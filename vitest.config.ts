@@ -5,6 +5,12 @@ export default defineConfig({
   resolve: { alias: { '@': resolve('src') } },
   test: {
     environment: 'node',
-    include: ['src/**/*.test.ts', 'src/**/*.test.tsx', 'electron/**/*.test.ts'],
+    include: [
+      'src/**/*.test.ts',
+      'src/**/*.test.tsx',
+      'electron/**/*.test.ts',
+      'tests/**/*.test.ts',
+      'tests/**/*.test.tsx',
+    ],
   },
 })

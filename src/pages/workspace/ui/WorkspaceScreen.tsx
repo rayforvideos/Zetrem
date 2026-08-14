@@ -1,8 +1,9 @@
-import { useEffect, useState, useSyncExternalStore } from 'react'
+import { useEffect, useRef, useState, useSyncExternalStore } from 'react'
 import type { CSSProperties } from 'react'
 import { addressed, roster, sessionStore } from '@/entities/agent-session'
+import type { Settings } from '@/entities/agent-session'
 import { pickProject, projectStore, restoreProject } from '@/entities/project'
-import { TILE_MIN_DWELL_MS } from '@/shared/config/motion'
+import { TILE_MIN_DWELL_MS } from '@/shared/config/motion/motion'
 import { PanelLeft } from 'lucide-react'
 import { cn } from '@/shared/lib/cn'
 import { Button } from '@/shared/ui/button'
@@ -12,8 +13,9 @@ import { TeamSidebar, team } from '@/widgets/team-sidebar'
 import { SetupPane } from '@/widgets/setup'
 import { TileDeck, closingIds, useDeck, visibleIds } from '@/widgets/tile-deck'
 import { Titlebar } from '@/widgets/titlebar'
-import { WORDMARK_SIGNATURE_OPACITY, WORDMARK_SIZE, Wordmark } from '@/shared/ui/wordmark'
-import { screenGate } from '../model/screen-gate'
+import { WORDMARK_SIGNATURE_OPACITY, WORDMARK_SIZE, Wordmark } from '@/shared/graphics/wordmark/wordmark'
+import { screenGate } from '../model/screen-gate/screen-gate'
+import { useFailure } from '@/shared/lib/failure/failure'
 import { useAuth } from '../model/use-auth'
 import { useCliUpdate } from '../model/use-cli-update'
 import { useAgentDefs } from '../model/use-agent-defs'
@@ -22,7 +24,7 @@ import { useAgent } from '../model/use-agent'
 import { ProjectPicker } from './controls/ProjectPicker'
 
 export function WorkspaceScreen() {
-  const { settings, loading, update } = useSettings()
+  const { settings, loading, failure: settingsFailure, update } = useSettings()
   const project = useSyncExternalStore(projectStore.subscribe, projectStore.get, projectStore.get)
   const { defs, hire, note: teamNote } = useAgentDefs()
 
@@ -45,9 +47,12 @@ export function WorkspaceScreen() {
     lock,
   })
   const { auth, authKnown, loggingIn, loginNote, login, loggingOut, logout, authError } = useAuth()
+  const { failure: projectFailure, report: reportProject } = useFailure()
   const cliUpdate = useCliUpdate(status.session?.cliVersion ?? null)
   const { state, launch: fanOut, openOne, closeOne } = useDeck()
   const [projectKnown, setProjectKnown] = useState(false)
+  const [reopened, setReopened] = useState(false)
+  const undoSettings = useRef<Settings | null>(null)
   const [viewport, setViewport] = useState(() => ({ w: window.innerWidth, h: window.innerHeight }))
 
   const sessionTools = status.session?.tools
@@ -63,7 +68,7 @@ export function WorkspaceScreen() {
     settingsLoaded: !loading,
     authKnown,
     projectKnown,
-    loggedIn: auth?.loggedIn === true,
+    loggedIn: auth?.state === 'signed-in',
     hasProject: project?.path != null,
     setupDone: settings.setupDone,
   })
@@ -81,7 +86,7 @@ export function WorkspaceScreen() {
       .then((restored) => {
         if (restored && projectStore.get() === null) projectStore.set(restored)
       })
-      .catch((cause: unknown) => console.error('could not restore the project', cause))
+      .catch(reportProject('Could not reopen your last project'))
       .finally(() => setProjectKnown(true))
   }, [])
 
@@ -107,7 +112,7 @@ export function WorkspaceScreen() {
       .then((picked) => {
         if (picked) projectStore.set(picked)
       })
-      .catch((cause: unknown) => console.error('could not pick a project', cause))
+      .catch(reportProject('Could not open that folder'))
   }
 
   return (
@@ -135,13 +140,25 @@ export function WorkspaceScreen() {
               onlyOurAgents={settings.onlyOurAgents}
               onOnlyOurAgents={(onlyOurAgents) => update({ onlyOurAgents })}
               ourAgentCount={defs.length}
-              onStart={() => update({ setupDone: true })}
-              canStart={auth?.loggedIn === true && project?.path != null}
+              onStart={() => {
+                undoSettings.current = null
+                setReopened(false)
+                update({ setupDone: true })
+              }}
+              onCancel={() => {
+                const snapshot = undoSettings.current
+                undoSettings.current = null
+                setReopened(false)
+                update({ ...(snapshot ?? {}), setupDone: true })
+              }}
+              reopened={reopened}
+              canStart={auth?.state === 'signed-in' && project?.path != null}
               loggingIn={loggingIn}
               loginNote={loginNote}
               onLogout={logout}
               loggingOut={loggingOut}
               authError={authError}
+              notice={settingsFailure ?? projectFailure}
               sessionLive={status.session !== null && conv.status !== 'done'}
             />
           ) : (
@@ -166,7 +183,6 @@ export function WorkspaceScreen() {
             onStop={stop}
             onUpdateCli={cliUpdate.start}
             updatingCli={cliUpdate.updating}
-            roster={roster(status.session?.agents ?? [], children)}
             fleet={children}
             report={
               openAgent === null ? null : (
@@ -219,7 +235,11 @@ export function WorkspaceScreen() {
           <Button
             variant="quiet"
             size="bare"
-            onClick={() => update({ setupDone: false })}
+            onClick={() => {
+              undoSettings.current = settings
+              setReopened(true)
+              update({ setupDone: false })
+            }}
             className="text-xs"
             title="Change account, project, and permissions"
           >

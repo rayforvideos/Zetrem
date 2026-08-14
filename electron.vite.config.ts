@@ -1,14 +1,39 @@
 import { resolve } from 'node:path'
 import { defineConfig } from 'electron-vite'
+import type { Plugin } from 'vite'
 import tailwindcss from '@tailwindcss/vite'
 import react from '@vitejs/plugin-react'
+
+function contentSecurityPolicy(): Plugin {
+  return {
+    name: 'zetrem-csp',
+    transformIndexHtml(html, ctx) {
+      const dev = ctx.server !== undefined
+      const policy = [
+        "default-src 'none'",
+        dev ? "script-src 'self' 'unsafe-inline'" : "script-src 'self'",
+        "style-src 'self' 'unsafe-inline'",
+        "img-src 'self' data:",
+        "font-src 'self'",
+        dev ? "connect-src 'self' ws:" : "connect-src 'self'",
+        "object-src 'none'",
+        "base-uri 'none'",
+        "form-action 'none'",
+        "frame-src 'none'",
+      ].join('; ')
+      return html.replace(
+        '</head>',
+        `  <meta http-equiv="Content-Security-Policy" content="${policy}" />\n  </head>`,
+      )
+    },
+  }
+}
 
 export default defineConfig({
   main: {
     build: {
       rollupOptions: {
         input: { index: resolve('electron/main.ts') },
-        external: ['@lydell/node-pty'],
       },
     },
   },
@@ -24,6 +49,6 @@ export default defineConfig({
     root: '.',
     build: { rollupOptions: { input: resolve('index.html') } },
     resolve: { alias: { '@': resolve('src') } },
-    plugins: [react(), tailwindcss()],
+    plugins: [react(), tailwindcss(), contentSecurityPolicy()],
   },
 })

@@ -1,5 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
-import type { AuthStatus } from '@/shared/api/desk'
+import type { AuthStatus } from '@/entities/auth'
+import { urlFrom } from '@/shared/lib/cli-output/cli-output'
+import { reasonOf } from '@/shared/lib/failure/failure'
 
 type Auth = {
   auth: AuthStatus | null
@@ -12,7 +14,7 @@ type Auth = {
   authError: string | null
 }
 
-const URL_PATTERN = /https?:\/\/\S+/
+const CHUNK_MEMORY = 8000
 
 export function useAuth(): Auth {
   const [auth, setAuth] = useState<AuthStatus | null>(null)
@@ -31,9 +33,11 @@ export function useAuth(): Auth {
   }, [])
 
   useEffect(() => {
-    return window.desk.onAuthProgress((line) => {
-      const url = line.match(URL_PATTERN)
-      if (url) setLoginNote(url[0])
+    let seen = ''
+    return window.desk.onAuthProgress((chunk) => {
+      seen = `${seen}${chunk}`.slice(-CHUNK_MEMORY)
+      const url = urlFrom(seen)
+      if (url !== null) setLoginNote(url)
     })
   }, [])
 
@@ -43,7 +47,9 @@ export function useAuth(): Auth {
     window.desk
       .login()
       .then(setAuth)
-      .catch((cause: unknown) => console.error('sign-in failed', cause))
+      .catch((cause: unknown) => {
+        setAuthError(reasonOf(cause))
+      })
       .finally(() => setLoggingIn(false))
   }, [])
 
@@ -55,12 +61,11 @@ export function useAuth(): Auth {
       .logout()
       .then((next) => {
         setAuth(next)
-        if (next.loggedIn) setAuthError('Still signed in — sign out did not take effect.')
+        if (next.state === 'signed-in') {
+          setAuthError('Still signed in — sign out did not take effect.')
+        }
       })
-      .catch((cause: unknown) => {
-        const text = cause instanceof Error ? cause.message : String(cause)
-        setAuthError(text.replace(/^Error invoking remote method '[^']*':\s*/, ''))
-      })
+      .catch((cause: unknown) => setAuthError(reasonOf(cause)))
       .finally(() => setLoggingOut(false))
   }, [])
 

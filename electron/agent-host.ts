@@ -2,13 +2,15 @@ import { spawn } from 'node:child_process'
 import type { ChildProcessWithoutNullStreams } from 'node:child_process'
 import { mkdirSync } from 'node:fs'
 import { join } from 'node:path'
-import { app, ipcMain } from 'electron'
-import { agentEnv } from '../src/shared/lib/shell-env'
-import { agentArgs } from '../src/entities/agent-session/model/run-config'
-import type { RunConfig } from '../src/entities/agent-session/model/run-config'
+import { app } from 'electron'
+import { agentEnv } from '../src/shared/lib/shell-env/shell-env'
+import { agentArgs } from '../src/entities/agent-session/model/run-config/run-config'
+import type { RunConfig } from '../src/entities/agent-session/model/run-config/run-config.types'
 import { orchestratorPrompt, persona } from './agent-style'
-import { claudeBin, loginPath } from './login-path'
+import { claudeBin, loginPath } from './login-path/login-path'
 import { recallProject } from './project-memory'
+import { handle, on } from './ipc/ipc'
+import { killTree, killTreeSync } from './kill-tree/kill-tree'
 
 const agents = new Map<string, ChildProcessWithoutNullStreams | 'starting'>()
 
@@ -30,13 +32,14 @@ function permissionResponse(requestId: string, result: unknown): string {
 
 export function killAllAgents(): void {
   for (const agent of agents.values()) {
-    if (agent !== 'starting') agent.kill()
+    if (agent === 'starting' || agent.pid === undefined) continue
+    killTreeSync(agent.pid)
   }
   agents.clear()
 }
 
 export function registerAgentHost(): void {
-  ipcMain.handle(
+  handle(
     'agent:start',
     async (event, id: string, prompt: string, config: RunConfig) => {
     const sender = event.sender
@@ -98,23 +101,23 @@ export function registerAgentHost(): void {
     },
   )
 
-  ipcMain.on('agent:send', (_event, id: string, text: string) => {
+  on('agent:send', (_event, id: string, text: string) => {
     if (typeof id !== 'string' || typeof text !== 'string') return
     const agent = agents.get(id)
     if (agent && agent !== 'starting') agent.stdin.write(userMessage(text))
   })
 
-  ipcMain.on('agent:permission', (_event, id: string, requestId: string, result: unknown) => {
+  on('agent:permission', (_event, id: string, requestId: string, result: unknown) => {
     if (typeof id !== 'string' || typeof requestId !== 'string') return
     const agent = agents.get(id)
     if (agent && agent !== 'starting') agent.stdin.write(permissionResponse(requestId, result))
   })
 
-  ipcMain.on('agent:stop', (_event, id: string) => {
+  on('agent:stop', (_event, id: string) => {
     if (typeof id !== 'string') return
     const agent = agents.get(id)
     agents.delete(id)
-    if (agent && agent !== 'starting') agent.kill()
+    if (agent && agent !== 'starting' && agent.pid !== undefined) killTree(agent.pid)
   })
 
   app.on('before-quit', () => {

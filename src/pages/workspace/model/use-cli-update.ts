@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { conversation } from './conversation'
+import { conversation } from './conversation/conversation'
 import { statusStore } from '@/entities/agent-session'
 
 export function useCliUpdate(cliVersion: string | null): { updating: boolean; start(): void } {

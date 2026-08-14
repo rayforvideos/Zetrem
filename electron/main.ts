@@ -1,5 +1,5 @@
 import { resolve } from 'node:path'
-import { BrowserWindow, app, dialog, ipcMain, shell } from 'electron'
+import { BrowserWindow, app, dialog, session, shell } from 'electron'
 import { CHROME_TOP, CONTROL_SYMBOL, GROUND, TRAFFIC_LIGHT } from '../src/shared/config/theme'
 import { killAllAgents, registerAgentHost } from './agent-host'
 import { registerAgentDefs } from './agent-defs'
@@ -7,6 +7,7 @@ import { registerAuth } from './auth'
 import { registerCliVersion } from './cli-version'
 import { registerSettingsStore } from './settings-store'
 import { recallProject, rememberProject } from './project-memory'
+import { handle } from './ipc/ipc'
 
 const isMac = process.platform === 'darwin'
 
@@ -67,7 +68,7 @@ function createWindow(): void {
   }
 }
 
-ipcMain.handle('project:pick', async () => {
+handle('project:pick', async () => {
   const result = await dialog.showOpenDialog({ properties: ['openDirectory'] })
   const path = result.canceled ? undefined : result.filePaths[0]
   if (!path) return null
@@ -75,7 +76,7 @@ ipcMain.handle('project:pick', async () => {
   return path
 })
 
-ipcMain.handle('project:restore', () => recallProject())
+handle('project:restore', () => recallProject())
 
 const primary = app.requestSingleInstanceLock()
 if (!primary) {
@@ -96,6 +97,8 @@ if (!primary) {
   registerSettingsStore()
 
   app.whenReady().then(() => {
+    session.defaultSession.setPermissionRequestHandler((_contents, _permission, grant) => grant(false))
+    session.defaultSession.setPermissionCheckHandler(() => false)
     createWindow()
     app.on('activate', () => {
       if (BrowserWindow.getAllWindows().length === 0) createWindow()
@@ -104,6 +107,6 @@ if (!primary) {
 
   app.on('window-all-closed', () => {
     killAllAgents()
-    if (process.platform !== 'darwin') app.quit()
+    if (!isMac) app.quit()
   })
 }

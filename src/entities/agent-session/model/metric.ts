@@ -1,4 +1,4 @@
-import type { AgentSession } from './session'
+import type { AgentSession } from './session.types'
 
 export type Metric = {
   id: string

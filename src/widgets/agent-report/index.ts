@@ -1,1 +1,1 @@
-export { AgentReport } from './ui/AgentReport'
+export { AgentReport } from './ui/AgentReport/AgentReport'

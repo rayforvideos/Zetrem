@@ -1,7 +1,7 @@
 import type { CSSProperties } from 'react'
 import { personaOf } from '@/entities/agent-session'
 import type { AgentSession } from '@/entities/agent-session'
-import { AgentFace } from '@/shared/ui/agent-face'
+import { AgentFace } from '@/entities/agent-session/ui/agent-face'
 
 type HeadlineProps = {
   session: AgentSession

@@ -1,3 +1,3 @@
-export { TeamSidebar } from './ui/TeamSidebar'
-export { team } from './lib/team'
-export type { TeamMember } from './lib/team'
+export { TeamSidebar } from './ui/TeamSidebar/TeamSidebar'
+export { team } from './lib/team/team'
+export type { TeamMember } from './lib/team/team.types'

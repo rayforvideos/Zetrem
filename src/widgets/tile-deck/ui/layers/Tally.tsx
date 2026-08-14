@@ -1,7 +1,7 @@
 import type { CSSProperties } from 'react'
-import { tally } from '@/shared/lib/tool-line'
-import { ToolIcon } from '@/shared/ui/tool-icon'
-import type { ToolShape } from '@/shared/lib/tool-shape'
+import { tally } from '@/shared/lib/tool-line/tool-line'
+import { ToolIcon } from '@/shared/graphics/tool-icon'
+import type { ToolShape } from '@/shared/lib/tool-shape/tool-shape.types'
 
 const SHAPES: { key: keyof ReturnType<typeof tally>; shape: ToolShape; word: string }[] = [
   { key: 'read', shape: { kind: 'file', verb: 'read', dir: '', name: '' }, word: 'Read' },

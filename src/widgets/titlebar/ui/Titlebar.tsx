@@ -1,6 +1,11 @@
 import type { CSSProperties, ReactNode } from 'react'
-import { CHROME_TOP, TRAFFIC_LIGHT, WINDOWS_CONTROLS_WIDTH } from '@/shared/config/theme'
-import { isMac } from '@/shared/lib/platform'
+import {
+  CHROME_TOP,
+  SHELL_PAD,
+  TRAFFIC_LIGHT,
+  WINDOWS_CONTROLS_WIDTH,
+} from '@/shared/config/theme'
+import { isMac } from '@/shared/lib/platform/platform'
 
 type TitlebarProps = {
   left?: ReactNode
@@ -10,7 +15,10 @@ type TitlebarProps = {
 export function Titlebar({ left, children }: TitlebarProps) {
   const mac = isMac()
   return (
-    <div data-titlebar style={{ ...rootStyle, paddingRight: mac ? 12 : WINDOWS_CONTROLS_WIDTH }}>
+    <div
+      data-titlebar
+      style={{ ...rootStyle, paddingRight: mac ? SHELL_PAD : WINDOWS_CONTROLS_WIDTH }}
+    >
       <div
         style={{
           ...leftStyle,
@@ -21,7 +29,15 @@ export function Titlebar({ left, children }: TitlebarProps) {
       >
         {left}
       </div>
-      <div style={rowStyle}>{children}</div>
+      <div
+        style={{
+          ...rowStyle,
+          alignSelf: mac ? 'flex-start' : 'center',
+          height: mac ? TRAFFIC_LIGHT.y * 2 + TRAFFIC_LIGHT.size : '100%',
+        }}
+      >
+        {children}
+      </div>
     </div>
   )
 }

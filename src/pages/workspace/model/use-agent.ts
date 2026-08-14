@@ -7,9 +7,9 @@ import {
   statusStore,
 } from '@/entities/agent-session'
 import type { AgentSession, RunConfig, StatusState } from '@/entities/agent-session'
-import { applyAgentEvent } from './agent-events'
-import { conversation } from './conversation'
-import type { ConversationState } from './conversation'
+import { applyAgentEvent } from './agent-events/agent-events'
+import { conversation } from './conversation/conversation'
+import type { ConversationState } from './conversation/conversation.types'
 
 const CLOCK_MS = 1000
 

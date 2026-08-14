@@ -144,11 +144,6 @@
     -webkit-app-region: no-drag;
   }
 
-  .xterm,
-  .xterm .xterm-viewport,
-  .xterm .xterm-screen {
-    background-color: transparent !important;
-  }
 }
 
 .zt-rail {
@@ -209,13 +204,11 @@
   font-variant-numeric: tabular-nums;
 }
 
-.zt-scroll::-webkit-scrollbar,
-.xterm .xterm-viewport::-webkit-scrollbar {
+.zt-scroll::-webkit-scrollbar {
   width: 8px;
 }
 
-.zt-scroll::-webkit-scrollbar-thumb,
-.xterm .xterm-viewport::-webkit-scrollbar-thumb {
+.zt-scroll::-webkit-scrollbar-thumb {
   border-radius: 4px;
   background: var(--color-border);
 }

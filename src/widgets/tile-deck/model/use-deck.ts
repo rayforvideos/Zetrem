@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useReducer, useRef } from 'react'
-import { MOTION } from '@/shared/config/motion'
-import { INITIAL_DECK, closingIds, deckReducer } from './deck-machine'
-import type { DeckState } from './deck-machine'
+import { MOTION } from '@/shared/config/motion/motion'
+import { INITIAL_DECK, closingIds, deckReducer } from './deck-machine/deck-machine'
+import type { DeckState } from './deck-machine/deck-machine.types'
 
 type Deck = {
   state: DeckState

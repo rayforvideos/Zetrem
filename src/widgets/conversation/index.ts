@@ -1,1 +1,1 @@
-export { ConversationPane } from './ui/ConversationPane'
+export { ConversationPane } from './ui/ConversationPane/ConversationPane'

@@ -1,2 +1,2 @@
-export { fileNameOf, parseAgentDef, toAgentFile } from './lib/frontmatter'
-export type { AgentDef, AgentDefDraft } from './lib/frontmatter'
+export { fileNameOf, parseAgentDef, toAgentFile } from './lib/frontmatter/frontmatter'
+export type { AgentDef, AgentDefDraft } from './lib/frontmatter/frontmatter.types'

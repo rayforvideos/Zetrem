@@ -1,4 +1,4 @@
-import type { PermissionAsk, RunnerId, SessionStatus, WorkOutcome } from '../model/session'
+import type { PermissionAsk, RunnerId, SessionStatus, WorkOutcome } from '../model/session.types'
 
 export type RunSink = {
   headline(text: string): void

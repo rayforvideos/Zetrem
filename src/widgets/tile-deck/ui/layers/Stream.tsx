@@ -1,7 +1,7 @@
 import type { CSSProperties } from 'react'
-import { shapeOfLine } from '@/shared/lib/tool-line'
-import type { ToolShape } from '@/shared/lib/tool-shape'
-import { ToolIcon } from '@/shared/ui/tool-icon'
+import { shapeOfLine } from '@/shared/lib/tool-line/tool-line'
+import type { ToolShape } from '@/shared/lib/tool-shape/tool-shape.types'
+import { ToolIcon } from '@/shared/graphics/tool-icon'
 
 type StreamProps = { lines: string[] }
 
@@ -26,13 +26,22 @@ export function Stream({ lines }: StreamProps) {
 }
 
 function text(shape: ToolShape): string {
-  if (shape.kind === 'file') return shape.name
-  if (shape.kind === 'command') return shape.command
-  if (shape.kind === 'search') return shape.pattern
-  if (shape.kind === 'web') return shape.label
-  if (shape.kind === 'agent') return shape.description
-  if (shape.kind === 'todo') return 'Todo'
-  return shape.name
+  switch (shape.kind) {
+    case 'file':
+      return shape.name
+    case 'command':
+      return shape.command
+    case 'search':
+      return shape.pattern
+    case 'web':
+      return shape.label
+    case 'agent':
+      return shape.description
+    case 'todo':
+      return 'Todo'
+    default:
+      return shape.name
+  }
 }
 
 const rootStyle: CSSProperties = {

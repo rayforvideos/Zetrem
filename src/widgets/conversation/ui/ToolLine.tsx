@@ -1,8 +1,8 @@
 import { personaOf } from '@/entities/agent-session'
-import { AgentFace } from '@/shared/ui/agent-face'
-import { resultNote, toolShape } from '@/shared/lib/tool-shape'
-import type { ToolActivity } from '@/pages/workspace/model/conversation'
-import { ToolIcon } from '@/shared/ui/tool-icon'
+import { AgentFace } from '@/entities/agent-session/ui/agent-face'
+import { resultNote, toolShape } from '@/shared/lib/tool-shape/tool-shape'
+import type { ToolActivity } from '@/entities/conversation'
+import { ToolIcon } from '@/shared/graphics/tool-icon'
 
 export function ToolLine({ tool }: { tool: ToolActivity }) {
   const name = tool.line.split(' ')[0] ?? ''

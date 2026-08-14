@@ -1,9 +1,9 @@
 import { spawn } from 'node:child_process'
 import { realpathSync } from 'node:fs'
-import { ipcMain } from 'electron'
-import { managerOf } from '../src/entities/agent-session/model/cli-update'
-import { agentEnv } from '../src/shared/lib/shell-env'
-import { claudeBin, findCommand, loginPath } from './login-path'
+import { managerOf } from '../src/entities/agent-session/model/cli-update/cli-update'
+import { agentEnv } from '../src/shared/lib/shell-env/shell-env'
+import { claudeBin, findCommand, loginPath } from './login-path/login-path'
+import { handle } from './ipc/ipc'
 
 const REGISTRY = 'https://registry.npmjs.org/@anthropic-ai/claude-code/latest'
 
@@ -65,7 +65,7 @@ async function installedVersion(): Promise<string | null> {
 }
 
 export function registerCliVersion(): void {
-  ipcMain.handle('cli:latest', async () => {
+  handle('cli:latest', async () => {
     const [installed, latest, managedBy] = await Promise.all([
       installedVersion(),
       latestVersion(),
@@ -74,7 +74,7 @@ export function registerCliVersion(): void {
     return { installed, latest, managedBy }
   })
 
-  ipcMain.handle('cli:update', async () => {
+  handle('cli:update', async () => {
     const path = await loginPath()
     const bin = await claudeBin()
     return new Promise<{ output: string }>((resolve) => {

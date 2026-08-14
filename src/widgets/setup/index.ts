@@ -1,1 +1,1 @@
-export { SetupPane } from './ui/SetupPane'
+export { SetupPane } from './ui/SetupPane/SetupPane'

@@ -1,8 +1,8 @@
 import { personaOf } from '@/entities/agent-session'
 import type { AgentSession } from '@/entities/agent-session'
-import { AgentFace } from '@/shared/ui/agent-face'
-import { workMap } from '../lib/branches'
-import type { Branch } from '../lib/branches'
+import { AgentFace } from '@/entities/agent-session/ui/agent-face'
+import { workMap } from '../lib/branches/branches'
+import type { Branch } from '../lib/branches/branches.types'
 
 const LANE_H = 30
 const TOP = 30

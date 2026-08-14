@@ -4,18 +4,18 @@ import type { ErrorInfo, ReactNode } from 'react'
 type State = { error: Error | null; stack: string }
 
 export class Boundary extends Component<{ children: ReactNode }, State> {
-  state: State = { error: null, stack: '' }
+  override state: State = { error: null, stack: '' }
 
   static getDerivedStateFromError(error: Error): Partial<State> {
     return { error }
   }
 
-  componentDidCatch(error: Error, info: ErrorInfo): void {
+  override componentDidCatch(error: Error, info: ErrorInfo): void {
     this.setState({ stack: info.componentStack ?? '' })
     console.error('[zetrem] the screen crashed', error, info.componentStack)
   }
 
-  render(): ReactNode {
+  override render(): ReactNode {
     const { error, stack } = this.state
     if (error === null) return this.props.children
 

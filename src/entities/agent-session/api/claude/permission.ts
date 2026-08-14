@@ -1,27 +1,11 @@
+import type { PermissionAlwaysResult, PermissionEvent, PermissionResult } from './permission.types'
+
 import { toolLine } from './shared'
-
-export type PermissionEvent = {
-  type: 'permission'
-  requestId: string
-  toolName: string
-  line: string
-  input: unknown
-}
-
-export type PermissionResult =
-  | { behavior: 'allow'; updatedInput: unknown }
-  | { behavior: 'deny'; message: string }
 
 export function permissionResult(allow: boolean, input: unknown): PermissionResult {
   return allow
     ? { behavior: 'allow', updatedInput: input }
     : { behavior: 'deny', message: 'The user denied this tool call' }
-}
-
-export type PermissionAlwaysResult = {
-  behavior: 'allow'
-  updatedInput: unknown
-  updatedPermissions: unknown[]
 }
 
 export function permissionAlwaysResult(toolName: string, input: unknown): PermissionAlwaysResult {

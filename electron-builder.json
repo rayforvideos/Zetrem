@@ -1,0 +1,14 @@
+{
+  "appId": "com.zetrem.app",
+  "productName": "Zetrem",
+  "directories": {
+    "output": "release"
+  },
+  "files": ["out/**", "package.json"],
+  "icon": "resources/icon.icns",
+  "mac": {
+    "target": [{ "target": "dir", "arch": ["arm64"] }],
+    "category": "public.app-category.developer-tools",
+    "identity": null
+  }
+}

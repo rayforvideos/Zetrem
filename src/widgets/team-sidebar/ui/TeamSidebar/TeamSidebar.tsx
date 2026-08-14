@@ -1,9 +1,17 @@
 import { useState } from 'react'
 import { Plus } from 'lucide-react'
-import { personaOf } from '@/entities/agent-session'
 import type { AgentDefDraft } from '@/entities/agent-def'
+import { SIDEBAR } from '@/shared/config/theme'
 import { cn } from '@/shared/lib/cn'
-import { AgentFace } from '@/entities/agent-session/ui/agent-face'
+import type { CharacterId } from '@/entities/agent-session'
+import { AgentSprite } from '@/entities/agent-session/ui/AgentSprite/AgentSprite'
+import { CharacterPicker } from '../CharacterPicker/CharacterPicker'
+import { MemberMenu } from '../MemberMenu/MemberMenu'
+import {
+  characterFor,
+  draftFrom,
+  initialCharacter,
+} from '../../lib/member-draft/member-draft'
 import { Button } from '@/shared/ui/button'
 import { Empty, EmptyDescription, EmptyHeader, EmptyTitle } from '@/shared/ui/empty'
 import { Field, FieldDescription, FieldGroup } from '@/shared/ui/field'
@@ -34,6 +42,9 @@ type TeamSidebarProps = {
   onHire(draft: AgentDefDraft): void
   onPick(sessionId: string): void
   onAddress(subagentType: string): void
+  onRelease(name: string): void
+  onEdit(draft: AgentDefDraft, previousName: string): void
+  drafts: Map<string, AgentDefDraft>
 }
 
 export function TeamSidebar({
@@ -44,26 +55,36 @@ export function TeamSidebar({
   onHire,
   onPick,
   onAddress,
+  onRelease,
+  onEdit,
+  drafts,
 }: TeamSidebarProps) {
-  const [hiring, setHiring] = useState(false)
+  const [editing, setEditing] = useState<'new' | string | null>(null)
+  const target = typeof editing === 'string' ? (drafts.get(editing) ?? null) : null
 
   return (
-    <aside className="zt-scroll zt-bleed flex w-[232px] flex-none flex-col gap-3 overflow-y-auto border-r border-border bg-card/40 pr-4">
+    <aside
+      style={{ width: SIDEBAR.width }}
+      className="zt-scroll zt-bleed flex flex-none flex-col gap-3 overflow-y-auto border-r border-border bg-card/40 pr-4"
+    >
       <div className="px-2.5 text-xs tracking-[0.08em] text-muted-foreground">Your team</div>
 
-      {hiring ? (
-        <HireForm
-          onCancel={() => setHiring(false)}
+      {editing !== null ? (
+        <MemberForm
+          key={editing}
+          initial={target}
+          onCancel={() => setEditing(null)}
           onSubmit={(draft) => {
-            onHire(draft)
-            setHiring(false)
+            if (target === null) onHire(draft)
+            else onEdit(draft, target.name)
+            setEditing(null)
           }}
         />
       ) : (
         <Button
           variant="ghost"
           size="bare"
-          onClick={() => setHiring(true)}
+          onClick={() => setEditing('new')}
           disabled={!canWrite}
           className="min-w-0 justify-start gap-2.5 rounded-xl bg-card px-2.5 py-2 text-left disabled:pointer-events-auto"
           title={canWrite ? undefined : 'Pick a project first'}
@@ -87,8 +108,11 @@ export function TeamSidebar({
             ? `${ORIGIN[member.origin]} — joins from the next session`
             : 'Not available this session — unlock it in Settings'
           return (
-            <Button
+            <div
               key={member.type}
+              className="group/member relative flex items-center gap-0.5"
+            >
+            <Button
               data-member={member.type}
               variant="ghost"
               size="bare"
@@ -97,7 +121,7 @@ export function TeamSidebar({
               }
               disabled={mute}
               className={cn(
-                'min-w-0 justify-start gap-2.5 rounded-xl px-2.5 py-2 text-left disabled:pointer-events-auto',
+                'min-w-0 flex-1 justify-start gap-2.5 rounded-xl px-2.5 py-2 text-left disabled:pointer-events-auto',
                 mute ? 'text-muted-foreground' : 'text-foreground',
                 active && 'bg-card',
               )}
@@ -105,26 +129,33 @@ export function TeamSidebar({
                 member.sessionId !== null ? 'See what they did' : mute ? why : 'Give them a task'
               }
             >
-              <AgentFace persona={personaOf(member.type)} size={AVATAR} />
+              <AgentSprite
+                subagentType={member.type}
+                chosen={member.character}
+                state={member.state}
+                size={AVATAR}
+              />
               <span className="flex min-w-0 flex-col gap-0.5 text-left">
-                <span className="flex items-baseline gap-1.5">
-                  <span className="truncate text-sm leading-tight">{member.name}</span>
+                <span className="truncate text-sm leading-tight">{member.name}</span>
+                <span className="flex min-w-0 items-baseline gap-1.5 text-xs leading-tight text-muted-foreground">
                   {member.model !== null && (
-                    <span className="flex-none font-mono text-xs text-muted-foreground">
-                      {member.model}
-                    </span>
+                    <span className="flex-none font-mono">{member.model}</span>
                   )}
-                </span>
-                <span className="truncate text-xs leading-tight text-muted-foreground">
-                  {state ?? member.description ?? ''}
+                  <span className="truncate">{state ?? member.description ?? ''}</span>
                 </span>
               </span>
             </Button>
+            <MemberMenu
+              name={member.name}
+              onEdit={() => setEditing(member.type)}
+              onRelease={() => onRelease(member.type)}
+            />
+            </div>
           )
         })}
       </div>
 
-      {members.length === 0 && !hiring && (
+      {members.length === 0 && editing === null && (
         <Empty className="flex-none items-start justify-start gap-2 px-2.5 py-2 text-left md:px-2.5 md:py-2">
           <EmptyHeader className="items-start text-left">
             <EmptyTitle className="text-sm">No one here yet</EmptyTitle>
@@ -144,17 +175,21 @@ export function TeamSidebar({
   )
 }
 
-function HireForm({
+function MemberForm({
+  initial = null,
   onSubmit,
   onCancel,
 }: {
+  initial?: AgentDefDraft | null
   onSubmit(draft: AgentDefDraft): void
   onCancel(): void
 }) {
-  const [name, setName] = useState('')
-  const [description, setDescription] = useState('')
-  const [prompt, setPrompt] = useState('')
+  const [name, setName] = useState(initial?.name ?? '')
+  const [description, setDescription] = useState(initial?.description ?? '')
+  const [prompt, setPrompt] = useState(initial?.prompt ?? '')
+  const [picked, setPicked] = useState<CharacterId | null>(initialCharacter(initial))
   const [missing, setMissing] = useState<string | null>(null)
+  const character = characterFor(picked, name)
   const lack =
     name.trim().length === 0
       ? 'Give them a name'
@@ -171,13 +206,7 @@ function HireForm({
           setMissing(lack)
           return
         }
-        onSubmit({
-          name: name.trim(),
-          description: description.trim(),
-          model: null,
-          tools: [],
-          prompt: prompt.trim(),
-        })
+        onSubmit(draftFrom({ name, description, prompt, character }, initial))
       }}
     >
       <FieldGroup className="gap-2.5">
@@ -211,12 +240,17 @@ function HireForm({
             className="resize-none rounded-lg text-sm"
           />
         </Field>
-        <FieldDescription>{missing ?? 'Available from the next session'}</FieldDescription>
+        <Field>
+          <CharacterPicker value={character} onChange={setPicked} />
+        </Field>
+        <FieldDescription>
+          {missing ?? (initial === null ? 'Available from the next session' : 'Applies from the next session')}
+        </FieldDescription>
       </FieldGroup>
 
       <div className="flex items-center gap-2">
         <Button type="submit" size="sm" className="rounded-full">
-          Create
+          {initial === null ? 'Create' : 'Save'}
         </Button>
         <Button
           type="button"

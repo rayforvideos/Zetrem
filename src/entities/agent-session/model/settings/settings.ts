@@ -1,5 +1,6 @@
 import type { Settings } from './settings.types'
 
+import { MODELS, PERMISSION_MODES } from '../run-config/run-config'
 import type { ModelChoice, PermissionMode } from '../run-config/run-config.types'
 
 export const DEFAULT_SETTINGS: Settings = {
@@ -11,17 +12,17 @@ export const DEFAULT_SETTINGS: Settings = {
   sidebarOpen: true,
 }
 
-const PERMISSION_MODES: PermissionMode[] = ['ask', 'acceptEdits', 'bypass']
-const MODELS: ModelChoice[] = ['default', 'opus', 'sonnet', 'haiku']
+const MODE_IDS: PermissionMode[] = PERMISSION_MODES.map((mode) => mode.id)
+const MODEL_IDS: ModelChoice[] = MODELS.map((model) => model.id)
 
 export function readSettings(saved: unknown): Settings {
   if (typeof saved !== 'object' || saved === null) return DEFAULT_SETTINGS
   const source = saved as Record<string, unknown>
   return {
-    permissionMode: PERMISSION_MODES.includes(source.permissionMode as PermissionMode)
+    permissionMode: MODE_IDS.includes(source.permissionMode as PermissionMode)
       ? (source.permissionMode as PermissionMode)
       : DEFAULT_SETTINGS.permissionMode,
-    model: MODELS.includes(source.model as ModelChoice)
+    model: MODEL_IDS.includes(source.model as ModelChoice)
       ? (source.model as ModelChoice)
       : DEFAULT_SETTINGS.model,
     setupDone: source.setupDone === true,

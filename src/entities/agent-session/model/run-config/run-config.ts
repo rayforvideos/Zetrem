@@ -15,9 +15,14 @@ export const PERMISSION_MODES: { id: PermissionMode; label: string; hint: string
 
 export const MODELS: { id: ModelChoice; label: string; hint: string }[] = [
   { id: 'default', label: 'Default', hint: 'Follows your account setting' },
-  { id: 'opus', label: 'Opus', hint: 'Smartest. Slower and pricier' },
-  { id: 'sonnet', label: 'Sonnet', hint: 'Balanced for most work' },
-  { id: 'haiku', label: 'Haiku', hint: 'Fast and cheap. Good for simple jobs' },
+  {
+    id: 'fable',
+    label: 'Fable',
+    hint: 'The hardest problems. Turn it on once with /model fable in the Claude Code CLI',
+  },
+  { id: 'opus', label: 'Opus', hint: 'Complex work. Slower and pricier' },
+  { id: 'sonnet', label: 'Sonnet', hint: 'Balanced for most tasks' },
+  { id: 'haiku', label: 'Haiku', hint: 'Fast and cheap. Good for quick questions' },
 ]
 
 export function agentArgs(config: RunConfig): string[] {
@@ -29,9 +34,9 @@ export function agentArgs(config: RunConfig): string[] {
     'stream-json',
     '--verbose',
     '--forward-subagent-text',
-    '--append-system-prompt',
-    config.persona,
   ]
+
+  if (config.persona.length > 0) args.push('--append-system-prompt', config.persona)
 
   args.push(...agentsArgs(config.people, config.lock, config.orchestrator ?? config.persona))
 

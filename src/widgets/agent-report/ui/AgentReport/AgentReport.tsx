@@ -1,7 +1,7 @@
-import { personaOf } from '@/entities/agent-session'
 import type { AgentSession } from '@/entities/agent-session'
 import { shapeOfLine, tally } from '@/shared/lib/tool-line/tool-line'
-import { AgentFace } from '@/entities/agent-session/ui/agent-face'
+import { personaOf } from '@/entities/agent-session'
+import { AgentSprite } from '@/entities/agent-session/ui/AgentSprite/AgentSprite'
 import { Button } from '@/shared/ui/button'
 import { ToolIcon } from '@/shared/graphics/tool-icon'
 
@@ -26,7 +26,11 @@ export function AgentReport({ session, nowMs, onClose }: AgentReportProps) {
     <div data-report data-selectable className="zt-scroll flex min-h-0 flex-1 flex-col gap-5 overflow-y-auto px-2">
       <div className="flex items-start justify-between gap-4">
         <div className="flex items-center gap-2.5">
-          <AgentFace persona={persona} size={22} />
+          <AgentSprite
+            subagentType={session.subagentType || session.label}
+            state={session.status}
+            size={44}
+          />
           <span className="flex flex-col">
             <span className="text-base leading-tight">{persona.name}</span>
             <span className="font-mono text-xs text-muted-foreground">

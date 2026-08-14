@@ -1,4 +1,5 @@
 export type AgentDef = {
+  character: string | null
   name: string
   description: string
   model: string | null
@@ -9,6 +10,7 @@ export type AgentDef = {
 }
 
 export type AgentDefDraft = {
+  character: string | null
   name: string
   description: string
   model: string | null

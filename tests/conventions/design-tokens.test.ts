@@ -2,6 +2,10 @@ import { readFile, readdir } from 'node:fs/promises'
 import { join } from 'node:path'
 import { describe, expect, it } from 'vitest'
 
+const SPRITE_SURFACES = ['CharacterPicker', 'AgentSprite']
+
+const REVEALED_ON_HOVER = ['MemberMenu']
+
 const OURS = [
   join('src', 'entities'),
   join('src', 'pages'),
@@ -40,6 +44,8 @@ describe('눈금은 shadcn 이 쥔다 — 우리가 칸을 새로 파지 않는�
     const stray: string[] = []
     for (const file of await ourFiles()) {
       if (file.path.includes('agent-face')) continue
+      if (SPRITE_SURFACES.some((name) => file.path.includes(name))) continue
+      if (REVEALED_ON_HOVER.some((name) => file.path.includes(name))) continue
       for (const match of file.text.matchAll(/(?:^|[\s"'`])(opacity-\d+)(?=[\s"'`]|$)/g)) {
         stray.push(`${file.path}: ${match[1]}`)
       }

@@ -1,6 +1,7 @@
 import type { TeamMember } from './team.types'
 
 import type { AgentDef } from '@/entities/agent-def'
+import { personaOf } from '@/entities/agent-session'
 import type { RosterMember, RosterState } from '@/entities/agent-session'
 
 const RANK: Record<RosterState, number> = { waiting: 0, working: 1, done: 2, idle: 3 }
@@ -21,9 +22,10 @@ export function team(
       const isLoaded = loaded.has(def.name)
       return {
         type: def.name,
-        name: def.name,
+        name: personaOf(def.name).name,
         description: def.description,
         model: def.model,
+        character: def.character,
         origin: def.source,
         loaded: isLoaded,
         callable: isLoaded && (allowed === null || allowed.has(def.name)),

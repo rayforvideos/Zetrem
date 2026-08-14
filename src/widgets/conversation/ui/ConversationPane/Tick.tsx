@@ -30,8 +30,8 @@ export function Tick({ tool, live }: { tool: ToolActivity; live: boolean }) {
         aria-expanded={open}
         data-tick={tool.toolUseId ?? tool.line}
         className={cn(
-          'zt-tick w-full min-w-0 justify-start text-left font-mono text-xs leading-normal text-muted-foreground disabled:opacity-100',
-          live && 'zt-tick--live',
+          'w-full min-w-0 justify-start rounded-md px-1.5 py-1 text-left font-mono text-xs leading-normal text-muted-foreground hover:bg-card disabled:opacity-100 disabled:hover:bg-transparent',
+          live && 'text-foreground',
         )}
       >
         <ToolLine tool={tool} />

@@ -1,4 +1,4 @@
-import { readFile, readdir, mkdir, writeFile } from 'node:fs/promises'
+import { readFile, readdir, mkdir, rm, writeFile } from 'node:fs/promises'
 import { join, resolve } from 'node:path'
 import { fileNameOf, parseAgentDef, toAgentFile } from '../../src/entities/agent-def'
 import type { AgentDef, AgentDefDraft } from '../../src/entities/agent-def'
@@ -29,10 +29,31 @@ export async function listAgentDefs(dir: string): Promise<AgentDef[]> {
   return defs.sort((a, b) => a.name.localeCompare(b.name))
 }
 
+function insideRoster(dir: string, name: string): string {
+  const root = resolve(dir)
+  const path = resolve(root, fileNameOf(name))
+  if (!path.startsWith(`${root}/`)) throw new Error('refusing to touch a path outside the roster')
+  return path
+}
+
+export async function removeAgentDef(dir: string, name: string): Promise<void> {
+  await rm(insideRoster(dir, name), { force: true })
+}
+
+export async function replaceAgentDef(
+  dir: string,
+  draft: AgentDefDraft,
+  previousName: string,
+): Promise<string> {
+  const path = await writeAgentDef(dir, draft)
+  const before = insideRoster(dir, previousName)
+  if (before !== path) await rm(before, { force: true })
+  return path
+}
+
 export async function writeAgentDef(dir: string, draft: AgentDefDraft): Promise<string> {
   const root = resolve(dir)
-  const path = resolve(root, fileNameOf(draft.name))
-  if (!path.startsWith(`${root}/`)) throw new Error('refusing to write outside the roster directory')
+  const path = insideRoster(dir, draft.name)
   await mkdir(root, { recursive: true })
   await writeFile(path, toAgentFile(draft), 'utf8')
   return path

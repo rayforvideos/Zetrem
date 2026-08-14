@@ -11,3 +11,7 @@ export const SHELL_PAD = 28
 export const GRID_PAD = 20
 
 export const WINDOWS_CONTROLS_WIDTH = 138
+
+export const SIDEBAR = { width: 232, gap: 28 } as const
+
+export const SIDEBAR_SPAN = SIDEBAR.width + SIDEBAR.gap

@@ -39,6 +39,32 @@ function turn(overrides: Partial<Turn> = {}): Turn {
   }
 }
 
+function working(turns: Turn[]): string {
+  return renderToStaticMarkup(
+    <ConversationPane
+      turns={turns}
+      status="working"
+      statusState={{ ...STATUS, cost: { ...STATUS.cost, tokens: { ...STATUS.cost.tokens, out: 1240 } } }}
+      permission={null}
+      nowMs={12_000}
+      permissionMode="ask"
+      onPermissionMode={() => {}}
+      model="default"
+      onModel={() => {}}
+      sessionLive
+      onSend={() => {}}
+      onDecide={() => {}}
+      onStop={() => {}}
+      onUpdateCli={() => {}}
+      updatingCli={false}
+      sidebar={null}
+      report={null}
+      addressee={null}
+      onClearAddressee={() => {}}
+    />,
+  )
+}
+
 function pane(turns: Turn[], permission: PermissionAsk | null = null): string {
   return renderToStaticMarkup(
     <ConversationPane
@@ -57,7 +83,6 @@ function pane(turns: Turn[], permission: PermissionAsk | null = null): string {
       onStop={() => {}}
       onUpdateCli={() => {}}
       updatingCli={false}
-      fleet={[]}
       sidebar={null}
       report={null}
       addressee={null}
@@ -147,6 +172,30 @@ describe('ConversationPane — 화면이 거짓말하지 않는다', () => {
   })
 })
 
+describe('답이 오기 전에도 화면이 비어 있지 않다', () => {
+  it('보내자마자 무엇을 하고 있는지와 얼마나 걸렸는지 선다', () => {
+    const html = working([turn({ role: 'user', text: '고쳐줘' })])
+    expect(html).toContain('data-working')
+    expect(html).toContain('Starting')
+    expect(html).toContain('12s')
+  })
+
+  it('도는 도구가 있으면 그것이 지금 하는 일이다', () => {
+    const html = working([
+      turn({
+        startedAtMs: 2_000,
+        tools: [{ line: 'Bash npm test', toolUseId: 't', input: { command: 'npm test' }, result: null }],
+      }),
+    ])
+    expect(html).toContain('Running')
+    expect(html).toContain('10s')
+  })
+
+  it('일이 끝나면 그 자리도 사라진다 — 다 된 뒤에 도는 표시를 두지 않는다', () => {
+    expect(pane([turn({ text: '다 했다' })])).not.toContain('data-working')
+  })
+})
+
 describe('결재 — 이 앱에서 가장 중요한 순간', () => {
   const ask = { requestId: 'r1', toolName: 'Bash', line: 'rm -rf build' }
 
@@ -194,7 +243,6 @@ describe('지목 — 누구에게 맡기는지가 쓰는 자리에 보인다', (
         onStop={() => {}}
         onUpdateCli={() => {}}
         updatingCli={false}
-        fleet={[]}
         sidebar={null}
         report={null}
         addressee="Explore"

@@ -1,6 +1,6 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import type { FormEvent, KeyboardEvent, ReactNode } from 'react'
-import { ArrowUp, ChevronDown, Shield, Square, X } from 'lucide-react'
+import { ArrowUp, Shield, Square, X } from 'lucide-react'
 import { MODELS, PERMISSION_MODES } from '@/entities/agent-session'
 import type {
   ModelChoice,
@@ -9,14 +9,10 @@ import type {
   SessionStatus,
   StatusState,
 } from '@/entities/agent-session'
-import type { AgentSession } from '@/entities/agent-session'
-import type { Turn, ToolActivity } from '@/entities/conversation'
+import type { Turn } from '@/entities/conversation'
 import { cn } from '@/shared/lib/cn'
 import { modifierKey } from '@/shared/lib/platform/platform'
-import { toolShape } from '@/shared/lib/tool-shape/tool-shape'
-import { ToolIcon } from '@/shared/graphics/tool-icon'
 import { Button } from '@/shared/ui/button'
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/shared/ui/collapsible'
 import { Kbd, KbdGroup } from '@/shared/ui/kbd'
 import {
   DropdownMenu,
@@ -33,18 +29,16 @@ import {
   InputGroupTextarea,
 } from '@/shared/ui/input-group'
 import { Wordmark } from '@/shared/graphics/wordmark/wordmark'
-import { WorkMap } from '@/widgets/work-map'
 import { StatusBar, StatusDrawer } from '@/widgets/status-bar'
-import { TOOL_OUTPUT_LINES, moreLine } from '../../lib/limits'
+import { settle } from '../../lib/settle/settle'
 import { Markdown } from '../Markdown'
 import { Approval } from './Approval'
 import { ChoicePicker } from './ChoicePicker'
 import { Thinking } from './Thinking'
 import { Tick } from './Tick'
-import { ToolDetail } from '../ToolDetail/ToolDetail'
-import { ToolLine } from '../ToolLine'
+import { Working } from './Working'
 
-const BUBBLE = 'rounded-2xl bg-card px-4 py-3'
+const BUBBLE = 'rounded-2xl rounded-br-md bg-muted px-4 py-2.5'
 
 type ConversationPaneProps = {
   turns: Turn[]
@@ -62,7 +56,6 @@ type ConversationPaneProps = {
   onStop(): void
   onUpdateCli(): void
   updatingCli: boolean
-  fleet: AgentSession[]
   sidebar: ReactNode
   report: ReactNode
   addressee: string | null
@@ -85,7 +78,6 @@ export function ConversationPane({
   onStop,
   onUpdateCli,
   updatingCli,
-  fleet,
   sidebar,
   report,
   addressee,
@@ -94,6 +86,8 @@ export function ConversationPane({
   const [draft, setDraft] = useState('')
   const [drawerOpen, setDrawerOpen] = useState(false)
   const scrollRef = useRef<HTMLDivElement>(null)
+  const draftRef = useRef<HTMLTextAreaElement>(null)
+  const composing = useRef(false)
   const busy = status === 'working'
   const lastIndex = turns.length - 1
 
@@ -105,6 +99,7 @@ export function ConversationPane({
   function submit(): void {
     const text = draft.trim()
     if (text.length === 0) return
+    settle(draftRef.current, composing)
     onSend(text)
     setDraft('')
   }
@@ -141,8 +136,15 @@ export function ConversationPane({
         )}
         <InputGroup className="rounded-3xl border-transparent bg-card p-1.5 shadow-none dark:bg-card">
           <InputGroupTextarea
+            ref={draftRef}
             value={draft}
             onChange={(event) => setDraft(event.target.value)}
+            onCompositionStart={() => {
+              composing.current = true
+            }}
+            onCompositionEnd={() => {
+              composing.current = false
+            }}
             onKeyDown={handleKey}
             placeholder={
               addressee !== null
@@ -242,12 +244,10 @@ export function ConversationPane({
           report
         ) : (
           <>
-            <WorkMap sessions={fleet} nowMs={nowMs} />
-
             <div
               ref={scrollRef}
               data-selectable
-              className="zt-scroll flex min-h-0 flex-1 flex-col gap-5 overflow-y-auto px-2"
+              className="zt-scroll flex min-h-0 flex-1 flex-col gap-6 overflow-y-auto px-2"
             >
               {turns.map((turn, index) => {
                 const live = busy && index === lastIndex && turn.role === 'assistant'
@@ -290,7 +290,7 @@ export function ConversationPane({
                       </div>
                     )}
                     {turn.tools.length > 0 && (
-                      <div className="flex flex-col gap-1">
+                      <div className="-mx-1.5 flex flex-col gap-0.5">
                         {turn.tools.map((tool, toolIndex) => (
                           <Tick
                             key={`${toolIndex}-${tool.toolUseId ?? tool.line}`}
@@ -300,15 +300,19 @@ export function ConversationPane({
                         ))}
                       </div>
                     )}
-                    {live && (
-                      <div className="font-mono text-xs tracking-wider tabular-nums text-muted-foreground">
-                        {elapsed(nowMs - turn.startedAtMs)}
-                      </div>
-                    )}
                   </article>
                 )
               })}
             </div>
+            {busy && (
+              <Working
+                turn={turns.at(-1)?.role === 'assistant' ? (turns.at(-1) ?? null) : null}
+                nowMs={nowMs}
+                startedAtMs={turns.at(-1)?.startedAtMs ?? nowMs}
+                tokensOut={statusState.cost.tokens.out}
+                agent={statusState.session?.model ?? 'orchestrator'}
+              />
+            )}
           </>
         )}
 
@@ -320,8 +324,3 @@ export function ConversationPane({
   )
 }
 
-function elapsed(ms: number): string {
-  const seconds = Math.max(0, Math.floor(ms / 1000))
-  if (seconds < 60) return `${seconds}s`
-  return `${Math.floor(seconds / 60)}m ${seconds % 60}s`
-}

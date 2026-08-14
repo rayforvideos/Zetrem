@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest'
+import { MODELS, PERMISSION_MODES } from '../run-config/run-config'
 import { DEFAULT_SETTINGS, readSettings } from './settings'
 
 describe('readSettings — 저장된 선택을 되읽는다', () => {
@@ -46,5 +47,19 @@ describe('잠금 설정', () => {
       'Read',
       'Bash',
     ])
+  })
+})
+
+describe('설정이 아는 값과 고르는 값은 한 목록이다', () => {
+  it('고를 수 있는 모델은 저장도 된다 — 목록이 둘이면 하나만 늙는다', () => {
+    for (const model of MODELS) {
+      expect(readSettings({ model: model.id }).model, model.id).toBe(model.id)
+    }
+  })
+
+  it('고를 수 있는 권한도 저장된다', () => {
+    for (const mode of PERMISSION_MODES) {
+      expect(readSettings({ permissionMode: mode.id }).permissionMode, mode.id).toBe(mode.id)
+    }
   })
 })

@@ -11,6 +11,7 @@ function def(overrides: Partial<AgentDef> = {}): AgentDef {
     model: 'haiku',
     tools: [],
     prompt: '',
+    character: null,
     source: 'project',
     path: '.claude/agents/code-reviewer.md',
     ...overrides,

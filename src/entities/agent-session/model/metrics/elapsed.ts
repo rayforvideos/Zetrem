@@ -4,6 +4,7 @@ export const elapsedMetric: Metric = {
   id: 'elapsed',
   label: 'Elapsed',
   unit: 's',
+  known: () => true,
   read: (session, nowMs) => Math.max(0, Math.floor((nowMs - session.startedAtMs) / 1000)),
   format: (value) => {
     const minutes = Math.floor(value / 60)

@@ -52,6 +52,7 @@ describe('읽을 것은 잡히고 나머지는 잡히지 않는다', () => {
       'ConversationPane.tsx',
       'SetupPane.tsx',
       'StatusDrawer.tsx',
+      'ToolDetail.tsx',
     ])
   })
 })

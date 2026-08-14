@@ -101,7 +101,7 @@ describe('observatoryLayout — 터미널이 일터, 세션은 곁의 판들', (
   it('세션이 생기면 터미널은 왼쪽 기둥이 되고 세션이 오른쪽에 쌓인다', () => {
     const { terminal, sessions } = observatoryLayout(2, viewport)
     expect(sessions).toHaveLength(2)
-    expect(terminal.w).toBeGreaterThan(sessions[0]!.w)
+    expect(terminal.x).toBeLessThan(sessions[0]!.x)
     expect(sessions[0]!.x).toBeGreaterThan(terminal.x + terminal.w - 1)
     expect(sessions[1]!.y).toBeGreaterThan(sessions[0]!.y)
     expect(terminal.h).toBeCloseTo(sessions[0]!.h + sessions[1]!.h + LAYOUT.gapPx, 0)
@@ -124,5 +124,28 @@ describe('observatoryLayout — 터미널이 일터, 세션은 곁의 판들', (
         expect(rect.y + rect.h).toBeLessThanOrEqual(viewport.h - LAYOUT.outerMarginPx + 0.5)
       }
     }
+  })
+})
+
+describe('observatoryLayout — 명단을 접으면 그 자리는 일하는 사람들에게 간다', () => {
+  const viewport = { w: 1440, h: 900 }
+
+  it('명단이 열려 있으면 대화 쪽이 그만큼 넓다', () => {
+    const open = observatoryLayout(2, viewport, 300)
+    const shut = observatoryLayout(2, viewport, 40)
+    expect(open.terminal.w).toBeGreaterThan(shut.terminal.w)
+    expect(shut.sessions[0]!.w).toBeGreaterThan(open.sessions[0]!.w)
+  })
+
+  it('명단이 비켜 준 자리는 글줄과 판이 나눠 갖는다 — 한쪽만 먹지 않는다', () => {
+    const open = observatoryLayout(2, viewport, 300)
+    const shut = observatoryLayout(2, viewport, 40)
+    const reading = (rect: { w: number }, sidebar: number) => rect.w - sidebar
+    expect(reading(shut.terminal, 40)).toBeGreaterThan(reading(open.terminal, 300))
+  })
+
+  it('타일이 우표만 해지지 않는다 — 대화가 아무리 커도 판에는 바닥이 있다', () => {
+    const greedy = observatoryLayout(1, { w: 900, h: 700 }, 700)
+    expect(greedy.sessions[0]!.w).toBeGreaterThanOrEqual(360)
   })
 })

@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from 'react'
 import {
+  ORCHESTRATOR_PROMPT,
   parseClaudeLine,
   permissionAlwaysResult,
   permissionResult,
@@ -79,7 +80,7 @@ export function useAgent(config: Omit<RunConfig, 'persona'>): Agent {
     statusStore.reset()
     const id = `agent-${Date.now()}`
     hostId.current = id
-    void window.desk.startAgent(id, text, { ...configRef.current, persona: '' })
+    void window.desk.startAgent(id, text, { ...configRef.current, persona: ORCHESTRATOR_PROMPT })
   }, [])
 
   const decide = useCallback((allow: boolean, always = false) => {

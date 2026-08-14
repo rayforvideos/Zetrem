@@ -7,6 +7,7 @@ export type TeamMember = {
   name: string
   description: string
   model: string | null
+  character: string | null
   origin: Origin
   loaded: boolean
   callable: boolean

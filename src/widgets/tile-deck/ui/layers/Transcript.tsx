@@ -24,10 +24,9 @@ export function Transcript({ entries }: TranscriptProps) {
 }
 
 const rootStyle: CSSProperties = {
-  position: 'relative',
-  zIndex: 3,
-  marginTop: 10,
-  maxHeight: '46%',
+  marginTop: 16,
+  flex: '1 1 auto',
+  minHeight: 0,
   overflowY: 'auto',
   display: 'flex',
   flexDirection: 'column',

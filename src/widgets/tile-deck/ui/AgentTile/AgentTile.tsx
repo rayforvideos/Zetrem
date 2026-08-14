@@ -3,10 +3,9 @@ import type { AgentSession } from '@/entities/agent-session'
 import { Surface } from '@/entities/surface'
 import { MOTION } from '@/shared/config/motion/motion'
 import type { Rect } from '../../lib/grid/grid.types'
+import { Gauge } from '../layers/Gauge'
 import { Headline } from '../layers/Headline'
 import { Stream } from '../layers/Stream'
-import { Tally } from '../layers/Tally'
-import { Telemetry } from '../layers/Telemetry'
 import { Transcript } from '../layers/Transcript'
 
 type AgentTileProps = {
@@ -49,18 +48,17 @@ export function AgentTile({
         ].join(', '),
       }}
     >
-      <Surface
-        behind={<Telemetry session={session} nowMs={nowMs} />}
-        style={{ height: '100%', padding: 20 }}
-      >
+      <Surface style={{ height: '100%', padding: 18 }}>
         {session.status === 'waiting' && (
           <div data-waiting style={waitingMarkStyle(attention)} />
         )}
         <div style={bodyStyle}>
           <Headline session={session} withText={!transcriptOpen} />
-          {!transcriptOpen && <Tally lines={session.stream} />}
           {transcriptOpen && <Transcript entries={session.transcript} />}
-          {!sweep && <Stream lines={session.stream} />}
+          {!sweep && !transcriptOpen && (
+            <Stream lines={session.stream} live={session.status === 'working'} />
+          )}
+          {!sweep && <Gauge session={session} nowMs={nowMs} />}
         </div>
       </Surface>
     </div>
@@ -69,7 +67,6 @@ export function AgentTile({
 
 const bodyStyle: CSSProperties = {
   position: 'relative',
-  zIndex: 3,
   height: '100%',
   display: 'flex',
   flexDirection: 'column',
@@ -85,10 +82,11 @@ const positionStyle: CSSProperties = {
 function waitingMarkStyle(attention: boolean): CSSProperties {
   return {
     position: 'absolute',
-    inset: 0,
+    inset: -18,
     borderRadius: 18,
     border: '1px solid currentColor',
     opacity: attention ? 0.85 : 0.25,
     pointerEvents: 'none',
+    zIndex: 2,
   }
 }

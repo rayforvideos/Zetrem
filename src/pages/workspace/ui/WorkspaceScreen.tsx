@@ -1,9 +1,10 @@
 import { useEffect, useRef, useState, useSyncExternalStore } from 'react'
 import type { CSSProperties } from 'react'
-import { addressed, roster, sessionStore } from '@/entities/agent-session'
-import type { Settings } from '@/entities/agent-session'
+import { CrewProvider, addressed, roster, sessionStore } from '@/entities/agent-session'
+import type { Crew, Settings } from '@/entities/agent-session'
 import { pickProject, projectStore, restoreProject } from '@/entities/project'
 import { TILE_MIN_DWELL_MS } from '@/shared/config/motion/motion'
+import { GRID_PAD, SIDEBAR_SPAN } from '@/shared/config/theme'
 import { PanelLeft } from 'lucide-react'
 import { cn } from '@/shared/lib/cn'
 import { Button } from '@/shared/ui/button'
@@ -26,7 +27,7 @@ import { ProjectPicker } from './controls/ProjectPicker'
 export function WorkspaceScreen() {
   const { settings, loading, failure: settingsFailure, update } = useSettings()
   const project = useSyncExternalStore(projectStore.subscribe, projectStore.get, projectStore.get)
-  const { defs, hire, note: teamNote } = useAgentDefs()
+  const { defs, drafts, hire, edit, release, note: teamNote } = useAgentDefs()
 
   const people = defs.map((def) => ({
     name: def.name,
@@ -46,12 +47,19 @@ export function WorkspaceScreen() {
     people,
     lock,
   })
+  const crew: Crew = {
+    members: Object.fromEntries(
+      defs.map((def) => [def.name, { character: def.character, model: def.model }]),
+    ),
+    fallbackModel: status.session?.model ?? null,
+  }
+
   const { auth, authKnown, loggingIn, loginNote, login, loggingOut, logout, authError } = useAuth()
   const { failure: projectFailure, report: reportProject } = useFailure()
   const cliUpdate = useCliUpdate(status.session?.cliVersion ?? null)
   const { state, launch: fanOut, openOne, closeOne } = useDeck()
   const [projectKnown, setProjectKnown] = useState(false)
-  const [reopened, setReopened] = useState(false)
+  const [settingsOpen, setSettingsOpen] = useState(false)
   const undoSettings = useRef<Settings | null>(null)
   const [viewport, setViewport] = useState(() => ({ w: window.innerWidth, h: window.innerHeight }))
 
@@ -71,6 +79,7 @@ export function WorkspaceScreen() {
     loggedIn: auth?.state === 'signed-in',
     hasProject: project?.path != null,
     setupDone: settings.setupDone,
+    settingsOpen,
   })
 
   useEffect(() => {
@@ -116,12 +125,13 @@ export function WorkspaceScreen() {
   }
 
   return (
-    <>
+    <CrewProvider crew={crew}>
       <TileDeck
         state={state}
         sessions={children}
         viewport={viewport}
         nowMs={nowMs}
+        sidebarW={(settings.sidebarOpen ? SIDEBAR_SPAN : 0) + GRID_PAD * 2}
         terminal={
           gate === 'holding' ? (
             <div className="relative z-[3] flex h-full items-center justify-center">
@@ -142,16 +152,16 @@ export function WorkspaceScreen() {
               ourAgentCount={defs.length}
               onStart={() => {
                 undoSettings.current = null
-                setReopened(false)
+                setSettingsOpen(false)
                 update({ setupDone: true })
               }}
               onCancel={() => {
                 const snapshot = undoSettings.current
                 undoSettings.current = null
-                setReopened(false)
-                update({ ...(snapshot ?? {}), setupDone: true })
+                setSettingsOpen(false)
+                if (snapshot !== null) update(snapshot)
               }}
-              reopened={reopened}
+              reopened={settings.setupDone}
               canStart={auth?.state === 'signed-in' && project?.path != null}
               loggingIn={loggingIn}
               loginNote={loginNote}
@@ -183,7 +193,6 @@ export function WorkspaceScreen() {
             onStop={stop}
             onUpdateCli={cliUpdate.start}
             updatingCli={cliUpdate.updating}
-            fleet={children}
             report={
               openAgent === null ? null : (
                 <AgentReport
@@ -195,10 +204,8 @@ export function WorkspaceScreen() {
             }
             sidebar={
               <div
-                className={cn(
-                  'flex flex-none transition-[margin] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]',
-                  settings.sidebarOpen ? 'ml-0' : '-ml-[260px]',
-                )}
+                style={{ marginLeft: settings.sidebarOpen ? 0 : -SIDEBAR_SPAN }}
+                className="flex flex-none transition-[margin] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]"
               >
               <TeamSidebar
                 members={team(defs, status.session?.agents ?? [], roster(status.session?.agents ?? [], children))}
@@ -208,6 +215,9 @@ export function WorkspaceScreen() {
                 onHire={hire}
                 onPick={setOpenAgentId}
                 onAddress={setAddressee}
+                onRelease={release}
+                onEdit={edit}
+                drafts={drafts}
               />
               </div>
             }
@@ -237,8 +247,7 @@ export function WorkspaceScreen() {
             size="bare"
             onClick={() => {
               undoSettings.current = settings
-              setReopened(true)
-              update({ setupDone: false })
+              setSettingsOpen(true)
             }}
             className="text-xs"
             title="Change account, project, and permissions"
@@ -248,6 +257,6 @@ export function WorkspaceScreen() {
         )}
         <ProjectPicker />
       </Titlebar>
-    </>
+    </CrewProvider>
   )
 }

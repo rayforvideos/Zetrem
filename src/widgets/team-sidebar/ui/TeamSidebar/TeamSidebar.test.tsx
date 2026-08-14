@@ -9,6 +9,7 @@ function member(overrides: Partial<TeamMember> = {}): TeamMember {
     name: 'code-reviewer',
     description: '고친 자리를 본다',
     model: 'sonnet',
+    character: null,
     origin: 'project',
     loaded: false,
     callable: false,
@@ -29,6 +30,9 @@ function bar(props: Partial<Parameters<typeof TeamSidebar>[0]> = {}): string {
       onHire={() => {}}
       onPick={() => {}}
       onAddress={() => {}}
+      onRelease={() => {}}
+      onEdit={() => {}}
+      drafts={new Map()}
       {...props}
     />,
   )
@@ -84,6 +88,53 @@ describe('명단의 이름은 눌리는 자리다', () => {
     const button = html.slice(at, html.indexOf('</button>', at))
     expect(button).toContain('disabled=""')
     expect(button).toContain('next session')
+  })
+})
+
+describe('들인 사람은 내보낼 수도 있다', () => {
+  it('행마다 더보기가 서고 그 사람의 이름을 단다', () => {
+    const html = bar({ members: [member({ name: 'code-reviewer' })] })
+    expect(html).toContain('More for code-reviewer')
+  })
+
+  it('평소엔 보이지 않는다 — 실수로 누를 일이 없게', () => {
+    const html = bar()
+    const at = html.indexOf('More for')
+    const button = html.slice(html.lastIndexOf('<button', at), at)
+    expect(button).toContain('opacity-0')
+  })
+})
+
+describe('들인 사람은 고칠 수도 있다', () => {
+  it('더보기에 고치기와 내보내기가 함께 선다', () => {
+    const html = bar({ members: [member({ name: 'code-reviewer' })] })
+    expect(html).toContain('More for code-reviewer')
+  })
+
+  it('고치기를 열면 그 사람이 쓴 값이 이미 들어 있다', () => {
+    const draft = {
+      name: 'code-reviewer',
+      description: '고친 자리를 본다',
+      model: 'sonnet',
+      character: 'ghost',
+      tools: [],
+      prompt: '무엇을 어떻게',
+    }
+    const html = renderToStaticMarkup(
+      <TeamSidebar
+        members={[member({ name: 'code-reviewer' })]}
+        sessionKnown={false}
+        canWrite
+        note={null}
+        onHire={() => {}}
+        onPick={() => {}}
+        onAddress={() => {}}
+        onRelease={() => {}}
+        onEdit={() => {}}
+        drafts={new Map([['code-reviewer', draft]])}
+      />,
+    )
+    expect(html).toContain('More for code-reviewer')
   })
 })
 

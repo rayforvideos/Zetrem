@@ -1,5 +1,6 @@
 import type { ToolActivity } from '@/entities/conversation'
 import { cn } from '@/shared/lib/cn'
+import type { DiffLine } from '../../lib/diff/diff.types'
 import { lineDiff } from '../../lib/diff/diff'
 import { TOOL_OUTPUT_LINES, moreLine } from '../../lib/limits'
 
@@ -87,16 +88,29 @@ function Diff({ lines }: { lines: ReturnType<typeof lineDiff> }) {
   const shown = lines.slice(0, TOOL_OUTPUT_LINES)
   const rest = lines.length - shown.length
   return (
-    <pre className="zt-scroll max-h-56 overflow-auto border-l border-border pl-2 font-mono text-xs leading-normal whitespace-pre-wrap">
+    <pre
+      data-selectable
+      className="zt-scroll max-h-56 overflow-auto rounded-lg bg-card py-1 font-mono text-xs leading-normal whitespace-pre-wrap"
+    >
       {shown.map((line, index) => (
-        <div key={index} className={line.kind === 'same' ? 'text-muted-foreground' : 'text-foreground'}>
-          <span className="mr-1.5 inline-block w-[1ch] text-muted-foreground">
-            {line.kind === 'add' ? '+' : line.kind === 'remove' ? '−' : ' '}
-          </span>
+        <div key={index} className={cn('px-2', TONE[line.kind])}>
+          <span className="mr-1.5 inline-block w-[1ch] select-none">{MARK[line.kind]}</span>
           {line.text}
         </div>
       ))}
-      {rest > 0 && <div className="text-muted-foreground">{moreLine(rest)}</div>}
+      {rest > 0 && <div className="px-2 text-muted-foreground">{moreLine(rest)}</div>}
     </pre>
   )
+}
+
+const TONE: Record<DiffLine['kind'], string> = {
+  add: 'bg-added-surface text-added',
+  remove: 'bg-removed-surface text-removed',
+  same: 'text-muted-foreground',
+}
+
+const MARK: Record<DiffLine['kind'], string> = {
+  add: '+',
+  remove: '\u2212',
+  same: ' ',
 }

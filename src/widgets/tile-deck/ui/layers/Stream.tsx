@@ -1,23 +1,35 @@
 import type { CSSProperties } from 'react'
 import { shapeOfLine } from '@/shared/lib/tool-line/tool-line'
-import type { ToolShape } from '@/shared/lib/tool-shape/tool-shape.types'
+import { targetOf, verbOf } from '@/shared/lib/tool-verb/tool-verb'
 import { ToolIcon } from '@/shared/graphics/tool-icon'
 
-type StreamProps = { lines: string[] }
+type StreamProps = { lines: string[]; live: boolean }
 
-export function Stream({ lines }: StreamProps) {
-  const shown = lines.slice(-8)
+export function Stream({ lines, live }: StreamProps) {
+  const shown = lines.slice(-6)
+  const lastIndex = shown.length - 1
   return (
-    <div style={rootStyle}>
+    <div data-stream style={rootStyle}>
       {shown.map((line, index) => {
         const shape = shapeOfLine(line)
+        const now = live && index === lastIndex
         return (
           <div
             key={`${index}-${line}`}
-            style={{ ...lineStyle, opacity: 0.45 + (0.55 * (index + 1)) / shown.length }}
+            data-now={now || undefined}
+            style={{ ...lineStyle, opacity: now ? 1 : 0.3 + (0.35 * (index + 1)) / shown.length }}
           >
-            <ToolIcon shape={shape} />
-            <span style={textStyle}>{shape.kind === 'plain' ? line : text(shape)}</span>
+            <span style={iconStyle}>
+              <ToolIcon shape={shape} />
+            </span>
+            {shape.kind === 'plain' ? (
+              <span style={targetStyle}>{line}</span>
+            ) : (
+              <>
+                <span style={verbStyle}>{verbOf(shape)}</span>
+                <span style={targetStyle}>{targetOf(shape)}</span>
+              </>
+            )}
           </div>
         )
       })}
@@ -25,47 +37,32 @@ export function Stream({ lines }: StreamProps) {
   )
 }
 
-function text(shape: ToolShape): string {
-  switch (shape.kind) {
-    case 'file':
-      return shape.name
-    case 'command':
-      return shape.command
-    case 'search':
-      return shape.pattern
-    case 'web':
-      return shape.label
-    case 'agent':
-      return shape.description
-    case 'todo':
-      return 'Todo'
-    default:
-      return shape.name
-  }
-}
-
 const rootStyle: CSSProperties = {
-  position: 'relative',
-  zIndex: 2,
-  marginTop: 14,
+  marginTop: 16,
   minHeight: 0,
-  flex: 1,
+  flex: '1 1 auto',
   display: 'flex',
   flexDirection: 'column',
-  gap: 3,
-  fontFamily: 'var(--zt-mono)',
-  fontSize: 10.5,
+  gap: 6,
+  fontSize: 11.5,
   overflow: 'hidden',
 }
 
 const lineStyle: CSSProperties = {
   display: 'flex',
   alignItems: 'center',
-  gap: 6,
+  gap: 7,
   minWidth: 0,
 }
 
-const textStyle: CSSProperties = {
+const iconStyle: CSSProperties = { flex: '0 0 auto', display: 'flex' }
+
+const verbStyle: CSSProperties = { flex: '0 0 auto' }
+
+const targetStyle: CSSProperties = {
+  fontFamily: 'var(--zt-mono)',
+  fontSize: 11,
+  opacity: 0.7,
   whiteSpace: 'nowrap',
   textOverflow: 'ellipsis',
   overflow: 'hidden',

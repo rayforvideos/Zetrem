@@ -17,15 +17,14 @@ describe('Surface', () => {
     expect(html).not.toContain('data-scrim')
   })
 
-  it('뒤층은 준 만큼만 그린다 — 안 주면 자리도 없다', () => {
-    const withBehind = renderToStaticMarkup(<Surface behind={<span>텔레메트리</span>}>내용</Surface>)
-    expect(withBehind).toContain('텔레메트리')
-    expect(withBehind).toContain('data-behind')
-    expect(renderToStaticMarkup(<Surface>내용</Surface>)).not.toContain('data-behind')
+  it('바탕은 겹판이 아니라 제 배경이다 — 위에 덮는 판이 있으면 뒤엣것이 묻힌다', () => {
+    const html = renderToStaticMarkup(<Surface>내용</Surface>)
+    expect(html).not.toContain('absolute inset-0')
   })
 
-  it('뒤층은 내용보다 뒤에 선다', () => {
-    const html = renderToStaticMarkup(<Surface behind={<span>뒤</span>}>앞</Surface>)
-    expect(html.indexOf('뒤')).toBeLessThan(html.indexOf('앞'))
+  it('bare 는 아무 판도 깔지 않는다', () => {
+    const html = renderToStaticMarkup(<Surface bare>내용</Surface>)
+    expect(html).not.toContain('bg-card')
+    expect(html).not.toContain('border-border')
   })
 })

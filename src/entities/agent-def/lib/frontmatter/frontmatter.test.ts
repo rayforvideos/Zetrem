@@ -21,6 +21,7 @@ describe('parseAgentDef — 디스크의 사람을 읽는다', () => {
       name: 'code-reviewer',
       description: '코드를 본다',
       model: 'haiku',
+    character: null,
       tools: ['Read', 'Grep'],
       prompt: '당신은 코드를 봅니다.\n\n두 번째 문단.',
       source: 'project',
@@ -66,6 +67,7 @@ describe('toAgentFile — 새 사람을 디스크에 쓴다', () => {
       name: 'scout',
       description: '찾아본다',
       model: 'haiku',
+    character: null,
       tools: ['Read'],
       prompt: '당신은 찾습니다.',
     }
@@ -78,6 +80,7 @@ describe('toAgentFile — 새 사람을 디스크에 쓴다', () => {
       name: 'scout',
       description: '',
       model: null,
+    character: null,
       tools: [],
       prompt: '본문',
     })
@@ -90,6 +93,7 @@ describe('toAgentFile — 새 사람을 디스크에 쓴다', () => {
       name: 'a',
       description: '코드: 본다',
       model: null,
+    character: null,
       tools: [],
       prompt: '본문',
     })

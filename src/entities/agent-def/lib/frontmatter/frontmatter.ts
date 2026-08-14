@@ -18,12 +18,14 @@ export function parseAgentDef(
   if (typeof name !== 'string' || name.length === 0) return null
 
   const model = fields.get('model')
+  const character = fields.get('character')
   const tools = fields.get('tools') ?? fields.get('allowed-tools')
 
   return {
     name,
     description: typeof fields.get('description') === 'string' ? (fields.get('description') as string) : '',
     model: typeof model === 'string' && model.length > 0 ? model : null,
+    character: typeof character === 'string' && character.length > 0 ? character : null,
     tools: Array.isArray(tools) ? tools : typeof tools === 'string' ? splitList(tools) : [],
     prompt: lines.slice(close + 1).join('\n').trim(),
     source,
@@ -34,6 +36,7 @@ export function parseAgentDef(
 export function toAgentFile(draft: AgentDefDraft): string {
   const head = [FENCE, `name: ${draft.name}`, `description: ${quote(draft.description)}`]
   if (draft.model !== null) head.push(`model: ${draft.model}`)
+  if (draft.character !== null) head.push(`character: ${draft.character}`)
   if (draft.tools.length > 0) head.push(`tools: ${draft.tools.join(', ')}`)
   head.push(FENCE, '')
   return `${head.join('\n')}${draft.prompt.trim()}\n`

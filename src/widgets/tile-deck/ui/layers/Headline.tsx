@@ -1,7 +1,9 @@
 import type { CSSProperties } from 'react'
-import { personaOf } from '@/entities/agent-session'
+import { personaOf, useModel } from '@/entities/agent-session'
 import type { AgentSession } from '@/entities/agent-session'
-import { AgentFace } from '@/entities/agent-session/ui/agent-face'
+import { AgentSprite } from '@/entities/agent-session/ui/AgentSprite/AgentSprite'
+import { modelLabel } from '@/shared/lib/model-label/model-label'
+import { StateChip } from './StateChip'
 
 type HeadlineProps = {
   session: AgentSession
@@ -10,13 +12,21 @@ type HeadlineProps = {
 
 export function Headline({ session, withText = true }: HeadlineProps) {
   const persona = session.subagentType ? personaOf(session.subagentType) : null
+  const model = modelLabel(useModel(session.subagentType))
   return (
     <div style={rootStyle}>
-      <div style={nameStyle}>
-        {persona && <AgentFace persona={persona} size={18} />}
-        <span data-dot style={dotStyle(session.status)} />
-        <span style={labelStyle}>{persona ? persona.name : session.label}</span>
-        <span style={modelStyle}>{persona ? session.label : session.model}</span>
+      <div style={identityStyle}>
+        {session.subagentType !== '' && (
+          <AgentSprite subagentType={session.subagentType} state={session.status} size={40} />
+        )}
+        <div style={stackStyle}>
+          <span style={nameStyle}>
+            {persona ? persona.name : session.label}
+            {model !== null && <span style={modelStyle}>{model}</span>}
+          </span>
+          <span style={assignmentStyle}>{persona ? session.label : session.model}</span>
+        </div>
+        <StateChip status={session.status} />
       </div>
       {withText && session.headline.length > 0 && (
         <div style={textStyle}>{session.headline}</div>
@@ -25,51 +35,57 @@ export function Headline({ session, withText = true }: HeadlineProps) {
   )
 }
 
-function dotStyle(status: AgentSession['status']): CSSProperties {
-  const base: CSSProperties = {
-    width: 6,
-    height: 6,
-    borderRadius: 3,
-    flex: '0 0 auto',
-    alignSelf: 'center',
-  }
-  if (status === 'working') {
-    return { ...base, background: 'currentColor' }
-  }
-  if (status === 'waiting') {
-    return { ...base, border: '1.5px solid currentColor', background: 'transparent' }
-  }
-  return { ...base, background: 'currentColor', opacity: 0.35 }
+const rootStyle: CSSProperties = { flex: '0 0 auto' }
+
+const identityStyle: CSSProperties = {
+  display: 'flex',
+  alignItems: 'center',
+  gap: 10,
+  minWidth: 0,
 }
 
-const rootStyle: CSSProperties = {
-  position: 'relative',
-  zIndex: 3,
-  paddingRight: 150,
+const stackStyle: CSSProperties = {
+  display: 'flex',
+  flexDirection: 'column',
+  gap: 1,
+  minWidth: 0,
+  flex: '1 1 auto',
 }
 
 const nameStyle: CSSProperties = {
   display: 'flex',
   alignItems: 'baseline',
   gap: 7,
-  fontSize: 12.5,
+  fontSize: 13,
   fontWeight: 600,
   letterSpacing: '-0.01em',
   minWidth: 0,
+  whiteSpace: 'nowrap',
 }
 
-const labelStyle: CSSProperties = {
+const modelStyle: CSSProperties = {
+  flex: '0 0 auto',
+  fontFamily: 'var(--zt-mono)',
+  fontSize: 10,
+  fontWeight: 400,
+  letterSpacing: '0.04em',
+  opacity: 0.55,
+}
+
+const assignmentStyle: CSSProperties = {
+  fontFamily: 'var(--zt-mono)',
+  fontSize: 10.5,
+  letterSpacing: '0.02em',
+  opacity: 0.55,
   overflow: 'hidden',
   textOverflow: 'ellipsis',
   whiteSpace: 'nowrap',
 }
 
-const modelStyle: CSSProperties = { fontSize: 11, fontWeight: 400, letterSpacing: '0.04em' }
-
 const textStyle: CSSProperties = {
-  marginTop: 8,
+  marginTop: 14,
   fontFamily: 'var(--zt-serif)',
-  fontSize: 14.5,
+  fontSize: 15,
   lineHeight: 1.5,
   letterSpacing: '-0.011em',
   display: '-webkit-box',

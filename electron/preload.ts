@@ -9,6 +9,9 @@ contextBridge.exposeInMainWorld('desk', {
   authStatus: (): Promise<unknown> => ipcRenderer.invoke('auth:status'),
   listAgentDefs: (): Promise<unknown> => ipcRenderer.invoke('agents:list'),
   writeAgentDef: (draft: unknown): Promise<unknown> => ipcRenderer.invoke('agents:write', draft),
+  removeAgentDef: (name: string): Promise<void> => ipcRenderer.invoke('agents:remove', name),
+  replaceAgentDef: (draft: unknown, previousName: string): Promise<unknown> =>
+    ipcRenderer.invoke('agents:replace', draft, previousName),
   readSettings: (): Promise<unknown> => ipcRenderer.invoke('settings:read'),
   writeSettings: (next: unknown): Promise<unknown> => ipcRenderer.invoke('settings:write', next),
   login: (): Promise<unknown> => ipcRenderer.invoke('auth:login'),

@@ -43,6 +43,7 @@ export function soloRect(viewport: Viewport): Rect {
 export function observatoryLayout(
   sessionCount: number,
   viewport: Viewport,
+  sidebarW = 0,
 ): { terminal: Rect; sessions: Rect[] } {
   const { outerMarginPx: margin, gapPx: gap } = LAYOUT
   const areaW = viewport.w - margin * 2
@@ -52,7 +53,11 @@ export function observatoryLayout(
     return { terminal: { x: margin, y: margin, w: areaW, h: areaH }, sessions: [] }
   }
 
-  const terminalW = Math.round(areaW * TERMINAL_SHARE)
+  const roomForTiles = areaW - sidebarW - gap
+  const terminalW = Math.min(
+    areaW - gap - MIN_TILE_W,
+    sidebarW + Math.round(roomForTiles * CONVERSATION_SHARE),
+  )
   const sideX = margin + terminalW + gap
   const sideW = areaW - terminalW - gap
   const terminal = { x: margin, y: margin, w: terminalW, h: areaH }
@@ -76,6 +81,8 @@ export function observatoryLayout(
   return { terminal, sessions }
 }
 
-const TERMINAL_SHARE = 0.52
+const CONVERSATION_SHARE = 0.42
+
+const MIN_TILE_W = 360
 
 const SIDE_ROWS_MAX = 3

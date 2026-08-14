@@ -4,6 +4,7 @@ export const tokensMetric: Metric = {
   id: 'tokens',
   label: 'Tokens',
   unit: 'tok',
+  known: (session) => session.tokens > 0,
   read: (session) => session.tokens,
   format: (value) => value.toLocaleString('ko-KR'),
 }

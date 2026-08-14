@@ -37,18 +37,15 @@ describe('AgentTile', () => {
     expect(html).toContain('무언가 이상한 줄 하나')
   })
 
-  it('한 일을 종류별로 세어 보여준다 — 얼마나 했는지가 보여야 한다', () => {
-    const html = renderToStaticMarkup(
-      <AgentTile
-        session={session({ stream: ['Read a.ts', 'Read b.ts', 'Edit b.ts'] })}
-        rect={rect}
-        delayMs={0}
-        nowMs={0}
-      />,
+  it('상태를 점이 아니라 말로 적는다 — 색만으로는 무슨 뜻인지 알 수 없다', () => {
+    const working = renderToStaticMarkup(
+      <AgentTile session={session()} rect={rect} delayMs={0} nowMs={0} />,
     )
-    const strip = html.slice(html.indexOf('data-tally'), html.indexOf('data-tally') + 1400)
-    expect(strip).toContain('>2<')
-    expect(strip).toContain('>1<')
+    const waiting = renderToStaticMarkup(
+      <AgentTile session={session({ status: 'waiting' })} rect={rect} delayMs={0} nowMs={0} />,
+    )
+    expect(working).toContain('Working')
+    expect(waiting).toContain('Needs you')
   })
 
   it('세 층을 모두 그린다', () => {
@@ -206,12 +203,19 @@ describe('AgentTile', () => {
     expect(sweeping).not.toContain('radial-gradient')
   })
 
-  it('3층은 면보다 먼저 그려진다 — 데이터가 면 뒤에 깔린다는 것이 구조여야 한다', () => {
+  it('계기는 타일 바닥에 붙어 마지막에 온다 — 흐름 아래에 받침이 있어야 한다', () => {
     const html = renderToStaticMarkup(
       <AgentTile session={session()} rect={rect} delayMs={0} nowMs={5000} />,
     )
-    expect(html.indexOf('Tokens')).toBeGreaterThan(-1)
-    expect(html.indexOf('Tokens')).toBeLessThan(html.indexOf('data-surface'))
+    expect(html.indexOf('data-gauge')).toBeGreaterThan(html.indexOf('data-stream'))
+  })
+
+  it('계기가 실제로 보인다 — 덮는 판 뒤에 그리지 않는다', () => {
+    const html = renderToStaticMarkup(
+      <AgentTile session={session()} rect={rect} delayMs={0} nowMs={5000} />,
+    )
+    expect(html).toContain('data-gauge')
+    expect(html).not.toContain('data-behind')
   })
 
   it('닫히는 타일은 흐려지며 병합 시간으로 움직인다', () => {

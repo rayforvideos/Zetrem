@@ -16,6 +16,7 @@ type TileDeckProps = {
   sessions: AgentSession[]
   viewport: Viewport
   nowMs: number
+  sidebarW?: number
   terminal: ReactNode
 }
 
@@ -31,6 +32,7 @@ export function TileDeck({
   sessions,
   viewport,
   nowMs,
+  sidebarW = 0,
   terminal,
 }: TileDeckProps) {
   const solo = soloRect(viewport)
@@ -40,7 +42,7 @@ export function TileDeck({
   const atGrid = state.kind === 'fanned' || (state.kind === 'fanning' && advanced)
 
   const gridSessions = findSessions(visibleIds(state), sessions)
-  const placed = observatoryLayout(gridSessions.length, viewport)
+  const placed = observatoryLayout(gridSessions.length, viewport, sidebarW)
   const terminalRect = atGrid ? placed.terminal : solo
   const tiles: PlacedTile[] = [
     ...gridSessions.map((session, index) => ({

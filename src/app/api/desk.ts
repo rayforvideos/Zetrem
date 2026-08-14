@@ -15,6 +15,8 @@ export type DeskBridge = {
   authStatus(): Promise<AuthStatus>
   listAgentDefs(): Promise<AgentDef[]>
   writeAgentDef(draft: AgentDefDraft): Promise<string>
+  removeAgentDef(name: string): Promise<void>
+  replaceAgentDef(draft: AgentDefDraft, previousName: string): Promise<string>
   login(): Promise<AuthStatus>
   logout(): Promise<AuthStatus>
   onAuthProgress(listener: (line: string) => void): () => void

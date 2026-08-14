@@ -7,4 +7,5 @@ export type GateState = {
   loggedIn: boolean
   hasProject: boolean
   setupDone: boolean
+  settingsOpen: boolean
 }

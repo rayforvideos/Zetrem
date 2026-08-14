@@ -8,6 +8,7 @@ const known = {
   loggedIn: true,
   hasProject: true,
   setupDone: true,
+  settingsOpen: false,
 }
 
 describe('screenGate — 모르는 동안은 어느 화면도 열지 않는다', () => {
@@ -39,5 +40,19 @@ describe('screenGate — 모르는 동안은 어느 화면도 열지 않는다',
 
   it('알고 나면 아니라고 말한다 — 기다림이 영원해지지 않게', () => {
     expect(screenGate({ ...known, authKnown: true, loggedIn: false })).toBe('setup')
+  })
+})
+
+describe('설정을 다시 열어도 마쳤다는 사실은 남는다', () => {
+  it('설정 화면을 열면 그 화면이 뜬다 — 마쳤다는 사실과 무관하게', () => {
+    expect(screenGate({ ...known, settingsOpen: true })).toBe('setup')
+  })
+
+  it('닫으면 대화로 돌아간다 — setupDone 을 건드리지 않았으므로', () => {
+    expect(screenGate({ ...known, settingsOpen: false })).toBe('conversation')
+  })
+
+  it('아직 아무것도 모르면 설정 화면보다 기다림이 먼저다', () => {
+    expect(screenGate({ ...known, settingsOpen: true, settingsLoaded: false })).toBe('holding')
   })
 })

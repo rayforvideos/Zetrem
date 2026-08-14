@@ -1,8 +1,8 @@
 import { readFile, writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import { app } from 'electron'
-import { readSettings } from '../src/entities/agent-session/model/settings/settings'
-import type { Settings } from '../src/entities/agent-session/model/settings/settings.types'
+import { readSettings } from '@/entities/agent-session/model/settings/settings'
+import type { Settings } from '@/entities/agent-session/model/settings/settings.types'
 import { handle } from './ipc/ipc'
 
 function settingsPath(): string {

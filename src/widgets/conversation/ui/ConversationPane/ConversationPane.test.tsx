@@ -18,7 +18,7 @@ const STATUS: StatusState = {
     ttftMs: null,
     turns: 0,
   },
-  limit: null,
+  limits: [],
   hooks: [],
   update: null,
   activity: 'idle',
@@ -92,19 +92,19 @@ function pane(turns: Turn[], permission: PermissionAsk | null = null): string {
   )
 }
 
-describe('tickOpen — 감추지 않는다', () => {
-  it('건드리지 않았으면 펼쳐져 있다 — 무엇을 했는지 보려고 누를 일이 없어야 한다', () => {
+describe('tickOpen: nothing is folded away', () => {
+  it('is open until touched, so nobody has to click to see what was done', () => {
     expect(tickOpen(null)).toBe(true)
   })
 
-  it('사람이 접었으면 접힌 채로 둔다 — 기본값이 사람의 손을 덮지 않는다', () => {
+  it('stays shut once a person shut it, since a default does not overrule a hand', () => {
     expect(tickOpen(false)).toBe(false)
     expect(tickOpen(true)).toBe(true)
   })
 })
 
-describe('ConversationPane — 화면이 거짓말하지 않는다', () => {
-  it('도구 출력은 한계에서 멈추고 몇 줄이 남았는지 말한다', () => {
+describe('ConversationPane: the screen does not lie', () => {
+  it('stops tool output at the cap and counts what was left out', () => {
     const stdout = Array.from({ length: TOOL_OUTPUT_LINES + 60 }, (_, i) => `줄${i}`).join('\n')
     const html = pane([
       turn({
@@ -124,7 +124,7 @@ describe('ConversationPane — 화면이 거짓말하지 않는다', () => {
     return html.slice(start, end)
   }
 
-  it('결과도 전용 렌더도 없는 눈금은 펼칠 수 없다 — 빈 판을 열지 않는다', () => {
+  it('cannot open a row with nothing behind it, rather than opening an empty drawer', () => {
     const html = pane([
       turn({ tools: [tool({ line: 'Bash ls', toolUseId: 'tk1', input: { command: 'ls' } })] }),
     ])
@@ -133,7 +133,7 @@ describe('ConversationPane — 화면이 거짓말하지 않는다', () => {
     expect(button).toContain('aria-expanded="false"')
   })
 
-  it('결과가 붙은 눈금은 잠기지 않는다 — 위 단언이 늘 참이 되지 않게 반대편도 건다', () => {
+  it('leaves a row with a result open to click, so the test above cannot pass by accident', () => {
     const html = pane([
       turn({
         tools: [
@@ -148,13 +148,13 @@ describe('ConversationPane — 화면이 거짓말하지 않는다', () => {
     expect(tickButton(html, 'tk2')).not.toContain('disabled=""')
   })
 
-  it('생각은 접힌 채로 서고 몇 문단인지 말한다 — 결론이 먼저다', () => {
+  it('folds thinking away and says how long it is, because the answer comes first', () => {
     const html = pane([turn({ thinking: '첫 문단\n\n둘째 문단\n\n셋째 문단' })])
     expect(html).toContain('Thought · 3 paragraphs')
     expect(html).not.toContain('둘째 문단')
   })
 
-  it('기계가 알려주는 줄은 고정폭이고 작업 레일을 달지 않는다', () => {
+  it('sets a machine line in monospace and hangs no work rail on it', () => {
     const html = pane([turn({ role: 'system', text: 'This turn: 261 out · 10.5s' })])
     expect(html).toContain('This turn: 261 out')
     const at = html.indexOf('This turn')
@@ -164,15 +164,15 @@ describe('ConversationPane — 화면이 거짓말하지 않는다', () => {
   })
 })
 
-describe('답이 오기 전에도 화면이 비어 있지 않다', () => {
-  it('보내자마자 무엇을 하고 있는지와 얼마나 걸렸는지 선다', () => {
+describe('the screen is not blank while an answer is on its way', () => {
+  it('shows what is happening and how long it has taken as soon as you send', () => {
     const html = working([turn({ role: 'user', text: '고쳐줘' })])
     expect(html).toContain('data-working')
     expect(html).toContain('Starting')
     expect(html).toContain('12s')
   })
 
-  it('도는 도구가 있으면 그것이 지금 하는 일이다', () => {
+  it('names the running tool as the thing being done', () => {
     const html = working([
       turn({
         startedAtMs: 2_000,
@@ -183,21 +183,21 @@ describe('답이 오기 전에도 화면이 비어 있지 않다', () => {
     expect(html).toContain('10s')
   })
 
-  it('일이 끝나면 그 자리도 사라진다 — 다 된 뒤에 도는 표시를 두지 않는다', () => {
+  it('takes the line away when the work is done', () => {
     expect(pane([turn({ text: '다 했다' })])).not.toContain('data-working')
   })
 })
 
-describe('결재 — 이 앱에서 가장 중요한 순간', () => {
+describe('approval: the most important moment in this app', () => {
   const ask = { requestId: 'r1', toolName: 'Bash', line: 'rm -rf build' }
 
-  it('무엇을 하려는지 사람 말로 먼저 말한다', () => {
+  it('says what it wants to do in plain words first', () => {
     const html = pane([], ask)
     expect(html).toContain('Run this command?')
     expect(html).toContain('rm -rf build')
   })
 
-  it('손이 키보드를 떠나지 않아도 끝난다 — 단축키를 화면이 알려준다', () => {
+  it('can be answered without leaving the keyboard, and says which keys', () => {
     const html = pane([], ask)
     const keys = [...html.matchAll(/<kbd[^>]*>([^<]*)<\/kbd>/g)].map((match) => match[1])
     expect(keys, '허용은 수정키+Enter, 거부는 Esc').toEqual(
@@ -205,19 +205,19 @@ describe('결재 — 이 앱에서 가장 중요한 순간', () => {
     )
   })
 
-  it('결재 중에는 입력 자리가 없다 — 답할 것은 하나뿐이다', () => {
+  it('takes the composer away while deciding, because there is only one thing to answer', () => {
     expect(pane([], ask)).not.toContain('Keep going')
   })
 
-  it('모르는 도구도 물어본다 — 이름을 지어내지 않는다', () => {
+  it('asks about a tool it does not know, without inventing a name for it', () => {
     const html = pane([], { requestId: 'r2', toolName: 'SomeTool', line: '무언가' })
     expect(html).toContain('Allow this?')
     expect(html).toContain('SomeTool')
   })
 })
 
-describe('지목 — 누구에게 맡기는지가 쓰는 자리에 보인다', () => {
-  it('지목한 사람이 입력 위에 서고 물음도 그 사람을 향한다', () => {
+describe('addressing: who the work goes to is visible where you type', () => {
+  it('puts the named person above the box and asks for them by name', () => {
     const html = renderToStaticMarkup(
       <ConversationPane
         turns={[]}

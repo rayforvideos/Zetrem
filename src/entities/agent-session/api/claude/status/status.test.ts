@@ -28,8 +28,8 @@ function initLine(overrides: Record<string, unknown> = {}): Record<string, unkno
   }
 }
 
-describe('status 파서 — 계기의 층', () => {
-  it('init 이 세션의 신원을 준다', () => {
+describe('the status parser: the instrument layer', () => {
+  it('takes the identity of the session from init', () => {
     const [event] = fromStatusLine(initLine())
     expect(event).toEqual({
       type: 'session',
@@ -54,12 +54,12 @@ describe('status 파서 — 계기의 층', () => {
     })
   })
 
-  it('fast mode 가 켜져 있으면 꺼진 이유는 없다', () => {
+  it('carries no reason for fast mode being off while it is on', () => {
     const [event] = fromStatusLine(initLine({ fast_mode_state: 'on', fast_mode_disabled_reason: undefined }))
     expect(event).toMatchObject({ type: 'session', session: { fastMode: { state: 'on', reason: null } } })
   })
 
-  it('assistant 의 usage 합이 지금 Context 크기다 — result 를 기다리지 않는다', () => {
+  it('reads context size from assistant usage, without waiting for a result', () => {
     const events = fromStatusLine({
       type: 'assistant',
       message: {
@@ -74,7 +74,7 @@ describe('status 파서 — 계기의 층', () => {
     expect(events).toEqual([{ type: 'context', used: 28364 }])
   })
 
-  it('자식의 usage 는 부모의 컨텍스트가 아니다', () => {
+  it('keeps child usage out of the parent context', () => {
     const events = fromStatusLine({
       type: 'assistant',
       parent_tool_use_id: 'toolu_1',
@@ -83,7 +83,7 @@ describe('status 파서 — 계기의 층', () => {
     expect(events).toEqual([])
   })
 
-  it('result 가 계기판을 준다 — 비용은 세션 누적값 그대로 넘긴다', () => {
+  it('takes the numbers from a result and passes the session cost through as it came', () => {
     const events = fromStatusLine({
       type: 'result',
       subtype: 'success',
@@ -118,12 +118,12 @@ describe('status 파서 — 계기의 층', () => {
     ])
   })
 
-  it('contextWindow 를 모르는 result 는 null 로 남긴다 — 기본값을 지어내지 않는다', () => {
+  it('leaves an unknown context window empty rather than inventing a default', () => {
     const [event] = fromStatusLine({ type: 'result', subtype: 'success', total_cost_usd: 0.1, usage: {} })
     expect(event).toMatchObject({ type: 'metrics', metrics: { contextWindow: null, ttftMs: null } })
   })
 
-  it('rate_limit_event 를 한도로 옮긴다 — resetsAt 은 초라서 ms 로 바꾼다', () => {
+  it('turns a rate limit event into a limit, converting its seconds to milliseconds', () => {
     const events = fromStatusLine({
       type: 'rate_limit_event',
       rate_limit_info: {
@@ -148,7 +148,7 @@ describe('status 파서 — 계기의 층', () => {
     ])
   })
 
-  it('훅은 시작과 끝이 따로 온다 — hook_id 로 이어붙이는 것은 스토어의 일이다', () => {
+  it('reports a hook start and end separately, leaving the store to join them', () => {
     expect(
       fromStatusLine({
         type: 'system',
@@ -171,13 +171,13 @@ describe('status 파서 — 계기의 층', () => {
     ).toEqual([{ type: 'hookDone', hookId: 'c3d7', exitCode: 0, stderr: '' }])
   })
 
-  it('system/status 는 지금 무엇을 하는 중인지 말한다', () => {
+  it('reads a status line as what is happening now', () => {
     expect(fromStatusLine({ type: 'system', subtype: 'status', status: 'requesting' })).toEqual([
       { type: 'activity', activity: 'requesting' },
     ])
   })
 
-  it('압축 경계는 trigger·pre/post 토큰을 읽는다 — 나머지 8개 @internal 필드는 손대지 않는다', () => {
+  it('reads the trigger and the token counts off a compaction, and touches nothing else', () => {
     const events = fromStatusLine({
       type: 'system',
       subtype: 'compact_boundary',
@@ -193,13 +193,13 @@ describe('status 파서 — 계기의 층', () => {
     ])
   })
 
-  it('compact_metadata 가 없으면 세 필드 모두 null 이다 — 기본값을 지어내지 않는다', () => {
+  it('leaves all three empty without compaction metadata, inventing no defaults', () => {
     expect(fromStatusLine({ type: 'system', subtype: 'compact_boundary' })).toEqual([
       { type: 'compacted', trigger: null, preTokens: null, postTokens: null },
     ])
   })
 
-  it('모르는 줄에는 아무 말도 하지 않는다', () => {
+  it('says nothing about a line it does not know', () => {
     expect(fromStatusLine({ type: 'system', subtype: '알수없음' })).toEqual([])
     expect(fromStatusLine({ type: 'stream_event', event: { type: 'message_start' } })).toEqual([])
   })

@@ -46,6 +46,21 @@ export function childNotified(event: Record<string, unknown>): ChildTurnEvent[] 
       type: 'childNotified',
       toolUseId: event.tool_use_id,
       summary: typeof event.summary === 'string' ? event.summary : '',
+      done: event.status === undefined || event.status === 'completed',
+    },
+  ]
+}
+
+export function childProgress(event: Record<string, unknown>): ChildTurnEvent[] {
+  if (typeof event.tool_use_id !== 'string') return []
+  const usage = event.usage as Record<string, unknown> | undefined
+  return [
+    {
+      type: 'childProgress',
+      toolUseId: event.tool_use_id,
+      doing: typeof event.description === 'string' ? event.description : '',
+      lastTool: typeof event.last_tool_name === 'string' ? event.last_tool_name : '',
+      tokens: typeof usage?.total_tokens === 'number' ? usage.total_tokens : 0,
     },
   ]
 }

@@ -1,13 +1,14 @@
 import { useState } from 'react'
-import { Plus } from 'lucide-react'
+import { Plus, RotateCcw } from 'lucide-react'
 import type { AgentDefDraft } from '@/entities/agent-def'
 import { cn } from '@/shared/lib/cn'
-import type { CharacterId } from '@/entities/agent-session'
+import type { CharacterId, StatusState } from '@/entities/agent-session'
 import { AgentSprite } from '@/entities/agent-session/ui/AgentSprite/AgentSprite'
 import type { ChatSummary } from '@/entities/conversation'
 import { ChatList } from '../ChatList/ChatList'
+import { MemberForm } from '../MemberForm/MemberForm'
 import { StockList } from '../StockList/StockList'
-import { CharacterPicker } from '../CharacterPicker/CharacterPicker'
+import { UsagePanel } from '../UsagePanel/UsagePanel'
 import { SidebarGrip } from '../SidebarGrip/SidebarGrip'
 import { MemberMenu } from '../MemberMenu/MemberMenu'
 import {
@@ -20,6 +21,8 @@ import { Empty, EmptyDescription, EmptyHeader, EmptyTitle } from '@/shared/ui/em
 import { Field, FieldDescription, FieldGroup } from '@/shared/ui/field'
 import { Input } from '@/shared/ui/input'
 import { Textarea } from '@/shared/ui/textarea'
+import { noteLine } from '../../lib/team-note/team-note'
+import type { TeamNote } from '../../lib/team-note/team-note.types'
 import type { Origin, TeamMember } from '../../lib/team/team.types'
 
 const ORIGIN: Record<Origin, string> = {
@@ -41,7 +44,7 @@ type TeamSidebarProps = {
   members: TeamMember[]
   sessionKnown: boolean
   canWrite: boolean
-  note: string | null
+  note: TeamNote | null
   onHire(draft: AgentDefDraft): void
   onPick(sessionId: string): void
   onAddress(subagentType: string): void
@@ -60,6 +63,10 @@ type TeamSidebarProps = {
   stock: string[]
   stockOn: string[]
   onStock(name: string, on: boolean): void
+  knownTools: string[]
+  sessionLive: boolean
+  onRestart(): void
+  status: StatusState
 }
 
 export function TeamSidebar({
@@ -85,8 +92,13 @@ export function TeamSidebar({
   stock,
   stockOn,
   onStock,
+  knownTools,
+  sessionLive,
+  onRestart,
+  status,
 }: TeamSidebarProps) {
   const [editing, setEditing] = useState<'new' | string | null>(null)
+  const said = note === null ? null : noteLine(note, sessionLive)
   const target = typeof editing === 'string' ? (drafts.get(editing) ?? null) : null
 
   return (
@@ -109,10 +121,11 @@ export function TeamSidebar({
         Your team
       </div>
 
-      {editing !== null ? (
+      {editing !== null && (
         <MemberForm
           key={editing}
           initial={target}
+          knownTools={knownTools}
           onCancel={() => setEditing(null)}
           onSubmit={(draft) => {
             if (target === null) onHire(draft)
@@ -120,7 +133,8 @@ export function TeamSidebar({
             setEditing(null)
           }}
         />
-      ) : (
+      )}
+      {(
         <Button
           variant="ghost"
           size="bare"
@@ -145,8 +159,8 @@ export function TeamSidebar({
           const mute = sessionKnown && !member.callable
           const active = member.state !== 'idle'
           const why = !member.loaded
-            ? `${ORIGIN[member.origin]} — joins from the next session`
-            : 'Not available this session — unlock it in Settings'
+            ? `${ORIGIN[member.origin]}. Joins from the next session.`
+            : 'Not available this session. Unlock it in Settings.'
           return (
             <div
               key={member.type}
@@ -203,10 +217,22 @@ export function TeamSidebar({
         </Empty>
       )}
 
-      {note !== null && (
-        <p data-note className="px-2.5 text-xs leading-snug text-muted-foreground">
-          {note}
-        </p>
+      {said !== null && (
+        <div data-note className="flex flex-col items-start gap-1.5 px-2 py-1">
+          <p className="text-xs leading-snug text-muted-foreground">{said.text}</p>
+          {said.restart && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={onRestart}
+              className="h-7 rounded-lg border border-border px-2.5 text-xs"
+              title="Stop the running session so the next message starts one that knows them"
+            >
+              <RotateCcw className="size-3.5" />
+              Restart session
+            </Button>
+          )}
+        </div>
       )}
 
       <div className="mt-2 border-t border-border px-2 pt-4 text-xs tracking-wide text-muted-foreground">
@@ -214,97 +240,7 @@ export function TeamSidebar({
       </div>
       <StockList stock={stock} on={stockOn} avatar={AVATAR} onChange={onStock} />
       </div>
+      <UsagePanel status={status} sessionLive={sessionLive} />
     </aside>
-  )
-}
-
-function MemberForm({
-  initial = null,
-  onSubmit,
-  onCancel,
-}: {
-  initial?: AgentDefDraft | null
-  onSubmit(draft: AgentDefDraft): void
-  onCancel(): void
-}) {
-  const [name, setName] = useState(initial?.name ?? '')
-  const [description, setDescription] = useState(initial?.description ?? '')
-  const [prompt, setPrompt] = useState(initial?.prompt ?? '')
-  const [picked, setPicked] = useState<CharacterId | null>(initialCharacter(initial))
-  const [missing, setMissing] = useState<string | null>(null)
-  const character = characterFor(picked, name)
-  const lack =
-    name.trim().length === 0
-      ? 'Give them a name'
-      : prompt.trim().length === 0
-        ? 'Describe what they do'
-        : null
-
-  return (
-    <form
-      className="flex flex-col gap-3 rounded-xl bg-card p-2.5"
-      onSubmit={(event) => {
-        event.preventDefault()
-        if (lack !== null) {
-          setMissing(lack)
-          return
-        }
-        onSubmit(draftFrom({ name, description, prompt, character }, initial))
-      }}
-    >
-      <FieldGroup className="gap-2.5">
-        <Field data-invalid={missing !== null && name.trim().length === 0 ? true : undefined}>
-          <Input
-            value={name}
-            onChange={(event) => setName(event.target.value)}
-            placeholder="Name"
-            aria-label="Name"
-            aria-invalid={missing !== null && name.trim().length === 0}
-            className="h-8 rounded-lg text-sm"
-          />
-        </Field>
-        <Field>
-          <Input
-            value={description}
-            onChange={(event) => setDescription(event.target.value)}
-            placeholder="When to call them"
-            aria-label="When to call them"
-            className="h-8 rounded-lg text-sm"
-          />
-        </Field>
-        <Field data-invalid={missing !== null && prompt.trim().length === 0 ? true : undefined}>
-          <Textarea
-            value={prompt}
-            onChange={(event) => setPrompt(event.target.value)}
-            placeholder="What they do, and how"
-            aria-label="What they do, and how"
-            aria-invalid={missing !== null && prompt.trim().length === 0}
-            rows={4}
-            className="resize-none rounded-lg text-sm"
-          />
-        </Field>
-        <Field>
-          <CharacterPicker value={character} onChange={setPicked} />
-        </Field>
-        <FieldDescription>
-          {missing ?? (initial === null ? 'Available from the next session' : 'Applies from the next session')}
-        </FieldDescription>
-      </FieldGroup>
-
-      <div className="flex items-center gap-2">
-        <Button type="submit" size="sm" className="rounded-full">
-          {initial === null ? 'Create' : 'Save'}
-        </Button>
-        <Button
-          type="button"
-          size="sm"
-          variant="ghost"
-          onClick={onCancel}
-          className="rounded-full text-muted-foreground"
-        >
-          Cancel
-        </Button>
-      </div>
-    </form>
   )
 }

@@ -1,7 +1,7 @@
 import { spawn } from 'node:child_process'
 import { realpathSync } from 'node:fs'
-import { managerOf } from '../src/entities/agent-session/model/cli-update/cli-update'
-import { agentEnv } from '../src/shared/lib/shell-env/shell-env'
+import { managerOf } from '@/entities/agent-session/model/cli-update/cli-update'
+import { agentEnv } from '@/shared/lib/shell-env/shell-env'
 import { claudeBin, findCommand, loginPath } from './login-path/login-path'
 import { handle } from './ipc/ipc'
 

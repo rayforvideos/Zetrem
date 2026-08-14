@@ -51,6 +51,10 @@ export default defineConfig({
     root: '.',
     build: { rollupOptions: { input: resolve('index.html') } },
     resolve: { alias: { '@': resolve('src') } },
-    plugins: [react(), tailwindcss(), contentSecurityPolicy()],
+    plugins: [
+      react({ babel: { plugins: [['babel-plugin-react-compiler', { target: '19' }]] } }),
+      tailwindcss(),
+      contentSecurityPolicy(),
+    ],
   },
 })

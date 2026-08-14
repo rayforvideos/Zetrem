@@ -24,8 +24,8 @@ const isTest = (name: string) => /\.test\.tsx?$/.test(name)
 const isSource = (name: string) => /\.tsx?$/.test(name) && !isTest(name)
 const stemOf = (name: string) => name.replace(/(\.test)?\.tsx?$/, '')
 
-describe('테스트는 제 모듈의 폴더 안에 산다', () => {
-  it('테스트가 있으면 그 모듈은 제 이름의 폴더를 갖는다', async () => {
+describe('a test lives in its own module folder', () => {
+  it('gives a module with a test a folder of its own name', async () => {
     const all = await entries()
     const stray: string[] = []
     for (const entry of all) {
@@ -40,7 +40,7 @@ describe('테스트는 제 모듈의 폴더 안에 산다', () => {
     expect(stray, 'example/example.ts 옆에 example/example.test.ts 꼴이어야 한다').toEqual([])
   })
 
-  it('모듈 폴더 밖에 소스가 평평하게 남지 않는다 — 테스트가 있는 것만', async () => {
+  it('leaves no tested module sitting flat outside its folder', async () => {
     const all = await entries()
     const stray: string[] = []
     for (const entry of all) {
@@ -65,8 +65,8 @@ function layerOf(path: string): string | null {
   return parts[1] !== undefined && LAYERS.includes(parts[1]) ? parts[1] : null
 }
 
-describe('레이어는 한 방향으로만 기댄다', () => {
-  it('아래 레이어가 위 레이어를 import 하지 않는다', async () => {
+describe('layers lean one way only', () => {
+  it('never imports an upper layer from a lower one', async () => {
     const stray: string[] = []
     for (const entry of await entries()) {
       const from = layerOf(entry.dir)
@@ -83,7 +83,7 @@ describe('레이어는 한 방향으로만 기댄다', () => {
     expect(stray, 'shared 는 entities 를, widgets 는 pages 를 모른다').toEqual([])
   })
 
-  it('shared/ui 는 shadcn 이 쓰는 자리다 — 도메인을 아는 컴포넌트를 두지 않는다', async () => {
+  it('keeps shared/ui for shadcn, with no component that knows the domain', async () => {
     const names = (await readdir(join('src', 'shared', 'ui'))).filter((name) =>
       name.endsWith('.tsx'),
     )

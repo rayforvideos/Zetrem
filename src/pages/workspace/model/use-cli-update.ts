@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { conversation } from './conversation/conversation'
 import { statusStore } from '@/entities/agent-session'
 
@@ -8,14 +8,14 @@ export function useCliUpdate(cliVersion: string | null): { updating: boolean; st
   const fallback = useRef<string | null>(null)
   fallback.current = cliVersion
 
-  const query = useCallback(async (): Promise<void> => {
+  async function query(): Promise<void> {
     try {
       const { installed, latest, managedBy } = await window.desk.latestCliVersion()
       statusStore.setUpdate({ current: installed ?? fallback.current, latest, managedBy })
     } catch {
       statusStore.setUpdate({ current: fallback.current, latest: null, managedBy: null })
     }
-  }, [])
+  }
 
   useEffect(() => {
     if (!cliVersion || asked.current) return
@@ -23,7 +23,7 @@ export function useCliUpdate(cliVersion: string | null): { updating: boolean; st
     void query()
   }, [cliVersion, query])
 
-  const start = useCallback(() => {
+  function start(): void {
     setUpdating(true)
     window.desk
       .runCliUpdate()
@@ -33,7 +33,7 @@ export function useCliUpdate(cliVersion: string | null): { updating: boolean; st
       })
       .catch(() => conversation.system('Could not start the update'))
       .finally(() => setUpdating(false))
-  }, [query])
+  }
 
   return { updating, start }
 }

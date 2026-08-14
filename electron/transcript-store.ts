@@ -6,11 +6,11 @@ import {
   isChatId,
   readTranscript,
   summaryOf,
-} from '../src/entities/conversation/lib/transcript/transcript'
+} from '@/entities/conversation/lib/transcript/transcript'
 import type {
   ChatSummary,
   Transcript,
-} from '../src/entities/conversation/lib/transcript/transcript.types'
+} from '@/entities/conversation/lib/transcript/transcript.types'
 import { handle } from './ipc/ipc'
 
 const CHAT_CAP = 60

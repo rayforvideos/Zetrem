@@ -1,5 +1,5 @@
 import { execFile, execFileSync } from 'node:child_process'
-import { descendantsOf, parsePsRows } from '../../src/shared/lib/process-tree/process-tree'
+import { descendantsOf, parsePsRows } from '@/shared/lib/process-tree/process-tree'
 
 const isWindows = process.platform === 'win32'
 

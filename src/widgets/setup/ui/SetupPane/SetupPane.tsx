@@ -19,9 +19,6 @@ type SetupPaneProps = {
   onPickProject(): void
   onPermissionMode(mode: PermissionMode): void
   onModel(model: ModelChoice): void
-  onlyOurAgents: boolean
-  onOnlyOurAgents(only: boolean): void
-  ourAgentCount: number
   onStart(): void
   onCancel(): void
   reopened: boolean
@@ -33,6 +30,8 @@ type SetupPaneProps = {
   sessionLive: boolean
   authError: string | null
   notice: Failure | null
+  pluginSummary: string
+  onPlugins(): void
 }
 
 export function SetupPane({
@@ -44,9 +43,6 @@ export function SetupPane({
   onPickProject,
   onPermissionMode,
   onModel,
-  onlyOurAgents,
-  onOnlyOurAgents,
-  ourAgentCount,
   onStart,
   onCancel,
   reopened,
@@ -58,6 +54,8 @@ export function SetupPane({
   sessionLive,
   authError,
   notice,
+  pluginSummary,
+  onPlugins,
 }: SetupPaneProps) {
   return (
     <div className="zt-scroll relative z-[3] h-full overflow-y-auto">
@@ -198,21 +196,12 @@ export function SetupPane({
 
         <Field orientation="horizontal" className="rounded-2xl bg-card p-4">
           <FieldContent>
-            <FieldLabel htmlFor="only-ours">Who can be called</FieldLabel>
-            <FieldDescription>
-              {ourAgentCount === 0
-                ? 'No teammates yet, so nothing is locked'
-                : onlyOurAgents
-                  ? `Only the ${ourAgentCount} teammates created in Zetrem can be called. Applies from the next session`
-                  : 'Any agent Claude Code knows can be called'}
-            </FieldDescription>
+            <FieldLabel>Plugins</FieldLabel>
+            <FieldDescription>{pluginSummary}</FieldDescription>
           </FieldContent>
-          <Switch
-            id="only-ours"
-            checked={onlyOurAgents}
-            onCheckedChange={onOnlyOurAgents}
-            disabled={ourAgentCount === 0}
-          />
+          <Button variant="ghost" onClick={onPlugins} className="rounded-full">
+            Manage
+          </Button>
         </Field>
       </FieldGroup>
 

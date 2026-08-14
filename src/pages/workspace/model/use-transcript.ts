@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from 'react'
+import { useEffect, useRef, useState, useSyncExternalStore } from 'react'
 import { statusStore } from '@/entities/agent-session'
 import { chatId, packTranscript } from '@/entities/conversation'
 import type { ChatSummary } from '@/entities/conversation'
@@ -30,12 +30,12 @@ export function useTranscript(project: string | null): Chats {
   const turns = conv.turns
   const liveSessionId = status.session?.id ?? null
 
-  const refresh = useCallback(async (): Promise<ChatSummary[]> => {
+  async function refresh(): Promise<ChatSummary[]> {
     if (project === null) return []
     const found = await window.desk.listChats(project).catch(() => [])
     setChats(found)
     return found
-  }, [project])
+  }
 
   useEffect(() => {
     if (project === null) {
@@ -69,7 +69,7 @@ export function useTranscript(project: string | null): Chats {
     return () => {
       alive = false
     }
-  }, [project, refresh])
+  }, [project])
 
   useEffect(() => {
     if (!ready || project === null || openId === null) return
@@ -86,47 +86,41 @@ export function useTranscript(project: string | null): Chats {
       .writeTranscript(project, packed)
       .then(() => refresh())
       .catch(() => undefined)
-  }, [ready, project, openId, turns, conv.status, liveSessionId, resumeId, refresh])
+  }, [ready, project, openId, turns, conv.status, liveSessionId, resumeId])
 
-  const open = useCallback(
-    (id: string) => {
-      if (project === null || id === openId) return
-      lastSaved.current = ''
-      statusStore.reset()
-      conversation.reset()
-      setOpenId(id)
-      setResumeId(null)
-      void window.desk
-        .readTranscript(project, id)
-        .then((saved) => {
-          if (saved === null) return
-          setResumeId(saved.sessionId)
-          conversation.restore(saved.turns)
-        })
-        .catch(() => undefined)
-    },
-    [project, openId],
-  )
+  function open(id: string): void {
+    if (project === null || id === openId) return
+    lastSaved.current = ''
+    statusStore.reset()
+    conversation.reset()
+    setOpenId(id)
+    setResumeId(null)
+    void window.desk
+      .readTranscript(project, id)
+      .then((saved) => {
+        if (saved === null) return
+        setResumeId(saved.sessionId)
+        conversation.restore(saved.turns)
+      })
+      .catch(() => undefined)
+  }
 
-  const start = useCallback(() => {
+  function start(): void {
     lastSaved.current = ''
     statusStore.reset()
     conversation.reset()
     setOpenId(freshId())
     setResumeId(null)
-  }, [])
+  }
 
-  const remove = useCallback(
-    (id: string) => {
-      if (project === null) return
-      void window.desk
-        .forgetTranscript(project, id)
-        .then(() => refresh())
-        .catch(() => undefined)
-      if (id === openId) start()
-    },
-    [project, openId, refresh, start],
-  )
+  function remove(id: string): void {
+    if (project === null) return
+    void window.desk
+      .forgetTranscript(project, id)
+      .then(() => refresh())
+      .catch(() => undefined)
+    if (id === openId) start()
+  }
 
   return { chats, openId, resumeId: liveSessionId ?? resumeId, ready, open, start, remove }
 }

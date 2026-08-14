@@ -12,16 +12,19 @@ function count(value: unknown): number {
   return Array.isArray(value) ? value.length : 0
 }
 
-export function fromStatusLine(event: Record<string, unknown>): StatusEvent[] {
+export function fromStatusLine(
+  event: Record<string, unknown>,
+  parent: string | null = null,
+): StatusEvent[] {
   switch (event.type) {
-    case 'system':
-      return fromSystem(event)
-    case 'assistant':
-      return fromAssistantUsage(event)
-    case 'result':
-      return fromResultMetrics(event)
     case 'rate_limit_event':
       return fromRateLimit(event)
+    case 'system':
+      return parent === null ? fromSystem(event) : []
+    case 'assistant':
+      return parent === null ? fromAssistantUsage(event) : []
+    case 'result':
+      return parent === null ? fromResultMetrics(event) : []
     default:
       return []
   }

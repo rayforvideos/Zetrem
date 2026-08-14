@@ -16,8 +16,8 @@ function Model({ type }: { type: string }) {
   return <i>{useModel(type) ?? 'unknown'}</i>
 }
 
-describe('Crew — 얼굴', () => {
-  it('명단에 적힌 얼굴을 어디서든 쓴다 — 고른 얼굴과 일하는 얼굴이 달라선 안 된다', () => {
+describe('Crew: faces', () => {
+  it('uses the face on the roster everywhere, so the one you chose is the one that works', () => {
     const bare = renderToStaticMarkup(<AgentSprite subagentType="code-reviewer" />)
     const known = renderToStaticMarkup(
       <CrewProvider crew={crew({ 'code-reviewer': { character: 'ghost', model: null } })}>
@@ -28,7 +28,7 @@ describe('Crew — 얼굴', () => {
     expect(faceOf(bare)).not.toBe('ghost')
   })
 
-  it('직접 준 얼굴이 명단보다 앞선다', () => {
+  it('lets a face given directly win over the roster', () => {
     const html = renderToStaticMarkup(
       <CrewProvider crew={crew({ 'code-reviewer': { character: 'ghost', model: null } })}>
         <AgentSprite subagentType="code-reviewer" chosen="planet" />
@@ -37,7 +37,7 @@ describe('Crew — 얼굴', () => {
     expect(faceOf(html)).toBe('planet')
   })
 
-  it('모르는 이름은 이름에서 얼굴을 만든다 — 빈 자리를 그리지 않는다', () => {
+  it('makes a face out of an unknown name, rather than drawing a gap', () => {
     const html = renderToStaticMarkup(
       <CrewProvider crew={crew({})}>
         <AgentSprite subagentType="whoever" />
@@ -47,8 +47,8 @@ describe('Crew — 얼굴', () => {
   })
 })
 
-describe('Crew — 모델', () => {
-  it('제 모델이 적혀 있으면 그것을 쓴다', () => {
+describe('Crew: models', () => {
+  it('uses the model written for that person', () => {
     const html = renderToStaticMarkup(
       <CrewProvider crew={crew({ Explore: { character: null, model: 'sonnet' } }, 'claude-opus-5')}>
         <Model type="Explore" />
@@ -57,7 +57,7 @@ describe('Crew — 모델', () => {
     expect(html).toContain('sonnet')
   })
 
-  it('제 모델이 없으면 세션 모델을 물려받는다 — 실제로 그렇게 돈다', () => {
+  it('inherits the session model when there is none, which is how it really runs', () => {
     const html = renderToStaticMarkup(
       <CrewProvider crew={crew({ Explore: { character: null, model: null } }, 'claude-opus-5')}>
         <Model type="Explore" />
@@ -66,7 +66,7 @@ describe('Crew — 모델', () => {
     expect(html).toContain('claude-opus-5')
   })
 
-  it('명단에 없는 사람의 모델은 지어내지 않는다', () => {
+  it('invents no model for someone not on the roster', () => {
     const html = renderToStaticMarkup(
       <CrewProvider crew={crew({}, 'claude-opus-5')}>
         <Model type="Whoever" />

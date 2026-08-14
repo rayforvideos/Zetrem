@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useReducer, useRef } from 'react'
+import { useEffect, useReducer, useRef } from 'react'
 import { MOTION } from '@/shared/config/motion/motion'
 import { INITIAL_DECK, closingIds, deckReducer } from './deck-machine/deck-machine'
 import type { DeckState } from './deck-machine/deck-machine.types'
@@ -54,9 +54,17 @@ export function useDeck(): Deck {
     }
   }, [])
 
-  const launch = useCallback((ids: string[]) => dispatch({ type: 'launch', ids }), [])
-  const openOne = useCallback((id: string) => dispatch({ type: 'openOne', id }), [])
-  const closeOne = useCallback((id: string) => dispatch({ type: 'closeOne', id }), [])
+  function launch(ids: string[]): void {
+    dispatch({ type: 'launch', ids })
+  }
+
+  function openOne(id: string): void {
+    dispatch({ type: 'openOne', id })
+  }
+
+  function closeOne(id: string): void {
+    dispatch({ type: 'closeOne', id })
+  }
 
   return { state, launch, openOne, closeOne }
 }

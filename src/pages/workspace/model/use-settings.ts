@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { DEFAULT_SETTINGS } from '@/entities/agent-session'
 import type { Settings } from '@/entities/agent-session'
 import { useFailure } from '@/shared/lib/failure/failure'
@@ -24,17 +24,14 @@ export function useSettings(): SettingsSource {
       .finally(() => setLoading(false))
   }, [report])
 
-  const update = useCallback(
-    (patch: Partial<Settings>) => {
-      clear()
-      setSettings((current) => {
-        const next = { ...current, ...patch }
-        void window.desk.writeSettings(next).catch(report('Could not save your settings'))
-        return next
-      })
-    },
-    [clear, report],
-  )
+  function update(patch: Partial<Settings>): void {
+    clear()
+    setSettings((current) => {
+      const next = { ...current, ...patch }
+      void window.desk.writeSettings(next).catch(report('Could not save your settings'))
+      return next
+    })
+  }
 
   return { settings, loading, failure, update }
 }

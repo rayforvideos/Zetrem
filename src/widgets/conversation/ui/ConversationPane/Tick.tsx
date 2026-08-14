@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useState } from 'react'
 import type { ToolActivity } from '@/entities/conversation'
 import { cn } from '@/shared/lib/cn'
 import { Button } from '@/shared/ui/button'
@@ -17,7 +17,7 @@ export function Tick({ tool, live }: { tool: ToolActivity; live: boolean }) {
   const lines = output.split('\n')
   const shown = lines.slice(0, TOOL_OUTPUT_LINES).join('\n')
   const rest = lines.length - TOOL_OUTPUT_LINES
-  const detail = useMemo(() => ToolDetail({ tool }), [tool.input, tool.line])
+  const detail = ToolDetail({ tool })
   const expandable = tool.result !== null || detail !== null
 
   return (

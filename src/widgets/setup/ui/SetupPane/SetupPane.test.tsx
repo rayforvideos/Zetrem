@@ -13,9 +13,6 @@ function pane(props: Partial<Parameters<typeof SetupPane>[0]> = {}): string {
       onPickProject={() => {}}
       onPermissionMode={() => {}}
       onModel={() => {}}
-      onlyOurAgents
-      onOnlyOurAgents={() => {}}
-      ourAgentCount={0}
       onStart={() => {}}
       onCancel={() => {}}
       reopened={false}
@@ -27,27 +24,29 @@ function pane(props: Partial<Parameters<typeof SetupPane>[0]> = {}): string {
       sessionLive={false}
       authError={null}
       notice={null}
+      pluginSummary="none"
+      onPlugins={() => {}}
       {...props}
     />,
   )
 }
 
-describe('SetupPane — 시작하기 전에 정할 것이 한 화면에 선다', () => {
-  it('정해야 할 것 넷을 모두 세운다', () => {
+describe('SetupPane: everything to settle before starting, on one screen', () => {
+  it('shows everything there is to settle', () => {
     const html = pane()
-    for (const label of ['Account', 'Project', 'Permissions', 'Model', 'Who can be called']) {
+    for (const label of ['Account', 'Project', 'Permissions', 'Model', 'Plugins']) {
       expect(html, `${label} 이 없다`).toContain(label)
     }
   })
 
-  it('계정과 프로젝트가 없으면 시작이 잠기고 이유를 단다', () => {
+  it('locks Start without an account and a project, and says why', () => {
     const html = pane()
     expect(html).toContain('Set your account and project first')
     const start = html.slice(html.lastIndexOf('<button', html.indexOf('>Start<')))
     expect(start).toContain('disabled=""')
   })
 
-  it('둘 다 정해지면 시작이 열린다 — 위 단언이 늘 참이 되지 않게 반대편도 건다', () => {
+  it('opens Start once both are set, so the test above cannot pass by accident', () => {
     const html = pane({
       canStart: true,
       auth: { state: 'signed-in', email: 'sam@example.com', orgName: null },
@@ -58,7 +57,7 @@ describe('SetupPane — 시작하기 전에 정할 것이 한 화면에 선다',
     expect(html).not.toContain('Set your account and project first')
   })
 
-  it('들어와 있으면 나갈 길도 같이 선다 — 계정을 바꿀 수 없으면 갇힌 것이다', () => {
+  it('offers a way out while signed in, because no way to switch accounts is a trap', () => {
     const html = pane({
       auth: { state: 'signed-in', email: 'sam@example.com', orgName: null },
     })
@@ -66,7 +65,7 @@ describe('SetupPane — 시작하기 전에 정할 것이 한 화면에 선다',
     expect(html).toContain('Sign out')
   })
 
-  it('세션이 도는 중이면 나가면 끊긴다고 먼저 말한다', () => {
+  it('warns that signing out cuts a running session', () => {
     const live = pane({
       auth: { state: 'signed-in', email: 'sam@example.com', orgName: null },
       sessionLive: true,
@@ -76,7 +75,7 @@ describe('SetupPane — 시작하기 전에 정할 것이 한 화면에 선다',
     expect(idle).not.toContain('stops the running session')
   })
 
-  it('나가려다 실패하면 그 사실이 화면에 남는다 — 조용히 로그인된 척하지 않는다', () => {
+  it('leaves a failed sign-out on screen rather than quietly pretending', () => {
     const html = pane({
       auth: { state: 'signed-in', email: 'sam@example.com', orgName: null },
       authError: 'claude: command not found',
@@ -85,7 +84,7 @@ describe('SetupPane — 시작하기 전에 정할 것이 한 화면에 선다',
     expect(html).not.toContain('Sign out to use a different')
   })
 
-  it('무엇이 실패하면 무엇이 왜 실패했는지 둘 다 적는다', () => {
+  it('writes both what failed and why', () => {
     const html = pane({
       notice: { what: 'Could not save your settings', why: 'EROFS: read-only file system' },
     })
@@ -93,40 +92,34 @@ describe('SetupPane — 시작하기 전에 정할 것이 한 화면에 선다',
     expect(html).toContain('EROFS: read-only file system')
   })
 
-  it('실패가 없으면 경고 자리도 없다 — 빈 칸이 자리를 차지하지 않게', () => {
+  it('takes the warning space away when there is nothing wrong', () => {
     expect(pane()).not.toContain('data-notice')
   })
 
-  it('처음 세울 때는 되돌릴 것이 없다 — 취소를 내밀지 않는다', () => {
+  it('offers no Cancel the first time, since there is nothing to go back to', () => {
     const html = pane()
     expect(html).toContain('>Start<')
     expect(html).not.toContain('>Cancel<')
   })
 
-  it('다시 열었을 때만 취소가 선다 — 그때는 되돌릴 상태가 있다', () => {
+  it('offers Cancel on a reopen, where there is a state to go back to', () => {
     const html = pane({ reopened: true, canStart: true })
     expect(html).toContain('>Cancel<')
     expect(html).toContain('>Done<')
     expect(html).not.toContain('>Start<')
   })
 
-  it('주 동작이 마지막에 선다 — 데스크톱은 오른쪽 끝이 주 동작이다', () => {
+  it('puts the main action last, where a desktop expects it', () => {
     const html = pane({ reopened: true, canStart: true })
     expect(html.indexOf('>Cancel<')).toBeLessThan(html.indexOf('>Done<'))
   })
 
-  it('claude 를 못 찾으면 로그인 대신 그 사실을 말한다', () => {
+  it('says the CLI is missing instead of offering sign-in', () => {
     const html = pane({ auth: { state: 'cli-missing' } })
     expect(html).toContain('command not found')
-    expect(html).not.toContain('Anthropic 계정으로 로그인')
   })
 
-  it('들인 사람이 없으면 잠금 스위치가 잠긴다 — 잠글 대상이 없다', () => {
-    expect(pane({ ourAgentCount: 0 })).toContain('No teammates yet, so nothing is locked')
-    expect(pane({ ourAgentCount: 3 })).toContain('Only the 3 teammates created in Zetrem')
-  })
-
-  it('고르는 알약은 제 내용만큼만 넓다 — Field 가 자식을 늘리는 것에 끌려가지 않는다', () => {
+  it('sizes the choice pills to their content, and not to the field around them', () => {
     const html = pane()
     const groups = [...html.matchAll(/<div[^>]*data-slot="toggle-group"[^>]*class="([^"]*)"/g)].map(
       (match) => match[1] as string,
@@ -138,7 +131,7 @@ describe('SetupPane — 시작하기 전에 정할 것이 한 화면에 선다',
     }
   })
 
-  it('고른 것의 뜻을 밑에 적는다 — 이름만으로는 무엇이 달라지는지 모른다', () => {
+  it('writes what the choice means underneath, since a name does not say what changes', () => {
     expect(pane({ permissionMode: 'bypass' })).toContain('Never asks')
     expect(pane({ model: 'haiku' })).toContain('Fast and cheap')
   })

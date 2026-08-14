@@ -39,6 +39,7 @@ export type RateLimit = {
   kind: string
   utilization: number
   resetsAtMs: number
+  resetsText?: string
   overage: boolean
   status: string
 }

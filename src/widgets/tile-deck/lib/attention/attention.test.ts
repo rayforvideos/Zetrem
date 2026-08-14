@@ -25,35 +25,35 @@ function waiting(id: string, since?: number): AgentSession {
 }
 
 describe('attentionId', () => {
-  it('기다리는 타일이 없으면 아무것도 시선을 끌지 않는다', () => {
+  it('draws no eye when nothing is waiting', () => {
     expect(attentionId([])).toBeNull()
     expect(attentionId([session('a'), session('b', { status: 'done' })])).toBeNull()
   })
 
-  it('하나만 기다리면 그것이 시선의 주인이다', () => {
+  it('gives the eye to the one thing that is waiting', () => {
     expect(attentionId([session('a'), waiting('b', 10), session('c')])).toBe('b')
   })
 
-  it('여럿이 기다리면 가장 오래 기다린 하나만 고른다 (스펙 §6 하드 제약)', () => {
+  it('picks the one that has waited longest when several wait', () => {
     const chosen = attentionId([waiting('a', 300), waiting('b', 100), waiting('c', 200)])
     expect(chosen).toBe('b')
   })
 
-  it('여섯 개가 동시에 기다려도 하나만 고른다 — 여섯이 끌면 규칙이 없는 것과 같다', () => {
+  it('still picks one out of six, because six pulling at once is no rule at all', () => {
     const all = [0, 1, 2, 3, 4, 5].map((i) => waiting(`s${i}`, 500 + i))
     expect(attentionId(all)).toBe('s0')
   })
 
-  it('대기 시각이 같으면 목록 순서로 가른다 — 판정은 하나로 정해져야 한다', () => {
+  it('breaks a tie by list order, so the answer is always the same one', () => {
     expect(attentionId([waiting('a', 100), waiting('b', 100)])).toBe('a')
   })
 
-  it('대기 시각을 모르는 세션은 아는 세션에 양보한다', () => {
+  it('yields to a session whose wait is known', () => {
     expect(attentionId([waiting('a'), waiting('b', 900)])).toBe('b')
     expect(attentionId([waiting('a'), waiting('b')])).toBe('a')
   })
 
-  it('작업 중·완료 타일은 후보가 아니다', () => {
+  it('leaves working and finished tiles out of the running', () => {
     const sessions = [
       session('a', { status: 'working', waitingSinceMs: 1 }),
       session('b', { status: 'done', waitingSinceMs: 2 }),

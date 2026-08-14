@@ -6,7 +6,7 @@ function line(value: unknown): string {
 }
 
 describe('parseClaudeLine', () => {
-  it('assistant 의 text 블록은 1층 headline 이 된다', () => {
+  it('turns an assistant text block into the headline', () => {
     const events = parseClaudeLine(
       line({
         type: 'assistant',
@@ -16,7 +16,7 @@ describe('parseClaudeLine', () => {
     expect(events).toContainEqual({ type: 'headline', text: '테스트를 고치는 중입니다' })
   })
 
-  it('assistant 의 tool_use 블록은 2층 stream 라인이 된다', () => {
+  it('turns an assistant tool_use block into a stream line', () => {
     const events = parseClaudeLine(
       line({
         type: 'assistant',
@@ -42,7 +42,7 @@ describe('parseClaudeLine', () => {
     })
   })
 
-  it('tool_use 의 대상이 길면 자른다 — 2층은 읽는 층이 아니다', () => {
+  it('cuts a long tool target, because the stream is not for reading in full', () => {
     const events = parseClaudeLine(
       line({
         type: 'assistant',
@@ -56,7 +56,7 @@ describe('parseClaudeLine', () => {
     expect(stream!.type === 'stream' && stream!.line.length).toBeLessThanOrEqual(120)
   })
 
-  it('result 이벤트는 턴 종료를 낸다 — 계기는 status.ts 가 따로 읽는다', () => {
+  it('turns a result event into the end of a turn, leaving the numbers to the status reader', () => {
     const events = parseClaudeLine(
       line({
         type: 'result',
@@ -68,7 +68,7 @@ describe('parseClaudeLine', () => {
     expect(events.some((event) => event.type === 'metrics')).toBe(true)
   })
 
-  it('권한 거부는 2층에 드러난다 — 조용히 삼키면 이유가 화면에 없다', () => {
+  it('shows a refused permission, because swallowing it leaves no reason on screen', () => {
     const events = parseClaudeLine(
       line({
         type: 'result',
@@ -85,24 +85,24 @@ describe('parseClaudeLine', () => {
     expect(events).toContainEqual({ type: 'turnEnded' })
   })
 
-  it('usage 가 없는 result 도 턴 종료는 낸다', () => {
+  it('still ends the turn for a result with no usage', () => {
     const events = parseClaudeLine(line({ type: 'result', subtype: 'success' }))
     expect(events).toContainEqual({ type: 'turnEnded' })
   })
 
-  it('JSON 이 아닌 줄은 조용히 무시한다 — CLI 는 잡음을 낼 수 있다', () => {
+  it('ignores a line that is not JSON, because the CLI can print noise', () => {
     expect(parseClaudeLine('not json at all')).toEqual([])
     expect(parseClaudeLine('')).toEqual([])
   })
 
-  it('모르는 이벤트 타입은 무시한다', () => {
+  it('ignores an event type it does not know', () => {
     expect(parseClaudeLine(line({ type: 'system', subtype: 'init' }))).toEqual([
       expect.objectContaining({ type: 'session' }),
     ])
     expect(parseClaudeLine(line({ type: 'system', subtype: '알수없음' }))).toEqual([])
   })
 
-  it('control_request 의 권한 질문은 permission 이벤트가 된다 (CLI 2.1.229 실측)', () => {
+  it('turns a control request asking permission into a permission event', () => {
     const events = parseClaudeLine(
       line({
         type: 'control_request',
@@ -126,14 +126,14 @@ describe('parseClaudeLine', () => {
     ])
   })
 
-  it('can_use_tool 이 아닌 control_request 는 무시한다 — 모르는 제어 요청에 답하면 안 된다', () => {
+  it('ignores a control request that is not asking about a tool, rather than answering blind', () => {
     const events = parseClaudeLine(
       line({ type: 'control_request', request_id: 'req-2', request: { subtype: 'interrupt' } }),
     )
     expect(events).toEqual([])
   })
 
-  it('text 와 tool_use 가 섞인 메시지는 둘 다 낸다', () => {
+  it('reports both when a message mixes text and a tool call', () => {
     const events = parseClaudeLine(
       line({
         type: 'assistant',
@@ -149,8 +149,8 @@ describe('parseClaudeLine', () => {
   })
 })
 
-describe('parseClaudeLine — 부분 메시지 델타 (2026-08-14 실측: --include-partial-messages)', () => {
-  it('부분 메시지의 텍스트 델타를 초안으로 낸다', () => {
+describe('parseClaudeLine: partial message deltas, as the CLI really sends them', () => {
+  it('reports a text delta as draft', () => {
     const events = parseClaudeLine(
       line({
         type: 'stream_event',
@@ -160,7 +160,7 @@ describe('parseClaudeLine — 부분 메시지 델타 (2026-08-14 실측: --incl
     expect(events).toEqual([{ type: 'delta', text: '안녕' }])
   })
 
-  it('자식의 델타는 부모의 초안이 아니다', () => {
+  it('keeps a child delta out of the parent draft', () => {
     const events = parseClaudeLine(
       line({
         type: 'stream_event',
@@ -171,7 +171,7 @@ describe('parseClaudeLine — 부분 메시지 델타 (2026-08-14 실측: --incl
     expect(events).toEqual([])
   })
 
-  it('텍스트가 아닌 델타는 초안에 넣지 않는다', () => {
+  it('leaves a delta that is not text out of the draft', () => {
     const events = parseClaudeLine(
       line({
         type: 'stream_event',
@@ -183,22 +183,22 @@ describe('parseClaudeLine — 부분 메시지 델타 (2026-08-14 실측: --incl
 })
 
 describe('permissionResult', () => {
-  it('허용은 입력을 그대로 되돌린다 — updatedInput 이 없으면 CLI 가 응답을 버린다', () => {
+  it('hands the input back on allow, because the CLI drops a reply without it', () => {
     expect(permissionResult(true, { command: 'mkdir demo' })).toEqual({
       behavior: 'allow',
       updatedInput: { command: 'mkdir demo' },
     })
   })
 
-  it('거부는 이유 문구를 담는다 — 에이전트가 다음 행동을 정할 근거다', () => {
+  it('carries a reason on deny, which is what the agent decides on next', () => {
     const result = permissionResult(false, { command: 'rm -rf /' })
     expect(result.behavior).toBe('deny')
     expect('message' in result && result.message.length).toBeGreaterThan(0)
   })
 })
 
-describe('parseClaudeLine — 서브에이전트 (--forward-subagent-text, 2.1.229 실측)', () => {
-  it('Agent tool_use 는 자식 열림이 된다 — 설명이 이름이다', () => {
+describe('parseClaudeLine: subagents, as forwarded by the CLI', () => {
+  it('opens a child on an Agent tool call, and the description is the name', () => {
     const events = parseClaudeLine(
       line({
         type: 'assistant',
@@ -224,7 +224,7 @@ describe('parseClaudeLine — 서브에이전트 (--forward-subagent-text, 2.1.2
     })
   })
 
-  it('parent 가 붙은 assistant text 는 자식의 말이다', () => {
+  it('reads assistant text with a parent as the child speaking', () => {
     const events = parseClaudeLine(
       line({
         type: 'assistant',
@@ -237,7 +237,7 @@ describe('parseClaudeLine — 서브에이전트 (--forward-subagent-text, 2.1.2
     ])
   })
 
-  it('parent 가 붙은 user text 는 자식이 받은 프롬프트다', () => {
+  it('reads user text with a parent as what the child was told', () => {
     const events = parseClaudeLine(
       line({
         type: 'user',
@@ -250,7 +250,7 @@ describe('parseClaudeLine — 서브에이전트 (--forward-subagent-text, 2.1.2
     ])
   })
 
-  it('tool_result 는 자식 닫힘 후보다 — 어느 도구의 것인지는 러너가 가른다', () => {
+  it('treats a tool_result as a possible child close, leaving the runner to say whose', () => {
     const events = parseClaudeLine(
       line({
         type: 'user',
@@ -272,7 +272,7 @@ describe('parseClaudeLine — 서브에이전트 (--forward-subagent-text, 2.1.2
     ])
   })
 
-  it('parent 가 붙은 말은 부모의 1층으로 새지 않는다', () => {
+  it('never leaks a child word into the parent headline', () => {
     const events = parseClaudeLine(
       line({
         type: 'assistant',
@@ -284,8 +284,8 @@ describe('parseClaudeLine — 서브에이전트 (--forward-subagent-text, 2.1.2
   })
 })
 
-describe('permissionAlwaysResult — 항상 허용', () => {
-  it('도구 단위 세션 규칙을 함께 되돌려준다 — 사용자 설정 파일을 쓰지 않는다', () => {
+describe('permissionAlwaysResult: allow from now on', () => {
+  it('sends back a session rule for that tool, without writing the settings file', () => {
     const result = permissionAlwaysResult('Bash', { command: 'mkdir demo' })
     expect(result.behavior).toBe('allow')
     expect(result.updatedInput).toEqual({ command: 'mkdir demo' })
@@ -295,8 +295,8 @@ describe('permissionAlwaysResult — 항상 허용', () => {
   })
 })
 
-describe('parseClaudeLine — 백그라운드 서브에이전트 (2026-08-13 실측)', () => {
-  it('run_in_background 가 참이면 childOpen 에 실린다 — tool_result 가 닫힘이 아니게 된다', () => {
+describe('parseClaudeLine: background subagents', () => {
+  it('marks a child as background, which means its tool_result is not a close', () => {
     const events = parseClaudeLine(
       line({
         type: 'assistant',
@@ -323,8 +323,8 @@ describe('parseClaudeLine — 백그라운드 서브에이전트 (2026-08-13 실
   })
 })
 
-describe('parseClaudeLine — task_notification (2026-08-13 실측)', () => {
-  it('백그라운드 자식의 완료 알림은 childNotified 가 된다', () => {
+describe('parseClaudeLine: task notifications', () => {
+  it('reads a completion notice as the child reporting back', () => {
     const events = parseClaudeLine(
       line({
         type: 'system',
@@ -335,16 +335,55 @@ describe('parseClaudeLine — task_notification (2026-08-13 실측)', () => {
         summary: '4',
       }),
     )
-    expect(events).toEqual([{ type: 'childNotified', toolUseId: 'toolu_bg1', summary: '4' }])
+    expect(events).toEqual([
+      { type: 'childNotified', toolUseId: 'toolu_bg1', summary: '4', done: true },
+    ])
   })
 
-  it('다른 system 이벤트는 여전히 무시한다', () => {
+  it('does not read a notice that is not a completion as the child reporting back', () => {
+    const events = parseClaudeLine(
+      line({
+        type: 'system',
+        subtype: 'task_notification',
+        tool_use_id: 'toolu_bg1',
+        status: 'running',
+        summary: 'still going',
+      }),
+    )
+    expect(events).toEqual([
+      { type: 'childNotified', toolUseId: 'toolu_bg1', summary: 'still going', done: false },
+    ])
+  })
+
+  it('carries what a subagent is doing, with the tools and tokens it has spent', () => {
+    const events = parseClaudeLine(
+      line({
+        type: 'system',
+        subtype: 'task_progress',
+        tool_use_id: 'toolu_bg1',
+        description: 'Running Sleep for 20 seconds',
+        last_tool_name: 'Bash',
+        usage: { total_tokens: 12_822, tool_uses: 1, duration_ms: 3407 },
+      }),
+    )
+    expect(events).toEqual([
+      {
+        type: 'childProgress',
+        toolUseId: 'toolu_bg1',
+        doing: 'Running Sleep for 20 seconds',
+        lastTool: 'Bash',
+        tokens: 12_822,
+      },
+    ])
+  })
+
+  it('still ignores every other system event', () => {
     expect(parseClaudeLine(line({ type: 'system', subtype: 'task_started' }))).toEqual([])
   })
 })
 
-describe('parseClaudeLine — 자식의 실패 (2026-08-13 화면 녹화로 발견)', () => {
-  it('is_error 인 tool_result 는 실패 내용을 담아 닫힌다 — 왜 죽었는지 화면에 남아야 한다', () => {
+describe('parseClaudeLine: a child that failed', () => {
+  it('closes with the failure text, so the reason stays on screen', () => {
     const events = parseClaudeLine(
       line({
         type: 'user',
@@ -373,7 +412,7 @@ describe('parseClaudeLine — 자식의 실패 (2026-08-13 화면 녹화로 발�
     ])
   })
 
-  it('정상 tool_result 에는 error 가 없다', () => {
+  it('carries no error on an ordinary result', () => {
     const events = parseClaudeLine(
       line({
         type: 'user',
@@ -387,8 +426,8 @@ describe('parseClaudeLine — 자식의 실패 (2026-08-13 화면 녹화로 발�
   })
 })
 
-describe('parseClaudeLine — 자식의 도구 활동 (2026-08-13 실측: tool_use 도 전달된다)', () => {
-  it('parent 가 붙은 tool_use 는 자식의 2층 줄이 된다 — 무슨 일을 하는지가 핵심이다', () => {
+describe('parseClaudeLine: what a child is doing, tool by tool', () => {
+  it('turns a child tool call into a line on that child, which is the point of watching', () => {
     const events = parseClaudeLine(
       line({
         type: 'assistant',
@@ -403,7 +442,7 @@ describe('parseClaudeLine — 자식의 도구 활동 (2026-08-13 실측: tool_u
     ])
   })
 
-  it('자식의 tool_use 는 부모의 2층으로 새지 않는다', () => {
+  it('never leaks a child tool call into the parent stream', () => {
     const events = parseClaudeLine(
       line({
         type: 'assistant',
@@ -417,8 +456,8 @@ describe('parseClaudeLine — 자식의 도구 활동 (2026-08-13 실측: tool_u
   })
 })
 
-describe('parseClaudeLine — 생각과 도구 결과 (Task 10)', () => {
-  it('생각 블록을 자기 이벤트로 낸다 — 본문과 다른 목소리다', () => {
+describe('parseClaudeLine: thinking, and what tools gave back', () => {
+  it('reports thinking as its own event, since it is a different voice', () => {
     const events = parseClaudeLine(
       JSON.stringify({
         type: 'assistant',
@@ -436,7 +475,7 @@ describe('parseClaudeLine — 생각과 도구 결과 (Task 10)', () => {
     ])
   })
 
-  it('빈 thinking 블록은 아무 이벤트도 내지 않는다 — 없는 생각을 있다고 말하지 않는다', () => {
+  it('reports nothing for an empty thinking block', () => {
     const events = parseClaudeLine(
       JSON.stringify({
         type: 'assistant',
@@ -448,7 +487,7 @@ describe('parseClaudeLine — 생각과 도구 결과 (Task 10)', () => {
     expect(events.some((e) => e.type === 'thinking')).toBe(false)
   })
 
-  it('도구 활동이 자기 id 를 들고 온다 — 결과를 그 눈금에 붙이려면 필요하다', () => {
+  it('carries the tool id, which is what attaches a result to it', () => {
     const events = parseClaudeLine(
       JSON.stringify({
         type: 'assistant',
@@ -462,7 +501,7 @@ describe('parseClaudeLine — 생각과 도구 결과 (Task 10)', () => {
     ])
   })
 
-  it('도구 입력을 함께 실어 온다 — 전용 렌더의 재료다', () => {
+  it('carries the tool input, which is what a richer view is drawn from', () => {
     const [event] = parseClaudeLine(
       JSON.stringify({
         type: 'assistant',
@@ -474,7 +513,7 @@ describe('parseClaudeLine — 생각과 도구 결과 (Task 10)', () => {
     expect(event).toMatchObject({ type: 'stream', input: { file_path: 'a.ts', old_string: 'a', new_string: 'b' } })
   })
 
-  it('도구 결과의 출력을 그대로 들고 온다', () => {
+  it('carries the output of a tool result as it came', () => {
     const events = parseClaudeLine(
       JSON.stringify({
         type: 'user',
@@ -494,7 +533,7 @@ describe('parseClaudeLine — 생각과 도구 결과 (Task 10)', () => {
     })
   })
 
-  it('실패한 도구는 실패로 표시된다 — 조용히 삼키면 화면이 거짓말한다', () => {
+  it('marks a failed tool as failed, because swallowing it makes the screen lie', () => {
     const events = parseClaudeLine(
       JSON.stringify({
         type: 'user',
@@ -505,5 +544,70 @@ describe('parseClaudeLine — 생각과 도구 결과 (Task 10)', () => {
     )
     const event = events.find((e) => e.type === 'toolResult')
     expect(event).toMatchObject({ type: 'toolResult', isError: true, stdout: 'no such file' })
+  })
+})
+
+describe('a nested line belongs to the child, never to the conversation', () => {
+  it('does not end the turn when a subagent finishes its own run', () => {
+    const events = parseClaudeLine(
+      JSON.stringify({
+        type: 'result',
+        parent_tool_use_id: 'toolu_a',
+        subtype: 'success',
+        usage: { output_tokens: 10 },
+        duration_ms: 1000,
+      }),
+    )
+    expect(events.some((event) => event.type === 'turnEnded')).toBe(false)
+  })
+
+  it('ends the turn when the conversation itself finishes', () => {
+    const events = parseClaudeLine(
+      JSON.stringify({ type: 'result', subtype: 'success', duration_ms: 1000 }),
+    )
+    expect(events.some((event) => event.type === 'turnEnded')).toBe(true)
+  })
+
+  it('does not bill a subagent run to the conversation', () => {
+    const events = parseClaudeLine(
+      JSON.stringify({
+        type: 'result',
+        parent_tool_use_id: 'toolu_a',
+        subtype: 'success',
+        usage: { output_tokens: 999 },
+        total_cost_usd: 9.99,
+        duration_ms: 1000,
+      }),
+    )
+    expect(events.some((event) => event.type === 'metrics')).toBe(false)
+  })
+
+  it('does not read the conversation context gauge off a subagent message', () => {
+    const events = parseClaudeLine(
+      JSON.stringify({
+        type: 'assistant',
+        parent_tool_use_id: 'toolu_a',
+        message: { content: [{ type: 'text', text: 'thinking out loud' }], usage: { input_tokens: 90_000 } },
+      }),
+    )
+    expect(events.some((event) => event.type === 'context')).toBe(false)
+    expect(events.some((event) => event.type === 'childSay')).toBe(true)
+  })
+
+  it('still reports a subagent finishing, since the notice is about the child', () => {
+    const events = parseClaudeLine(
+      JSON.stringify({
+        type: 'system',
+        subtype: 'task_notification',
+        tool_use_id: 'toolu_a',
+        summary: 'read the file',
+      }),
+    )
+    expect(events).toContainEqual({
+      type: 'childNotified',
+      toolUseId: 'toolu_a',
+      summary: 'read the file',
+      done: true,
+    })
   })
 })

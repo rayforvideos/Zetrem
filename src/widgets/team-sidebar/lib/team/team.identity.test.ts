@@ -9,18 +9,19 @@ function def(name: string): AgentDef {
     model: null,
     character: null,
     tools: [],
+    knowledge: [],
     prompt: '',
     source: 'user',
     path: `/${name}.md`,
   }
 }
 
-describe('team 의 이름과 신원', () => {
-  it('부르는 이름은 사람 이름으로 다듬는다', () => {
+describe('what a teammate is called and who they are', () => {
+  it('tidies the name into something you would call a person', () => {
     expect(team([def('code-reviewer')], [], [])[0]!.name).toBe('Code Reviewer')
   })
 
-  it('신원은 파일에 적힌 이름 그대로다 — 다듬은 이름으로 지우면 엉뚱한 것을 지운다', () => {
+  it('keeps identity as the name on disk, because deleting by the tidy name deletes the wrong thing', () => {
     expect(team([def('code-reviewer')], [], [])[0]!.type).toBe('code-reviewer')
   })
 })

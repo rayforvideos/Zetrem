@@ -17,36 +17,36 @@ const session: AgentSession = {
   startedAtMs: 1_000,
 }
 
-describe('metrics 레지스트리', () => {
-  it('id 가 중복되지 않는다', () => {
+describe('the metrics registry', () => {
+  it('has no two metrics with the same id', () => {
     const ids = metrics.map((m) => m.id)
     expect(new Set(ids).size).toBe(ids.length)
   })
 
-  it('모든 지표가 숫자를 낸다', () => {
+  it('gets a number out of every metric', () => {
     for (const metric of metrics) {
       const value = metric.read(session, 4_000)
       expect(Number.isFinite(value), metric.id).toBe(true)
     }
   })
 
-  it('모든 지표가 사람이 읽는 문자열을 낸다', () => {
+  it('gets readable words out of every metric', () => {
     for (const metric of metrics) {
       expect(metric.format(metric.read(session, 4_000)).length, metric.id).toBeGreaterThan(0)
     }
   })
 
-  it('토큰 지표는 천 단위로 끊어 낸다 — 3층 숫자는 초점을 스치듯 읽힌다', () => {
+  it('groups tokens by thousands, because a long number is skimmed', () => {
     const tokens = metrics.find((m) => m.id === 'tokens')!
     expect(tokens.format(tokens.read(session, 4_000))).toBe('4,200')
   })
 
-  it('경과 지표는 시작 시각을 뺀 초를 낸다', () => {
+  it('counts elapsed from when it started', () => {
     const elapsed = metrics.find((m) => m.id === 'elapsed')!
     expect(elapsed.read(session, 4_000)).toBe(3)
   })
 
-  it('Context 지표는 백분율로 낸다', () => {
+  it('reports context as a percentage', () => {
     const context = metrics.find((m) => m.id === 'context')!
     expect(context.read(session, 4_000)).toBeCloseTo(42, 5)
   })

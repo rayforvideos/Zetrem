@@ -3,19 +3,18 @@ import { SIDEBAR } from '@/shared/config/theme'
 import { MODELS, PERMISSION_MODES } from '../run-config/run-config'
 import { DEFAULT_SETTINGS, readSettings } from './settings'
 
-describe('readSettings — 저장된 선택을 되읽는다', () => {
-  it('처음이면 기본값이고, 아직 시작을 누르지 않은 상태다', () => {
+describe('readSettings: reading back what was chosen', () => {
+  it('starts on the defaults, with setup not yet finished', () => {
     expect(readSettings(null)).toEqual(DEFAULT_SETTINGS)
     expect(DEFAULT_SETTINGS.setupDone).toBe(false)
     expect(DEFAULT_SETTINGS.permissionMode).toBe('ask')
   })
 
-  it('저장된 값을 그대로 되살린다', () => {
+  it('brings a saved value back as it was', () => {
     const saved = {
       permissionMode: 'bypass',
       model: 'haiku',
       setupDone: true,
-      onlyOurAgents: false,
       knownTools: ['Read', 'Bash'],
       knownAgents: ['Explore', 'Ray'],
       stockAgents: ['Explore'],
@@ -25,28 +24,20 @@ describe('readSettings — 저장된 선택을 되읽는다', () => {
     expect(readSettings(saved)).toEqual(saved)
   })
 
-  it('모르는 값은 기본으로 되돌린다 — 파일이 손상돼도 앱이 이상한 모드로 켜지지 않는다', () => {
+  it('falls back to a default for a value it does not know, so a spoiled file cannot open the app in a strange mode', () => {
     const restored = readSettings({ permissionMode: '전부열기', model: 'gpt', setupDone: 'yes' })
     expect(restored.permissionMode).toBe('ask')
     expect(restored.model).toBe('default')
     expect(restored.setupDone).toBe(false)
   })
 
-  it('일부만 저장돼 있어도 나머지는 기본으로 채운다', () => {
+  it('fills the rest with defaults when only part was saved', () => {
     expect(readSettings({ model: 'opus' })).toEqual({ ...DEFAULT_SETTINGS, model: 'opus' })
   })
 })
 
-describe('잠금 설정', () => {
-  it('아무것도 저장돼 있지 않으면 우리가 들인 사람만 쓰는 쪽이 기본이다', () => {
-    expect(readSettings({}).onlyOurAgents).toBe(true)
-  })
-
-  it('꺼 둔 것은 꺼진 채로 되살린다', () => {
-    expect(readSettings({ onlyOurAgents: false }).onlyOurAgents).toBe(false)
-  })
-
-  it('기억해 둔 도구 이름 중 글자가 아닌 것은 버린다', () => {
+describe('the lock setting', () => {
+  it('drops anything in the remembered tool list that is not a name', () => {
     expect(readSettings({ knownTools: ['Read', 3, null, 'Bash'] }).knownTools).toEqual([
       'Read',
       'Bash',
@@ -54,46 +45,46 @@ describe('잠금 설정', () => {
   })
 })
 
-describe('설정이 아는 값과 고르는 값은 한 목록이다', () => {
-  it('고를 수 있는 모델은 저장도 된다 — 목록이 둘이면 하나만 늙는다', () => {
+describe('what settings accept and what the app offers are one list', () => {
+  it('saves every model it offers, because two lists means one goes stale', () => {
     for (const model of MODELS) {
       expect(readSettings({ model: model.id }).model, model.id).toBe(model.id)
     }
   })
 
-  it('고를 수 있는 권한도 저장된다', () => {
+  it('saves every permission mode it offers', () => {
     for (const mode of PERMISSION_MODES) {
       expect(readSettings({ permissionMode: mode.id }).permissionMode, mode.id).toBe(mode.id)
     }
   })
 })
 
-describe('보드 폭', () => {
-  it('처음에는 기본 폭이다', () => {
+describe('the width of the board', () => {
+  it('starts at the default width', () => {
     expect(readSettings({}).sidebarWidth).toBe(SIDEBAR.width)
   })
 
-  it('저장된 폭이 한계를 벗어나면 끌어들인다 — 창을 바꾸고 열어도 보드가 화면을 먹지 않는다', () => {
+  it('pulls a saved width back into range, so a resized window does not open with the board eating the screen', () => {
     expect(readSettings({ sidebarWidth: 9999 }).sidebarWidth).toBe(SIDEBAR.max)
     expect(readSettings({ sidebarWidth: 1 }).sidebarWidth).toBe(SIDEBAR.min)
   })
 
-  it('폭이 숫자가 아니면 기본으로 돌아간다', () => {
+  it('falls back to the default when the width is not a number', () => {
     expect(readSettings({ sidebarWidth: '넓게' }).sidebarWidth).toBe(SIDEBAR.width)
   })
 })
 
-describe('기본 에이전트 설정', () => {
-  it('처음에는 아는 것도 켠 것도 없다 — 세션을 봐야 안다', () => {
+describe('the built-in agent settings', () => {
+  it('knows none and has none on until a session says otherwise', () => {
     expect(readSettings({}).knownAgents).toEqual([])
     expect(readSettings({}).stockAgents).toEqual([])
   })
 
-  it('이름이 아닌 것이 섞여 있으면 걸러 낸다', () => {
+  it('filters out anything that is not a name', () => {
     expect(readSettings({ knownAgents: ['Explore', 7, null] }).knownAgents).toEqual(['Explore'])
   })
 
-  it('배열이 아니면 없는 셈 친다', () => {
+  it('treats a non-list as none', () => {
     expect(readSettings({ stockAgents: 'Explore' }).stockAgents).toEqual([])
   })
 })

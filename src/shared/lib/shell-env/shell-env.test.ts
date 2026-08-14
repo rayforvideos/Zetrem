@@ -40,21 +40,21 @@ const HOST_ENV = {
   MallocNanoZone: '0',
 }
 
-describe('agentEnv — 에이전트가 물려받는 환경', () => {
+describe('agentEnv: what an agent inherits', () => {
   const env = agentEnv(HOST_ENV)
 
-  it('사람과 시스템의 것은 남는다', () => {
+  it('keeps what belongs to the person and the system', () => {
     for (const key of ['HOME', 'USER', 'LOGNAME', 'SHELL', 'LANG', 'TMPDIR', 'SSH_AUTH_SOCK']) {
       expect(env[key], key).toBe(HOST_ENV[key as keyof typeof HOST_ENV])
     }
   })
 
-  it('인증과 프록시는 남는다 — 지우면 로그인과 사내망이 끊긴다', () => {
+  it('keeps credentials and proxies, because dropping them breaks sign-in and the office network', () => {
     expect(env.ANTHROPIC_API_KEY).toBe('secret')
     expect(env.HTTPS_PROXY).toBe('http://proxy.local:8080')
   })
 
-  it('이 앱을 띄운 에이전트 호스트의 흔적은 하나도 남지 않는다', () => {
+  it('carries no trace of the agent host that launched this app', () => {
     for (const key of [
       'ORCA_AGENT_HOOK_PORT',
       'ORCA_AGENT_HOOK_TOKEN',
@@ -75,28 +75,28 @@ describe('agentEnv — 에이전트가 물려받는 환경', () => {
     }
   })
 
-  it('띄운 셸의 도구 체인 고정도 남지 않는다 — python 이 2.7 로 돌면 안 된다', () => {
+  it('drops the launching shell toolchain pins, so python does not run as 2.7', () => {
     for (const key of ['PYENV_VERSION', 'PYENV_ROOT', 'NVM_BIN', 'SDKMAN_DIR', 'RBENV_SHELL']) {
       expect(key in env, key).toBe(false)
     }
   })
 
-  it('허용 목록 방식이다 — 모르는 변수는 통과하지 않는다', () => {
+  it('works by allow list, so an unknown variable does not get through', () => {
     expect('SOME_FUTURE_VENDOR_TOKEN' in agentEnv({ SOME_FUTURE_VENDOR_TOKEN: 'x' })).toBe(false)
   })
 
-  it('우리가 정하는 것을 얹는다 — 편집기가 열려 멈추는 일이 없게', () => {
+  it('lays our own settings on top, so no editor opens and blocks', () => {
     expect(env.GIT_EDITOR).toBe('true')
     expect(env.ZETREM).toBe('1')
   })
 
-  it('로그인 셸의 PATH 를 주면 그것을 쓴다 — Finder 로 띄워도 claude 를 찾는다', () => {
+  it('uses the login shell PATH when given one, so claude is found even from Finder', () => {
     const withPath = agentEnv(HOST_ENV, '/opt/homebrew/bin:/usr/bin')
     expect(withPath.PATH).toBe('/opt/homebrew/bin:/usr/bin')
     expect(agentEnv(HOST_ENV).PATH).toBe('/usr/bin:/bin')
   })
 
-  it('빈 값은 담지 않는다 — spawn 이 문자열만 받는다', () => {
+  it('leaves empty values out, because spawn takes strings only', () => {
     expect('HOME' in agentEnv({ HOME: undefined })).toBe(false)
   })
 })

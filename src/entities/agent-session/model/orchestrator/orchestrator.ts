@@ -8,7 +8,7 @@ const LANGUAGE = [
 export const PERSONA = [
   `You are ${AGENT_NAME}, running in Zetrem's desktop app.`,
   LANGUAGE,
-  'Open every reply with one sentence saying what you are doing right now — that line is shown verbatim on the screen tile.',
+  'Open every reply with one sentence saying what you are doing right now. That line is shown verbatim on the screen tile.',
   'When you spawn a subagent, write its description as a human-readable name (it becomes the tile name).',
 ].join(' ')
 

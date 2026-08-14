@@ -4,6 +4,7 @@ export type AgentDef = {
   description: string
   model: string | null
   tools: string[]
+  knowledge: string[]
   prompt: string
   source: 'project' | 'user'
   path: string
@@ -15,5 +16,6 @@ export type AgentDefDraft = {
   description: string
   model: string | null
   tools: string[]
+  knowledge: string[]
   prompt: string
 }

@@ -23,8 +23,8 @@ async function sources(): Promise<Entry[]> {
 const DECLARES_TYPE = /^export (?:type|interface) [A-Za-z]/m
 const DECLARES_LOGIC = /^export (?:async function|function|const|class) /m
 
-describe('타입은 로직과 같은 파일에 살지 않는다', () => {
-  it('한 파일이 타입 선언과 로직을 함께 내보내지 않는다', async () => {
+describe('types do not live in the same file as logic', () => {
+  it('never exports a type declaration and logic from one file', async () => {
     const stray: string[] = []
     for (const entry of await sources()) {
       if (entry.name.endsWith('.types.ts')) continue
@@ -36,7 +36,7 @@ describe('타입은 로직과 같은 파일에 살지 않는다', () => {
     expect(stray, '타입은 <모듈>.types.ts 로 옮긴다').toEqual([])
   })
 
-  it('.types 파일은 값을 내보내지 않는다 — 지워도 런타임이 그대로여야 한다', async () => {
+  it('exports no value from a types file, so deleting it changes nothing that runs', async () => {
     const stray: string[] = []
     for (const entry of await sources()) {
       if (!entry.name.endsWith('.types.ts')) continue
@@ -46,7 +46,7 @@ describe('타입은 로직과 같은 파일에 살지 않는다', () => {
     expect(stray, '값이 필요하면 로직 파일로 간다').toEqual([])
   })
 
-  it('.types 파일 이름은 제 모듈을 따른다', async () => {
+  it('names a types file after its module', async () => {
     const all = await sources()
     const stray: string[] = []
     for (const entry of all) {
@@ -64,8 +64,8 @@ describe('타입은 로직과 같은 파일에 살지 않는다', () => {
   })
 })
 
-describe('레이어 밖에서도 이름은 배럴이 정한다', () => {
-  it('엔티티 배럴은 타입을 .types 에서 내보낸다 — 타입만 쓰는 쪽이 로직에 묶이지 않게', async () => {
+describe('the barrel decides the names the rest of the app sees', () => {
+  it('exports types from the types file, so code that needs a shape is not tied to the code', async () => {
     const stray: string[] = []
     for (const entry of await sources()) {
       if (entry.name !== 'index.ts' || !entry.dir.includes(join('src', 'entities'))) continue

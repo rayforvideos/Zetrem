@@ -12,58 +12,58 @@ const known = {
   settingsOpen: false,
 }
 
-describe('screenGate — 모르는 동안은 어느 화면도 열지 않는다', () => {
-  it('셋을 다 알고 갖춰졌으면 대화를 연다', () => {
+describe('screenGate: while anything is unknown, no screen opens', () => {
+  it('opens the conversation once everything is known and in place', () => {
     expect(screenGate(known)).toBe('conversation')
   })
 
-  it('갖춰지지 않았으면 설정을 연다', () => {
+  it('opens setup when something is missing', () => {
     expect(screenGate({ ...known, setupDone: false })).toBe('setup')
     expect(screenGate({ ...known, loggedIn: false })).toBe('setup')
     expect(screenGate({ ...known, hasProject: false })).toBe('setup')
   })
 
-  it('로그인 상태를 아직 모르면 설정을 열지 않는다 — 그게 새로고침 때의 깜빡임이었다', () => {
+  it('does not open setup while sign-in is still unknown, which was the flash on reload', () => {
     expect(screenGate({ ...known, authKnown: false })).toBe('holding')
   })
 
-  it('프로젝트를 아직 복원 중이면 설정을 열지 않는다', () => {
+  it('does not open setup while the project is still being restored', () => {
     expect(screenGate({ ...known, projectKnown: false, hasProject: false })).toBe('holding')
   })
 
-  it('설정을 아직 읽는 중이면 아무 화면도 열지 않는다', () => {
+  it('opens nothing while settings are still being read', () => {
     expect(screenGate({ ...known, settingsLoaded: false })).toBe('holding')
   })
 
-  it('모름이 하나라도 있으면, 나머지가 갖춰졌든 아니든 기다린다', () => {
+  it('waits on any one unknown, whether or not the rest is ready', () => {
     expect(screenGate({ ...known, authKnown: false, setupDone: false })).toBe('holding')
   })
 
-  it('알고 나면 아니라고 말한다 — 기다림이 영원해지지 않게', () => {
+  it('answers once it knows, so the wait cannot last forever', () => {
     expect(screenGate({ ...known, authKnown: true, loggedIn: false })).toBe('setup')
   })
 })
 
-describe('설정을 다시 열어도 마쳤다는 사실은 남는다', () => {
-  it('설정 화면을 열면 그 화면이 뜬다 — 마쳤다는 사실과 무관하게', () => {
+describe('reopening settings does not undo having finished', () => {
+  it('shows setup when setup is opened, finished or not', () => {
     expect(screenGate({ ...known, settingsOpen: true })).toBe('setup')
   })
 
-  it('닫으면 대화로 돌아간다 — setupDone 을 건드리지 않았으므로', () => {
+  it('goes back to the conversation on close, since setupDone was never touched', () => {
     expect(screenGate({ ...known, settingsOpen: false })).toBe('conversation')
   })
 
-  it('아직 아무것도 모르면 설정 화면보다 기다림이 먼저다', () => {
+  it('waits before showing setup while nothing is known yet', () => {
     expect(screenGate({ ...known, settingsOpen: true, settingsLoaded: false })).toBe('holding')
   })
 })
 
-describe('지난 대화를 아직 못 읽었으면 빈 화면을 보여주지 않는다', () => {
-  it('기다린다 — 빈 대화가 한 번 깜빡였다가 채워지면 지워진 줄 안다', () => {
+describe('an unread history is not shown as an empty screen', () => {
+  it('waits, because an empty chat that fills in later reads as one that was wiped', () => {
     expect(screenGate({ ...known, chatKnown: false })).toBe('holding')
   })
 
-  it('갖춰지지 않은 쪽이 먼저다 — 프로젝트가 없으면 대화를 읽을 것도 없다', () => {
+  it('answers the missing project first, since there is no history without one', () => {
     expect(screenGate({ ...known, chatKnown: false, hasProject: false })).toBe('setup')
   })
 })

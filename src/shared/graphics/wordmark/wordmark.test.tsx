@@ -3,26 +3,26 @@ import { describe, expect, it } from 'vitest'
 import { Wordmark } from './wordmark'
 
 describe('Wordmark', () => {
-  it('색을 스스로 정하지 않는다 — 글자와 같은 규칙 아래 있다', () => {
+  it('picks no colour of its own, and lives under the same rule as text', () => {
     const html = renderToStaticMarkup(<Wordmark width={180} />)
     expect(html).toContain('bg-current')
     expect(html).not.toMatch(/text-(red|amber|yellow|orange|blue|green)-/)
     expect(html).not.toContain('<img')
   })
 
-  it('마스크로 잉크 모양을 얻는다', () => {
+  it('gets its ink shape from a mask', () => {
     const html = renderToStaticMarkup(<Wordmark width={180} />)
     expect(html).toContain('mask-image')
     expect(html).toContain('wordmark')
   })
 
-  it('원본 비율을 지킨다 — 붓글씨는 늘어나면 다른 글씨가 된다', () => {
+  it('holds its aspect ratio, because stretched brushwork is different lettering', () => {
     const html = renderToStaticMarkup(<Wordmark width={720} />)
     expect(html).toContain('width:720px')
     expect(html).toContain('height:298px')
   })
 
-  it('사람이 읽는 이름을 남긴다 — 마스크는 스크린리더에 아무것도 아니다', () => {
+  it('leaves a name a person can read, since a mask is nothing to a screen reader', () => {
     const html = renderToStaticMarkup(<Wordmark width={180} />)
     expect(html).toContain('Zetrem')
   })

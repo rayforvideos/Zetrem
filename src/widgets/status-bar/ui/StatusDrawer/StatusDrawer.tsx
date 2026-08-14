@@ -46,7 +46,7 @@ export function StatusDrawer({ statusState, onUpdate, updating }: StatusDrawerPr
           {known(session.outputStyle) && <Row label="Output style">{session.outputStyle}</Row>}
           <Row label="Fast mode">
             {session.fastMode.state}
-            {session.fastMode.reason ? ` — ${session.fastMode.reason}` : ''}
+            {session.fastMode.reason ? `: ${session.fastMode.reason}` : ''}
           </Row>
           {known(session.apiKeySource) && session.apiKeySource !== 'none' && (
             <Row label="API key">{session.apiKeySource}</Row>
@@ -109,10 +109,10 @@ export function StatusDrawer({ statusState, onUpdate, updating }: StatusDrawerPr
                   <span>
                     {update.current}
                     {update.latest === null
-                      ? ' — could not check for updates'
+                      ? ', could not check for updates'
                       : stale
-                        ? ` — update available: ${update.latest}`
-                        : ' — up to date'}
+                        ? `, update available: ${update.latest}`
+                        : ', up to date'}
                     {update.managedBy ? ` (${update.managedBy})` : ''}
                   </span>
                   {stale && (

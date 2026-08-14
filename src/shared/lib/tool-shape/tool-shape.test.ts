@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest'
 import { resultNote, toolShape } from './tool-shape'
 
-describe('toolShape — 도구를 제 모양으로 읽는다', () => {
-  it('파일을 읽고 쓰는 도구는 경로를 디렉터리와 이름으로 가른다', () => {
+describe('toolShape: reading a tool into its own shape', () => {
+  it('splits a path into a folder and a name', () => {
     expect(toolShape('Read', { file_path: 'src/entities/agent-session/api/claude/status.ts' })).toEqual({
       kind: 'file',
       verb: 'read',
@@ -14,14 +14,14 @@ describe('toolShape — 도구를 제 모양으로 읽는다', () => {
     expect(toolShape('MultiEdit', { file_path: 'a.ts' })).toMatchObject({ verb: 'edit' })
   })
 
-  it('명령은 명령으로 읽는다', () => {
+  it('reads a command as a command', () => {
     expect(toolShape('Bash', { command: 'npm test -- status' })).toEqual({
       kind: 'command',
       command: 'npm test -- status',
     })
   })
 
-  it('찾는 도구는 패턴과 범위를 가른다', () => {
+  it('separates what is searched for from where', () => {
     expect(toolShape('Grep', { pattern: 'childOpen', path: 'src' })).toEqual({
       kind: 'search',
       pattern: 'childOpen',
@@ -30,7 +30,7 @@ describe('toolShape — 도구를 제 모양으로 읽는다', () => {
     expect(toolShape('Glob', { pattern: '**/*.tsx' })).toMatchObject({ kind: 'search', scope: '' })
   })
 
-  it('웹은 주소에서 도메인만 남긴다 — 전체 URL 은 줄을 잡아먹는다', () => {
+  it('keeps only the domain, because a whole URL eats the line', () => {
     expect(toolShape('WebFetch', { url: 'https://registry.npmjs.org/@anthropic-ai/claude-code/latest' })).toEqual({
       kind: 'web',
       label: 'registry.npmjs.org',
@@ -41,11 +41,11 @@ describe('toolShape — 도구를 제 모양으로 읽는다', () => {
     })
   })
 
-  it('망가진 주소는 있는 그대로 둔다 — 파싱에 실패했다고 빈 줄을 내지 않는다', () => {
+  it('leaves a broken address alone rather than showing an empty line', () => {
     expect(toolShape('WebFetch', { url: 'not a url' })).toEqual({ kind: 'web', label: 'not a url' })
   })
 
-  it('서브에이전트는 역할과 받은 일감을 가른다', () => {
+  it('separates who a subagent is from what it was given', () => {
     expect(toolShape('Agent', { subagent_type: 'code-reviewer', description: '리뷰' })).toEqual({
       kind: 'agent',
       subagentType: 'code-reviewer',
@@ -54,39 +54,39 @@ describe('toolShape — 도구를 제 모양으로 읽는다', () => {
     expect(toolShape('Task', { subagent_type: 'Explore' })).toMatchObject({ kind: 'agent' })
   })
 
-  it('할 일 목록은 제 모양이 따로 있다', () => {
+  it('gives a todo list a shape of its own', () => {
     expect(toolShape('TodoWrite', { todos: [] })).toEqual({ kind: 'todo' })
   })
 
-  it('모르는 도구는 이름만 남긴다 — 지어내지 않는다', () => {
+  it('keeps just the name of a tool it does not know', () => {
     expect(toolShape('ScheduleWakeup', { delaySeconds: 60 })).toEqual({
       kind: 'plain',
       name: 'ScheduleWakeup',
     })
   })
 
-  it('입력이 기대한 모양이 아니면 평범한 줄로 물러난다', () => {
+  it('falls back to a plain line when the input is not the expected shape', () => {
     expect(toolShape('Read', null)).toEqual({ kind: 'plain', name: 'Read' })
     expect(toolShape('Bash', { command: 123 })).toEqual({ kind: 'plain', name: 'Bash' })
   })
 })
 
-describe('resultNote — 결과에서 한 조각만 꺼낸다', () => {
-  it('읽은 파일은 줄 수를 센다', () => {
+describe('resultNote: one fact taken out of a result', () => {
+  it('counts the lines of a file that was read', () => {
     const note = resultNote({ kind: 'file', verb: 'read', dir: '', name: 'a.ts' }, '1\n2\n3')
     expect(note).toBe('3 lines')
   })
 
-  it('찾은 것은 적중 수를 센다', () => {
+  it('counts the hits of a search', () => {
     const note = resultNote({ kind: 'search', pattern: 'x', scope: '' }, 'a.ts:1\nb.ts:2')
     expect(note).toBe('2 hits')
   })
 
-  it('아무것도 못 찾으면 그렇게 말한다 — 빈 칸으로 두면 실패인지 성공인지 모른다', () => {
+  it('says so when a search found nothing, because a blank reads as neither', () => {
     expect(resultNote({ kind: 'search', pattern: 'x', scope: '' }, '')).toBe('none')
   })
 
-  it('셀 것이 없는 모양에는 아무 말도 붙이지 않는다', () => {
+  it('adds nothing to a shape with nothing to count', () => {
     expect(resultNote({ kind: 'command', command: 'ls' }, 'a\nb')).toBeNull()
     expect(resultNote({ kind: 'file', verb: 'read', dir: '', name: 'a.ts' }, null)).toBeNull()
   })

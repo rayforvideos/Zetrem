@@ -2,41 +2,41 @@ import { describe, expect, it } from 'vitest'
 import { LAYOUT, MOTION, TILE_MIN_DWELL_MS, staggerDelay } from './motion'
 
 describe('MOTION', () => {
-  it('스펙의 물 문법 값을 그대로 가진다', () => {
+  it('holds the timings the motion rules set', () => {
     expect(MOTION.fanMs).toBe(500)
     expect(MOTION.mergeMs).toBe(400)
     expect(MOTION.staggerMs).toBe(60)
   })
 
-  it('닫힘이 열림보다 빠르다', () => {
+  it('closes faster than it opens', () => {
     expect(MOTION.mergeMs).toBeLessThan(MOTION.fanMs)
   })
 
-  it('이징은 cubic-bezier 하나로 통일돼 있다', () => {
+  it('uses one easing curve everywhere', () => {
     expect(MOTION.easing).toMatch(/^cubic-bezier\(/)
   })
 })
 
 describe('staggerDelay', () => {
-  it('인덱스에 비례해 어긋난다', () => {
+  it('offsets each tile by its place in the row', () => {
     expect(staggerDelay(0)).toBe(0)
     expect(staggerDelay(1)).toBe(60)
     expect(staggerDelay(3)).toBe(180)
   })
 
-  it('마지막 타일이 늦게 시작해도 전체가 전환 시간 안에 끝난다', () => {
+  it('finishes inside the transition even for the last tile to start', () => {
     expect(staggerDelay(5) + MOTION.fanMs).toBeLessThanOrEqual(MOTION.fanMs * 2)
   })
 })
 
 describe('LAYOUT', () => {
-  it('바깥 여백이 0 이 아니다 — 배경이 항상 보여야 한다', () => {
+  it('keeps an outer margin, so the ground is always visible', () => {
     expect(LAYOUT.outerMarginPx).toBeGreaterThan(0)
   })
 })
 
 describe('TILE_MIN_DWELL_MS', () => {
-  it('타일 최소 체류시간은 분할 전환보다 길다 — 태어난 타일은 읽을 수 있어야 한다', () => {
+  it('holds a tile longer than the fan-out lasts, so a new one can be read', () => {
     expect(TILE_MIN_DWELL_MS).toBeGreaterThan(MOTION.fanMs * 2)
   })
 })

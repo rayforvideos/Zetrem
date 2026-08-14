@@ -19,7 +19,7 @@ export type StatusState = {
     ttftMs: number | null
     turns: number
   }
-  limit: RateLimit | null
+  limits: RateLimit[]
   hooks: HookRun[]
   update: UpdateInfo | null
   activity: 'requesting' | 'idle'

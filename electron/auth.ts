@@ -1,8 +1,8 @@
 import { execFile, spawn } from 'node:child_process'
 import { promisify } from 'node:util'
 import type { WebContents } from 'electron'
-import { agentEnv } from '../src/shared/lib/shell-env/shell-env'
-import type { AuthStatus } from '../src/entities/auth'
+import { agentEnv } from '@/shared/lib/shell-env/shell-env'
+import type { AuthStatus } from '@/entities/auth'
 import { claudeBin, loginPath } from './login-path/login-path'
 import { handle } from './ipc/ipc'
 

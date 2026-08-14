@@ -20,6 +20,7 @@ export function parseAgentDef(
   const model = fields.get('model')
   const character = fields.get('character')
   const tools = fields.get('tools') ?? fields.get('allowed-tools')
+  const knowledge = fields.get('knowledge')
 
   return {
     name,
@@ -27,19 +28,44 @@ export function parseAgentDef(
     model: typeof model === 'string' && model.length > 0 ? model : null,
     character: typeof character === 'string' && character.length > 0 ? character : null,
     tools: Array.isArray(tools) ? tools : typeof tools === 'string' ? splitList(tools) : [],
-    prompt: lines.slice(close + 1).join('\n').trim(),
+    knowledge: Array.isArray(knowledge)
+      ? knowledge
+      : typeof knowledge === 'string'
+        ? splitList(knowledge)
+        : [],
+    prompt: ownWords(lines.slice(close + 1).join('\n')),
     source,
     path,
   }
 }
+
+export const READING_MARK = '<!-- zetrem:knowledge -->'
 
 export function toAgentFile(draft: AgentDefDraft): string {
   const head = [FENCE, `name: ${draft.name}`, `description: ${quote(draft.description)}`]
   if (draft.model !== null) head.push(`model: ${draft.model}`)
   if (draft.character !== null) head.push(`character: ${draft.character}`)
   if (draft.tools.length > 0) head.push(`tools: ${draft.tools.join(', ')}`)
+  if (draft.knowledge.length > 0) head.push(`knowledge: ${draft.knowledge.join(', ')}`)
   head.push(FENCE, '')
-  return `${head.join('\n')}${draft.prompt.trim()}\n`
+  return `${head.join('\n')}${draft.prompt.trim()}\n${readingOrder(draft.knowledge)}`
+}
+
+function readingOrder(knowledge: string[]): string {
+  if (knowledge.length === 0) return ''
+  const lines = [
+    '',
+    READING_MARK,
+    'Read these before you start, and work by what they say:',
+    ...knowledge.map((path) => `- ${path}`),
+    '',
+  ]
+  return lines.join('\n')
+}
+
+function ownWords(body: string): string {
+  const mark = body.indexOf(READING_MARK)
+  return (mark === -1 ? body : body.slice(0, mark)).trim()
 }
 
 export function fileNameOf(name: string): string {

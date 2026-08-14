@@ -25,7 +25,7 @@ function session(overrides: Partial<AgentSession> = {}): AgentSession {
 }
 
 describe('AgentTile', () => {
-  it('못 알아본 줄은 원문 그대로 남는다 — 모르는 줄일수록 버리면 안 된다', () => {
+  it('keeps a line it could not read exactly as it came', () => {
     const html = renderToStaticMarkup(
       <AgentTile
         session={session({ stream: ['무언가 이상한 줄 하나'] })}
@@ -37,7 +37,7 @@ describe('AgentTile', () => {
     expect(html).toContain('무언가 이상한 줄 하나')
   })
 
-  it('상태를 점이 아니라 말로 적는다 — 색만으로는 무슨 뜻인지 알 수 없다', () => {
+  it('writes the state in words and not just a dot, because colour alone says nothing', () => {
     const working = renderToStaticMarkup(
       <AgentTile session={session()} rect={rect} delayMs={0} nowMs={0} />,
     )
@@ -48,7 +48,7 @@ describe('AgentTile', () => {
     expect(waiting).toContain('Needs you')
   })
 
-  it('세 층을 모두 그린다', () => {
+  it('draws all three layers', () => {
     const html = renderToStaticMarkup(
       <AgentTile session={session()} rect={rect} delayMs={0} nowMs={5000} />,
     )
@@ -58,7 +58,7 @@ describe('AgentTile', () => {
     expect(html).toContain('Tokens')
   })
 
-  it('사각형을 좌표로 반영한다', () => {
+  it('puts the tile where the rectangle says', () => {
     const html = renderToStaticMarkup(
       <AgentTile session={session()} rect={rect} delayMs={0} nowMs={0} />,
     )
@@ -66,14 +66,14 @@ describe('AgentTile', () => {
     expect(html).toContain('380px')
   })
 
-  it('스태거 지연을 스타일에 싣는다', () => {
+  it('carries the stagger delay in the style', () => {
     const html = renderToStaticMarkup(
       <AgentTile session={session()} rect={rect} delayMs={120} nowMs={0} />,
     )
     expect(html).toContain('120ms')
   })
 
-  it('입력 대기 상태를 표시로 구분한다', () => {
+  it('marks a tile that is waiting on you', () => {
     const waiting = renderToStaticMarkup(
       <AgentTile
         session={session({ status: 'waiting' })}
@@ -86,7 +86,7 @@ describe('AgentTile', () => {
     expect(waiting).toContain('data-status="waiting"')
   })
 
-  it('시선의 주인은 테두리가 밝다 — 움직임이 아니라 밝기로 부른다 (스펙 §6)', () => {
+  it('brightens the border of the tile that has the eye, calling with light and not motion', () => {
     const owner = renderToStaticMarkup(
       <AgentTile
         session={session({ status: 'waiting' })}
@@ -106,7 +106,7 @@ describe('AgentTile', () => {
     expect(owner).not.toContain('animation')
   })
 
-  it('대기 표시는 currentColor 를 쓴다 — 판이 밝아져도 보여야 한다', () => {
+  it('draws the waiting mark in the current colour, so it survives a lighter board', () => {
     const owner = renderToStaticMarkup(
       <AgentTile
         session={session({ status: 'waiting' })}
@@ -120,7 +120,7 @@ describe('AgentTile', () => {
     expect(owner).toContain('border:1px solid currentColor')
   })
 
-  it('시선의 주인은 대화 전문을 펼친다 — 무슨 일을 하는지가 화면의 핵심이다', () => {
+  it('opens the transcript on the tile that has the eye', () => {
     const long = '어느 파일의 테스트를 고칠까요? '.repeat(20).trim()
     const html = renderToStaticMarkup(
       <AgentTile
@@ -143,7 +143,7 @@ describe('AgentTile', () => {
     expect(html).toContain(long)
   })
 
-  it('전문이 펼쳐지면 1층 요약은 물러난다 — 같은 말이 두 번 보이면 안 된다', () => {
+  it('drops the headline when the transcript opens, so nothing is said twice', () => {
     const html = renderToStaticMarkup(
       <AgentTile
         session={session({
@@ -162,7 +162,7 @@ describe('AgentTile', () => {
     expect(html.match(/어느 테스트인가요\?/g)).toHaveLength(1)
   })
 
-  it('시선의 주인이 아니면 전문을 펼치지 않는다', () => {
+  it('leaves the transcript closed on every other tile', () => {
     const html = renderToStaticMarkup(
       <AgentTile
         session={session({
@@ -178,7 +178,7 @@ describe('AgentTile', () => {
     expect(html).not.toContain('data-transcript')
   })
 
-  it('작업 중에도 시선의 주인이면 전문을 펼친다 — 관측기에는 답할 대기가 없다', () => {
+  it('opens the transcript for the tile with the eye even while it works', () => {
     const html = renderToStaticMarkup(
       <AgentTile
         session={session({
@@ -195,7 +195,7 @@ describe('AgentTile', () => {
     expect(html).toContain('data-transcript')
   })
 
-  it('타일이 열릴 때 판 위에 무엇도 덧칠하지 않는다 — 자리로 오는 것이 전부다', () => {
+  it('paints nothing over the board as a tile opens; arriving is the whole effect', () => {
     const sweeping = renderToStaticMarkup(
       <AgentTile session={session()} rect={rect} delayMs={0} nowMs={0} sweeping />,
     )
@@ -203,14 +203,14 @@ describe('AgentTile', () => {
     expect(sweeping).not.toContain('radial-gradient')
   })
 
-  it('계기는 타일 바닥에 붙어 마지막에 온다 — 흐름 아래에 받침이 있어야 한다', () => {
+  it('puts the gauge last, at the foot of the tile, as a base under the stream', () => {
     const html = renderToStaticMarkup(
       <AgentTile session={session()} rect={rect} delayMs={0} nowMs={5000} />,
     )
     expect(html.indexOf('data-gauge')).toBeGreaterThan(html.indexOf('data-stream'))
   })
 
-  it('계기가 실제로 보인다 — 덮는 판 뒤에 그리지 않는다', () => {
+  it('actually shows the gauge, rather than drawing it behind a panel', () => {
     const html = renderToStaticMarkup(
       <AgentTile session={session()} rect={rect} delayMs={0} nowMs={5000} />,
     )
@@ -218,7 +218,7 @@ describe('AgentTile', () => {
     expect(html).not.toContain('data-behind')
   })
 
-  it('닫히는 타일은 흐려지며 병합 시간으로 움직인다', () => {
+  it('fades a closing tile and moves it on the merge timing', () => {
     const html = renderToStaticMarkup(
       <AgentTile session={session()} rect={rect} delayMs={0} nowMs={0} closing />,
     )
@@ -227,7 +227,7 @@ describe('AgentTile', () => {
     expect(html).toContain(`transform ${MOTION.mergeMs}ms`)
   })
 
-  it('닫히지 않는 타일은 불투명하고 분할 시간으로 움직인다', () => {
+  it('keeps an open tile solid and moves it on the fan timing', () => {
     const html = renderToStaticMarkup(
       <AgentTile session={session()} rect={rect} delayMs={0} nowMs={0} />,
     )
@@ -236,14 +236,14 @@ describe('AgentTile', () => {
     expect(html).toContain(`transform ${MOTION.fanMs}ms`)
   })
 
-  it('래퍼에 will-change 를 걸지 않는다 — 없는 합성 층을 미리 만들지 않는다', () => {
+  it('sets no will-change, so no compositing layer is made in advance', () => {
     const html = renderToStaticMarkup(
       <AgentTile session={session()} rect={rect} delayMs={0} nowMs={0} />,
     )
     expect(html).not.toContain('will-change')
   })
 
-  it('전환 중에는 2층을 멈춘다 — 움직임은 한 번에 하나만', () => {
+  it('holds the stream still during a transition, so only one thing moves at a time', () => {
     const html = renderToStaticMarkup(
       <AgentTile session={session()} rect={rect} delayMs={0} nowMs={0} sweeping />,
     )

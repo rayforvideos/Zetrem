@@ -15,8 +15,8 @@ function deck(): string {
   )
 }
 
-describe('창틀 자리 — 신호등 위에 내용을 그리지 않는다', () => {
-  it('한 장짜리 판은 신호등이 끝나는 아래에서 시작한다', () => {
+describe('window chrome: nothing is drawn over the traffic lights', () => {
+  it('starts the single board below where the traffic lights end', () => {
     const html = deck()
     const at = html.indexOf('padding-top:')
     expect(at).toBeGreaterThan(-1)
@@ -24,7 +24,7 @@ describe('창틀 자리 — 신호등 위에 내용을 그리지 않는다', () 
     expect(value).toBeGreaterThanOrEqual(TRAFFIC_LIGHT.y + TRAFFIC_LIGHT.size + 8)
   })
 
-  it('비워 두는 높이는 신호등 자리에서 나온다 — 숫자를 따로 적어 두지 않는다', () => {
+  it('derives the height it leaves clear from the traffic lights, rather than a written number', () => {
     expect(CHROME_TOP).toBeGreaterThanOrEqual(TRAFFIC_LIGHT.y + TRAFFIC_LIGHT.size)
   })
 })

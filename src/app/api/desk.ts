@@ -1,6 +1,7 @@
 import type { AgentDef, AgentDefDraft } from '@/entities/agent-def'
 import type { RunConfig, Settings } from '@/entities/agent-session'
 import type { ChatSummary, Transcript } from '@/entities/conversation'
+import type { Catalog, Marketplace, PluginRun, PluginVerb } from '@/entities/plugin'
 import type { AuthStatus } from '@/entities/auth'
 export type AgentHostEvent =
   | { id: string; kind: 'line'; line: string }
@@ -13,6 +14,10 @@ export type DeskBridge = {
   startAgent(id: string, prompt: string, config: RunConfig): Promise<void>
   readSettings(): Promise<Settings>
   writeSettings(next: Settings): Promise<Settings>
+  pickKnowledge(): Promise<string[]>
+  pluginCatalog(): Promise<Catalog>
+  marketplaces(): Promise<Marketplace[]>
+  pluginAct(verb: PluginVerb, target: string): Promise<PluginRun>
   listChats(project: string): Promise<ChatSummary[]>
   readTranscript(project: string, id: string): Promise<Transcript | null>
   writeTranscript(project: string, saved: Transcript): Promise<void>
@@ -29,6 +34,8 @@ export type DeskBridge = {
   stopAgent(id: string): void
   respondPermission(id: string, requestId: string, result: unknown): void
   onAgentEvent(listener: (event: AgentHostEvent) => void): () => void
+  probeSession(config: Omit<RunConfig, 'persona'>): Promise<string | null>
+  sessionUsage(): Promise<string | null>
   latestCliVersion(): Promise<{
     installed: string | null
     latest: string | null

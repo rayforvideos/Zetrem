@@ -13,35 +13,35 @@ function person(overrides: Partial<Parameters<typeof peopleSpec>[0][number]> = {
   }
 }
 
-describe('peopleSpec — 앱이 들인 사람을 세션에 실어 보낸다', () => {
-  it('이름·설명·지시·모델을 그대로 싣는다', () => {
+describe('peopleSpec: handing the people we hired to the session', () => {
+  it('carries the name, description, brief and model as they are', () => {
     expect(peopleSpec([person()])).toEqual({
       scout: { description: '찾아본다', prompt: '당신은 찾습니다.', model: 'haiku' },
     })
   })
 
-  it('모델을 안 정한 사람은 그 칸을 비워 보낸다 — 빈 값을 지어내지 않는다', () => {
+  it('leaves the model out for someone with none, rather than inventing one', () => {
     expect(peopleSpec([person({ model: null })]).scout).not.toHaveProperty('model')
   })
 
-  it('설명이 없으면 이름으로 대신한다 — CLI 는 설명으로 사람을 고른다', () => {
+  it('falls back to the name as the description, which is what the CLI chooses on', () => {
     expect(peopleSpec([person({ description: '' })]).scout?.description).toBe('scout')
   })
 
-  it('지시가 없는 사람은 싣지 않는다 — 실려도 CLI 가 버린다', () => {
+  it('leaves out someone with no brief, since the CLI would drop them anyway', () => {
     expect(peopleSpec([person({ prompt: '   ' })])).toEqual({})
   })
 })
 
-describe('agentsArgs — 잠금은 세션 주 에이전트로 표현된다', () => {
-  it('잠그지 않으면 사람만 싣고 주 에이전트는 건드리지 않는다', () => {
+describe('agentsArgs: the lock is expressed as the session main agent', () => {
+  it('sends the people and leaves the main agent alone when not locking', () => {
     const args = agentsArgs([person()], null, boss)
     expect(args[0]).toBe('--agents')
     expect(args).not.toContain('--agent')
     expect(JSON.parse(args[1] as string)).not.toHaveProperty(ORCHESTRATOR)
   })
 
-  it('잠그면 우리 오케스트레이터를 세우고 부를 사람을 좁힌다', () => {
+  it('stands up our orchestrator and narrows who it may call', () => {
     const args = agentsArgs([person(), person({ name: 'reviewer' })], { knownTools: ['Read', 'Task'], alsoCallable: [] }, boss)
     const spec = JSON.parse(args[1] as string)
     expect(spec[ORCHESTRATOR].tools).toEqual(['Read', 'Agent(scout, reviewer)'])
@@ -49,12 +49,12 @@ describe('agentsArgs — 잠금은 세션 주 에이전트로 표현된다', () 
     expect(args.slice(2)).toEqual(['--agent', ORCHESTRATOR])
   })
 
-  it('아는 도구가 없으면 잠그지 않는다 — 잠그면 도구를 전부 잃는다', () => {
+  it('does not lock without a known tool list, because locking would take every tool away', () => {
     const args = agentsArgs([person()], { knownTools: [], alsoCallable: [] }, boss)
     expect(args).not.toContain('--agent')
   })
 
-  it('들인 사람이 없으면 아무 인자도 넘기지 않는다', () => {
+  it('passes nothing when nobody was hired', () => {
     expect(agentsArgs([], { knownTools: ['Read'], alsoCallable: [] }, boss)).toEqual([])
   })
 })

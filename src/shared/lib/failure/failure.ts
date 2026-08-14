@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react'
+import { useState } from 'react'
 import type { Failure } from './failure.types'
 
 const REMOTE_PREFIX = /^Error invoking remote method '[^']*':\s*/
@@ -14,10 +14,14 @@ export function useFailure(): {
   report(what: string): (cause: unknown) => void
 } {
   const [failure, setFailure] = useState<Failure | null>(null)
-  const clear = useCallback(() => setFailure(null), [])
-  const report = useCallback(
-    (what: string) => (cause: unknown) => setFailure({ what, why: reasonOf(cause) }),
-    [],
-  )
+
+  function clear(): void {
+    setFailure(null)
+  }
+
+  function report(what: string) {
+    return (cause: unknown): void => setFailure({ what, why: reasonOf(cause) })
+  }
+
   return { failure, clear, report }
 }

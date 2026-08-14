@@ -54,6 +54,17 @@ export function agentArgs(config: RunConfig): string[] {
   return args
 }
 
+export const PROBE_PROMPT = 'hi'
+export const PROBE_BUDGET_USD = '0.0001'
+
+export function probeArgs(config: RunConfig): string[] {
+  const args = agentArgs({ ...config, resume: null })
+  const format = args.indexOf('--input-format')
+  if (format !== -1) args.splice(format, 2)
+  args.splice(args.indexOf('-p') + 1, 0, PROBE_PROMPT)
+  return [...args, '--max-budget-usd', PROBE_BUDGET_USD]
+}
+
 export function isReady(state: { loggedIn: boolean; project: string | null }): boolean {
   return state.loggedIn && state.project !== null
 }

@@ -16,8 +16,8 @@ function channels(text: string, call: string): string[] {
   return found.map((match) => match[1] as string)
 }
 
-describe('IPC 다리 — 한쪽에만 있는 채널은 눌러도 아무 일이 없다', () => {
-  it('렌더러가 부르는 채널은 모두 메인이 받는다', async () => {
+describe('the IPC bridge: a channel on one side only does nothing when pressed', () => {
+  it('has the main process answer every channel the renderer calls', async () => {
     const files = await sources()
     const preload = files.find((file) => file.name === 'preload.ts')
     expect(preload).toBeDefined()
@@ -37,7 +37,7 @@ describe('IPC 다리 — 한쪽에만 있는 채널은 눌러도 아무 일이 �
     expect(orphans, '메인이 받지 않는 채널').toEqual([])
   })
 
-  it('메인이 받는 채널은 렌더러가 닿을 수 있다 — 아무도 안 부르는 다리는 죽은 코드다', async () => {
+  it('lets the renderer reach every channel main answers, since a bridge nobody crosses is dead code', async () => {
     const files = await sources()
     const preload = files.find((file) => file.name === 'preload.ts')?.text ?? ''
     const asked = [

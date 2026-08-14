@@ -4,23 +4,23 @@ import { canFind, commandNames, findCommand } from './login-path'
 
 const windows = process.platform === 'win32'
 
-describe('claude 를 찾는 규칙은 기계마다 다르다', () => {
-  it('맥·리눅스에서는 이름 그대로 찾는다', () => {
+describe('finding claude works differently on each machine', () => {
+  it('looks for the plain name on macOS and Linux', () => {
     if (windows) return
     expect(commandNames('claude')).toEqual(['claude'])
   })
 
-  it('PATH 는 그 기계의 구분자로 쪼갠다 — 맥은 :, 윈도우는 ;', () => {
+  it('splits PATH on the separator that machine uses', () => {
     const dirs = ['/nowhere-a', '/nowhere-b'].join(delimiter)
     expect(findCommand('definitely-not-a-real-binary', dirs)).toBeNull()
     expect(canFind('definitely-not-a-real-binary', dirs)).toBe(false)
   })
 
-  it('빈 칸은 건너뛴다 — PATH 끝의 구분자가 현재 폴더를 뒤지게 두지 않는다', () => {
+  it('skips an empty entry, so a trailing separator does not search the current folder', () => {
     expect(findCommand('claude', delimiter + delimiter)).toBeNull()
   })
 
-  it('찾으면 절대 경로를 준다 — 이름만 넘기면 윈도우가 못 띄운다', () => {
+  it('gives back an absolute path, because a bare name will not launch on Windows', () => {
     const found = findCommand(windows ? 'cmd' : 'sh', process.env.PATH ?? '')
     expect(found, '이 기계에 기본 셸은 있어야 한다').not.toBeNull()
     expect(found).toContain(windows ? 'cmd' : 'sh')

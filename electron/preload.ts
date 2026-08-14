@@ -14,6 +14,11 @@ contextBridge.exposeInMainWorld('desk', {
     ipcRenderer.invoke('agents:replace', draft, previousName),
   readSettings: (): Promise<unknown> => ipcRenderer.invoke('settings:read'),
   writeSettings: (next: unknown): Promise<unknown> => ipcRenderer.invoke('settings:write', next),
+  pickKnowledge: (): Promise<unknown> => ipcRenderer.invoke('agents:pickKnowledge'),
+  pluginCatalog: (): Promise<unknown> => ipcRenderer.invoke('plugins:catalog'),
+  marketplaces: (): Promise<unknown> => ipcRenderer.invoke('plugins:marketplaces'),
+  pluginAct: (verb: string, target: string): Promise<unknown> =>
+    ipcRenderer.invoke('plugins:act', verb, target),
   listChats: (project: string): Promise<unknown> => ipcRenderer.invoke('transcript:list', project),
   readTranscript: (project: string, id: string): Promise<unknown> =>
     ipcRenderer.invoke('transcript:read', project, id),
@@ -37,6 +42,8 @@ contextBridge.exposeInMainWorld('desk', {
     ipcRenderer.on('agent:event', handler)
     return () => ipcRenderer.removeListener('agent:event', handler)
   },
+  probeSession: (config: unknown): Promise<unknown> => ipcRenderer.invoke('session:probe', config),
+  sessionUsage: (): Promise<unknown> => ipcRenderer.invoke('session:usage'),
   latestCliVersion: (): Promise<unknown> => ipcRenderer.invoke('cli:latest'),
   runCliUpdate: (): Promise<unknown> => ipcRenderer.invoke('cli:update'),
 })

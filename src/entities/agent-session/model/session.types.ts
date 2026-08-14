@@ -21,6 +21,8 @@ export type AgentSession = {
   tokens: number
   contextUsed: number
   startedAtMs: number
+  detached?: boolean
+  lastSeenAtMs?: number
   endedAtMs?: number
   waitingSinceMs?: number
   outcome?: WorkOutcome | null

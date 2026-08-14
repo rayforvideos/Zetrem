@@ -8,7 +8,6 @@ export const DEFAULT_SETTINGS: Settings = {
   permissionMode: 'ask',
   model: 'default',
   setupDone: false,
-  onlyOurAgents: true,
   knownTools: [],
   knownAgents: [],
   stockAgents: [],
@@ -40,7 +39,6 @@ export function readSettings(saved: unknown): Settings {
       ? (source.model as ModelChoice)
       : DEFAULT_SETTINGS.model,
     setupDone: source.setupDone === true,
-    onlyOurAgents: source.onlyOurAgents !== false,
     knownTools: names(source.knownTools, DEFAULT_SETTINGS.knownTools),
     knownAgents: names(source.knownAgents, DEFAULT_SETTINGS.knownAgents),
     stockAgents: names(source.stockAgents, DEFAULT_SETTINGS.stockAgents),

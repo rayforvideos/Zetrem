@@ -6,35 +6,35 @@ async function css(): Promise<string> {
   return readFile(join('src', 'app', 'styles', 'global.css'), 'utf8')
 }
 
-describe('네이티브 앱처럼 군다', () => {
-  it('누를 수 있는 것에는 손가락 커서가 선다 — Tailwind v4 는 이것을 주지 않는다', async () => {
+describe('it behaves like a native app', () => {
+  it('puts a pointer cursor on anything pressable, which Tailwind v4 does not do for us', async () => {
     const text = await css()
     const rule = text.slice(text.indexOf('button,'), text.indexOf('cursor: pointer'))
     expect(rule, '버튼과 메뉴·스위치·탭이 한 규칙에 묶여야 한다').toContain("[role='switch']")
     expect(text).toContain('cursor: pointer')
   })
 
-  it('막힌 것은 손가락을 내린다 — 눌리지 않는데 눌릴 것처럼 보이면 거짓말이다', async () => {
+  it('takes the pointer off what cannot be pressed, since looking pressable would be a lie', async () => {
     expect(await css()).toMatch(/button:disabled[^}]*cursor: default/s)
   })
 
-  it('판때기는 끌리지 않는다 — 글자는 읽을 자리에서만 잡힌다', async () => {
+  it('does not let the surface be dragged, and only lets text be selected where it is read', async () => {
     const text = await css()
     expect(text).toMatch(/body\s*\{[^}]*user-select: none/s)
     expect(text).toMatch(/\[data-selectable\][^{]*\{[^}]*user-select: text/s)
   })
 
-  it('고무줄 스크롤로 창 밖이 드러나지 않는다', async () => {
+  it('does not bounce the window and show what is behind it', async () => {
     expect(await css()).toContain('overscroll-behavior: none')
   })
 
-  it('그림과 워드마크를 창 밖으로 끌어낼 수 없다', async () => {
+  it('does not let images or the wordmark be dragged out of the window', async () => {
     expect(await css()).toContain('-webkit-user-drag: none')
   })
 })
 
-describe('읽을 것은 잡히고 나머지는 잡히지 않는다', () => {
-  it('대화·보고서·세션 명세에만 data-selectable 이 붙는다', async () => {
+describe('what is meant to be read can be selected, and nothing else', () => {
+  it('marks only the conversation, the report and the session details as selectable', async () => {
     const marked: string[] = []
     async function walk(dir: string): Promise<void> {
       for (const entry of await readdir(dir, { withFileTypes: true })) {

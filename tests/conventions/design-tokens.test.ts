@@ -29,8 +29,8 @@ async function ourFiles(): Promise<{ path: string; text: string }[]> {
   return out
 }
 
-describe('눈금은 shadcn 이 쥔다 — 우리가 칸을 새로 파지 않는다', () => {
-  it('임의 픽셀 글자 크기를 쓰지 않는다 — Tailwind 스케일을 쓴다', async () => {
+describe('shadcn holds the ruler, and we do not cut new notches', () => {
+  it('uses the Tailwind scale instead of a pixel size of its own', async () => {
     const stray: string[] = []
     for (const file of await ourFiles()) {
       for (const match of file.text.matchAll(/text-\[[0-9.]+(?:px|rem)\]/g)) {
@@ -40,7 +40,7 @@ describe('눈금은 shadcn 이 쥔다 — 우리가 칸을 새로 파지 않는�
     expect(stray, 'text-xs · text-sm · text-base 를 쓴다').toEqual([])
   })
 
-  it('밝기를 손으로 깎지 않는다 — 색은 시맨틱 토큰이 정한다', async () => {
+  it('does not carve brightness by hand, and lets the tokens set colour', async () => {
     const stray: string[] = []
     for (const file of await ourFiles()) {
       if (file.path.includes('agent-face')) continue
@@ -53,7 +53,7 @@ describe('눈금은 shadcn 이 쥔다 — 우리가 칸을 새로 파지 않는�
     expect(stray, 'text-muted-foreground 처럼 뜻이 있는 토큰을 쓴다').toEqual([])
   })
 
-  it('색을 직접 들이지 않는다 — 얼굴 말고는 무채색이다', async () => {
+  it('brings in no colour of its own, since only the faces have any', async () => {
     const PALETTE =
       /(?:^|[\s"'`:])(?:bg|text|border|ring|fill|stroke)-(?:red|orange|amber|yellow|lime|green|emerald|teal|cyan|sky|blue|indigo|violet|purple|fuchsia|pink|rose)-\d{2,3}/g
     const stray: string[] = []

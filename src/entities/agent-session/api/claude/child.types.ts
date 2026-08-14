@@ -10,4 +10,11 @@ export type ChildTurnEvent =
   | { type: 'childSay'; toolUseId: string; role: 'user' | 'assistant'; text: string }
   | { type: 'childStream'; toolUseId: string; line: string }
   | { type: 'childClosed'; toolUseId: string; error?: string }
-  | { type: 'childNotified'; toolUseId: string; summary: string }
+  | { type: 'childNotified'; toolUseId: string; summary: string; done: boolean }
+  | {
+      type: 'childProgress'
+      toolUseId: string
+      doing: string
+      lastTool: string
+      tokens: number
+    }

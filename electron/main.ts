@@ -1,11 +1,13 @@
-import { resolve } from 'node:path'
+import { relative, resolve } from 'node:path'
 import { BrowserWindow, app, dialog, session, shell } from 'electron'
-import { CHROME_TOP, CONTROL_SYMBOL, GROUND, TRAFFIC_LIGHT } from '../src/shared/config/theme'
+import { CHROME_TOP, CONTROL_SYMBOL, GROUND, TRAFFIC_LIGHT } from '@/shared/config/theme'
 import { killAllAgents, registerAgentHost } from './agent-host'
 import { registerAgentDefs } from './agent-defs'
 import { registerAuth } from './auth'
 import { registerCliVersion } from './cli-version'
+import { registerPlugins } from './plugins'
 import { registerSettingsStore } from './settings-store'
+import { registerSessionProbe } from './session-probe'
 import { registerTranscriptStore } from './transcript-store'
 import { recallProject, rememberProject } from './project-memory'
 import { handle } from './ipc/ipc'
@@ -79,6 +81,17 @@ handle('project:pick', async () => {
 
 handle('project:restore', () => recallProject())
 
+handle('agents:pickKnowledge', async (): Promise<string[]> => {
+  const project = await recallProject()
+  const result = await dialog.showOpenDialog({
+    properties: ['openFile', 'multiSelections'],
+    defaultPath: project ?? undefined,
+    filters: [{ name: 'Notes', extensions: ['md', 'mdx', 'txt', 'json', 'yaml', 'yml'] }],
+  })
+  if (result.canceled) return []
+  return result.filePaths.map((path) => (project ? relative(project, path) : path))
+})
+
 const primary = app.requestSingleInstanceLock()
 if (!primary) {
   app.quit()
@@ -96,7 +109,9 @@ if (!primary) {
   registerAgentDefs()
   registerCliVersion()
   registerSettingsStore()
+  registerSessionProbe()
   registerTranscriptStore()
+  registerPlugins()
 
   app.whenReady().then(() => {
     session.defaultSession.setPermissionRequestHandler((_contents, _permission, grant) => grant(false))

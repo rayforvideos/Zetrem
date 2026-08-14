@@ -176,7 +176,7 @@ export function ConversationPane({
               selected={model}
               onSelect={(id) => onModel(id as ModelChoice)}
               label="Model"
-              note={sessionLive ? 'Running session keeps its model — applies from the next one' : null}
+              note={sessionLive ? 'The running session keeps its model. This applies from the next one.' : null}
             />
             <div className="ml-auto flex items-center gap-2">
               <KbdGroup>

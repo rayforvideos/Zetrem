@@ -1,6 +1,7 @@
 import { renderToStaticMarkup } from 'react-dom/server'
 import { describe, expect, it } from 'vitest'
 import { TeamSidebar } from './TeamSidebar'
+import type { StatusState } from '@/entities/agent-session'
 import type { TeamMember } from '../../lib/team/team.types'
 import { SIDEBAR } from '@/shared/config/theme'
 
@@ -8,7 +9,7 @@ function member(overrides: Partial<TeamMember> = {}): TeamMember {
   return {
     type: 'code-reviewer',
     name: 'code-reviewer',
-    description: '고친 자리를 본다',
+    description: 'Looks at what changed',
     model: 'sonnet',
     character: null,
     origin: 'project',
@@ -21,6 +22,23 @@ function member(overrides: Partial<TeamMember> = {}): TeamMember {
   }
 }
 
+const IDLE: StatusState = {
+  session: null,
+  context: { used: 0, window: null },
+  cost: {
+    usd: 0,
+    lastTurnUsd: 0,
+    tokens: { in: 0, out: 0, cacheRead: 0, cacheCreate: 0 },
+    durationMs: 0,
+    ttftMs: null,
+    turns: 0,
+  },
+  limits: [],
+  hooks: [],
+  update: null,
+  activity: 'idle',
+}
+
 function bar(props: Partial<Parameters<typeof TeamSidebar>[0]> = {}): string {
   return renderToStaticMarkup(
     <TeamSidebar
@@ -28,6 +46,10 @@ function bar(props: Partial<Parameters<typeof TeamSidebar>[0]> = {}): string {
       sessionKnown={false}
       canWrite
       note={null}
+      knownTools={[]}
+      status={IDLE}
+      sessionLive={false}
+      onRestart={() => {}}
       stock={[]}
       stockOn={[]}
       onStock={() => {}}
@@ -51,12 +73,21 @@ function bar(props: Partial<Parameters<typeof TeamSidebar>[0]> = {}): string {
   )
 }
 
-describe('TeamSidebar — 눌렀는데 아무 일도 안 일어나면 안 된다', () => {
-  it('들인 결과든 실패든 화면에 남는다', () => {
-    expect(bar({ note: 'Restart Zetrem' })).toContain('Restart Zetrem')
+describe('TeamSidebar: pressing something always does something', () => {
+  it('leaves the outcome on screen, whether it worked or not', () => {
+    expect(bar({ note: { kind: 'trouble', text: 'Restart Zetrem' } })).toContain('Restart Zetrem')
+    expect(bar({ note: { kind: 'created', name: 'Nova' } })).toContain('Nova is ready')
   })
 
-  it('프로젝트가 없으면 들이기 자체가 잠기고 이유를 단다', () => {
+  it('offers the restart button while a session runs, instead of only mentioning it', () => {
+    const live = bar({ note: { kind: 'created', name: 'Nova' }, sessionLive: true })
+    expect(live).toContain('Restart session')
+    expect(bar({ note: { kind: 'created', name: 'Nova' }, sessionLive: false })).not.toContain(
+      'Restart session',
+    )
+  })
+
+  it('locks hiring without a project and says why', () => {
     const html = bar({ canWrite: false })
     const button = html.slice(html.lastIndexOf('<button', html.indexOf('>Add teammate<')))
     expect(button).toContain('disabled=""')
@@ -68,19 +99,19 @@ describe('TeamSidebar — 눌렀는데 아무 일도 안 일어나면 안 된다
     return html.slice(at, html.indexOf('>', html.indexOf('data-member=')))
   }
 
-  it('세션이 아직 없으면 아무도 흐리지 않는다 — 모른다를 아니다로 읽지 않는다', () => {
+  it('dims nobody before a session exists, since unknown is not no', () => {
     expect(memberRow(bar())).toContain('text-foreground')
     expect(memberRow(bar({ sessionKnown: true }))).toContain('text-muted-foreground')
   })
 
-  it('세션이 아는 사람은 세션이 있어도 선명하다', () => {
+  it('keeps someone the session knows at full strength', () => {
     const html = bar({ sessionKnown: true, members: [member({ loaded: true, callable: true })] })
     expect(memberRow(html)).toContain('text-foreground')
   })
 })
 
-describe('명단의 이름은 눌리는 자리다', () => {
-  it('일하는 사람을 누르면 한 일을 본다', () => {
+describe('a name on the roster is something you can press', () => {
+  it('opens the report when you press someone who is working', () => {
     const html = bar({ members: [member({ state: 'working', sessionId: 's1' })] })
     const at = html.lastIndexOf('<button', html.indexOf('data-member='))
     const button = html.slice(at, html.indexOf('</button>', at))
@@ -88,14 +119,14 @@ describe('명단의 이름은 눌리는 자리다', () => {
     expect(button).not.toContain('disabled="')
   })
 
-  it('놀고 있는 사람을 누르면 그 사람에게 맡긴다', () => {
+  it('addresses the next task to someone who is idle', () => {
     const html = bar({ sessionKnown: true, members: [member({ loaded: true, callable: true })] })
     const at = html.lastIndexOf('<button', html.indexOf('data-member='))
     const button = html.slice(at, html.indexOf('</button>', at))
     expect(button).toContain('Give them a task')
   })
 
-  it('이번 세션이 모르는 사람은 누를 수 없다 — 불러도 오지 않는다', () => {
+  it('cannot press someone this session does not know, since calling would not reach them', () => {
     const html = bar({ sessionKnown: true, members: [member({ loaded: false })] })
     const at = html.lastIndexOf('<button', html.indexOf('data-member='))
     const button = html.slice(at, html.indexOf('</button>', at))
@@ -104,13 +135,13 @@ describe('명단의 이름은 눌리는 자리다', () => {
   })
 })
 
-describe('들인 사람은 내보낼 수도 있다', () => {
-  it('행마다 더보기가 서고 그 사람의 이름을 단다', () => {
+describe('someone you hired can be let go', () => {
+  it('gives each row a menu named after that person', () => {
     const html = bar({ members: [member({ name: 'code-reviewer' })] })
     expect(html).toContain('More for code-reviewer')
   })
 
-  it('평소엔 보이지 않는다 — 실수로 누를 일이 없게', () => {
+  it('keeps the menu out of sight until wanted, so it is not pressed by accident', () => {
     const html = bar()
     const at = html.indexOf('More for')
     const button = html.slice(html.lastIndexOf('<button', at), at)
@@ -118,20 +149,21 @@ describe('들인 사람은 내보낼 수도 있다', () => {
   })
 })
 
-describe('들인 사람은 고칠 수도 있다', () => {
-  it('더보기에 고치기와 내보내기가 함께 선다', () => {
+describe('someone you hired can be edited', () => {
+  it('puts edit and remove in the same menu', () => {
     const html = bar({ members: [member({ name: 'code-reviewer' })] })
     expect(html).toContain('More for code-reviewer')
   })
 
-  it('고치기를 열면 그 사람이 쓴 값이 이미 들어 있다', () => {
+  it('opens the editor already filled with what that person is', () => {
     const draft = {
       name: 'code-reviewer',
-      description: '고친 자리를 본다',
+      description: 'Looks at what changed',
       model: 'sonnet',
       character: 'ghost',
       tools: [],
-      prompt: '무엇을 어떻게',
+      knowledge: [],
+      prompt: 'What, and how',
     }
     const html = renderToStaticMarkup(
       <TeamSidebar
@@ -139,6 +171,10 @@ describe('들인 사람은 고칠 수도 있다', () => {
         sessionKnown={false}
         canWrite
         note={null}
+        knownTools={[]}
+        status={IDLE}
+        sessionLive={false}
+        onRestart={() => {}}
         stock={[]}
       stockOn={[]}
       onStock={() => {}}
@@ -163,8 +199,8 @@ describe('들인 사람은 고칠 수도 있다', () => {
   })
 })
 
-describe('잠긴 세션은 그렇게 말한다', () => {
-  it('부를 수 없는 사람은 눌리지 않고 이유가 붙는다', () => {
+describe('a locked session says so', () => {
+  it('leaves someone uncallable unpressable, with the reason attached', () => {
     const html = bar({
       sessionKnown: true,
       members: [member({ loaded: true, callable: false })],
@@ -173,5 +209,58 @@ describe('잠긴 세션은 그렇게 말한다', () => {
     const button = html.slice(at, html.indexOf('</button>', at))
     expect(button).toContain('disabled=""')
     expect(button).toContain('Not available this session')
+  })
+})
+
+describe('the sidebar foot says what has been spent', () => {
+  it('says why it is empty rather than vanishing, so the panel can be found', () => {
+    const html = bar()
+    expect(html).toContain('data-usage')
+    expect(html).toContain('once a chat is under way')
+  })
+
+  it('shows the weekly account limit as a share used', () => {
+    const html = bar({
+      status: {
+        ...IDLE,
+        limits: [
+          {
+            kind: 'seven_day',
+            utilization: 0.5,
+            resetsAtMs: 1787173200000,
+            overage: false,
+            status: 'allowed',
+          },
+        ],
+      },
+    })
+    expect(html).toContain('data-usage')
+    expect(html).toContain('Weekly')
+    expect(html).toContain('50%')
+  })
+
+  it('shows how much of the context window this chat holds', () => {
+    const html = bar({ status: { ...IDLE, context: { used: 40_000, window: 200_000 } } })
+    expect(html).toContain('This chat')
+    expect(html).toContain('20%')
+  })
+
+  it('marks a limit that needs attention by weight and not by colour', () => {
+    const html = bar({
+      status: {
+        ...IDLE,
+        limits: [
+          {
+            kind: 'five_hour',
+            utilization: 0.95,
+            resetsAtMs: 1787173200000,
+            overage: false,
+            status: 'allowed_warning',
+          },
+        ],
+      },
+    })
+    expect(html).toContain('5-hour')
+    expect(html).not.toMatch(/text-(red|amber|yellow|orange)-/)
   })
 })

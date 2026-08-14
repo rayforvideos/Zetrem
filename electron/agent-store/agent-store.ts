@@ -1,7 +1,7 @@
 import { readFile, readdir, mkdir, rm, writeFile } from 'node:fs/promises'
 import { join, resolve } from 'node:path'
-import { fileNameOf, parseAgentDef, toAgentFile } from '../../src/entities/agent-def'
-import type { AgentDef, AgentDefDraft } from '../../src/entities/agent-def'
+import { fileNameOf, parseAgentDef, toAgentFile } from '@/entities/agent-def'
+import type { AgentDef, AgentDefDraft } from '@/entities/agent-def'
 
 async function readDir(dir: string, source: AgentDef['source']): Promise<AgentDef[]> {
   let names: string[]

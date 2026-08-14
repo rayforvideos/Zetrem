@@ -50,7 +50,6 @@ function announce(turn: ClaudeTurnEvent, refs: AgentEventRefs): void {
       return conversation.think(turn.text)
     case 'turnEnded':
       conversation.settleDraft()
-      release(refs)
       return conversation.setStatus('waiting')
     case 'toolResult':
       wakeResumed(turn.toolUseId, turn.stdout, refs)
@@ -84,6 +83,9 @@ function announce(turn: ClaudeTurnEvent, refs: AgentEventRefs): void {
       return conversation.setStatus('waiting')
     case 'childOpen':
       refs.childIds.add(turn.toolUseId)
+      if (sessionStore.find(turn.toolUseId) !== null) {
+        return sessionStore.patch(turn.toolUseId, { status: 'working' })
+      }
       return sessionStore.open({
         id: turn.toolUseId,
         runnerId: 'subagent',
@@ -97,6 +99,7 @@ function announce(turn: ClaudeTurnEvent, refs: AgentEventRefs): void {
         tokens: 0,
         contextUsed: 0,
         startedAtMs: Date.now(),
+        detached: turn.background,
       })
     case 'childSay':
       if (!refs.childIds.has(turn.toolUseId)) return
@@ -112,15 +115,26 @@ function announce(turn: ClaudeTurnEvent, refs: AgentEventRefs): void {
       if (turn.summary) {
         sessionStore.patch(turn.toolUseId, { headline: turn.summary.slice(0, HEADLINE_MAX) })
       }
-      return sessionStore.patch(turn.toolUseId, { status: 'reported' })
-    case 'childClosed':
-      if (!turn.error || !refs.childIds.has(turn.toolUseId)) return
-      sessionStore.patch(turn.toolUseId, {
-        status: 'done',
-        headline: `Failed — ${turn.error.slice(0, 120)}`,
+      return sessionStore.patch(turn.toolUseId, { status: turn.done ? 'reported' : 'working' })
+    case 'childProgress':
+      if (!refs.childIds.has(turn.toolUseId)) return
+      wake(turn.toolUseId)
+      note(turn.toolUseId, turn.lastTool)
+      return sessionStore.patch(turn.toolUseId, {
+        ...(turn.doing ? { headline: turn.doing.slice(0, HEADLINE_MAX) } : {}),
+        tokens: turn.tokens,
+        lastSeenAtMs: Date.now(),
       })
-      refs.childIds.delete(turn.toolUseId)
-      return
+    case 'childClosed':
+      if (!refs.childIds.has(turn.toolUseId)) return
+      if (turn.error) {
+        return sessionStore.patch(turn.toolUseId, {
+          status: 'done',
+          headline: `Failed: ${turn.error.slice(0, 120)}`,
+        })
+      }
+      if (sessionStore.find(turn.toolUseId)?.detached === true) return
+      return sessionStore.patch(turn.toolUseId, { status: 'done' })
     default:
       return
   }
@@ -162,24 +176,24 @@ function wakeResumed(toolUseId: string, stdout: string, refs: AgentEventRefs): v
   })
 }
 
-function wake(toolUseId: string): void {
-  if (sessionStore.find(toolUseId)?.status !== 'reported') return
-  sessionStore.patch(toolUseId, { status: 'working' })
+function note(toolUseId: string, tool: string): void {
+  if (tool.length === 0) return
+  const stream = sessionStore.find(toolUseId)?.stream
+  if (stream === undefined || stream.at(-1) === tool) return
+  sessionStore.pushStream(toolUseId, tool)
 }
 
-function release(refs: AgentEventRefs): void {
-  for (const id of [...refs.childIds]) {
-    if (sessionStore.find(id)?.status === 'working') continue
-    sessionStore.patch(id, { status: 'done' })
-    refs.childIds.delete(id)
-  }
+function wake(toolUseId: string): void {
+  const status = sessionStore.find(toolUseId)?.status
+  if (status === undefined || status === 'working') return
+  sessionStore.patch(toolUseId, { status: 'working', endedAtMs: undefined })
 }
 
 export function limitLine(limit: RateLimit): string {
   const percent = Math.round(limit.utilization * 100)
   const when = formatResetTime(limit.resetsAtMs)
   const overage = limit.overage ? ' · on overage' : ''
-  return `${limitKindLabel(limit.kind)} limit ${percent}% used — resets ${when}${overage}`
+  return `${limitKindLabel(limit.kind)} limit ${percent}% used, resets ${when}${overage}`
 }
 
 export function compactedLine(
@@ -188,10 +202,10 @@ export function compactedLine(
   postTokens: number | null,
 ): string {
   const base = 'Conversation compacted here'
-  if (preTokens === null || postTokens === null) return `${base} — earlier turns live on as a summary`
+  if (preTokens === null || postTokens === null) return `${base}. Earlier turns live on as a summary.`
   const shrink = `${formatTokens(preTokens)} → ${formatTokens(postTokens)}`
   const cause = triggerLabel(trigger)
-  return cause ? `${base} (${cause}) — ${shrink}` : `${base} — ${shrink}`
+  return cause ? `${base} (${cause}): ${shrink}` : `${base}: ${shrink}`
 }
 
 export function triggerLabel(trigger: string | null): string | null {

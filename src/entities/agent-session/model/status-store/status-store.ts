@@ -1,6 +1,7 @@
 import type { HookRun, StatusState, UpdateInfo } from './status-store.types'
 
-import type { RateLimit, SessionIdentity, StatusEvent } from '../../api/claude/status/status.types'
+import type { SessionIdentity, StatusEvent } from '../../api/claude/status/status.types'
+import { withLimit } from '../limits/limits'
 
 const HOOK_KEEP = 5
 
@@ -15,7 +16,7 @@ const EMPTY: StatusState = {
     ttftMs: null,
     turns: 0,
   },
-  limit: null,
+  limits: [],
   hooks: [],
   update: null,
   activity: 'idle',
@@ -67,7 +68,7 @@ export const statusStore = {
       return
     }
     if (event.type === 'limit') {
-      emit({ ...state, limit: event.limit })
+      emit({ ...state, limits: withLimit(state.limits, event.limit) })
       return
     }
     if (event.type === 'hookStarted') {

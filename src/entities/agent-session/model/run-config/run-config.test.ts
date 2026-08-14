@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
-import { MODELS, PERMISSION_MODES, agentArgs, isReady } from './run-config'
+import { MODELS, PERMISSION_MODES, agentArgs, isReady, PROBE_BUDGET_USD, PROBE_PROMPT, probeArgs } from './run-config'
 
-describe('agentArgs — 무엇을 들고 claude 를 띄우는가', () => {
+describe('agentArgs: what claude is started with', () => {
   const base = {
     permissionMode: 'ask' as const,
     lock: null,
@@ -10,43 +10,43 @@ describe('agentArgs — 무엇을 들고 claude 를 띄우는가', () => {
     persona: '말투',
   }
 
-  it('물어보기 모드는 권한 판단을 우리 창구로 위임한다', () => {
+  it('routes permission questions to our own prompt in ask mode', () => {
     const args = agentArgs(base)
     expect(args).toContain('--permission-prompt-tool')
     expect(args).toContain('stdio')
     expect(args).not.toContain('--permission-mode')
   })
 
-  it('편집 자동승인은 CLI 의 모드로 넘긴다 — 우리가 흉내 내지 않는다', () => {
+  it('hands auto-edit to the CLI mode instead of imitating it', () => {
     const args = agentArgs({ ...base, permissionMode: 'acceptEdits' })
     expect(args).toContain('--permission-mode')
     expect(args).toContain('acceptEdits')
     expect(args).toContain('--permission-prompt-tool')
   })
 
-  it('전부 허용은 위험한 선택이라 묻는 창구를 아예 떼어낸다 — 둘을 함께 주면 CLI 가 거부한다', () => {
+  it('removes the prompt entirely for allow-all, because the CLI refuses both together', () => {
     const args = agentArgs({ ...base, permissionMode: 'bypass' })
     expect(args).toContain('--dangerously-skip-permissions')
     expect(args).not.toContain('--permission-prompt-tool')
   })
 
-  it('모델을 고르면 넘기고, 기본이면 CLI 의 선택을 존중한다', () => {
+  it('passes a chosen model and leaves the choice to the CLI on default', () => {
     expect(agentArgs({ ...base, model: 'haiku' })).toContain('haiku')
     expect(agentArgs(base)).not.toContain('--model')
   })
 
-  it('말투는 언제나 얹는다 — 답의 첫 줄이 화면의 첫 줄이다', () => {
+  it('always adds the persona, because the first line of a reply is the first line on screen', () => {
     const args = agentArgs(base)
     expect(args).toContain('--append-system-prompt')
     expect(args).toContain('말투')
   })
 
-  it('부분 메시지를 켜지 않는다 — 말은 완성된 뒤에 선다', () => {
+  it('leaves partial messages off, so words appear once they are finished', () => {
     const args = agentArgs({ permissionMode: 'ask' as const, lock: null, people: [], model: 'default', persona: '' })
     expect(args).not.toContain('--include-partial-messages')
   })
 
-  it('고르는 것들은 전부 이름과 설명을 가진다 — 이름만으로는 무엇을 정하는지 모른다', () => {
+  it('gives every choice a label and a hint, since a name alone does not say what it sets', () => {
     expect(PERMISSION_MODES).toHaveLength(3)
     for (const choice of [...PERMISSION_MODES, ...MODELS]) {
       expect(choice.label.length).toBeGreaterThan(0)
@@ -55,16 +55,16 @@ describe('agentArgs — 무엇을 들고 claude 를 띄우는가', () => {
   })
 })
 
-describe('isReady — 일을 맡길 수 있는 상태인가', () => {
-  it('로그인과 프로젝트가 모두 있어야 한다', () => {
+describe('isReady: whether work can be handed over yet', () => {
+  it('needs both an account and a project', () => {
     expect(isReady({ loggedIn: true, project: '/p' })).toBe(true)
     expect(isReady({ loggedIn: false, project: '/p' })).toBe(false)
     expect(isReady({ loggedIn: true, project: null })).toBe(false)
   })
 })
 
-describe('잠금 — 우리가 들인 사람만 부르게 한다', () => {
-  it('잠그면 오케스트레이터를 우리가 세우고 부를 사람을 좁힌다', () => {
+describe('the lock: only the people we hired can be called', () => {
+  it('sets up our own orchestrator and narrows who it may call', () => {
     const args = agentArgs({
       permissionMode: 'ask' as const,
       model: 'default' as const,
@@ -78,7 +78,7 @@ describe('잠금 — 우리가 들인 사람만 부르게 한다', () => {
     expect(spec.zetrem.tools).toEqual(['Read', 'Agent(scout)'])
   })
 
-  it('잠그지 않으면 CLI 의 기본 오케스트레이터를 건드리지 않는다', () => {
+  it('leaves the CLI default orchestrator alone when not locking', () => {
     const args = agentArgs({
       permissionMode: 'ask' as const,
       model: 'default' as const,
@@ -91,8 +91,8 @@ describe('잠금 — 우리가 들인 사람만 부르게 한다', () => {
   })
 })
 
-describe('잠긴 오케스트레이터의 프롬프트', () => {
-  it('잠글 때는 말투가 아니라 오케스트레이터 프롬프트를 넣는다 — 말투만 주면 일을 못 한다', () => {
+describe('what a locked orchestrator is told', () => {
+  it('gives it the orchestrator brief and not just a voice, because a voice cannot do the job', () => {
     const args = agentArgs({
       permissionMode: 'ask' as const,
       model: 'default' as const,
@@ -106,7 +106,7 @@ describe('잠긴 오케스트레이터의 프롬프트', () => {
     expect(args).toContain('말투')
   })
 
-  it('오케스트레이터 프롬프트가 없으면 말투로 대신한다 — 빈 프롬프트를 넘기면 CLI 가 정의를 통째로 무시한다', () => {
+  it('falls back to the persona, because an empty brief makes the CLI ignore the definition', () => {
     const args = agentArgs({
       permissionMode: 'ask' as const,
       model: 'default' as const,
@@ -115,5 +115,37 @@ describe('잠긴 오케스트레이터의 프롬프트', () => {
       lock: { knownTools: ['Read'], alsoCallable: [] },
     })
     expect(JSON.parse(args[args.indexOf('--agents') + 1] as string).zetrem.prompt).toBe('말투')
+  })
+})
+
+describe('probeArgs: asking what the session would be, without starting one', () => {
+  const base = {
+    permissionMode: 'ask' as const,
+    model: 'default' as const,
+    people: [],
+    lock: null,
+    persona: 'P',
+  }
+
+  it('passes the prompt on the command line, since nothing will be written to stdin', () => {
+    const args = probeArgs(base)
+    expect(args).not.toContain('--input-format')
+    expect(args[args.indexOf('-p') + 1]).toBe(PROBE_PROMPT)
+  })
+
+  it('caps what it may spend, so an answer can never be paid for', () => {
+    const args = probeArgs(base)
+    expect(args[args.indexOf('--max-budget-usd') + 1]).toBe(PROBE_BUDGET_USD)
+  })
+
+  it('asks in the same shape the real session runs in, or the answer would not match', () => {
+    const args = probeArgs({ ...base, model: 'opus', permissionMode: 'acceptEdits' })
+    expect(args).toContain('--verbose')
+    expect(args[args.indexOf('--model') + 1]).toBe('opus')
+    expect(args[args.indexOf('--permission-mode') + 1]).toBe('acceptEdits')
+  })
+
+  it('never picks up an old conversation, because it is only asking about the setup', () => {
+    expect(probeArgs({ ...base, resume: 'abc-123' })).not.toContain('--resume')
   })
 })

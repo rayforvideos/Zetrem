@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import type { AuthStatus } from '@/entities/auth'
 import { urlFrom } from '@/shared/lib/cli-output/cli-output'
 import { reasonOf } from '@/shared/lib/failure/failure'
@@ -41,7 +41,7 @@ export function useAuth(): Auth {
     })
   }, [])
 
-  const login = useCallback(() => {
+  function login(): void {
     setLoggingIn(true)
     setLoginNote('')
     window.desk
@@ -51,9 +51,9 @@ export function useAuth(): Auth {
         setAuthError(reasonOf(cause))
       })
       .finally(() => setLoggingIn(false))
-  }, [])
+  }
 
-  const logout = useCallback(() => {
+  function logout(): void {
     setLoggingOut(true)
     setLoginNote('')
     setAuthError(null)
@@ -62,12 +62,12 @@ export function useAuth(): Auth {
       .then((next) => {
         setAuth(next)
         if (next.state === 'signed-in') {
-          setAuthError('Still signed in — sign out did not take effect.')
+          setAuthError('Still signed in. Sign out did not take effect.')
         }
       })
       .catch((cause: unknown) => setAuthError(reasonOf(cause)))
       .finally(() => setLoggingOut(false))
-  }, [])
+  }
 
   return { auth, authKnown, loggingIn, loginNote, login, loggingOut, logout, authError }
 }

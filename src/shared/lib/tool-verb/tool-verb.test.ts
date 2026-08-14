@@ -2,8 +2,8 @@ import { describe, expect, it } from 'vitest'
 import { shapeOfLine } from '../tool-line/tool-line'
 import { targetOf, verbOf } from './tool-verb'
 
-describe('verbOf — 무엇을 하는 중인지 한 낱말로', () => {
-  it('도구마다 제 동사를 쓴다', () => {
+describe('verbOf: what is happening, in one word', () => {
+  it('gives each tool its own verb', () => {
     expect(verbOf(shapeOfLine('Read src/a.ts'))).toBe('Reading')
     expect(verbOf(shapeOfLine('Edit src/a.ts'))).toBe('Editing')
     expect(verbOf(shapeOfLine('Write src/a.ts'))).toBe('Writing')
@@ -13,13 +13,13 @@ describe('verbOf — 무엇을 하는 중인지 한 낱말로', () => {
     expect(verbOf(shapeOfLine('TodoWrite'))).toBe('Planning')
   })
 
-  it('모르는 도구도 말을 잃지 않는다', () => {
+  it('still has a word for a tool it does not know', () => {
     expect(verbOf(shapeOfLine('SomethingNew'))).toBe('Working')
   })
 })
 
-describe('targetOf — 무엇을 상대로 하는지', () => {
-  it('파일은 이름만, 명령은 명령줄, 검색은 무늬', () => {
+describe('targetOf: what the work is being done to', () => {
+  it('names a file, echoes a command, shows a pattern', () => {
     expect(targetOf(shapeOfLine('Read src/deep/a.ts'))).toBe('a.ts')
     expect(targetOf(shapeOfLine('Bash npm test'))).toBe('npm test')
     expect(targetOf(shapeOfLine('Grep case .assistant'))).toBe('case .assistant')

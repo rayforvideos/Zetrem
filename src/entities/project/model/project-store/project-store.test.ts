@@ -6,11 +6,11 @@ beforeEach(() => {
 })
 
 describe('projectStore', () => {
-  it('초기에는 프로젝트가 없다', () => {
+  it('starts with no project', () => {
     expect(projectStore.get()).toBeNull()
   })
 
-  it('넣으면 읽히고 구독자에게 알린다', () => {
+  it('reads back what was set and tells subscribers', () => {
     const listener = vi.fn()
     const unsubscribe = projectStore.subscribe(listener)
     projectStore.set({ path: '/repo/zetrem', name: 'zetrem' })

@@ -1,23 +1,39 @@
 import { describe, expect, it } from 'vitest'
 import { formatTokens, limitKindLabel } from './units'
 
-describe('formatTokens — 크기감', () => {
-  it('1000 미만은 그대로 정수로 보여준다', () => {
+describe('formatTokens: a sense of size', () => {
+  it('shows anything under a thousand as it is', () => {
     expect(formatTokens(500)).toBe('500')
   })
 
-  it('1000 이상은 k 단위로 줄인다', () => {
+  it('folds a thousand and over into k', () => {
     expect(formatTokens(148200)).toBe('148.2k')
   })
 })
 
-describe('limitKindLabel — 한도의 이름', () => {
-  it('알려진 kind 는 한글 라벨로 바꾼다', () => {
-    expect(limitKindLabel('seven_day')).toBe('7-day')
+describe('limitKindLabel: what a limit is called', () => {
+  it('gives a known kind the name people use', () => {
+    expect(limitKindLabel('seven_day')).toBe('Weekly')
     expect(limitKindLabel('five_hour')).toBe('5-hour')
   })
 
-  it('모르는 kind 는 그대로 통과시킨다 — 거짓 이름을 지어내지 않는다', () => {
+  it('passes an unknown kind through, rather than inventing a name for it', () => {
     expect(limitKindLabel('unknown_kind')).toBe('unknown_kind')
+  })
+})
+
+describe('limitKindLabel: the names on the account limits', () => {
+  it('names the weekly limit for what it is', () => {
+    expect(limitKindLabel('seven_day')).toBe('Weekly')
+    expect(limitKindLabel('seven_day_oauth')).toBe('Weekly')
+  })
+
+  it('keeps the model apart when the limit is per model', () => {
+    expect(limitKindLabel('seven_day_opus')).toBe('Weekly Opus')
+    expect(limitKindLabel('seven_day_sonnet')).toBe('Weekly Sonnet')
+  })
+
+  it('passes a kind it has never seen through untouched', () => {
+    expect(limitKindLabel('thirty_day')).toBe('thirty_day')
   })
 })

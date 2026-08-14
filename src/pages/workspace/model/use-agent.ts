@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from 'react'
+import { useEffect, useRef, useState, useSyncExternalStore } from 'react'
 import {
   parseClaudeLine,
   permissionAlwaysResult,
@@ -10,6 +10,7 @@ import type { AgentSession, RunConfig, StatusState } from '@/entities/agent-sess
 import { applyAgentEvent } from './agent-events/agent-events'
 import { conversation } from './conversation/conversation'
 import { shouldRelaunch } from './relaunch/relaunch'
+import { SETTLE_QUIET_MS, settled } from './settle/settle'
 import type { Attempt } from './relaunch/relaunch.types'
 import type { ConversationState } from './conversation/conversation.types'
 
@@ -46,6 +47,12 @@ export function useAgent(config: Omit<RunConfig, 'persona'>): Agent {
   }, [])
 
   useEffect(() => {
+    for (const id of settled(children, nowMs, SETTLE_QUIET_MS)) {
+      sessionStore.patch(id, { status: 'done' })
+    }
+  }, [children, nowMs])
+
+  useEffect(() => {
     const unsubscribe = window.desk.onAgentEvent((event) => {
       if (event.id !== hostId.current) return
 
@@ -54,7 +61,7 @@ export function useAgent(config: Omit<RunConfig, 'persona'>): Agent {
         const failed = attempt.current
         attempt.current = null
         if (shouldRelaunch(failed, event.code)) {
-          conversation.system('Could not pick that conversation back up — starting a new one')
+          conversation.system('Could not pick that conversation back up. Starting a new one.')
           launch(failed!.prompt, null)
           return
         }
@@ -83,39 +90,40 @@ export function useAgent(config: Omit<RunConfig, 'persona'>): Agent {
     }
   }, [])
 
-  const launch = useCallback((text: string, resume: string | null) => {
+  function launch(text: string, resume: string | null): void {
     statusStore.reset()
+    sessionStore.clear()
+    childIds.current.clear()
+    sends.current.clear()
     const id = `agent-${Date.now()}`
     hostId.current = id
     attempt.current = { prompt: text, resumed: resume !== null, spoke: false }
     conversation.setStatus('working')
     void window.desk.startAgent(id, text, { ...configRef.current, persona: '', resume })
-  }, [])
+  }
 
-  const send = useCallback(
-    (text: string) => {
-      conversation.say('user', text)
-      conversation.setStatus('working')
-      if (hostId.current) {
-        window.desk.sendToAgent(hostId.current, text)
-        return
-      }
-      launch(text, configRef.current.resume ?? null)
-    },
-    [launch],
-  )
+  function send(text: string): void {
+    conversation.say('user', text)
+    conversation.setStatus('working')
+    if (hostId.current) {
+      window.desk.sendToAgent(hostId.current, text)
+      return
+    }
+    launch(text, configRef.current.resume ?? null)
+  }
 
-  const reset = useCallback(() => {
+  function reset(): void {
     const id = hostId.current
     hostId.current = null
     attempt.current = null
     asks.current.length = 0
     childIds.current.clear()
     sends.current.clear()
+    sessionStore.clear()
     if (id !== null) window.desk.stopAgent(id)
-  }, [])
+  }
 
-  const decide = useCallback((allow: boolean, always = false) => {
+  function decide(allow: boolean, always = false): void {
     const current = asks.current.shift()
     const id = hostId.current
     if (!current || !id) return
@@ -137,11 +145,11 @@ export function useAgent(config: Omit<RunConfig, 'persona'>): Agent {
     }
     conversation.setPermission(null)
     conversation.setStatus('working')
-  }, [])
+  }
 
-  const stop = useCallback(() => {
+  function stop(): void {
     if (hostId.current) window.desk.stopAgent(hostId.current)
-  }, [])
+  }
 
   return { conversation: conv, children, status, nowMs, send, decide, stop, reset }
 }

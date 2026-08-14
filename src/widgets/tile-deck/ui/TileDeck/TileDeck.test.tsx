@@ -47,8 +47,8 @@ function tileChunks(html: string): string[] {
 const fleet = [0, 1, 2, 3, 4, 5].map((i) => session(`s${i}`))
 const ids = fleet.map((s) => s.id)
 
-describe('TileDeck 시선 규칙 (스펙 §6 하드 제약)', () => {
-  it('여섯 개가 동시에 대기해도 시선의 주인은 정확히 하나다', () => {
+describe('TileDeck: the rule about where the eye goes', () => {
+  it('gives the eye to exactly one tile, even with six waiting', () => {
     const waitingFleet = fleet.map((s, i) => ({
       ...s,
       status: 'waiting' as const,
@@ -60,7 +60,7 @@ describe('TileDeck 시선 규칙 (스펙 §6 하드 제약)', () => {
     expect(count(html, 'data-waiting')).toBe(6)
   })
 
-  it('가장 오래 기다린 타일이 시선의 주인이다', () => {
+  it('gives the eye to whichever has waited longest', () => {
     const waitingFleet = fleet.map((s, i) => ({
       ...s,
       status: 'waiting' as const,
@@ -72,12 +72,12 @@ describe('TileDeck 시선 규칙 (스펙 §6 하드 제약)', () => {
     expect(owners[0]).toContain('에이전트 s3')
   })
 
-  it('아무도 기다리지 않으면 표시도 없다', () => {
+  it('marks nothing when nobody is waiting', () => {
     const html = render({ kind: 'fanned', ids, closing: [] }, fleet)
     expect(count(html, 'data-waiting')).toBe(0)
   })
 
-  it('닫히는 중인 타일은 대기 중이어도 시선을 끌지 않는다', () => {
+  it('does not give the eye to a tile that is closing, waiting or not', () => {
     const closingWaiter = { ...session('s9'), status: 'waiting' as const, waitingSinceMs: 1 }
     const html = render(
       { kind: 'fanned', ids, closing: ['s9'] },
@@ -87,7 +87,7 @@ describe('TileDeck 시선 규칙 (스펙 §6 하드 제약)', () => {
     expect(count(html, 'data-closing')).toBe(1)
   })
 
-  it('한 타일만 대기하면 그 타일이 시선의 주인이다', () => {
+  it('gives the eye to the one tile that waits', () => {
     const one = fleet.map((s, i) =>
       i === 2 ? { ...s, status: 'waiting' as const, waitingSinceMs: 5 } : s,
     )
@@ -98,13 +98,13 @@ describe('TileDeck 시선 규칙 (스펙 §6 하드 제약)', () => {
 })
 
 describe('TileDeck', () => {
-  it('solo 에서는 터미널 한 장뿐이다 — 세션 타일은 없다', () => {
+  it('shows the terminal alone and no session tiles', () => {
     const html = render({ kind: 'solo' }, fleet)
     expect(html).toContain('터미널')
     expect(count(html, 'data-status')).toBe(0)
   })
 
-  it('fanned 에서도 터미널은 남는다 — 언마운트되면 셸이 끊긴다', () => {
+  it('keeps the terminal through a fan, because unmounting it would cut the shell', () => {
     const html = render({ kind: 'fanned', ids, closing: [] }, fleet)
     expect(html).toContain('터미널')
     expect(count(html, 'data-terminal-tile')).toBe(1)

@@ -6,17 +6,17 @@ const viewport = { w: 1440, h: 900 }
 const M = LAYOUT.outerMarginPx
 
 describe('layoutTiles', () => {
-  it('요청한 개수만큼 사각형을 낸다', () => {
+  it('returns as many rectangles as asked for', () => {
     for (const count of [1, 2, 3, 4, 5, 6, 7, 9]) {
       expect(layoutTiles(count, viewport)).toHaveLength(count)
     }
   })
 
-  it('0개면 빈 배열', () => {
+  it('returns nothing for none', () => {
     expect(layoutTiles(0, viewport)).toEqual([])
   })
 
-  it('어떤 개수에서도 바깥 여백을 침범하지 않는다', () => {
+  it('never crosses the outer margin, at any count', () => {
     for (const count of [1, 2, 3, 4, 5, 6, 7, 8, 9, 12]) {
       for (const rect of layoutTiles(count, viewport)) {
         expect(rect.x, `count=${count}`).toBeGreaterThanOrEqual(M - 0.01)
@@ -27,7 +27,7 @@ describe('layoutTiles', () => {
     }
   })
 
-  it('어떤 개수에서도 타일끼리 겹치지 않는다', () => {
+  it('never overlaps two tiles, at any count', () => {
     for (const count of [1, 2, 3, 4, 5, 6, 7, 8, 9, 12]) {
       const rects = layoutTiles(count, viewport)
       for (let i = 0; i < rects.length; i += 1) {
@@ -41,37 +41,37 @@ describe('layoutTiles', () => {
     }
   })
 
-  it('모든 타일이 양의 크기를 가진다', () => {
+  it('gives every tile a real size', () => {
     for (const rect of layoutTiles(12, viewport)) {
       expect(rect.w).toBeGreaterThan(0)
       expect(rect.h).toBeGreaterThan(0)
     }
   })
 
-  it('5개는 첫 행에 3개, 둘째 행에 2개가 놓인다', () => {
+  it('lays five out as three then two', () => {
     const rects = layoutTiles(5, viewport)
     const topRow = rects.filter((r) => r.y === rects[0]!.y)
     expect(topRow).toHaveLength(3)
   })
 
-  it('2개는 가로로 나란히 놓인다 — 화면이 가로로 넓다', () => {
+  it('puts two side by side, because the screen is wider than it is tall', () => {
     const rects = layoutTiles(2, viewport)
     expect(rects[0]!.y).toBe(rects[1]!.y)
     expect(rects[0]!.x).toBeLessThan(rects[1]!.x)
   })
 
-  it('같은 입력이면 같은 출력이다', () => {
+  it('gives the same layout for the same input', () => {
     expect(layoutTiles(4, viewport)).toEqual(layoutTiles(4, viewport))
   })
 })
 
 describe('soloRect', () => {
-  it('한 장뿐일 때는 창을 가득 채운다', () => {
+  it('fills the window when there is only one', () => {
     const rect = soloRect(viewport)
     expect(rect).toEqual({ x: 0, y: 0, w: viewport.w, h: viewport.h })
   })
 
-  it('가로 세로 모두 가운데 정렬된다', () => {
+  it('centres on both axes', () => {
     for (const size of [viewport, { w: 1024, h: 1280 }, { w: 900, h: 900 }]) {
       const rect = soloRect(size)
       expect(rect.x, `w=${size.w}`).toBeCloseTo(size.w - (rect.x + rect.w), 5)
@@ -80,8 +80,8 @@ describe('soloRect', () => {
   })
 })
 
-describe('layoutTiles — 터미널을 포함한 격자', () => {
-  it('세션 하나가 생기면 터미널과 나란히 둘로 갈라진다', () => {
+describe('layoutTiles: a grid that includes the terminal', () => {
+  it('splits in two beside the terminal when one session appears', () => {
     const rects = layoutTiles(2, { w: 1440, h: 900 })
     expect(rects).toHaveLength(2)
     expect(rects[0]!.y).toBe(rects[1]!.y)
@@ -89,16 +89,16 @@ describe('layoutTiles — 터미널을 포함한 격자', () => {
   })
 })
 
-describe('observatoryLayout — 터미널이 일터, 세션은 곁의 판들', () => {
+describe('observatoryLayout: the terminal is the desk, sessions are the boards beside it', () => {
   const viewport = { w: 1440, h: 900 }
 
-  it('세션이 없으면 터미널이 화면을 갖는다', () => {
+  it('gives the terminal the screen when no session is running', () => {
     const { terminal, sessions } = observatoryLayout(0, viewport)
     expect(sessions).toHaveLength(0)
     expect(terminal.w).toBeGreaterThan(viewport.w * 0.8)
   })
 
-  it('세션이 생기면 터미널은 왼쪽 기둥이 되고 세션이 오른쪽에 쌓인다', () => {
+  it('makes the terminal a left column and stacks sessions to its right', () => {
     const { terminal, sessions } = observatoryLayout(2, viewport)
     expect(sessions).toHaveLength(2)
     expect(terminal.x).toBeLessThan(sessions[0]!.x)
@@ -107,14 +107,14 @@ describe('observatoryLayout — 터미널이 일터, 세션은 곁의 판들', (
     expect(terminal.h).toBeCloseTo(sessions[0]!.h + sessions[1]!.h + LAYOUT.gapPx, 0)
   })
 
-  it('세션이 넷을 넘으면 오른쪽이 두 줄로 갈라진다 — 판이 우표만 해지지 않게', () => {
+  it('splits the right into two columns past four, so no board shrinks to a stamp', () => {
     const { sessions } = observatoryLayout(6, viewport)
     expect(sessions).toHaveLength(6)
     const columns = new Set(sessions.map((rect) => Math.round(rect.x)))
     expect(columns.size).toBe(2)
   })
 
-  it('어떤 수에서도 바깥 여백이 남는다 — 배경이 보여야 한다 (스펙 §2.2)', () => {
+  it('keeps an outer margin at any count, so the ground stays visible', () => {
     for (const count of [0, 1, 3, 5, 9]) {
       const { terminal, sessions } = observatoryLayout(count, viewport)
       for (const rect of [terminal, ...sessions]) {
@@ -127,24 +127,24 @@ describe('observatoryLayout — 터미널이 일터, 세션은 곁의 판들', (
   })
 })
 
-describe('observatoryLayout — 명단을 접으면 그 자리는 일하는 사람들에게 간다', () => {
+describe('observatoryLayout: folding the roster away hands its room to the people working', () => {
   const viewport = { w: 1440, h: 900 }
 
-  it('명단이 열려 있으면 대화 쪽이 그만큼 넓다', () => {
+  it('gives the conversation that much more width while the roster is open', () => {
     const open = observatoryLayout(2, viewport, 300)
     const shut = observatoryLayout(2, viewport, 40)
     expect(open.terminal.w).toBeGreaterThan(shut.terminal.w)
     expect(shut.sessions[0]!.w).toBeGreaterThan(open.sessions[0]!.w)
   })
 
-  it('명단이 비켜 준 자리는 글줄과 판이 나눠 갖는다 — 한쪽만 먹지 않는다', () => {
+  it('shares the room the roster gave up between the text and the boards', () => {
     const open = observatoryLayout(2, viewport, 300)
     const shut = observatoryLayout(2, viewport, 40)
     const reading = (rect: { w: number }, sidebar: number) => rect.w - sidebar
     expect(reading(shut.terminal, 40)).toBeGreaterThan(reading(open.terminal, 300))
   })
 
-  it('타일이 우표만 해지지 않는다 — 대화가 아무리 커도 판에는 바닥이 있다', () => {
+  it('keeps a floor under tile width, however wide the conversation gets', () => {
     const greedy = observatoryLayout(1, { w: 900, h: 700 }, 700)
     expect(greedy.sessions[0]!.w).toBeGreaterThanOrEqual(360)
   })

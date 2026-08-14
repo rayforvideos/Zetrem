@@ -1,6 +1,6 @@
 import { execFileSync, spawn } from 'node:child_process'
 import { describe, expect, it } from 'vitest'
-import { descendantsOf, parsePsRows } from '../../src/shared/lib/process-tree/process-tree'
+import { descendantsOf, parsePsRows } from '@/shared/lib/process-tree/process-tree'
 import { killTreeSync } from './kill-tree'
 
 const posix = process.platform !== 'win32'
@@ -14,7 +14,7 @@ function alive(pid: number): boolean {
   }
 }
 
-describe('멈추면 손자까지 멈춘다', () => {
+describe('stopping something stops its grandchildren too', () => {
   it.skipIf(!posix)('자식만 죽이면 손자가 남는다 — 트리 전체를 죽인다', async () => {
     const parent = spawn('sh', ['-c', 'sleep 30 & sleep 30 & wait'], { stdio: 'ignore' })
     await new Promise((resolve) => setTimeout(resolve, 600))

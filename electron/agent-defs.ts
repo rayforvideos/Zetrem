@@ -1,6 +1,6 @@
 import { join } from 'node:path'
 import { app } from 'electron'
-import type { AgentDefDraft } from '../src/entities/agent-def'
+import type { AgentDefDraft } from '@/entities/agent-def'
 import {
   listAgentDefs,
   removeAgentDef,

@@ -38,6 +38,8 @@ export function agentArgs(config: RunConfig): string[] {
 
   if (config.persona.length > 0) args.push('--append-system-prompt', config.persona)
 
+  if (config.resume) args.push('--resume', config.resume)
+
   args.push(...agentsArgs(config.people, config.lock, config.orchestrator ?? config.persona))
 
   if (config.model !== 'default') args.push('--model', config.model)

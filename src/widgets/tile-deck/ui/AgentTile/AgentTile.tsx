@@ -55,9 +55,7 @@ export function AgentTile({
         <div style={bodyStyle}>
           <Headline session={session} withText={!transcriptOpen} />
           {transcriptOpen && <Transcript entries={session.transcript} />}
-          {!sweep && !transcriptOpen && (
-            <Stream lines={session.stream} live={session.status === 'working'} />
-          )}
+          {!sweep && <Stream lines={session.stream} live={session.status === 'working'} />}
           {!sweep && <Gauge session={session} nowMs={nowMs} />}
         </div>
       </Surface>

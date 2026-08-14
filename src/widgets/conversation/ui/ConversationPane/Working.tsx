@@ -30,7 +30,7 @@ export function Working({
       className="zt-rise flex flex-none items-center gap-2.5 border-t border-border px-2 pt-3"
     >
       <AgentSprite subagentType={agent} state="working" size={26} />
-      <span className="min-w-0 flex-1 truncate text-sm">{doingOf(turn)}</span>
+      <span className="zt-shimmer zt-dots min-w-0 flex-1 truncate text-sm">{doingOf(turn)}</span>
       <span className="flex flex-none items-baseline gap-4 font-mono text-xs tabular-nums text-muted-foreground">
         <span>{elapsedLabel(nowMs - startedAtMs)}</span>
         {tokens !== '' && <span>{tokens}</span>}

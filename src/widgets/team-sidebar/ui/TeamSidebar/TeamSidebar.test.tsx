@@ -2,6 +2,7 @@ import { renderToStaticMarkup } from 'react-dom/server'
 import { describe, expect, it } from 'vitest'
 import { TeamSidebar } from './TeamSidebar'
 import type { TeamMember } from '../../lib/team/team.types'
+import { SIDEBAR } from '@/shared/config/theme'
 
 function member(overrides: Partial<TeamMember> = {}): TeamMember {
   return {
@@ -27,6 +28,18 @@ function bar(props: Partial<Parameters<typeof TeamSidebar>[0]> = {}): string {
       sessionKnown={false}
       canWrite
       note={null}
+      stock={[]}
+      stockOn={[]}
+      onStock={() => {}}
+      chats={[]}
+      openChatId={null}
+      nowMs={0}
+      onOpenChat={() => {}}
+      onStartChat={() => {}}
+      onRemoveChat={() => {}}
+      width={SIDEBAR.width}
+      onResize={() => {}}
+      onResizeEnd={() => {}}
       onHire={() => {}}
       onPick={() => {}}
       onAddress={() => {}}
@@ -45,7 +58,7 @@ describe('TeamSidebar — 눌렀는데 아무 일도 안 일어나면 안 된다
 
   it('프로젝트가 없으면 들이기 자체가 잠기고 이유를 단다', () => {
     const html = bar({ canWrite: false })
-    const button = html.slice(html.lastIndexOf('<button', html.indexOf('>Create new<')))
+    const button = html.slice(html.lastIndexOf('<button', html.indexOf('>Add teammate<')))
     expect(button).toContain('disabled=""')
     expect(button).toContain('Pick a project first')
   })
@@ -126,6 +139,18 @@ describe('들인 사람은 고칠 수도 있다', () => {
         sessionKnown={false}
         canWrite
         note={null}
+        stock={[]}
+      stockOn={[]}
+      onStock={() => {}}
+      chats={[]}
+      openChatId={null}
+      nowMs={0}
+      onOpenChat={() => {}}
+      onStartChat={() => {}}
+      onRemoveChat={() => {}}
+      width={SIDEBAR.width}
+        onResize={() => {}}
+        onResizeEnd={() => {}}
         onHire={() => {}}
         onPick={() => {}}
         onAddress={() => {}}

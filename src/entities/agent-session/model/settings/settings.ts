@@ -1,5 +1,6 @@
 import type { Settings } from './settings.types'
 
+import { SIDEBAR } from '@/shared/config/theme'
 import { MODELS, PERMISSION_MODES } from '../run-config/run-config'
 import type { ModelChoice, PermissionMode } from '../run-config/run-config.types'
 
@@ -9,11 +10,24 @@ export const DEFAULT_SETTINGS: Settings = {
   setupDone: false,
   onlyOurAgents: true,
   knownTools: [],
+  knownAgents: [],
+  stockAgents: [],
   sidebarOpen: true,
+  sidebarWidth: SIDEBAR.width,
 }
 
 const MODE_IDS: PermissionMode[] = PERMISSION_MODES.map((mode) => mode.id)
 const MODEL_IDS: ModelChoice[] = MODELS.map((model) => model.id)
+
+function names(saved: unknown, fallback: string[]): string[] {
+  if (!Array.isArray(saved)) return fallback
+  return (saved as unknown[]).filter((name): name is string => typeof name === 'string')
+}
+
+function sidebarWidth(saved: unknown): number {
+  if (typeof saved !== 'number' || !Number.isFinite(saved)) return SIDEBAR.width
+  return Math.min(SIDEBAR.max, Math.max(SIDEBAR.min, Math.round(saved)))
+}
 
 export function readSettings(saved: unknown): Settings {
   if (typeof saved !== 'object' || saved === null) return DEFAULT_SETTINGS
@@ -27,9 +41,10 @@ export function readSettings(saved: unknown): Settings {
       : DEFAULT_SETTINGS.model,
     setupDone: source.setupDone === true,
     onlyOurAgents: source.onlyOurAgents !== false,
-    knownTools: Array.isArray(source.knownTools)
-      ? (source.knownTools as unknown[]).filter((name): name is string => typeof name === 'string')
-      : DEFAULT_SETTINGS.knownTools,
+    knownTools: names(source.knownTools, DEFAULT_SETTINGS.knownTools),
+    knownAgents: names(source.knownAgents, DEFAULT_SETTINGS.knownAgents),
+    stockAgents: names(source.stockAgents, DEFAULT_SETTINGS.stockAgents),
     sidebarOpen: source.sidebarOpen !== false,
+    sidebarWidth: sidebarWidth(source.sidebarWidth),
   }
 }

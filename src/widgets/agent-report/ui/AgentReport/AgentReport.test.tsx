@@ -36,7 +36,7 @@ describe('AgentReport — 여태 무엇이 되었나', () => {
     const html = report()
     expect(html).toContain('Code Reviewer')
     expect(html).toContain('두 자리를 고쳤습니다')
-    expect(html).toContain('Reported back')
+    expect(html).toContain('Done')
     expect(html).toContain('30s')
   })
 

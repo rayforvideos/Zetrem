@@ -70,7 +70,7 @@ describe('잠금 — 우리가 들인 사람만 부르게 한다', () => {
       model: 'default' as const,
       persona: '말투',
       people: [{ name: 'scout', description: '찾는다', prompt: '찾아라', model: null }],
-      lock: { knownTools: ['Read', 'Task'] },
+      lock: { knownTools: ['Read', 'Task'], alsoCallable: [] },
     })
     expect(args).toContain('--agent')
     expect(args[args.indexOf('--agent') + 1]).toBe('zetrem')
@@ -99,7 +99,7 @@ describe('잠긴 오케스트레이터의 프롬프트', () => {
       persona: '말투',
       orchestrator: '너는 오케스트레이터다',
       people: [{ name: 'scout', description: '찾는다', prompt: '찾아라', model: null }],
-      lock: { knownTools: ['Read'] },
+      lock: { knownTools: ['Read'], alsoCallable: [] },
     })
     const spec = JSON.parse(args[args.indexOf('--agents') + 1] as string)
     expect(spec.zetrem.prompt).toBe('너는 오케스트레이터다')
@@ -112,7 +112,7 @@ describe('잠긴 오케스트레이터의 프롬프트', () => {
       model: 'default' as const,
       persona: '말투',
       people: [{ name: 'scout', description: '찾는다', prompt: '찾아라', model: null }],
-      lock: { knownTools: ['Read'] },
+      lock: { knownTools: ['Read'], alsoCallable: [] },
     })
     expect(JSON.parse(args[args.indexOf('--agents') + 1] as string).zetrem.prompt).toBe('말투')
   })

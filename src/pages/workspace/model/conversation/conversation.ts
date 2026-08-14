@@ -130,6 +130,9 @@ export const conversation = {
   setPermission(permission: PermissionAsk | null): void {
     emit({ ...state, permission })
   },
+  restore(turns: Turn[]): void {
+    emit({ turns, status: 'done', permission: null })
+  },
   reset(): void {
     emit({ turns: [], status: 'done', permission: null })
   },

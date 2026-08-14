@@ -31,6 +31,7 @@ function contentSecurityPolicy(): Plugin {
 
 export default defineConfig({
   main: {
+    resolve: { alias: { '@': resolve('src') } },
     build: {
       rollupOptions: {
         input: { index: resolve('electron/main.ts') },
@@ -38,6 +39,7 @@ export default defineConfig({
     },
   },
   preload: {
+    resolve: { alias: { '@': resolve('src') } },
     build: {
       rollupOptions: {
         input: { index: resolve('electron/preload.ts') },

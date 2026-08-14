@@ -37,6 +37,7 @@ export function moodOf(state: MemberState): Mood {
       return 'busy'
     case 'waiting':
       return 'default'
+    case 'reported':
     case 'done':
       return 'relax'
     case 'idle':

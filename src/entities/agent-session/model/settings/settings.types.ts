@@ -6,5 +6,8 @@ export type Settings = {
   setupDone: boolean
   onlyOurAgents: boolean
   knownTools: string[]
+  knownAgents: string[]
+  stockAgents: string[]
   sidebarOpen: boolean
+  sidebarWidth: number
 }

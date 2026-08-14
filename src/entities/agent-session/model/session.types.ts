@@ -1,4 +1,4 @@
-export type SessionStatus = 'working' | 'waiting' | 'done'
+export type SessionStatus = 'working' | 'waiting' | 'reported' | 'done'
 
 export type RunnerId = string
 

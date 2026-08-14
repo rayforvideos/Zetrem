@@ -1,11 +1,14 @@
 import { useState } from 'react'
 import { Plus } from 'lucide-react'
 import type { AgentDefDraft } from '@/entities/agent-def'
-import { SIDEBAR } from '@/shared/config/theme'
 import { cn } from '@/shared/lib/cn'
 import type { CharacterId } from '@/entities/agent-session'
 import { AgentSprite } from '@/entities/agent-session/ui/AgentSprite/AgentSprite'
+import type { ChatSummary } from '@/entities/conversation'
+import { ChatList } from '../ChatList/ChatList'
+import { StockList } from '../StockList/StockList'
 import { CharacterPicker } from '../CharacterPicker/CharacterPicker'
+import { SidebarGrip } from '../SidebarGrip/SidebarGrip'
 import { MemberMenu } from '../MemberMenu/MemberMenu'
 import {
   characterFor,
@@ -45,6 +48,18 @@ type TeamSidebarProps = {
   onRelease(name: string): void
   onEdit(draft: AgentDefDraft, previousName: string): void
   drafts: Map<string, AgentDefDraft>
+  width: number
+  onResize(width: number): void
+  onResizeEnd(width: number): void
+  chats: ChatSummary[]
+  openChatId: string | null
+  nowMs: number
+  onOpenChat(id: string): void
+  onStartChat(): void
+  onRemoveChat(id: string): void
+  stock: string[]
+  stockOn: string[]
+  onStock(name: string, on: boolean): void
 }
 
 export function TeamSidebar({
@@ -58,16 +73,41 @@ export function TeamSidebar({
   onRelease,
   onEdit,
   drafts,
+  width,
+  onResize,
+  onResizeEnd,
+  chats,
+  openChatId,
+  nowMs,
+  onOpenChat,
+  onStartChat,
+  onRemoveChat,
+  stock,
+  stockOn,
+  onStock,
 }: TeamSidebarProps) {
   const [editing, setEditing] = useState<'new' | string | null>(null)
   const target = typeof editing === 'string' ? (drafts.get(editing) ?? null) : null
 
   return (
     <aside
-      style={{ width: SIDEBAR.width }}
-      className="zt-scroll zt-bleed flex flex-none flex-col gap-3 overflow-y-auto border-r border-border bg-card/40 pr-4"
+      style={{ width }}
+      className="zt-bleed relative flex flex-none flex-col overflow-hidden border-r border-border bg-card/40"
     >
-      <div className="px-2.5 text-xs tracking-[0.08em] text-muted-foreground">Your team</div>
+      <SidebarGrip width={width} onResize={onResize} onResizeEnd={onResizeEnd} />
+      <div className="zt-scroll flex min-h-0 flex-1 flex-col gap-3 overflow-x-hidden overflow-y-auto pr-3">
+      <ChatList
+        chats={chats}
+        openId={openChatId}
+        nowMs={nowMs}
+        onOpen={onOpenChat}
+        onStart={onStartChat}
+        onRemove={onRemoveChat}
+      />
+
+      <div className="mt-2 border-t border-border px-2 pt-4 text-xs tracking-wide text-muted-foreground">
+        Your team
+      </div>
 
       {editing !== null ? (
         <MemberForm
@@ -86,7 +126,7 @@ export function TeamSidebar({
           size="bare"
           onClick={() => setEditing('new')}
           disabled={!canWrite}
-          className="min-w-0 justify-start gap-2.5 rounded-xl bg-card px-2.5 py-2 text-left disabled:pointer-events-auto"
+          className="min-w-0 justify-start gap-2.5 rounded-xl bg-card px-2 py-1.5 text-left disabled:pointer-events-auto"
           title={canWrite ? undefined : 'Pick a project first'}
         >
           <span
@@ -95,7 +135,7 @@ export function TeamSidebar({
           >
             <Plus />
           </span>
-          <span className="truncate text-sm font-medium">Create new</span>
+          <span className="truncate text-sm font-medium">Add teammate</span>
         </Button>
       )}
 
@@ -121,7 +161,7 @@ export function TeamSidebar({
               }
               disabled={mute}
               className={cn(
-                'min-w-0 flex-1 justify-start gap-2.5 rounded-xl px-2.5 py-2 text-left disabled:pointer-events-auto',
+                'min-w-0 flex-1 justify-start gap-2.5 rounded-lg px-2 py-1.5 text-left disabled:pointer-events-auto',
                 mute ? 'text-muted-foreground' : 'text-foreground',
                 active && 'bg-card',
               )}
@@ -137,11 +177,8 @@ export function TeamSidebar({
               />
               <span className="flex min-w-0 flex-col gap-0.5 text-left">
                 <span className="truncate text-sm leading-tight">{member.name}</span>
-                <span className="flex min-w-0 items-baseline gap-1.5 text-xs leading-tight text-muted-foreground">
-                  {member.model !== null && (
-                    <span className="flex-none font-mono">{member.model}</span>
-                  )}
-                  <span className="truncate">{state ?? member.description ?? ''}</span>
+                <span className="truncate text-xs leading-tight text-muted-foreground">
+                  {state ?? member.description ?? ''}
                 </span>
               </span>
             </Button>
@@ -171,6 +208,12 @@ export function TeamSidebar({
           {note}
         </p>
       )}
+
+      <div className="mt-2 border-t border-border px-2 pt-4 text-xs tracking-wide text-muted-foreground">
+        Claude Code
+      </div>
+      <StockList stock={stock} on={stockOn} avatar={AVATAR} onChange={onStock} />
+      </div>
     </aside>
   )
 }

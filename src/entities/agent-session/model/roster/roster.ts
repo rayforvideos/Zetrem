@@ -6,6 +6,18 @@ import { personaOf } from '../persona/persona'
 
 const RANK: Record<RosterState, number> = { waiting: 0, working: 1, done: 2, idle: 3 }
 
+function rosterState(status: AgentSession['status']): RosterState {
+  switch (status) {
+    case 'waiting':
+      return 'waiting'
+    case 'working':
+      return 'working'
+    case 'reported':
+    case 'done':
+      return 'done'
+  }
+}
+
 export function roster(agentTypes: string[], sessions: AgentSession[]): RosterMember[] {
   const seen = new Map<string, RosterMember>()
 
@@ -22,8 +34,7 @@ export function roster(agentTypes: string[], sessions: AgentSession[]): RosterMe
 
   for (const session of sessions) {
     const type = session.subagentType.length > 0 ? session.subagentType : session.label
-    const state: RosterState =
-      session.status === 'waiting' ? 'waiting' : session.status === 'working' ? 'working' : 'done'
+    const state = rosterState(session.status)
     const current = seen.get(type)
     if (current !== undefined && RANK[current.state] <= RANK[state] && current.sessionId !== null) {
       continue

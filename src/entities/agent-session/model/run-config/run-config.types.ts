@@ -9,6 +9,7 @@ export type RunConfig = {
   model: ModelChoice
   persona: string
   orchestrator?: string
+  resume?: string | null
   people: Person[]
   lock: RosterLock | null
 }

@@ -1,6 +1,7 @@
 import { renderToStaticMarkup } from 'react-dom/server'
 import { describe, expect, it } from 'vitest'
 import type { ToolActivity } from '@/entities/conversation'
+import { TOOL_OUTPUT_LINES } from '../../lib/limits'
 import { ToolDetail } from './ToolDetail'
 
 function tool(overrides: Partial<ToolActivity>): ToolActivity {
@@ -83,13 +84,14 @@ describe('ToolDetail — 도구마다 제 모양으로', () => {
     expect(html).toContain('line-through')
   })
 
-  it('diff 도 40 lines에서 멈추고 몇 줄이 남았는지 말한다', () => {
-    const content = Array.from({ length: 100 }, (_, i) => `줄${i}`).join('\n')
+  it('diff 도 한계에서 멈추고 몇 줄이 남았는지 말한다 — 자르되 자른 것을 숨기지 않는다', () => {
+    const over = TOOL_OUTPUT_LINES + 60
+    const content = Array.from({ length: over }, (_, i) => `줄${i}`).join('\n')
     const html = renderToStaticMarkup(
       <ToolDetail tool={tool({ line: 'Write big.ts', input: { file_path: 'big.ts', content } })} />,
     )
-    expect(html).toContain('줄39')
-    expect(html).not.toContain('줄40')
+    expect(html).toContain(`줄${TOOL_OUTPUT_LINES - 1}`)
+    expect(html).not.toContain(`줄${TOOL_OUTPUT_LINES}<`)
     expect(html).toContain('… 60 more lines')
   })
 

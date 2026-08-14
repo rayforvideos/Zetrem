@@ -6,6 +6,7 @@ import { registerAgentDefs } from './agent-defs'
 import { registerAuth } from './auth'
 import { registerCliVersion } from './cli-version'
 import { registerSettingsStore } from './settings-store'
+import { registerTranscriptStore } from './transcript-store'
 import { recallProject, rememberProject } from './project-memory'
 import { handle } from './ipc/ipc'
 
@@ -95,6 +96,7 @@ if (!primary) {
   registerAgentDefs()
   registerCliVersion()
   registerSettingsStore()
+  registerTranscriptStore()
 
   app.whenReady().then(() => {
     session.defaultSession.setPermissionRequestHandler((_contents, _permission, grant) => grant(false))

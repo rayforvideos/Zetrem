@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest'
+import { SIDEBAR } from '@/shared/config/theme'
 import { MODELS, PERMISSION_MODES } from '../run-config/run-config'
 import { DEFAULT_SETTINGS, readSettings } from './settings'
 
@@ -16,7 +17,10 @@ describe('readSettings — 저장된 선택을 되읽는다', () => {
       setupDone: true,
       onlyOurAgents: false,
       knownTools: ['Read', 'Bash'],
+      knownAgents: ['Explore', 'Ray'],
+      stockAgents: ['Explore'],
       sidebarOpen: false,
+      sidebarWidth: 300,
     }
     expect(readSettings(saved)).toEqual(saved)
   })
@@ -61,5 +65,35 @@ describe('설정이 아는 값과 고르는 값은 한 목록이다', () => {
     for (const mode of PERMISSION_MODES) {
       expect(readSettings({ permissionMode: mode.id }).permissionMode, mode.id).toBe(mode.id)
     }
+  })
+})
+
+describe('보드 폭', () => {
+  it('처음에는 기본 폭이다', () => {
+    expect(readSettings({}).sidebarWidth).toBe(SIDEBAR.width)
+  })
+
+  it('저장된 폭이 한계를 벗어나면 끌어들인다 — 창을 바꾸고 열어도 보드가 화면을 먹지 않는다', () => {
+    expect(readSettings({ sidebarWidth: 9999 }).sidebarWidth).toBe(SIDEBAR.max)
+    expect(readSettings({ sidebarWidth: 1 }).sidebarWidth).toBe(SIDEBAR.min)
+  })
+
+  it('폭이 숫자가 아니면 기본으로 돌아간다', () => {
+    expect(readSettings({ sidebarWidth: '넓게' }).sidebarWidth).toBe(SIDEBAR.width)
+  })
+})
+
+describe('기본 에이전트 설정', () => {
+  it('처음에는 아는 것도 켠 것도 없다 — 세션을 봐야 안다', () => {
+    expect(readSettings({}).knownAgents).toEqual([])
+    expect(readSettings({}).stockAgents).toEqual([])
+  })
+
+  it('이름이 아닌 것이 섞여 있으면 걸러 낸다', () => {
+    expect(readSettings({ knownAgents: ['Explore', 7, null] }).knownAgents).toEqual(['Explore'])
+  })
+
+  it('배열이 아니면 없는 셈 친다', () => {
+    expect(readSettings({ stockAgents: 'Explore' }).stockAgents).toEqual([])
   })
 })

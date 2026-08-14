@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from 'react'
 import {
-  ORCHESTRATOR_PROMPT,
   parseClaudeLine,
   permissionAlwaysResult,
   permissionResult,
@@ -10,6 +9,8 @@ import {
 import type { AgentSession, RunConfig, StatusState } from '@/entities/agent-session'
 import { applyAgentEvent } from './agent-events/agent-events'
 import { conversation } from './conversation/conversation'
+import { shouldRelaunch } from './relaunch/relaunch'
+import type { Attempt } from './relaunch/relaunch.types'
 import type { ConversationState } from './conversation/conversation.types'
 
 const CLOCK_MS = 1000
@@ -22,6 +23,7 @@ type Agent = {
   send(text: string): void
   decide(allow: boolean, always?: boolean): void
   stop(): void
+  reset(): void
 }
 
 export function useAgent(config: Omit<RunConfig, 'persona'>): Agent {
@@ -35,6 +37,8 @@ export function useAgent(config: Omit<RunConfig, 'persona'>): Agent {
   const hostId = useRef<string | null>(null)
   const asks = useRef<{ requestId: string; toolName: string; input: unknown }[]>([])
   const childIds = useRef(new Set<string>())
+  const sends = useRef(new Map<string, string>())
+  const attempt = useRef<Attempt | null>(null)
 
   useEffect(() => {
     const timer = setInterval(() => setNowMs(Date.now()), CLOCK_MS)
@@ -47,6 +51,13 @@ export function useAgent(config: Omit<RunConfig, 'persona'>): Agent {
 
       if (event.kind === 'exit') {
         hostId.current = null
+        const failed = attempt.current
+        attempt.current = null
+        if (shouldRelaunch(failed, event.code)) {
+          conversation.system('Could not pick that conversation back up — starting a new one')
+          launch(failed!.prompt, null)
+          return
+        }
         conversation.settleDraft()
         conversation.setStatus('done')
         conversation.setPermission(null)
@@ -55,10 +66,12 @@ export function useAgent(config: Omit<RunConfig, 'persona'>): Agent {
         return
       }
       if (event.kind === 'workspace') return
+      if (attempt.current !== null) attempt.current.spoke = true
 
       const refs = {
         asks: asks.current,
         childIds: childIds.current,
+        sends: sends.current,
       }
       for (const turn of parseClaudeLine(event.line)) {
         applyAgentEvent(turn, refs)
@@ -70,17 +83,36 @@ export function useAgent(config: Omit<RunConfig, 'persona'>): Agent {
     }
   }, [])
 
-  const send = useCallback((text: string) => {
-    conversation.say('user', text)
-    conversation.setStatus('working')
-    if (hostId.current) {
-      window.desk.sendToAgent(hostId.current, text)
-      return
-    }
+  const launch = useCallback((text: string, resume: string | null) => {
     statusStore.reset()
     const id = `agent-${Date.now()}`
     hostId.current = id
-    void window.desk.startAgent(id, text, { ...configRef.current, persona: ORCHESTRATOR_PROMPT })
+    attempt.current = { prompt: text, resumed: resume !== null, spoke: false }
+    conversation.setStatus('working')
+    void window.desk.startAgent(id, text, { ...configRef.current, persona: '', resume })
+  }, [])
+
+  const send = useCallback(
+    (text: string) => {
+      conversation.say('user', text)
+      conversation.setStatus('working')
+      if (hostId.current) {
+        window.desk.sendToAgent(hostId.current, text)
+        return
+      }
+      launch(text, configRef.current.resume ?? null)
+    },
+    [launch],
+  )
+
+  const reset = useCallback(() => {
+    const id = hostId.current
+    hostId.current = null
+    attempt.current = null
+    asks.current.length = 0
+    childIds.current.clear()
+    sends.current.clear()
+    if (id !== null) window.desk.stopAgent(id)
   }, [])
 
   const decide = useCallback((allow: boolean, always = false) => {
@@ -111,5 +143,5 @@ export function useAgent(config: Omit<RunConfig, 'persona'>): Agent {
     if (hostId.current) window.desk.stopAgent(hostId.current)
   }, [])
 
-  return { conversation: conv, children, status, nowMs, send, decide, stop }
+  return { conversation: conv, children, status, nowMs, send, decide, stop, reset }
 }

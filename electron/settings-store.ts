@@ -9,6 +9,17 @@ function settingsPath(): string {
   return join(app.getPath('userData'), 'settings.json')
 }
 
+let writing: Promise<void> = Promise.resolve()
+
+function queueWrite(settings: Settings): Promise<void> {
+  writing = writing.then(() =>
+    writeFile(settingsPath(), JSON.stringify(settings, null, 2), 'utf8').catch(
+      (cause: unknown) => console.error('could not save settings', cause),
+    ),
+  )
+  return writing
+}
+
 export function registerSettingsStore(): void {
   handle('settings:read', async (): Promise<Settings> => {
     try {
@@ -20,9 +31,7 @@ export function registerSettingsStore(): void {
 
   handle('settings:write', async (_event, next: unknown): Promise<Settings> => {
     const settings = readSettings(next)
-    await writeFile(settingsPath(), JSON.stringify(settings, null, 2), 'utf8').catch(
-      (cause: unknown) => console.error('could not save settings', cause),
-    )
+    await queueWrite(settings)
     return settings
   })
 }

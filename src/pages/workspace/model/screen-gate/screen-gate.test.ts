@@ -5,6 +5,7 @@ const known = {
   settingsLoaded: true,
   authKnown: true,
   projectKnown: true,
+  chatKnown: true,
   loggedIn: true,
   hasProject: true,
   setupDone: true,
@@ -54,5 +55,15 @@ describe('설정을 다시 열어도 마쳤다는 사실은 남는다', () => {
 
   it('아직 아무것도 모르면 설정 화면보다 기다림이 먼저다', () => {
     expect(screenGate({ ...known, settingsOpen: true, settingsLoaded: false })).toBe('holding')
+  })
+})
+
+describe('지난 대화를 아직 못 읽었으면 빈 화면을 보여주지 않는다', () => {
+  it('기다린다 — 빈 대화가 한 번 깜빡였다가 채워지면 지워진 줄 안다', () => {
+    expect(screenGate({ ...known, chatKnown: false })).toBe('holding')
+  })
+
+  it('갖춰지지 않은 쪽이 먼저다 — 프로젝트가 없으면 대화를 읽을 것도 없다', () => {
+    expect(screenGate({ ...known, chatKnown: false, hasProject: false })).toBe('setup')
   })
 })

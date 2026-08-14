@@ -1,10 +1,17 @@
 import { useEffect, useRef, useState, useSyncExternalStore } from 'react'
 import type { CSSProperties } from 'react'
-import { CrewProvider, addressed, roster, sessionStore } from '@/entities/agent-session'
+import {
+  CrewProvider,
+  addressed,
+  allowedStock,
+  roster,
+  sessionStore,
+  stockAgents,
+} from '@/entities/agent-session'
 import type { Crew, Settings } from '@/entities/agent-session'
 import { pickProject, projectStore, restoreProject } from '@/entities/project'
 import { TILE_MIN_DWELL_MS } from '@/shared/config/motion/motion'
-import { GRID_PAD, SIDEBAR_SPAN } from '@/shared/config/theme'
+import { GRID_PAD, SIDEBAR } from '@/shared/config/theme'
 import { PanelLeft } from 'lucide-react'
 import { cn } from '@/shared/lib/cn'
 import { Button } from '@/shared/ui/button'
@@ -15,6 +22,7 @@ import { SetupPane } from '@/widgets/setup'
 import { TileDeck, closingIds, useDeck, visibleIds } from '@/widgets/tile-deck'
 import { Titlebar } from '@/widgets/titlebar'
 import { WORDMARK_SIGNATURE_OPACITY, WORDMARK_SIZE, Wordmark } from '@/shared/graphics/wordmark/wordmark'
+import { remembered } from '../model/remembered/remembered'
 import { screenGate } from '../model/screen-gate/screen-gate'
 import { useFailure } from '@/shared/lib/failure/failure'
 import { useAuth } from '../model/use-auth'
@@ -22,6 +30,7 @@ import { useCliUpdate } from '../model/use-cli-update'
 import { useAgentDefs } from '../model/use-agent-defs'
 import { useSettings } from '../model/use-settings'
 import { useAgent } from '../model/use-agent'
+import { useTranscript } from '../model/use-transcript'
 import { ProjectPicker } from './controls/ProjectPicker'
 
 export function WorkspaceScreen() {
@@ -36,17 +45,30 @@ export function WorkspaceScreen() {
     model: def.model,
   }))
 
+  const stock = stockAgents(settings.knownAgents, defs.map((def) => def.name))
   const lock =
     settings.onlyOurAgents && settings.knownTools.length > 0
-      ? { knownTools: settings.knownTools }
+      ? { knownTools: settings.knownTools, alsoCallable: allowedStock(stock, settings.stockAgents) }
       : null
 
-  const { conversation: conv, children, status, nowMs, send, decide, stop } = useAgent({
+  const {
+    chats,
+    openId: openChatId,
+    resumeId,
+    ready: transcriptReady,
+    open: openChat,
+    start: startChat,
+    remove: removeChat,
+  } = useTranscript(project?.path ?? null)
+
+  const { conversation: conv, children, status, nowMs, send, decide, stop, reset } = useAgent({
     permissionMode: settings.permissionMode,
     model: settings.model,
     people,
     lock,
+    resume: resumeId,
   })
+
   const crew: Crew = {
     members: Object.fromEntries(
       defs.map((def) => [def.name, { character: def.character, model: def.model }]),
@@ -62,13 +84,19 @@ export function WorkspaceScreen() {
   const [settingsOpen, setSettingsOpen] = useState(false)
   const undoSettings = useRef<Settings | null>(null)
   const [viewport, setViewport] = useState(() => ({ w: window.innerWidth, h: window.innerHeight }))
+  const [dragWidth, setDragWidth] = useState<number | null>(null)
+  const sidebarWidth = dragWidth ?? settings.sidebarWidth
+  const sidebarSpan = settings.sidebarOpen ? sidebarWidth + SIDEBAR.gap : 0
 
   const sessionTools = status.session?.tools
+  const sessionAgents = status.session?.agents
   useEffect(() => {
-    if (sessionTools === undefined || sessionTools.length === 0) return
-    if (sessionTools.join('\u0000') === settings.knownTools.join('\u0000')) return
-    update({ knownTools: sessionTools })
-  }, [sessionTools, settings.knownTools, update])
+    const learned = remembered(
+      { tools: sessionTools, agents: sessionAgents },
+      { tools: settings.knownTools, agents: settings.knownAgents },
+    )
+    if (learned !== null) update(learned)
+  }, [sessionTools, sessionAgents, settings.knownTools, settings.knownAgents, update])
   const [openAgentId, setOpenAgentId] = useState<string | null>(null)
   const [addressee, setAddressee] = useState<string | null>(null)
   const openAgent = children.find((session) => session.id === openAgentId) ?? null
@@ -76,6 +104,7 @@ export function WorkspaceScreen() {
     settingsLoaded: !loading,
     authKnown,
     projectKnown,
+    chatKnown: transcriptReady,
     loggedIn: auth?.state === 'signed-in',
     hasProject: project?.path != null,
     setupDone: settings.setupDone,
@@ -131,7 +160,7 @@ export function WorkspaceScreen() {
         sessions={children}
         viewport={viewport}
         nowMs={nowMs}
-        sidebarW={(settings.sidebarOpen ? SIDEBAR_SPAN : 0) + GRID_PAD * 2}
+        sidebarW={sidebarSpan + GRID_PAD * 2}
         terminal={
           gate === 'holding' ? (
             <div className="relative z-[3] flex h-full items-center justify-center">
@@ -204,7 +233,7 @@ export function WorkspaceScreen() {
             }
             sidebar={
               <div
-                style={{ marginLeft: settings.sidebarOpen ? 0 : -SIDEBAR_SPAN }}
+                style={{ marginLeft: settings.sidebarOpen ? 0 : -(sidebarWidth + SIDEBAR.gap) }}
                 className="flex flex-none transition-[margin] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]"
               >
               <TeamSidebar
@@ -218,6 +247,39 @@ export function WorkspaceScreen() {
                 onRelease={release}
                 onEdit={edit}
                 drafts={drafts}
+                chats={chats}
+                openChatId={openChatId}
+                nowMs={nowMs}
+                onOpenChat={(id) => {
+                  reset()
+                  setOpenAgentId(null)
+                  setAddressee(null)
+                  sessionStore.clear()
+                  openChat(id)
+                }}
+                onStartChat={() => {
+                  reset()
+                  setOpenAgentId(null)
+                  setAddressee(null)
+                  sessionStore.clear()
+                  startChat()
+                }}
+                onRemoveChat={removeChat}
+                stock={stock}
+                stockOn={settings.stockAgents}
+                onStock={(name, on) =>
+                  update({
+                    stockAgents: on
+                      ? [...settings.stockAgents.filter((held) => held !== name), name]
+                      : settings.stockAgents.filter((held) => held !== name),
+                  })
+                }
+                width={sidebarWidth}
+                onResize={setDragWidth}
+                onResizeEnd={(next) => {
+                  setDragWidth(null)
+                  update({ sidebarWidth: next })
+                }}
               />
               </div>
             }

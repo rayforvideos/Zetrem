@@ -42,7 +42,7 @@ describe('agentsArgs — 잠금은 세션 주 에이전트로 표현된다', () 
   })
 
   it('잠그면 우리 오케스트레이터를 세우고 부를 사람을 좁힌다', () => {
-    const args = agentsArgs([person(), person({ name: 'reviewer' })], { knownTools: ['Read', 'Task'] }, boss)
+    const args = agentsArgs([person(), person({ name: 'reviewer' })], { knownTools: ['Read', 'Task'], alsoCallable: [] }, boss)
     const spec = JSON.parse(args[1] as string)
     expect(spec[ORCHESTRATOR].tools).toEqual(['Read', 'Agent(scout, reviewer)'])
     expect(spec[ORCHESTRATOR].prompt).toBe(boss)
@@ -50,11 +50,11 @@ describe('agentsArgs — 잠금은 세션 주 에이전트로 표현된다', () 
   })
 
   it('아는 도구가 없으면 잠그지 않는다 — 잠그면 도구를 전부 잃는다', () => {
-    const args = agentsArgs([person()], { knownTools: [] }, boss)
+    const args = agentsArgs([person()], { knownTools: [], alsoCallable: [] }, boss)
     expect(args).not.toContain('--agent')
   })
 
   it('들인 사람이 없으면 아무 인자도 넘기지 않는다', () => {
-    expect(agentsArgs([], { knownTools: ['Read'] }, boss)).toEqual([])
+    expect(agentsArgs([], { knownTools: ['Read'], alsoCallable: [] }, boss)).toEqual([])
   })
 })

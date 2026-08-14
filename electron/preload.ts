@@ -14,6 +14,13 @@ contextBridge.exposeInMainWorld('desk', {
     ipcRenderer.invoke('agents:replace', draft, previousName),
   readSettings: (): Promise<unknown> => ipcRenderer.invoke('settings:read'),
   writeSettings: (next: unknown): Promise<unknown> => ipcRenderer.invoke('settings:write', next),
+  listChats: (project: string): Promise<unknown> => ipcRenderer.invoke('transcript:list', project),
+  readTranscript: (project: string, id: string): Promise<unknown> =>
+    ipcRenderer.invoke('transcript:read', project, id),
+  writeTranscript: (project: string, saved: unknown): Promise<void> =>
+    ipcRenderer.invoke('transcript:write', project, saved),
+  forgetTranscript: (project: string, id: string): Promise<void> =>
+    ipcRenderer.invoke('transcript:forget', project, id),
   login: (): Promise<unknown> => ipcRenderer.invoke('auth:login'),
   logout: (): Promise<unknown> => ipcRenderer.invoke('auth:logout'),
   onAuthProgress: (listener: (line: string) => void): (() => void) => {

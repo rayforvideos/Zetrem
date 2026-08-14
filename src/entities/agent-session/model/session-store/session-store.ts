@@ -27,6 +27,9 @@ export const sessionStore = {
   get(): AgentSession[] {
     return sessions
   },
+  find(id: string): AgentSession | null {
+    return sessions.find((session) => session.id === id) ?? null
+  },
   subscribe(listener: Listener): () => void {
     listeners.add(listener)
     return () => listeners.delete(listener)

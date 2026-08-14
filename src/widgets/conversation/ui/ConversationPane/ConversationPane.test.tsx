@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest'
 import type { PermissionAsk, StatusState } from '@/entities/agent-session'
 import type { ToolActivity, Turn } from '@/entities/conversation'
 import { modifierKey } from '@/shared/lib/platform/platform'
+import { TOOL_OUTPUT_LINES } from '../../lib/limits'
 import { ConversationPane } from './ConversationPane'
 import { tickOpen } from './Tick'
 
@@ -91,36 +92,27 @@ function pane(turns: Turn[], permission: PermissionAsk | null = null): string {
   )
 }
 
-describe('tickOpen — 실패는 이유가 화면에 있어야 한다', () => {
-  it('결과가 마운트 뒤에 도착해도 실패한 눈금은 펼쳐진다', () => {
-    const mounted = tool({ result: null })
-    expect(tickOpen(null, mounted)).toBe(false)
-
-    const resolved = tool({
-      result: { stdout: '', stderr: 'no such file', isError: true, interrupted: false },
-    })
-    expect(tickOpen(null, resolved)).toBe(true)
+describe('tickOpen — 감추지 않는다', () => {
+  it('건드리지 않았으면 펼쳐져 있다 — 무엇을 했는지 보려고 누를 일이 없어야 한다', () => {
+    expect(tickOpen(null)).toBe(true)
   })
 
   it('사람이 접었으면 접힌 채로 둔다 — 기본값이 사람의 손을 덮지 않는다', () => {
-    const failed = tool({
-      result: { stdout: '', stderr: 'boom', isError: true, interrupted: false },
-    })
-    expect(tickOpen(false, failed)).toBe(false)
-    expect(tickOpen(true, tool())).toBe(true)
+    expect(tickOpen(false)).toBe(false)
+    expect(tickOpen(true)).toBe(true)
   })
 })
 
 describe('ConversationPane — 화면이 거짓말하지 않는다', () => {
-  it('도구 출력은 40 lines에서 멈추고 몇 줄이 남았는지 말한다', () => {
-    const stdout = Array.from({ length: 100 }, (_, i) => `줄${i}`).join('\n')
+  it('도구 출력은 한계에서 멈추고 몇 줄이 남았는지 말한다', () => {
+    const stdout = Array.from({ length: TOOL_OUTPUT_LINES + 60 }, (_, i) => `줄${i}`).join('\n')
     const html = pane([
       turn({
         tools: [tool({ result: { stdout, stderr: '', isError: true, interrupted: false } })],
       }),
     ])
-    expect(html).toContain('줄39')
-    expect(html).not.toContain('줄40')
+    expect(html).toContain(`줄${TOOL_OUTPUT_LINES - 1}`)
+    expect(html).not.toContain(`줄${TOOL_OUTPUT_LINES}\n`)
     expect(html).toContain('60 more lines')
   })
 

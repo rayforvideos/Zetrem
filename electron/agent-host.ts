@@ -6,7 +6,7 @@ import { app } from 'electron'
 import { agentEnv } from '../src/shared/lib/shell-env/shell-env'
 import { agentArgs } from '../src/entities/agent-session/model/run-config/run-config'
 import type { RunConfig } from '../src/entities/agent-session/model/run-config/run-config.types'
-import { orchestratorPrompt, persona } from './agent-style'
+import { ORCHESTRATOR_PROMPT, PERSONA } from '../src/entities/agent-session/model/orchestrator/orchestrator'
 import { claudeBin, loginPath } from './login-path/login-path'
 import { recallProject } from './project-memory'
 import { handle, on } from './ipc/ipc'
@@ -62,7 +62,7 @@ export function registerAgentHost(): void {
 
     const child = spawn(
       await claudeBin(),
-      agentArgs({ ...config, persona: persona(), orchestrator: orchestratorPrompt() }),
+      agentArgs({ ...config, persona: PERSONA, orchestrator: ORCHESTRATOR_PROMPT }),
       { cwd: workspace, env: agentEnv(process.env, await loginPath()) },
     )
     agents.set(id, child)

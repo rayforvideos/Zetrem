@@ -24,14 +24,15 @@ export function agentsArgs(
 ): string[] {
   const spec = peopleSpec(people)
   const names = Object.keys(spec)
-  const locking = lock !== null && names.length > 0 && lock.knownTools.length > 0
+  const callable = [...names, ...(lock?.alsoCallable ?? [])]
+  const locking = lock !== null && callable.length > 0 && lock.knownTools.length > 0
 
   if (locking) {
     const tools = lock.knownTools.filter((name) => name !== 'Task' && !name.startsWith('Agent('))
     spec[ORCHESTRATOR] = {
       description: 'The orchestrator Zetrem runs',
       prompt: orchestratorPrompt,
-      tools: [...tools, `Agent(${names.join(', ')})`],
+      tools: [...tools, `Agent(${callable.join(', ')})`],
     }
   }
 

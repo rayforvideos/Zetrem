@@ -15,15 +15,15 @@ export function ToolLine({ tool }: { tool: ToolActivity }) {
 
   return (
     <Item size="sm" className="w-full min-w-0 gap-2.5 px-0 py-0 text-xs">
-      <ItemMedia className="size-4">
+      <ItemMedia className="size-4 self-start">
         {shape.kind === 'agent' ? (
           <AgentSprite subagentType={shape.subagentType} size={16} />
         ) : (
           <ToolIcon shape={shape} />
         )}
       </ItemMedia>
-      <ItemContent className="min-w-0 flex-row items-center gap-1.5 overflow-hidden">
-        <span className="min-w-0 truncate">{body(shape)}</span>
+      <ItemContent className="min-w-0 flex-row flex-wrap items-baseline gap-x-1.5 gap-y-0.5">
+        <span className="min-w-0 [overflow-wrap:anywhere]">{body(shape)}</span>
         {changed !== null && (
           <span data-change className="flex-none tabular-nums">
             {changed.added > 0 && <span className="text-added">+{changed.added}</span>}

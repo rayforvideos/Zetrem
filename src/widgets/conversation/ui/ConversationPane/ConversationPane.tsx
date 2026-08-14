@@ -30,10 +30,11 @@ import {
 } from '@/shared/ui/input-group'
 import { Wordmark } from '@/shared/graphics/wordmark/wordmark'
 import { StatusBar, StatusDrawer } from '@/widgets/status-bar'
-import { settle } from '../../lib/settle/settle'
+import { beganComposing, endedComposing, newComposer, sent } from '../../lib/composer/composer'
 import { Markdown } from '../Markdown'
 import { Approval } from './Approval'
 import { ChoicePicker } from './ChoicePicker'
+import { Greeting } from './Greeting'
 import { Thinking } from './Thinking'
 import { Tick } from './Tick'
 import { Working } from './Working'
@@ -87,7 +88,7 @@ export function ConversationPane({
   const [drawerOpen, setDrawerOpen] = useState(false)
   const scrollRef = useRef<HTMLDivElement>(null)
   const draftRef = useRef<HTMLTextAreaElement>(null)
-  const composing = useRef(false)
+  const keying = useRef(newComposer())
   const busy = status === 'working'
   const lastIndex = turns.length - 1
 
@@ -96,12 +97,19 @@ export function ConversationPane({
     if (el) el.scrollTop = el.scrollHeight
   }, [turns, permission])
 
+  function clearField(): void {
+    setDraft('')
+    const field = draftRef.current
+    if (field !== null) field.value = ''
+  }
+
   function submit(): void {
     const text = draft.trim()
     if (text.length === 0) return
-    settle(draftRef.current, composing)
     onSend(text)
-    setDraft('')
+    sent(keying.current)
+    clearField()
+    window.setTimeout(clearField, 0)
   }
 
   function handleSubmit(event: FormEvent): void {
@@ -139,11 +147,9 @@ export function ConversationPane({
             ref={draftRef}
             value={draft}
             onChange={(event) => setDraft(event.target.value)}
-            onCompositionStart={() => {
-              composing.current = true
-            }}
+            onCompositionStart={() => beganComposing(keying.current)}
             onCompositionEnd={() => {
-              composing.current = false
+              if (endedComposing(keying.current)) window.setTimeout(clearField, 0)
             }}
             onKeyDown={handleKey}
             placeholder={
@@ -227,9 +233,7 @@ export function ConversationPane({
         {sidebar}
         <div className="flex min-w-0 flex-1 flex-col items-center justify-center">
           <Wordmark width={196} />
-          <p className="mt-7 text-center text-base leading-relaxed break-keep text-muted-foreground">
-            Let's get to work with your cute little agents!
-          </p>
+          <Greeting />
           <div className="mt-9 w-full max-w-3xl">{composerNode()}</div>
         </div>
       </div>

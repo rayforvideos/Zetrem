@@ -8,7 +8,8 @@ import { ToolIcon } from '@/shared/graphics/tool-icon'
 const STATE: Record<AgentSession['status'], string> = {
   working: 'Working',
   waiting: 'Waiting on you',
-  done: 'Reported back',
+  reported: 'Reported back',
+  done: 'Done',
 }
 
 type AgentReportProps = {

@@ -12,4 +12,4 @@ export type CharacterId =
 
 export type Mood = 'default' | 'sleepy' | 'relax' | 'busy'
 
-export type MemberState = 'waiting' | 'working' | 'done' | 'idle'
+export type MemberState = 'waiting' | 'working' | 'reported' | 'done' | 'idle'

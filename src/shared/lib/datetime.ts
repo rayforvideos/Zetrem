@@ -9,5 +9,5 @@ export function formatResetTime(ms: number, timeZone?: string): string {
   }).formatToParts(new Date(ms))
   const get = (type: string) => parts.find((part) => part.type === type)?.value ?? ''
   const strip = (value: string) => value.replace(/^0/, '')
-  return `${strip(get('month'))}월 ${strip(get('day'))}일 ${get('hour')}:${get('minute')}`
+  return `${strip(get('month'))}/${strip(get('day'))} ${get('hour')}:${get('minute')}`
 }

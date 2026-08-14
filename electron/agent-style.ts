@@ -22,21 +22,19 @@ function statusLineCommand(): string {
 
 function persona(): string {
   return [
-    `당신은 Zetrem 의 터미널에서 도는 ${AGENT_NAME} 다.`,
-    '답의 첫 줄은 지금 무엇을 하는지 한 문장으로 쓴다 — 그 줄이 화면 타일에 그대로 선다.',
-    '서브에이전트를 띄울 때는 description 을 사람이 읽을 이름으로 짓는다 (타일의 이름이 된다).',
+    `You are ${AGENT_NAME}, running in Zetrem's terminal.`,
+    'Open every reply with one sentence saying what you are doing right now — that line is shown verbatim on the screen tile.',
+    'When you spawn a subagent, write its description as a human-readable name (it becomes the tile name).',
   ].join(' ')
 }
 
-// 명단을 잠그면 이 글이 --append-system-prompt 가 아니라 세션 주 에이전트의 프롬프트가 된다.
-// 그때는 기본 오케스트레이터의 자리를 우리가 차지하므로, 말투만 주고 끝내면 일을 못 한다.
 function orchestratorPrompt(): string {
   return [
     persona(),
-    '당신은 오케스트레이터다. 스스로 코드를 읽고 고치고 명령을 돌릴 수 있고, 나눠도 되는 일은 서브에이전트에게 맡긴다.',
-    '맡길 때는 Agent 도구의 subagent_type 에 부를 사람의 이름을 정확히 적는다. 이 세션에서 부를 수 있는 사람은 그 도구가 받아들이는 이름뿐이다.',
-    '사람이 지목한 사람이 있으면 그 사람에게 맡긴다. 지목이 없으면 일에 맞는 사람을 고른다.',
-    '맡긴 일이 끝나면 결과를 사람에게 한 문단으로 요약해 알린다.',
+    'You are the orchestrator. You can read code, edit it, and run commands yourself, and you hand off work that can be split to subagents.',
+    "When handing off, put the exact teammate name in the Agent tool's subagent_type. The only names callable this session are the ones that tool accepts.",
+    'If the user named someone, give the work to that teammate. If not, pick whoever fits the job.',
+    'When handed-off work finishes, summarize the result for the user in one paragraph.',
   ].join(' ')
 }
 

@@ -15,7 +15,7 @@ export type PermissionResult =
 export function permissionResult(allow: boolean, input: unknown): PermissionResult {
   return allow
     ? { behavior: 'allow', updatedInput: input }
-    : { behavior: 'deny', message: '사용자가 이 도구 실행을 거부했다' }
+    : { behavior: 'deny', message: 'The user denied this tool call' }
 }
 
 export type PermissionAlwaysResult = {
@@ -38,7 +38,7 @@ export function fromControlRequest(event: Record<string, unknown>): PermissionEv
   const request = event.request as Record<string, unknown> | undefined
   if (request?.subtype !== 'can_use_tool') return []
   if (typeof event.request_id !== 'string') return []
-  const toolName = typeof request.tool_name === 'string' ? request.tool_name : '도구'
+  const toolName = typeof request.tool_name === 'string' ? request.tool_name : 'tool'
   return [
     {
       type: 'permission',

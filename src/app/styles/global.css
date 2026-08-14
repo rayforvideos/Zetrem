@@ -1,166 +1,154 @@
 @import 'tailwindcss';
 @import 'tw-animate-css';
 
+@custom-variant dark (&:is(.dark *));
+
+:root {
+  --background: oklch(0 0 0);
+  --foreground: oklch(0.95 0 0);
+
+  --card: oklch(0.17 0 0);
+  --card-foreground: oklch(0.95 0 0);
+  --popover: oklch(0.2 0 0);
+  --popover-foreground: oklch(0.95 0 0);
+
+  --primary: oklch(1 0 0);
+  --primary-foreground: oklch(0 0 0);
+
+  --secondary: oklch(0.2 0 0);
+  --secondary-foreground: oklch(0.95 0 0);
+
+  --muted: oklch(0.26 0 0);
+  --muted-foreground: oklch(0.62 0 0);
+  --accent: oklch(0.22 0 0);
+  --accent-foreground: oklch(0.97 0 0);
+  --destructive: oklch(0.58 0.2 25);
+
+  --border: oklch(0.24 0 0);
+  --input: oklch(0.24 0 0);
+
+  --ring: oklch(0.62 0 0);
+
+  --radius: 0.625rem;
+
+  --font-zt-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-zt-mono: ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
 @theme inline {
-  --font-sans: var(--zt-sans);
-  --font-serif: var(--zt-serif);
-  --font-mono: var(--zt-mono);
+  --font-sans: var(--font-zt-sans);
+  --font-mono: var(--font-zt-mono);
 
-  --color-background: transparent;
-  --color-foreground: var(--zt-text, currentColor);
-  --color-card: color-mix(in srgb, currentColor 6%, transparent);
-  --color-card-foreground: var(--zt-text, currentColor);
-  --color-popover: color-mix(in srgb, currentColor 10%, transparent);
-  --color-popover-foreground: var(--zt-text, currentColor);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
 
-  --color-primary: var(--zt-text, #ededf0);
-  --color-primary-foreground: var(--zt-on-primary, var(--zt-ground, #0a0a0b));
-  --color-secondary: color-mix(in srgb, currentColor 10%, transparent);
-  --color-secondary-foreground: var(--zt-text, currentColor);
-  --color-muted: color-mix(in srgb, currentColor 8%, transparent);
-  --color-muted-foreground: color-mix(in srgb, currentColor 65%, transparent);
-  --color-accent: color-mix(in srgb, currentColor 12%, transparent);
-  --color-accent-foreground: var(--zt-text, currentColor);
-  --color-destructive: var(--zt-text, currentColor);
-  --color-border: color-mix(in srgb, currentColor 16%, transparent);
-  --color-input: color-mix(in srgb, currentColor 18%, transparent);
-  --color-ring: color-mix(in srgb, currentColor 45%, transparent);
-
-  --radius-sm: 8px;
-  --radius-md: 10px;
-  --radius-lg: 12px;
-  --radius-xl: 16px;
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
 }
 
 @layer base {
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    border-color: var(--color-border);
+  }
 
-html,
-body,
-#root {
-  height: 100%;
+  html,
+  body,
+  #root {
+    height: 100%;
+    overflow: hidden;
+    overscroll-behavior: none;
+  }
 
-  background: var(--zt-ground);
-  overflow: hidden;
-}
+  body {
+    background: var(--color-background);
+    color: var(--color-foreground);
+    font-family: var(--font-sans);
+    font-size: 14px;
+    -webkit-font-smoothing: antialiased;
+    cursor: default;
+    user-select: none;
+    -webkit-user-select: none;
+  }
 
-:root {
-  --zt-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  --zt-serif: ui-serif, 'New York', Georgia, serif;
-  --zt-mono: ui-monospace, SFMono-Regular, Menlo, monospace;
+  [data-selectable],
+  [data-selectable] *,
+  input,
+  textarea {
+    user-select: text;
+    -webkit-user-select: text;
+  }
 
-  --zt-ground: #0a0a0b;
-}
+  input,
+  textarea {
+    cursor: text;
+  }
 
-body {
-  font-family: var(--zt-sans);
-  font-size: 14px;
-  -webkit-font-smoothing: antialiased;
-}
+  button,
+  summary,
+  a[href],
+  label[for],
+  [role='button'],
+  [role='radio'],
+  [role='switch'],
+  [role='menuitem'],
+  [role='menuitemradio'],
+  [role='option'],
+  [role='tab'] {
+    cursor: pointer;
+  }
 
-.zt-input,
-.zt-select {
-  appearance: none;
-  -webkit-app-region: no-drag;
-  padding: 8px 12px;
-  border-radius: 10px;
-  border: 1px solid color-mix(in srgb, currentColor 18%, transparent);
-  background: color-mix(in srgb, currentColor 5%, transparent);
-  color: inherit;
-  font: inherit;
-  font-size: 13px;
-  line-height: 1.4;
-  transition:
-    border-color 150ms ease,
-    background-color 150ms ease;
-}
+  button:disabled,
+  [aria-disabled='true'],
+  [data-disabled] {
+    cursor: default;
+  }
 
-.zt-input::placeholder {
-  color: color-mix(in srgb, currentColor 55%, transparent);
-}
+  img,
+  svg,
+  [role='img'] {
+    -webkit-user-drag: none;
+  }
 
-.zt-input:hover,
-.zt-select:hover {
-  border-color: color-mix(in srgb, currentColor 30%, transparent);
-}
+  ::selection {
+    background: color-mix(in srgb, var(--color-foreground) 22%, transparent);
+  }
 
-.zt-input:focus-visible,
-.zt-select:focus-visible {
-  outline: none;
-  border-color: color-mix(in srgb, currentColor 50%, transparent);
-  background: color-mix(in srgb, currentColor 8%, transparent);
-}
+  [data-titlebar] {
+    -webkit-app-region: drag;
+  }
 
-.zt-select {
-  cursor: pointer;
-  padding-right: 26px;
-  background-image: linear-gradient(45deg, transparent 50%, currentColor 50%),
-    linear-gradient(135deg, currentColor 50%, transparent 50%);
-  background-position:
-    right 14px top 55%,
-    right 10px top 55%;
-  background-size:
-    4px 4px,
-    4px 4px;
-  background-repeat: no-repeat;
-}
+  [data-titlebar] button,
+  [data-titlebar] input,
+  [data-titlebar] label {
+    -webkit-app-region: no-drag;
+  }
 
-.zt-card {
-  border-radius: 12px;
-  border: 1px solid color-mix(in srgb, currentColor 14%, transparent);
-  background: color-mix(in srgb, currentColor 6%, transparent);
-  padding: 12px;
-}
-
-.zt-range {
-  -webkit-app-region: no-drag;
-  accent-color: currentColor;
-}
-
-.zt-nums {
-  font-variant-numeric: tabular-nums;
-}
-
-.zt-scroll::-webkit-scrollbar {
-  width: 8px;
-}
-
-.zt-scroll::-webkit-scrollbar-thumb {
-  border-radius: 4px;
-  background: color-mix(in srgb, currentColor 22%, transparent);
-}
-
-.zt-scroll::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-[data-titlebar] {
-  -webkit-app-region: drag;
-}
-
-[data-titlebar] button,
-[data-titlebar] input,
-[data-titlebar] label {
-  -webkit-app-region: no-drag;
-}
-
-.xterm,
-.xterm .xterm-viewport,
-.xterm .xterm-screen {
-  background-color: transparent !important;
-}
-
-.xterm .xterm-viewport::-webkit-scrollbar {
-  width: 8px;
-}
-
-.xterm .xterm-viewport::-webkit-scrollbar-thumb {
-  border-radius: 4px;
-  background: color-mix(in srgb, currentColor 22%, transparent);
+  .xterm,
+  .xterm .xterm-viewport,
+  .xterm .xterm-screen {
+    background-color: transparent !important;
+  }
 }
 
 .zt-rail {
@@ -175,7 +163,7 @@ body {
   top: 6px;
   bottom: 4px;
   width: 1px;
-  background: color-mix(in srgb, currentColor 24%, transparent);
+  background: var(--color-border);
 }
 
 .zt-rail--live::after {
@@ -186,8 +174,7 @@ body {
   width: 3px;
   height: 34px;
   border-radius: 2px;
-  background: currentColor;
-  opacity: 0.4;
+  background: var(--color-muted-foreground);
 }
 
 .zt-tick {
@@ -202,36 +189,88 @@ body {
   width: 5px;
   height: 5px;
   border-radius: 3px;
-  background: color-mix(in srgb, currentColor 46%, transparent);
-  box-shadow: 0 0 0 3px var(--zt-tick-halo, transparent);
+  background: var(--color-muted-foreground);
 }
 
 .zt-tick--live::before {
-  background: currentColor;
+  background: var(--color-foreground);
 }
 
-.zt-chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  padding: 3px 8px;
-  border-radius: 999px;
-  border: 1px solid color-mix(in srgb, currentColor 14%, transparent);
-  font-size: 11px;
-  letter-spacing: 0.01em;
-  white-space: nowrap;
+.zt-bleed {
+  margin-top: calc(var(--zt-shell-pad-top, 0px) * -1);
+  margin-bottom: calc(var(--zt-shell-pad, 0px) * -1);
+  margin-left: calc(var(--zt-shell-pad, 0px) * -1);
+  padding-top: var(--zt-shell-pad-top, 0px);
+  padding-bottom: var(--zt-shell-pad, 0px);
+  padding-left: var(--zt-shell-pad, 0px);
 }
 
-[data-slot='dropdown-menu-content'],
-[data-slot='popover-content'],
-[data-slot='tooltip-content'] {
-  backdrop-filter: blur(24px) saturate(1.3);
-  -webkit-backdrop-filter: blur(24px) saturate(1.3);
-  background: color-mix(in srgb, var(--zt-on-primary, canvas) 92%, transparent);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.28),
-    0 18px 44px -16px rgba(0, 0, 0, 0.45);
+.zt-nums {
+  font-variant-numeric: tabular-nums;
 }
+
+.zt-scroll::-webkit-scrollbar,
+.xterm .xterm-viewport::-webkit-scrollbar {
+  width: 8px;
+}
+
+.zt-scroll::-webkit-scrollbar-thumb,
+.xterm .xterm-viewport::-webkit-scrollbar-thumb {
+  border-radius: 4px;
+  background: var(--color-border);
+}
+
+.zt-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+@keyframes zt-collapse-down {
+  from {
+    height: 0;
+    opacity: 0;
+  }
+  to {
+    height: var(--radix-collapsible-content-height);
+    opacity: 1;
+  }
+}
+
+@keyframes zt-collapse-up {
+  from {
+    height: var(--radix-collapsible-content-height);
+    opacity: 1;
+  }
+  to {
+    height: 0;
+    opacity: 0;
+  }
+}
+
+[data-slot='collapsible-content'] {
+  overflow: hidden;
+}
+
+[data-slot='collapsible-content'][data-state='open'] {
+  animation: zt-collapse-down 200ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+[data-slot='collapsible-content'][data-state='closed'] {
+  animation: zt-collapse-up 160ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@keyframes zt-rise {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.zt-rise {
+  animation: zt-rise 260ms cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 @media (prefers-reduced-motion: reduce) {

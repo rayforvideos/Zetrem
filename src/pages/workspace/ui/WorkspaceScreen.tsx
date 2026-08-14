@@ -3,7 +3,8 @@ import type { CSSProperties } from 'react'
 import { addressed, roster, sessionStore } from '@/entities/agent-session'
 import { pickProject, projectStore, restoreProject } from '@/entities/project'
 import { TILE_MIN_DWELL_MS } from '@/shared/config/motion'
-import { GROUND, TEXT } from '@/shared/config/theme'
+import { PanelLeft } from 'lucide-react'
+import { cn } from '@/shared/lib/cn'
 import { Button } from '@/shared/ui/button'
 import { ConversationPane } from '@/widgets/conversation'
 import { AgentReport } from '@/widgets/agent-report'
@@ -32,8 +33,6 @@ export function WorkspaceScreen() {
     model: def.model,
   }))
 
-  // 우리가 들인 사람만 부르게 잠근다. 도구 이름을 하나씩 적어야만 제한이 서므로(실측),
-  // 세션이 한 번 서서 이름을 알려주기 전에는 잠그지 않는다 — 잠그면 도구를 전부 잃는다.
   const lock =
     settings.onlyOurAgents && settings.knownTools.length > 0
       ? { knownTools: settings.knownTools }
@@ -45,13 +44,12 @@ export function WorkspaceScreen() {
     people,
     lock,
   })
-  const { auth, authKnown, loggingIn, loginNote, login } = useAuth()
+  const { auth, authKnown, loggingIn, loginNote, login, loggingOut, logout, authError } = useAuth()
   const cliUpdate = useCliUpdate(status.session?.cliVersion ?? null)
   const { state, launch: fanOut, openOne, closeOne } = useDeck()
   const [projectKnown, setProjectKnown] = useState(false)
   const [viewport, setViewport] = useState(() => ({ w: window.innerWidth, h: window.innerHeight }))
 
-  // 세션이 알려준 도구 이름을 기억해 둔다 — 다음 세션을 잠글 때 이 이름들이 필요하다
   const sessionTools = status.session?.tools
   useEffect(() => {
     if (sessionTools === undefined || sessionTools.length === 0) return
@@ -71,13 +69,6 @@ export function WorkspaceScreen() {
   })
 
   useEffect(() => {
-    const root = document.documentElement
-    root.style.setProperty('--zt-text', TEXT)
-    root.style.setProperty('--zt-on-primary', GROUND)
-    root.style.setProperty('color', TEXT)
-  }, [])
-
-  useEffect(() => {
     function onResize(): void {
       setViewport({ w: window.innerWidth, h: window.innerHeight })
     }
@@ -90,7 +81,7 @@ export function WorkspaceScreen() {
       .then((restored) => {
         if (restored && projectStore.get() === null) projectStore.set(restored)
       })
-      .catch((cause: unknown) => console.error('프로젝트 복원 실패', cause))
+      .catch((cause: unknown) => console.error('could not restore the project', cause))
       .finally(() => setProjectKnown(true))
   }, [])
 
@@ -116,7 +107,7 @@ export function WorkspaceScreen() {
       .then((picked) => {
         if (picked) projectStore.set(picked)
       })
-      .catch((cause: unknown) => console.error('프로젝트를 고르지 못했다', cause))
+      .catch((cause: unknown) => console.error('could not pick a project', cause))
   }
 
   return (
@@ -148,6 +139,10 @@ export function WorkspaceScreen() {
               canStart={auth?.loggedIn === true && project?.path != null}
               loggingIn={loggingIn}
               loginNote={loginNote}
+              onLogout={logout}
+              loggingOut={loggingOut}
+              authError={authError}
+              sessionLive={status.session !== null && conv.status !== 'done'}
             />
           ) : (
           <ConversationPane
@@ -157,6 +152,7 @@ export function WorkspaceScreen() {
             permission={conv.permission}
             nowMs={nowMs}
             permissionMode={settings.permissionMode}
+            onPermissionMode={(permissionMode) => update({ permissionMode })}
             model={settings.model}
             onModel={(model) => update({ model })}
             sessionLive={conv.status !== 'done'}
@@ -182,6 +178,12 @@ export function WorkspaceScreen() {
               )
             }
             sidebar={
+              <div
+                className={cn(
+                  'flex flex-none transition-[margin] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]',
+                  settings.sidebarOpen ? 'ml-0' : '-ml-[260px]',
+                )}
+              >
               <TeamSidebar
                 members={team(defs, status.session?.agents ?? [], roster(status.session?.agents ?? [], children))}
                 sessionKnown={status.session !== null}
@@ -191,21 +193,37 @@ export function WorkspaceScreen() {
                 onPick={setOpenAgentId}
                 onAddress={setAddressee}
               />
+              </div>
             }
           />
           )
         }
       />
-      <Titlebar>
+      <Titlebar
+        left={
+          settings.setupDone && (
+            <Button
+              variant="quiet"
+              size="bare"
+              onClick={() => update({ sidebarOpen: !settings.sidebarOpen })}
+              aria-pressed={settings.sidebarOpen}
+              aria-label={settings.sidebarOpen ? 'Hide team sidebar' : 'Show team sidebar'}
+              title={settings.sidebarOpen ? 'Hide team sidebar' : 'Show team sidebar'}
+            >
+              <PanelLeft className="size-3.5" />
+            </Button>
+          )
+        }
+      >
         {settings.setupDone && (
           <Button
             variant="quiet"
             size="bare"
             onClick={() => update({ setupDone: false })}
-            className="text-[11px]"
-            title="계정·프로젝트·권한 모드를 다시 고릅니다"
+            className="text-xs"
+            title="Change account, project, and permissions"
           >
-            설정
+            Settings
           </Button>
         )}
         <ProjectPicker />

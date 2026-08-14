@@ -1,23 +1,30 @@
 import { useState } from 'react'
+import { Plus } from 'lucide-react'
 import { personaOf } from '@/entities/agent-session'
 import type { AgentDefDraft } from '@/entities/agent-def'
 import { cn } from '@/shared/lib/cn'
 import { AgentFace } from '@/shared/ui/agent-face'
 import { Button } from '@/shared/ui/button'
+import { Empty, EmptyDescription, EmptyHeader, EmptyTitle } from '@/shared/ui/empty'
+import { Field, FieldDescription, FieldGroup } from '@/shared/ui/field'
+import { Input } from '@/shared/ui/input'
+import { Textarea } from '@/shared/ui/textarea'
 import type { Origin, TeamMember } from '../lib/team'
 
 const ORIGIN: Record<Origin, string> = {
-  project: '이 프로젝트',
-  user: '내 계정',
-  session: '엔진이 데려옴',
+  project: 'This project',
+  user: 'Your account',
+  session: 'Claude Code',
 }
 
 const STATE: Record<TeamMember['state'], string | null> = {
-  waiting: '기다리는 중',
+  waiting: 'Waiting on you',
   working: null,
-  done: '보고함',
+  done: 'Reported back',
   idle: null,
 }
+
+const AVATAR = 24
 
 type TeamSidebarProps = {
   members: TeamMember[]
@@ -41,93 +48,98 @@ export function TeamSidebar({
   const [hiring, setHiring] = useState(false)
 
   return (
-    <aside className="zt-scroll flex w-[212px] flex-none flex-col gap-4 overflow-y-auto border-r border-current/15 pr-5">
-      <div className="flex items-baseline justify-between text-[10.5px] tracking-[0.08em] opacity-45">
-        <span>데리고 있는 사람</span>
-        <span className="font-mono tabular-nums">{members.length}</span>
-      </div>
+    <aside className="zt-scroll zt-bleed flex w-[232px] flex-none flex-col gap-3 overflow-y-auto border-r border-border bg-card/40 pr-4">
+      <div className="px-2.5 text-xs tracking-[0.08em] text-muted-foreground">Your team</div>
 
-      {members.length === 0 && (
-        <p className="text-[10.5px] leading-relaxed opacity-30">
-          아직 아무도 없습니다. 아래에서 사람을 들이면 이 자리에 섭니다.
-        </p>
+      {hiring ? (
+        <HireForm
+          onCancel={() => setHiring(false)}
+          onSubmit={(draft) => {
+            onHire(draft)
+            setHiring(false)
+          }}
+        />
+      ) : (
+        <Button
+          variant="ghost"
+          size="bare"
+          onClick={() => setHiring(true)}
+          disabled={!canWrite}
+          className="min-w-0 justify-start gap-2.5 rounded-xl bg-card px-2.5 py-2 text-left disabled:pointer-events-auto"
+          title={canWrite ? undefined : 'Pick a project first'}
+        >
+          <span
+            className="flex flex-none items-center justify-center rounded-full border border-border text-muted-foreground"
+            style={{ width: AVATAR, height: AVATAR }}
+          >
+            <Plus />
+          </span>
+          <span className="truncate text-sm font-medium">Create new</span>
+        </Button>
       )}
 
-      <div className="flex flex-col gap-3">
+      <div className="flex flex-col gap-0.5">
         {members.map((member) => {
-          const note = STATE[member.state] ?? member.note
-          const body = (
-            <>
-              <AgentFace persona={personaOf(member.type)} size={18} />
-              <span className="flex min-w-0 flex-col gap-0.5 text-left">
-                <span className="flex items-baseline gap-1.5">
-                  <span className="truncate text-[12.5px] leading-tight">{member.name}</span>
-                  {member.model !== null && (
-                    <span className="flex-none font-mono text-[10.5px] opacity-45">
-                      {member.model}
-                    </span>
-                  )}
-                </span>
-                <span className="truncate text-[10.5px] leading-tight opacity-45">
-                  {note ?? member.description ?? ''}
-                </span>
-              </span>
-            </>
-          )
+          const state = STATE[member.state] ?? member.note
           const mute = sessionKnown && !member.callable
-          const dim =
-            member.state === 'idle' ? (mute ? 'opacity-30' : 'opacity-70') : 'opacity-100'
+          const active = member.state !== 'idle'
           const why = !member.loaded
-            ? `${ORIGIN[member.origin]} — 다음 세션부터 실립니다`
-            : '이번 세션에서는 부를 수 없습니다 — 설정에서 잠금을 풀 수 있습니다'
+            ? `${ORIGIN[member.origin]} — joins from the next session`
+            : 'Not available this session — unlock it in Settings'
           return (
             <Button
               key={member.type}
-              variant="quiet"
+              data-member={member.type}
+              variant="ghost"
               size="bare"
               onClick={() =>
                 member.sessionId !== null ? onPick(member.sessionId) : onAddress(member.type)
               }
               disabled={mute}
-              className={cn('min-w-0 justify-start gap-2 opacity-100', dim)}
+              className={cn(
+                'min-w-0 justify-start gap-2.5 rounded-xl px-2.5 py-2 text-left disabled:pointer-events-auto',
+                mute ? 'text-muted-foreground' : 'text-foreground',
+                active && 'bg-card',
+              )}
               title={
-                member.sessionId !== null ? '한 일을 봅니다' : mute ? why : '이 사람에게 맡깁니다'
+                member.sessionId !== null ? 'See what they did' : mute ? why : 'Give them a task'
               }
             >
-              {body}
+              <AgentFace persona={personaOf(member.type)} size={AVATAR} />
+              <span className="flex min-w-0 flex-col gap-0.5 text-left">
+                <span className="flex items-baseline gap-1.5">
+                  <span className="truncate text-sm leading-tight">{member.name}</span>
+                  {member.model !== null && (
+                    <span className="flex-none font-mono text-xs text-muted-foreground">
+                      {member.model}
+                    </span>
+                  )}
+                </span>
+                <span className="truncate text-xs leading-tight text-muted-foreground">
+                  {state ?? member.description ?? ''}
+                </span>
+              </span>
             </Button>
           )
         })}
       </div>
 
-      <div className="mt-1 flex flex-col gap-3 border-t border-current/15 pt-3">
-          {hiring ? (
-            <HireForm
-              onCancel={() => setHiring(false)}
-              onSubmit={(draft) => {
-                onHire(draft)
-                setHiring(false)
-              }}
-            />
-          ) : (
-            <Button
-              variant="quiet"
-              size="bare"
-              onClick={() => setHiring(true)}
-              disabled={!canWrite}
-              className="justify-start gap-1.5 text-[11px]"
-              title={canWrite ? undefined : '프로젝트를 먼저 골라야 합니다'}
-            >
-              <span className="text-[12.5px] leading-none">+</span>
-              사람 새로 들이기
-            </Button>
-          )}
-          {note !== null && (
-            <p data-note className="text-[10.5px] leading-snug opacity-45">
-              {note}
-            </p>
-          )}
-        </div>
+      {members.length === 0 && !hiring && (
+        <Empty className="flex-none items-start justify-start gap-2 px-2.5 py-2 text-left md:px-2.5 md:py-2">
+          <EmptyHeader className="items-start text-left">
+            <EmptyTitle className="text-sm">No one here yet</EmptyTitle>
+            <EmptyDescription className="text-xs">
+              Create a teammate and they'll show up here.
+            </EmptyDescription>
+          </EmptyHeader>
+        </Empty>
+      )}
+
+      {note !== null && (
+        <p data-note className="px-2.5 text-xs leading-snug text-muted-foreground">
+          {note}
+        </p>
+      )}
     </aside>
   )
 }
@@ -145,17 +157,14 @@ function HireForm({
   const [missing, setMissing] = useState<string | null>(null)
   const lack =
     name.trim().length === 0
-      ? '이름이 있어야 합니다'
+      ? 'Give them a name'
       : prompt.trim().length === 0
-        ? '무슨 일을 어떻게 하는지 적어야 합니다'
+        ? 'Describe what they do'
         : null
-
-  const field =
-    'w-full resize-none border-0 border-b border-current/15 bg-transparent px-0 py-1 text-[11px] outline-none placeholder:opacity-30'
 
   return (
     <form
-      className="flex flex-col gap-2"
+      className="flex flex-col gap-3 rounded-xl bg-card p-2.5"
       onSubmit={(event) => {
         event.preventDefault()
         if (lack !== null) {
@@ -171,36 +180,54 @@ function HireForm({
         })
       }}
     >
-      <input
-        value={name}
-        onChange={(event) => setName(event.target.value)}
-        placeholder="이름"
-        className={field}
-      />
-      <input
-        value={description}
-        onChange={(event) => setDescription(event.target.value)}
-        placeholder="언제 부를 사람인가"
-        className={field}
-      />
-      <textarea
-        value={prompt}
-        onChange={(event) => setPrompt(event.target.value)}
-        placeholder="무슨 일을 어떻게 하는지"
-        rows={4}
-        className={field}
-      />
-      <div className="flex items-center gap-3 text-[11px]">
-        <Button type="submit" variant="quiet" size="bare" className="opacity-70">
-          들이기
+      <FieldGroup className="gap-2.5">
+        <Field data-invalid={missing !== null && name.trim().length === 0 ? true : undefined}>
+          <Input
+            value={name}
+            onChange={(event) => setName(event.target.value)}
+            placeholder="Name"
+            aria-label="Name"
+            aria-invalid={missing !== null && name.trim().length === 0}
+            className="h-8 rounded-lg text-sm"
+          />
+        </Field>
+        <Field>
+          <Input
+            value={description}
+            onChange={(event) => setDescription(event.target.value)}
+            placeholder="When to call them"
+            aria-label="When to call them"
+            className="h-8 rounded-lg text-sm"
+          />
+        </Field>
+        <Field data-invalid={missing !== null && prompt.trim().length === 0 ? true : undefined}>
+          <Textarea
+            value={prompt}
+            onChange={(event) => setPrompt(event.target.value)}
+            placeholder="What they do, and how"
+            aria-label="What they do, and how"
+            aria-invalid={missing !== null && prompt.trim().length === 0}
+            rows={4}
+            className="resize-none rounded-lg text-sm"
+          />
+        </Field>
+        <FieldDescription>{missing ?? 'Available from the next session'}</FieldDescription>
+      </FieldGroup>
+
+      <div className="flex items-center gap-2">
+        <Button type="submit" size="sm" className="rounded-full">
+          Create
         </Button>
-        <Button variant="quiet" size="bare" onClick={onCancel}>
-          그만두기
+        <Button
+          type="button"
+          size="sm"
+          variant="ghost"
+          onClick={onCancel}
+          className="rounded-full text-muted-foreground"
+        >
+          Cancel
         </Button>
       </div>
-      <p className="text-[10.5px] leading-snug opacity-30">
-        {missing ?? '엔진은 다음 세션부터 이 사람을 압니다'}
-      </p>
     </form>
   )
 }

@@ -1,13 +1,26 @@
 import type { CSSProperties, ReactNode } from 'react'
-import { CHROME_TOP } from '@/shared/config/theme'
+import { CHROME_TOP, TRAFFIC_LIGHT, WINDOWS_CONTROLS_WIDTH } from '@/shared/config/theme'
+import { isMac } from '@/shared/lib/platform'
 
 type TitlebarProps = {
+  left?: ReactNode
   children?: ReactNode
 }
 
-export function Titlebar({ children }: TitlebarProps) {
+export function Titlebar({ left, children }: TitlebarProps) {
+  const mac = isMac()
   return (
-    <div data-titlebar style={rootStyle}>
+    <div data-titlebar style={{ ...rootStyle, paddingRight: mac ? 12 : WINDOWS_CONTROLS_WIDTH }}>
+      <div
+        style={{
+          ...leftStyle,
+          alignSelf: mac ? 'flex-start' : 'center',
+          height: mac ? TRAFFIC_LIGHT.y * 2 + TRAFFIC_LIGHT.size : '100%',
+          paddingLeft: mac ? TRAFFIC_LIGHT.x * 2 + TRAFFIC_LIGHT.size * 3 + 22 : 16,
+        }}
+      >
+        {left}
+      </div>
       <div style={rowStyle}>{children}</div>
     </div>
   )
@@ -22,8 +35,13 @@ const rootStyle: CSSProperties = {
   zIndex: 5,
   display: 'flex',
   alignItems: 'center',
-  justifyContent: 'flex-end',
-  paddingRight: 12,
+  justifyContent: 'space-between',
+}
+
+const leftStyle: CSSProperties = {
+  display: 'flex',
+  alignItems: 'center',
+  gap: 8,
 }
 
 const rowStyle: CSSProperties = {

@@ -45,7 +45,7 @@ export function applyAgentEvent(turn: ClaudeTurnEvent, refs: AgentEventRefs): vo
   }
   if (turn.type === 'metrics') {
     if (turn.metrics.apiErrorStatus) {
-      conversation.system(`API 오류 ${turn.metrics.apiErrorStatus}`)
+      conversation.system(`API error ${turn.metrics.apiErrorStatus}`)
     }
     conversation.system(turnLine(turn.metrics, statusStore.get().cost.lastTurnUsd))
   }
@@ -91,7 +91,7 @@ export function applyAgentEvent(turn: ClaudeTurnEvent, refs: AgentEventRefs): vo
   if (turn.type === 'childClosed' && turn.error && refs.childIds.has(turn.toolUseId)) {
     sessionStore.patch(turn.toolUseId, {
       status: 'done',
-      headline: `실패 — ${turn.error.slice(0, 120)}`,
+      headline: `Failed — ${turn.error.slice(0, 120)}`,
     })
     refs.childIds.delete(turn.toolUseId)
   }
@@ -100,8 +100,8 @@ export function applyAgentEvent(turn: ClaudeTurnEvent, refs: AgentEventRefs): vo
 export function limitLine(limit: RateLimit): string {
   const percent = Math.round(limit.utilization * 100)
   const when = formatResetTime(limit.resetsAtMs)
-  const overage = limit.overage ? ' · 초과분 사용 중' : ''
-  return `${limitKindLabel(limit.kind)} 한도 ${percent}% 사용 — ${when} 초기화${overage}`
+  const overage = limit.overage ? ' · on overage' : ''
+  return `${limitKindLabel(limit.kind)} limit ${percent}% used — resets ${when}${overage}`
 }
 
 export function compactedLine(
@@ -109,21 +109,21 @@ export function compactedLine(
   preTokens: number | null,
   postTokens: number | null,
 ): string {
-  const base = '여기서 대화가 압축됐습니다'
-  if (preTokens === null || postTokens === null) return `${base} — 앞의 내용은 요약으로 남습니다`
+  const base = 'Conversation compacted here'
+  if (preTokens === null || postTokens === null) return `${base} — earlier turns live on as a summary`
   const shrink = `${formatTokens(preTokens)} → ${formatTokens(postTokens)}`
   const cause = triggerLabel(trigger)
   return cause ? `${base} (${cause}) — ${shrink}` : `${base} — ${shrink}`
 }
 
 export function triggerLabel(trigger: string | null): string | null {
-  if (trigger === 'auto') return '자동'
-  if (trigger === 'manual') return '수동'
+  if (trigger === 'auto') return 'auto'
+  if (trigger === 'manual') return 'manual'
   return null
 }
 
 export function turnLine(metrics: ResultMetrics, turnUsd: number): string {
   const seconds = (metrics.durationMs / 1000).toFixed(1)
   const cost = turnUsd > 0 ? ` · $${turnUsd.toFixed(4)}` : ''
-  return `이 턴 ${metrics.tokens.out.toLocaleString('ko-KR')}출력 · ${seconds}초${cost}`
+  return `This turn: ${metrics.tokens.out.toLocaleString('en-US')} out · ${seconds}s${cost}`
 }

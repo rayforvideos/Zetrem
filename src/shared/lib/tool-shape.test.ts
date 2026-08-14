@@ -74,16 +74,16 @@ describe('toolShape — 도구를 제 모양으로 읽는다', () => {
 describe('resultNote — 결과에서 한 조각만 꺼낸다', () => {
   it('읽은 파일은 줄 수를 센다', () => {
     const note = resultNote({ kind: 'file', verb: 'read', dir: '', name: 'a.ts' }, '1\n2\n3')
-    expect(note).toBe('3줄')
+    expect(note).toBe('3 lines')
   })
 
   it('찾은 것은 적중 수를 센다', () => {
     const note = resultNote({ kind: 'search', pattern: 'x', scope: '' }, 'a.ts:1\nb.ts:2')
-    expect(note).toBe('2곳')
+    expect(note).toBe('2 hits')
   })
 
   it('아무것도 못 찾으면 그렇게 말한다 — 빈 칸으로 두면 실패인지 성공인지 모른다', () => {
-    expect(resultNote({ kind: 'search', pattern: 'x', scope: '' }, '')).toBe('없음')
+    expect(resultNote({ kind: 'search', pattern: 'x', scope: '' }, '')).toBe('none')
   })
 
   it('셀 것이 없는 모양에는 아무 말도 붙이지 않는다', () => {

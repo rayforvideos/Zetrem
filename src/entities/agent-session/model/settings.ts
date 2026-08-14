@@ -6,6 +6,7 @@ export type Settings = {
   setupDone: boolean
   onlyOurAgents: boolean
   knownTools: string[]
+  sidebarOpen: boolean
 }
 
 export const DEFAULT_SETTINGS: Settings = {
@@ -14,6 +15,7 @@ export const DEFAULT_SETTINGS: Settings = {
   setupDone: false,
   onlyOurAgents: true,
   knownTools: [],
+  sidebarOpen: true,
 }
 
 const PERMISSION_MODES: PermissionMode[] = ['ask', 'acceptEdits', 'bypass']
@@ -34,5 +36,6 @@ export function readSettings(saved: unknown): Settings {
     knownTools: Array.isArray(source.knownTools)
       ? (source.knownTools as unknown[]).filter((name): name is string => typeof name === 'string')
       : DEFAULT_SETTINGS.knownTools,
+    sidebarOpen: source.sidebarOpen !== false,
   }
 }

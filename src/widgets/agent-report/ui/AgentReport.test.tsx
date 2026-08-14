@@ -7,7 +7,7 @@ function session(overrides: Partial<AgentSession> = {}): AgentSession {
   return {
     id: 's1',
     runnerId: 'claude',
-    label: '서브에이전트',
+    label: 'Subagent',
     subagentType: 'code-reviewer',
     model: 'sonnet',
     status: 'done',
@@ -36,20 +36,20 @@ describe('AgentReport — 여태 무엇이 되었나', () => {
     const html = report()
     expect(html).toContain('Code Reviewer')
     expect(html).toContain('두 자리를 고쳤습니다')
-    expect(html).toContain('보고를 마침')
-    expect(html).toContain('30초')
+    expect(html).toContain('Reported back')
+    expect(html).toContain('30s')
   })
 
   it('아직 도는 사람은 지금까지의 시간을 센다', () => {
-    expect(report({ status: 'working', endedAtMs: undefined })).toContain('60초')
+    expect(report({ status: 'working', endedAtMs: undefined })).toContain('60s')
   })
 
   it('한 일을 종류별로 세고, 없는 종류는 그리지 않는다', () => {
     const html = report()
-    expect(html).toContain('읽음')
-    expect(html).toContain('고침')
-    expect(html).toContain('돌림')
-    expect(html).not.toContain('찾음')
+    expect(html).toContain('Read')
+    expect(html).toContain('Edited')
+    expect(html).toContain('Ran')
+    expect(html).not.toContain('Searched')
   })
 
   it('무엇을 했는지 한 줄씩 남긴다', () => {
@@ -61,12 +61,12 @@ describe('AgentReport — 여태 무엇이 되었나', () => {
   })
 
   it('한 일이 없으면 없다고 말한다 — 빈 판을 보여주지 않는다', () => {
-    expect(report({ stream: [], transcript: [] })).toContain('아직 아무것도 하지 않았습니다')
+    expect(report({ stream: [], transcript: [] })).toContain('Nothing yet')
   })
 
   it('작업 결과가 있으면 어디에 남았는지 말한다', () => {
     const html = report({ outcome: { branch: 'feat/x', commits: 2, dirtyFiles: 1 } })
     expect(html).toContain('feat/x')
-    expect(html).toContain('커밋 2')
+    expect(html).toContain('commits 2')
   })
 })

@@ -18,9 +18,6 @@ export type TeamMember = {
 
 const RANK: Record<RosterState, number> = { waiting: 0, working: 1, done: 2, idle: 3 }
 
-// 명단에는 Zetrem 에서 들인 사람만 선다. 엔진이 데려온 사람들(Explore·Plan 같은 것)은
-// 우리가 고용한 사람이 아니라 엔진의 부속이라 여기 세우지 않는다 — 지금 도는 것이 있으면
-// 그건 작업 지도가 말한다.
 export function team(
   defs: AgentDef[],
   sessionNames: string[],

@@ -3,7 +3,7 @@ import { realpathSync } from 'node:fs'
 import { ipcMain } from 'electron'
 import { managerOf } from '../src/entities/agent-session/model/cli-update'
 import { agentEnv } from '../src/shared/lib/shell-env'
-import { loginPath } from './login-path'
+import { claudeBin, findCommand, loginPath } from './login-path'
 
 const REGISTRY = 'https://registry.npmjs.org/@anthropic-ai/claude-code/latest'
 
@@ -50,8 +50,7 @@ async function latestVersion(): Promise<string | null> {
 }
 
 async function manager(): Promise<string | null> {
-  const out = await probe('which', ['claude'], await loginPath())
-  const found = out?.trim() ?? ''
+  const found = findCommand('claude', await loginPath()) ?? ''
   if (found.length === 0) return null
   try {
     return managerOf(realpathSync(found))
@@ -61,7 +60,7 @@ async function manager(): Promise<string | null> {
 }
 
 async function installedVersion(): Promise<string | null> {
-  const out = await probe('claude', ['--version'], await loginPath())
+  const out = await probe(await claudeBin(), ['--version'], await loginPath())
   return out === null ? null : (VERSION.exec(out)?.[0] ?? null)
 }
 
@@ -77,8 +76,9 @@ export function registerCliVersion(): void {
 
   ipcMain.handle('cli:update', async () => {
     const path = await loginPath()
+    const bin = await claudeBin()
     return new Promise<{ output: string }>((resolve) => {
-      const child = spawn('claude', ['update'], { env: agentEnv(process.env, path) })
+      const child = spawn(bin, ['update'], { env: agentEnv(process.env, path) })
       let output = ''
       const take = (chunk: Buffer): void => {
         output += chunk.toString('utf8')
@@ -93,12 +93,12 @@ export function registerCliVersion(): void {
       const timer = setTimeout(() => {
         child.kill('SIGTERM')
         settle(
-          `${output.trim().slice(-2000)}\n갱신이 3분 안에 끝나지 않아 멈췄습니다 — 터미널에서 claude update 를 직접 돌려 보세요`.trim(),
+          `${output.trim().slice(-2000)}\nUpdate did not finish within 3 minutes and was stopped — try running claude update in your terminal`.trim(),
         )
       }, UPDATE_TIMEOUT_MS)
       child.stdout.on('data', take)
       child.stderr.on('data', take)
-      child.on('error', () => settle('claude 명령을 찾지 못했습니다'))
+      child.on('error', () => settle('claude command not found'))
       child.on('exit', () => settle(output.trim().slice(-2000)))
     })
   })

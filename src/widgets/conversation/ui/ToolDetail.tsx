@@ -51,10 +51,10 @@ export function ToolDetail({ tool }: { tool: ToolActivity }) {
             <li
               key={`${index}-${String(todo.content)}`}
               className={cn(
-                'flex items-baseline gap-1.5 font-mono text-[10.5px] leading-normal',
-                status === 'completed' && 'line-through opacity-45',
-                status === 'in_progress' && 'opacity-100',
-                status !== 'completed' && status !== 'in_progress' && 'opacity-70',
+                'flex items-baseline gap-1.5 font-mono text-xs leading-normal',
+                status === 'completed' && 'line-through text-muted-foreground',
+                status === 'in_progress' && 'text-foreground',
+                status !== 'completed' && status !== 'in_progress' && 'text-muted-foreground',
               )}
             >
               <span className="flex-none">
@@ -87,16 +87,16 @@ function Diff({ lines }: { lines: ReturnType<typeof lineDiff> }) {
   const shown = lines.slice(0, TOOL_OUTPUT_LINES)
   const rest = lines.length - shown.length
   return (
-    <pre className="zt-scroll max-h-56 overflow-auto border-l border-current/15 pl-2 font-mono text-[10.5px] leading-normal whitespace-pre-wrap">
+    <pre className="zt-scroll max-h-56 overflow-auto border-l border-border pl-2 font-mono text-xs leading-normal whitespace-pre-wrap">
       {shown.map((line, index) => (
-        <div key={index} className={line.kind === 'same' ? 'opacity-45' : 'opacity-100'}>
-          <span className="mr-1.5 inline-block w-[1ch] opacity-70">
+        <div key={index} className={line.kind === 'same' ? 'text-muted-foreground' : 'text-foreground'}>
+          <span className="mr-1.5 inline-block w-[1ch] text-muted-foreground">
             {line.kind === 'add' ? '+' : line.kind === 'remove' ? '−' : ' '}
           </span>
           {line.text}
         </div>
       ))}
-      {rest > 0 && <div className="opacity-70">{moreLine(rest)}</div>}
+      {rest > 0 && <div className="text-muted-foreground">{moreLine(rest)}</div>}
     </pre>
   )
 }

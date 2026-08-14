@@ -83,14 +83,14 @@ describe('ToolDetail — 도구마다 제 모양으로', () => {
     expect(html).toContain('line-through')
   })
 
-  it('diff 도 40줄에서 멈추고 몇 줄이 남았는지 말한다', () => {
+  it('diff 도 40 lines에서 멈추고 몇 줄이 남았는지 말한다', () => {
     const content = Array.from({ length: 100 }, (_, i) => `줄${i}`).join('\n')
     const html = renderToStaticMarkup(
       <ToolDetail tool={tool({ line: 'Write big.ts', input: { file_path: 'big.ts', content } })} />,
     )
     expect(html).toContain('줄39')
     expect(html).not.toContain('줄40')
-    expect(html).toContain('… 60줄 더 있음')
+    expect(html).toContain('… 60 more lines')
   })
 
   it('전용 렌더가 없는 도구에는 아무것도 그리지 않는다', () => {

@@ -20,9 +20,9 @@ export function ToolLine({ tool }: { tool: ToolActivity }) {
         )}
       </span>
       <span className="min-w-0 truncate">{body(shape)}</span>
-      {note && <span className="flex-none opacity-45">{note}</span>}
-      {failed && <span className="flex-none">실패</span>}
-      {tool.result?.interrupted && <span className="flex-none opacity-45">중단됨</span>}
+      {note && <span className="flex-none text-muted-foreground">{note}</span>}
+      {failed && <span className="flex-none">failed</span>}
+      {tool.result?.interrupted && <span className="flex-none text-muted-foreground">interrupted</span>}
     </span>
   )
 }
@@ -31,7 +31,7 @@ function body(shape: ToolShape) {
   if (shape.kind === 'file') {
     return (
       <>
-        {shape.dir && <span className="opacity-45">{shape.dir}</span>}
+        {shape.dir && <span className="text-muted-foreground">{shape.dir}</span>}
         <span>{shape.name}</span>
       </>
     )
@@ -39,7 +39,7 @@ function body(shape: ToolShape) {
   if (shape.kind === 'command') {
     return (
       <>
-        <span className="opacity-45">$ </span>
+        <span className="text-muted-foreground">$ </span>
         <span>{shape.command}</span>
       </>
     )
@@ -48,7 +48,7 @@ function body(shape: ToolShape) {
     return (
       <>
         <span>{shape.pattern}</span>
-        {shape.scope && <span className="opacity-45"> · {shape.scope}</span>}
+        {shape.scope && <span className="text-muted-foreground"> · {shape.scope}</span>}
       </>
     )
   }
@@ -58,11 +58,11 @@ function body(shape: ToolShape) {
     return (
       <>
         <span>{persona.name}</span>
-        {shape.description && <span className="opacity-45"> · {shape.description}</span>}
+        {shape.description && <span className="text-muted-foreground"> · {shape.description}</span>}
       </>
     )
   }
-  if (shape.kind === 'todo') return <span className="opacity-70">할 일 정리</span>
+  if (shape.kind === 'todo') return <span className="text-muted-foreground">Todo list</span>
   return <span>{shape.name}</span>
 }
 

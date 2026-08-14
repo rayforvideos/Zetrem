@@ -1,13 +1,13 @@
 import { renderToStaticMarkup } from 'react-dom/server'
 import { describe, expect, it } from 'vitest'
-import { GROUND, TEXT } from '@/shared/config/theme'
 import { Surface } from './Surface'
 
 describe('Surface', () => {
-  it('컴포넌트 언어가 읽는 색 변수를 판에 건다', () => {
+  it('색을 스스로 정하지 않는다 — 문서 뿌리의 토큰을 읽는다', () => {
     const html = renderToStaticMarkup(<Surface>내용</Surface>)
-    expect(html).toContain(`--zt-text:${TEXT}`)
-    expect(html).toContain(`--zt-on-primary:${GROUND}`)
+    expect(html).toContain('text-foreground')
+    expect(html).toContain('bg-card')
+    expect(html).not.toContain('--zt-text')
   })
 
   it('유리는 없다 — 블러도 그라디언트도 그리지 않는다', () => {

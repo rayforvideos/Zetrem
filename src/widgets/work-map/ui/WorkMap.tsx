@@ -22,7 +22,7 @@ export function WorkMap({ sessions, nowMs }: WorkMapProps) {
       style={{ height: TOP + map.lanes * LANE_H }}
       data-work-map
     >
-      <div className="absolute inset-x-0 top-0 h-px bg-current opacity-15" />
+      <div className="absolute inset-x-0 top-0 h-px bg-border" />
       {map.branches.map((branch) => (
         <Lane key={branch.id} branch={branch} />
       ))}
@@ -69,7 +69,7 @@ function Lane({ branch }: { branch: Branch }) {
       >
         <AgentFace persona={persona} size={13} />
         <span
-          className="text-[10.5px] whitespace-nowrap"
+          className="text-xs whitespace-nowrap"
           style={{ opacity: branch.live ? 0.75 : 0.4 }}
         >
           {persona.name}

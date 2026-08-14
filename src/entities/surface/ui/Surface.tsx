@@ -1,7 +1,5 @@
 import type { CSSProperties, ReactNode } from 'react'
-import { GROUND, TEXT } from '@/shared/config/theme'
-
-const FILL = 'rgba(255, 255, 255, 0.035)'
+import { cn } from '@/shared/lib/cn'
 
 type SurfaceProps = {
   behind?: ReactNode
@@ -11,34 +9,23 @@ type SurfaceProps = {
 }
 
 export function Surface({ behind, bare = false, style, children }: SurfaceProps) {
-  const vars = {
-    '--zt-text': TEXT,
-    '--zt-on-primary': GROUND,
-  } as CSSProperties
   return (
-    <div style={{ ...(bare ? bareShellStyle : shellStyle), ...vars, color: TEXT, ...style }}>
+    <div
+      className={cn(
+        'relative overflow-hidden text-foreground',
+        !bare && 'rounded-[18px] border border-border',
+      )}
+      style={style}
+    >
       {behind !== undefined && (
         <div data-behind style={behindStyle}>
           {behind}
         </div>
       )}
-      {!bare && <div data-surface style={surfaceStyle} />}
+      {!bare && <div data-surface className="absolute inset-0 z-[2] bg-card" />}
       <div style={contentStyle}>{children}</div>
     </div>
   )
-}
-
-const shellStyle: CSSProperties = {
-  position: 'relative',
-  overflow: 'hidden',
-  borderRadius: 18,
-  border: '1px solid color-mix(in srgb, currentColor 12%, transparent)',
-  boxShadow: 'none',
-}
-
-const bareShellStyle: CSSProperties = {
-  position: 'relative',
-  overflow: 'hidden',
 }
 
 const behindStyle: CSSProperties = {
@@ -46,14 +33,6 @@ const behindStyle: CSSProperties = {
   inset: 0,
   zIndex: 1,
   pointerEvents: 'none',
-}
-
-const surfaceStyle: CSSProperties = {
-  position: 'absolute',
-  inset: 0,
-  zIndex: 2,
-  pointerEvents: 'none',
-  backgroundColor: FILL,
 }
 
 const contentStyle: CSSProperties = {

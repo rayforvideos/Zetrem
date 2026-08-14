@@ -28,7 +28,6 @@ describe('peopleSpec — 앱이 들인 사람을 세션에 실어 보낸다', ()
     expect(peopleSpec([person({ description: '' })]).scout?.description).toBe('scout')
   })
 
-  // 실측: prompt 가 빈 항목은 CLI 가 통째로 무시한다 (명단에도 뜨지 않는다).
   it('지시가 없는 사람은 싣지 않는다 — 실려도 CLI 가 버린다', () => {
     expect(peopleSpec([person({ prompt: '   ' })])).toEqual({})
   })

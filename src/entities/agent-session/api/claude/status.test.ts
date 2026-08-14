@@ -59,7 +59,7 @@ describe('status 파서 — 계기의 층', () => {
     expect(event).toMatchObject({ type: 'session', session: { fastMode: { state: 'on', reason: null } } })
   })
 
-  it('assistant 의 usage 합이 지금 컨텍스트 크기다 — result 를 기다리지 않는다', () => {
+  it('assistant 의 usage 합이 지금 Context 크기다 — result 를 기다리지 않는다', () => {
     const events = fromStatusLine({
       type: 'assistant',
       message: {

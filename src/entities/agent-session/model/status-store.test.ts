@@ -86,7 +86,7 @@ describe('statusStore — 마지막으로 알려진 진실', () => {
   })
 
   it('짝 없는 hookDone 은 버린다 — 이름 없는 줄을 화면에 세우지 않는다', () => {
-    statusStore.apply({ type: 'hookDone', hookId: '없음', exitCode: 1, stderr: 'x' })
+    statusStore.apply({ type: 'hookDone', hookId: 'none', exitCode: 1, stderr: 'x' })
     expect(statusStore.get().hooks).toEqual([])
   })
 
@@ -148,7 +148,7 @@ describe('statusStore — 마지막으로 알려진 진실', () => {
     expect(statusStore.get().cost.lastTurnUsd).toBe(0)
   })
 
-  it('컨텍스트 크기가 같으면 다시 알리지 않는다 — 도구 왕복마다 같은 수를 다시 그리지 않는다', () => {
+  it('Context 크기가 같으면 다시 알리지 않는다 — 도구 왕복마다 같은 수를 다시 그리지 않는다', () => {
     let count = 0
     const stop = statusStore.subscribe(() => { count += 1 })
     statusStore.apply({ type: 'context', used: 28364 })

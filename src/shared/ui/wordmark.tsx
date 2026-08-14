@@ -8,7 +8,7 @@ export const WORDMARK_SIZE = {
   signature: 100,
 } as const
 
-export const WORDMARK_SIGNATURE_OPACITY = 'opacity-45'
+export const WORDMARK_SIGNATURE_OPACITY = 'text-muted-foreground'
 
 export function Wordmark({ width, className }: { width: number; className?: string }) {
   const height = Math.round((width / SOURCE.width) * SOURCE.height)

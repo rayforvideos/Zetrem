@@ -58,7 +58,7 @@ describe('AgentTile', () => {
     expect(html).toContain('가짜 에이전트')
     expect(html).toContain('타일을 만드는 중')
     expect(html).toContain('b.ts')
-    expect(html).toContain('토큰')
+    expect(html).toContain('Tokens')
   })
 
   it('사각형을 좌표로 반영한다', () => {
@@ -210,8 +210,8 @@ describe('AgentTile', () => {
     const html = renderToStaticMarkup(
       <AgentTile session={session()} rect={rect} delayMs={0} nowMs={5000} />,
     )
-    expect(html.indexOf('토큰')).toBeGreaterThan(-1)
-    expect(html.indexOf('토큰')).toBeLessThan(html.indexOf('data-surface'))
+    expect(html.indexOf('Tokens')).toBeGreaterThan(-1)
+    expect(html.indexOf('Tokens')).toBeLessThan(html.indexOf('data-surface'))
   })
 
   it('닫히는 타일은 흐려지며 병합 시간으로 움직인다', () => {

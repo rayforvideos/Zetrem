@@ -76,11 +76,11 @@ export function resultNote(shape: ToolShape, stdout: string | null): string | nu
   if (stdout === null) return null
   if (shape.kind === 'file' && shape.verb === 'read') {
     const lines = stdout.length === 0 ? 0 : stdout.split('\n').length
-    return lines > 0 ? `${lines}줄` : null
+    return lines > 0 ? `${lines} lines` : null
   }
   if (shape.kind === 'search') {
     const hits = stdout.trim().length === 0 ? 0 : stdout.trim().split('\n').length
-    return hits === 0 ? '없음' : `${hits}곳`
+    return hits === 0 ? 'none' : `${hits} hits`
   }
   return null
 }

@@ -12,6 +12,7 @@ contextBridge.exposeInMainWorld('desk', {
   readSettings: (): Promise<unknown> => ipcRenderer.invoke('settings:read'),
   writeSettings: (next: unknown): Promise<unknown> => ipcRenderer.invoke('settings:write', next),
   login: (): Promise<unknown> => ipcRenderer.invoke('auth:login'),
+  logout: (): Promise<unknown> => ipcRenderer.invoke('auth:logout'),
   onAuthProgress: (listener: (line: string) => void): (() => void) => {
     const handler = (_event: IpcRendererEvent, line: string): void => listener(line)
     ipcRenderer.on('auth:progress', handler)

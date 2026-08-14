@@ -3,7 +3,7 @@ import { promisify } from 'node:util'
 import { ipcMain } from 'electron'
 import type { WebContents } from 'electron'
 import { agentEnv } from '../src/shared/lib/shell-env'
-import { loginPath } from './login-path'
+import { claudeBin, loginPath } from './login-path'
 
 const execFileAsync = promisify(execFile)
 
@@ -16,7 +16,7 @@ export type AuthStatus = {
 
 export async function readAuthStatus(): Promise<AuthStatus> {
   try {
-    const { stdout } = await execFileAsync('claude', ['auth', 'status', '--json'], {
+    const { stdout } = await execFileAsync(await claudeBin(), ['auth', 'status', '--json'], {
       env: agentEnv(process.env, await loginPath()),
     })
     const parsed = JSON.parse(stdout) as Record<string, unknown>
@@ -34,11 +34,26 @@ export async function readAuthStatus(): Promise<AuthStatus> {
 export function registerAuth(): void {
   ipcMain.handle('auth:status', () => readAuthStatus())
 
+  ipcMain.handle('auth:logout', async (): Promise<AuthStatus> => {
+    const env = agentEnv(process.env, await loginPath())
+    let failure: string | null = null
+    try {
+      await execFileAsync(await claudeBin(), ['auth', 'logout'], { env })
+    } catch (cause) {
+      const error = cause as { stderr?: string; message?: string }
+      failure = (error.stderr || error.message || 'claude auth logout failed').trim()
+    }
+    const status = await readAuthStatus()
+    if (status.loggedIn && failure !== null) throw new Error(failure)
+    return status
+  })
+
   ipcMain.handle('auth:login', async (event): Promise<AuthStatus> => {
     const sender: WebContents = event.sender
     const env = agentEnv(process.env, await loginPath())
+    const bin = await claudeBin()
     await new Promise<void>((resolve) => {
-      const child = spawn('claude', ['auth', 'login'], {
+      const child = spawn(bin, ['auth', 'login'], {
         env,
         stdio: ['ignore', 'pipe', 'pipe'],
       })

@@ -31,7 +31,7 @@ export function useCliUpdate(cliVersion: string | null): { updating: boolean; st
         conversation.system(output)
         void query()
       })
-      .catch(() => conversation.system('갱신을 시작하지 못했습니다'))
+      .catch(() => conversation.system('Could not start the update'))
       .finally(() => setUpdating(false))
   }, [query])
 

@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import type { FormEvent, KeyboardEvent, ReactNode } from 'react'
-import { Check, ChevronDown, Square } from 'lucide-react'
+import { ArrowUp, ChevronDown, Shield, Square, X } from 'lucide-react'
 import { MODELS, PERMISSION_MODES } from '@/entities/agent-session'
 import type {
   ModelChoice,
@@ -12,18 +12,27 @@ import type {
 import type { AgentSession, RosterMember } from '@/entities/agent-session'
 import type { Turn, ToolActivity } from '@/pages/workspace/model/conversation'
 import { cn } from '@/shared/lib/cn'
+import { modifierKey } from '@/shared/lib/platform'
 import { toolShape } from '@/shared/lib/tool-shape'
 import { ToolIcon } from '@/shared/ui/tool-icon'
 import { Button } from '@/shared/ui/button'
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/shared/ui/collapsible'
+import { Kbd, KbdGroup } from '@/shared/ui/kbd'
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from '@/shared/ui/dropdown-menu'
-import { Textarea } from '@/shared/ui/textarea'
-import { WORDMARK_SIGNATURE_OPACITY, WORDMARK_SIZE, Wordmark } from '@/shared/ui/wordmark'
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupButton,
+  InputGroupTextarea,
+} from '@/shared/ui/input-group'
+import { Wordmark } from '@/shared/ui/wordmark'
 import { WorkMap } from '@/widgets/work-map'
 import { StatusBar, StatusDrawer } from '@/widgets/status-bar'
 import { TOOL_OUTPUT_LINES, moreLine } from '../lib/limits'
@@ -31,7 +40,7 @@ import { Markdown } from './Markdown'
 import { ToolDetail } from './ToolDetail'
 import { ToolLine } from './ToolLine'
 
-const BODY = 'text-[16px] leading-[1.72] tracking-[-0.011em]'
+const BUBBLE = 'rounded-2xl bg-card px-4 py-3'
 
 type ConversationPaneProps = {
   turns: Turn[]
@@ -40,6 +49,7 @@ type ConversationPaneProps = {
   permission: PermissionAsk | null
   nowMs: number
   permissionMode: PermissionMode
+  onPermissionMode(mode: PermissionMode): void
   model: ModelChoice
   onModel(model: ModelChoice): void
   sessionLive: boolean
@@ -63,6 +73,7 @@ export function ConversationPane({
   permission,
   nowMs,
   permissionMode,
+  onPermissionMode,
   model,
   onModel,
   sessionLive,
@@ -71,7 +82,6 @@ export function ConversationPane({
   onStop,
   onUpdateCli,
   updatingCli,
-  roster,
   fleet,
   sidebar,
   report,
@@ -108,68 +118,90 @@ export function ConversationPane({
     }
   }
 
-  function composerNode(centered: boolean) {
+  function composerNode() {
     return (
-      <form onSubmit={handleSubmit} className="flex flex-none flex-col">
+      <form onSubmit={handleSubmit} className="flex flex-none flex-col gap-2">
         {addressee !== null && (
-          <div className="mb-1 flex items-center gap-2 text-[11px]">
-            <span className="opacity-70">{addressee} 에게</span>
+          <div className="flex items-center gap-1.5 self-start rounded-full bg-card py-1 pr-1 pl-3 text-xs">
+            <span>To {addressee}</span>
             <Button
-              variant="quiet"
-              size="bare"
+              type="button"
+              variant="ghost"
+              size="icon-xs"
               onClick={onClearAddressee}
-              aria-label="지목 지우기"
-              className="font-mono text-[10.5px]"
+              aria-label="Clear"
+              className="rounded-full text-muted-foreground"
             >
-              ×
+              <X />
             </Button>
           </div>
         )}
-        <Textarea
-          value={draft}
-          onChange={(event) => setDraft(event.target.value)}
-          onKeyDown={handleKey}
-          placeholder={
-            addressee !== null
-              ? `${addressee} 에게 맡길 일`
-              : turns.length === 0
-                ? '무엇을 맡길까요'
-                : '이어서 말하기'
-          }
-          rows={1}
-          className={cn(
-            'max-h-40 min-h-9 resize-none rounded-none border-0 bg-transparent px-0 py-1 text-[16px] leading-relaxed shadow-none placeholder:opacity-30 focus-visible:ring-0 dark:bg-transparent',
-            centered && 'text-center',
-          )}
-          autoFocus
-        />
-        <div
-          className={cn(
-            'h-px w-full bg-current transition-opacity',
-            draft.length > 0 ? 'opacity-30' : 'opacity-15',
-          )}
-        />
-        {(busy || !centered) && (
-          <div
-            className={cn(
-              'mt-2 flex items-center gap-3 text-[10.5px]',
-              centered && 'justify-center',
-            )}
-          >
-            {busy ? (
-              <Button variant="quiet" size="bare" onClick={onStop} className="opacity-70">
-                멈추기
-              </Button>
-            ) : (
-              <span className="font-mono text-[11px] tracking-wider opacity-45">⌘↵</span>
-            )}
-          </div>
-        )}
+        <InputGroup className="rounded-3xl border-transparent bg-card p-1.5 shadow-none dark:bg-card">
+          <InputGroupTextarea
+            value={draft}
+            onChange={(event) => setDraft(event.target.value)}
+            onKeyDown={handleKey}
+            placeholder={
+              addressee !== null
+                ? `Task for ${addressee}`
+                : turns.length === 0
+                  ? 'What should they work on?'
+                  : 'Keep going'
+            }
+            rows={1}
+            className="max-h-40 min-h-11 py-2.5 text-base"
+            autoFocus
+          />
+          <InputGroupAddon align="block-end" className="gap-1.5 px-1.5 pb-1.5">
+            <ChoicePicker
+              icon={<Shield />}
+              options={PERMISSION_MODES}
+              selected={permissionMode}
+              onSelect={(id) => onPermissionMode(id as PermissionMode)}
+              label="Permissions"
+            />
+            <ChoicePicker
+              options={MODELS}
+              selected={model}
+              onSelect={(id) => onModel(id as ModelChoice)}
+              label="Model"
+              note={sessionLive ? 'Running session keeps its model — applies from the next one' : null}
+            />
+            <div className="ml-auto flex items-center gap-2">
+              <KbdGroup>
+                <Kbd>{modifierKey()}</Kbd>
+                <Kbd>Enter</Kbd>
+              </KbdGroup>
+              {busy ? (
+                <InputGroupButton
+                  size="icon-sm"
+                  variant="default"
+                  onClick={onStop}
+                  aria-label="Stop"
+                  className="rounded-full"
+                >
+                  <Square />
+                </InputGroupButton>
+              ) : (
+                <InputGroupButton
+                  type="submit"
+                  size="icon-sm"
+                  variant="default"
+                  disabled={draft.trim().length === 0}
+                  aria-label="Send"
+                  className="rounded-full"
+                >
+                  <ArrowUp />
+                </InputGroupButton>
+              )}
+            </div>
+          </InputGroupAddon>
+        </InputGroup>
       </form>
     )
   }
 
-  const composer = composerNode(false)
+  const composer = composerNode()
 
   const statusBar = (
     <>
@@ -180,10 +212,6 @@ export function ConversationPane({
         status={statusState}
         open={drawerOpen}
         onToggle={() => setDrawerOpen((was) => !was)}
-        permissionMode={permissionMode}
-        model={model}
-        onModel={onModel}
-        sessionLive={sessionLive}
       />
     </>
   )
@@ -194,24 +222,10 @@ export function ConversationPane({
         {sidebar}
         <div className="flex min-w-0 flex-1 flex-col items-center justify-center">
           <Wordmark width={196} />
-          <p className="mt-7 text-center text-[15px] leading-relaxed opacity-45">
-            일을 맡기면 데려온 에이전트들이
-            <br />
-            나눠 맡습니다
+          <p className="mt-7 text-center text-base leading-relaxed break-keep text-muted-foreground">
+            Let's get to work with your cute little agents!
           </p>
-          <div className="mt-9 w-full max-w-[420px]">{composerNode(true)}</div>
-          <div className="mt-4">
-            <StatusBar
-              status={statusState}
-              open={drawerOpen}
-              onToggle={() => setDrawerOpen((was) => !was)}
-              permissionMode={permissionMode}
-              model={model}
-              onModel={onModel}
-              sessionLive={sessionLive}
-              variant="quiet"
-            />
-          </div>
+          <div className="mt-9 w-full max-w-3xl">{composerNode()}</div>
         </div>
       </div>
     )
@@ -220,87 +234,89 @@ export function ConversationPane({
   return (
     <div className="relative z-[3] flex h-full gap-7">
       {sidebar}
-      <div className="flex min-w-0 flex-1 flex-col gap-4">
-      {report !== null ? (
-        report
-      ) : (
-        <>
-      <WorkMap sessions={fleet} nowMs={nowMs} />
+      <div className="mx-auto flex w-full min-w-0 max-w-3xl flex-1 flex-col gap-4">
+        {report !== null ? (
+          report
+        ) : (
+          <>
+            <WorkMap sessions={fleet} nowMs={nowMs} />
 
-      <div
-        ref={scrollRef}
-        className="zt-scroll flex min-h-0 flex-1 flex-col gap-[22px] overflow-y-auto pr-2"
-      >
-        {turns.map((turn, index) => {
-          const live = busy && index === lastIndex && turn.role === 'assistant'
-          if (turn.role === 'system') {
-            return (
-              <div
-                key={index}
-                className="font-mono text-[11px] leading-normal tracking-wide opacity-70 [overflow-wrap:anywhere]"
-              >
-                {turn.text}
-              </div>
-            )
-          }
-          if (turn.role === 'user') {
-            return (
-              <div
-                key={index}
-                className="border-l border-current/25 pl-3 text-[14px] leading-relaxed whitespace-pre-wrap opacity-70 [overflow-wrap:anywhere]"
-              >
-                {turn.text}
-              </div>
-            )
-          }
-          return (
-            <article
-              key={index}
-              className={cn('zt-rail flex flex-col gap-2.5', live && 'zt-rail--live')}
-              style={{ ['--zt-rail-length' as string]: `${railLength(turn)}px` }}
+            <div
+              ref={scrollRef}
+              data-selectable
+              className="zt-scroll flex min-h-0 flex-1 flex-col gap-5 overflow-y-auto px-2"
             >
-              {turn.thinking.length > 0 && <Thinking text={turn.thinking} />}
-              {turn.text.length > 0 && <Markdown text={turn.text} className={BODY} />}
-              {turn.draft.length > 0 && (
-                <div className={cn(BODY, 'whitespace-pre-wrap [overflow-wrap:anywhere]')}>
-                  {turn.draft}
-                  <span className="ml-0.5 inline-block h-[1em] w-[0.5ch] translate-y-[0.1em] bg-current align-baseline opacity-70" />
-                </div>
-              )}
-              {turn.tools.length > 0 && (
-                <div className="flex flex-col gap-1">
-                  {turn.tools.map((tool, toolIndex) => (
-                    <Tick
-                      key={`${toolIndex}-${tool.toolUseId ?? tool.line}`}
-                      tool={tool}
-                      live={live && toolIndex === turn.tools.length - 1}
-                    />
-                  ))}
-                </div>
-              )}
-              {live && (
-                <div className="font-mono text-[10.5px] tracking-wider tabular-nums opacity-70">
-                  {elapsed(nowMs - turn.startedAtMs)}
-                </div>
-              )}
-            </article>
-          )
-        })}
-      </div>
+              {turns.map((turn, index) => {
+                const live = busy && index === lastIndex && turn.role === 'assistant'
+                if (turn.role === 'system') {
+                  return (
+                    <div
+                      key={index}
+                      className="zt-rise self-center font-mono text-xs leading-normal tracking-wide text-muted-foreground [overflow-wrap:anywhere]"
+                    >
+                      {turn.text}
+                    </div>
+                  )
+                }
+                if (turn.role === 'user') {
+                  return (
+                    <div
+                      key={index}
+                      className={cn(
+                        BUBBLE,
+                        'zt-rise max-w-[80%] self-end text-sm leading-relaxed whitespace-pre-wrap [overflow-wrap:anywhere]',
+                      )}
+                    >
+                      {turn.text}
+                    </div>
+                  )
+                }
+                return (
+                  <article
+                    key={index}
+                    className={cn('zt-rail zt-rise flex flex-col gap-2.5', live && 'zt-rail--live')}
+                  >
+                    {turn.thinking.length > 0 && <Thinking text={turn.thinking} />}
+                    {turn.text.length > 0 && (
+                      <Markdown text={turn.text} className="text-base leading-[1.72]" />
+                    )}
+                    {turn.draft.length > 0 && (
+                      <div className="text-base leading-[1.72] whitespace-pre-wrap [overflow-wrap:anywhere]">
+                        {turn.draft}
+                        <span className="ml-0.5 inline-block h-[1em] w-[0.5ch] translate-y-[0.1em] bg-muted-foreground align-baseline" />
+                      </div>
+                    )}
+                    {turn.tools.length > 0 && (
+                      <div className="flex flex-col gap-1">
+                        {turn.tools.map((tool, toolIndex) => (
+                          <Tick
+                            key={`${toolIndex}-${tool.toolUseId ?? tool.line}`}
+                            tool={tool}
+                            live={live && toolIndex === turn.tools.length - 1}
+                          />
+                        ))}
+                      </div>
+                    )}
+                    {live && (
+                      <div className="font-mono text-xs tracking-wider tabular-nums text-muted-foreground">
+                        {elapsed(nowMs - turn.startedAtMs)}
+                      </div>
+                    )}
+                  </article>
+                )
+              })}
+            </div>
+          </>
+        )}
 
-        </>
-      )}
+        {permission ? <Approval ask={permission} onDecide={onDecide} /> : composer}
 
-      {permission ? <Approval ask={permission} onDecide={onDecide} /> : composer}
-
-      {statusBar}
+        {statusBar}
       </div>
     </div>
   )
 }
 
-// 결재는 이 앱에서 가장 중요한 순간이다 (docs/direction.md). 다른 무엇보다 밝게 서고,
-// 누가 무엇을 하려는지 한 줄로 말하고, 손이 키보드를 떠나지 않고 끝난다.
 function Approval({
   ask,
   onDecide,
@@ -326,62 +342,137 @@ function Approval({
   const shape = toolShape(ask.toolName, null)
 
   return (
-    <div data-approval className="flex flex-none flex-col gap-3 border-t border-current/25 pt-4">
+    <div
+      data-approval
+      className="flex flex-none flex-col gap-3 rounded-2xl border border-border bg-card p-4"
+    >
       <div className="flex items-baseline gap-2">
-        <span className="text-[15px]">{verbOf(ask.toolName)}</span>
-        <span className="font-mono text-[11px] opacity-45">{ask.toolName}</span>
+        <span className="text-base">{verbOf(ask.toolName)}</span>
+        <span className="font-mono text-xs text-muted-foreground">{ask.toolName}</span>
       </div>
 
-      <div className="flex items-start gap-2 font-mono text-[12.5px] [overflow-wrap:anywhere]">
-        <span className="mt-[3px] flex-none">
+      <div data-selectable className="flex items-start gap-2 font-mono text-sm [overflow-wrap:anywhere]">
+        <span className="mt-[3px] flex-none text-muted-foreground">
           <ToolIcon shape={shape} />
         </span>
         <span>{ask.line}</span>
       </div>
 
-      <div className="flex items-center gap-5 text-[12.5px]">
-        <Button variant="quiet" size="bare" onClick={() => onDecide(true)} className="opacity-100">
-          허용
-          <span className="ml-1.5 font-mono text-[10.5px] opacity-45">⌘ Enter</span>
+      <div className="flex flex-wrap items-center gap-2">
+        <Button size="sm" onClick={() => onDecide(true)} className="rounded-full">
+          Allow
+          <KbdGroup>
+            <Kbd className="bg-primary-foreground/15 text-primary-foreground/70">
+              {modifierKey()}
+            </Kbd>
+            <Kbd className="bg-primary-foreground/15 text-primary-foreground/70">Enter</Kbd>
+          </KbdGroup>
         </Button>
-        <Button variant="quiet" size="bare" onClick={() => onDecide(false)}>
-          거부
-          <span className="ml-1.5 font-mono text-[10.5px] opacity-45">Esc</span>
+        <Button
+          size="sm"
+          variant="secondary"
+          onClick={() => onDecide(false)}
+          className="rounded-full"
+        >
+          Deny
+          <Kbd>Esc</Kbd>
         </Button>
-        <Button variant="quiet" size="bare" onClick={() => onDecide(true, true)}>
-          이 세션에선 묻지 않기
+        <Button
+          size="sm"
+          variant="ghost"
+          onClick={() => onDecide(true, true)}
+          className="rounded-full text-muted-foreground"
+        >
+          Don't ask again this session
         </Button>
       </div>
     </div>
   )
 }
 
+type Choice = { id: string; label: string; hint: string }
+
+function ChoicePicker({
+  icon,
+  options,
+  selected,
+  onSelect,
+  label,
+  note = null,
+}: {
+  icon?: ReactNode
+  options: Choice[]
+  selected: string
+  onSelect(id: string): void
+  label: string
+  note?: string | null
+}) {
+  const current = options.find((option) => option.id === selected)
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <InputGroupButton
+          size="xs"
+          className="rounded-full text-muted-foreground hover:text-foreground"
+          aria-label={label}
+          title={current?.hint}
+        >
+          {icon}
+          {current?.label ?? label}
+          <ChevronDown />
+        </InputGroupButton>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="start" className="w-64">
+        <DropdownMenuLabel className="text-xs text-muted-foreground">{label}</DropdownMenuLabel>
+        <DropdownMenuGroup>
+          {options.map((option) => (
+            <DropdownMenuItem key={option.id} onSelect={() => onSelect(option.id)}>
+              <span className={cn(option.id === selected ? '' : 'text-muted-foreground')}>
+                <span className="block text-sm">{option.label}</span>
+                <span className="block text-xs leading-snug text-muted-foreground">
+                  {option.hint}
+                </span>
+              </span>
+            </DropdownMenuItem>
+          ))}
+        </DropdownMenuGroup>
+        {note !== null && (
+          <DropdownMenuLabel className="text-xs font-normal text-muted-foreground">
+            {note}
+          </DropdownMenuLabel>
+        )}
+      </DropdownMenuContent>
+    </DropdownMenu>
+  )
+}
+
 function verbOf(toolName: string): string {
-  if (toolName === 'Bash') return '명령을 돌려도 될까요'
-  if (toolName === 'Write') return '파일을 새로 써도 될까요'
-  if (toolName === 'Edit' || toolName === 'MultiEdit') return '파일을 고쳐도 될까요'
-  if (toolName === 'WebFetch' || toolName === 'WebSearch') return '바깥에 나가도 될까요'
-  return '해도 될까요'
+  if (toolName === 'Bash') return 'Run this command?'
+  if (toolName === 'Write') return 'Write this file?'
+  if (toolName === 'Edit' || toolName === 'MultiEdit') return 'Edit this file?'
+  if (toolName === 'WebFetch' || toolName === 'WebSearch') return 'Reach out to the web?'
+  return 'Allow this?'
 }
 
 function Thinking({ text }: { text: string }) {
   const [open, setOpen] = useState(false)
   const paragraphs = text.split('\n\n').length
   return (
-    <div className="flex flex-col gap-1">
-      <Button
-        variant="quiet"
-        size="bare"
-        onClick={() => setOpen((was) => !was)}
-        aria-expanded={open}
-        className="self-start font-mono text-[10.5px] tracking-wide opacity-70"
-      >
-        생각 {paragraphs}문단 {open ? '▴' : '▾'}
-      </Button>
-      {open && (
-        <Markdown text={text} className="text-[12.5px] leading-[1.6] italic opacity-70" />
-      )}
-    </div>
+    <Collapsible open={open} onOpenChange={setOpen} className="flex flex-col gap-1">
+      <CollapsibleTrigger asChild>
+        <Button
+          variant="ghost"
+          size="xs"
+          className="self-start rounded-full font-mono tracking-wide text-muted-foreground"
+        >
+          Thought · {paragraphs} paragraphs
+          <ChevronDown data-icon="inline-end" className={cn(open && 'rotate-180')} />
+        </Button>
+      </CollapsibleTrigger>
+      <CollapsibleContent>
+        <Markdown text={text} className="text-sm leading-[1.6] italic text-muted-foreground" />
+      </CollapsibleContent>
+    </Collapsible>
   )
 }
 
@@ -409,7 +500,7 @@ function Tick({ tool, live }: { tool: ToolActivity; live: boolean }) {
         aria-expanded={open}
         data-tick={tool.toolUseId ?? tool.line}
         className={cn(
-          'zt-tick w-full min-w-0 justify-start text-left font-mono text-[11px] leading-normal opacity-70 disabled:opacity-70',
+          'zt-tick w-full min-w-0 justify-start text-left font-mono text-xs leading-normal text-muted-foreground disabled:opacity-100',
           live && 'zt-tick--live',
         )}
       >
@@ -419,7 +510,7 @@ function Tick({ tool, live }: { tool: ToolActivity; live: boolean }) {
         <div className="flex flex-col gap-1">
           {detail}
           {output.length > 0 && (
-            <pre className="zt-scroll max-h-56 overflow-auto border-l border-current/15 pl-2 font-mono text-[10.5px] leading-normal whitespace-pre-wrap opacity-70">
+            <pre className="zt-scroll max-h-56 overflow-auto rounded-lg bg-card p-2.5 font-mono text-xs leading-normal whitespace-pre-wrap text-muted-foreground">
               {shown}
               {rest > 0 ? `\n${moreLine(rest)}` : ''}
             </pre>
@@ -430,32 +521,8 @@ function Tick({ tool, live }: { tool: ToolActivity; live: boolean }) {
   )
 }
 
-function railLength(turn: Turn): number {
-  const lines = (turn.text.length + turn.draft.length) / 44 + turn.tools.length
-  return Math.max(60, Math.min(260, Math.round(lines * 22)))
-}
-
 function elapsed(ms: number): string {
   const seconds = Math.max(0, Math.floor(ms / 1000))
-  if (seconds < 60) return `${seconds}초째`
-  return `${Math.floor(seconds / 60)}분 ${seconds % 60}초째`
-}
-
-function modeLabel(mode: PermissionMode): string {
-  return PERMISSION_MODES.find((item) => item.id === mode)?.label ?? '물어보기'
-}
-
-function modeHint(mode: PermissionMode): string {
-  return PERMISSION_MODES.find((item) => item.id === mode)?.hint ?? ''
-}
-
-function modelLabel(model: ModelChoice): string {
-  return MODELS.find((item) => item.id === model)?.label ?? '기본'
-}
-
-function statusDot(status: SessionStatus): string {
-  const base = 'size-1.5 flex-none rounded-full'
-  if (status === 'working') return cn(base, 'bg-current')
-  if (status === 'waiting') return cn(base, 'border-[1.5px] border-current')
-  return cn(base, 'bg-current opacity-30')
+  if (seconds < 60) return `${seconds}s`
+  return `${Math.floor(seconds / 60)}m ${seconds % 60}s`
 }

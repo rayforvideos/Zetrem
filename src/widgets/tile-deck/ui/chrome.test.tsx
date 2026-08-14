@@ -3,8 +3,6 @@ import { describe, expect, it } from 'vitest'
 import { CHROME_TOP, TRAFFIC_LIGHT } from '@/shared/config/theme'
 import { TileDeck } from './TileDeck'
 
-// 창틀을 OS 에 넘긴 뒤로 왼쪽 위 (18,18)~(80,50) 는 신호등의 자리다. 브라우저로 확인하면
-// 신호등이 없어 겹침이 보이지 않는다 — 그래서 자리를 코드가 지킨다.
 function deck(): string {
   return renderToStaticMarkup(
     <TileDeck

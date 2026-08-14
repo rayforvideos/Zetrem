@@ -23,19 +23,19 @@ describe('상태줄의 칸', () => {
   it('분모를 모르면 % 대신 절대값을 쓴다', () => {
     expect(contextPercent({ used: 28364, window: null })).toBeNull()
     const [cell] = cells(state({ context: { used: 28364, window: null } }))
-    expect(cell).toEqual({ key: 'context', text: '컨텍스트 28.4k', warn: false })
+    expect(cell).toEqual({ key: 'context', text: 'Context 28.4k', warn: false })
   })
 
   it('분모를 알면 남은 비율로 말한다 — 사람이 신경쓰는 것은 남은 쪽이다', () => {
     expect(contextPercent({ used: 100_000, window: 1_000_000 })).toBe(10)
     const [cell] = cells(state({ context: { used: 100_000, window: 1_000_000 } }))
-    expect(cell).toEqual({ key: 'context', text: '컨텍스트 90%', warn: false })
+    expect(cell).toEqual({ key: 'context', text: 'Context 90%', warn: false })
   })
 
   it('85% 를 넘게 쓰면 그 칸이 문장으로 부푼다', () => {
     const [cell] = cells(state({ context: { used: 880_000, window: 1_000_000 } }))
     expect(cell!.warn).toBe(true)
-    expect(cell!.text).toBe('컨텍스트 12% 남음 — 곧 압축됩니다')
+    expect(cell!.text).toBe('Context 12% left — compacting soon')
   })
 
   it('비용은 세션 총액이다', () => {
@@ -45,7 +45,7 @@ describe('상태줄의 칸', () => {
 
   it('한도는 경고 상태에서만 부푼다', () => {
     const calm = cells(state({ limit: { kind: 'seven_day', utilization: 0.28, resetsAtMs: 1787173200000, overage: false, status: 'allowed' } }))
-    expect(calm.find((c) => c.key === 'limit')).toEqual({ key: 'limit', text: '7일 28%', warn: false })
+    expect(calm.find((c) => c.key === 'limit')).toEqual({ key: 'limit', text: '7-day 28%', warn: false })
 
     const warned = cells(state({ limit: { kind: 'seven_day', utilization: 0.28, resetsAtMs: 1787173200000, overage: false, status: 'allowed_warning' } }))
     expect(warned.find((c) => c.key === 'limit')!.warn).toBe(true)
@@ -64,7 +64,7 @@ describe('상태줄의 칸', () => {
       ],
     }
     const found = cells(state({ session })).find((c) => c.key === 'mcp')
-    expect(found).toEqual({ key: 'mcp', text: 'MCP 2/4 · 1개 인증 필요', warn: true })
+    expect(found).toEqual({ key: 'mcp', text: 'MCP 2/4 · 1 need auth', warn: true })
   })
 
   it('MCP 가 하나도 없으면 칸을 만들지 않는다', () => {
@@ -74,18 +74,18 @@ describe('상태줄의 칸', () => {
 
   it('새 버전이 있으면 버전 칸이 부푼다', () => {
     const calm = cells(state({ update: { current: '2.1.231', latest: '2.1.231', managedBy: 'Homebrew' } }))
-    expect(calm.find((c) => c.key === 'update')).toEqual({ key: 'update', text: '2.1.231', warn: false })
+    expect(calm.find((c) => c.key === 'update')).toEqual({ key: 'update', text: 'CLI 2.1.231', warn: false })
 
     const stale = cells(state({ update: { current: '2.1.231', latest: '2.1.240', managedBy: 'Homebrew' } }))
     expect(stale.find((c) => c.key === 'update')).toEqual({
-      key: 'update', text: '새 버전 2.1.240 있음', warn: true,
+      key: 'update', text: 'CLI 2.1.231 → 2.1.240 available', warn: true,
     })
   })
 
   it('과거 버전이 최신이라고 나와도 그것은 다운그레이드다 — 새 버전으로 오인하지 않는다', () => {
     const downgrade = cells(state({ update: { current: '2.1.231', latest: '2.1.200', managedBy: 'Homebrew' } }))
     expect(downgrade.find((c) => c.key === 'update')).toEqual({
-      key: 'update', text: '2.1.231', warn: false,
+      key: 'update', text: 'CLI 2.1.231', warn: false,
     })
   })
 

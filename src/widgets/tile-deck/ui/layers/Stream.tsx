@@ -31,7 +31,7 @@ function text(shape: ToolShape): string {
   if (shape.kind === 'search') return shape.pattern
   if (shape.kind === 'web') return shape.label
   if (shape.kind === 'agent') return shape.description
-  if (shape.kind === 'todo') return '할 일'
+  if (shape.kind === 'todo') return 'Todo'
   return shape.name
 }
 

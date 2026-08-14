@@ -78,7 +78,7 @@ describe('parseClaudeLine', () => {
     )
     expect(events).toContainEqual({
       type: 'stream',
-      line: '권한 거부됨 Bash',
+      line: 'permission denied: Bash',
       toolUseId: null,
       input: null,
     })

@@ -13,8 +13,8 @@ describe('formatTokens — 크기감', () => {
 
 describe('limitKindLabel — 한도의 이름', () => {
   it('알려진 kind 는 한글 라벨로 바꾼다', () => {
-    expect(limitKindLabel('seven_day')).toBe('7일')
-    expect(limitKindLabel('five_hour')).toBe('5시간')
+    expect(limitKindLabel('seven_day')).toBe('7-day')
+    expect(limitKindLabel('five_hour')).toBe('5-hour')
   })
 
   it('모르는 kind 는 그대로 통과시킨다 — 거짓 이름을 지어내지 않는다', () => {

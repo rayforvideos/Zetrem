@@ -22,6 +22,7 @@ export type DeskBridge = {
   listAgentDefs(): Promise<AgentDef[]>
   writeAgentDef(draft: AgentDefDraft): Promise<string>
   login(): Promise<AuthStatus>
+  logout(): Promise<AuthStatus>
   onAuthProgress(listener: (line: string) => void): () => void
   sendToAgent(id: string, text: string): void
   stopAgent(id: string): void

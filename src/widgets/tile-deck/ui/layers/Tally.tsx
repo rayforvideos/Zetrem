@@ -4,10 +4,10 @@ import { ToolIcon } from '@/shared/ui/tool-icon'
 import type { ToolShape } from '@/shared/lib/tool-shape'
 
 const SHAPES: { key: keyof ReturnType<typeof tally>; shape: ToolShape; word: string }[] = [
-  { key: 'read', shape: { kind: 'file', verb: 'read', dir: '', name: '' }, word: '읽음' },
-  { key: 'wrote', shape: { kind: 'file', verb: 'edit', dir: '', name: '' }, word: '고침' },
-  { key: 'ran', shape: { kind: 'command', command: '' }, word: '돌림' },
-  { key: 'searched', shape: { kind: 'search', pattern: '', scope: '' }, word: '찾음' },
+  { key: 'read', shape: { kind: 'file', verb: 'read', dir: '', name: '' }, word: 'Read' },
+  { key: 'wrote', shape: { kind: 'file', verb: 'edit', dir: '', name: '' }, word: 'Edited' },
+  { key: 'ran', shape: { kind: 'command', command: '' }, word: 'Ran' },
+  { key: 'searched', shape: { kind: 'search', pattern: '', scope: '' }, word: 'Searched' },
 ]
 
 export function Tally({ lines }: { lines: string[] }) {

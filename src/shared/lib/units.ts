@@ -4,7 +4,7 @@ export function formatTokens(tokens: number): string {
 }
 
 export function limitKindLabel(kind: string): string {
-  if (kind === 'seven_day') return '7일'
-  if (kind === 'five_hour') return '5시간'
+  if (kind === 'seven_day') return '7-day'
+  if (kind === 'five_hour') return '5-hour'
   return kind
 }

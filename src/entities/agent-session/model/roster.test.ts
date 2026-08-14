@@ -6,7 +6,7 @@ function session(overrides: Partial<AgentSession> = {}): AgentSession {
   return {
     id: 's1',
     runnerId: 'claude',
-    label: '서브에이전트',
+    label: 'Subagent',
     subagentType: 'Explore',
     model: 'demo',
     status: 'working',

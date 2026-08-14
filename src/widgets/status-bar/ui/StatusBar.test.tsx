@@ -18,21 +18,21 @@ function state(overrides: Partial<StatusState> = {}): StatusState {
 
 describe('StatusBar', () => {
   it('아는 값만 칸으로 세운다', () => {
-    const html = renderToStaticMarkup(<StatusBar status={state()} open={false} onToggle={() => {}} permissionMode="acceptEdits" model="opus" onModel={() => {}} sessionLive={false} />)
-    expect(html).toContain('컨텍스트 90%')
+    const html = renderToStaticMarkup(<StatusBar status={state()} open={false} onToggle={() => {}} />)
+    expect(html).toContain('Context 90%')
     expect(html).toContain('$0.19')
     expect(html).toContain('2.1.231')
   })
 
   it('아무것도 모르면 손잡이만 남는다 — 빈 줄이 자리를 차지하지 않게', () => {
     const empty = state({ context: { used: 0, window: null }, cost: { ...state().cost, usd: 0 }, update: null })
-    const html = renderToStaticMarkup(<StatusBar status={empty} open={false} onToggle={() => {}} permissionMode="acceptEdits" model="opus" onModel={() => {}} sessionLive={false} />)
+    const html = renderToStaticMarkup(<StatusBar status={empty} open={false} onToggle={() => {}} />)
     expect(html).not.toContain('컨텍스트')
     expect(html).toContain('aria-expanded="false"')
   })
 
   it('숫자는 tabular-nums 로 선다 — 값이 바뀔 때 자리가 흔들리면 안 된다', () => {
-    const html = renderToStaticMarkup(<StatusBar status={state()} open={false} onToggle={() => {}} permissionMode="acceptEdits" model="opus" onModel={() => {}} sessionLive={false} />)
+    const html = renderToStaticMarkup(<StatusBar status={state()} open={false} onToggle={() => {}} />)
     expect(html).toContain('tabular-nums')
   })
 
@@ -40,13 +40,13 @@ describe('StatusBar', () => {
     const warned = state({
       limit: { kind: 'seven_day', utilization: 0.28, resetsAtMs: 1787173200000, overage: false, status: 'allowed_warning' },
     })
-    const html = renderToStaticMarkup(<StatusBar status={warned} open={false} onToggle={() => {}} permissionMode="acceptEdits" model="opus" onModel={() => {}} sessionLive={false} />)
-    expect(html).toContain('한도 28%')
+    const html = renderToStaticMarkup(<StatusBar status={warned} open={false} onToggle={() => {}} />)
+    expect(html).toContain('limit 28%')
     expect(html).not.toMatch(/text-(red|amber|yellow|orange)-/)
   })
 
   it('열려 있으면 손잡이가 그것을 말한다', () => {
-    const html = renderToStaticMarkup(<StatusBar status={state()} open onToggle={() => {}} permissionMode="acceptEdits" model="opus" onModel={() => {}} sessionLive={false} />)
+    const html = renderToStaticMarkup(<StatusBar status={state()} open onToggle={() => {}} />)
     expect(html).toContain('aria-expanded="true"')
   })
 })

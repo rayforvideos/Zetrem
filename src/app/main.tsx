@@ -5,7 +5,7 @@ import { Boundary } from './Boundary'
 import './styles/global.css'
 
 const root = document.getElementById('root')
-if (!root) throw new Error('#root 를 찾지 못했다')
+if (!root) throw new Error('#root not found')
 
 createRoot(root).render(
   <StrictMode>

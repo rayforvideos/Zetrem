@@ -7,7 +7,7 @@ import { agentEnv } from '../src/shared/lib/shell-env'
 import { agentArgs } from '../src/entities/agent-session/model/run-config'
 import type { RunConfig } from '../src/entities/agent-session/model/run-config'
 import { orchestratorPrompt, persona } from './agent-style'
-import { loginPath } from './login-path'
+import { claudeBin, loginPath } from './login-path'
 import { recallProject } from './project-memory'
 
 const agents = new Map<string, ChildProcessWithoutNullStreams | 'starting'>()
@@ -58,7 +58,7 @@ export function registerAgentHost(): void {
     if (!project) mkdirSync(workspace, { recursive: true })
 
     const child = spawn(
-      'claude',
+      await claudeBin(),
       agentArgs({ ...config, persona: persona(), orchestrator: orchestratorPrompt() }),
       { cwd: workspace, env: agentEnv(process.env, await loginPath()) },
     )

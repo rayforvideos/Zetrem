@@ -79,11 +79,15 @@ export function TileDeck({
       >
         <Surface
           bare={!atGrid}
-          style={{
-            height: '100%',
-            padding: atGrid ? 20 : 28,
-            paddingTop: atGrid ? 20 : CHROME_TOP,
-          }}
+          style={
+            {
+              height: '100%',
+              padding: atGrid ? 20 : 28,
+              paddingTop: atGrid ? 20 : CHROME_TOP,
+              '--zt-shell-pad': `${atGrid ? 20 : 28}px`,
+              '--zt-shell-pad-top': `${atGrid ? 20 : CHROME_TOP}px`,
+            } as CSSProperties
+          }
         >
           {terminal}
         </Surface>

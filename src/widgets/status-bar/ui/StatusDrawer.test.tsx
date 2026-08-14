@@ -51,7 +51,7 @@ describe('StatusDrawer', () => {
     const html = renderToStaticMarkup(<StatusDrawer statusState={full} onUpdate={() => {}} updating={false} />)
     expect(html).toContain('playwright')
     expect(html).toContain('claude.ai Notion')
-    expect(html).toContain('인증 필요')
+    expect(html).toContain('Needs auth')
   })
 
   it('환경 묶음이 버전과 관리 주체를 말한다', () => {
@@ -63,17 +63,17 @@ describe('StatusDrawer', () => {
 
   it('새 버전이 있을 때만 갱신 버튼이 선다', () => {
     const calm = renderToStaticMarkup(<StatusDrawer statusState={full} onUpdate={() => {}} updating={false} />)
-    expect(calm).not.toContain('갱신하기')
+    expect(calm).not.toContain('Update')
 
     const stale = { ...full, update: { current: '2.1.231', latest: '2.1.240', managedBy: 'Homebrew' } }
     const html = renderToStaticMarkup(<StatusDrawer statusState={stale} onUpdate={() => {}} updating={false} />)
-    expect(html).toContain('갱신하기')
+    expect(html).toContain('Update')
   })
 
   it('로컬 빌드가 latest 보다 새 버전이면 갱신 버튼을 세우지 않는다 — 문자열(!==) 이 아니라 isOutdated 의 숫자 비교로 판단한다', () => {
     const newerLocal = { ...full, update: { current: '2.2.0', latest: '2.1.240', managedBy: 'Homebrew' } }
     const html = renderToStaticMarkup(<StatusDrawer statusState={newerLocal} onUpdate={() => {}} updating={false} />)
-    expect(html).not.toContain('갱신하기')
+    expect(html).not.toContain('Update')
     expect(html).not.toContain('새 버전')
   })
 

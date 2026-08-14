@@ -44,7 +44,7 @@ describe('personaOf — 역할에 얼굴을 붙인다', () => {
 
   it('빈 이름에도 얼굴이 있다 — 이름을 모르는 자식도 화면에는 서야 한다', () => {
     const persona = personaOf('')
-    expect(persona.name).toBe('서브에이전트')
+    expect(persona.name).toBe('Subagent')
     expect(persona.hue).toBeGreaterThanOrEqual(0)
   })
 })

@@ -7,6 +7,9 @@ type Auth = {
   loggingIn: boolean
   loginNote: string
   login(): void
+  loggingOut: boolean
+  logout(): void
+  authError: string | null
 }
 
 const URL_PATTERN = /https?:\/\/\S+/
@@ -16,12 +19,14 @@ export function useAuth(): Auth {
   const [authKnown, setAuthKnown] = useState(false)
   const [loggingIn, setLoggingIn] = useState(false)
   const [loginNote, setLoginNote] = useState('')
+  const [loggingOut, setLoggingOut] = useState(false)
+  const [authError, setAuthError] = useState<string | null>(null)
 
   useEffect(() => {
     window.desk
       .authStatus()
       .then(setAuth)
-      .catch((cause: unknown) => console.error('로그인 상태를 묻지 못했다', cause))
+      .catch((cause: unknown) => console.error('could not read sign-in status', cause))
       .finally(() => setAuthKnown(true))
   }, [])
 
@@ -38,9 +43,26 @@ export function useAuth(): Auth {
     window.desk
       .login()
       .then(setAuth)
-      .catch((cause: unknown) => console.error('로그인하지 못했다', cause))
+      .catch((cause: unknown) => console.error('sign-in failed', cause))
       .finally(() => setLoggingIn(false))
   }, [])
 
-  return { auth, authKnown, loggingIn, loginNote, login }
+  const logout = useCallback(() => {
+    setLoggingOut(true)
+    setLoginNote('')
+    setAuthError(null)
+    window.desk
+      .logout()
+      .then((next) => {
+        setAuth(next)
+        if (next.loggedIn) setAuthError('Still signed in — sign out did not take effect.')
+      })
+      .catch((cause: unknown) => {
+        const text = cause instanceof Error ? cause.message : String(cause)
+        setAuthError(text.replace(/^Error invoking remote method '[^']*':\s*/, ''))
+      })
+      .finally(() => setLoggingOut(false))
+  }, [])
+
+  return { auth, authKnown, loggingIn, loginNote, login, loggingOut, logout, authError }
 }

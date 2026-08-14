@@ -46,7 +46,7 @@ describe('metrics 레지스트리', () => {
     expect(elapsed.read(session, 4_000)).toBe(3)
   })
 
-  it('컨텍스트 지표는 백분율로 낸다', () => {
+  it('Context 지표는 백분율로 낸다', () => {
     const context = metrics.find((m) => m.id === 'context')!
     expect(context.read(session, 4_000)).toBeCloseTo(42, 5)
   })

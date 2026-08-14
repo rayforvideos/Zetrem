@@ -57,7 +57,7 @@ describe('applyAgentEvent — 순서가 못 박혀야 한다', () => {
     applyAgentEvent({ type: 'limit', limit }, fakeRefs())
     const last = conversation.get().turns.at(-1)!
     expect(last.role).toBe('system')
-    expect(last.text).toContain('7일 한도 28%')
+    expect(last.text).toContain('7-day limit 28%')
   })
 
   it('한도가 allowed 면 대화에 사건 줄을 남기지 않는다', () => {
@@ -104,8 +104,8 @@ describe('applyAgentEvent — 순서가 못 박혀야 한다', () => {
       fakeRefs(),
     )
     const lines = conversation.get().turns.map((turn) => turn.text)
-    expect(lines[0]).toBe('API 오류 529')
-    expect(lines[1]).toContain('이 턴')
+    expect(lines[0]).toBe('API error 529')
+    expect(lines[1]).toContain('This turn')
   })
 
   it(
@@ -144,7 +144,7 @@ describe('applyAgentEvent — 순서가 못 박혀야 한다', () => {
 
     const child = sessionStore.get().find((s) => s.id === 'toolu_3')
     expect(child?.status).toBe('done')
-    expect(child?.headline).toContain('실패')
+    expect(child?.headline).toContain('Failed')
   })
 
   it('백그라운드 자식도 childClosed 로 안 닫힌다 — 접수증일 뿐, childNotified 가 진짜 완료다', () => {
@@ -170,7 +170,7 @@ describe('limitLine — 한도는 사실만 말한다', () => {
       overage: true,
       status: 'approaching',
     })
-    expect(line).toContain('초과분 사용 중')
+    expect(line).toContain('on overage')
   })
 
   it('초과분이 아니면 접미사가 없다', () => {
@@ -197,24 +197,24 @@ describe('turnLine — 턴 결산', () => {
 
 describe('compactedLine — 압축 사건 한 줄, 모르는 것은 그리지 않는다', () => {
   it('세 값이 다 있으면 무엇이 왜 줄었는지 말한다', () => {
-    expect(compactedLine('auto', 148200, 31100)).toBe('여기서 대화가 압축됐습니다 (자동) — 148.2k → 31.1k')
+    expect(compactedLine('auto', 148200, 31100)).toBe('Conversation compacted here (auto) — 148.2k → 31.1k')
   })
 
   it('trigger 가 manual 이면 수동으로 옮긴다', () => {
-    expect(compactedLine('manual', 100000, 20000)).toBe('여기서 대화가 압축됐습니다 (수동) — 100.0k → 20.0k')
+    expect(compactedLine('manual', 100000, 20000)).toBe('Conversation compacted here (manual) — 100.0k → 20.0k')
   })
 
   it('trigger 를 모르면 괄호를 통째로 뺀다 — 빈 괄호를 찍지 않는다', () => {
-    expect(compactedLine(null, 148200, 31100)).toBe('여기서 대화가 압축됐습니다 — 148.2k → 31.1k')
+    expect(compactedLine(null, 148200, 31100)).toBe('Conversation compacted here — 148.2k → 31.1k')
   })
 
   it('trigger 가 알려지지 않은 셋째 값이면 영어 토큰 대신 괄호를 뺀다', () => {
-    expect(compactedLine('scheduled', 148200, 31100)).toBe('여기서 대화가 압축됐습니다 — 148.2k → 31.1k')
+    expect(compactedLine('scheduled', 148200, 31100)).toBe('Conversation compacted here — 148.2k → 31.1k')
   })
 
   it('토큰 수를 모르면 대화 요약이라는 사실만 남기고 숫자는 찍지 않는다', () => {
-    expect(compactedLine('auto', null, 31100)).toBe('여기서 대화가 압축됐습니다 — 앞의 내용은 요약으로 남습니다')
-    expect(compactedLine('auto', 148200, null)).toBe('여기서 대화가 압축됐습니다 — 앞의 내용은 요약으로 남습니다')
-    expect(compactedLine(null, null, null)).toBe('여기서 대화가 압축됐습니다 — 앞의 내용은 요약으로 남습니다')
+    expect(compactedLine('auto', null, 31100)).toBe('Conversation compacted here — earlier turns live on as a summary')
+    expect(compactedLine('auto', 148200, null)).toBe('Conversation compacted here — earlier turns live on as a summary')
+    expect(compactedLine(null, null, null)).toBe('Conversation compacted here — earlier turns live on as a summary')
   })
 })

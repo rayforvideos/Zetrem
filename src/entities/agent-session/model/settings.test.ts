@@ -15,6 +15,7 @@ describe('readSettings — 저장된 선택을 되읽는다', () => {
       setupDone: true,
       onlyOurAgents: false,
       knownTools: ['Read', 'Bash'],
+      sidebarOpen: false,
     }
     expect(readSettings(saved)).toEqual(saved)
   })

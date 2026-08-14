@@ -52,7 +52,7 @@ function childLabel(block: Record<string, unknown>): string {
     return input.description
   if (typeof input?.subagent_type === 'string' && input.subagent_type.length > 0)
     return input.subagent_type
-  return typeof block.name === 'string' ? block.name : '서브에이전트'
+  return typeof block.name === 'string' ? block.name : 'subagent'
 }
 
 export function fromStreamEvent(event: Record<string, unknown>): TurnEvent[] {
@@ -69,8 +69,8 @@ export function fromResult(event: Record<string, unknown>): TurnEvent[] {
   const denials = event.permission_denials
   if (Array.isArray(denials)) {
     for (const denial of denials as Record<string, unknown>[]) {
-      const tool = typeof denial.tool_name === 'string' ? denial.tool_name : '도구'
-      out.push({ type: 'stream', line: `권한 거부됨 ${tool}`, toolUseId: null, input: null })
+      const tool = typeof denial.tool_name === 'string' ? denial.tool_name : 'tool'
+      out.push({ type: 'stream', line: `permission denied: ${tool}`, toolUseId: null, input: null })
     }
   }
   out.push({ type: 'turnEnded' })

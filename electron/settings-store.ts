@@ -20,7 +20,7 @@ export function registerSettingsStore(): void {
   ipcMain.handle('settings:write', async (_event, next: unknown): Promise<Settings> => {
     const settings = readSettings(next)
     await writeFile(settingsPath(), JSON.stringify(settings, null, 2), 'utf8').catch(
-      (cause: unknown) => console.error('설정을 저장하지 못했다', cause),
+      (cause: unknown) => console.error('could not save settings', cause),
     )
     return settings
   })

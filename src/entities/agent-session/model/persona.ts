@@ -27,7 +27,7 @@ function bareName(type: string): string {
 export function personaOf(subagentType: string): Persona {
   const seed = hash(subagentType)
   return {
-    name: bareName(subagentType) || '서브에이전트',
+    name: bareName(subagentType) || 'Subagent',
     hue: Math.round((seed * 137.508) % 360),
     face: seed % FACES,
   }

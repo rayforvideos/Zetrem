@@ -139,12 +139,12 @@ describe('conversation — 우리 UI 가 그리는 대화', () => {
 
   it('사건은 자기 차례로 선다 — 말에 섞이지 않는다', () => {
     conversation.say('assistant', '고치고 있습니다')
-    conversation.system('7일 한도 28% 사용 — 금 05:00 초기화')
+    conversation.system('7-day limit 28% 사용 — 금 05:00 초기화')
     conversation.say('assistant', '고쳤습니다')
 
     const turns = conversation.get().turns
     expect(turns.map((turn) => turn.role)).toEqual(['assistant', 'system', 'assistant'])
-    expect(turns[1]!.text).toBe('7일 한도 28% 사용 — 금 05:00 초기화')
+    expect(turns[1]!.text).toBe('7-day limit 28% 사용 — 금 05:00 초기화')
   })
 
   it('사건 뒤의 말은 사건에 붙지 않는다', () => {

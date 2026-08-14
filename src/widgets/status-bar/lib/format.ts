@@ -18,11 +18,11 @@ export function cells(status: StatusState): Cell[] {
   if (status.context.used > 0) {
     const percent = contextPercent(status.context)
     if (percent === null) {
-      out.push({ key: 'context', text: `컨텍스트 ${formatTokens(status.context.used)}`, warn: false })
+      out.push({ key: 'context', text: `Context ${formatTokens(status.context.used)}`, warn: false })
     } else if (percent >= CONTEXT_WARN * 100) {
-      out.push({ key: 'context', text: `컨텍스트 ${100 - percent}% 남음 — 곧 압축됩니다`, warn: true })
+      out.push({ key: 'context', text: `Context ${100 - percent}% left — compacting soon`, warn: true })
     } else {
-      out.push({ key: 'context', text: `컨텍스트 ${100 - percent}%`, warn: false })
+      out.push({ key: 'context', text: `Context ${100 - percent}%`, warn: false })
     }
   }
 
@@ -38,7 +38,7 @@ export function cells(status: StatusState): Cell[] {
     out.push({
       key: 'limit',
       text: warn
-        ? `${limitKindLabel(limit.kind)} 한도 ${percent}% — ${when} 초기화`
+        ? `${limitKindLabel(limit.kind)} limit ${percent}% — resets ${when}`
         : `${limitKindLabel(limit.kind)} ${percent}%`,
       warn,
     })
@@ -51,7 +51,7 @@ export function cells(status: StatusState): Cell[] {
     out.push({
       key: 'mcp',
       text: needsAuth > 0
-        ? `MCP ${connected}/${mcp.length} · ${needsAuth}개 인증 필요`
+        ? `MCP ${connected}/${mcp.length} · ${needsAuth} need auth`
         : `MCP ${connected}/${mcp.length}`,
       warn: needsAuth > 0,
     })
@@ -62,7 +62,7 @@ export function cells(status: StatusState): Cell[] {
     const stale = isOutdated(update.current, update.latest)
     out.push({
       key: 'update',
-      text: stale ? `새 버전 ${update.latest} 있음` : update.current,
+      text: stale ? `CLI ${update.current} → ${update.latest} available` : `CLI ${update.current}`,
       warn: stale,
     })
   }

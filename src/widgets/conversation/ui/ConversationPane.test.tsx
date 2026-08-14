@@ -2,6 +2,7 @@ import { renderToStaticMarkup } from 'react-dom/server'
 import { describe, expect, it } from 'vitest'
 import type { PermissionAsk, StatusState } from '@/entities/agent-session'
 import type { ToolActivity, Turn } from '@/pages/workspace/model/conversation'
+import { modifierKey } from '@/shared/lib/platform'
 import { ConversationPane, tickOpen } from './ConversationPane'
 
 const STATUS: StatusState = {
@@ -46,6 +47,7 @@ function pane(turns: Turn[], permission: PermissionAsk | null = null): string {
       permission={permission}
       nowMs={0}
       permissionMode="ask"
+      onPermissionMode={() => {}}
       model="default"
       onModel={() => {}}
       sessionLive={false}
@@ -85,7 +87,7 @@ describe('tickOpen — 실패는 이유가 화면에 있어야 한다', () => {
 })
 
 describe('ConversationPane — 화면이 거짓말하지 않는다', () => {
-  it('도구 출력은 40줄에서 멈추고 몇 줄이 남았는지 말한다', () => {
+  it('도구 출력은 40 lines에서 멈추고 몇 줄이 남았는지 말한다', () => {
     const stdout = Array.from({ length: 100 }, (_, i) => `줄${i}`).join('\n')
     const html = pane([
       turn({
@@ -94,7 +96,7 @@ describe('ConversationPane — 화면이 거짓말하지 않는다', () => {
     ])
     expect(html).toContain('줄39')
     expect(html).not.toContain('줄40')
-    expect(html).toContain('60줄 더 있음')
+    expect(html).toContain('60 more lines')
   })
 
   function tickButton(html: string, tickId: string): string {
@@ -131,14 +133,14 @@ describe('ConversationPane — 화면이 거짓말하지 않는다', () => {
 
   it('생각은 접힌 채로 서고 몇 문단인지 말한다 — 결론이 먼저다', () => {
     const html = pane([turn({ thinking: '첫 문단\n\n둘째 문단\n\n셋째 문단' })])
-    expect(html).toContain('생각 3문단')
+    expect(html).toContain('Thought · 3 paragraphs')
     expect(html).not.toContain('둘째 문단')
   })
 
   it('기계가 알려주는 줄은 고정폭이고 작업 레일을 달지 않는다', () => {
-    const html = pane([turn({ role: 'system', text: '이 턴 261출력 · 10.5초' })])
-    expect(html).toContain('이 턴 261출력')
-    const at = html.indexOf('이 턴')
+    const html = pane([turn({ role: 'system', text: 'This turn: 261 out · 10.5s' })])
+    expect(html).toContain('This turn: 261 out')
+    const at = html.indexOf('This turn')
     const line = html.slice(html.lastIndexOf('<div', at), at)
     expect(line).toContain('font-mono')
     expect(line).not.toContain('zt-rail')
@@ -150,23 +152,25 @@ describe('결재 — 이 앱에서 가장 중요한 순간', () => {
 
   it('무엇을 하려는지 사람 말로 먼저 말한다', () => {
     const html = pane([], ask)
-    expect(html).toContain('명령을 돌려도 될까요')
+    expect(html).toContain('Run this command?')
     expect(html).toContain('rm -rf build')
   })
 
   it('손이 키보드를 떠나지 않아도 끝난다 — 단축키를 화면이 알려준다', () => {
     const html = pane([], ask)
-    expect(html).toContain('⌘ Enter')
-    expect(html).toContain('Esc')
+    const keys = [...html.matchAll(/<kbd[^>]*>([^<]*)<\/kbd>/g)].map((match) => match[1])
+    expect(keys, '허용은 수정키+Enter, 거부는 Esc').toEqual(
+      expect.arrayContaining([modifierKey(), 'Enter', 'Esc']),
+    )
   })
 
   it('결재 중에는 입력 자리가 없다 — 답할 것은 하나뿐이다', () => {
-    expect(pane([], ask)).not.toContain('이어서 말하기')
+    expect(pane([], ask)).not.toContain('Keep going')
   })
 
   it('모르는 도구도 물어본다 — 이름을 지어내지 않는다', () => {
     const html = pane([], { requestId: 'r2', toolName: 'SomeTool', line: '무언가' })
-    expect(html).toContain('해도 될까요')
+    expect(html).toContain('Allow this?')
     expect(html).toContain('SomeTool')
   })
 })
@@ -181,6 +185,7 @@ describe('지목 — 누구에게 맡기는지가 쓰는 자리에 보인다', (
         permission={null}
         nowMs={0}
         permissionMode="ask"
+        onPermissionMode={() => {}}
         model="default"
         onModel={() => {}}
         sessionLive={false}
@@ -197,7 +202,7 @@ describe('지목 — 누구에게 맡기는지가 쓰는 자리에 보인다', (
         onClearAddressee={() => {}}
       />,
     )
-    expect(html).toContain('Explore 에게')
-    expect(html).toContain('Explore 에게 맡길 일')
+    expect(html).toContain('To Explore')
+    expect(html).toContain('Task for Explore')
   })
 })

@@ -16,7 +16,7 @@ export function useSettings(): SettingsSource {
     window.desk
       .readSettings()
       .then(setSettings)
-      .catch((cause: unknown) => console.error('설정을 읽지 못했다', cause))
+      .catch((cause: unknown) => console.error('could not read settings', cause))
       .finally(() => setLoading(false))
   }, [])
 
@@ -24,7 +24,7 @@ export function useSettings(): SettingsSource {
     setSettings((current) => {
       const next = { ...current, ...patch }
       void window.desk.writeSettings(next).catch((cause: unknown) => {
-        console.error('설정을 저장하지 못했다', cause)
+        console.error('could not save settings', cause)
       })
       return next
     })

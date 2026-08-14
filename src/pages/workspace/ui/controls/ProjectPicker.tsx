@@ -1,36 +1,57 @@
 import { useSyncExternalStore } from 'react'
-import type { CSSProperties } from 'react'
+import { Folder } from 'lucide-react'
 import { pickProject, projectStore } from '@/entities/project'
 import { Button } from '@/shared/ui/button'
+import { Popover, PopoverContent, PopoverTrigger } from '@/shared/ui/popover'
 
 export function ProjectPicker() {
   const project = useSyncExternalStore(projectStore.subscribe, projectStore.get, projectStore.get)
 
-  function handleClick(): void {
+  function choose(): void {
     pickProject()
       .then((picked) => {
         if (picked) projectStore.set(picked)
       })
-      .catch((cause: unknown) => console.error('프로젝트를 고르지 못했다', cause))
+      .catch((cause: unknown) => console.error('could not pick a project', cause))
   }
 
-  return (
-    <Button
-      variant="quiet"
-      size="bare"
-      onClick={handleClick}
-      className="text-[11px]"
-      style={buttonStyle}
-      title={project?.path}
-    >
-      {project ? project.name : '프로젝트 선택'}
-    </Button>
-  )
-}
+  if (project === null) {
+    return (
+      <Button variant="quiet" size="bare" onClick={choose} className="text-xs">
+        Choose project
+      </Button>
+    )
+  }
 
-const buttonStyle: CSSProperties = {
-  maxWidth: 180,
-  overflow: 'hidden',
-  textOverflow: 'ellipsis',
-  display: 'block',
+  const home = project.path.match(/^\/Users\/[^/]+/)?.[0] ?? ''
+  const short = home ? project.path.replace(home, '~') : project.path
+
+  return (
+    <Popover>
+      <PopoverTrigger asChild>
+        <Button variant="quiet" size="bare" className="max-w-[180px] truncate text-xs">
+          {project.name}
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent align="end" className="w-80">
+        <div className="flex flex-col gap-3">
+          <div className="flex items-start gap-2.5">
+            <Folder className="mt-0.5 size-4 flex-none text-muted-foreground" />
+            <div className="flex min-w-0 flex-col gap-1">
+              <span className="truncate text-sm font-medium">{project.name}</span>
+              <span
+                data-selectable
+                className="font-mono text-xs leading-snug break-all text-muted-foreground"
+              >
+                {short}
+              </span>
+            </div>
+          </div>
+          <Button size="sm" variant="secondary" onClick={choose} className="rounded-full">
+            Change folder…
+          </Button>
+        </div>
+      </PopoverContent>
+    </Popover>
+  )
 }

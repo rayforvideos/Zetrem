@@ -5,10 +5,18 @@
     "output": "release"
   },
   "files": ["out/**", "package.json"],
-  "icon": "resources/icon.icns",
   "mac": {
+    "icon": "resources/icon.icns",
     "target": [{ "target": "dir", "arch": ["arm64"] }],
     "category": "public.app-category.developer-tools",
     "identity": null
+  },
+  "win": {
+    "icon": "resources/icon.png",
+    "target": [{ "target": "nsis", "arch": ["x64"] }]
+  },
+  "nsis": {
+    "oneClick": false,
+    "allowToChangeInstallationDirectory": true
   }
 }

@@ -84,7 +84,7 @@ function fromSystem(event: Record<string, unknown>): StatusEvent[] {
       {
         type: 'hookStarted',
         hookId: str(event.hook_id),
-        name: str(event.hook_name, '훅'),
+        name: str(event.hook_name, 'hook'),
         event: str(event.hook_event),
       },
     ]
@@ -122,7 +122,7 @@ function identity(event: Record<string, unknown>): SessionIdentity {
   return {
     id: str(event.session_id),
     cwd: str(event.cwd),
-    model: str(event.model, '알 수 없음'),
+    model: str(event.model, 'unknown'),
     permissionMode: str(event.permissionMode),
     outputStyle: str(event.output_style),
     cliVersion: str(event.claude_code_version),
@@ -206,7 +206,7 @@ function fromRateLimit(event: Record<string, unknown>): StatusEvent[] {
     {
       type: 'limit',
       limit: {
-        kind: str(i.rateLimitType, '알 수 없음'),
+        kind: str(i.rateLimitType, 'unknown'),
         utilization: num(i.utilization),
         resetsAtMs: num(i.resetsAt) * 1000,
         overage: i.isUsingOverage === true,

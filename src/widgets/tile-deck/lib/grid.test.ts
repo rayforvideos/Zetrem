@@ -66,10 +66,9 @@ describe('layoutTiles', () => {
 })
 
 describe('soloRect', () => {
-  it('화면의 약 80%를 차지한다', () => {
+  it('한 장뿐일 때는 창을 가득 채운다', () => {
     const rect = soloRect(viewport)
-    expect(rect.w / viewport.w).toBeCloseTo(0.8, 2)
-    expect(rect.h / viewport.h).toBeCloseTo(0.8, 2)
+    expect(rect).toEqual({ x: 0, y: 0, w: viewport.w, h: viewport.h })
   })
 
   it('가로 세로 모두 가운데 정렬된다', () => {
@@ -85,7 +84,6 @@ describe('layoutTiles — 터미널을 포함한 격자', () => {
   it('세션 하나가 생기면 터미널과 나란히 둘로 갈라진다', () => {
     const rects = layoutTiles(2, { w: 1440, h: 900 })
     expect(rects).toHaveLength(2)
-    // 가로로 넓은 화면이므로 나란히 — y 가 같다
     expect(rects[0]!.y).toBe(rects[1]!.y)
     expect(rects[1]!.x).toBeGreaterThan(rects[0]!.x)
   })
@@ -103,12 +101,9 @@ describe('observatoryLayout — 터미널이 일터, 세션은 곁의 판들', (
   it('세션이 생기면 터미널은 왼쪽 기둥이 되고 세션이 오른쪽에 쌓인다', () => {
     const { terminal, sessions } = observatoryLayout(2, viewport)
     expect(sessions).toHaveLength(2)
-    // 터미널은 일하는 자리다 — 곁의 판보다 넓다
     expect(terminal.w).toBeGreaterThan(sessions[0]!.w)
-    // 세션은 터미널 오른쪽에, 위아래로 쌓인다
     expect(sessions[0]!.x).toBeGreaterThan(terminal.x + terminal.w - 1)
     expect(sessions[1]!.y).toBeGreaterThan(sessions[0]!.y)
-    // 터미널은 세로로 꽉 찬다 — 셸은 잘리면 안 된다
     expect(terminal.h).toBeCloseTo(sessions[0]!.h + sessions[1]!.h + LAYOUT.gapPx, 0)
   })
 

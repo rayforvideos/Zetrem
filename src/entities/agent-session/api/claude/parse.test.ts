@@ -65,7 +65,6 @@ describe('parseClaudeLine', () => {
       }),
     )
     expect(events).toContainEqual({ type: 'turnEnded' })
-    // 같은 줄에서 컨텍스트·비용은 status.ts 의 metrics 가 든다 (turn.ts 의 meter 는 폐기)
     expect(events.some((event) => event.type === 'metrics')).toBe(true)
   })
 
@@ -97,8 +96,6 @@ describe('parseClaudeLine', () => {
   })
 
   it('모르는 이벤트 타입은 무시한다', () => {
-    // system/init 은 더 이상 낯선 타입이 아니다 — Task 3 이 계기의 층에서 세션 신원으로 읽는다.
-    // 여기서는 여전히 대화 이벤트가 비어 있다는 것만 확인한다 (session 신원 값 검증은 status.test.ts)
     expect(parseClaudeLine(line({ type: 'system', subtype: 'init' }))).toEqual([
       expect.objectContaining({ type: 'session' }),
     ])
@@ -221,7 +218,7 @@ describe('parseClaudeLine — 서브에이전트 (--forward-subagent-text, 2.1.2
       type: 'childOpen',
       toolUseId: 'toolu_sub1',
       label: '산술 문제 해결',
-      // 자식이 첫 마디를 하기 전까지 타일이 텅 비지 않게 — 받은 일감이 첫 화면이다
+      subagentType: 'general-purpose',
       prompt: '2+2?',
       background: false,
     })
@@ -262,7 +259,6 @@ describe('parseClaudeLine — 서브에이전트 (--forward-subagent-text, 2.1.2
         },
       }),
     )
-    // 파서는 자식 닫힘 후보와 도구 결과를 둘 다 낸다 — 어느 쪽을 쓸지는 러너(childIds)가 가른다
     expect(events).toEqual([
       { type: 'childClosed', toolUseId: 'toolu_sub1' },
       {
@@ -293,7 +289,6 @@ describe('permissionAlwaysResult — 항상 허용', () => {
     const result = permissionAlwaysResult('Bash', { command: 'mkdir demo' })
     expect(result.behavior).toBe('allow')
     expect(result.updatedInput).toEqual({ command: 'mkdir demo' })
-    // ruleContent 가 없어야 한다 — 명령 prefix 규칙은 질문 폭풍을 끄지 못한다 (2026-08-13 실측)
     expect(result.updatedPermissions).toEqual([
       { type: 'addRules', rules: [{ toolName: 'Bash' }], behavior: 'allow', destination: 'session' },
     ])
@@ -321,6 +316,7 @@ describe('parseClaudeLine — 백그라운드 서브에이전트 (2026-08-13 실
       type: 'childOpen',
       toolUseId: 'toolu_bg1',
       label: '백그라운드 일',
+      subagentType: '',
       prompt: 'x',
       background: true,
     })
@@ -488,8 +484,6 @@ describe('parseClaudeLine — 생각과 도구 결과 (Task 10)', () => {
         tool_use_result: { stdout: 'total 40', stderr: '', interrupted: false },
       }),
     )
-    // 부모 대화에서 온 tool_result 도 자식 닫힘 후보를 함께 낸다 (러너가 childIds 로 가른다) —
-    // 그래서 toEqual 이 아니라 도구 결과 이벤트만 짚어 본다
     expect(events).toContainEqual({
       type: 'toolResult',
       toolUseId: 'toolu_9',

@@ -1,9 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { agentEnv } from './shell-env'
 
-/** 실측한 실행 환경의 축소판 (2026-08-13, Orca 안의 셸에서 앱을 띄웠을 때) */
 const HOST_ENV = {
-  // 사람과 시스템의 것 — 남아야 한다
   HOME: '/Users/sam',
   USER: 'ray',
   LOGNAME: 'ray',
@@ -15,7 +13,6 @@ const HOST_ENV = {
   ANTHROPIC_API_KEY: 'secret',
   HTTPS_PROXY: 'http://proxy.local:8080',
 
-  // 이 앱을 띄운 다른 에이전트 호스트의 것 — 새면 안 된다
   ORCA_AGENT_HOOK_PORT: '62929',
   ORCA_AGENT_HOOK_TOKEN: 'tok',
   ORCA_PANE_KEY: 'pane',
@@ -31,7 +28,6 @@ const HOST_ENV = {
   OPENCODE_CONFIG_DIR: '/Users/sam/Library/Application Support/orca/opencode',
   DEVIN_PROJECT_DIR: '/x',
 
-  // 띄운 셸의 도구 체인 고정 — 에이전트가 쓸 도구를 바꿔 버린다
   PYENV_VERSION: '2.7.18',
   PYENV_ROOT: '/Users/sam/.pyenv',
   NVM_BIN: '/Users/sam/.nvm/versions/node/v20.19.5/bin',
@@ -97,7 +93,6 @@ describe('agentEnv — 에이전트가 물려받는 환경', () => {
   it('로그인 셸의 PATH 를 주면 그것을 쓴다 — Finder 로 띄워도 claude 를 찾는다', () => {
     const withPath = agentEnv(HOST_ENV, '/opt/homebrew/bin:/usr/bin')
     expect(withPath.PATH).toBe('/opt/homebrew/bin:/usr/bin')
-    // 주지 않으면 물려받은 것을 쓴다
     expect(agentEnv(HOST_ENV).PATH).toBe('/usr/bin:/bin')
   })
 

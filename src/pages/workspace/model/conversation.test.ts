@@ -12,7 +12,6 @@ describe('conversation — 우리 UI 가 그리는 대화', () => {
     expect(turn.role).toBe('user')
     expect(turn.text).toBe('테스트 고쳐줘')
     expect(turn.tools).toEqual([])
-    // 차례마다 시작 시각이 있다 — 화면이 "얼마나 걸리는 중" 을 말할 근거다
     expect(turn.startedAtMs).toBeGreaterThan(0)
   })
 
@@ -94,7 +93,7 @@ describe('conversation — 우리 UI 가 그리는 대화', () => {
     conversation.settleDraft()
     const turn = conversation.get().turns.at(-1)!
     expect(turn.text).toBe('여기까지 쓰다 멈')
-    expect(turn.draft).toBe('') // 커서는 draft 가 비면서 멈춘다
+    expect(turn.draft).toBe('')
     expect(conversation.get().turns).toHaveLength(1)
   })
 
@@ -114,7 +113,7 @@ describe('conversation — 우리 UI 가 그리는 대화', () => {
       count += 1
     })
     conversation.settleDraft()
-    expect(count).toBe(0) // 헛된 알림으로 매초 도는 판을 흔들지 않는다
+    expect(count).toBe(0)
     expect(conversation.get()).toBe(before)
     expect(conversation.get().turns.at(-1)!.text).toBe('안녕하세요')
     stop()
@@ -151,7 +150,6 @@ describe('conversation — 우리 UI 가 그리는 대화', () => {
   it('사건 뒤의 말은 사건에 붙지 않는다', () => {
     conversation.system('여기서 대화가 압축됐습니다')
     conversation.system('두 번째 사건')
-    // 사건은 각각 한 줄이다 — 문단으로 합치면 시간 순서가 뭉개진다
     expect(conversation.get().turns).toHaveLength(2)
   })
 

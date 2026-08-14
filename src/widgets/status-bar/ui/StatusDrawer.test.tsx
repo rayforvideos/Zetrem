@@ -17,6 +17,8 @@ const full: StatusState = {
       { name: 'playwright', status: 'connected' },
       { name: 'claude.ai Notion', status: 'needs-auth' },
     ],
+    tools: [],
+    agents: [],
     counts: { tools: 62, commands: 65, agents: 12, skills: 20, plugins: 3 },
     memoryPaths: ['/Users/sam/.claude/projects/x/memory/'],
   },
@@ -34,14 +36,14 @@ describe('StatusDrawer', () => {
     expect(html).toContain('f77f771b')
     expect(html).toContain('/Users/sam/workspace/zetrem')
     expect(html).toContain('claude-opus-5[1m]')
-    expect(html).toContain('sdk_opt_in_required') // 빠른 모드가 꺼진 이유
+    expect(html).toContain('sdk_opt_in_required')
   })
 
   it('계기 묶음이 토큰 네 종류와 컨텍스트·비용을 나눠 보인다', () => {
     const html = renderToStaticMarkup(<StatusDrawer statusState={full} onUpdate={() => {}} updating={false} />)
-    expect(html).toContain('76,424') // 캐시 읽기
-    expect(html).toContain('14,862') // 캐시 생성
-    expect(html).toContain('261')    // 출력
+    expect(html).toContain('76,424')
+    expect(html).toContain('14,862')
+    expect(html).toContain('261')
     expect(html).toContain('100,000')
   })
 
@@ -83,8 +85,6 @@ describe('StatusDrawer', () => {
   })
 
   it('세션이 있어도 환경 묶음의 재료(갱신·훅·기억)가 하나도 없으면 그 묶음은 그리지 않는다', () => {
-    // session != null 만으로 게이트했던 예전 조건이면 여기서도 (빈) 묶음이 그려진다 —
-    // 이 테스트가 그 실수로 되돌리면 빨개지는지가 요점이다
     const noEnvironment: StatusState = {
       ...full,
       session: { ...full.session!, memoryPaths: [] },
@@ -96,7 +96,6 @@ describe('StatusDrawer', () => {
     )
     expect(html).not.toContain('Homebrew')
     expect(html).not.toContain('SessionStart')
-    // 구분선 개수로 묶음 경계를 센다: 세션 뒤 계기, 계기 뒤 연결 — 두 번뿐, 환경 묶음의 세 번째는 없다
     expect(html.match(/data-slot="separator"/g)?.length ?? 0).toBe(2)
   })
 
@@ -112,7 +111,6 @@ describe('StatusDrawer', () => {
     expect(html).not.toContain('권한 모드')
     expect(html).not.toContain('출력 스타일')
     expect(html).not.toContain('API 키')
-    // 모델과 빠른 모드는 파서가 의미 있는 폴백을 주므로 늘 선다
     expect(html).toContain('claude-opus-5[1m]')
   })
 
@@ -122,8 +120,6 @@ describe('StatusDrawer', () => {
   })
 
   it('뷰포트보다 짧은 판에서도 절대 높이로 한 번 더 천장을 건다', () => {
-    // 40vh 는 뷰포트 기준이라 창보다 짧은 판에서는 대화를 통째로 밀어낼 수 있다 —
-    // min() 의 두 번째 항이 그 경우의 실제 천장이다
     const html = renderToStaticMarkup(<StatusDrawer statusState={full} onUpdate={() => {}} updating={false} />)
     expect(html).toContain('min(40vh,340px)')
   })

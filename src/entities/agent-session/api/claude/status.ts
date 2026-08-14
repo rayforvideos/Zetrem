@@ -1,10 +1,3 @@
-/**
- * stream-json 중 **계기의 층**을 번역한다 — 세션의 신원, 컨텍스트, 비용, 사용량 한도,
- * 훅, 진행 상태, 압축. 대화가 아니라 상태줄과 서랍이 먹는 재료다.
- *
- * 순수 함수 — 이어붙이기(훅의 시작·끝 짝짓기, 컨텍스트 누적)는 상태를 가진 스토어의 일이다.
- * 여기서 시간을 읽거나 이전 줄을 기억하면 CLI 없이 테스트할 수 없게 된다.
- */
 export type McpServer = { name: string; status: string }
 
 export type Counts = {
@@ -23,21 +16,20 @@ export type SessionIdentity = {
   outputStyle: string
   cliVersion: string
   apiKeySource: string
-  /** 빠른 모드는 꺼진 이유까지 말해야 사람이 손쓸 수 있다 */
   fastMode: { state: string; reason: string | null }
   mcp: McpServer[]
+  tools: string[]
+  agents: string[]
   counts: Counts
   memoryPaths: string[]
 }
 
 export type ResultMetrics = {
-  /** 세션 누적이다 (실측: 0.125331 → 0.166547). 턴 차액은 스토어가 뺀다 */
   costUsd: number
   tokens: { in: number; out: number; cacheRead: number; cacheCreate: number }
   durationMs: number
   ttftMs: number | null
   turns: number
-  /** 컨텍스트의 분모. result 에서만 온다 — 모르면 % 를 띄우지 않는다 */
   contextWindow: number | null
   apiErrorStatus: string | null
   stopReason: string | null
@@ -59,8 +51,6 @@ export type StatusEvent =
   | { type: 'hookStarted'; hookId: string; name: string; event: string }
   | { type: 'hookDone'; hookId: string; exitCode: number; stderr: string }
   | { type: 'activity'; activity: 'requesting' | 'idle' }
-  // trigger 는 CLI 소스가 "manual"|"auto" 로 선언하지만, 셋째 값이 늘어도 파서가
-  // 거짓을 말하지 않도록 string 으로 넓혀 둔다 (컨트롤러 판단, stream-shapes 노트)
   | { type: 'compacted'; trigger: string | null; preTokens: number | null; postTokens: number | null }
 
 function str(value: unknown, fallback = ''): string {
@@ -113,11 +103,6 @@ function fromSystem(event: Record<string, unknown>): StatusEvent[] {
   return []
 }
 
-/**
- * 압축 경계는 trigger·pre_tokens·post_tokens 세 필드만 읽는다 (실측: stream-shapes 노트
- * §compact_boundary). zod 스키마의 나머지 여덜 필드는 CLI 자체 주석이 @internal 이라
- * 이름이나 존재 여부가 예고 없이 바뀔 수 있다는 신호다 — 확인 안 된 필드는 읽지 않는다.
- */
 function compacted(event: Record<string, unknown>): StatusEvent {
   const metadata = event.compact_metadata
   if (typeof metadata !== 'object' || metadata === null) {
@@ -144,7 +129,6 @@ function identity(event: Record<string, unknown>): SessionIdentity {
     apiKeySource: str(event.apiKeySource),
     fastMode: {
       state: str(event.fast_mode_state, 'off'),
-      // 켜져 있을 때 이유를 들고 있으면 화면이 거짓말을 한다
       reason:
         str(event.fast_mode_state, 'off') === 'off' && typeof event.fast_mode_disabled_reason === 'string'
           ? event.fast_mode_disabled_reason
@@ -155,6 +139,12 @@ function identity(event: Record<string, unknown>): SessionIdentity {
           name: str(server.name, '?'),
           status: str(server.status, 'unknown'),
         }))
+      : [],
+    tools: Array.isArray(event.tools)
+      ? (event.tools as unknown[]).filter((name): name is string => typeof name === 'string')
+      : [],
+    agents: Array.isArray(event.agents)
+      ? (event.agents as unknown[]).filter((name): name is string => typeof name === 'string')
       : [],
     counts: {
       tools: count(event.tools),
@@ -172,11 +162,6 @@ function identity(event: Record<string, unknown>): SessionIdentity {
   }
 }
 
-/**
- * 컨텍스트는 result 를 기다리지 않는다 — 매 assistant 의 usage 합이 곧 지금 크기다
- * (실측: 2 + 16671 + 11691 = 28364, 다음 턴의 cache_read 28362 와 일치).
- * 자식(parent_tool_use_id)의 usage 는 자기 컨텍스트라 부모의 계기를 흔들면 안 된다.
- */
 function fromAssistantUsage(event: Record<string, unknown>): StatusEvent[] {
   if (typeof event.parent_tool_use_id === 'string') return []
   const usage = (event.message as Record<string, unknown> | undefined)?.usage
@@ -223,7 +208,6 @@ function fromRateLimit(event: Record<string, unknown>): StatusEvent[] {
       limit: {
         kind: str(i.rateLimitType, '알 수 없음'),
         utilization: num(i.utilization),
-        // 실측: resetsAt 은 epoch 초다. ms 로 바꿔 화면이 Date 로 바로 쓴다
         resetsAtMs: num(i.resetsAt) * 1000,
         overage: i.isUsingOverage === true,
         status: str(i.status),

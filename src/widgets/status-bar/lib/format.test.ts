@@ -55,7 +55,9 @@ describe('상태줄의 칸', () => {
     const session = {
       id: 's', cwd: '/w', model: 'm', permissionMode: 'ask', outputStyle: 'default',
       cliVersion: '2.1.231', apiKeySource: 'none', fastMode: { state: 'off', reason: null },
-      counts: { tools: 0, commands: 0, agents: 0, skills: 0, plugins: 0 }, memoryPaths: [],
+      tools: [],
+    agents: [],
+    counts: { tools: 0, commands: 0, agents: 0, skills: 0, plugins: 0 }, memoryPaths: [],
       mcp: [
         { name: 'a', status: 'connected' }, { name: 'b', status: 'connected' },
         { name: 'c', status: 'needs-auth' }, { name: 'd', status: 'pending' },
@@ -81,8 +83,6 @@ describe('상태줄의 칸', () => {
   })
 
   it('과거 버전이 최신이라고 나와도 그것은 다운그레이드다 — 새 버전으로 오인하지 않는다', () => {
-    // !== 로만 비교하면 2.1.200 이 latest 로 와도 "새 버전 있음" 이 되어버린다 —
-    // 문자열 비교가 아니라 isOutdated 로 실제 순서를 봐야 한다
     const downgrade = cells(state({ update: { current: '2.1.231', latest: '2.1.200', managedBy: 'Homebrew' } }))
     expect(downgrade.find((c) => c.key === 'update')).toEqual({
       key: 'update', text: '2.1.231', warn: false,

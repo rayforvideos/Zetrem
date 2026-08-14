@@ -1,48 +1,62 @@
 import type { CSSProperties } from 'react'
+import { shapeOfLine } from '@/shared/lib/tool-line'
+import type { ToolShape } from '@/shared/lib/tool-shape'
+import { ToolIcon } from '@/shared/ui/tool-icon'
 
 type StreamProps = { lines: string[] }
 
-/** 2층 — 흐르는 것. 읽으라고 있는 게 아니라 살아있다는 증거다 (스펙 §5.2) */
 export function Stream({ lines }: StreamProps) {
   const shown = lines.slice(-8)
   return (
     <div style={rootStyle}>
-      {shown.map((line, index) => (
-        <div
-          key={`${index}-${line}`}
-          style={{
-            ...lineStyle,
-            // 오래된 줄일수록 옅어져 흐름의 방향이 읽힌다
-            opacity: 0.25 + (0.75 * (index + 1)) / shown.length,
-          }}
-        >
-          {line}
-        </div>
-      ))}
+      {shown.map((line, index) => {
+        const shape = shapeOfLine(line)
+        return (
+          <div
+            key={`${index}-${line}`}
+            style={{ ...lineStyle, opacity: 0.45 + (0.55 * (index + 1)) / shown.length }}
+          >
+            <ToolIcon shape={shape} />
+            <span style={textStyle}>{shape.kind === 'plain' ? line : text(shape)}</span>
+          </div>
+        )
+      })}
     </div>
   )
+}
+
+function text(shape: ToolShape): string {
+  if (shape.kind === 'file') return shape.name
+  if (shape.kind === 'command') return shape.command
+  if (shape.kind === 'search') return shape.pattern
+  if (shape.kind === 'web') return shape.label
+  if (shape.kind === 'agent') return shape.description
+  if (shape.kind === 'todo') return '할 일'
+  return shape.name
 }
 
 const rootStyle: CSSProperties = {
   position: 'relative',
   zIndex: 2,
-  // 흐름은 바닥에 붙는다 — 위에서 아래로 흐르는 것이 시간의 방향이다
-  marginTop: 'auto',
-  paddingTop: 12,
+  marginTop: 14,
+  minHeight: 0,
+  flex: 1,
+  display: 'flex',
+  flexDirection: 'column',
+  gap: 3,
   fontFamily: 'var(--zt-mono)',
   fontSize: 10.5,
-  lineHeight: 1.75,
-  /**
-   * 2층 전체 밝기. 스펙 §5.2 는 60% 였으나 실사용 피드백(2026-08-13)으로 70% 로 올렸다 —
-   * 흐르는 층이지만 방금 지나간 두어 줄은 읽히기를 기대하게 된다.
-   * 줄 수를 14→10 으로 줄여 시각적 밀도는 오히려 낮췄다.
-   */
-  opacity: 0.7,
   overflow: 'hidden',
-  maskImage: 'linear-gradient(180deg, transparent 0%, #000 30%, #000 100%)',
 }
 
 const lineStyle: CSSProperties = {
+  display: 'flex',
+  alignItems: 'center',
+  gap: 6,
+  minWidth: 0,
+}
+
+const textStyle: CSSProperties = {
   whiteSpace: 'nowrap',
   textOverflow: 'ellipsis',
   overflow: 'hidden',

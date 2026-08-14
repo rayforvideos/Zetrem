@@ -7,6 +7,7 @@ function session(id: string, overrides: Partial<AgentSession> = {}): AgentSessio
     id,
     runnerId: 'fake',
     label: `에이전트 ${id}`,
+    subagentType: 'general-purpose',
     model: 'demo-1',
     status: 'working',
     headline: '',
@@ -49,7 +50,6 @@ describe('attentionId', () => {
 
   it('대기 시각을 모르는 세션은 아는 세션에 양보한다', () => {
     expect(attentionId([waiting('a'), waiting('b', 900)])).toBe('b')
-    // 전부 모르면 목록 순서
     expect(attentionId([waiting('a'), waiting('b')])).toBe('a')
   })
 

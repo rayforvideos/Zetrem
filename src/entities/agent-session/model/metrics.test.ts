@@ -6,6 +6,7 @@ const session: AgentSession = {
   id: 'a',
   runnerId: 'fake',
   label: '가짜',
+  subagentType: 'general-purpose',
   model: 'demo-1',
   status: 'working',
   headline: '작업 중',

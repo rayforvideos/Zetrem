@@ -1,5 +1,0 @@
-export { pickBackdrop, restoreBackdrop } from './api/backdrop-file'
-export { FALLBACK_BACKDROP } from './model/backdrop'
-export type { Backdrop, BackdropState } from './model/backdrop'
-export { backdropStore } from './model/backdrop-store'
-export { BackdropLayer } from './ui/BackdropLayer'

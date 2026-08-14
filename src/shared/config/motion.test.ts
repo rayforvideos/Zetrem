@@ -25,7 +25,6 @@ describe('staggerDelay', () => {
   })
 
   it('마지막 타일이 늦게 시작해도 전체가 전환 시간 안에 끝난다', () => {
-    // 타일 6개까지는 스태거 총합이 fanMs 를 넘지 않아야 물결로 읽힌다
     expect(staggerDelay(5) + MOTION.fanMs).toBeLessThanOrEqual(MOTION.fanMs * 2)
   })
 })

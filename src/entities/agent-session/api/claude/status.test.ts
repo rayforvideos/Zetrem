@@ -1,7 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { fromStatusLine } from './status'
 
-/** 실측 init (claude 2.1.231) 에서 필요한 필드만 줄인 것 */
 function initLine(overrides: Record<string, unknown> = {}): Record<string, unknown> {
   return {
     type: 'system',
@@ -47,6 +46,8 @@ describe('status 파서 — 계기의 층', () => {
           { name: 'playwright', status: 'connected' },
           { name: 'claude.ai Notion', status: 'needs-auth' },
         ],
+        tools: ['Bash', 'Read', 'Edit'],
+        agents: ['claude'],
         counts: { tools: 3, commands: 2, agents: 1, skills: 1, plugins: 1 },
         memoryPaths: ['/Users/sam/.claude/projects/x/memory/'],
       },
@@ -59,8 +60,6 @@ describe('status 파서 — 계기의 층', () => {
   })
 
   it('assistant 의 usage 합이 지금 컨텍스트 크기다 — result 를 기다리지 않는다', () => {
-    // 실측: in 2 + cacheRead 16671 + cacheCreate 11691 = 28364,
-    // 그리고 다음 턴의 cache_read 가 28362 로 일치했다 (스펙 §실측 2)
     const events = fromStatusLine({
       type: 'assistant',
       message: {
@@ -178,9 +177,6 @@ describe('status 파서 — 계기의 층', () => {
     ])
   })
 
-  // 브리프의 원래 테스트("사건으로만 본다")는 컨트롤러 판단으로 대체됐다 — Task 1 이
-  // compact_metadata 의 trigger/pre_tokens/post_tokens 를 실측했다 (stream-shapes 노트).
-  // 나머지 8개 필드는 CLI 자체에서 @internal 로 표시돼 있어 읽지 않는다.
   it('압축 경계는 trigger·pre/post 토큰을 읽는다 — 나머지 8개 @internal 필드는 손대지 않는다', () => {
     const events = fromStatusLine({
       type: 'system',
@@ -189,7 +185,7 @@ describe('status 파서 — 계기의 층', () => {
         trigger: 'auto',
         pre_tokens: 180000,
         post_tokens: 42000,
-        cumulative_dropped_tokens: 999, // @internal — 읽지 않아야 한다
+        cumulative_dropped_tokens: 999,
       },
     })
     expect(events).toEqual([

@@ -31,8 +31,6 @@ beforeEach(() => {
 
 describe('applyAgentEvent — 순서가 못 박혀야 한다', () => {
   it('턴 결산 줄은 세션 누적이 아니라 이번 턴의 차액을 담는다', () => {
-    // statusStore.apply 가 먼저 돌아 차액을 계산해야 두 번째 턴 결산이 0.06 을 말한다.
-    // 두 if 블록이 뒤집히면 이 assert 가 $0.1600 (누적) 을 보게 되어 빨개진다.
     const refs = fakeRefs()
     applyAgentEvent({ type: 'metrics', metrics: fakeMetrics(0.1) }, refs)
     applyAgentEvent({ type: 'metrics', metrics: fakeMetrics(0.16) }, refs)
@@ -87,7 +85,7 @@ describe('applyAgentEvent — 순서가 못 박혀야 한다', () => {
     applyAgentEvent({ type: 'turnEnded' }, fakeRefs())
     const turn = conversation.get().turns.at(-1)!
     expect(turn.text).toBe('여기까지 쓰다 멈')
-    expect(turn.draft).toBe('') // 커서만 거둔다
+    expect(turn.draft).toBe('')
     expect(conversation.get().status).toBe('waiting')
   })
 
@@ -96,7 +94,7 @@ describe('applyAgentEvent — 순서가 못 박혀야 한다', () => {
     applyAgentEvent({ type: 'headline', text: '안녕하세요' }, fakeRefs())
     applyAgentEvent({ type: 'turnEnded' }, fakeRefs())
     const turn = conversation.get().turns.at(-1)!
-    expect(turn.text).toBe('안녕하세요') // 같은 문장이 두 번 서지 않는다
+    expect(turn.text).toBe('안녕하세요')
     expect(turn.draft).toBe('')
   })
 
@@ -115,10 +113,9 @@ describe('applyAgentEvent — 순서가 못 박혀야 한다', () => {
       '그 결과는 완료가 아니라 접수증이다',
     () => {
       const refs = fakeRefs()
-      // 부모가 Agent 도구를 쓴 눈금이 먼저 서야 결과가 붙을 자리가 있다
       applyAgentEvent({ type: 'stream', line: 'Agent 산술', toolUseId: 'toolu_1', input: {} }, refs)
       applyAgentEvent(
-        { type: 'childOpen', toolUseId: 'toolu_1', label: '산술', prompt: '2+2?', background: false },
+        { type: 'childOpen', toolUseId: 'toolu_1', label: '산술', subagentType: 'general-purpose', prompt: '2+2?', background: false },
         refs,
       )
       applyAgentEvent({ type: 'childClosed', toolUseId: 'toolu_1' }, refs)
@@ -127,17 +124,11 @@ describe('applyAgentEvent — 순서가 못 박혀야 한다', () => {
         refs,
       )
 
-      // 부모 대화의 눈금이 결과를 받았다 — 자식으로 오인해 삼키지 않았다는 뜻
       const tool = conversation.get().turns.at(-1)!.tools.find((t) => t.toolUseId === 'toolu_1')
       expect(tool?.result?.stdout).toBe('4')
 
-      // 그런데 자식 타일은 아직 살아 있어야 한다. Agent 도구의 tool_result 는 이 CLI 에서
-      // **접수증**이다 — 앱 실기 기록(2026-08-14): 열림 02:00:03.867 → 결과 02:00:03.964,
-      // 97ms 뒤에 "Async agent launched successfully" 가 온다. run_in_background 는 붙지도
-      // 않는다. 여기서 닫으면 타일이 태어난 지 한 순간에 사라진다
       expect(sessionStore.get().find((s) => s.id === 'toolu_1')?.status).toBe('working')
 
-      // 진짜 완료는 task_notification 이다
       applyAgentEvent({ type: 'childNotified', toolUseId: 'toolu_1', summary: '4' }, refs)
       expect(sessionStore.get().find((s) => s.id === 'toolu_1')?.status).toBe('done')
     },
@@ -146,7 +137,7 @@ describe('applyAgentEvent — 순서가 못 박혀야 한다', () => {
   it('에러를 달고 온 childClosed 는 자식을 닫는다 — 죽은 자식은 접수증을 남기지 않는다', () => {
     const refs = fakeRefs()
     applyAgentEvent(
-      { type: 'childOpen', toolUseId: 'toolu_3', label: '실패할 일', prompt: 'x', background: false },
+      { type: 'childOpen', toolUseId: 'toolu_3', label: '실패할 일', subagentType: 'Explore', prompt: 'x', background: false },
       refs,
     )
     applyAgentEvent({ type: 'childClosed', toolUseId: 'toolu_3', error: '파일을 찾지 못했다' }, refs)
@@ -159,7 +150,7 @@ describe('applyAgentEvent — 순서가 못 박혀야 한다', () => {
   it('백그라운드 자식도 childClosed 로 안 닫힌다 — 접수증일 뿐, childNotified 가 진짜 완료다', () => {
     const refs = fakeRefs()
     applyAgentEvent(
-      { type: 'childOpen', toolUseId: 'toolu_2', label: '백그라운드 일', prompt: 'x', background: true },
+      { type: 'childOpen', toolUseId: 'toolu_2', label: '백그라운드 일', subagentType: 'Explore', prompt: 'x', background: true },
       refs,
     )
     applyAgentEvent({ type: 'childClosed', toolUseId: 'toolu_2' }, refs)

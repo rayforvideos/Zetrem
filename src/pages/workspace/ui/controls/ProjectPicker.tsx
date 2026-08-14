@@ -1,8 +1,8 @@
 import { useSyncExternalStore } from 'react'
 import type { CSSProperties } from 'react'
 import { pickProject, projectStore } from '@/entities/project'
+import { Button } from '@/shared/ui/button'
 
-/** 에이전트가 일할 프로젝트. 이름이 보이는 것 자체가 "어디서 도는지" 의 답이다 */
 export function ProjectPicker() {
   const project = useSyncExternalStore(projectStore.subscribe, projectStore.get, projectStore.get)
 
@@ -15,15 +15,16 @@ export function ProjectPicker() {
   }
 
   return (
-    <button
-      type="button"
+    <Button
+      variant="quiet"
+      size="bare"
       onClick={handleClick}
-      className="zt-btn zt-btn--ghost zt-btn--sm"
+      className="text-[11px]"
       style={buttonStyle}
       title={project?.path}
     >
       {project ? project.name : '프로젝트 선택'}
-    </button>
+    </Button>
   )
 }
 

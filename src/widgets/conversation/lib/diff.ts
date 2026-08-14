@@ -1,13 +1,5 @@
-/**
- * 줄 단위 diff — 의존성을 늘리지 않기 위해 직접 쓴다.
- *
- * 우리가 비교하는 것은 파일 전체가 아니라 Edit 이 준 두 덩어리(old_string / new_string)다.
- * 그래서 최장공통부분수열 같은 것이 필요하지 않다: 앞뒤로 같은 줄을 깎아내고
- * 남은 가운데를 통째로 -/+ 로 낸다. 사람이 보려는 것은 "무엇이 바뀌었나" 하나다.
- */
 export type DiffLine = { kind: 'add' | 'remove' | 'same'; text: string }
 
-/** 바뀐 자리 위아래로 남길 같은 줄의 수 */
 const CONTEXT = 3
 
 export function lineDiff(before: string, after: string, context = CONTEXT): DiffLine[] {
@@ -29,7 +21,6 @@ export function lineDiff(before: string, after: string, context = CONTEXT): Diff
 
   const out: DiffLine[] = []
   const headShown = Math.min(head, context)
-  // 앞이 길게 같으면 잘렸다는 사실을 한 줄로 알린다 — 조용히 없어지면 화면이 거짓말한다
   if (head > headShown) out.push({ kind: 'same', text: '…' })
   for (const text of a.slice(head - headShown, head)) out.push({ kind: 'same', text })
 

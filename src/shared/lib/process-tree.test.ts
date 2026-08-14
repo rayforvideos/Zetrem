@@ -18,11 +18,11 @@ describe('parsePsRows', () => {
 
 describe('descendantsOf', () => {
   const rows = [
-    { pid: 100, ppid: 1 }, // 남의 셸
-    { pid: 205, ppid: 1 }, // 우리 셸
-    { pid: 300, ppid: 205 }, // 우리 셸이 띄운 claude
-    { pid: 400, ppid: 300 }, // 그 claude 의 자식
-    { pid: 500, ppid: 100 }, // 남의 셸이 띄운 claude
+    { pid: 100, ppid: 1 },
+    { pid: 205, ppid: 1 },
+    { pid: 300, ppid: 205 },
+    { pid: 400, ppid: 300 },
+    { pid: 500, ppid: 100 },
   ]
 
   it('손자까지 따라 내려간다 — 서브에이전트도 우리 것이다', () => {
@@ -58,7 +58,6 @@ describe('runningSessionIds', () => {
     expect(runningSessionIds(ps)).toEqual(
       new Set([
         '11111111-2222-3333-4444-555555555555',
-        // 대소문자는 기록 파일 이름과 맞추려고 소문자로 눕힌다
         'aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee',
       ]),
     )

@@ -116,7 +116,6 @@ describe('닫히는 타일의 수명', () => {
     const merging = deckReducer(one, { type: 'closeOne', id: 'a' })
     expect(merging.kind).toBe('merging')
     expect(closingIds(merging)).toEqual(['a'])
-    // 수렴이 끝나는 순간에만 사라진다
     expect(closingIds(deckReducer(merging, { type: 'mergeSettled' }))).toEqual([])
   })
 })

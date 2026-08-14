@@ -8,6 +8,7 @@ function session(id: string): AgentSession {
     id,
     runnerId: 'fake',
     label: `에이전트 ${id}`,
+    subagentType: 'general-purpose',
     model: 'demo',
     status: 'working',
     headline: '',
@@ -48,7 +49,6 @@ describe('sessionStore', () => {
     sessionStore.patch('a', { status: 'waiting' })
     expect(sessionStore.get()[0]!.waitingSinceMs).toBe(5_000)
 
-    // 같은 상태로 다시 밀어 넣어도 시각이 초기화되지 않는다 — 기다린 시간이 리셋되면 순서가 뒤집힌다
     vi.setSystemTime(9_000)
     sessionStore.patch('a', { status: 'waiting' })
     expect(sessionStore.get()[0]!.waitingSinceMs).toBe(5_000)

@@ -2,31 +2,14 @@ import { mkdir, writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import { app } from 'electron'
 
-/**
- * 이 터미널에서 도는 에이전트의 정체성.
- *
- * 같은 `claude` 라도 Zetrem 에서 띄운 것은 이 책상의 식구다 — 이름이 있고, 상태줄이
- * 이 앱의 문법으로 서고, 말투도 이 화면에 맞는다. 순정 CLI 의 환영 배너를 지울 수는 없지만
- * (그건 CLI 의 것이다), 그 아래 사람이 실제로 오래 보는 것들은 우리가 정한다.
- *
- * 설정 파일 하나로 준다 — CLI 의 `--settings` 가 받는 형식이고, 사람이 이미 가진 개인 설정을
- * 덮지 않는다 (이 파일은 이 세션에만 얹힌다).
- */
-
-/** 에이전트의 이름. 타일의 라벨과 상태줄에 같은 이름이 선다 */
 export const AGENT_NAME = 'Zeta'
 
-/** 상태줄에 서는 표식. 유리 위에서도 읽히는 한 글자 */
 const AGENT_MARK = '◆'
 
 export function agentSettingsPath(): string {
   return join(app.getPath('userData'), 'agent-style.json')
 }
 
-/**
- * 상태줄 — CLI 가 매 턴 stdin 으로 세션 JSON 을 주고, 출력 한 줄을 화면 아래에 붙인다.
- * 모델·디렉토리·브랜치를 우리 순서로 세운다: 정체성 → 자리 → 가지.
- */
 function statusLineCommand(): string {
   return [
     "input=$(cat)",
@@ -37,11 +20,6 @@ function statusLineCommand(): string {
   ].join('; ')
 }
 
-/**
- * 이 터미널 에이전트의 말투.
- *
- * 화면이 좁은 타일이라 첫 줄이 곧 요약이어야 한다 — 타일의 1층이 그 줄을 그대로 보여준다.
- */
 function persona(): string {
   return [
     `당신은 Zetrem 의 터미널에서 도는 ${AGENT_NAME} 다.`,
@@ -50,7 +28,18 @@ function persona(): string {
   ].join(' ')
 }
 
-/** 설정 파일을 써 두고 경로를 돌려준다. 셸의 `claude` 감싸개가 이 경로를 붙인다 */
+// 명단을 잠그면 이 글이 --append-system-prompt 가 아니라 세션 주 에이전트의 프롬프트가 된다.
+// 그때는 기본 오케스트레이터의 자리를 우리가 차지하므로, 말투만 주고 끝내면 일을 못 한다.
+function orchestratorPrompt(): string {
+  return [
+    persona(),
+    '당신은 오케스트레이터다. 스스로 코드를 읽고 고치고 명령을 돌릴 수 있고, 나눠도 되는 일은 서브에이전트에게 맡긴다.',
+    '맡길 때는 Agent 도구의 subagent_type 에 부를 사람의 이름을 정확히 적는다. 이 세션에서 부를 수 있는 사람은 그 도구가 받아들이는 이름뿐이다.',
+    '사람이 지목한 사람이 있으면 그 사람에게 맡긴다. 지목이 없으면 일에 맞는 사람을 고른다.',
+    '맡긴 일이 끝나면 결과를 사람에게 한 문단으로 요약해 알린다.',
+  ].join(' ')
+}
+
 export async function writeAgentSettings(): Promise<string> {
   const path = agentSettingsPath()
   await mkdir(app.getPath('userData'), { recursive: true }).catch(() => undefined)
@@ -68,4 +57,4 @@ export async function writeAgentSettings(): Promise<string> {
   return path
 }
 
-export { persona }
+export { orchestratorPrompt, persona }

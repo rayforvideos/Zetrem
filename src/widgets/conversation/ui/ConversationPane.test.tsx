@@ -1,6 +1,6 @@
 import { renderToStaticMarkup } from 'react-dom/server'
 import { describe, expect, it } from 'vitest'
-import type { StatusState } from '@/entities/agent-session'
+import type { PermissionAsk, StatusState } from '@/entities/agent-session'
 import type { ToolActivity, Turn } from '@/pages/workspace/model/conversation'
 import { ConversationPane, tickOpen } from './ConversationPane'
 
@@ -37,13 +37,13 @@ function turn(overrides: Partial<Turn> = {}): Turn {
   }
 }
 
-function pane(turns: Turn[]): string {
+function pane(turns: Turn[], permission: PermissionAsk | null = null): string {
   return renderToStaticMarkup(
     <ConversationPane
       turns={turns}
       status="done"
       statusState={STATUS}
-      permission={null}
+      permission={permission}
       nowMs={0}
       permissionMode="ask"
       model="default"
@@ -54,27 +54,21 @@ function pane(turns: Turn[]): string {
       onStop={() => {}}
       onUpdateCli={() => {}}
       updatingCli={false}
+      roster={[]}
+      fleet={[]}
+      sidebar={null}
+      report={null}
+      addressee={null}
+      onClearAddressee={() => {}}
     />,
   )
 }
 
-/**
- * 산 흐름에서 눈금은 `tool_use` 줄에서 마운트되고 결과는 **그 뒤 줄**로 온다.
- * `useState(tool.result?.isError === true)` 는 초기값을 마운트 때 한 번만 읽으므로
- * 그 순서에서는 실패가 영영 펼쳐지지 않았다 — 스펙의 "실패는 이유가 화면에 있어야
- * 한다" 가 죽어 있던 자리다.
- *
- * vitest 는 `environment: 'node'` 라 마운트 뒤 다시 그릴 렌더러가 없다(jsdom 금지,
- * 새 의존성 금지). 그래서 펼침 판정을 순수 함수로 떼어내 "사람이 아직 손대지 않은
- * 상태(override === null)에서 무엇이 나오는가" 를 직접 본다 — 마운트 시점이 아니라
- * 매 렌더의 도구 값으로 답이 나온다는 것이 이 함수의 존재 이유다.
- */
 describe('tickOpen — 실패는 이유가 화면에 있어야 한다', () => {
   it('결과가 마운트 뒤에 도착해도 실패한 눈금은 펼쳐진다', () => {
     const mounted = tool({ result: null })
-    expect(tickOpen(null, mounted)).toBe(false) // tool_use 줄만 왔을 때
+    expect(tickOpen(null, mounted)).toBe(false)
 
-    // 다음 줄에서 결과가 붙는다 — 같은 눈금, 새 값
     const resolved = tool({
       result: { stdout: '', stderr: 'no such file', isError: true, interrupted: false },
     })
@@ -103,21 +97,19 @@ describe('ConversationPane — 화면이 거짓말하지 않는다', () => {
     expect(html).toContain('60줄 더 있음')
   })
 
-  /**
-   * 눈금 버튼 **자기 자신**만 본다. 같은 판이 `Textarea` 와 `Button` 도 그리는데 그
-   * 클래스 문자열에 `disabled:cursor-not-allowed` 같은 변형이 들어 있어서, 마크업 전체에서
-   * `'disabled'` 를 찾으면 눈금이 잠기지 않아도 통과한다 — 모양만 보는 단언은 이 브랜치를
-   * 두 번 되돌리게 한 종류다. 불리언 속성이 실제로 붙었는지(`disabled=""`)를 확인한다.
-   */
-  function tickButton(html: string, line: string): string {
-    const at = html.indexOf(line)
+  function tickButton(html: string, tickId: string): string {
+    const at = html.indexOf(`data-tick="${tickId}"`)
     expect(at).toBeGreaterThan(-1)
-    return html.slice(html.lastIndexOf('<button', at), at)
+    const start = html.lastIndexOf('<button', at)
+    const end = html.indexOf('</button>', at)
+    return html.slice(start, end)
   }
 
   it('결과도 전용 렌더도 없는 눈금은 펼칠 수 없다 — 빈 판을 열지 않는다', () => {
-    const html = pane([turn({ tools: [tool({ line: 'Bash ls', input: { command: 'ls' } })] })])
-    const button = tickButton(html, 'Bash ls')
+    const html = pane([
+      turn({ tools: [tool({ line: 'Bash ls', toolUseId: 'tk1', input: { command: 'ls' } })] }),
+    ])
+    const button = tickButton(html, 'tk1')
     expect(button).toContain('disabled=""')
     expect(button).toContain('aria-expanded="false"')
   })
@@ -128,12 +120,13 @@ describe('ConversationPane — 화면이 거짓말하지 않는다', () => {
         tools: [
           tool({
             line: 'Bash ls',
+            toolUseId: 'tk2',
             result: { stdout: 'a.ts', stderr: '', isError: false, interrupted: false },
           }),
         ],
       }),
     ])
-    expect(tickButton(html, 'Bash ls')).not.toContain('disabled=""')
+    expect(tickButton(html, 'tk2')).not.toContain('disabled=""')
   })
 
   it('생각은 접힌 채로 서고 몇 문단인지 말한다 — 결론이 먼저다', () => {
@@ -145,8 +138,66 @@ describe('ConversationPane — 화면이 거짓말하지 않는다', () => {
   it('기계가 알려주는 줄은 고정폭이고 작업 레일을 달지 않는다', () => {
     const html = pane([turn({ role: 'system', text: '이 턴 261출력 · 10.5초' })])
     expect(html).toContain('이 턴 261출력')
-    const line = html.slice(html.indexOf('이 턴') - 300, html.indexOf('이 턴'))
+    const at = html.indexOf('이 턴')
+    const line = html.slice(html.lastIndexOf('<div', at), at)
     expect(line).toContain('font-mono')
     expect(line).not.toContain('zt-rail')
+  })
+})
+
+describe('결재 — 이 앱에서 가장 중요한 순간', () => {
+  const ask = { requestId: 'r1', toolName: 'Bash', line: 'rm -rf build' }
+
+  it('무엇을 하려는지 사람 말로 먼저 말한다', () => {
+    const html = pane([], ask)
+    expect(html).toContain('명령을 돌려도 될까요')
+    expect(html).toContain('rm -rf build')
+  })
+
+  it('손이 키보드를 떠나지 않아도 끝난다 — 단축키를 화면이 알려준다', () => {
+    const html = pane([], ask)
+    expect(html).toContain('⌘ Enter')
+    expect(html).toContain('Esc')
+  })
+
+  it('결재 중에는 입력 자리가 없다 — 답할 것은 하나뿐이다', () => {
+    expect(pane([], ask)).not.toContain('이어서 말하기')
+  })
+
+  it('모르는 도구도 물어본다 — 이름을 지어내지 않는다', () => {
+    const html = pane([], { requestId: 'r2', toolName: 'SomeTool', line: '무언가' })
+    expect(html).toContain('해도 될까요')
+    expect(html).toContain('SomeTool')
+  })
+})
+
+describe('지목 — 누구에게 맡기는지가 쓰는 자리에 보인다', () => {
+  it('지목한 사람이 입력 위에 서고 물음도 그 사람을 향한다', () => {
+    const html = renderToStaticMarkup(
+      <ConversationPane
+        turns={[]}
+        status="done"
+        statusState={STATUS}
+        permission={null}
+        nowMs={0}
+        permissionMode="ask"
+        model="default"
+        onModel={() => {}}
+        sessionLive={false}
+        onSend={() => {}}
+        onDecide={() => {}}
+        onStop={() => {}}
+        onUpdateCli={() => {}}
+        updatingCli={false}
+        roster={[]}
+        fleet={[]}
+        sidebar={null}
+        report={null}
+        addressee="Explore"
+        onClearAddressee={() => {}}
+      />,
+    )
+    expect(html).toContain('Explore 에게')
+    expect(html).toContain('Explore 에게 맡길 일')
   })
 })

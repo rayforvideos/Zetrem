@@ -10,6 +10,8 @@ const session = {
   outputStyle: 'default', cliVersion: '2.1.231', apiKeySource: 'none',
   fastMode: { state: 'off', reason: 'sdk_opt_in_required' },
   mcp: [{ name: 'playwright', status: 'connected' }],
+  tools: [],
+    agents: [],
   counts: { tools: 3, commands: 2, agents: 1, skills: 1, plugins: 1 },
   memoryPaths: [],
 }
@@ -76,7 +78,7 @@ describe('statusStore — 마지막으로 알려진 진실', () => {
 
   it('훅의 시작과 끝을 hook_id 로 이어붙인다', () => {
     statusStore.apply({ type: 'hookStarted', hookId: 'c3d7', name: 'SessionStart:startup', event: 'SessionStart' })
-    expect(statusStore.get().hooks).toHaveLength(0) // 끝나기 전에는 목록에 서지 않는다
+    expect(statusStore.get().hooks).toHaveLength(0)
     statusStore.apply({ type: 'hookDone', hookId: 'c3d7', exitCode: 0, stderr: '' })
     const [hook] = statusStore.get().hooks
     expect(hook).toMatchObject({ name: 'SessionStart:startup', event: 'SessionStart', exitCode: 0 })
@@ -95,7 +97,7 @@ describe('statusStore — 마지막으로 알려진 진실', () => {
     }
     const hooks = statusStore.get().hooks
     expect(hooks).toHaveLength(5)
-    expect(hooks[0]!.name).toBe('훅6') // 최신이 앞
+    expect(hooks[0]!.name).toBe('훅6')
   })
 
   it('진행 상태를 든다', () => {
@@ -130,7 +132,6 @@ describe('statusStore — 마지막으로 알려진 진실', () => {
     expect(statusStore.get().cost.usd).toBe(0)
     expect(statusStore.get().limit).toBeNull()
 
-    // 새 세션의 첫 결산이 자기 값을 그대로 든다 (지난 세션이 남았다면 0 이 됐을 자리)
     statusStore.apply({ type: 'metrics', metrics: metrics(0.02) })
     expect(statusStore.get().cost.lastTurnUsd).toBeCloseTo(0.02, 6)
   })
@@ -153,7 +154,7 @@ describe('statusStore — 마지막으로 알려진 진실', () => {
     statusStore.apply({ type: 'context', used: 28364 })
     expect(count).toBe(1)
     statusStore.apply({ type: 'context', used: 28364 })
-    expect(count).toBe(1) // 같은 값은 새 상태가 아니다
+    expect(count).toBe(1)
     stop()
   })
 
@@ -163,7 +164,7 @@ describe('statusStore — 마지막으로 알려진 진실', () => {
     statusStore.apply({ type: 'activity', activity: 'requesting' })
     expect(count).toBe(1)
     statusStore.apply({ type: 'activity', activity: 'requesting' })
-    expect(count).toBe(1) // 같은 값은 새 상태가 아니다
+    expect(count).toBe(1)
     stop()
     statusStore.apply({ type: 'activity', activity: 'idle' })
     expect(count).toBe(1)

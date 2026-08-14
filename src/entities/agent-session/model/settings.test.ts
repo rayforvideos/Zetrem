@@ -5,12 +5,17 @@ describe('readSettings — 저장된 선택을 되읽는다', () => {
   it('처음이면 기본값이고, 아직 시작을 누르지 않은 상태다', () => {
     expect(readSettings(null)).toEqual(DEFAULT_SETTINGS)
     expect(DEFAULT_SETTINGS.setupDone).toBe(false)
-    // 처음 켠 사람에게 "전부 허용" 을 기본으로 줄 수는 없다
     expect(DEFAULT_SETTINGS.permissionMode).toBe('ask')
   })
 
   it('저장된 값을 그대로 되살린다', () => {
-    const saved = { permissionMode: 'bypass', model: 'haiku', setupDone: true }
+    const saved = {
+      permissionMode: 'bypass',
+      model: 'haiku',
+      setupDone: true,
+      onlyOurAgents: false,
+      knownTools: ['Read', 'Bash'],
+    }
     expect(readSettings(saved)).toEqual(saved)
   })
 
@@ -23,5 +28,22 @@ describe('readSettings — 저장된 선택을 되읽는다', () => {
 
   it('일부만 저장돼 있어도 나머지는 기본으로 채운다', () => {
     expect(readSettings({ model: 'opus' })).toEqual({ ...DEFAULT_SETTINGS, model: 'opus' })
+  })
+})
+
+describe('잠금 설정', () => {
+  it('아무것도 저장돼 있지 않으면 우리가 들인 사람만 쓰는 쪽이 기본이다', () => {
+    expect(readSettings({}).onlyOurAgents).toBe(true)
+  })
+
+  it('꺼 둔 것은 꺼진 채로 되살린다', () => {
+    expect(readSettings({ onlyOurAgents: false }).onlyOurAgents).toBe(false)
+  })
+
+  it('기억해 둔 도구 이름 중 글자가 아닌 것은 버린다', () => {
+    expect(readSettings({ knownTools: ['Read', 3, null, 'Bash'] }).knownTools).toEqual([
+      'Read',
+      'Bash',
+    ])
   })
 })

@@ -3,10 +3,10 @@ import type { AgentSession } from '@/entities/agent-session'
 import { Surface } from '@/entities/surface'
 import { MOTION } from '@/shared/config/motion/motion'
 import type { Rect } from '../../lib/grid/grid.types'
-import { Gauge } from '../layers/Gauge'
-import { Headline } from '../layers/Headline'
-import { Stream } from '../layers/Stream'
-import { Transcript } from '../layers/Transcript'
+import { Gauge } from '../layers/Gauge/Gauge'
+import { Headline } from '../layers/Headline/Headline'
+import { CallLog } from '../layers/CallLog/CallLog'
+import { Transcript } from '../layers/Transcript/Transcript'
 
 type AgentTileProps = {
   session: AgentSession
@@ -16,6 +16,7 @@ type AgentTileProps = {
   sweeping?: boolean
   closing?: boolean
   attention?: boolean
+  onDismiss?: () => void
 }
 
 export function AgentTile({
@@ -26,10 +27,13 @@ export function AgentTile({
   sweeping = false,
   closing = false,
   attention = false,
+  onDismiss,
 }: AgentTileProps) {
-  const transcriptOpen = attention && session.transcript.length > 0
+  const transcriptOpen = session.transcript.length > 0
   const durationMs = closing ? MOTION.mergeMs : MOTION.fanMs
   const sweep = sweeping || closing
+  const live = session.status === 'working'
+  const now = session.stream.at(-1) ?? null
   return (
     <div
       data-status={session.status}
@@ -39,28 +43,69 @@ export function AgentTile({
         transform: `translate(${rect.x}px, ${rect.y}px)`,
         width: rect.w,
         height: rect.h,
-        opacity: closing ? 0 : 1,
         transition: [
           `transform ${durationMs}ms ${MOTION.easing} ${delayMs}ms`,
           `width ${durationMs}ms ${MOTION.easing} ${delayMs}ms`,
           `height ${durationMs}ms ${MOTION.easing} ${delayMs}ms`,
-          `opacity ${MOTION.mergeMs}ms ${MOTION.easing} ${delayMs}ms`,
         ].join(', '),
       }}
     >
+      <div data-presence={closing ? 'leaving' : 'arriving'} style={presenceStyle(closing, delayMs)}>
       <Surface style={{ height: '100%', padding: 18 }}>
         {session.status === 'waiting' && (
           <div data-waiting style={waitingMarkStyle(attention)} />
         )}
         <div style={bodyStyle}>
-          <Headline session={session} withText={!transcriptOpen} />
+          <Headline session={session} withText={!transcriptOpen} onDismiss={onDismiss} />
           {transcriptOpen && <Transcript entries={session.transcript} />}
-          {!sweep && <Stream lines={session.stream} live={session.status === 'working'} />}
+          {!sweep && (
+            <div style={footerStyle}>
+              {live && now === null && (session.doing ?? '').length > 0 && (
+                <div data-doing style={doingStyle}>
+                  {session.doing}
+                </div>
+              )}
+              <CallLog calls={session.stream} live={live} nowMs={nowMs} />
+            </div>
+          )}
           {!sweep && <Gauge session={session} nowMs={nowMs} />}
         </div>
       </Surface>
+      </div>
     </div>
   )
+}
+
+function presenceStyle(closing: boolean, delayMs: number): CSSProperties {
+  const shape = closing
+    ? `zt-tile-out ${MOTION.leaveMs}ms ${MOTION.leaving}`
+    : `zt-tile-in ${MOTION.arriveMs}ms ${MOTION.spring} ${delayMs}ms`
+  return {
+    height: '100%',
+    transformOrigin: 'center',
+    animation: `${shape} both`,
+  }
+}
+
+const footerStyle: CSSProperties = {
+  marginTop: 14,
+  marginBottom: 4,
+  flex: '0 1 auto',
+  maxHeight: '45%',
+  minHeight: 0,
+  display: 'flex',
+  flexDirection: 'column',
+  gap: 6,
+  minWidth: 0,
+}
+
+const doingStyle: CSSProperties = {
+  flex: '0 0 auto',
+  fontSize: 11.5,
+  opacity: 0.55,
+  overflow: 'hidden',
+  textOverflow: 'ellipsis',
+  whiteSpace: 'nowrap',
 }
 
 const bodyStyle: CSSProperties = {

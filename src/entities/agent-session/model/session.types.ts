@@ -16,7 +16,8 @@ export type AgentSession = {
   model: string
   status: SessionStatus
   headline: string
-  stream: string[]
+  doing?: string
+  stream: Call[]
   transcript: TranscriptEntry[]
   tokens: number
   contextUsed: number
@@ -28,6 +29,15 @@ export type AgentSession = {
   waitingSinceMs?: number
   outcome?: WorkOutcome | null
   permission?: PermissionAsk | null
+}
+
+export type Call = {
+  id: string
+  line: string
+  startedAtMs: number
+  endedAtMs: number | null
+  failed: boolean
+  note: string
 }
 
 export type TranscriptEntry = {

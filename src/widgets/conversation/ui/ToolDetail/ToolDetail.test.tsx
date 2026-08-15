@@ -5,7 +5,7 @@ import { TOOL_OUTPUT_LINES } from '../../lib/limits'
 import { ToolDetail } from './ToolDetail'
 
 function tool(overrides: Partial<ToolActivity>): ToolActivity {
-  return { line: 'Edit a.ts', toolUseId: 't1', input: null, result: null, ...overrides }
+  return { line: 'Edit a.ts', toolUseId: 't1', input: null, result: null, startedAtMs: 0, endedAtMs: 100, ...overrides }
 }
 
 describe('ToolDetail: each tool drawn in its own shape', () => {

@@ -1,6 +1,6 @@
 import { relative, resolve } from 'node:path'
 import { BrowserWindow, app, dialog, session, shell } from 'electron'
-import { CHROME_TOP, CONTROL_SYMBOL, GROUND, TRAFFIC_LIGHT } from '@/shared/config/theme'
+import { CHROME_TOP, CONTROL_SYMBOL, GROUND, MIN_WINDOW, TRAFFIC_LIGHT } from '@/shared/config/theme'
 import { killAllAgents, registerAgentHost } from './agent-host'
 import { registerAgentDefs } from './agent-defs'
 import { registerAuth } from './auth'
@@ -16,10 +16,14 @@ import { handle } from './ipc/ipc'
 
 const isMac = process.platform === 'darwin'
 
+if (process.env.ZT_INSPECT) app.commandLine.appendSwitch('remote-debugging-port', process.env.ZT_INSPECT)
+
 function createWindow(): void {
   const win = new BrowserWindow({
     width: 1440,
     height: 900,
+    minWidth: MIN_WINDOW.width,
+    minHeight: MIN_WINDOW.height,
     show: false,
     titleBarStyle: isMac ? 'hiddenInset' : 'hidden',
     ...(isMac

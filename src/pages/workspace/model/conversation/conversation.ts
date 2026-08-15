@@ -36,8 +36,8 @@ export const conversation = {
     listeners.add(listener)
     return () => listeners.delete(listener)
   },
-  say(role: Turn['role'], text: string): void {
-    const target = appendable(role)
+  say(role: Turn['role'], text: string, to?: string): void {
+    const target = to === undefined ? appendable(role) : null
     if (target) {
       const merged = { ...target, draft: '', text: joined(target.text, text) }
       emit({ ...state, turns: [...state.turns.slice(0, -1), merged] })
@@ -47,13 +47,28 @@ export const conversation = {
       ...state,
       turns: [
         ...state.turns,
-        { role, text, tools: [], draft: '', thinking: '', startedAtMs: Date.now() },
+        {
+          role,
+          text,
+          tools: [],
+          draft: '',
+          thinking: '',
+          startedAtMs: Date.now(),
+          ...(to === undefined ? {} : { to }),
+        },
       ],
     })
   },
   tool(line: string, toolUseId: string | null, input?: unknown): void {
     const last = state.turns.at(-1)
-    const activity: ToolActivity = { line, toolUseId, input: input ?? null, result: null }
+    const activity: ToolActivity = {
+      line,
+      toolUseId,
+      input: input ?? null,
+      result: null,
+      startedAtMs: Date.now(),
+      endedAtMs: null,
+    }
     if (!last || last.role !== 'assistant') {
       emit({
         ...state,
@@ -79,7 +94,7 @@ export const conversation = {
     }
     const turn = state.turns[index]!
     const tools = turn.tools.map((tool) =>
-      tool.toolUseId === toolUseId ? { ...tool, result: held } : tool,
+      tool.toolUseId === toolUseId ? { ...tool, result: held, endedAtMs: Date.now() } : tool,
     )
     const turns = [...state.turns]
     turns[index] = { ...turn, tools }

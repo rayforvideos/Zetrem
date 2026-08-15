@@ -1,14 +1,16 @@
 import type { AgentEventRefs } from './agent-events.types'
 
-import { sessionStore, statusStore } from '@/entities/agent-session'
-import type { ClaudeTurnEvent, RateLimit, ResultMetrics, StatusEvent } from '@/entities/agent-session'
-import { clip } from '@/shared/lib/clip/clip'
+import { statusStore } from '@/entities/agent-session'
+import type {
+  ClaudeTurnEvent,
+  RateLimit,
+  ResultMetrics,
+  StatusEvent,
+} from '@/entities/agent-session'
 import { formatResetTime } from '@/shared/lib/datetime/datetime'
 import { formatTokens, limitKindLabel } from '@/shared/lib/units/units'
-import { resumedAgent } from '@/entities/agent-session'
 import { conversation } from '../conversation/conversation'
-
-const HEADLINE_MAX = 140
+import { SEND_TOOL, applyCrewEvent, isCrewEvent, remember, wakeResumed } from './crew/crew'
 
 export function applyAgentEvent(turn: ClaudeTurnEvent, refs: AgentEventRefs): void {
   if (isStatusEvent(turn)) statusStore.apply(turn)
@@ -32,12 +34,13 @@ function isStatusEvent(turn: ClaudeTurnEvent): turn is StatusEvent {
 }
 
 function announce(turn: ClaudeTurnEvent, refs: AgentEventRefs): void {
+  if (isCrewEvent(turn)) return applyCrewEvent(turn, refs)
   switch (turn.type) {
     case 'headline':
       return conversation.say('assistant', turn.text)
     case 'stream':
       if (turn.toolUseId !== null && turn.line.startsWith(SEND_TOOL)) {
-        refs.sends.set(turn.toolUseId, addressee(turn.input))
+        remember(turn.toolUseId, turn.input, refs)
       }
       return conversation.tool(turn.line, turn.toolUseId, turn.input)
     case 'delta':
@@ -81,107 +84,9 @@ function announce(turn: ClaudeTurnEvent, refs: AgentEventRefs): void {
         })
       }
       return conversation.setStatus('waiting')
-    case 'childOpen':
-      refs.childIds.add(turn.toolUseId)
-      if (sessionStore.find(turn.toolUseId) !== null) {
-        return sessionStore.patch(turn.toolUseId, { status: 'working' })
-      }
-      return sessionStore.open({
-        id: turn.toolUseId,
-        runnerId: 'subagent',
-        label: turn.label,
-        subagentType: turn.subagentType,
-        model: 'subagent',
-        status: 'working',
-        headline: clip(turn.prompt, HEADLINE_MAX),
-        stream: [],
-        transcript: [],
-        tokens: 0,
-        contextUsed: 0,
-        startedAtMs: Date.now(),
-        detached: turn.background,
-      })
-    case 'childSay':
-      if (!refs.childIds.has(turn.toolUseId)) return
-      wake(turn.toolUseId)
-      sessionStore.patch(turn.toolUseId, { headline: clip(turn.text, HEADLINE_MAX) })
-      return sessionStore.appendTranscript(turn.toolUseId, { role: turn.role, text: turn.text })
-    case 'childStream':
-      if (!refs.childIds.has(turn.toolUseId)) return
-      wake(turn.toolUseId)
-      return sessionStore.pushStream(turn.toolUseId, turn.line)
-    case 'childNotified':
-      if (!refs.childIds.has(turn.toolUseId)) return
-      if (turn.summary) {
-        sessionStore.patch(turn.toolUseId, { headline: clip(turn.summary, HEADLINE_MAX) })
-      }
-      return sessionStore.patch(turn.toolUseId, { status: turn.done ? 'reported' : 'working' })
-    case 'childStarted':
-      if (!refs.childIds.has(turn.toolUseId)) return
-      return sessionStore.patch(turn.toolUseId, { taskId: turn.taskId })
-    case 'childProgress':
-      if (!refs.childIds.has(turn.toolUseId)) return
-      wake(turn.toolUseId)
-      note(turn.toolUseId, turn.lastTool)
-      return sessionStore.patch(turn.toolUseId, {
-        ...(turn.doing ? { headline: clip(turn.doing, HEADLINE_MAX) } : {}),
-        tokens: turn.tokens,
-        lastSeenAtMs: Date.now(),
-      })
-    case 'childClosed':
-      if (!refs.childIds.has(turn.toolUseId)) return
-      if (turn.error) {
-        return sessionStore.patch(turn.toolUseId, {
-          status: 'done',
-          headline: `Failed: ${clip(turn.error, 120)}`,
-        })
-      }
-      if (sessionStore.find(turn.toolUseId)?.detached === true) return
-      return sessionStore.patch(turn.toolUseId, { status: 'done' })
     default:
       return
   }
-}
-
-const SEND_TOOL = 'SendMessage'
-
-function addressee(input: unknown): string {
-  if (typeof input !== 'object' || input === null) return ''
-  const held = input as Record<string, unknown>
-  const to = held.to ?? held.agent ?? held.name
-  return typeof to === 'string' ? bareName(to) : ''
-}
-
-function bareName(to: string): string {
-  return to.replace(/\s*\[[^\]]*\]\s*$/, '').trim()
-}
-
-function wakeResumed(toolUseId: string, stdout: string, refs: AgentEventRefs): void {
-  const called = refs.sends.get(toolUseId)
-  if (called === undefined) return
-  refs.sends.delete(toolUseId)
-  const agent = resumedAgent(stdout)
-  if (agent === null) return
-  if (sessionStore.find(agent.id) !== null) {
-    refs.childIds.add(agent.id)
-    sessionStore.patch(agent.id, { status: 'working' })
-    return
-  }
-  refs.childIds.add(agent.id)
-  sessionStore.open({
-    id: agent.id,
-    runnerId: 'subagent',
-    label: called.length > 0 ? called : agent.name,
-    subagentType: called.length > 0 ? called : agent.name,
-    model: 'subagent',
-    status: 'working',
-    headline: 'Picked up where they left off',
-    stream: [],
-    transcript: [],
-    tokens: 0,
-    contextUsed: 0,
-    startedAtMs: Date.now(),
-  })
 }
 
 function drop(requestId: string, refs: AgentEventRefs): void {
@@ -200,19 +105,6 @@ function drop(requestId: string, refs: AgentEventRefs): void {
     toolName: next.toolName,
     line: next.line,
   })
-}
-
-function note(toolUseId: string, tool: string): void {
-  if (tool.length === 0) return
-  const stream = sessionStore.find(toolUseId)?.stream
-  if (stream === undefined || stream.at(-1) === tool) return
-  sessionStore.pushStream(toolUseId, tool)
-}
-
-function wake(toolUseId: string): void {
-  const status = sessionStore.find(toolUseId)?.status
-  if (status === undefined || status === 'working') return
-  sessionStore.patch(toolUseId, { status: 'working', endedAtMs: undefined })
 }
 
 export function limitLine(limit: RateLimit): string {

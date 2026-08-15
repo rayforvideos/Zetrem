@@ -9,7 +9,7 @@ export function Markdown({ text, className }: { text: string; className?: string
   return (
     <div className={cn('zt-md', className)}>
       <ReactMarkdown
-        remarkPlugins={[remarkGfm]}
+        remarkPlugins={[[remarkGfm, { singleTilde: false }]]}
         components={{
           h1: ({ children }) => <h1 className="mt-6 mb-2 text-base font-semibold">{children}</h1>,
           h2: ({ children }) => <h2 className="mt-6 mb-2 text-base font-semibold">{children}</h2>,

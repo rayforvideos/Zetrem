@@ -47,10 +47,10 @@ describe('what is meant to be read can be selected, and nothing else', () => {
     }
     await walk(join('src', 'widgets'))
     expect(marked.sort()).toEqual([
+      'AccountField.tsx',
       'AgentReport.tsx',
       'Approval.tsx',
       'ConversationPane.tsx',
-      'SetupPane.tsx',
       'StatusDrawer.tsx',
       'ToolDetail.tsx',
     ])

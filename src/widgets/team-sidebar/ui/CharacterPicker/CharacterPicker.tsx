@@ -23,11 +23,12 @@ export function CharacterPicker({
           key={character}
           className={cn(
             'flex cursor-pointer items-center justify-center rounded-lg p-1 transition-colors',
+            'has-[:focus-visible]:ring-[3px] has-[:focus-visible]:ring-ring/50',
             character === value ? 'bg-accent' : 'hover:bg-card',
           )}
           title={character}
         >
-          <RadioGroupItem value={character} className="sr-only" />
+          <RadioGroupItem value={character} aria-label={character} className="sr-only" />
           <img
             src={spriteSrc(character)}
             alt={character}

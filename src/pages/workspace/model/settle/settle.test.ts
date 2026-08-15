@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import type { AgentSession } from '@/entities/agent-session'
-import { IDLE_QUIET_MS, REPORTED_QUIET_MS, settled } from './settle'
+import { LOST_QUIET_MS, REPORTED_QUIET_MS, settled } from './settle'
 
 function session(id: string, overrides: Partial<AgentSession> = {}): AgentSession {
   return {
@@ -34,30 +34,39 @@ describe('settled: who has gone quiet long enough to call finished', () => {
     expect(settled([fresh], { nowMs: 8000, ...busy })).toEqual([])
   })
 
-  it('finishes an agent that never reported once the work around it has stopped', () => {
-    const stuck = session('a', { lastSeenAtMs: 1000 })
-    expect(settled([stuck], { nowMs: 1000 + IDLE_QUIET_MS, ...idle })).toEqual(['a'])
+  it('never times out an agent the CLI is reporting on, however long it goes quiet', () => {
+    const slow = session('a', { taskId: 'task_a', lastSeenAtMs: 0 })
+    expect(settled([slow], { nowMs: 99_999_999, ...idle })).toEqual([])
   })
 
-  it('leaves a quiet agent alone while the conversation is still working', () => {
-    const stuck = session('a', { lastSeenAtMs: 1000 })
-    expect(settled([stuck], { nowMs: 999_999, ...busy })).toEqual([])
+  it('never times out an agent that is waiting on you', () => {
+    const asked = session('a', { status: 'waiting', lastSeenAtMs: 0 })
+    expect(settled([asked], { nowMs: 99_999_999, ...idle })).toEqual([])
   })
 
-  it('gives an agent that never reported far longer than one that did', () => {
-    const quiet = session('a', { lastSeenAtMs: 0 })
-    expect(settled([quiet], { nowMs: REPORTED_QUIET_MS + 1, ...idle })).toEqual([])
-    expect(settled([quiet], { nowMs: IDLE_QUIET_MS, ...idle })).toEqual(['a'])
+  it('gives up on an agent it was never told about, but only after a long wait', () => {
+    const lost = session('a', { lastSeenAtMs: 1000 })
+    expect(settled([lost], { nowMs: 1000 + LOST_QUIET_MS - 1, ...idle })).toEqual([])
+    expect(settled([lost], { nowMs: 1000 + LOST_QUIET_MS, ...idle })).toEqual(['a'])
+  })
+
+  it('leaves even a lost agent alone while the conversation is still working', () => {
+    const lost = session('a', { lastSeenAtMs: 0 })
+    expect(settled([lost], { nowMs: 99_999_999, ...busy })).toEqual([])
+  })
+
+  it('waits far longer on a lost agent than on one that has already reported', () => {
+    expect(LOST_QUIET_MS).toBeGreaterThan(REPORTED_QUIET_MS * 50)
   })
 
   it('says nothing about an agent that is already finished', () => {
     const over = session('a', { status: 'done', lastSeenAtMs: 0 })
-    expect(settled([over], { nowMs: 999_999, ...idle })).toEqual([])
+    expect(settled([over], { nowMs: 99_999_999, ...idle })).toEqual([])
   })
 
   it('counts from the start when the agent has never been heard from', () => {
     const mute = session('a', { startedAtMs: 1000 })
-    expect(settled([mute], { nowMs: 1000 + IDLE_QUIET_MS, ...idle })).toEqual(['a'])
+    expect(settled([mute], { nowMs: 1000 + LOST_QUIET_MS, ...idle })).toEqual(['a'])
   })
 
   it('tolerates a clock reading that lags behind the last thing it heard', () => {
@@ -65,8 +74,8 @@ describe('settled: who has gone quiet long enough to call finished', () => {
     expect(settled([ahead], { nowMs: 8000, ...busy })).toEqual([])
   })
 
-  it('picks up an agent resumed by a message, which never gets a completion notice', () => {
+  it('picks up an agent resumed by a message, which the CLI never reports a task for', () => {
     const resumed = session('a', { headline: 'Picked up where they left off', lastSeenAtMs: 0 })
-    expect(settled([resumed], { nowMs: IDLE_QUIET_MS, ...idle })).toEqual(['a'])
+    expect(settled([resumed], { nowMs: LOST_QUIET_MS, ...idle })).toEqual(['a'])
   })
 })

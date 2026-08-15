@@ -17,6 +17,7 @@ export type {
 } from './api/claude/status/status.types'
 export type {
   AgentSession,
+  Call,
   PermissionAsk,
   RunnerId,
   SessionStatus,

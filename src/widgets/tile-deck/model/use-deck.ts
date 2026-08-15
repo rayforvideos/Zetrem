@@ -36,7 +36,7 @@ export function useDeck(): Deck {
         setTimeout(() => {
           retiring.current.delete(id)
           dispatch({ type: 'tileRetired', id })
-        }, MOTION.mergeMs),
+        }, MOTION.leaveMs),
       )
     }
     for (const [id, timer] of retiring.current) {

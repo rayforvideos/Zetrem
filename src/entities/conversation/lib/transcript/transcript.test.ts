@@ -69,6 +69,8 @@ describe('packTranscript: deciding what is worth keeping', () => {
               toolUseId: 't1',
               input: null,
               result: { stdout: long, stderr: '', isError: false, interrupted: false },
+              startedAtMs: 0,
+              endedAtMs: 100,
             },
           ],
         }),

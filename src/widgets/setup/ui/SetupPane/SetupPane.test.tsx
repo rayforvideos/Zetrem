@@ -1,32 +1,64 @@
 import { renderToStaticMarkup } from 'react-dom/server'
 import { describe, expect, it } from 'vitest'
+import type { ModelChoice, PermissionMode } from '@/entities/agent-session'
+import type { AuthStatus } from '@/entities/auth'
+import type { Failure } from '@/shared/lib/failure/failure.types'
 import { SetupPane } from './SetupPane'
 
-function pane(props: Partial<Parameters<typeof SetupPane>[0]> = {}): string {
+type Flat = {
+  auth: AuthStatus | null
+  project: { name: string; path: string } | null
+  permissionMode: PermissionMode
+  model: ModelChoice
+  reopened: boolean
+  canStart: boolean
+  sessionLive: boolean
+  authError: string | null
+  loginNote: string
+  notice: Failure | null
+}
+
+function pane(over: Partial<Flat> = {}): string {
+  const flat: Flat = {
+    auth: null,
+    project: null,
+    permissionMode: 'ask',
+    model: 'default',
+    reopened: false,
+    canStart: false,
+    sessionLive: false,
+    authError: null,
+    loginNote: '',
+    notice: null,
+    ...over,
+  }
   return renderToStaticMarkup(
     <SetupPane
-      auth={null}
-      project={null}
-      permissionMode="ask"
-      model="default"
-      onLogin={() => {}}
-      onPickProject={() => {}}
-      onPermissionMode={() => {}}
-      onModel={() => {}}
-      onStart={() => {}}
-      onCancel={() => {}}
-      reopened={false}
-      canStart={false}
-      loggingIn={false}
-      loginNote=""
-      onLogout={() => {}}
-      loggingOut={false}
-      sessionLive={false}
-      authError={null}
-      notice={null}
-      pluginSummary="none"
-      onPlugins={() => {}}
-      {...props}
+      account={{
+        auth: flat.auth,
+        error: flat.authError,
+        note: flat.loginNote,
+        signingIn: false,
+        signingOut: false,
+        sessionLive: flat.sessionLive,
+        onSignIn: () => {},
+        onSignOut: () => {},
+      }}
+      project={{ chosen: flat.project, onChoose: () => {} }}
+      defaults={{
+        permissionMode: flat.permissionMode,
+        model: flat.model,
+        onPermissionMode: () => {},
+        onModel: () => {},
+      }}
+      plugins={{ summary: 'none', onOpen: () => {} }}
+      actions={{
+        reopened: flat.reopened,
+        canStart: flat.canStart,
+        onStart: () => {},
+        onCancel: () => {},
+      }}
+      notice={flat.notice}
     />,
   )
 }

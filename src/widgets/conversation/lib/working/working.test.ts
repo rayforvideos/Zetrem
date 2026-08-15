@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest'
+import type { ToolActivity } from '@/entities/conversation'
 import type { Turn } from '@/entities/conversation'
 import { doingOf, elapsedLabel, tokenLabel } from './working'
 
@@ -14,6 +15,10 @@ function turn(overrides: Partial<Turn> = {}): Turn {
   }
 }
 
+function tool(line: string, input: unknown, result: ToolActivity['result'] = null): ToolActivity {
+  return { line, toolUseId: 't', input, result, startedAtMs: 0, endedAtMs: result === null ? null : 100 }
+}
+
 describe('saying what is happening while you wait', () => {
   it('is starting when there is no turn yet', () => {
     expect(doingOf(null)).toBe('Starting')
@@ -21,7 +26,7 @@ describe('saying what is happening while you wait', () => {
 
   it('takes the tool without a result as the thing being done', () => {
     const running = turn({
-      tools: [{ line: 'Bash npm test', toolUseId: 't', input: { command: 'npm test' }, result: null }],
+      tools: [tool('Bash npm test', { command: 'npm test' })],
     })
     expect(doingOf(running)).toBe('Running')
   })
@@ -30,12 +35,7 @@ describe('saying what is happening while you wait', () => {
     const done = turn({
       thinking: '음',
       tools: [
-        {
-          line: 'Read a.ts',
-          toolUseId: 't',
-          input: { file_path: 'a.ts' },
-          result: { stdout: 'x', stderr: '', isError: false, interrupted: false },
-        },
+        tool('Read a.ts', { file_path: 'a.ts' }, { stdout: 'x', stderr: '', isError: false, interrupted: false }),
       ],
     })
     expect(doingOf(done)).toBe('Thinking')
@@ -46,8 +46,8 @@ describe('saying what is happening while you wait', () => {
   })
 
   it('lets the kind of tool name the work', () => {
-    expect(doingOf(turn({ tools: [{ line: 'Read a.ts', toolUseId: 't', input: { file_path: 'a.ts' }, result: null }] }))).toBe('Reading')
-    expect(doingOf(turn({ tools: [{ line: 'Grep foo', toolUseId: 't', input: { pattern: 'foo' }, result: null }] }))).toBe('Searching')
+    expect(doingOf(turn({ tools: [tool('Read a.ts', { file_path: 'a.ts' })] }))).toBe('Reading')
+    expect(doingOf(turn({ tools: [tool('Grep foo', { pattern: 'foo' })] }))).toBe('Searching')
   })
 })
 

@@ -1,7 +1,7 @@
 import { useEffect, useSyncExternalStore } from 'react'
-import { CrewProvider, addressed, roster, stockAgents } from '@/entities/agent-session'
+import { CrewProvider, roster, stockAgents } from '@/entities/agent-session'
 import { pickProject, projectStore } from '@/entities/project'
-import { GRID_PAD, SIDEBAR } from '@/shared/config/theme'
+import { GRID_PAD } from '@/shared/config/theme'
 import { PanelLeft } from 'lucide-react'
 import { Button } from '@/shared/ui/button'
 import { useFailure } from '@/shared/lib/failure/failure'
@@ -29,6 +29,8 @@ import { useSettingsPanel } from '../model/use-settings-panel'
 import { useSidebarWidth } from '../model/use-sidebar-width'
 import { useTranscript } from '../model/use-transcript'
 import { useViewport } from '../model/use-viewport'
+import { useOffsetWidth } from '@/shared/lib/offset-width/use-offset-width'
+import { tuckedBy } from '../model/tuck/tuck'
 import { crewOf, lockOf, peopleOf, pluginSummary } from '../model/workspace-config/workspace-config'
 import { ProjectPicker } from './controls/ProjectPicker'
 
@@ -55,7 +57,8 @@ export function WorkspaceScreen() {
   const viewport = useViewport()
   const projectKnown = useProjectMemory(reportProject('Could not reopen your last project'))
   const panel = useSettingsPanel(settings, update)
-  const sidebar = useSidebarWidth(settings, update)
+  const sidebar = useSidebarWidth(settings, update, viewport.w)
+  const [attachSidebar, sidebarBoxW] = useOffsetWidth<HTMLDivElement>()
   const focus = useFocus()
 
   const gate = screenGate({
@@ -109,6 +112,7 @@ export function WorkspaceScreen() {
         state={deck.state}
         sessions={children}
         viewport={viewport}
+        onDismiss={deck.closeOne}
         nowMs={nowMs}
         sidebarW={sidebar.span + GRID_PAD * 2}
         terminal={
@@ -118,30 +122,37 @@ export function WorkspaceScreen() {
             </div>
           ) : gate === 'setup' ? (
             <SetupPane
-              auth={auth.auth}
-              project={project}
-              permissionMode={settings.permissionMode}
-              model={settings.model}
-              onLogin={auth.login}
-              onPickProject={handlePickProject}
-              onPermissionMode={(permissionMode) => update({ permissionMode })}
-              onModel={(model) => update({ model })}
-              onStart={panel.start}
-              onCancel={panel.cancel}
-              reopened={settings.setupDone}
-              canStart={auth.auth?.state === 'signed-in' && project?.path != null}
-              loggingIn={auth.loggingIn}
-              loginNote={auth.loginNote}
-              onLogout={auth.logout}
-              loggingOut={auth.loggingOut}
-              authError={auth.authError}
+              account={{
+                auth: auth.auth,
+                error: auth.authError,
+                note: auth.loginNote,
+                signingIn: auth.loggingIn,
+                signingOut: auth.loggingOut,
+                sessionLive: status.session !== null && conv.status !== 'done',
+                onSignIn: auth.login,
+                onSignOut: auth.logout,
+              }}
+              project={{ chosen: project, onChoose: handlePickProject }}
+              defaults={{
+                permissionMode: settings.permissionMode,
+                model: settings.model,
+                onPermissionMode: (permissionMode) => update({ permissionMode }),
+                onModel: (model) => update({ model }),
+              }}
+              plugins={{
+                summary: pluginSummary(
+                  shelf.catalog.installed.length,
+                  shelf.marketplaces.length,
+                ),
+                onOpen: shelf.show,
+              }}
+              actions={{
+                reopened: settings.setupDone,
+                canStart: auth.auth?.state === 'signed-in' && project?.path != null,
+                onStart: panel.start,
+                onCancel: panel.cancel,
+              }}
               notice={settingsFailure ?? projectFailure}
-              sessionLive={status.session !== null && conv.status !== 'done'}
-              pluginSummary={pluginSummary(
-                shelf.catalog.installed.length,
-                shelf.marketplaces.length,
-              )}
-              onPlugins={shelf.show}
             />
           ) : (
             <ConversationPane
@@ -160,7 +171,7 @@ export function WorkspaceScreen() {
                   permissionMode={settings.permissionMode}
                   model={settings.model}
                   onSend={(text) => {
-                    agent.send(addressed(text, focus.addressee))
+                    agent.send(text, focus.addressee)
                     focus.address(null)
                   }}
                   onStop={agent.stop}
@@ -175,14 +186,17 @@ export function WorkspaceScreen() {
                 openAgent === null ? null : (
                   <AgentReport
                     session={openAgent}
+                    sessions={children}
                     nowMs={nowMs}
                     onClose={() => focus.pick(null)}
+                    onPick={focus.pick}
                   />
                 )
               }
               sidebar={
                 <div
-                  style={{ marginLeft: settings.sidebarOpen ? 0 : -(sidebar.width + SIDEBAR.gap) }}
+                  ref={attachSidebar}
+                  style={{ marginLeft: tuckedBy(sidebar.open, sidebarBoxW, sidebar.width) }}
                   className="flex flex-none transition-[margin] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]"
                 >
                   <TeamSidebar
@@ -194,7 +208,7 @@ export function WorkspaceScreen() {
                       onRemove: chat.remove,
                     }}
                     team={{
-                      members: team(defs, sessionAgentNames, roster(sessionAgentNames, children)),
+                      members: team(defs, sessionAgentNames, roster(sessionAgentNames, children, conv.status !== 'done')),
                       drafts,
                       knownTools: settings.knownTools,
                       sessionKnown: status.session !== null,
@@ -253,10 +267,11 @@ export function WorkspaceScreen() {
             <Button
               variant="quiet"
               size="bare"
-              onClick={() => update({ sidebarOpen: !settings.sidebarOpen })}
-              aria-pressed={settings.sidebarOpen}
-              aria-label={settings.sidebarOpen ? 'Hide team sidebar' : 'Show team sidebar'}
-              title={settings.sidebarOpen ? 'Hide team sidebar' : 'Show team sidebar'}
+              onClick={sidebar.toggle}
+              aria-pressed={sidebar.open}
+              aria-label={sidebar.open ? 'Hide team sidebar' : 'Show team sidebar'}
+              title={sidebar.open ? 'Hide team sidebar' : 'Show team sidebar'}
+              className="zt-hit"
             >
               <PanelLeft className="size-3.5" />
             </Button>
@@ -268,7 +283,7 @@ export function WorkspaceScreen() {
             variant="quiet"
             size="bare"
             onClick={panel.show}
-            className="text-xs"
+            className="zt-hit text-xs"
             title="Change account, project, and permissions"
           >
             Settings

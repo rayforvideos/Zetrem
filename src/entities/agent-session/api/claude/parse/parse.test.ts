@@ -336,7 +336,7 @@ describe('parseClaudeLine: task notifications', () => {
       }),
     )
     expect(events).toEqual([
-      { type: 'childNotified', toolUseId: 'toolu_bg1', summary: '4', done: true },
+      { type: 'childNotified', toolUseId: 'toolu_bg1', taskId: 'a9ad', summary: '4', done: true },
     ])
   })
 
@@ -345,13 +345,20 @@ describe('parseClaudeLine: task notifications', () => {
       line({
         type: 'system',
         subtype: 'task_notification',
+        task_id: 'a9ad',
         tool_use_id: 'toolu_bg1',
         status: 'running',
         summary: 'still going',
       }),
     )
     expect(events).toEqual([
-      { type: 'childNotified', toolUseId: 'toolu_bg1', summary: 'still going', done: false },
+      {
+        type: 'childNotified',
+        toolUseId: 'toolu_bg1',
+        taskId: 'a9ad',
+        summary: 'still going',
+        done: false,
+      },
     ])
   })
 
@@ -360,6 +367,7 @@ describe('parseClaudeLine: task notifications', () => {
       line({
         type: 'system',
         subtype: 'task_progress',
+        task_id: 'a9ad',
         tool_use_id: 'toolu_bg1',
         description: 'Running Sleep for 20 seconds',
         last_tool_name: 'Bash',
@@ -370,6 +378,7 @@ describe('parseClaudeLine: task notifications', () => {
       {
         type: 'childProgress',
         toolUseId: 'toolu_bg1',
+        taskId: 'a9ad',
         doing: 'Running Sleep for 20 seconds',
         lastTool: 'Bash',
         tokens: 12_822,
@@ -377,8 +386,57 @@ describe('parseClaudeLine: task notifications', () => {
     ])
   })
 
-  it('still ignores every other system event', () => {
+  it('takes a notice that carries only a task id, since the tool id is optional', () => {
+    const events = parseClaudeLine(
+      line({ type: 'system', subtype: 'task_notification', task_id: 'a9ad', summary: 'done' }),
+    )
+    expect(events).toEqual([
+      { type: 'childNotified', toolUseId: null, taskId: 'a9ad', summary: 'done', done: true },
+    ])
+  })
+
+  it('drops a task event with no task id, because there is nothing to aim it at', () => {
     expect(parseClaudeLine(line({ type: 'system', subtype: 'task_started' }))).toEqual([])
+    expect(parseClaudeLine(line({ type: 'system', subtype: 'task_progress' }))).toEqual([])
+  })
+
+  it('reads a task state change as what it is, rather than waiting out the silence', () => {
+    const events = parseClaudeLine(
+      line({
+        type: 'system',
+        subtype: 'task_updated',
+        task_id: 'a9ad',
+        patch: { status: 'completed', end_time: 1000 },
+      }),
+    )
+    expect(events).toEqual([
+      { type: 'childStateKnown', toolUseId: null, taskId: 'a9ad', state: 'completed', error: '' },
+    ])
+  })
+
+  it('carries the reason a task failed', () => {
+    const events = parseClaudeLine(
+      line({
+        type: 'system',
+        subtype: 'task_updated',
+        task_id: 'a9ad',
+        patch: { status: 'failed', error: 'the tool crashed' },
+      }),
+    )
+    expect(events).toEqual([
+      {
+        type: 'childStateKnown',
+        toolUseId: null,
+        taskId: 'a9ad',
+        state: 'failed',
+        error: 'the tool crashed',
+      },
+    ])
+  })
+
+  it('ignores a patch that says nothing about the state', () => {
+    const line1 = line({ type: 'system', subtype: 'task_updated', task_id: 'a', patch: {} })
+    expect(parseClaudeLine(line1)).toEqual([])
   })
 })
 
@@ -438,7 +496,12 @@ describe('parseClaudeLine: what a child is doing, tool by tool', () => {
       }),
     )
     expect(events).toEqual([
-      { type: 'childStream', toolUseId: 'toolu_sub1', line: 'Read src/a.ts' },
+      {
+        type: 'childStream',
+        toolUseId: 'toolu_sub1',
+        callId: 'Read src/a.ts',
+        line: 'Read src/a.ts',
+      },
     ])
   })
 
@@ -599,6 +662,7 @@ describe('a nested line belongs to the child, never to the conversation', () => 
       JSON.stringify({
         type: 'system',
         subtype: 'task_notification',
+        task_id: 'task_a',
         tool_use_id: 'toolu_a',
         summary: 'read the file',
       }),
@@ -606,6 +670,7 @@ describe('a nested line belongs to the child, never to the conversation', () => 
     expect(events).toContainEqual({
       type: 'childNotified',
       toolUseId: 'toolu_a',
+      taskId: 'task_a',
       summary: 'read the file',
       done: true,
     })
@@ -679,15 +744,91 @@ describe('the app says when the CLI is retrying rather than looking frozen', () 
     ])
   })
 
-  it('passes on a model swap in the words the CLI wrote', () => {
+  it('says which model took over when the one you picked declined', () => {
     const events = parseClaudeLine(
-      line({ type: 'system', subtype: 'model_fallback', content: 'Switched to Sonnet' }),
+      line({
+        type: 'system',
+        subtype: 'model_refusal_fallback',
+        original_model: 'claude-opus-5',
+        fallback_model: 'claude-sonnet-5',
+        content: 'Retrying on a different model.',
+      }),
     )
-    expect(events).toEqual([{ type: 'notice', text: 'Switched to Sonnet' }])
+    expect(events).toEqual([
+      { type: 'notice', text: 'Opus declined this, so Sonnet took it. Retrying on a different model.' },
+    ])
   })
 
-  it('holds back a fallback notice with no words in it', () => {
-    expect(parseClaudeLine(line({ type: 'system', subtype: 'model_fallback' }))).toEqual([])
+  it('says so when the model declined and there was nothing to fall back to', () => {
+    const events = parseClaudeLine(
+      line({
+        type: 'system',
+        subtype: 'model_refusal_no_fallback',
+        original_model: 'claude-opus-5',
+        content: '',
+      }),
+    )
+    expect(events).toEqual([
+      { type: 'notice', text: 'Opus declined this and there is nothing to fall back to' },
+    ])
+  })
+
+  it('never leaves a refusal silent, even with no words and no model named', () => {
+    const events = parseClaudeLine(line({ type: 'system', subtype: 'model_refusal_fallback' }))
+    expect(events).toEqual([{ type: 'notice', text: 'The model declined this' }])
+  })
+
+  it('says when a tool was blocked, rather than letting it look like nothing happened', () => {
+    const events = parseClaudeLine(
+      line({
+        type: 'system',
+        subtype: 'permission_denied',
+        tool_name: 'Bash',
+        message: 'the project settings do not allow it',
+      }),
+    )
+    expect(events).toEqual([
+      { type: 'notice', text: 'Bash was not allowed: the project settings do not allow it' },
+    ])
+  })
+
+  it('passes on what the CLI wants you told, whichever field it used', () => {
+    expect(
+      parseClaudeLine(line({ type: 'system', subtype: 'notification', text: 'Fast mode is off' })),
+    ).toEqual([{ type: 'notice', text: 'Fast mode is off' }])
+    expect(
+      parseClaudeLine(
+        line({ type: 'system', subtype: 'informational', content: 'Memory was recalled' }),
+      ),
+    ).toEqual([{ type: 'notice', text: 'Memory was recalled' }])
+  })
+
+  it('holds back a notice with no words in it', () => {
+    expect(parseClaudeLine(line({ type: 'system', subtype: 'notification' }))).toEqual([])
+    expect(parseClaudeLine(line({ type: 'system', subtype: 'informational' }))).toEqual([])
+  })
+
+  it('says the session is closing, so a window going quiet has a reason', () => {
+    const events = parseClaudeLine(
+      line({ type: 'system', subtype: 'worker_shutting_down', reason: 'idle timeout' }),
+    )
+    expect(events).toEqual([{ type: 'notice', text: 'The session is closing: idle timeout' }])
+  })
+
+  it('keeps every one of these out of the parent when it belongs to a child', () => {
+    for (const subtype of [
+      'model_refusal_fallback',
+      'model_refusal_no_fallback',
+      'permission_denied',
+      'notification',
+      'informational',
+      'worker_shutting_down',
+    ]) {
+      const events = parseClaudeLine(
+        line({ type: 'system', subtype, parent_tool_use_id: 'toolu_a', content: 'x', reason: 'x' }),
+      )
+      expect(events, subtype).toEqual([])
+    }
   })
 })
 
@@ -769,5 +910,35 @@ describe('a server or plugin that never loaded says so, instead of just being ab
       type: 'notice',
       text: 'MCP server ghost did not load: reserved_name',
     })
+  })
+})
+
+describe('the tool that summons a teammate, whatever the CLI calls it', () => {
+  function summon(name: string): string {
+    return JSON.stringify({
+      type: 'assistant',
+      message: {
+        content: [
+          {
+            type: 'tool_use',
+            id: 'toolu_s1',
+            name,
+            input: { subagent_type: 'Explore', description: 'Go look', prompt: 'look' },
+          },
+        ],
+      },
+    })
+  }
+
+  it('opens a teammate for the name the CLI sends today', () => {
+    expect(parseClaudeLine(summon('Agent')).some((e) => e.type === 'childOpen')).toBe(true)
+  })
+
+  it('still opens one for the name the CLI used to send, so an old session is not blank', () => {
+    expect(parseClaudeLine(summon('Task')).some((e) => e.type === 'childOpen')).toBe(true)
+  })
+
+  it('opens nothing for a tool that merely sounds like it summons someone', () => {
+    expect(parseClaudeLine(summon('AgentOutput')).some((e) => e.type === 'childOpen')).toBe(false)
   })
 })

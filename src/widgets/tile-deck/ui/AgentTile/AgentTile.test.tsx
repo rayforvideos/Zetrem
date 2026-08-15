@@ -1,10 +1,14 @@
 import { renderToStaticMarkup } from 'react-dom/server'
 import { describe, expect, it } from 'vitest'
-import type { AgentSession } from '@/entities/agent-session'
+import type { AgentSession, Call } from '@/entities/agent-session'
 import { MOTION } from '@/shared/config/motion/motion'
 import { AgentTile } from './AgentTile'
 
 const rect = { x: 48, y: 48, w: 600, h: 380 }
+
+function call(id: string, line: string): Call {
+  return { id, line, startedAtMs: 0, endedAtMs: 200, failed: false, note: '' }
+}
 
 function session(overrides: Partial<AgentSession> = {}): AgentSession {
   return {
@@ -15,7 +19,7 @@ function session(overrides: Partial<AgentSession> = {}): AgentSession {
     model: 'demo-1',
     status: 'working',
     headline: '타일을 만드는 중',
-    stream: ['Read a.ts', 'Edit b.ts'],
+    stream: [call('c1', 'Read a.ts'), call('c2', 'Edit b.ts')],
     transcript: [],
     tokens: 1200,
     contextUsed: 0.3,
@@ -28,7 +32,7 @@ describe('AgentTile', () => {
   it('keeps a line it could not read exactly as it came', () => {
     const html = renderToStaticMarkup(
       <AgentTile
-        session={session({ stream: ['무언가 이상한 줄 하나'] })}
+        session={session({ stream: [call('c1', '무언가 이상한 줄 하나')] })}
         rect={rect}
         delayMs={0}
         nowMs={0}
@@ -104,7 +108,8 @@ describe('AgentTile', () => {
     expect(quiet).toContain('data-waiting')
     expect(owner).toContain('opacity:0.85')
     expect(quiet).toContain('opacity:0.25')
-    expect(owner).not.toContain('animation')
+    const mark = owner.slice(owner.indexOf('data-waiting'), owner.indexOf('data-waiting') + 260)
+    expect(mark, '기다림은 빛으로 부르지 움직임으로 부르지 않는다').not.toContain('animation')
   })
 
   it('draws the waiting mark in the current colour, so it survives a lighter board', () => {
@@ -163,7 +168,7 @@ describe('AgentTile', () => {
     expect(html.match(/어느 테스트인가요\?/g)).toHaveLength(1)
   })
 
-  it('leaves the transcript closed on every other tile', () => {
+  it('keeps the conversation on every tile, not only the one with the eye', () => {
     const html = renderToStaticMarkup(
       <AgentTile
         session={session({
@@ -176,7 +181,41 @@ describe('AgentTile', () => {
         nowMs={0}
       />,
     )
+    expect(html).toContain('data-transcript')
+    expect(html).toContain('테스트 고쳐줘')
+  })
+
+  it('falls back to the headline only while there is nothing said yet', () => {
+    const html = renderToStaticMarkup(
+      <AgentTile
+        session={session({ headline: '아직 아무 말도 없음', transcript: [] })}
+        rect={rect}
+        delayMs={0}
+        nowMs={0}
+      />,
+    )
     expect(html).not.toContain('data-transcript')
+    expect(html).toContain('아직 아무 말도 없음')
+  })
+
+  it('keeps every turn, so nothing an agent said is swapped out by the next', () => {
+    const html = renderToStaticMarkup(
+      <AgentTile
+        session={session({
+          transcript: [
+            { role: 'user', text: '리서치해줘' },
+            { role: 'assistant', text: '첫 번째로 찾은 것' },
+            { role: 'assistant', text: '두 번째로 찾은 것' },
+          ],
+        })}
+        rect={rect}
+        delayMs={0}
+        nowMs={0}
+      />,
+    )
+    expect(html).toContain('리서치해줘')
+    expect(html).toContain('첫 번째로 찾은 것')
+    expect(html).toContain('두 번째로 찾은 것')
   })
 
   it('opens the transcript for the tile with the eye even while it works', () => {
@@ -237,11 +276,37 @@ describe('AgentTile', () => {
     expect(html).toContain(`transform ${MOTION.fanMs}ms`)
   })
 
-  it('sets no will-change, so no compositing layer is made in advance', () => {
+  it('sets no will-change, so no compositing layer is kept once the tile has settled', () => {
     const html = renderToStaticMarkup(
       <AgentTile session={session()} rect={rect} delayMs={0} nowMs={0} />,
     )
     expect(html).not.toContain('will-change')
+  })
+
+  it('arrives under its own animation rather than appearing already there', () => {
+    const html = renderToStaticMarkup(
+      <AgentTile session={session()} rect={rect} delayMs={0} nowMs={0} />,
+    )
+    expect(html).toContain('data-presence="arriving"')
+    expect(html).toContain('zt-tile-in')
+  })
+
+  it('leaves faster than it arrives, the way a thing put away does', () => {
+    const html = renderToStaticMarkup(
+      <AgentTile session={session()} rect={rect} delayMs={0} nowMs={0} closing />,
+    )
+    expect(html).toContain('data-presence="leaving"')
+    expect(html).toContain('zt-tile-out')
+    expect(MOTION.leaveMs).toBeLessThan(MOTION.arriveMs)
+  })
+
+  it('keeps where it sits and whether it is here on separate layers, so neither fights the other', () => {
+    const html = renderToStaticMarkup(
+      <AgentTile session={session()} rect={rect} delayMs={0} nowMs={0} />,
+    )
+    const box = html.slice(0, html.indexOf('data-presence'))
+    expect(box, '바깥 상자는 자리만 맡는다').toContain('transition')
+    expect(box).not.toContain('animation')
   })
 
   it('holds the stream still during a transition, so only one thing moves at a time', () => {

@@ -3,18 +3,21 @@ import { personaOf, useModel } from '@/entities/agent-session'
 import type { AgentSession } from '@/entities/agent-session'
 import { AgentSprite } from '@/entities/agent-session/ui/AgentSprite/AgentSprite'
 import { modelLabel } from '@/shared/lib/model-label/model-label'
-import { StateChip } from './StateChip/StateChip'
+import { X } from 'lucide-react'
+import { Button } from '@/shared/ui/button'
+import { StateChip } from '../StateChip/StateChip'
 
 type HeadlineProps = {
   session: AgentSession
   withText?: boolean
+  onDismiss?: () => void
 }
 
-export function Headline({ session, withText = true }: HeadlineProps) {
+export function Headline({ session, withText = true, onDismiss }: HeadlineProps) {
   const persona = session.subagentType ? personaOf(session.subagentType) : null
   const model = modelLabel(useModel(session.subagentType))
   return (
-    <div style={rootStyle}>
+    <div style={withText ? rootStyle : headerOnlyStyle}>
       <div style={identityStyle}>
         {session.subagentType !== '' && (
           <AgentSprite subagentType={session.subagentType} state={session.status} size={40} />
@@ -27,6 +30,20 @@ export function Headline({ session, withText = true }: HeadlineProps) {
           <span style={assignmentStyle}>{persona ? session.label : session.model}</span>
         </div>
         <StateChip status={session.status} />
+        {onDismiss !== undefined && (
+          <Button
+            variant="quiet"
+            size="bare"
+            data-dismiss
+            onClick={onDismiss}
+            aria-label={`Close ${persona ? persona.name : session.label}`}
+            title="Close this tile. The run stays in the sidebar."
+            className="zt-hit"
+            style={dismissStyle}
+          >
+            <X className="size-3.5" />
+          </Button>
+        )}
       </div>
       {withText && session.headline.length > 0 && (
         <div className="zt-scroll" style={textStyle}>
@@ -39,12 +56,18 @@ export function Headline({ session, withText = true }: HeadlineProps) {
 
 const rootStyle: CSSProperties = {
   flex: '1 1 auto',
-  minHeight: 0,
+  display: 'flex',
+  flexDirection: 'column',
+}
+
+const headerOnlyStyle: CSSProperties = {
+  flex: '0 0 auto',
   display: 'flex',
   flexDirection: 'column',
 }
 
 const identityStyle: CSSProperties = {
+  flex: '0 0 auto',
   display: 'flex',
   alignItems: 'center',
   gap: 10,
@@ -57,6 +80,15 @@ const stackStyle: CSSProperties = {
   gap: 1,
   minWidth: 0,
   flex: '1 1 auto',
+}
+
+const dismissStyle: CSSProperties = {
+  flex: '0 0 auto',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  opacity: 0.45,
+  cursor: 'pointer',
 }
 
 const nameStyle: CSSProperties = {
@@ -97,5 +129,6 @@ const textStyle: CSSProperties = {
   fontSize: 15,
   lineHeight: 1.5,
   letterSpacing: '-0.011em',
+  overflowX: 'hidden',
   overflowY: 'auto',
 }

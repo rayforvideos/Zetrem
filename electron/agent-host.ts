@@ -11,6 +11,7 @@ import { claudeBin, loginPath } from './login-path/login-path'
 import { recallProject } from './project-memory'
 import { handle, on } from './ipc/ipc'
 import { killTree, killTreeSync } from './kill-tree/kill-tree'
+import { tell } from './tell/tell'
 import { killAllProbes } from './session-probe'
 
 const agents = new Map<string, ChildProcessWithoutNullStreams | 'starting'>()
@@ -59,7 +60,7 @@ export function registerAgentHost(): void {
     let workspace: string
     try {
       const project = await recallProject()
-      if (agents.get(id) !== 'starting') return
+        if (agents.get(id) !== 'starting') return fail()
 
       workspace = project ?? join(app.getPath('userData'), 'agent-workspace')
       if (!project) mkdirSync(workspace, { recursive: true })
@@ -75,6 +76,7 @@ export function registerAgentHost(): void {
       return fail()
     }
     agents.set(id, child)
+    child.stdin.on('error', () => undefined)
     if (!sender.isDestroyed()) sender.send('agent:event', { id, kind: 'workspace', cwd: workspace })
 
     let buffer = ''
@@ -106,20 +108,20 @@ export function registerAgentHost(): void {
       if (!sender.isDestroyed()) sender.send('agent:event', { id, kind: 'exit', code: -1 })
     })
 
-    child.stdin.write(userMessage(prompt))
+    tell(child.stdin, userMessage(prompt))
     },
   )
 
   on('agent:send', (_event, id: string, text: string) => {
     if (typeof id !== 'string' || typeof text !== 'string') return
     const agent = agents.get(id)
-    if (agent && agent !== 'starting') agent.stdin.write(userMessage(text))
+    if (agent && agent !== 'starting') tell(agent.stdin, userMessage(text))
   })
 
   on('agent:permission', (_event, id: string, requestId: string, result: unknown) => {
     if (typeof id !== 'string' || typeof requestId !== 'string') return
     const agent = agents.get(id)
-    if (agent && agent !== 'starting') agent.stdin.write(permissionResponse(requestId, result))
+    if (agent && agent !== 'starting') tell(agent.stdin, permissionResponse(requestId, result))
   })
 
   on('agent:stop', (_event, id: string) => {

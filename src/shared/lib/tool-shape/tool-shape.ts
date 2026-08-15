@@ -75,5 +75,17 @@ export function resultNote(shape: ToolShape, stdout: string | null): string | nu
     const hits = stdout.trim().length === 0 ? 0 : stdout.trim().split('\n').length
     return hits === 0 ? 'none' : `${hits} hits`
   }
+  if (shape.kind === 'command') {
+    const body = stdout.trim()
+    if (body.length === 0) return 'no output'
+    const lines = body.split('\n')
+    return lines.length === 1 ? clipNote(lines[0]!) : `${lines.length} lines`
+  }
   return null
+}
+
+const NOTE_MAX = 48
+
+function clipNote(text: string): string {
+  return text.length <= NOTE_MAX ? text : `${text.slice(0, NOTE_MAX - 1)}…`
 }

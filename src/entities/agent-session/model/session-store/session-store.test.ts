@@ -70,10 +70,12 @@ describe('sessionStore', () => {
 
   it('never lets the stream grow past its cap', () => {
     sessionStore.open(session('a'))
-    for (let i = 0; i < STREAM_BUFFER + 25; i += 1) sessionStore.pushStream('a', `line ${i}`)
+    for (let i = 0; i < STREAM_BUFFER + 25; i += 1) {
+      sessionStore.beginCall('a', { id: `c${i}`, line: `line ${i}` })
+    }
     const { stream } = sessionStore.get()[0]!
     expect(stream).toHaveLength(STREAM_BUFFER)
-    expect(stream.at(-1)).toBe(`line ${STREAM_BUFFER + 24}`)
+    expect(stream.at(-1)!.line).toBe(`line ${STREAM_BUFFER + 24}`)
   })
 
   it('tells subscribers about a change', () => {
@@ -96,7 +98,7 @@ describe('sessionStore', () => {
     const afterPatch = sessionStore.get()
     expect(afterPatch).not.toBe(afterOpen)
 
-    sessionStore.pushStream('a', 'line')
+    sessionStore.beginCall('a', { id: 'c1', line: 'line' })
     expect(sessionStore.get()).not.toBe(afterPatch)
   })
 
@@ -104,7 +106,8 @@ describe('sessionStore', () => {
     sessionStore.open(session('a'))
     const before = sessionStore.get()
     sessionStore.patch('nope', { tokens: 1 })
-    sessionStore.pushStream('nope', 'line')
+    sessionStore.beginCall('nope', { id: 'c1', line: 'line' })
+    sessionStore.endCall('nope', 'c1', { failed: false, note: '' })
     expect(sessionStore.get()).toBe(before)
   })
 })
@@ -149,5 +152,48 @@ describe('sessionStore.clear', () => {
     sessionStore.open(session('a'))
     sessionStore.patch('a', { status: 'done' })
     expect(sessionStore.find('a')?.status).toBe('done')
+  })
+})
+
+describe('sessionStore: closing the right call when an id comes round again', () => {
+  it('closes the newest call bearing that id, not the one it replaced', () => {
+    sessionStore.open(session('a'))
+    sessionStore.beginCall('a', { id: 'Read-0', line: 'Read one.ts' })
+    sessionStore.endCall('a', 'Read-0', { failed: false, note: 'first' })
+    sessionStore.beginCall('a', { id: 'Read-0', line: 'Read two.ts' })
+    sessionStore.endCall('a', 'Read-0', { failed: true, note: 'second' })
+
+    const [older, newer] = sessionStore.get()[0]!.stream
+    expect(older!.note).toBe('first')
+    expect(older!.failed).toBe(false)
+    expect(newer!.note).toBe('second')
+    expect(newer!.failed).toBe(true)
+  })
+
+  it('says nothing about a call id it has never opened', () => {
+    sessionStore.open(session('a'))
+    expect(() => sessionStore.endCall('a', 'nope', { failed: false, note: '' })).not.toThrow()
+    expect(sessionStore.get()[0]!.stream).toHaveLength(0)
+  })
+})
+
+describe('sessionStore: closing the right call when an id comes round again', () => {
+  it('closes the newest call bearing that id, not the one it replaced', () => {
+    sessionStore.open(session('a'))
+    sessionStore.beginCall('a', { id: 'Read-0', line: 'Read one.ts' })
+    sessionStore.endCall('a', 'Read-0', { failed: false, note: 'first' })
+    sessionStore.beginCall('a', { id: 'Read-0', line: 'Read two.ts' })
+    sessionStore.endCall('a', 'Read-0', { failed: true, note: 'second' })
+
+    const [older, newer] = sessionStore.get()[0]!.stream
+    expect(older!.note).toBe('first')
+    expect(newer!.note).toBe('second')
+    expect(newer!.failed).toBe(true)
+  })
+
+  it('says nothing about a call id it has never opened', () => {
+    sessionStore.open(session('a'))
+    expect(() => sessionStore.endCall('a', 'nope', { failed: false, note: '' })).not.toThrow()
+    expect(sessionStore.get()[0]!.stream).toHaveLength(0)
   })
 })

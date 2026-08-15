@@ -1,16 +1,18 @@
 import { useEffect, useState } from 'react'
 import type { ReactNode } from 'react'
 import type { PermissionAsk, SessionStatus, StatusState } from '@/entities/agent-session'
+import { personaOf } from '@/entities/agent-session'
+import { AgentSprite } from '@/entities/agent-session/ui/AgentSprite/AgentSprite'
 import type { Turn } from '@/entities/conversation'
 import { cn } from '@/shared/lib/cn'
 import { useScrollState } from '@/shared/lib/scroll-state/use-scroll-state'
 import { Wordmark } from '@/shared/graphics/wordmark/wordmark'
 import { StatusBar, StatusDrawer } from '@/widgets/status-bar'
-import { Markdown } from '../Markdown'
+import { Markdown } from '../Markdown/Markdown'
 import { Approval } from './Approval'
 import { Greeting } from './Greeting'
 import { Thinking } from './Thinking'
-import { Tick } from './Tick'
+import { ToolRun } from '../ToolRun/ToolRun'
 import { Working } from './Working'
 
 const BUBBLE = 'rounded-2xl rounded-br-md bg-muted px-4 py-2.5'
@@ -82,7 +84,7 @@ export function ConversationPane({
   return (
     <div className="relative z-[3] flex h-full gap-7">
       {sidebar}
-      <div className="mx-auto flex w-full min-w-0 max-w-3xl flex-1 flex-col gap-4">
+      <div className="mx-auto flex w-full min-w-0 max-w-3xl flex-1 flex-col gap-4 px-2">
         {report !== null ? (
           report
         ) : (
@@ -90,7 +92,7 @@ export function ConversationPane({
             <div
               ref={attachScroll}
               data-selectable
-              className="zt-scroll zt-fade-out flex min-h-0 flex-1 flex-col gap-6 overflow-y-auto px-2"
+              className="zt-scroll zt-fade-out flex min-h-0 flex-1 flex-col gap-6 overflow-x-hidden overflow-y-auto"
             >
               {turns.map((turn, index) => {
                 const live = busy && index === lastIndex && turn.role === 'assistant'
@@ -106,14 +108,24 @@ export function ConversationPane({
                 }
                 if (turn.role === 'user') {
                   return (
-                    <div
-                      key={index}
-                      className={cn(
-                        BUBBLE,
-                        'zt-rise max-w-[80%] self-end text-sm leading-relaxed whitespace-pre-wrap [overflow-wrap:anywhere]',
+                    <div key={index} className="zt-rise flex max-w-[80%] flex-col items-end gap-1 self-end">
+                      {turn.to !== undefined && (
+                        <span
+                          data-addressed
+                          className="flex items-center gap-1.5 pr-1 text-xs text-muted-foreground"
+                        >
+                          <AgentSprite subagentType={turn.to} size={14} />
+                          {personaOf(turn.to).name}
+                        </span>
                       )}
-                    >
-                      {turn.text}
+                      <div
+                        className={cn(
+                          BUBBLE,
+                          'text-sm leading-relaxed whitespace-pre-wrap [overflow-wrap:anywhere]',
+                        )}
+                      >
+                        {turn.text}
+                      </div>
                     </div>
                   )
                 }
@@ -133,15 +145,7 @@ export function ConversationPane({
                       </div>
                     )}
                     {turn.tools.length > 0 && (
-                      <div className="-mx-1.5 flex flex-col gap-0.5">
-                        {turn.tools.map((tool, toolIndex) => (
-                          <Tick
-                            key={`${toolIndex}-${tool.toolUseId ?? tool.line}`}
-                            tool={tool}
-                            live={live && toolIndex === turn.tools.length - 1}
-                          />
-                        ))}
-                      </div>
+                      <ToolRun tools={turn.tools} live={live} nowMs={nowMs} />
                     )}
                   </article>
                 )

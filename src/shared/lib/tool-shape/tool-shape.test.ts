@@ -86,8 +86,25 @@ describe('resultNote: one fact taken out of a result', () => {
     expect(resultNote({ kind: 'search', pattern: 'x', scope: '' }, '')).toBe('none')
   })
 
+  it('counts the lines a command printed', () => {
+    expect(resultNote({ kind: 'command', command: 'ls' }, 'a\nb')).toBe('2 lines')
+  })
+
+  it('quotes a command that answered in one line, since the answer is the point', () => {
+    expect(resultNote({ kind: 'command', command: 'git branch' }, 'main\n')).toBe('main')
+  })
+
+  it('says so when a command printed nothing, because a blank reads as unfinished', () => {
+    expect(resultNote({ kind: 'command', command: 'true' }, '  ')).toBe('no output')
+  })
+
+  it('cuts a long one line answer rather than pushing the row wide', () => {
+    const long = 'x'.repeat(200)
+    expect(resultNote({ kind: 'command', command: 'echo' }, long)!.length).toBeLessThanOrEqual(48)
+  })
+
   it('adds nothing to a shape with nothing to count', () => {
-    expect(resultNote({ kind: 'command', command: 'ls' }, 'a\nb')).toBeNull()
+    expect(resultNote({ kind: 'todo' }, 'a\nb')).toBeNull()
     expect(resultNote({ kind: 'file', verb: 'read', dir: '', name: 'a.ts' }, null)).toBeNull()
   })
 })

@@ -21,6 +21,7 @@ export function StatusBar({ status, open, onToggle }: StatusBarProps) {
           onClick={onToggle}
           aria-expanded={open}
           aria-label="Session details"
+          className="zt-hit"
         >
           <ChevronUp className="size-3" />
         </Button>
@@ -51,7 +52,7 @@ export function StatusBar({ status, open, onToggle }: StatusBarProps) {
           onClick={onToggle}
           aria-expanded={open}
           aria-label="Session details"
-          className="flex-none"
+          className="zt-hit flex-none"
         >
           {open ? <ChevronDown className="size-3" /> : <ChevronUp className="size-3" />}
         </Button>

@@ -16,7 +16,12 @@ export function Gauge({ session, nowMs }: GaugeProps) {
   return (
     <div data-gauge style={rootStyle}>
       <span style={spentStyle}>
-        {spent.map((metric) => `${metric.format(metric.read(session, nowMs))} ${metric.label}`).join(' · ')}
+        {spent.map((metric, at) => (
+          <span key={metric.id} className={at === 0 ? undefined : '@max-[220px]:hidden'}>
+            {at === 0 ? '' : ' · '}
+            {metric.format(metric.read(session, nowMs))} {metric.label}
+          </span>
+        ))}
       </span>
       {clock !== undefined && (
         <span data-clock={running ? 'running' : 'settled'} style={clockStyle(running)}>
@@ -28,8 +33,9 @@ export function Gauge({ session, nowMs }: GaugeProps) {
 }
 
 const rootStyle: CSSProperties = {
+  containerType: 'inline-size',
   flex: '0 0 auto',
-  marginTop: 'auto',
+  marginTop: 12,
   paddingTop: 12,
   borderTop: '1px solid var(--border)',
   display: 'flex',

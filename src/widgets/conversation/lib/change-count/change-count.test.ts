@@ -3,7 +3,7 @@ import type { ToolActivity } from '@/entities/conversation'
 import { changeCount } from './change-count'
 
 function tool(line: string, input: unknown): ToolActivity {
-  return { line, toolUseId: 't', input, result: null }
+  return { line, toolUseId: 't', input, result: null, startedAtMs: 0, endedAtMs: 100 }
 }
 
 describe('how much changed, without opening anything', () => {

@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, useSyncExternalStore } from 'react'
 import {
+  addressed,
   parseClaudeLine,
   permissionAlwaysResult,
   permissionResult,
@@ -21,7 +22,7 @@ type Agent = {
   children: AgentSession[]
   status: StatusState
   nowMs: number
-  send(text: string): void
+  send(text: string, to?: string | null): void
   decide(allow: boolean, always?: boolean): void
   stop(): void
   reset(): void
@@ -103,14 +104,15 @@ export function useAgent(config: Omit<RunConfig, 'persona'>): Agent {
     void window.desk.startAgent(id, text, { ...configRef.current, persona: '', resume })
   }
 
-  function send(text: string): void {
-    conversation.say('user', text)
+  function send(text: string, to: string | null = null): void {
+    conversation.say('user', text, to ?? undefined)
     conversation.setStatus('working')
+    const dressed = addressed(text, to)
     if (hostId.current) {
-      window.desk.sendToAgent(hostId.current, text)
+      window.desk.sendToAgent(hostId.current, dressed)
       return
     }
-    launch(text, configRef.current.resume ?? null)
+    launch(dressed, configRef.current.resume ?? null)
   }
 
   function restart(): void {
@@ -127,13 +129,16 @@ export function useAgent(config: Omit<RunConfig, 'persona'>): Agent {
     sends.current.clear()
     sessionStore.clear()
     statusStore.reset()
+    conversation.settleDraft()
+    conversation.setStatus('done')
+    conversation.setPermission(null)
     if (id !== null) window.desk.stopAgent(id)
   }
 
   function decide(allow: boolean, always = false): void {
-    const current = asks.current.shift()
     const id = hostId.current
-    if (!current || !id) return
+    if (id === null || asks.current.length === 0) return
+    const current = asks.current.shift()!
     window.desk.respondPermission(
       id,
       current.requestId,

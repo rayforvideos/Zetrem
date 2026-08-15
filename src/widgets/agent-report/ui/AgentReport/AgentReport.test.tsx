@@ -1,7 +1,11 @@
 import { renderToStaticMarkup } from 'react-dom/server'
 import { describe, expect, it } from 'vitest'
-import type { AgentSession } from '@/entities/agent-session'
+import type { AgentSession, Call } from '@/entities/agent-session'
 import { AgentReport } from './AgentReport'
+
+function call(id: string, line: string): Call {
+  return { id, line, startedAtMs: 0, endedAtMs: 200, failed: false, note: '' }
+}
 
 function session(overrides: Partial<AgentSession> = {}): AgentSession {
   return {
@@ -12,7 +16,7 @@ function session(overrides: Partial<AgentSession> = {}): AgentSession {
     model: 'sonnet',
     status: 'done',
     headline: '두 자리를 고쳤습니다',
-    stream: ['Read a.ts', 'Edit a.ts', 'Bash npm test'],
+    stream: [call('c1', 'Read a.ts'), call('c2', 'Edit a.ts'), call('c3', 'Bash npm test')],
     transcript: [
       { role: 'user', text: '리뷰해줘' },
       { role: 'assistant', text: '고칠 곳 두 군데를 찾았습니다' },
@@ -27,7 +31,13 @@ function session(overrides: Partial<AgentSession> = {}): AgentSession {
 
 function report(overrides: Partial<AgentSession> = {}): string {
   return renderToStaticMarkup(
-    <AgentReport session={session(overrides)} nowMs={61000} onClose={() => {}} />,
+    <AgentReport
+      session={session(overrides)}
+      sessions={[session(overrides)]}
+      nowMs={61000}
+      onClose={() => {}}
+      onPick={() => {}}
+    />,
   )
 }
 

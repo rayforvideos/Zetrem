@@ -26,7 +26,7 @@ const STATUS: StatusState = {
 }
 
 function tool(overrides: Partial<ToolActivity> = {}): ToolActivity {
-  return { line: 'Bash ls', toolUseId: 't1', input: null, result: null, ...overrides }
+  return { line: 'Bash ls', toolUseId: 't1', input: null, result: null, startedAtMs: 0, endedAtMs: 100, ...overrides }
 }
 
 function turn(overrides: Partial<Turn> = {}): Turn {
@@ -185,7 +185,7 @@ describe('the screen is not blank while an answer is on its way', () => {
     const html = working([
       turn({
         startedAtMs: 2_000,
-        tools: [{ line: 'Bash npm test', toolUseId: 't', input: { command: 'npm test' }, result: null }],
+        tools: [tool({ line: 'Bash npm test', input: { command: 'npm test' } })],
       }),
     ])
     expect(html).toContain('Running')

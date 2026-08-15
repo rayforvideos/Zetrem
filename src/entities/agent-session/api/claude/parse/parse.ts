@@ -1,11 +1,24 @@
 import type { ClaudeTurnEvent } from './parse.types'
 
-import { childCloses, childNotified, childProgress, childSays, childStarted } from '../child'
+import {
+  childCloses,
+  childNotified,
+  childProgress,
+  childSays,
+  childStarted,
+  childStateKnown,
+} from '../child'
 import { fromControlCancel, fromControlRequest } from '../permission'
 import { fromStatusLine } from '../status/status'
 import {
+  deniedLine,
+  noFallbackLine,
+  noticeLine,
+  refusalLine,
+  shutdownLine,
+} from '../aside/aside'
+import {
   fromAssistant,
-  fromFallback,
   fromResult,
   fromRetry,
   fromStartupTrouble,
@@ -14,6 +27,10 @@ import {
 } from '../turn'
 
 export { permissionAlwaysResult, permissionResult } from '../permission'
+
+function aside(text: string): ClaudeTurnEvent[] {
+  return text.length === 0 ? [] : [{ type: 'notice', text }]
+}
 
 export function parseClaudeLine(line: string): ClaudeTurnEvent[] {
   let parsed: unknown
@@ -53,12 +70,23 @@ function turns(event: Record<string, unknown>, parent: string | null): ClaudeTur
           return childStarted(event)
         case 'task_progress':
           return childProgress(event)
+        case 'task_updated':
+          return childStateKnown(event)
         case 'init':
           return parent ? [] : fromStartupTrouble(event)
         case 'api_retry':
           return parent ? [] : fromRetry(event)
-        case 'model_fallback':
-          return parent ? [] : fromFallback(event)
+        case 'model_refusal_fallback':
+          return parent ? [] : aside(refusalLine(event))
+        case 'model_refusal_no_fallback':
+          return parent ? [] : aside(noFallbackLine(event))
+        case 'permission_denied':
+          return parent ? [] : aside(deniedLine(event))
+        case 'notification':
+        case 'informational':
+          return parent ? [] : aside(noticeLine(event) ?? '')
+        case 'worker_shutting_down':
+          return parent ? [] : aside(shutdownLine(event))
         default:
           return []
       }

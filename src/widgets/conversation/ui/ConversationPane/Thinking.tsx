@@ -3,7 +3,7 @@ import { ChevronDown } from 'lucide-react'
 import { cn } from '@/shared/lib/cn'
 import { Button } from '@/shared/ui/button'
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/shared/ui/collapsible'
-import { Markdown } from '../Markdown'
+import { Markdown } from '../Markdown/Markdown'
 
 export function Thinking({ text }: { text: string }) {
   const [open, setOpen] = useState(false)

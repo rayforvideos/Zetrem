@@ -24,3 +24,9 @@ function titled(name: string): string {
     .map((word) => word[0]!.toUpperCase() + word.slice(1))
     .join(' ')
 }
+
+export function formatClock(seconds: number): string {
+  const whole = Math.max(0, Math.floor(seconds))
+  const minutes = Math.floor(whole / 60)
+  return `${minutes}:${String(whole % 60).padStart(2, '0')}`
+}

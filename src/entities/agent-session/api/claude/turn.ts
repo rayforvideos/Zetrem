@@ -105,10 +105,6 @@ export function fromRetry(event: Record<string, unknown>): TurnEvent[] {
   ]
 }
 
-export function fromFallback(event: Record<string, unknown>): TurnEvent[] {
-  const said = str(event.content)
-  return said.length > 0 ? [{ type: 'notice', text: said }] : []
-}
 
 function str(value: unknown): string {
   return typeof value === 'string' ? value : ''

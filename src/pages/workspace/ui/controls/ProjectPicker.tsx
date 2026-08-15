@@ -17,7 +17,7 @@ export function ProjectPicker() {
 
   if (project === null) {
     return (
-      <Button variant="quiet" size="bare" onClick={choose} className="text-xs">
+      <Button variant="quiet" size="bare" onClick={choose} className="zt-hit text-xs">
         Choose project
       </Button>
     )
@@ -29,7 +29,7 @@ export function ProjectPicker() {
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <Button variant="quiet" size="bare" className="max-w-[180px] truncate text-xs">
+        <Button variant="quiet" size="bare" className="zt-hit max-w-[180px] truncate text-xs">
           {project.name}
         </Button>
       </PopoverTrigger>

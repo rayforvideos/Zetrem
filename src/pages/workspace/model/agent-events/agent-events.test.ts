@@ -122,7 +122,7 @@ describe('applyAgentEvent: the order has to be nailed down', () => {
       },
       refs,
     )
-    applyAgentEvent({ type: 'childNotified', toolUseId: 'toolu_1', summary: '4', done: true }, refs)
+    applyAgentEvent({ type: 'childNotified', toolUseId: 'toolu_1', taskId: 'task-toolu_1', summary: '4', done: true }, refs)
     expect(sessionStore.get().find((s) => s.id === 'toolu_1')?.status).toBe('reported')
 
     applyAgentEvent({ type: 'childClosed', toolUseId: 'toolu_1' }, refs)
@@ -158,7 +158,7 @@ describe('applyAgentEvent: the order has to be nailed down', () => {
     applyAgentEvent({ type: 'childClosed', toolUseId: 'toolu_2' }, refs)
     expect(sessionStore.get().find((s) => s.id === 'toolu_2')?.status).toBe('working')
 
-    applyAgentEvent({ type: 'childNotified', toolUseId: 'toolu_2', summary: '4', done: true }, refs)
+    applyAgentEvent({ type: 'childNotified', toolUseId: 'toolu_2', taskId: 'task-toolu_2', summary: '4', done: true }, refs)
     expect(sessionStore.get().find((s) => s.id === 'toolu_2')?.status).toBe('reported')
   })
 })
@@ -239,7 +239,7 @@ describe('a child that runs several rounds does not vanish for reporting once', 
   it('puts a child back to working when it speaks again, so round two is visible', () => {
     const refs = fakeRefs()
     open(refs, 'toolu_a')
-    applyAgentEvent({ type: 'childNotified', toolUseId: 'toolu_a', summary: 'round one done', done: true }, refs)
+    applyAgentEvent({ type: 'childNotified', toolUseId: 'toolu_a', taskId: 'task-toolu_a', summary: 'round one done', done: true }, refs)
     expect(sessionStore.get().find((s) => s.id === 'toolu_a')?.status).toBe('reported')
 
     applyAgentEvent({ type: 'childSay', toolUseId: 'toolu_a', role: 'assistant', text: 'round two' }, refs)
@@ -249,18 +249,18 @@ describe('a child that runs several rounds does not vanish for reporting once', 
   it('keeps the tools a child uses after it reported', () => {
     const refs = fakeRefs()
     open(refs, 'toolu_b')
-    applyAgentEvent({ type: 'childNotified', toolUseId: 'toolu_b', summary: 'done', done: true }, refs)
-    applyAgentEvent({ type: 'childStream', toolUseId: 'toolu_b', line: 'Read b.ts' }, refs)
+    applyAgentEvent({ type: 'childNotified', toolUseId: 'toolu_b', taskId: 'task-toolu_b', summary: 'done', done: true }, refs)
+    applyAgentEvent({ type: 'childStream', toolUseId: 'toolu_b', callId: 'call1', line: 'Read b.ts' }, refs)
 
     const child = sessionStore.get().find((s) => s.id === 'toolu_b')
-    expect(child?.stream).toContain('Read b.ts')
+    expect(child?.stream.map((call) => call.line)).toContain('Read b.ts')
     expect(child?.status).toBe('working')
   })
 
   it('holds a child that reported when the turn ends, because the notice can come mid job', () => {
     const refs = fakeRefs()
     open(refs, 'toolu_c')
-    applyAgentEvent({ type: 'childNotified', toolUseId: 'toolu_c', summary: 'round one', done: true }, refs)
+    applyAgentEvent({ type: 'childNotified', toolUseId: 'toolu_c', taskId: 'task-toolu_c', summary: 'round one', done: true }, refs)
     applyAgentEvent({ type: 'turnEnded' }, refs)
 
     expect(sessionStore.get().find((s) => s.id === 'toolu_c')?.status).toBe('reported')
@@ -270,7 +270,7 @@ describe('a child that runs several rounds does not vanish for reporting once', 
   it('marks the moment it last heard from a child, so quiet can be measured', () => {
     const refs = fakeRefs()
     open(refs, 'toolu_k')
-    applyAgentEvent({ type: 'childStream', toolUseId: 'toolu_k', line: 'Read a.ts' }, refs)
+    applyAgentEvent({ type: 'childStream', toolUseId: 'toolu_k', callId: 'call1', line: 'Read a.ts' }, refs)
 
     const child = sessionStore.get().find((s) => s.id === 'toolu_k')
     expect(child?.lastSeenAtMs).toBeGreaterThan(0)
@@ -279,7 +279,7 @@ describe('a child that runs several rounds does not vanish for reporting once', 
   it('brings a settled child back for round two, which is why settling must not drop the id', () => {
     const refs = fakeRefs()
     open(refs, 'toolu_g')
-    applyAgentEvent({ type: 'childNotified', toolUseId: 'toolu_g', summary: 'round one', done: true }, refs)
+    applyAgentEvent({ type: 'childNotified', toolUseId: 'toolu_g', taskId: 'task-toolu_g', summary: 'round one', done: true }, refs)
     sessionStore.patch('toolu_g', { status: 'done' })
     applyAgentEvent({ type: 'turnEnded' }, refs)
     applyAgentEvent(
@@ -314,7 +314,7 @@ describe('a child that runs several rounds does not vanish for reporting once', 
       },
       refs,
     )
-    applyAgentEvent({ type: 'childNotified', toolUseId: 'toolu_m', summary: '4', done: true }, refs)
+    applyAgentEvent({ type: 'childNotified', toolUseId: 'toolu_m', taskId: 'task-toolu_m', summary: '4', done: true }, refs)
     applyAgentEvent({ type: 'childClosed', toolUseId: 'toolu_m' }, refs)
 
     expect(sessionStore.get().find((s) => s.id === 'toolu_m')?.status).toBe('done')
@@ -344,7 +344,7 @@ describe('a child that runs several rounds does not vanish for reporting once', 
     applyAgentEvent({ type: 'childClosed', toolUseId: 'toolu_h', error: 'timed out' }, refs)
     expect(sessionStore.get().find((s) => s.id === 'toolu_h')?.status).toBe('done')
 
-    applyAgentEvent({ type: 'childStream', toolUseId: 'toolu_h', line: 'Read late.ts' }, refs)
+    applyAgentEvent({ type: 'childStream', toolUseId: 'toolu_h', callId: 'call1', line: 'Read late.ts' }, refs)
     const child = sessionStore.get().find((s) => s.id === 'toolu_h')
     expect(child?.status).toBe('working')
     expect(child?.endedAtMs).toBeUndefined()
@@ -370,9 +370,9 @@ describe('a child that runs several rounds does not vanish for reporting once', 
     const refs = fakeRefs()
     open(refs, 'toolu_f')
     applyAgentEvent({ type: 'turnEnded' }, refs)
-    applyAgentEvent({ type: 'childStream', toolUseId: 'toolu_f', line: 'Read late.ts' }, refs)
+    applyAgentEvent({ type: 'childStream', toolUseId: 'toolu_f', callId: 'call1', line: 'Read late.ts' }, refs)
 
-    expect(sessionStore.get().find((s) => s.id === 'toolu_f')?.stream).toContain('Read late.ts')
+    expect(sessionStore.get().find((s) => s.id === 'toolu_f')?.stream.map((call) => call.line)).toContain('Read late.ts')
   })
 })
 
@@ -405,10 +405,10 @@ describe('an agent woken by a message gets a tile too', () => {
     const refs = fakeRefs()
     send(refs, 'tu_2', 'Hardy', resumed)
     applyAgentEvent(
-      { type: 'childStream', toolUseId: 'abc34151ab50738ee', line: 'Read a.ts' },
+      { type: 'childStream', toolUseId: 'abc34151ab50738ee', callId: 'call1', line: 'Read a.ts' },
       refs,
     )
-    expect(sessionStore.get().find((s) => s.id === 'abc34151ab50738ee')?.stream).toContain('Read a.ts')
+    expect(sessionStore.get().find((s) => s.id === 'abc34151ab50738ee')?.stream.map((call) => call.line)).toContain('Read a.ts')
   })
 
   it('opens nothing for a message that only delivered', () => {
@@ -454,9 +454,7 @@ describe('a subagent reports what it is doing while it works', () => {
     const refs = fakeRefs()
     open(refs, 'toolu_p')
     applyAgentEvent(
-      {
-        type: 'childProgress',
-        toolUseId: 'toolu_p',
+      { type: 'childProgress', toolUseId: 'toolu_p', taskId: 'task-toolu_p',
         doing: 'Reading the config',
         lastTool: 'Read',
         tokens: 12_822,
@@ -465,9 +463,9 @@ describe('a subagent reports what it is doing while it works', () => {
     )
 
     const child = sessionStore.get().find((s) => s.id === 'toolu_p')
-    expect(child?.headline).toBe('Reading the config')
+    expect(child?.doing).toBe('Reading the config')
     expect(child?.tokens).toBe(12_822)
-    expect(child?.stream).toEqual(['Read'])
+    expect(child?.stream.map((call) => call.line)).toEqual(['Read'])
   })
 
   it('does not repeat a tool it is still using', () => {
@@ -476,6 +474,7 @@ describe('a subagent reports what it is doing while it works', () => {
     const tick = {
       type: 'childProgress' as const,
       toolUseId: 'toolu_q',
+      taskId: 'task-q',
       doing: 'Reading',
       lastTool: 'Read',
       tokens: 1,
@@ -484,7 +483,43 @@ describe('a subagent reports what it is doing while it works', () => {
     applyAgentEvent(tick, refs)
     applyAgentEvent({ ...tick, lastTool: 'Bash' }, refs)
 
-    expect(sessionStore.get().find((s) => s.id === 'toolu_q')?.stream).toEqual(['Read', 'Bash'])
+    expect(sessionStore.get().find((s) => s.id === 'toolu_q')?.stream.map((call) => call.line)).toEqual(['Read', 'Bash'])
+  })
+
+  it('never lets a passing action erase what the agent said', () => {
+    const refs = fakeRefs()
+    open(refs, 'toolu_said')
+    applyAgentEvent(
+      { type: 'childSay', toolUseId: 'toolu_said', role: 'assistant', text: '설정을 두 군데 고쳤습니다' },
+      refs,
+    )
+    applyAgentEvent(
+      { type: 'childProgress', toolUseId: 'toolu_said', taskId: 'task-toolu_said',
+        doing: 'Running echo "--- main.tsx ---"',
+        lastTool: 'Bash',
+        tokens: 9,
+      },
+      refs,
+    )
+
+    const child = sessionStore.get().find((s) => s.id === 'toolu_said')
+    expect(child?.headline).toBe('설정을 두 군데 고쳤습니다')
+    expect(child?.doing).toBe('Running echo "--- main.tsx ---"')
+  })
+
+  it('drops the stale action once the agent speaks again, since it is no longer doing that', () => {
+    const refs = fakeRefs()
+    open(refs, 'toolu_stale')
+    applyAgentEvent(
+      { type: 'childProgress', toolUseId: 'toolu_stale', taskId: 'task-toolu_stale', doing: 'Reading', lastTool: 'Read', tokens: 1 },
+      refs,
+    )
+    applyAgentEvent(
+      { type: 'childSay', toolUseId: 'toolu_stale', role: 'assistant', text: '다 봤습니다' },
+      refs,
+    )
+
+    expect(sessionStore.get().find((s) => s.id === 'toolu_stale')?.doing).toBe('')
   })
 
   it('brings a settled agent back, because progress means it is alive', () => {
@@ -492,7 +527,7 @@ describe('a subagent reports what it is doing while it works', () => {
     open(refs, 'toolu_r')
     sessionStore.patch('toolu_r', { status: 'done' })
     applyAgentEvent(
-      { type: 'childProgress', toolUseId: 'toolu_r', doing: '', lastTool: '', tokens: 5 },
+      { type: 'childProgress', toolUseId: 'toolu_r', taskId: 'task-toolu_r', doing: '', lastTool: '', tokens: 5 },
       refs,
     )
 
@@ -504,7 +539,7 @@ describe('a subagent reports what it is doing while it works', () => {
   it('ignores progress from a task that is not one of ours, such as a subagent own shell', () => {
     const refs = fakeRefs()
     applyAgentEvent(
-      { type: 'childProgress', toolUseId: 'toolu_stranger', doing: 'x', lastTool: 'Bash', tokens: 1 },
+      { type: 'childProgress', toolUseId: 'toolu_stranger', taskId: 'task-toolu_stranger', doing: 'x', lastTool: 'Bash', tokens: 1 },
       refs,
     )
     expect(sessionStore.get()).toEqual([])
@@ -624,5 +659,129 @@ describe('what the CLI reports about itself reaches the conversation', () => {
     const last = conversation.get().turns.at(-1)
     expect(last?.role).toBe('system')
     expect(last?.text).toBe('Stopped: Reached maximum budget ($0.02)')
+  })
+})
+
+describe('addressing a child by the id the CLI actually sends', () => {
+  function open(refs: AgentEventRefs, id: string): void {
+    applyAgentEvent(
+      {
+        type: 'childOpen',
+        toolUseId: id,
+        label: 'Explore',
+        subagentType: 'Explore',
+        prompt: 'Go look',
+        background: false,
+      },
+      refs,
+    )
+  }
+
+  function link(refs: AgentEventRefs, id: string, taskId: string): void {
+    applyAgentEvent({ type: 'childStarted', toolUseId: id, taskId }, refs)
+  }
+
+  it('finds the child by its task when the tool id is left out, which the CLI is allowed to do', () => {
+    const refs = fakeRefs()
+    open(refs, 'toolu_z')
+    link(refs, 'toolu_z', 'task_z')
+    applyAgentEvent(
+      { type: 'childNotified', toolUseId: null, taskId: 'task_z', summary: '다 봤습니다', done: true },
+      refs,
+    )
+
+    const child = sessionStore.get().find((s) => s.id === 'toolu_z')
+    expect(child?.status).toBe('reported')
+    expect(child?.headline).toBe('다 봤습니다')
+  })
+
+  it('ignores a task it has never been introduced to', () => {
+    const refs = fakeRefs()
+    open(refs, 'toolu_z')
+    applyAgentEvent(
+      { type: 'childNotified', toolUseId: null, taskId: 'someone_else', summary: 'hi', done: true },
+      refs,
+    )
+    expect(sessionStore.get().find((s) => s.id === 'toolu_z')?.status).toBe('working')
+  })
+
+  it('takes a told finish rather than waiting out the silence', () => {
+    const refs = fakeRefs()
+    open(refs, 'toolu_y')
+    link(refs, 'toolu_y', 'task_y')
+    applyAgentEvent(
+      { type: 'childStateKnown', toolUseId: null, taskId: 'task_y', state: 'completed', error: '' },
+      refs,
+    )
+    expect(sessionStore.get().find((s) => s.id === 'toolu_y')?.status).toBe('done')
+  })
+
+  it('writes down why a task failed, instead of ending it as if all was well', () => {
+    const refs = fakeRefs()
+    open(refs, 'toolu_x')
+    link(refs, 'toolu_x', 'task_x')
+    applyAgentEvent(
+      {
+        type: 'childStateKnown',
+        toolUseId: null,
+        taskId: 'task_x',
+        state: 'failed',
+        error: 'the tool crashed',
+      },
+      refs,
+    )
+    const child = sessionStore.get().find((s) => s.id === 'toolu_x')
+    expect(child?.status).toBe('done')
+    expect(child?.headline).toContain('the tool crashed')
+  })
+
+  it('keeps a paused task on screen, since paused is not finished', () => {
+    const refs = fakeRefs()
+    open(refs, 'toolu_w')
+    link(refs, 'toolu_w', 'task_w')
+    applyAgentEvent(
+      { type: 'childStateKnown', toolUseId: null, taskId: 'task_w', state: 'paused', error: '' },
+      refs,
+    )
+    expect(sessionStore.get().find((s) => s.id === 'toolu_w')?.status).toBe('working')
+  })
+
+  it('ends a detached agent, which the tool result deliberately leaves alone', () => {
+    const refs = fakeRefs()
+    applyAgentEvent(
+      {
+        type: 'childOpen',
+        toolUseId: 'toolu_bg',
+        label: 'Explore',
+        subagentType: 'Explore',
+        prompt: 'Go look',
+        background: true,
+      },
+      refs,
+    )
+    link(refs, 'toolu_bg', 'task_bg')
+    applyAgentEvent({ type: 'childClosed', toolUseId: 'toolu_bg' }, refs)
+    expect(
+      sessionStore.get().find((s) => s.id === 'toolu_bg')?.status,
+      '분리된 에이전트는 도구 결과로 끝나지 않는다',
+    ).toBe('working')
+
+    applyAgentEvent(
+      { type: 'childStateKnown', toolUseId: null, taskId: 'task_bg', state: 'completed', error: '' },
+      refs,
+    )
+    expect(sessionStore.get().find((s) => s.id === 'toolu_bg')?.status).toBe('done')
+  })
+
+  it('brings a settled child back when the CLI says it is running again', () => {
+    const refs = fakeRefs()
+    open(refs, 'toolu_v')
+    link(refs, 'toolu_v', 'task_v')
+    sessionStore.patch('toolu_v', { status: 'done' })
+    applyAgentEvent(
+      { type: 'childStateKnown', toolUseId: null, taskId: 'task_v', state: 'running', error: '' },
+      refs,
+    )
+    expect(sessionStore.get().find((s) => s.id === 'toolu_v')?.status).toBe('working')
   })
 })

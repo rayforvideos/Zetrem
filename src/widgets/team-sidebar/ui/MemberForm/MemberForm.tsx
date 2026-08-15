@@ -35,6 +35,7 @@ type MemberFormProps = {
 
 export function MemberForm({ initial, knownTools, onSubmit, onCancel }: MemberFormProps) {
   const [name, setName] = useState(initial?.name ?? '')
+  const [settledName, setSettledName] = useState(initial?.name ?? '')
   const [description, setDescription] = useState(initial?.description ?? '')
   const [prompt, setPrompt] = useState(initial?.prompt ?? '')
   const [model, setModel] = useState(initial?.model ?? null)
@@ -44,7 +45,7 @@ export function MemberForm({ initial, knownTools, onSubmit, onCancel }: MemberFo
   const [picked, setPicked] = useState<CharacterId | null>(initialCharacter(initial))
   const [missing, setMissing] = useState<string | null>(null)
   const [sheet, setSheet] = useState<HTMLElement | null>(null)
-  const character = characterFor(picked, name)
+  const character = characterFor(picked, settledName)
 
   const lack =
     name.trim().length === 0
@@ -102,6 +103,7 @@ export function MemberForm({ initial, knownTools, onSubmit, onCancel }: MemberFo
                   id="member-name"
                   value={name}
                   onChange={(event) => setName(event.target.value)}
+                  onBlur={(event) => setSettledName(event.target.value)}
                   placeholder="Siena"
                   aria-invalid={missing !== null && name.trim().length === 0}
                   autoFocus

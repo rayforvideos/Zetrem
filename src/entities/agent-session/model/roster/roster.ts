@@ -17,7 +17,11 @@ function rosterState(status: AgentSession['status']): RosterState {
   }
 }
 
-export function roster(agentTypes: string[], sessions: AgentSession[]): RosterMember[] {
+export function roster(
+  agentTypes: string[],
+  sessions: AgentSession[],
+  live = true,
+): RosterMember[] {
   const seen = new Map<string, RosterMember>()
 
   for (const type of agentTypes) {
@@ -33,16 +37,16 @@ export function roster(agentTypes: string[], sessions: AgentSession[]): RosterMe
 
   for (const session of sessions) {
     const type = session.subagentType.length > 0 ? session.subagentType : session.label
-    const state = rosterState(session.status)
+    const state = live ? rosterState(session.status) : 'idle'
     const current = seen.get(type)
-    if (current !== undefined && RANK[current.state] <= RANK[state] && current.sessionId !== null) {
+    if (current !== undefined && RANK[current.state] < RANK[state] && current.sessionId !== null) {
       continue
     }
     seen.set(type, {
       type,
       persona: personaOf(type),
       state,
-      note: session.headline.length > 0 ? session.headline : null,
+      note: live && session.headline.length > 0 ? session.headline : null,
       sessionId: session.id,
     })
   }

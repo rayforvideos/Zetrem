@@ -10,6 +10,8 @@ export type ToolActivity = {
   toolUseId: string | null
   input: unknown
   result: ToolResult | null
+  startedAtMs: number
+  endedAtMs: number | null
 }
 
 export type Turn = {
@@ -19,4 +21,5 @@ export type Turn = {
   draft: string
   thinking: string
   startedAtMs: number
+  to?: string
 }

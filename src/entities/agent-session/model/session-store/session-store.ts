@@ -1,5 +1,5 @@
 import { STREAM_BUFFER, TRANSCRIPT_BUFFER } from '../session'
-import type { AgentSession, TranscriptEntry } from '../session.types'
+import type { AgentSession, Call, TranscriptEntry } from '../session.types'
 
 type Listener = () => void
 
@@ -36,6 +36,9 @@ export const sessionStore = {
   find(id: string): AgentSession | null {
     return sessions.find((session) => session.id === id) ?? null
   },
+  findByTask(taskId: string): AgentSession | null {
+    return sessions.find((session) => session.taskId === taskId) ?? null
+  },
   subscribe(listener: Listener): () => void {
     listeners.add(listener)
     return () => listeners.delete(listener)
@@ -61,10 +64,30 @@ export const sessionStore = {
     const lastSeenAtMs = Date.now()
     emit(sessions.map((s) => (s.id === id ? { ...s, transcript, lastSeenAtMs } : s)))
   },
-  pushStream(id: string, line: string): void {
+  beginCall(id: string, call: { id: string; line: string }): void {
     const target = sessions.find((s) => s.id === id)
     if (!target) return
-    const stream = [...target.stream, line].slice(-STREAM_BUFFER)
+    const opened: Call = {
+      ...call,
+      startedAtMs: Date.now(),
+      endedAtMs: null,
+      failed: false,
+      note: '',
+    }
+    const stream = [...target.stream, opened].slice(-STREAM_BUFFER)
+    const lastSeenAtMs = Date.now()
+    emit(sessions.map((s) => (s.id === id ? { ...s, stream, lastSeenAtMs } : s)))
+  },
+  endCall(id: string, callId: string, done: { failed: boolean; note: string }): void {
+    const target = sessions.find((s) => s.id === id)
+    if (!target) return
+    const at = target.stream.findLastIndex((call) => call.id === callId)
+    if (at === -1) return
+    const stream = target.stream.with(at, {
+      ...target.stream[at]!,
+      ...done,
+      endedAtMs: Date.now(),
+    })
     const lastSeenAtMs = Date.now()
     emit(sessions.map((s) => (s.id === id ? { ...s, stream, lastSeenAtMs } : s)))
   },

@@ -18,6 +18,7 @@ type TileDeckProps = {
   nowMs: number
   sidebarW?: number
   terminal: ReactNode
+  onDismiss?: (id: string) => void
 }
 
 type PlacedTile = {
@@ -34,6 +35,7 @@ export function TileDeck({
   nowMs,
   sidebarW = 0,
   terminal,
+  onDismiss,
 }: TileDeckProps) {
   const solo = soloRect(viewport)
   const advanced = useAdvancedFrame(state.kind)
@@ -104,6 +106,7 @@ export function TileDeck({
           sweeping={sweeping}
           closing={tile.closing}
           attention={!tile.closing && tile.session.id === attention}
+          onDismiss={onDismiss === undefined ? undefined : () => onDismiss(tile.session.id)}
         />
       ))}
     </div>

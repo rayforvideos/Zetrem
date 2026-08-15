@@ -1,0 +1,43 @@
+import { describe, expect, it } from 'vitest'
+import { maySave } from './may-save'
+
+const ready = {
+  ready: true,
+  project: '/a',
+  loadedFor: '/a',
+  openId: 'chat-1',
+  status: 'done' as const,
+  turnCount: 3,
+}
+
+describe('maySave: a chat is only ever written back to the project it came from', () => {
+  it('saves a settled chat of the project it was loaded for', () => {
+    expect(maySave(ready)).toBe(true)
+  })
+
+  it('refuses the moment the project changes, before the new one has loaded', () => {
+    expect(maySave({ ...ready, project: '/b' })).toBe(false)
+  })
+
+  it('refuses again once the new project is loaded but the old turns are still on screen', () => {
+    expect(maySave({ ...ready, project: '/b', loadedFor: null })).toBe(false)
+  })
+
+  it('saves once the new project has finished loading its own chat', () => {
+    expect(maySave({ ...ready, project: '/b', loadedFor: '/b' })).toBe(true)
+  })
+
+  it('waits while a turn is still running', () => {
+    expect(maySave({ ...ready, status: 'working' })).toBe(false)
+  })
+
+  it('has nothing to save for an empty chat', () => {
+    expect(maySave({ ...ready, turnCount: 0 })).toBe(false)
+  })
+
+  it('waits until the screen is ready and has a chat open', () => {
+    expect(maySave({ ...ready, ready: false })).toBe(false)
+    expect(maySave({ ...ready, openId: null })).toBe(false)
+    expect(maySave({ ...ready, project: null })).toBe(false)
+  })
+})

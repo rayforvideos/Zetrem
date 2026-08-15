@@ -80,7 +80,15 @@ export function childNotified(event: Record<string, unknown>): ChildTurnEvent[] 
 export function childStarted(event: Record<string, unknown>): ChildTurnEvent[] {
   const task = taskId(event)
   if (task === null) return []
-  return [{ type: 'childStarted', toolUseId: toolUseId(event), taskId: task }]
+  return [
+    {
+      type: 'childStarted',
+      toolUseId: toolUseId(event),
+      taskId: task,
+      taskType: typeof event.task_type === 'string' ? event.task_type : '',
+      description: typeof event.description === 'string' ? event.description.trim() : '',
+    },
+  ]
 }
 
 export function childProgress(event: Record<string, unknown>): ChildTurnEvent[] {

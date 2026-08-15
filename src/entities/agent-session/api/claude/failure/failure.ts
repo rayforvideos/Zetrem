@@ -6,6 +6,35 @@ const REASON: Record<string, string> = {
   error: 'Something went wrong',
 }
 
+const MODEL_HELP = /run\s+--model[^.]*\.?/i
+
+export function stoppedLine(event: {
+  subtype: string
+  isError: boolean
+  error: string
+  result: string
+  errors: unknown
+}): string | null {
+  const named = modelLine(event.error, event.result)
+  if (named !== null) return named
+  const said = failureLine(event.subtype, event.errors)
+  if (said !== null) return said
+  if (!event.isError) return null
+  const body = event.result.trim()
+  return body.length > 0 ? `Stopped: ${ourWords(body)}` : 'Stopped: something went wrong'
+}
+
+function modelLine(error: string, result: string): string | null {
+  if (error !== 'model_not_found' && !/selected model/i.test(result)) return null
+  const named = /selected model \(([^)]+)\)/i.exec(result)?.[1]
+  const who = named === undefined ? 'That model' : named
+  return `${who} is not available on your account. Pick another in Settings.`
+}
+
+function ourWords(said: string): string {
+  return said.replace(MODEL_HELP, '').trim()
+}
+
 export function failureLine(subtype: string, errors: unknown): string | null {
   if (!subtype.startsWith('error')) return null
   const said = Array.isArray(errors)

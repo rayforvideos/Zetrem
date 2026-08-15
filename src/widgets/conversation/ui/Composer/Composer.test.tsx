@@ -11,6 +11,7 @@ function box(props: Partial<Parameters<typeof Composer>[0]> = {}): string {
       addressee={null}
       permissionMode="ask"
       model="default"
+      refusedModels={[]}
       onSend={() => {}}
       onStop={() => {}}
       onClearAddressee={() => {}}
@@ -59,5 +60,15 @@ describe('Composer: the line you type into', () => {
 
   it('shows the shortcut that sends, since the button is not the only way', () => {
     expect(box()).toContain('Enter')
+  })
+})
+
+describe('Composer: the field has a name of its own', () => {
+  it('names the field, since a placeholder disappears the moment you type', () => {
+    expect(box()).toContain('aria-label="Message your team"')
+  })
+
+  it('names whom it is for once someone has been picked', () => {
+    expect(box({ addressee: 'Siena' })).toContain('aria-label="Message for Siena"')
   })
 })

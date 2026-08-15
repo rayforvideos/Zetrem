@@ -7,6 +7,7 @@ export type ComposerProps = {
   addressee: string | null
   permissionMode: PermissionMode
   model: ModelChoice
+  refusedModels: ModelChoice[]
   onSend(text: string): void
   onStop(): void
   onClearAddressee(): void

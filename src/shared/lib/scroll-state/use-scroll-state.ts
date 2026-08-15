@@ -1,6 +1,6 @@
 import { useCallback, useRef } from 'react'
 import type { MutableRefObject } from 'react'
-import { atEnd } from './scroll-state'
+import { AT_END_SLACK_PX, atEnd } from './scroll-state'
 
 const QUIET_MS = 700
 
@@ -20,8 +20,8 @@ export function useScrollState<T extends HTMLElement>(): [
     let timer: ReturnType<typeof setTimeout> | null = null
 
     const look = (): void => {
-      if (atEnd(el.scrollTop, el.scrollHeight, el.clientHeight)) el.setAttribute('data-at-end', '')
-      else el.removeAttribute('data-at-end')
+      el.toggleAttribute('data-at-end', atEnd(el.scrollTop, el.scrollHeight, el.clientHeight))
+      el.toggleAttribute('data-at-start', el.scrollTop <= AT_END_SLACK_PX)
     }
 
     const onScroll = (): void => {

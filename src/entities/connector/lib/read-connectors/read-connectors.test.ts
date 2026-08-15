@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
-import { connectorSummary, needingAuth, readConnectors } from './read-connectors'
+import { canSignIn, connectorSummary, needingAuth, readConnectors } from './read-connectors'
+import type { Connector } from './read-connectors.types'
 
 const REAL = `Checking MCP server health…
 
@@ -75,5 +76,32 @@ describe('connectorSummary: one line about the connectors', () => {
 
   it('invites a first one when there is nothing at all', () => {
     expect(connectorSummary([])).toBe('No connectors yet')
+  })
+})
+
+describe('canSignIn: which connectors have a sign in at all', () => {
+  function one(where: string, state: Connector['state']): Connector {
+    return { name: 'x', where, state }
+  }
+
+  it('offers it for a remote server, which is what signing in is for', () => {
+    expect(canSignIn(one('https://mcp.asana.com/v2/mcp', 'needs-auth'))).toBe(true)
+    expect(canSignIn(one('https://mcp.figma.com/mcp', 'connected'))).toBe(true)
+  })
+
+  it('does not offer it for a command on this machine, which has nothing to sign in to', () => {
+    expect(canSignIn(one('npx @playwright/mcp@latest', 'connected'))).toBe(false)
+    expect(canSignIn(one('npx nx-mcp@latest --minimal', 'connected'))).toBe(false)
+  })
+
+  it('does not offer it to a server still waiting to be approved, which signing in will not fix', () => {
+    expect(canSignIn(one('https://mcp.example.com/mcp', 'unapproved'))).toBe(false)
+  })
+})
+
+describe('readConnectors: a server the CLI is holding for approval', () => {
+  it('reads waiting for approval as its own state, rather than as unknown', () => {
+    const [found] = readConnectors('shadcn: npx shadcn@latest mcp - ⏸ Pending approval (run `claude` to approve)')
+    expect(found!.state).toBe('unapproved')
   })
 })

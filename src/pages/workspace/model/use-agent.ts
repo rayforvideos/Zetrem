@@ -7,9 +7,10 @@ import {
   sessionStore,
   statusStore,
 } from '@/entities/agent-session'
-import type { AgentSession, RunConfig, StatusState } from '@/entities/agent-session'
+import type { AgentSession, ModelChoice, RunConfig, StatusState } from '@/entities/agent-session'
 import { applyAgentEvent } from './agent-events/agent-events'
 import { conversation } from './conversation/conversation'
+import { reasonOf } from '@/shared/lib/failure/failure'
 import { shouldRelaunch } from './relaunch/relaunch'
 import { settled } from './settle/settle'
 import type { Attempt } from './relaunch/relaunch.types'
@@ -29,7 +30,10 @@ type Agent = {
   restart(): void
 }
 
-export function useAgent(config: Omit<RunConfig, 'persona'>): Agent {
+export function useAgent(
+  config: Omit<RunConfig, 'persona'>,
+  onModelRefused: (model: ModelChoice) => void,
+): Agent {
   const configRef = useRef(config)
   configRef.current = config
   const conv = useSyncExternalStore(conversation.subscribe, conversation.get, conversation.get)
@@ -38,10 +42,14 @@ export function useAgent(config: Omit<RunConfig, 'persona'>): Agent {
   const [nowMs, setNowMs] = useState(() => Date.now())
 
   const hostId = useRef<string | null>(null)
-  const asks = useRef<{ requestId: string; toolName: string; line: string; input: unknown }[]>([])
+  const asks = useRef<
+    { requestId: string; toolName: string; line: string; detail: string; input: unknown }[]
+  >([])
   const childIds = useRef(new Set<string>())
   const sends = useRef(new Map<string, string>())
   const attempt = useRef<Attempt | null>(null)
+  const refused = useRef(onModelRefused)
+  refused.current = onModelRefused
 
   useEffect(() => {
     const timer = setInterval(() => setNowMs(Date.now()), CLOCK_MS)
@@ -68,8 +76,10 @@ export function useAgent(config: Omit<RunConfig, 'persona'>): Agent {
           return
         }
         conversation.settleDraft()
+        if (event.reason !== null) conversation.system(event.reason)
         conversation.setStatus('done')
         conversation.setPermission(null)
+        conversation.clearChores()
         for (const childId of childIds.current) sessionStore.patch(childId, { status: 'done' })
         childIds.current.clear()
         return
@@ -81,6 +91,7 @@ export function useAgent(config: Omit<RunConfig, 'persona'>): Agent {
         asks: asks.current,
         childIds: childIds.current,
         sends: sends.current,
+        onModelRefused: refused.current,
       }
       for (const turn of parseClaudeLine(event.line)) {
         applyAgentEvent(turn, refs)
@@ -101,7 +112,15 @@ export function useAgent(config: Omit<RunConfig, 'persona'>): Agent {
     hostId.current = id
     attempt.current = { prompt: text, resumed: resume !== null, spoke: false }
     conversation.setStatus('working')
-    void window.desk.startAgent(id, text, { ...configRef.current, persona: '', resume })
+    void window.desk
+      .startAgent(id, text, { ...configRef.current, persona: '', resume })
+      .catch((cause: unknown) => {
+        if (hostId.current !== id) return
+        hostId.current = null
+        attempt.current = null
+        conversation.system(`Could not start Claude Code: ${reasonOf(cause)}`)
+        conversation.setStatus('done')
+      })
   }
 
   function send(text: string, to: string | null = null): void {
@@ -152,6 +171,7 @@ export function useAgent(config: Omit<RunConfig, 'persona'>): Agent {
         requestId: next.requestId,
         toolName: next.toolName,
         line: next.line,
+        detail: next.detail,
       })
       return
     }

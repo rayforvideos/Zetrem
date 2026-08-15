@@ -13,8 +13,14 @@ import { killAllProbes, registerSessionProbe } from './session-probe'
 import { registerTranscriptStore } from './transcript-store'
 import { recallProject, rememberProject } from './project-memory'
 import { handle } from './ipc/ipc'
+import { loadTroubleLine, troublePage } from './window-trouble/window-trouble'
 
 const isMac = process.platform === 'darwin'
+
+function dropChildren(): void {
+  killAllAgents()
+  killAllProbes()
+}
 
 if (process.env.ZT_INSPECT) app.commandLine.appendSwitch('remote-debugging-port', process.env.ZT_INSPECT)
 
@@ -46,6 +52,22 @@ function createWindow(): void {
 
   win.once('ready-to-show', () => win.show())
 
+  win.webContents.on('did-fail-load', (_event, errorCode, errorDescription, _url, isMainFrame) => {
+    if (!isMainFrame) return
+    const line = loadTroubleLine(errorCode, errorDescription)
+    if (line === null) return
+    console.error(`[window] ${line}`)
+    win.show()
+    void win.webContents.loadURL(troublePage(line))
+  })
+
+  win.webContents.on('render-process-gone', (_event, details) => {
+    console.error('[renderer] crashed', details.reason)
+    if (details.reason === 'clean-exit' || win.isDestroyed()) return
+    win.show()
+    void win.webContents.loadURL(troublePage(`The screen stopped: ${details.reason}`))
+  })
+
   win.webContents.on('will-navigate', (event, url) => {
     if (url !== win.webContents.getURL()) event.preventDefault()
   })
@@ -64,17 +86,13 @@ function createWindow(): void {
         console.error(`[renderer] ${message}`)
       }
     })
-    win.webContents.on('render-process-gone', (_event, details) => {
-      console.error('[renderer] crashed', details.reason)
-    })
   }
 
   const devUrl = process.env.ELECTRON_RENDERER_URL
-  if (devUrl) {
-    win.loadURL(devUrl)
-  } else {
-    win.loadFile(resolve(import.meta.dirname, '../renderer/index.html'))
-  }
+  const loading = devUrl
+    ? win.loadURL(devUrl)
+    : win.loadFile(resolve(import.meta.dirname, '../renderer/index.html'))
+  void loading.catch(() => undefined)
 }
 
 handle('project:pick', async () => {
@@ -121,18 +139,38 @@ if (!primary) {
   registerTranscriptStore()
   registerPlugins()
 
-  app.whenReady().then(() => {
-    session.defaultSession.setPermissionRequestHandler((_contents, _permission, grant) => grant(false))
-    session.defaultSession.setPermissionCheckHandler(() => false)
-    createWindow()
-    app.on('activate', () => {
-      if (BrowserWindow.getAllWindows().length === 0) createWindow()
+  app
+    .whenReady()
+    .then(() => {
+      session.defaultSession.setPermissionRequestHandler((_contents, _permission, grant) =>
+        grant(false),
+      )
+      session.defaultSession.setPermissionCheckHandler(() => false)
+      createWindow()
+      app.on('activate', () => {
+        if (BrowserWindow.getAllWindows().length === 0) createWindow()
+      })
     })
-  })
+    .catch((cause: unknown) => {
+      console.error('[zetrem] could not start', cause)
+      dialog.showErrorBox('Zetrem could not start', String(cause))
+      app.exit(1)
+    })
 
   app.on('window-all-closed', () => {
-    killAllAgents()
-    killAllProbes()
+    dropChildren()
     if (!isMac) app.quit()
+  })
+
+  app.on('before-quit', dropChildren)
+
+  process.on('uncaughtException', (cause) => {
+    console.error('[zetrem] main crashed', cause)
+    dropChildren()
+    app.exit(1)
+  })
+
+  process.on('unhandledRejection', (cause) => {
+    console.error('[zetrem] a promise was dropped', cause)
   })
 }

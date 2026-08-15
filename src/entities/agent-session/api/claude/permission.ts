@@ -1,6 +1,6 @@
 import type { PermissionAlwaysResult, PermissionEvent, PermissionResult } from './permission.types'
 
-import { toolLine } from './shared'
+import { toolLine, toolTarget } from './shared'
 
 export function permissionResult(allow: boolean, input: unknown): PermissionResult {
   return allow
@@ -34,6 +34,7 @@ export function fromControlRequest(event: Record<string, unknown>): PermissionEv
       requestId: event.request_id,
       toolName,
       line: toolLine(toolName, request.input),
+      detail: toolTarget(request.input),
       input: request.input,
     },
   ]

@@ -64,3 +64,62 @@ describe('shadcn holds the ruler, and we do not cut new notches', () => {
     expect(stray, '색은 에이전트 얼굴에만 있다').toEqual([])
   })
 })
+
+describe('the one colour that is not a face', () => {
+  it('gives the Claude mark its own token rather than a hex written in place', async () => {
+    const css = await readFile(join('src', 'app', 'styles', 'global.css'), 'utf8')
+    expect(css, 'Claude 의 공식 색은 이름을 가진다').toContain('--claude: #d97757')
+    expect(css).toContain('--color-claude: var(--claude)')
+  })
+
+  it('spends that token on the mark alone, and nowhere else', async () => {
+    const worn: string[] = []
+    for (const file of await ourFiles()) {
+      if (file.text.includes('text-claude') || file.text.includes('bg-claude')) worn.push(file.path)
+    }
+    expect(worn, '브랜드 색은 그 브랜드를 가리킬 때만 쓴다').toEqual([
+      join('src', 'widgets', 'usage-bar', 'ui', 'UsageBar', 'UsageBar.tsx'),
+    ])
+  })
+})
+
+describe('the ring that says where the keyboard is', () => {
+  async function shadcnFiles(): Promise<{ path: string; text: string }[]> {
+    const dir = join('src', 'shared', 'ui')
+    const names = (await readdir(dir)).filter((name) => name.endsWith('.tsx'))
+    return Promise.all(
+      names.map(async (name) => ({ path: name, text: await readFile(join(dir, name), 'utf8') })),
+    )
+  }
+
+  it('draws it two pixels thick, which is thin enough to sit close to a small control', async () => {
+    const stray: string[] = []
+    for (const file of await shadcnFiles()) {
+      for (const match of file.text.matchAll(/focus-visible:ring-\[(\d+)px\]/g)) {
+        stray.push(`${file.path}: ${match[0]}`)
+      }
+      for (const match of file.text.matchAll(/focus-visible:ring-(\d+)(?![\w/-])/g)) {
+        if (match[1] !== '2' && match[1] !== '0') stray.push(`${file.path}: ${match[0]}`)
+      }
+    }
+    expect(stray, '얇게 만들었으면 어디서나 얇아야 한다').toEqual([])
+  })
+
+  it('keeps it solid enough to clear the readable mark, since a thin ring cannot be faint too', async () => {
+    const stray: string[] = []
+    for (const file of await shadcnFiles()) {
+      for (const match of file.text.matchAll(/focus-visible:ring-ring\/(\d+)/g)) {
+        if (Number(match[1]) < 70) stray.push(`${file.path}: ${match[0]}`)
+      }
+    }
+    expect(stray, '50% 는 카드 위에서 2.18:1 이라 기준 미달이었다').toEqual([])
+  })
+
+  it('does not colour the border as well, which drew a second line around the first', async () => {
+    const stray: string[] = []
+    for (const file of await shadcnFiles()) {
+      if (file.text.includes('focus-visible:border-ring')) stray.push(file.path)
+    }
+    expect(stray).toEqual([])
+  })
+})

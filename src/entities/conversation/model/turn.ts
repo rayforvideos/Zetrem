@@ -23,3 +23,9 @@ export type Turn = {
   startedAtMs: number
   to?: string
 }
+
+export type Chore = {
+  readonly id: string
+  readonly line: string
+  readonly startedAtMs: number
+}

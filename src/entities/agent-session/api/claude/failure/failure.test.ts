@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { failureLine, retryLine } from './failure'
+import { failureLine, retryLine, stoppedLine } from './failure'
 
 describe('failureLine: saying why a turn stopped short', () => {
   it('says nothing for a turn that ended well', () => {
@@ -50,5 +50,50 @@ describe('retryLine: saying that it is trying again', () => {
 
   it('has words for a reason it does not know', () => {
     expect(retryLine(1, 3, 1000, 'something_new', null)).toContain('The request failed')
+  })
+})
+
+describe('stoppedLine: what to say when a turn ends badly', () => {
+  const REFUSED =
+    "There's an issue with the selected model (fable). It may not exist or you may not have access to it. Run --model to pick a different model."
+
+  function ended(over: Partial<Parameters<typeof stoppedLine>[0]> = {}) {
+    return stoppedLine({ subtype: 'success', isError: false, error: '', result: '', errors: null, ...over })
+  }
+
+  it('says nothing about a turn that went fine', () => {
+    expect(ended({ result: 'all done' })).toBeNull()
+  })
+
+  it('speaks up for a failure the CLI calls a success, which is how a bad model arrives', () => {
+    expect(ended({ isError: true, error: 'model_not_found', result: REFUSED })).not.toBeNull()
+  })
+
+  it('names the model your account cannot use, since that is the whole message', () => {
+    expect(ended({ isError: true, error: 'model_not_found', result: REFUSED })).toContain('fable')
+  })
+
+  it('points at Settings, not at a command line flag this window does not have', () => {
+    const said = ended({ isError: true, error: 'model_not_found', result: REFUSED })
+    expect(said).toContain('Settings')
+    expect(said).not.toContain('--model')
+  })
+
+  it('reads it as a model problem even when the CLI names no error kind', () => {
+    expect(ended({ isError: true, result: REFUSED })).toContain('not available on your account')
+  })
+
+  it('passes on any other failure in the CLI words, with the flag advice taken out', () => {
+    const said = ended({ isError: true, result: 'The request was refused. Run --model to pick a different model.' })
+    expect(said).toContain('The request was refused')
+    expect(said).not.toContain('--model')
+  })
+
+  it('still says something when a failure carries no words at all', () => {
+    expect(ended({ isError: true })).toBe('Stopped: something went wrong')
+  })
+
+  it('leaves the older error subtypes to the reason they already had', () => {
+    expect(ended({ subtype: 'error_max_turns', isError: true })).toContain('limit on how many turns')
   })
 })

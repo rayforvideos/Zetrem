@@ -197,3 +197,57 @@ describe('sessionStore: closing the right call when an id comes round again', ()
     expect(sessionStore.get()[0]!.stream).toHaveLength(0)
   })
 })
+
+describe('one call announced twice is one row, not two', () => {
+  it('fills in the argument the first announcement did not have yet', () => {
+    sessionStore.clear()
+    sessionStore.open(session('a'))
+    sessionStore.beginCall('a', { id: 'c1', line: 'Bash' })
+    sessionStore.beginCall('a', { id: 'c1', line: 'Bash npm test' })
+    const [only] = sessionStore.get()
+    expect(only?.stream).toHaveLength(1)
+    expect(only?.stream[0]?.line).toBe('Bash npm test')
+  })
+
+  it('opens a second row when the same id comes back after the first one closed', () => {
+    sessionStore.clear()
+    sessionStore.open(session('a'))
+    sessionStore.beginCall('a', { id: 'c1', line: 'Bash ls' })
+    sessionStore.endCall('a', 'c1', { failed: false, note: '2 lines' })
+    sessionStore.beginCall('a', { id: 'c1', line: 'Bash ls' })
+    expect(sessionStore.get()[0]?.stream).toHaveLength(2)
+  })
+
+  it('keeps the clock of the first announcement, since that is when the call began', () => {
+    sessionStore.clear()
+    sessionStore.open(session('a'))
+    sessionStore.beginCall('a', { id: 'c1', line: 'Bash' })
+    const began = sessionStore.get()[0]?.stream[0]?.startedAtMs
+    sessionStore.beginCall('a', { id: 'c1', line: 'Bash npm test' })
+    expect(sessionStore.get()[0]?.stream[0]?.startedAtMs).toBe(began)
+  })
+})
+
+describe('a row that only names the tool gives way when the real call arrives', () => {
+  it('replaces it rather than drawing the same call twice', () => {
+    sessionStore.clear()
+    sessionStore.open(session('a'))
+    sessionStore.beginCall('a', { id: 'p1', line: 'Bash' })
+    sessionStore.endCall('a', 'p1', { failed: false, note: '' })
+    sessionStore.beginCall('a', { id: 'toolu_1', line: 'Bash npm test' })
+    const stream = sessionStore.get()[0]?.stream ?? []
+    expect(stream).toHaveLength(1)
+    expect(stream[0]?.line).toBe('Bash npm test')
+    expect(stream[0]?.id).toBe('toolu_1')
+    expect(stream[0]?.endedAtMs).toBeNull()
+  })
+
+  it('leaves a row alone that already said what it did', () => {
+    sessionStore.clear()
+    sessionStore.open(session('a'))
+    sessionStore.beginCall('a', { id: 'c1', line: 'Bash ls' })
+    sessionStore.endCall('a', 'c1', { failed: false, note: '2 lines' })
+    sessionStore.beginCall('a', { id: 'c2', line: 'Bash npm test' })
+    expect(sessionStore.get()[0]?.stream).toHaveLength(2)
+  })
+})

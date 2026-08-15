@@ -6,6 +6,7 @@ export type PermissionAsk = {
   requestId: string
   toolName: string
   line: string
+  detail: string
 }
 
 export type AgentSession = {

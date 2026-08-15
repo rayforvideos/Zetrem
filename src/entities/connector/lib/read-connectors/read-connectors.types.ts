@@ -1,4 +1,4 @@
-export type ConnectorState = 'connected' | 'needs-auth' | 'failed' | 'unknown'
+export type ConnectorState = 'connected' | 'needs-auth' | 'unapproved' | 'failed' | 'unknown'
 
 export type Connector = {
   name: string

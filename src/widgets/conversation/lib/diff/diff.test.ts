@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { lineDiff } from './diff'
+import { lineDiff, linesOf } from './diff'
 
 describe('lineDiff: seeing the two halves of an edit side by side', () => {
   it('marks only the lines that changed', () => {
@@ -64,5 +64,34 @@ describe('lineDiff: seeing the two halves of an edit side by side', () => {
       { kind: 'remove', text: 'a' },
       { kind: 'remove', text: 'b' },
     ])
+  })
+})
+
+describe('a file that ends in a newline has no ghost last line', () => {
+  it('counts four lines for a four line file, not five', () => {
+    expect(linesOf('alpha\nbeta\ngamma\ndelta\n')).toEqual(['alpha', 'beta', 'gamma', 'delta'])
+  })
+
+  it('keeps a last line that was written without a newline', () => {
+    expect(linesOf('alpha\nbeta')).toEqual(['alpha', 'beta'])
+  })
+
+  it('keeps a blank line that was written on purpose in the middle', () => {
+    expect(linesOf('alpha\n\nbeta\n')).toEqual(['alpha', '', 'beta'])
+  })
+
+  it('has no lines at all in an empty file', () => {
+    expect(linesOf('')).toEqual([])
+  })
+
+  it('draws a written file as one added row per line, with none left over', () => {
+    const lines = lineDiff('', 'alpha\nbeta\ngamma\ndelta\n')
+    expect(lines).toHaveLength(4)
+    expect(lines.every((line) => line.kind === 'add')).toBe(true)
+  })
+
+  it('draws a deleted line as one removed row, not two', () => {
+    const lines = lineDiff('gamma\n', '')
+    expect(lines).toEqual([{ kind: 'remove', text: 'gamma' }])
   })
 })

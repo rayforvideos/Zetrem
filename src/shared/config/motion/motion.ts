@@ -1,4 +1,7 @@
 export const MOTION = {
+  quickMs: 160,
+  baseMs: 240,
+  moveMs: 400,
   fanMs: 500,
   mergeMs: 400,
   staggerMs: 60,
@@ -12,6 +15,7 @@ export const MOTION = {
 
 export const LAYOUT = {
   outerMarginPx: 48,
+  topMarginPx: 80,
   gapPx: 16,
   soloInsetRatio: 0,
 } as const

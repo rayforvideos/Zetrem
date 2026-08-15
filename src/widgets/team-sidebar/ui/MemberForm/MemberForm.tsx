@@ -22,6 +22,7 @@ import { Textarea } from '@/shared/ui/textarea'
 import { characterFor, draftFrom, initialCharacter, toggled, toolSummary } from '../../lib/member-draft/member-draft'
 import { CharacterPicker } from '../CharacterPicker/CharacterPicker'
 import { ToolPicker } from '../ToolPicker/ToolPicker'
+import { useScrollState } from '@/shared/lib/scroll-state/use-scroll-state'
 
 const INHERIT = 'inherit'
 const AVATAR = 32
@@ -34,6 +35,7 @@ type MemberFormProps = {
 }
 
 export function MemberForm({ initial, knownTools, onSubmit, onCancel }: MemberFormProps) {
+  const [side] = useScrollState<HTMLElement>()
   const [name, setName] = useState(initial?.name ?? '')
   const [settledName, setSettledName] = useState(initial?.name ?? '')
   const [description, setDescription] = useState(initial?.description ?? '')
@@ -97,7 +99,10 @@ export function MemberForm({ initial, knownTools, onSubmit, onCancel }: MemberFo
           </DialogHeader>
 
           <div className="flex min-h-0 flex-1">
-            <aside className="zt-scroll flex w-[264px] flex-none flex-col gap-4 overflow-y-auto border-r border-border px-5 py-5">
+            <aside
+              ref={side}
+              className="zt-scroll zt-fade-y flex w-[264px] flex-none flex-col gap-4 overflow-y-auto border-r border-border px-5 py-5"
+            >
               <Row label="Name" htmlFor="member-name">
                 <Input
                   id="member-name"

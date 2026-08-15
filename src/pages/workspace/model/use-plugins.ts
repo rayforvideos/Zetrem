@@ -1,5 +1,12 @@
-import { useEffect, useState } from 'react'
-import type { Catalog, Marketplace, PluginVerb } from '@/entities/plugin'
+import { useEffect, useRef, useState } from 'react'
+import type {
+  AvailablePlugin,
+  Catalog,
+  Marketplace,
+  PluginScope,
+  PluginVerb,
+} from '@/entities/plugin'
+import { outcomeLine, useAsk } from '@/shared/lib/ask/ask'
 
 type Shelf = {
   open: boolean
@@ -8,9 +15,11 @@ type Shelf = {
   catalog: Catalog
   marketplaces: Marketplace[]
   loading: boolean
+  browsing: boolean
+  browse(again?: boolean): void
   busy: string | null
   note: string | null
-  act(verb: PluginVerb, target: string): void
+  act(verb: PluginVerb, target: string, scope?: PluginScope): void
   reload(): void
 }
 
@@ -21,51 +30,68 @@ export function usePlugins(wanted: boolean): Shelf {
   const [catalog, setCatalog] = useState<Catalog>(EMPTY)
   const [marketplaces, setMarketplaces] = useState<Marketplace[]>([])
   const [loading, setLoading] = useState(false)
-  const [busy, setBusy] = useState<string | null>(null)
-  const [note, setNote] = useState<string | null>(null)
+  const [available, setAvailable] = useState<AvailablePlugin[]>([])
+  const [browsing, setBrowsing] = useState(false)
+  const asked = useRef(false)
+  const { busy, note, say, ask } = useAsk()
 
   function reload(): void {
     setLoading(true)
     void Promise.all([
-      window.desk.pluginCatalog().catch(() => EMPTY),
-      window.desk.marketplaces().catch(() => []),
+      ask('catalog', 'Could not read the plugin shelf', () => window.desk.pluginCatalog()),
+      ask('marketplaces', 'Could not read your marketplaces', () => window.desk.marketplaces()),
     ])
       .then(([found, markets]) => {
-        setCatalog(found)
-        setMarketplaces(markets)
+        setCatalog(found ?? EMPTY)
+        setMarketplaces(markets ?? [])
       })
       .finally(() => setLoading(false))
+  }
+
+  function browse(again = false): void {
+    if (asked.current && !again) return
+    asked.current = true
+    setBrowsing(true)
+    void ask('available', 'Could not read what is available', () => window.desk.pluginAvailable())
+      .then((found) => setAvailable(found?.available ?? []))
+      .finally(() => setBrowsing(false))
   }
 
   useEffect(() => {
     if (open || wanted) reload()
   }, [open, wanted])
 
-  function act(verb: PluginVerb, target: string): void {
-    setBusy(target)
-    setNote(null)
-    void window.desk
-      .pluginAct(verb, target)
-      .then((result) => {
-        setNote(result.ok ? doneLine(verb, target) : lastLine(result.out))
+  function act(verb: PluginVerb, target: string, scope?: PluginScope): void {
+    void ask(target, `Could not ${said(verb)} ${target}`, () =>
+      window.desk.pluginAct(verb, target, scope),
+    ).then((result) => {
+      if (result === null) return
+      if (result.ok) {
+        asked.current = false
         reload()
-      })
-      .catch((cause: unknown) => setNote(cause instanceof Error ? cause.message : String(cause)))
-      .finally(() => setBusy(null))
+      }
+      say(outcomeLine(result, doneLine(verb, target)))
+    })
   }
 
   return {
     open,
     show: () => setOpen(true),
     hide: () => setOpen(false),
-    catalog,
+    catalog: { ...catalog, available },
     marketplaces,
     loading,
+    browsing,
+    browse,
     busy,
     note,
     act,
     reload,
   }
+}
+
+function said(verb: PluginVerb): string {
+  return verb.replace('market-', '')
 }
 
 function doneLine(verb: PluginVerb, target: string): string {
@@ -87,12 +113,4 @@ function doneLine(verb: PluginVerb, target: string): string {
     case 'market-update':
       return `${target} refreshed`
   }
-}
-
-function lastLine(out: string): string {
-  const lines = out
-    .split('\n')
-    .map((line) => line.trim())
-    .filter((line) => line.length > 0)
-  return lines.at(-1) ?? 'That did not work'
 }

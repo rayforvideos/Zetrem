@@ -22,7 +22,7 @@ export function SetupPane({
   return (
     <div className="relative z-[3] flex h-full min-h-0 flex-col">
       <div className="zt-scroll min-h-0 flex-1 overflow-y-auto">
-        <div className="mx-auto flex min-h-full w-full max-w-[560px] flex-col gap-8 py-8 [&>*:first-child]:mt-auto [&>*:last-child]:mb-auto">
+        <div className="mx-auto flex min-h-full w-full max-w-[560px] flex-col gap-8 pt-8 pb-20 [&>*:first-child]:mt-auto [&>*:last-child]:mb-auto">
           <div className="flex flex-col gap-3">
             <Wordmark width={WORDMARK_SIZE.setup} />
             <p className="max-w-[380px] text-sm leading-relaxed break-keep text-muted-foreground">
@@ -65,7 +65,7 @@ export function SetupPane({
         </div>
       </div>
 
-      <div data-actions className="flex-none border-t border-border">
+      <div data-actions className="zt-veil-up flex-none bg-background">
         <div className="mx-auto flex w-full max-w-[560px] flex-wrap items-center justify-end gap-3 py-4">
           {!actions.canStart && (
             <span className="mr-auto text-sm text-muted-foreground">

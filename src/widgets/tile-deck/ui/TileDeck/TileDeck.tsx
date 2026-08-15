@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import type { CSSProperties, ReactNode } from 'react'
 import type { AgentSession } from '@/entities/agent-session'
 import { Surface } from '@/entities/surface'
@@ -46,16 +46,24 @@ export function TileDeck({
   const gridSessions = findSessions(visibleIds(state), sessions)
   const placed = observatoryLayout(gridSessions.length, viewport, sidebarW)
   const terminalRect = atGrid ? placed.terminal : solo
+  const seats = useRef(new Map<string, Rect>())
+
+  const standing: PlacedTile[] = gridSessions.map((session, index) => ({
+    session,
+    rect: atGrid ? (placed.sessions[index] ?? solo) : solo,
+    delayMs: staggerDelay(index + 1),
+    closing: false,
+  }))
+
+  useEffect(() => {
+    for (const tile of standing) seats.current.set(tile.session.id, tile.rect)
+  })
+
   const tiles: PlacedTile[] = [
-    ...gridSessions.map((session, index) => ({
-      session,
-      rect: atGrid ? (placed.sessions[index] ?? solo) : solo,
-      delayMs: staggerDelay(index + 1),
-      closing: false,
-    })),
+    ...standing,
     ...findSessions(closingIds(state), sessions).map((session) => ({
       session,
-      rect: solo,
+      rect: seats.current.get(session.id) ?? solo,
       delayMs: 0,
       closing: true,
     })),

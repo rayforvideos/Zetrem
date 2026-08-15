@@ -4,6 +4,7 @@ import type { StatusState } from '@/entities/agent-session'
 import { StatusDrawer } from './StatusDrawer'
 
 const full: StatusState = {
+  usage: 'read',
   session: {
     id: 'f77f771b-4d45-4551-b887-202b62a6edc5',
     cwd: '/Users/sam/workspace/zetrem',
@@ -50,7 +51,8 @@ describe('StatusDrawer', () => {
   it('lists every MCP server and marks the ones needing sign-in', () => {
     const html = renderToStaticMarkup(<StatusDrawer statusState={full} onUpdate={() => {}} updating={false} />)
     expect(html).toContain('playwright')
-    expect(html).toContain('claude.ai Notion')
+    expect(html, '제목이 이미 아는 접두사는 빼고 이름만 보인다').toContain('>Notion<')
+    expect(html).not.toContain('claude.ai Notion')
     expect(html).toContain('Needs auth')
   })
 

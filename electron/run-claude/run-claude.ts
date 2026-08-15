@@ -3,11 +3,12 @@ import type { PluginRun } from '@/entities/plugin'
 import { agentEnv } from '@/shared/lib/shell-env/shell-env'
 import { claudeBin, loginPath } from '../login-path/login-path'
 
-export function runClaude(args: string[], timeoutMs: number): Promise<PluginRun> {
+export function runClaude(args: string[], timeoutMs: number, cwd?: string): Promise<PluginRun> {
   return new Promise((resolve) => {
     void (async () => {
       const child = spawn(await claudeBin(), args, {
         env: agentEnv(process.env, await loginPath()),
+        ...(cwd === undefined ? {} : { cwd }),
       })
       let out = ''
       let settled = false

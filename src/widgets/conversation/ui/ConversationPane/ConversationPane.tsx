@@ -1,19 +1,22 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef } from 'react'
 import type { ReactNode } from 'react'
 import type { PermissionAsk, SessionStatus, StatusState } from '@/entities/agent-session'
+import type { Chore } from '@/entities/conversation'
 import { personaOf } from '@/entities/agent-session'
 import { AgentSprite } from '@/entities/agent-session/ui/AgentSprite/AgentSprite'
 import type { Turn } from '@/entities/conversation'
 import { cn } from '@/shared/lib/cn'
 import { useScrollState } from '@/shared/lib/scroll-state/use-scroll-state'
+import { shouldFollow } from '../../lib/follow/follow'
+import { askedAtMs } from '../../lib/working/working'
 import { Wordmark } from '@/shared/graphics/wordmark/wordmark'
-import { StatusBar, StatusDrawer } from '@/widgets/status-bar'
 import { Markdown } from '../Markdown/Markdown'
 import { Approval } from './Approval'
 import { Greeting } from './Greeting'
 import { Thinking } from './Thinking'
 import { ToolRun } from '../ToolRun/ToolRun'
 import { Working } from './Working'
+import { Chores } from './Chores'
 
 const BUBBLE = 'rounded-2xl rounded-br-md bg-muted px-4 py-2.5'
 
@@ -22,10 +25,9 @@ type ConversationPaneProps = {
   status: SessionStatus
   statusState: StatusState
   permission: PermissionAsk | null
+  chores: Chore[]
   nowMs: number
   onDecide(allow: boolean, always?: boolean): void
-  onUpdateCli(): void
-  updatingCli: boolean
   sidebar: ReactNode
   report: ReactNode
   composer: ReactNode
@@ -36,37 +38,27 @@ export function ConversationPane({
   status,
   statusState,
   permission,
+  chores,
   nowMs,
   onDecide,
-  onUpdateCli,
-  updatingCli,
   sidebar,
   report,
   composer,
 }: ConversationPaneProps) {
-  const [drawerOpen, setDrawerOpen] = useState(false)
   const [attachScroll, scrollRef] = useScrollState<HTMLDivElement>()
+  const seen = useRef(0)
   const busy = status === 'working'
   const lastIndex = turns.length - 1
 
   useEffect(() => {
     const el = scrollRef.current
-    if (el) el.scrollTop = el.scrollHeight
+    const before = seen.current
+    seen.current = turns.length
+    if (el === null) return
+    if (!shouldFollow(before, turns.length, el.hasAttribute('data-at-end'))) return
+    el.scrollTop = el.scrollHeight
   }, [turns, permission])
 
-
-  const statusBar = (
-    <>
-      {drawerOpen && (
-        <StatusDrawer statusState={statusState} onUpdate={onUpdateCli} updating={updatingCli} />
-      )}
-      <StatusBar
-        status={statusState}
-        open={drawerOpen}
-        onToggle={() => setDrawerOpen((was) => !was)}
-      />
-    </>
-  )
 
   if (turns.length === 0 && !permission) {
     return (
@@ -92,7 +84,7 @@ export function ConversationPane({
             <div
               ref={attachScroll}
               data-selectable
-              className="zt-scroll zt-fade-out flex min-h-0 flex-1 flex-col gap-6 overflow-x-hidden overflow-y-auto"
+              className="zt-scroll zt-fade-out flex min-h-0 flex-1 flex-col gap-6 overflow-x-hidden overflow-y-auto pb-3"
             >
               {turns.map((turn, index) => {
                 const live = busy && index === lastIndex && turn.role === 'assistant'
@@ -151,11 +143,12 @@ export function ConversationPane({
                 )
               })}
             </div>
+            <Chores chores={chores} nowMs={nowMs} />
             {busy && (
               <Working
                 turn={turns.at(-1)?.role === 'assistant' ? (turns.at(-1) ?? null) : null}
                 nowMs={nowMs}
-                startedAtMs={turns.at(-1)?.startedAtMs ?? nowMs}
+                startedAtMs={askedAtMs(turns, nowMs)}
                 tokensOut={statusState.cost.tokens.out}
                 agent={statusState.session?.model ?? 'orchestrator'}
               />
@@ -164,8 +157,6 @@ export function ConversationPane({
         )}
 
         {permission ? <Approval ask={permission} onDecide={onDecide} /> : composer}
-
-        {statusBar}
       </div>
     </div>
   )

@@ -1,6 +1,6 @@
 import type { AvailablePlugin, Catalog, InstalledPlugin, Marketplace, PluginScope } from './catalog.types'
 
-const SCOPES: PluginScope[] = ['user', 'project']
+const SCOPES: PluginScope[] = ['user', 'project', 'managed']
 
 export function splitId(id: string): { name: string; marketplace: string } {
   const at = id.lastIndexOf('@')
@@ -9,6 +9,9 @@ export function splitId(id: string): { name: string; marketplace: string } {
 }
 
 export function readCatalog(raw: unknown): Catalog {
+  if (Array.isArray(raw)) {
+    return { installed: list(raw).map(installed).filter(known), available: [] }
+  }
   const source = typeof raw === 'object' && raw !== null ? (raw as Record<string, unknown>) : {}
   return {
     installed: list(source.installed).map(installed).filter(known),
@@ -34,6 +37,7 @@ function installed(entry: Record<string, unknown>): InstalledPlugin {
     ...splitId(id),
     version: version.length > 0 && version !== 'unknown' ? version : null,
     scope: SCOPES.find((scope) => scope === entry.scope) ?? 'unknown',
+    projectPath: text(entry.projectPath).length > 0 ? text(entry.projectPath) : null,
     enabled: entry.enabled !== false,
   }
 }

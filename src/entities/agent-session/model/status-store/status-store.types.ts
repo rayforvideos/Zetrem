@@ -8,7 +8,10 @@ export type UpdateInfo = {
   managedBy: string | null
 }
 
+export type UsageRead = 'unread' | 'read' | 'unreadable'
+
 export type StatusState = {
+  usage: UsageRead
   session: SessionIdentity | null
   context: { used: number; window: number | null }
   cost: {

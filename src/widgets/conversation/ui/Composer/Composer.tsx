@@ -1,7 +1,7 @@
 import { useRef, useState } from 'react'
 import type { FormEvent, KeyboardEvent } from 'react'
 import { ArrowUp, Shield, Square, X } from 'lucide-react'
-import { MODELS, PERMISSION_MODES } from '@/entities/agent-session'
+import { MODELS, PERMISSION_MODES, modelsWith } from '@/entities/agent-session'
 import type { ModelChoice, PermissionMode } from '@/entities/agent-session'
 import { modifierKey } from '@/shared/lib/platform/platform'
 import { Button } from '@/shared/ui/button'
@@ -18,6 +18,7 @@ export function Composer({
   addressee,
   permissionMode,
   model,
+  refusedModels,
   onSend,
   onStop,
   onClearAddressee,
@@ -79,6 +80,7 @@ export function Composer({
             if (endedComposing(keying.current)) window.setTimeout(submit, 0)
           }}
           onKeyDown={handleKey}
+          aria-label={addressee !== null ? `Message for ${addressee}` : 'Message your team'}
           placeholder={
             addressee !== null
               ? `Task for ${addressee}`
@@ -99,7 +101,7 @@ export function Composer({
             label="Permissions"
           />
           <ChoicePicker
-            options={MODELS}
+            options={modelsWith(MODELS, refusedModels)}
             selected={model}
             onSelect={(id) => onModel(id as ModelChoice)}
             label="Model"

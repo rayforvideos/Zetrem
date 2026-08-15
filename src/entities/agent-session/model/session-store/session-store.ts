@@ -1,4 +1,5 @@
 import { STREAM_BUFFER, TRANSCRIPT_BUFFER } from '../session'
+import { absorbs, mergedLine } from '../../lib/call-line/call-line'
 import type { AgentSession, Call, TranscriptEntry } from '../session.types'
 
 type Listener = () => void
@@ -67,6 +68,32 @@ export const sessionStore = {
   beginCall(id: string, call: { id: string; line: string }): void {
     const target = sessions.find((s) => s.id === id)
     if (!target) return
+    const open = target.stream.findLastIndex(
+      (already) => already.id === call.id && already.endedAtMs === null,
+    )
+    if (open !== -1) {
+      const held = target.stream[open]!
+      const again = target.stream.with(open, {
+        ...held,
+        line: mergedLine(held.line, call.line),
+      })
+      emit(sessions.map((s) => (s.id === id ? { ...s, stream: again, lastSeenAtMs: Date.now() } : s)))
+      return
+    }
+    const last = target.stream.length - 1
+    const held = target.stream[last]
+    if (held !== undefined && absorbs(held.line, call.line)) {
+      const taken = target.stream.with(last, {
+        ...held,
+        id: call.id,
+        line: call.line,
+        endedAtMs: null,
+        failed: false,
+        note: '',
+      })
+      emit(sessions.map((s) => (s.id === id ? { ...s, stream: taken, lastSeenAtMs: Date.now() } : s)))
+      return
+    }
     const opened: Call = {
       ...call,
       startedAtMs: Date.now(),

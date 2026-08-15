@@ -145,6 +145,7 @@ function MemberRow({
   const state = STATE[member.state] ?? member.note
   const mute = sessionKnown && !member.callable
   const active = member.state !== 'idle'
+  const ran = member.sessionId !== null && !active
   const why = !member.loaded
     ? `${ORIGIN[member.origin]}. Joins from the next session.`
     : 'Not available this session. Unlock it in Settings.'
@@ -171,7 +172,16 @@ function MemberRow({
           size={avatar}
         />
         <span className="flex min-w-0 flex-col gap-0.5 text-left">
-          <span className="truncate text-sm leading-tight">{member.name}</span>
+          <span className="flex min-w-0 items-center gap-1.5 text-sm leading-tight">
+            <span className="truncate">{member.name}</span>
+            {ran && (
+              <span
+                data-ran
+                aria-label="Has a run you can read"
+                className="size-1 flex-none rounded-full bg-muted-foreground"
+              />
+            )}
+          </span>
           <span className="truncate text-xs leading-tight text-muted-foreground">
             {state ?? member.description ?? ''}
           </span>

@@ -16,9 +16,10 @@ contextBridge.exposeInMainWorld('desk', {
   writeSettings: (next: unknown): Promise<unknown> => ipcRenderer.invoke('settings:write', next),
   pickKnowledge: (): Promise<unknown> => ipcRenderer.invoke('agents:pickKnowledge'),
   pluginCatalog: (): Promise<unknown> => ipcRenderer.invoke('plugins:catalog'),
+  pluginAvailable: (): Promise<unknown> => ipcRenderer.invoke('plugins:available'),
   marketplaces: (): Promise<unknown> => ipcRenderer.invoke('plugins:marketplaces'),
-  pluginAct: (verb: string, target: string): Promise<unknown> =>
-    ipcRenderer.invoke('plugins:act', verb, target),
+  pluginAct: (verb: string, target: string, scope?: string): Promise<unknown> =>
+    ipcRenderer.invoke('plugins:act', verb, target, scope),
   listChats: (project: string): Promise<unknown> => ipcRenderer.invoke('transcript:list', project),
   readTranscript: (project: string, id: string): Promise<unknown> =>
     ipcRenderer.invoke('transcript:read', project, id),
@@ -43,6 +44,10 @@ contextBridge.exposeInMainWorld('desk', {
     return () => ipcRenderer.removeListener('agent:event', handler)
   },
   probeSession: (config: unknown): Promise<unknown> => ipcRenderer.invoke('session:probe', config),
+  keptUsage: (): Promise<unknown> => ipcRenderer.invoke('usage:kept'),
+  addConnector: (draft: unknown, taken: unknown): Promise<unknown> =>
+    ipcRenderer.invoke('connectors:add', draft, taken),
+  importConnectors: (): Promise<unknown> => ipcRenderer.invoke('connectors:import'),
   listConnectors: (): Promise<unknown> => ipcRenderer.invoke('connectors:list'),
   connectorAct: (verb: string, target: string): Promise<unknown> =>
     ipcRenderer.invoke('connectors:act', verb, target),

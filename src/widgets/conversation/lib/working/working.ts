@@ -1,16 +1,28 @@
 import type { Turn } from '@/entities/conversation'
 import { toolShape } from '@/shared/lib/tool-shape/tool-shape'
-import { verbOf } from '@/shared/lib/tool-verb/tool-verb'
+import { targetOf, verbOf } from '@/shared/lib/tool-verb/tool-verb'
+import type { Doing } from './working.types'
 
-export function doingOf(turn: Turn | null): string {
-  if (turn === null) return 'Starting'
+export function doingOf(turn: Turn | null): Doing {
+  if (turn === null) return { verb: 'Starting', target: '', shape: null }
   const last = turn.tools.at(-1)
   if (last !== undefined && last.result === null) {
-    return verbOf(toolShape(last.line.split(' ')[0] ?? '', last.input))
+    const shape = toolShape(last.line.split(' ')[0] ?? '', last.input)
+    return { verb: verbOf(shape), target: targetOf(shape), shape }
   }
-  if (turn.draft.length > 0 || turn.text.length > 0) return 'Writing'
-  if (turn.thinking.length > 0) return 'Thinking'
-  return 'Working'
+  if (turn.draft.length > 0 || turn.text.length > 0) {
+    return { verb: 'Writing', target: '', shape: null }
+  }
+  if (turn.thinking.length > 0) return { verb: 'Thinking', target: '', shape: null }
+  return { verb: 'Working', target: '', shape: null }
+}
+
+export function askedAtMs(turns: Turn[], fallbackMs: number): number {
+  for (let at = turns.length - 1; at >= 0; at -= 1) {
+    const turn = turns[at]
+    if (turn !== undefined && turn.role === 'user') return turn.startedAtMs
+  }
+  return turns.at(-1)?.startedAtMs ?? fallbackMs
 }
 
 export function elapsedLabel(ms: number): string {

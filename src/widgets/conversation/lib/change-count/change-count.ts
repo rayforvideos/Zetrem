@@ -1,5 +1,5 @@
 import type { ToolActivity } from '@/entities/conversation'
-import { lineDiff } from '../diff/diff'
+import { lineDiff, linesOf } from '../diff/diff'
 import type { ChangeCount } from './change-count.types'
 
 function inputOf(tool: ToolActivity): Record<string, unknown> {
@@ -26,7 +26,7 @@ export function changeCount(tool: ToolActivity): ChangeCount | null {
       return tally(input.old_string, input.new_string)
     case 'Write': {
       if (typeof input.content !== 'string') return null
-      const written = input.content === '' ? 0 : input.content.split('\n').length
+      const written = linesOf(input.content).length
       return written === 0 ? null : { added: written, removed: 0 }
     }
     case 'MultiEdit': {

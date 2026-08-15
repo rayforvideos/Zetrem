@@ -7,6 +7,7 @@ import type { ModelChoice, PermissionMode } from '../run-config/run-config.types
 export const DEFAULT_SETTINGS: Settings = {
   permissionMode: 'ask',
   model: 'default',
+  refusedModels: [],
   setupDone: false,
   knownTools: [],
   knownAgents: [],
@@ -38,6 +39,9 @@ export function readSettings(saved: unknown): Settings {
     model: MODEL_IDS.includes(source.model as ModelChoice)
       ? (source.model as ModelChoice)
       : DEFAULT_SETTINGS.model,
+    refusedModels: names(source.refusedModels, []).filter((one): one is ModelChoice =>
+      MODEL_IDS.includes(one as ModelChoice),
+    ),
     setupDone: source.setupDone === true,
     knownTools: names(source.knownTools, DEFAULT_SETTINGS.knownTools),
     knownAgents: names(source.knownAgents, DEFAULT_SETTINGS.knownAgents),

@@ -1,6 +1,16 @@
 import { useState } from 'react'
-import { Plus, RotateCw, Search, Trash2 } from 'lucide-react'
-import type { AvailablePlugin, Catalog, Marketplace, PluginVerb } from '@/entities/plugin'
+import { useScrollState } from '@/shared/lib/scroll-state/use-scroll-state'
+import { Blocks, Building2, FolderClosed, Plus, RotateCw, Search, Trash2, User } from 'lucide-react'
+import { ClaudeMark } from '@/shared/graphics/ClaudeMark/ClaudeMark'
+import { appliesHere, browsable, groupsOf, removableHere, switchableHere } from '@/entities/plugin'
+import type { PluginGroupKey } from '@/entities/plugin'
+import type {
+  AvailablePlugin,
+  Catalog,
+  Marketplace,
+  PluginScope,
+  PluginVerb,
+} from '@/entities/plugin'
 import { cn } from '@/shared/lib/cn'
 import { Button } from '@/shared/ui/button'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/shared/ui/dialog'
@@ -8,11 +18,21 @@ import { Input } from '@/shared/ui/input'
 import { Spinner } from '@/shared/ui/spinner'
 import { Switch } from '@/shared/ui/switch'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/shared/ui/tabs'
-import type { Connector, ConnectorState, ConnectorVerb } from '@/entities/connector'
+import { canSignIn, connectorGroupsOf, removableConnector, shortName } from '@/entities/connector'
+import type {
+  Connector,
+  ConnectorOrigin,
+  ConnectorState,
+  ConnectorVerb,
+  NewConnector,
+} from '@/entities/connector'
+import { ConnectorMark } from '../ConnectorMark/ConnectorMark'
+import { AddConnector } from '../AddConnector/AddConnector'
 
 const CONNECTOR_STATE: Record<ConnectorState, string> = {
   connected: 'Connected',
   'needs-auth': 'Needs signing in',
+  unapproved: 'Waiting for your approval in the CLI',
   failed: 'Could not connect',
   unknown: 'Unknown',
 }
@@ -20,35 +40,50 @@ const CONNECTOR_STATE: Record<ConnectorState, string> = {
 type PluginShelfProps = {
   connectors: Connector[]
   onConnector(verb: ConnectorVerb, target: string): void
+  onAddConnector(draft: NewConnector): Promise<boolean>
+  onImportConnectors(): void
+  adding: boolean
   catalog: Catalog
   marketplaces: Marketplace[]
   loading: boolean
+  browsing: boolean
+  onTab(value: string): void
   busy: string | null
-  note: string | null
-  onAct(verb: PluginVerb, target: string): void
+  onAct(verb: PluginVerb, target: string, scope?: PluginScope): void
   onReload(): void
+  project: string | null
   onClose(): void
 }
-
-const HITS = 20
 
 export function PluginShelf({
   connectors,
   onConnector,
+  onAddConnector,
+  onImportConnectors,
+  adding,
   catalog,
   marketplaces,
   loading,
+  browsing,
+  onTab,
   busy,
-  note,
   onAct,
   onReload,
+  project,
   onClose,
 }: PluginShelfProps) {
+  const here = catalog.installed.filter((plugin) =>
+    appliesHere(plugin.scope, plugin.projectPath, project),
+  )
+  const [body] = useScrollState<HTMLDivElement>()
+  const groups = groupsOf(here)
+  const wires = connectorGroupsOf(connectors)
+
   return (
     <Dialog open onOpenChange={(next) => !next && onClose()}>
       <DialogContent
         showCloseButton={false}
-        className="flex max-h-[86vh] flex-col gap-0 overflow-hidden p-0 sm:max-w-2xl"
+        className="flex h-[min(86vh,720px)] flex-col gap-0 overflow-hidden p-0 sm:max-w-2xl"
       >
         <DialogHeader className="flex-none border-b border-border px-6 py-4 text-left">
           <DialogTitle className="text-base">What the session brings</DialogTitle>
@@ -57,37 +92,66 @@ export function PluginShelf({
           </DialogDescription>
         </DialogHeader>
 
-        <Tabs defaultValue="installed" className="flex min-h-0 flex-1 flex-col gap-0">
+        <Tabs
+          defaultValue="installed"
+          onValueChange={onTab}
+          className="flex min-h-0 flex-1 flex-col gap-0"
+        >
           <TabsList className="mx-6 mt-4 w-fit">
-            <TabsTrigger value="installed">Installed · {catalog.installed.length}</TabsTrigger>
+            <TabsTrigger value="installed">Installed · {here.length}</TabsTrigger>
             <TabsTrigger value="browse">Browse</TabsTrigger>
             <TabsTrigger value="sources">Sources · {marketplaces.length}</TabsTrigger>
             <TabsTrigger value="connectors">Connectors · {connectors.length}</TabsTrigger>
           </TabsList>
 
-          <div className="zt-scroll min-h-0 flex-1 overflow-y-auto px-6 py-4">
-            <TabsContent value="installed" className="flex flex-col gap-1">
-              {catalog.installed.length === 0 && <Quiet>Nothing installed yet.</Quiet>}
-              {catalog.installed.map((plugin) => (
+          <div ref={body} className="zt-scroll zt-fade-y min-h-0 flex-1 overflow-y-auto px-4 py-4">
+            <TabsContent value="installed" className="flex flex-col gap-5">
+              {here.length === 0 && <Quiet>Nothing installed yet.</Quiet>}
+              {groups.map((group) => (
+                <section key={group.key} className="flex flex-col gap-1.5">
+                  {group.titled && (
+                    <GroupName kind={group.key} title={group.title} note={group.note} />
+                  )}
+                  <div className="-mx-2 flex flex-col gap-0.5 rounded-xl bg-card/50 px-2 py-1.5">
+                  {group.plugins.map((plugin) => (
                 <Row
-                  key={plugin.id}
+                  key={`${plugin.id}:${plugin.scope}`}
                   title={plugin.name}
                   note={[plugin.marketplace, plugin.version].filter(Boolean).join(' · ')}
                   busy={busy === plugin.id}
-                  dim={!plugin.enabled}
+                  dim={!plugin.enabled && plugin.scope !== 'managed'}
                 >
-                  <Quietly label="Update" onClick={() => onAct('update', plugin.id)} />
-                  <Quietly
-                    label="Remove"
-                    icon={<Trash2 />}
-                    onClick={() => onAct('uninstall', plugin.id)}
-                  />
-                  <Switch
-                    checked={plugin.enabled}
-                    aria-label={plugin.name}
-                    onCheckedChange={(on) => onAct(on ? 'enable' : 'disable', plugin.id)}
-                  />
+                  <Slot width="w-[58px]">
+                    <Quietly
+                      label="Update"
+                      onClick={() => onAct('update', plugin.id, plugin.scope)}
+                    />
+                  </Slot>
+                  <Slot width="w-9">
+                    {removableHere(plugin.scope, plugin.projectPath, project) && (
+                      <Quietly
+                        label="Remove"
+                        icon={<Trash2 />}
+                        onClick={() => onAct('uninstall', plugin.id, plugin.scope)}
+                      />
+                    )}
+                  </Slot>
+                  <Slot width="w-8">
+                    {switchableHere(plugin.scope, plugin.projectPath, project) && (
+                      <Switch
+                        checked={plugin.enabled}
+                        aria-label={plugin.name}
+                        className="zt-hit-around"
+                        onCheckedChange={(on) =>
+                          onAct(on ? 'enable' : 'disable', plugin.id, plugin.scope)
+                        }
+                      />
+                    )}
+                  </Slot>
                 </Row>
+                  ))}
+                  </div>
+                </section>
               ))}
             </TabsContent>
 
@@ -96,7 +160,7 @@ export function PluginShelf({
                 available={catalog.available}
                 held={new Set(catalog.installed.map((plugin) => plugin.id))}
                 busy={busy}
-                loading={loading}
+                loading={browsing}
                 onInstall={(id) => onAct('install', id)}
               />
             </TabsContent>
@@ -120,39 +184,60 @@ export function PluginShelf({
               <AddSource onAdd={(source) => onAct('market-add', source)} />
             </TabsContent>
 
-            <TabsContent value="connectors" className="flex flex-col gap-1">
+            <TabsContent value="connectors" className="flex flex-col gap-5">
               {connectors.length === 0 && (
-                <p className="px-1 py-2 text-xs text-muted-foreground">
-                  No connectors yet. Add one with claude mcp add, and it shows up here.
+                <p className="px-2 py-2 text-xs text-muted-foreground">
+                  No connectors yet. Add one below, or bring over what Claude Desktop already has.
                 </p>
               )}
-              {connectors.map((connector) => (
+              {wires.map((group) => (
+                <section key={group.key} className="flex flex-col gap-1.5">
+                  {group.titled && (
+                    <GroupName kind={group.key} title={group.title} note={group.note} />
+                  )}
+                  <div className="-mx-2 flex flex-col gap-0.5 rounded-xl bg-card/50 px-2 py-1.5">
+                  {group.connectors.map((connector) => (
                 <Row
                   key={connector.name}
-                  title={connector.name}
-                  note={`${CONNECTOR_STATE[connector.state]} · ${connector.where}`}
+                  title={shortName(connector.name)}
+                  note={[CONNECTOR_STATE[connector.state], connector.where]
+                    .filter(Boolean)
+                    .join(' · ')}
                   busy={busy === connector.name}
+                  mark={<ConnectorMark where={connector.where} />}
                 >
-                  {connector.state === 'connected' ? (
-                    <Quietly label="Sign out" onClick={() => onConnector('logout', connector.name)} />
-                  ) : (
-                    <Quietly label="Sign in" onClick={() => onConnector('login', connector.name)} />
+                  {canSignIn(connector) &&
+                    (connector.state === 'connected' ? (
+                      <Quietly
+                        label="Sign out"
+                        onClick={() => onConnector('logout', connector.name)}
+                      />
+                    ) : (
+                      <Quietly label="Sign in" onClick={() => onConnector('login', connector.name)} />
+                    ))}
+                  {removableConnector(connector.name) && (
+                    <Quietly
+                      label="Remove"
+                      icon={<Trash2 />}
+                      onClick={() => onConnector('remove', connector.name)}
+                    />
                   )}
-                  <Quietly
-                    label="Remove"
-                    icon={<Trash2 />}
-                    onClick={() => onConnector('remove', connector.name)}
-                  />
                 </Row>
+                  ))}
+                  </div>
+                </section>
               ))}
+              <AddConnector
+                taken={connectors.map((connector) => connector.name)}
+                busy={adding}
+                onAdd={onAddConnector}
+                onImport={onImportConnectors}
+              />
             </TabsContent>
           </div>
         </Tabs>
 
-        <div className="flex flex-none items-center justify-between gap-3 border-t border-border px-6 py-3">
-          <span data-plugin-note className="min-w-0 truncate text-xs text-muted-foreground">
-            {note ?? ''}
-          </span>
+        <div className="flex flex-none items-center justify-end gap-3 border-t border-border px-6 py-3">
           <span className="flex flex-none items-center gap-2">
             <Button
               variant="ghost"
@@ -187,14 +272,9 @@ function Browse({
   onInstall(id: string): void
 }) {
   const [query, setQuery] = useState('')
-  const needle = query.trim().toLowerCase()
+  const needle = query.trim()
   const pool = available.filter((plugin) => !held.has(plugin.id))
-  const hits =
-    needle.length === 0
-      ? []
-      : pool.filter((plugin) =>
-          `${plugin.name} ${plugin.description}`.toLowerCase().includes(needle),
-        )
+  const hits = browsable(available, held, query)
 
   return (
     <div className="flex flex-col gap-3">
@@ -210,15 +290,16 @@ function Browse({
         />
       </div>
 
-      {needle.length === 0 && (
-        <Quiet>
-          {loading ? 'Reading the catalog…' : 'Type to search. Results appear as you type.'}
-        </Quiet>
+      {loading && <Quiet>Reading the catalog…</Quiet>}
+      {!loading && hits.length === 0 && needle.length > 0 && (
+        <Quiet>Nothing matches “{needle}”.</Quiet>
       )}
-      {needle.length > 0 && hits.length === 0 && <Quiet>Nothing matches “{query.trim()}”.</Quiet>}
+      {!loading && pool.length === 0 && needle.length === 0 && (
+        <Quiet>Nothing left to add. Every plugin your sources offer is installed.</Quiet>
+      )}
 
-      <div className="flex flex-col gap-1">
-        {hits.slice(0, HITS).map((plugin) => (
+      <div className="-mx-2 flex flex-col gap-0.5 rounded-xl bg-card/50 px-2 py-1.5 empty:hidden">
+        {hits.map((plugin) => (
           <Row
             key={plugin.id}
             title={plugin.name}
@@ -229,7 +310,6 @@ function Browse({
             <Quietly label="Install" onClick={() => onInstall(plugin.id)} />
           </Row>
         ))}
-        {hits.length > HITS && <Quiet>{hits.length - HITS} more. Narrow the search.</Quiet>}
       </div>
     </div>
   )
@@ -262,10 +342,49 @@ function AddSource({ onAdd }: { onAdd(source: string): void }) {
   )
 }
 
+type GroupKind = PluginGroupKey | ConnectorOrigin
+
+const GROUP_MARK: Record<GroupKind, React.ReactNode> = {
+  yours: <User />,
+  project: <FolderClosed />,
+  organisation: <Building2 />,
+  account: <ClaudeMark size={13} />,
+  plugin: <Blocks />,
+}
+
+function GroupName({
+  kind,
+  title,
+  note,
+}: {
+  kind: GroupKind
+  title: string
+  note: string | null
+}) {
+  return (
+    <div className="flex flex-col gap-0.5 px-2">
+      <span className="flex items-center gap-1.5 text-xs font-medium tracking-wide text-foreground/80">
+        <span className="flex-none text-muted-foreground [&_svg]:size-3.5">
+          {GROUP_MARK[kind]}
+        </span>
+        {title}
+      </span>
+      {note !== null && (
+        <span className="pl-[22px] text-xs leading-snug text-muted-foreground/70">{note}</span>
+      )}
+    </div>
+  )
+}
+
+function Slot({ width, children }: { width: string; children: React.ReactNode }) {
+  return <span className={cn('flex flex-none items-center justify-center', width)}>{children}</span>
+}
+
 function Row({
   title,
   note,
   busy,
+  mark = null,
   dim = false,
   tall = false,
   children,
@@ -273,6 +392,7 @@ function Row({
   title: string
   note: string
   busy: boolean
+  mark?: React.ReactNode
   dim?: boolean
   tall?: boolean
   children: React.ReactNode
@@ -284,6 +404,7 @@ function Row({
         dim && 'text-muted-foreground',
       )}
     >
+      {mark}
       <span className="flex min-w-0 flex-1 flex-col gap-0.5">
         <span className="truncate text-sm leading-tight">{title}</span>
         {note.length > 0 && (

@@ -2,10 +2,17 @@ import type { DiffLine } from './diff.types'
 
 const CONTEXT = 3
 
+export function linesOf(text: string): string[] {
+  if (text.length === 0) return []
+  const lines = text.split('\n')
+  if (lines.at(-1) === '') lines.pop()
+  return lines
+}
+
 export function lineDiff(before: string, after: string, context = CONTEXT): DiffLine[] {
   if (before.length === 0 && after.length === 0) return []
-  const a = before.length === 0 ? [] : before.split('\n')
-  const b = after.length === 0 ? [] : after.split('\n')
+  const a = linesOf(before)
+  const b = linesOf(after)
 
   let head = 0
   while (head < a.length && head < b.length && a[head] === b[head]) head += 1

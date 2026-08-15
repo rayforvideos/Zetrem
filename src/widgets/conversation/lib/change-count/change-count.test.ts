@@ -38,3 +38,29 @@ describe('how much changed, without opening anything', () => {
     expect(changeCount(tool('Edit a.ts', null))).toBeNull()
   })
 })
+
+describe('the count matches the rows drawn under it', () => {
+  it('counts a four line written file as four, not five', () => {
+    const wrote = {
+      line: 'Write a.txt',
+      toolUseId: 't',
+      input: { file_path: 'a.txt', content: 'alpha\nbeta\ngamma\ndelta\n' },
+      result: null,
+      startedAtMs: 0,
+      endedAtMs: null,
+    }
+    expect(changeCount(wrote as never)).toEqual({ added: 4, removed: 0 })
+  })
+
+  it('counts one deleted line as one, not two', () => {
+    const cut = {
+      line: 'Edit a.txt',
+      toolUseId: 't',
+      input: { file_path: 'a.txt', old_string: 'gamma\n', new_string: '' },
+      result: null,
+      startedAtMs: 0,
+      endedAtMs: null,
+    }
+    expect(changeCount(cut as never)).toEqual({ added: 0, removed: 1 })
+  })
+})

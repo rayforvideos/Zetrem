@@ -5,12 +5,16 @@ import type { ToolActivity } from '@/entities/conversation'
 import { ToolIcon } from '@/shared/graphics/tool-icon'
 import { Item, ItemContent, ItemMedia } from '@/shared/ui/item'
 import { changeCount } from '../lib/change-count/change-count'
+import { noteParts } from '../lib/tool-note/tool-note'
 
 export function ToolLine({ tool }: { tool: ToolActivity }) {
   const name = tool.line.split(' ')[0] ?? ''
   const shape = toolShape(name, tool.input)
-  const note = resultNote(shape, tool.result ? tool.result.stdout : null)
   const failed = tool.result?.isError === true
+  const { note, failure } = noteParts(
+    resultNote(shape, tool.result ? tool.result.stdout : null),
+    failed,
+  )
   const changed = changeCount(tool)
 
   return (
@@ -36,7 +40,11 @@ export function ToolLine({ tool }: { tool: ToolActivity }) {
           </span>
         )}
         {note && <span className="flex-none text-muted-foreground">{note}</span>}
-        {failed && <span className="flex-none">failed</span>}
+        {failure && (
+          <span data-failed className="min-w-0 text-removed [overflow-wrap:anywhere]">
+            {failure}
+          </span>
+        )}
         {tool.result?.interrupted && (
           <span className="flex-none text-muted-foreground">interrupted</span>
         )}

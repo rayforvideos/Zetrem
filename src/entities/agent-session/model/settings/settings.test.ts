@@ -20,6 +20,7 @@ describe('readSettings: reading back what was chosen', () => {
       stockAgents: ['Explore'],
       sidebarOpen: false,
       sidebarWidth: 300,
+      refusedModels: ['fable'],
     }
     expect(readSettings(saved)).toEqual(saved)
   })
@@ -86,5 +87,19 @@ describe('the built-in agent settings', () => {
 
   it('treats a non-list as none', () => {
     expect(readSettings({ stockAgents: 'Explore' }).stockAgents).toEqual([])
+  })
+})
+
+describe('readSettings: models the account has already turned down', () => {
+  it('remembers one that was refused, so it is not offered again as if it were fine', () => {
+    expect(readSettings({ refusedModels: ['fable'] }).refusedModels).toEqual(['fable'])
+  })
+
+  it('starts with none, since nothing has been refused before anything is tried', () => {
+    expect(readSettings({}).refusedModels).toEqual([])
+  })
+
+  it('drops a name it does not offer, so a spoiled file cannot grey out something real', () => {
+    expect(readSettings({ refusedModels: ['fable', 'gpt-9', 7] }).refusedModels).toEqual(['fable'])
   })
 })

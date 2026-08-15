@@ -6,6 +6,7 @@ import { withLimit } from '../limits/limits'
 const HOOK_KEEP = 5
 
 const EMPTY: StatusState = {
+  usage: 'unread',
   session: null,
   context: { used: 0, window: null },
   cost: {
@@ -96,6 +97,14 @@ export const statusStore = {
   },
   setUpdate(update: UpdateInfo): void {
     emit({ ...state, update })
+  },
+  usageRead(): void {
+    if (state.usage === 'read') return
+    emit({ ...state, usage: 'read' })
+  },
+  usageUnreadable(): void {
+    if (state.usage !== 'unread') return
+    emit({ ...state, usage: 'unreadable' })
   },
   reset(): void {
     pending = new Map()

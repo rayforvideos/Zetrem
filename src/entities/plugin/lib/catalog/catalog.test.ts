@@ -122,3 +122,40 @@ describe('readMarketplaces', () => {
     expect(readMarketplaces(null)).toEqual([])
   })
 })
+
+describe('a plugin your organisation installed is not yours to remove', () => {
+  it('reads the managed scope the CLI reports', () => {
+    const catalog = readCatalog({
+      installed: [{ id: 'inhouse-api@acme', version: '0.1.5', scope: 'managed', enabled: true }],
+    })
+    expect(catalog.installed[0]?.scope).toBe('managed')
+  })
+
+  it('still calls anything it does not recognise unknown', () => {
+    const catalog = readCatalog({
+      installed: [{ id: 'a@b', version: '1', scope: 'whatever', enabled: true }],
+    })
+    expect(catalog.installed[0]?.scope).toBe('unknown')
+  })
+})
+
+describe('the CLI answers with a bare list when it is not asked what is available', () => {
+  it('reads that list as the installed plugins', () => {
+    const catalog = readCatalog([
+      { id: 'a@b', version: '1.0.0', scope: 'user', enabled: true },
+      { id: 'c@d', version: '2.0.0', scope: 'project', enabled: false },
+    ])
+    expect(catalog.installed).toHaveLength(2)
+    expect(catalog.installed[0]?.name).toBe('a')
+    expect(catalog.available).toEqual([])
+  })
+
+  it('still reads the shape with both halves', () => {
+    const catalog = readCatalog({
+      installed: [{ id: 'a@b', version: '1', scope: 'user', enabled: true }],
+      available: [{ pluginId: 'x@y', description: 'something' }],
+    })
+    expect(catalog.installed).toHaveLength(1)
+    expect(catalog.available).toHaveLength(1)
+  })
+})

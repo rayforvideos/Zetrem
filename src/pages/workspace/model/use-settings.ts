@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { DEFAULT_SETTINGS } from '@/entities/agent-session'
+import { DEFAULT_SETTINGS, readSettings } from '@/entities/agent-session'
 import type { Settings } from '@/entities/agent-session'
 import { useFailure } from '@/shared/lib/failure/failure'
 import type { Failure } from '@/shared/lib/failure/failure.types'
@@ -25,7 +25,7 @@ export function useSettings(): SettingsSource {
   useEffect(() => {
     window.desk
       .readSettings()
-      .then(hold)
+      .then((saved) => hold(readSettings(saved)))
       .catch(report('Could not read your settings'))
       .finally(() => setLoading(false))
   }, [report])

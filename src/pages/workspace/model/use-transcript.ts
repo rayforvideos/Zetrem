@@ -3,6 +3,8 @@ import { statusStore } from '@/entities/agent-session'
 import { chatId, packTranscript } from '@/entities/conversation'
 import type { ChatSummary } from '@/entities/conversation'
 import { conversation } from './conversation/conversation'
+import { troubleLine } from '@/shared/lib/ask/ask'
+import { maySave } from './may-save/may-save'
 
 type Chats = {
   chats: ChatSummary[]
@@ -26,13 +28,19 @@ export function useTranscript(project: string | null): Chats {
   const [resumeId, setResumeId] = useState<string | null>(null)
   const [ready, setReady] = useState(false)
   const lastSaved = useRef('')
+  const toldSaveTrouble = useRef(false)
+  const loadedFor = useRef<string | null>(null)
 
   const turns = conv.turns
   const liveSessionId = status.session?.id ?? null
 
   async function refresh(): Promise<ChatSummary[]> {
     if (project === null) return []
-    const found = await window.desk.listChats(project).catch(() => [])
+    const found = await window.desk.listChats(project).catch((cause: unknown) => {
+      conversation.system(troubleLine('Could not list your saved chats', cause))
+      return null
+    })
+    if (found === null) return []
     setChats(found)
     return found
   }
@@ -44,6 +52,7 @@ export function useTranscript(project: string | null): Chats {
     }
     let alive = true
     setReady(false)
+    loadedFor.current = null
     lastSaved.current = ''
     conversation.reset()
     statusStore.reset()
@@ -64,7 +73,9 @@ export function useTranscript(project: string | null): Chats {
       })
       .catch(() => undefined)
       .finally(() => {
-        if (alive) setReady(true)
+        if (!alive) return
+        loadedFor.current = project
+        setReady(true)
       })
     return () => {
       alive = false
@@ -72,8 +83,15 @@ export function useTranscript(project: string | null): Chats {
   }, [project])
 
   useEffect(() => {
-    if (!ready || project === null || openId === null) return
-    if (conv.status === 'working' || turns.length === 0) return
+    const allowed = maySave({
+      ready,
+      project,
+      loadedFor: loadedFor.current,
+      openId,
+      status: conv.status,
+      turnCount: turns.length,
+    })
+    if (!allowed || project === null || openId === null) return
     const packed = packTranscript(turns, {
       id: openId,
       sessionId: liveSessionId ?? resumeId,
@@ -84,8 +102,16 @@ export function useTranscript(project: string | null): Chats {
     lastSaved.current = stamp
     void window.desk
       .writeTranscript(project, packed)
-      .then(() => refresh())
-      .catch(() => undefined)
+      .then(() => {
+        toldSaveTrouble.current = false
+        return refresh()
+      })
+      .catch((cause: unknown) => {
+        lastSaved.current = ''
+        if (toldSaveTrouble.current) return
+        toldSaveTrouble.current = true
+        conversation.system(troubleLine('This chat is not being saved', cause))
+      })
   }, [ready, project, openId, turns, conv.status, liveSessionId, resumeId])
 
   function open(id: string): void {
@@ -102,7 +128,9 @@ export function useTranscript(project: string | null): Chats {
         setResumeId(saved.sessionId)
         conversation.restore(saved.turns)
       })
-      .catch(() => undefined)
+      .catch((cause: unknown) => {
+        conversation.system(troubleLine('Could not open that chat', cause))
+      })
   }
 
   function start(): void {
@@ -118,7 +146,9 @@ export function useTranscript(project: string | null): Chats {
     void window.desk
       .forgetTranscript(project, id)
       .then(() => refresh())
-      .catch(() => undefined)
+      .catch((cause: unknown) => {
+        conversation.system(troubleLine('Could not forget that chat', cause))
+      })
     if (id === openId) start()
   }
 

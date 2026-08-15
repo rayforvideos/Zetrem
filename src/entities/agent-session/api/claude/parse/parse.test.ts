@@ -121,6 +121,7 @@ describe('parseClaudeLine', () => {
         requestId: 'req-1',
         toolName: 'Bash',
         line: 'Bash mkdir demo',
+        detail: 'mkdir demo',
         input: { command: 'mkdir demo' },
       },
     ])

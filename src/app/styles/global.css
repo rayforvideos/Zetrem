@@ -29,12 +29,18 @@
   --removed: oklch(0.72 0.17 20);
   --removed-surface: oklch(0.28 0.08 20);
 
+  --claude: #d97757;
+
   --border: oklch(0.24 0 0);
   --input: oklch(0.24 0 0);
 
   --ring: oklch(0.62 0 0);
 
   --radius: 0.625rem;
+
+  --zt-quick: 160ms;
+  --zt-base: 240ms;
+  --zt-move: 400ms;
 
   --font-zt-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   --font-zt-mono: ui-monospace, SFMono-Regular, Menlo, monospace;
@@ -63,6 +69,7 @@
   --color-added-surface: var(--added-surface);
   --color-removed: var(--removed);
   --color-removed-surface: var(--removed-surface);
+  --color-claude: var(--claude);
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
@@ -176,7 +183,7 @@
   left: 2px;
   top: 6px;
   width: 3px;
-  height: 34px;
+  height: min(34px, calc(100% - 10px));
   border-radius: 2px;
   background: var(--color-muted-foreground);
 }
@@ -226,6 +233,16 @@
   margin: -6px;
 }
 
+.zt-hit-around {
+  position: relative;
+}
+
+.zt-hit-around::after {
+  content: '';
+  position: absolute;
+  inset: -7px;
+}
+
 .zt-fade-y {
   --zt-fade-top: 14px;
   --zt-fade-bottom: 14px;
@@ -236,6 +253,21 @@
     black calc(100% - var(--zt-fade-bottom)),
     transparent 100%
   );
+}
+
+.zt-veil-up {
+  position: relative;
+}
+
+.zt-veil-up::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 100%;
+  height: 64px;
+  background: linear-gradient(to top, var(--background), transparent);
+  pointer-events: none;
 }
 
 .zt-fade-y[data-at-start] {
@@ -273,11 +305,11 @@
 }
 
 [data-slot='collapsible-content'][data-state='open'] {
-  animation: zt-collapse-down 200ms cubic-bezier(0.22, 1, 0.36, 1);
+  animation: zt-collapse-down var(--zt-base) cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 [data-slot='collapsible-content'][data-state='closed'] {
-  animation: zt-collapse-up 160ms cubic-bezier(0.22, 1, 0.36, 1);
+  animation: zt-collapse-up var(--zt-quick) cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 @keyframes zt-rise {
@@ -292,7 +324,7 @@
 }
 
 .zt-rise {
-  animation: zt-rise 260ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation: zt-rise var(--zt-base) cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 @keyframes zt-fade {
@@ -397,11 +429,25 @@
   }
 }
 
+[data-tucked],
+[data-tucked] * {
+  animation-play-state: paused;
+}
+
 .zt-sprite {
   animation-delay: var(--zt-sprite-phase, 0ms);
   animation-iteration-count: infinite;
   animation-timing-function: ease-in-out;
+  animation-play-state: paused;
   will-change: transform;
+}
+
+[data-live] .zt-sprite {
+  animation-play-state: running;
+}
+
+[data-tucked] .zt-sprite {
+  animation-play-state: paused;
 }
 
 .zt-sprite--default {
@@ -422,6 +468,10 @@
 .zt-sprite--busy {
   animation-name: zt-bustle;
   animation-duration: 1.1s;
+}
+
+.zt-breath {
+  animation: zt-pulse 1.6s ease-in-out infinite;
 }
 
 @keyframes zt-tile-in {

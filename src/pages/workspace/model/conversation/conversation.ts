@@ -6,7 +6,7 @@ import { heldOutput, heldTurns } from './hold/hold'
 
 type Listener = () => void
 
-const EMPTY: ConversationState = { turns: [], status: 'done', permission: null }
+const EMPTY: ConversationState = { turns: [], status: 'done', permission: null, chores: [] }
 
 let state: ConversationState = EMPTY
 const listeners = new Set<Listener>()
@@ -152,10 +152,23 @@ export const conversation = {
   setPermission(permission: PermissionAsk | null): void {
     emit({ ...state, permission })
   },
+  startChore(id: string, line: string): void {
+    if (state.chores.some((chore) => chore.id === id)) return
+    emit({ ...state, chores: [...state.chores, { id, line, startedAtMs: Date.now() }] })
+  },
+  endChore(id: string): void {
+    const left = state.chores.filter((chore) => chore.id !== id)
+    if (left.length === state.chores.length) return
+    emit({ ...state, chores: left })
+  },
+  clearChores(): void {
+    if (state.chores.length === 0) return
+    emit({ ...state, chores: [] })
+  },
   restore(turns: Turn[]): void {
-    emit({ turns, status: 'done', permission: null })
+    emit({ turns, status: 'done', permission: null, chores: [] })
   },
   reset(): void {
-    emit({ turns: [], status: 'done', permission: null })
+    emit({ turns: [], status: 'done', permission: null, chores: [] })
   },
 }

@@ -2,6 +2,7 @@ import { useEffect } from 'react'
 import type { PermissionAsk } from '@/entities/agent-session'
 import { toolShape } from '@/shared/lib/tool-shape/tool-shape'
 import { modifierKey } from '@/shared/lib/platform/platform'
+import { layerOver } from '@/shared/lib/modal/modal'
 import { Button } from '@/shared/ui/button'
 import { Kbd, KbdGroup } from '@/shared/ui/kbd'
 import { ToolIcon } from '@/shared/graphics/tool-icon'
@@ -15,6 +16,7 @@ export function Approval({
 }) {
   useEffect(() => {
     function onKey(event: globalThis.KeyboardEvent): void {
+      if (layerOver(document)) return
       if (event.key === 'Enter' && (event.metaKey || event.ctrlKey)) {
         event.preventDefault()
         onDecide(true)
@@ -42,12 +44,12 @@ export function Approval({
 
       <div
         data-selectable
-        className="flex items-start gap-2 font-mono text-sm [overflow-wrap:anywhere]"
+        className="zt-scroll flex max-h-52 items-start gap-2 overflow-y-auto font-mono text-sm [overflow-wrap:anywhere]"
       >
         <span className="mt-[3px] flex-none text-muted-foreground">
           <ToolIcon shape={shape} />
         </span>
-        <span>{ask.line}</span>
+        <span className="whitespace-pre-wrap">{ask.detail || ask.line}</span>
       </div>
 
       <div className="flex flex-wrap items-center gap-2">

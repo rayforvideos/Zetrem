@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest'
+import { TRAFFIC_LIGHT } from '@/shared/config/theme'
 import { LAYOUT } from '@/shared/config/motion/motion'
 import { layoutTiles, observatoryLayout, soloRect, roomToFan } from './grid'
 
@@ -178,5 +179,31 @@ describe('roomToFan: whether the tiles can sit beside the conversation at all', 
   it('leaves the tile its floor even where that costs the conversation, since a tile cannot be negative', () => {
     const { sessions } = observatoryLayout(1, { w: 900, h: 640 }, 328)
     expect(sessions[0]!.w).toBeGreaterThanOrEqual(360)
+  })
+})
+
+describe('the deck sits clear of the title bar, not tucked under it', () => {
+  const viewport = { w: 1440, h: 870 }
+
+  it('starts every tile below the window controls', () => {
+    const rects = layoutTiles(4, viewport)
+    for (const rect of rects) {
+      expect(rect.y).toBeGreaterThanOrEqual(TRAFFIC_LIGHT.y + TRAFFIC_LIGHT.size)
+    }
+  })
+
+  it('leaves the same air above the first row as it leaves below the last', () => {
+    const rects = layoutTiles(2, viewport)
+    const first = rects[0]!
+    const last = rects.at(-1)!
+    const above = first.y - (TRAFFIC_LIGHT.y + TRAFFIC_LIGHT.size)
+    const below = viewport.h - (last.y + last.h)
+    expect(above).toBe(below)
+  })
+
+  it('leaves the conversation the same air, so the two panes line up', () => {
+    const { terminal, sessions } = observatoryLayout(1, viewport, 260)
+    expect(terminal.y).toBe(sessions[0]!.y)
+    expect(terminal.y + terminal.h).toBe(sessions[0]!.y + sessions[0]!.h)
   })
 })

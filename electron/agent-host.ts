@@ -8,6 +8,7 @@ import { agentArgs } from '@/entities/agent-session/model/run-config/run-config'
 import type { RunConfig } from '@/entities/agent-session/model/run-config/run-config.types'
 import { ORCHESTRATOR_PROMPT, PERSONA } from '@/entities/agent-session/model/orchestrator/orchestrator'
 import { claudeBin, loginPath } from './login-path/login-path'
+import { exitReason, startTrouble } from './exit-reason/exit-reason'
 import { recallProject } from './project-memory'
 import { handle, on } from './ipc/ipc'
 import { killTree, killTreeSync } from './kill-tree/kill-tree'
@@ -45,14 +46,14 @@ export function registerAgentHost(): void {
     'agent:start',
     async (event, id: string, prompt: string, config: RunConfig) => {
     const sender = event.sender
-    const fail = (): void => {
+    const fail = (reason: string | null): void => {
       if (typeof id === 'string' && !sender.isDestroyed()) {
-        sender.send('agent:event', { id, kind: 'exit', code: -1 })
+        sender.send('agent:event', { id, kind: 'exit', code: -1, reason })
       }
     }
-    if (typeof id !== 'string' || typeof prompt !== 'string') return fail()
-    if (agents.has(id)) return fail()
-    if (!/^[A-Za-z0-9-]+$/.test(id)) return fail()
+    if (typeof id !== 'string' || typeof prompt !== 'string') return fail(null)
+    if (agents.has(id)) return fail(null)
+    if (!/^[A-Za-z0-9-]+$/.test(id)) return fail(null)
 
     agents.set(id, 'starting')
 
@@ -60,7 +61,7 @@ export function registerAgentHost(): void {
     let workspace: string
     try {
       const project = await recallProject()
-        if (agents.get(id) !== 'starting') return fail()
+        if (agents.get(id) !== 'starting') return fail(null)
 
       workspace = project ?? join(app.getPath('userData'), 'agent-workspace')
       if (!project) mkdirSync(workspace, { recursive: true })
@@ -73,7 +74,7 @@ export function registerAgentHost(): void {
     } catch (cause: unknown) {
       console.error(`[agent ${id}] could not start`, cause)
       agents.delete(id)
-      return fail()
+      return fail(startTrouble(cause instanceof Error ? cause.message : String(cause)))
     }
     agents.set(id, child)
     child.stdin.on('error', () => undefined)
@@ -101,11 +102,14 @@ export function registerAgentHost(): void {
     child.on('exit', (code) => {
       agents.delete(id)
       if (code !== 0 && lastError) console.error(`[agent ${id}] stderr:`, lastError)
-      if (!sender.isDestroyed()) sender.send('agent:event', { id, kind: 'exit', code })
+      const reason = exitReason(code, lastError, '')
+      if (!sender.isDestroyed()) sender.send('agent:event', { id, kind: 'exit', code, reason })
     })
-    child.on('error', () => {
+    child.on('error', (cause: Error) => {
       agents.delete(id)
-      if (!sender.isDestroyed()) sender.send('agent:event', { id, kind: 'exit', code: -1 })
+      if (!sender.isDestroyed()) {
+        sender.send('agent:event', { id, kind: 'exit', code: -1, reason: startTrouble(cause.message) })
+      }
     })
 
     tell(child.stdin, userMessage(prompt))

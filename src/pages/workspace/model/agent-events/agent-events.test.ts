@@ -20,7 +20,7 @@ function fakeMetrics(costUsd: number, overrides: Partial<ResultMetrics> = {}): R
 }
 
 function fakeRefs(): AgentEventRefs {
-  return { asks: [], childIds: new Set<string>(), sends: new Map<string, string>() }
+  return { asks: [], childIds: new Set<string>(), sends: new Map<string, string>(), onModelRefused: () => {} }
 }
 
 beforeEach(() => {
@@ -600,7 +600,14 @@ describe('a message names the teammate it is sent to', () => {
 describe('a permission request the CLI takes back is taken off the screen', () => {
   function ask(refs: AgentEventRefs, id: string): void {
     applyAgentEvent(
-      { type: 'permission', requestId: id, toolName: 'Bash', line: `Bash ${id}`, input: {} },
+      {
+        type: 'permission',
+        requestId: id,
+        toolName: 'Bash',
+        line: `Bash ${id}`,
+        detail: id,
+        input: {},
+      },
       refs,
     )
   }
@@ -678,7 +685,10 @@ describe('addressing a child by the id the CLI actually sends', () => {
   }
 
   function link(refs: AgentEventRefs, id: string, taskId: string): void {
-    applyAgentEvent({ type: 'childStarted', toolUseId: id, taskId }, refs)
+    applyAgentEvent(
+      { type: 'childStarted', toolUseId: id, taskId, taskType: 'local_agent', description: '' },
+      refs,
+    )
   }
 
   it('finds the child by its task when the tool id is left out, which the CLI is allowed to do', () => {
@@ -783,5 +793,90 @@ describe('addressing a child by the id the CLI actually sends', () => {
       refs,
     )
     expect(sessionStore.get().find((s) => s.id === 'toolu_v')?.status).toBe('working')
+  })
+})
+
+describe('work the CLI sends to the background stays visible while it runs', () => {
+  function refs(): AgentEventRefs {
+    return { asks: [], childIds: new Set(), sends: new Map(), onModelRefused: () => {} }
+  }
+
+  beforeEach(() => {
+    conversation.reset()
+  })
+
+  it('puts a background command on the board with the words the CLI used', () => {
+    applyAgentEvent(
+      {
+        type: 'childStarted',
+        toolUseId: 'tu1',
+        taskId: 'task1',
+        taskType: 'local_bash',
+        description: 'Sleep 12s then echo hi',
+      },
+      refs(),
+    )
+    const [chore] = conversation.get().chores
+    expect(chore?.id).toBe('task1')
+    expect(chore?.line).toBe('Sleep 12s then echo hi')
+  })
+
+  it('takes it off the board once the CLI says it finished', () => {
+    const at = refs()
+    applyAgentEvent(
+      { type: 'childStarted', toolUseId: 'tu1', taskId: 'task1', taskType: 'local_bash', description: 'x' },
+      at,
+    )
+    applyAgentEvent(
+      { type: 'childNotified', toolUseId: 'tu1', taskId: 'task1', summary: 'x', done: true },
+      at,
+    )
+    expect(conversation.get().chores).toHaveLength(0)
+  })
+
+  it('leaves it there while the state only says it is still running', () => {
+    const at = refs()
+    applyAgentEvent(
+      { type: 'childStarted', toolUseId: 'tu1', taskId: 'task1', taskType: 'local_bash', description: 'x' },
+      at,
+    )
+    applyAgentEvent(
+      { type: 'childStateKnown', toolUseId: 'tu1', taskId: 'task1', state: 'running', error: '' },
+      at,
+    )
+    expect(conversation.get().chores).toHaveLength(1)
+    applyAgentEvent(
+      { type: 'childStateKnown', toolUseId: 'tu1', taskId: 'task1', state: 'failed', error: 'no' },
+      at,
+    )
+    expect(conversation.get().chores).toHaveLength(0)
+  })
+
+  it('does not put a teammate on the background board, since a teammate gets a tile', () => {
+    applyAgentEvent(
+      {
+        type: 'childStarted',
+        toolUseId: 'tu2',
+        taskId: 'task2',
+        taskType: 'local_agent',
+        description: 'Look into the docs',
+      },
+      refs(),
+    )
+    expect(conversation.get().chores).toHaveLength(0)
+  })
+
+  it('counts the same task once, however many times the CLI announces it', () => {
+    const at = refs()
+    const start = {
+      type: 'childStarted' as const,
+      toolUseId: 'tu1',
+      taskId: 'task1',
+      taskType: 'local_bash',
+      description: 'x',
+    }
+    applyAgentEvent(start, at)
+    applyAgentEvent(start, at)
+    expect(conversation.get().chores).toHaveLength(1)
   })
 })

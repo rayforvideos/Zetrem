@@ -1,2 +1,10 @@
-export { connectorSummary, needingAuth, readConnectors } from './lib/read-connectors/read-connectors'
+export { canSignIn, connectorSummary, needingAuth, readConnectors } from './lib/read-connectors/read-connectors'
 export type { Connector, ConnectorState, ConnectorVerb } from './lib/read-connectors/read-connectors.types'
+export { readyToAdd, refusalOf, tidyName } from './lib/new-connector/new-connector'
+export type { NewConnector, Refusal } from './lib/new-connector/new-connector.types'
+export { brandOf } from './lib/brand/brand'
+
+export { originLine, originOf, removableConnector, shortName } from './lib/origin/origin'
+export { connectorGroupsOf } from './lib/groups/groups'
+export type { ConnectorGroup } from './lib/groups/groups.types'
+export type { ConnectorOrigin } from './lib/origin/origin.types'

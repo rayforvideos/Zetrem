@@ -2,7 +2,9 @@ import type { ReactNode } from 'react'
 import { isOutdated } from '@/entities/agent-session'
 import type { StatusState } from '@/entities/agent-session'
 import { Button } from '@/shared/ui/button'
+import { shortName } from '@/entities/connector'
 import { Separator } from '@/shared/ui/separator'
+import { useScrollState } from '@/shared/lib/scroll-state/use-scroll-state'
 
 type StatusDrawerProps = {
   statusState: StatusState
@@ -12,8 +14,10 @@ type StatusDrawerProps = {
 
 function Row({ label, children }: { label: string; children: ReactNode }) {
   return (
-    <div className="flex items-baseline gap-2.5">
-      <span className="w-[92px] flex-none font-mono text-xs text-muted-foreground">{label}</span>
+    <div className="flex items-baseline gap-4">
+      <span className="w-[124px] flex-none truncate font-mono text-xs text-muted-foreground">
+        {label}
+      </span>
       <span className="min-w-0 flex-1 font-mono text-xs tabular-nums [overflow-wrap:anywhere]">
         {children}
       </span>
@@ -30,13 +34,18 @@ function known(value: string): string | null {
 }
 
 export function StatusDrawer({ statusState, onUpdate, updating }: StatusDrawerProps) {
+  const [body] = useScrollState<HTMLDivElement>()
   const { session, context, cost, hooks, update } = statusState
   const stale = isOutdated(update?.current ?? null, update?.latest ?? null)
 
   const hasEnvironment = Boolean(update?.current) || hooks.length > 0 || (session?.memoryPaths.length ?? 0) > 0
 
   return (
-    <div data-selectable className="zt-scroll flex max-h-[min(40vh,340px)] flex-none flex-col gap-3 overflow-y-auto px-2 pt-2">
+    <div
+      ref={body}
+      data-selectable
+      className="zt-scroll zt-fade-y flex max-h-[min(40vh,340px)] flex-none flex-col gap-3 overflow-y-auto px-2 pt-2"
+    >
       {session && (
         <div className="flex flex-col gap-1">
           {known(session.id) && <Row label="Session">{session.id.slice(0, 8)}</Row>}
@@ -84,7 +93,7 @@ export function StatusDrawer({ statusState, onUpdate, updating }: StatusDrawerPr
           <Separator />
           <div className="flex flex-col gap-1">
             {session.mcp.map((server) => (
-              <Row key={server.name} label={server.name}>
+              <Row key={server.name} label={shortName(server.name)}>
                 <span className={server.status === 'needs-auth' ? 'text-foreground' : 'text-muted-foreground'}>
                   {mcpLabel(server.status)}
                 </span>

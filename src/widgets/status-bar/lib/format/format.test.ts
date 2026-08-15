@@ -4,6 +4,7 @@ import type { StatusState } from '@/entities/agent-session'
 
 function state(overrides: Partial<StatusState> = {}): StatusState {
   return {
+    usage: 'read',
     session: null,
     context: { used: 0, window: null },
     cost: { usd: 0, lastTurnUsd: 0, tokens: { in: 0, out: 0, cacheRead: 0, cacheCreate: 0 }, durationMs: 0, ttftMs: null, turns: 0 },
@@ -40,7 +41,7 @@ describe('the cells in the status bar', () => {
     expect(found).toBeUndefined()
   })
 
-  it('does not repeat the account limits the sidebar already shows', () => {
+  it('leaves the account limits to the bar along the foot of the window', () => {
     const held = cells(state({ limits: [{ kind: 'seven_day', utilization: 0.91, resetsAtMs: 1787173200000, overage: false, status: 'allowed_warning' }] }))
     expect(held.find((c) => c.key === 'limit')).toBeUndefined()
   })

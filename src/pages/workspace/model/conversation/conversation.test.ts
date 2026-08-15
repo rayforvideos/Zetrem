@@ -131,7 +131,7 @@ describe('conversation: what our screen draws', () => {
     conversation.setStatus('working')
     expect(conversation.get().status).toBe('working')
 
-    conversation.setPermission({ requestId: 'r1', toolName: 'Bash', line: 'Bash ls' })
+    conversation.setPermission({ requestId: 'r1', toolName: 'Bash', line: 'Bash ls', detail: 'ls' })
     expect(conversation.get().permission?.toolName).toBe('Bash')
     conversation.setPermission(null)
     expect(conversation.get().permission).toBeNull()

@@ -4,6 +4,7 @@ export type PermissionEvent =
       requestId: string
       toolName: string
       line: string
+      detail: string
       input: unknown
     }
   | { type: 'permissionDropped'; requestId: string }

@@ -2,18 +2,17 @@ export const STREAM_LINE_MAX = 120
 
 const TARGET_KEYS = ['file_path', 'command', 'pattern', 'path', 'url', 'query'] as const
 
-export function toolLine(name: string, input: unknown): string {
-  let target = ''
-  if (typeof input === 'object' && input !== null) {
-    for (const key of TARGET_KEYS) {
-      const value = (input as Record<string, unknown>)[key]
-      if (typeof value === 'string' && value.length > 0) {
-        target = value
-        break
-      }
-    }
+export function toolTarget(input: unknown): string {
+  if (typeof input !== 'object' || input === null) return ''
+  for (const key of TARGET_KEYS) {
+    const value = (input as Record<string, unknown>)[key]
+    if (typeof value === 'string' && value.length > 0) return value
   }
-  return `${name} ${target}`.trim().slice(0, STREAM_LINE_MAX)
+  return ''
+}
+
+export function toolLine(name: string, input: unknown): string {
+  return `${name} ${toolTarget(input)}`.trim().slice(0, STREAM_LINE_MAX)
 }
 
 export function resultText(content: unknown): string {

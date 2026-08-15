@@ -1,13 +1,13 @@
 import type { AgentDef, AgentDefDraft } from '@/entities/agent-def'
 import type { RunConfig, Settings, WorkOutcome } from '@/entities/agent-session'
 import type { ChatSummary, Transcript } from '@/entities/conversation'
-import type { Connector, ConnectorVerb } from '@/entities/connector'
-import type { Catalog, Marketplace, PluginRun, PluginVerb } from '@/entities/plugin'
+import type { Connector, ConnectorVerb, NewConnector } from '@/entities/connector'
+import type { Catalog, Marketplace, PluginRun, PluginScope, PluginVerb } from '@/entities/plugin'
 import type { AuthStatus } from '@/entities/auth'
 export type AgentHostEvent =
   | { id: string; kind: 'line'; line: string }
   | { id: string; kind: 'workspace'; cwd: string }
-  | { id: string; kind: 'exit'; code: number | null }
+  | { id: string; kind: 'exit'; code: number | null; reason: string | null }
 
 export type DeskBridge = {
   pickProjectDir(): Promise<string | null>
@@ -17,8 +17,9 @@ export type DeskBridge = {
   writeSettings(next: Settings): Promise<Settings>
   pickKnowledge(): Promise<string[]>
   pluginCatalog(): Promise<Catalog>
+  pluginAvailable(): Promise<Catalog>
   marketplaces(): Promise<Marketplace[]>
-  pluginAct(verb: PluginVerb, target: string): Promise<PluginRun>
+  pluginAct(verb: PluginVerb, target: string, scope?: PluginScope): Promise<PluginRun>
   listChats(project: string): Promise<ChatSummary[]>
   readTranscript(project: string, id: string): Promise<Transcript | null>
   writeTranscript(project: string, saved: Transcript): Promise<void>
@@ -38,8 +39,11 @@ export type DeskBridge = {
   probeSession(config: Omit<RunConfig, 'persona'>): Promise<string | null>
   listConnectors(): Promise<Connector[]>
   connectorAct(verb: ConnectorVerb, target: string): Promise<PluginRun>
+  addConnector(draft: NewConnector, taken: string[]): Promise<PluginRun>
+  importConnectors(): Promise<PluginRun>
   readOutcome(taskId: string): Promise<WorkOutcome | null>
   sessionUsage(): Promise<string | null>
+  keptUsage(): Promise<string | null>
   latestCliVersion(): Promise<{
     installed: string | null
     latest: string | null

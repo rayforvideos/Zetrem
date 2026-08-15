@@ -1,4 +1,4 @@
-export type PluginScope = 'user' | 'project' | 'unknown'
+export type PluginScope = 'user' | 'project' | 'managed' | 'unknown'
 
 export type PluginVerb =
   | 'install'
@@ -18,6 +18,7 @@ export type InstalledPlugin = {
   marketplace: string
   version: string | null
   scope: PluginScope
+  projectPath: string | null
   enabled: boolean
 }
 

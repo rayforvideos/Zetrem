@@ -5,9 +5,9 @@ import { LAYOUT } from '@/shared/config/motion/motion'
 export function layoutTiles(count: number, viewport: Viewport): Rect[] {
   if (count <= 0) return []
 
-  const { outerMarginPx: margin, gapPx: gap } = LAYOUT
+  const { outerMarginPx: margin, topMarginPx: top, gapPx: gap } = LAYOUT
   const areaW = viewport.w - margin * 2
-  const areaH = viewport.h - margin * 2
+  const areaH = viewport.h - top - margin
   const maxCols = Math.ceil(Math.sqrt(count))
   const rows = Math.ceil(count / maxCols)
   const rowH = (areaH - gap * (rows - 1)) / rows
@@ -20,7 +20,7 @@ export function layoutTiles(count: number, viewport: Viewport): Rect[] {
     for (let col = 0; col < cols; col += 1) {
       rects.push({
         x: margin + col * (colW + gap),
-        y: margin + row * (rowH + gap),
+        y: top + row * (rowH + gap),
         w: colW,
         h: rowH,
       })
@@ -45,12 +45,12 @@ export function observatoryLayout(
   viewport: Viewport,
   sidebarW = 0,
 ): { terminal: Rect; sessions: Rect[] } {
-  const { outerMarginPx: margin, gapPx: gap } = LAYOUT
+  const { outerMarginPx: margin, topMarginPx: top, gapPx: gap } = LAYOUT
   const areaW = viewport.w - margin * 2
-  const areaH = viewport.h - margin * 2
+  const areaH = viewport.h - top - margin
 
   if (sessionCount <= 0) {
-    return { terminal: { x: margin, y: margin, w: areaW, h: areaH }, sessions: [] }
+    return { terminal: { x: margin, y: top, w: areaW, h: areaH }, sessions: [] }
   }
 
   const roomForTiles = areaW - sidebarW - gap
@@ -60,7 +60,7 @@ export function observatoryLayout(
   )
   const sideX = margin + terminalW + gap
   const sideW = areaW - terminalW - gap
-  const terminal = { x: margin, y: margin, w: terminalW, h: areaH }
+  const terminal = { x: margin, y: top, w: terminalW, h: areaH }
 
   const columns = sessionCount > SIDE_ROWS_MAX ? 2 : 1
   const rows = Math.ceil(sessionCount / columns)
@@ -73,7 +73,7 @@ export function observatoryLayout(
     const row = Math.floor(index / columns)
     sessions.push({
       x: sideX + column * (colW + gap),
-      y: margin + row * (rowH + gap),
+      y: top + row * (rowH + gap),
       w: colW,
       h: rowH,
     })

@@ -1,4 +1,4 @@
-import type { StatusState } from '@/entities/agent-session'
+import { SIDEBAR } from '@/shared/config/theme'
 import { useScrollState } from '@/shared/lib/scroll-state/use-scroll-state'
 import { ChatList } from '../ChatList/ChatList'
 import type { ChatListProps } from '../ChatList/ChatList.types'
@@ -7,7 +7,6 @@ import { StockList } from '../StockList/StockList'
 import type { StockListProps } from '../StockList/StockList.types'
 import { TeamList } from '../TeamList/TeamList'
 import type { TeamListProps } from '../TeamList/TeamList.types'
-import { UsagePanel } from '../UsagePanel/UsagePanel'
 
 const AVATAR = 24
 
@@ -15,7 +14,6 @@ type TeamSidebarProps = {
   chats: Omit<ChatListProps, 'nowMs'>
   team: Omit<TeamListProps, 'avatar'>
   stock: Omit<StockListProps, 'avatar'>
-  status: StatusState
   nowMs: number
   width: number
   onResize(width: number): void
@@ -26,7 +24,6 @@ export function TeamSidebar({
   chats,
   team,
   stock,
-  status,
   nowMs,
   width,
   onResize,
@@ -36,14 +33,14 @@ export function TeamSidebar({
 
   return (
     <aside
-      style={{ width }}
+      style={{ width, paddingLeft: SIDEBAR.gutter }}
       className="zt-bleed relative flex flex-none flex-col overflow-hidden border-r border-border bg-card/40"
     >
       <SidebarGrip width={width} onResize={onResize} onResizeEnd={onResizeEnd} />
 
       <div
         ref={column}
-        className="zt-scroll zt-fade-out flex min-h-0 flex-1 flex-col gap-3 overflow-x-hidden overflow-y-auto pr-3"
+        className="zt-scroll zt-fade-out -mx-1 -mt-1 flex min-h-0 flex-1 flex-col gap-3 overflow-x-hidden overflow-y-auto px-1 pt-1 pr-5"
       >
         <ChatList {...chats} nowMs={nowMs} />
 
@@ -54,14 +51,13 @@ export function TeamSidebar({
         <StockList {...stock} avatar={AVATAR} />
       </div>
 
-      <UsagePanel status={status} sessionLive={team.sessionLive} avatar={AVATAR} />
     </aside>
   )
 }
 
 function Heading({ children }: { children: string }) {
   return (
-    <div className="mt-2 border-t border-border px-2 pt-4 text-xs tracking-wide text-muted-foreground">
+    <div className="mt-7 px-2 text-xs tracking-wide text-muted-foreground">
       {children}
     </div>
   )

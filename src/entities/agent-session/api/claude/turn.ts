@@ -1,6 +1,6 @@
 import type { TurnEvent } from './turn.types'
 
-import { failureLine, retryLine } from './failure/failure'
+import { retryLine, stoppedLine } from './failure/failure'
 import { resultText, toolLine } from './shared'
 
 export function fromAssistant(event: Record<string, unknown>): TurnEvent[] {
@@ -66,7 +66,13 @@ export function fromResult(event: Record<string, unknown>): TurnEvent[] {
       out.push({ type: 'stream', line: `permission denied: ${tool}`, toolUseId: null, input: null })
     }
   }
-  const said = failureLine(str(event.subtype), event.errors)
+  const said = stoppedLine({
+    subtype: str(event.subtype),
+    isError: event.is_error === true,
+    error: str(event.error),
+    result: str(event.result),
+    errors: event.errors,
+  })
   if (said !== null) out.push({ type: 'notice', text: said })
   out.push({ type: 'turnEnded' })
   return out

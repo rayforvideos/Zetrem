@@ -1,6 +1,6 @@
 import type { AgentEventRefs } from './agent-events.types'
 
-import { statusStore } from '@/entities/agent-session'
+import { modelRefusedIn, statusStore } from '@/entities/agent-session'
 import type {
   ClaudeTurnEvent,
   RateLimit,
@@ -33,7 +33,23 @@ function isStatusEvent(turn: ClaudeTurnEvent): turn is StatusEvent {
   }
 }
 
+const BACKGROUND = 'local_bash'
+const OVER = ['completed', 'failed', 'killed']
+
+function chore(turn: ClaudeTurnEvent): boolean {
+  if (turn.type === 'childStarted' && turn.taskType === BACKGROUND) {
+    conversation.startChore(turn.taskId, turn.description)
+    return true
+  }
+  if (turn.type === 'childNotified') conversation.endChore(turn.taskId)
+  if (turn.type === 'childStateKnown' && OVER.includes(turn.state)) {
+    conversation.endChore(turn.taskId)
+  }
+  return false
+}
+
 function announce(turn: ClaudeTurnEvent, refs: AgentEventRefs): void {
+  if (chore(turn)) return
   if (isCrewEvent(turn)) return applyCrewEvent(turn, refs)
   switch (turn.type) {
     case 'headline':
@@ -47,8 +63,11 @@ function announce(turn: ClaudeTurnEvent, refs: AgentEventRefs): void {
       return conversation.delta(turn.text)
     case 'thinking':
       return conversation.think(turn.text)
-    case 'notice':
+    case 'notice': {
+      const refused = modelRefusedIn(turn.text)
+      if (refused !== null) refs.onModelRefused(refused)
       return conversation.system(turn.text)
+    }
     case 'turnEnded':
       conversation.settleDraft()
       return conversation.setStatus('waiting')
@@ -81,6 +100,7 @@ function announce(turn: ClaudeTurnEvent, refs: AgentEventRefs): void {
           requestId: turn.requestId,
           toolName: turn.toolName,
           line: turn.line,
+          detail: turn.detail,
         })
       }
       return conversation.setStatus('waiting')
@@ -104,6 +124,7 @@ function drop(requestId: string, refs: AgentEventRefs): void {
     requestId: next.requestId,
     toolName: next.toolName,
     line: next.line,
+    detail: next.detail,
   })
 }
 

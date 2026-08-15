@@ -9,6 +9,7 @@ import { Composer } from '../Composer/Composer'
 import { tickOpen } from './Tick'
 
 const STATUS: StatusState = {
+  usage: 'read',
   session: null,
   context: { used: 0, window: null },
   cost: {
@@ -48,10 +49,9 @@ function working(turns: Turn[]): string {
       status="working"
       statusState={{ ...STATUS, cost: { ...STATUS.cost, tokens: { ...STATUS.cost.tokens, out: 1240 } } }}
       permission={null}
+      chores={[]}
       nowMs={12_000}
       onDecide={() => {}}
-      onUpdateCli={() => {}}
-      updatingCli={false}
       sidebar={null}
       report={null}
       composer={<Composer
@@ -61,6 +61,7 @@ function working(turns: Turn[]): string {
         addressee={null}
         permissionMode="ask"
         model="default"
+        refusedModels={[]}
         onSend={() => {}}
         onStop={() => {}}
         onClearAddressee={() => {}}
@@ -78,10 +79,9 @@ function pane(turns: Turn[], permission: PermissionAsk | null = null): string {
       status="done"
       statusState={STATUS}
       permission={permission}
+      chores={[]}
       nowMs={0}
       onDecide={() => {}}
-      onUpdateCli={() => {}}
-      updatingCli={false}
       sidebar={null}
       report={null}
       composer={<Composer
@@ -91,6 +91,7 @@ function pane(turns: Turn[], permission: PermissionAsk | null = null): string {
         addressee={null}
         permissionMode="ask"
         model="default"
+        refusedModels={[]}
         onSend={() => {}}
         onStop={() => {}}
         onClearAddressee={() => {}}
@@ -198,7 +199,7 @@ describe('the screen is not blank while an answer is on its way', () => {
 })
 
 describe('approval: the most important moment in this app', () => {
-  const ask = { requestId: 'r1', toolName: 'Bash', line: 'rm -rf build' }
+  const ask = { requestId: 'r1', toolName: 'Bash', line: 'Bash rm -rf build', detail: 'rm -rf build' }
 
   it('says what it wants to do in plain words first', () => {
     const html = pane([], ask)
@@ -219,7 +220,7 @@ describe('approval: the most important moment in this app', () => {
   })
 
   it('asks about a tool it does not know, without inventing a name for it', () => {
-    const html = pane([], { requestId: 'r2', toolName: 'SomeTool', line: '무언가' })
+    const html = pane([], { requestId: 'r2', toolName: 'SomeTool', line: '무언가', detail: '무언가' })
     expect(html).toContain('Allow this?')
     expect(html).toContain('SomeTool')
   })

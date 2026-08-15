@@ -111,3 +111,41 @@ describe('TileDeck', () => {
     expect(count(html, 'data-status')).toBe(6)
   })
 })
+
+describe('TileDeck: a tile that is leaving', () => {
+  it('keeps drawing a tile that is on its way out, so it can be seen to go', () => {
+    const html = renderToStaticMarkup(
+      <TileDeck
+        state={{ kind: 'fanned', ids: ['b'], closing: ['a'] }}
+        sessions={[session('a'), session('b')]}
+        viewport={{ w: 1440, h: 900 }}
+        nowMs={0}
+        terminal={<div />}
+      />,
+    )
+    expect(html).toContain('data-closing="true"')
+    expect(html).toContain('zt-tile-out')
+  })
+
+  it('gives the standing tiles their new places at once, without waiting for the leaver', () => {
+    const two = renderToStaticMarkup(
+      <TileDeck
+        state={{ kind: 'fanned', ids: ['a', 'b'], closing: [] }}
+        sessions={[session('a'), session('b')]}
+        viewport={{ w: 1440, h: 900 }}
+        nowMs={0}
+        terminal={<div />}
+      />,
+    )
+    const oneLeaving = renderToStaticMarkup(
+      <TileDeck
+        state={{ kind: 'fanned', ids: ['b'], closing: ['a'] }}
+        sessions={[session('a'), session('b')]}
+        viewport={{ w: 1440, h: 900 }}
+        nowMs={0}
+        terminal={<div />}
+      />,
+    )
+    expect(oneLeaving).not.toBe(two)
+  })
+})

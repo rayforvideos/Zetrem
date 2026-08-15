@@ -1,5 +1,5 @@
-import { useEffect, useSyncExternalStore } from 'react'
-import { CrewProvider, roster, stockAgents } from '@/entities/agent-session'
+import { useEffect, useState, useSyncExternalStore } from 'react'
+import { CrewProvider, roster, stockAgents, withRefused, withoutRefused } from '@/entities/agent-session'
 import { pickProject, projectStore } from '@/entities/project'
 import { GRID_PAD } from '@/shared/config/theme'
 import { PanelLeft } from 'lucide-react'
@@ -11,9 +11,14 @@ import { Composer, ConversationPane } from '@/widgets/conversation'
 import { PluginShelf, SetupPane } from '@/widgets/setup'
 import { TeamSidebar, team, toggled } from '@/widgets/team-sidebar'
 import { TileDeck, useDeck, useFleet } from '@/widgets/tile-deck'
+import { MOTION } from '@/shared/config/motion/motion'
+import { layerOver } from '@/shared/lib/modal/modal'
+import { UsageBar } from '@/widgets/usage-bar'
+import { StatusDrawer } from '@/widgets/status-bar'
 import { Titlebar } from '@/widgets/titlebar'
 import { remembered } from '../model/remembered/remembered'
 import { screenGate } from '../model/screen-gate/screen-gate'
+import { sessionLive, stirring } from '../model/live/live'
 import { useAgent } from '../model/use-agent'
 import { useAgentDefs } from '../model/use-agent-defs'
 import { useAuth } from '../model/use-auth'
@@ -48,8 +53,16 @@ export function WorkspaceScreen() {
     lock: lockOf(settings, defs),
     resume: chat.resumeId,
   }
-  const agent = useAgent(runConfig)
+  const agent = useAgent(runConfig, (model) =>
+    update({ refusedModels: withRefused(settings.refusedModels, model) }),
+  )
   const { conversation: conv, children, status, nowMs } = agent
+
+  useEffect(() => {
+    if (!settings.refusedModels.includes(settings.model)) return
+    if (status.cost.turns === 0) return
+    update({ refusedModels: withoutRefused(settings.refusedModels, settings.model) })
+  }, [status.cost.turns, settings.model, settings.refusedModels])
 
   const auth = useAuth()
   const cliUpdate = useCliUpdate(status.session?.cliVersion ?? null)
@@ -73,6 +86,7 @@ export function WorkspaceScreen() {
   })
 
   const shelf = usePlugins(gate === 'setup')
+  const [shelfTab, setShelfTab] = useState('installed')
   const wires = useConnectors(shelf.open)
   useSessionProbe(runConfig, gate !== 'holding' && status.session === null)
   useFleet(deck, children, nowMs, viewport, sidebar.span + GRID_PAD * 2)
@@ -91,6 +105,18 @@ export function WorkspaceScreen() {
   const stock = stockAgents(settings.knownAgents, defs.map((def) => def.name))
   const openAgent = children.find((session) => session.id === focus.openAgentId) ?? null
   const sessionAgentNames = status.session?.agents ?? []
+  const live = sessionLive(status, conv.status)
+  const atWork = stirring(conv.status, children)
+  const [drawerOpen, setDrawerOpen] = useState(false)
+  useEffect(() => {
+    if (!drawerOpen) return
+    const onKey = (event: KeyboardEvent): void => {
+      if (event.key !== 'Escape' || layerOver(document)) return
+      setDrawerOpen(false)
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [drawerOpen])
 
   function handlePickProject(): void {
     pickProject()
@@ -108,6 +134,8 @@ export function WorkspaceScreen() {
 
   return (
     <CrewProvider crew={crewOf(defs, status.session?.model ?? null)}>
+      <div data-live={atWork ? '' : undefined} className="flex h-full min-h-0 flex-col">
+      <div className="relative min-h-0 flex-1">
       <TileDeck
         state={deck.state}
         sessions={children}
@@ -128,7 +156,7 @@ export function WorkspaceScreen() {
                 note: auth.loginNote,
                 signingIn: auth.loggingIn,
                 signingOut: auth.loggingOut,
-                sessionLive: status.session !== null && conv.status !== 'done',
+                sessionLive: live,
                 onSignIn: auth.login,
                 onSignOut: auth.logout,
               }}
@@ -160,16 +188,18 @@ export function WorkspaceScreen() {
               status={conv.status}
               statusState={status}
               permission={conv.permission}
+              chores={conv.chores}
               nowMs={nowMs}
               onDecide={agent.decide}
               composer={
                 <Composer
                   empty={conv.turns.length === 0}
                   busy={conv.status === 'working'}
-                  sessionLive={conv.status !== 'done'}
+                  sessionLive={live}
                   addressee={focus.addressee}
                   permissionMode={settings.permissionMode}
                   model={settings.model}
+                  refusedModels={settings.refusedModels}
                   onSend={(text) => {
                     agent.send(text, focus.addressee)
                     focus.address(null)
@@ -180,8 +210,6 @@ export function WorkspaceScreen() {
                   onModel={(model) => update({ model })}
                 />
               }
-              onUpdateCli={cliUpdate.start}
-              updatingCli={cliUpdate.updating}
               report={
                 openAgent === null ? null : (
                   <AgentReport
@@ -196,8 +224,12 @@ export function WorkspaceScreen() {
               sidebar={
                 <div
                   ref={attachSidebar}
-                  style={{ marginLeft: tuckedBy(sidebar.open, sidebarBoxW, sidebar.width) }}
-                  className="flex flex-none transition-[margin] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]"
+                  data-tucked={sidebar.open ? undefined : ''}
+                  style={{
+                    marginLeft: tuckedBy(sidebar.open, sidebarBoxW, sidebar.width),
+                    transition: `margin ${MOTION.moveMs}ms ${MOTION.easing}`,
+                  }}
+                  className="flex flex-none"
                 >
                   <TeamSidebar
                     chats={{
@@ -212,7 +244,7 @@ export function WorkspaceScreen() {
                       drafts,
                       knownTools: settings.knownTools,
                       sessionKnown: status.session !== null,
-                      sessionLive: status.session !== null,
+                      sessionLive: live,
                       canWrite: true,
                       note: teamNote,
                       onHire: hire,
@@ -230,7 +262,6 @@ export function WorkspaceScreen() {
                       on: settings.stockAgents,
                       onChange: (name, on) => update({ stockAgents: toggled(settings.stockAgents, name, on) }),
                     }}
-                    status={status}
                     nowMs={nowMs}
                     width={sidebar.width}
                     onResize={sidebar.resize}
@@ -246,20 +277,50 @@ export function WorkspaceScreen() {
       {shelf.open && (
         <PluginShelf
           connectors={wires.connectors}
+          onAddConnector={wires.add}
+          onImportConnectors={wires.importDesktop}
+          adding={wires.adding}
           onConnector={wires.act}
           catalog={shelf.catalog}
           marketplaces={shelf.marketplaces}
-          loading={shelf.loading || wires.loading}
-          note={wires.note ?? shelf.note}
+          loading={shelfTab === 'connectors' ? wires.loading : shelf.loading}
+          browsing={shelf.browsing}
+          onTab={(value) => {
+            setShelfTab(value)
+            if (value === 'browse') shelf.browse()
+          }}
           onAct={shelf.act}
           busy={shelf.busy ?? wires.busy}
           onReload={() => {
+            if (shelfTab === 'connectors') {
+              wires.reload()
+              return
+            }
+            if (shelfTab === 'browse') {
+              shelf.browse(true)
+              return
+            }
             shelf.reload()
-            wires.reload()
           }}
+          project={project?.path ?? null}
           onClose={shelf.hide}
         />
       )}
+
+      {drawerOpen && gate === 'conversation' && (
+        <div className="zt-scroll absolute inset-x-0 bottom-0 z-[6] max-h-[60%] overflow-y-auto border-t border-border bg-background px-4 pt-3 pb-4">
+          <div className="w-full max-w-3xl">
+            <StatusDrawer
+              statusState={status}
+              onUpdate={cliUpdate.start}
+              updating={cliUpdate.updating}
+            />
+          </div>
+        </div>
+      )}
+      </div>
+      <UsageBar status={status} open={drawerOpen} onToggle={() => setDrawerOpen((was) => !was)} />
+      </div>
 
       <Titlebar
         left={

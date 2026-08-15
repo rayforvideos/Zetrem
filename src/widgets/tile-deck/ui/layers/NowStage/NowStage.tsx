@@ -8,6 +8,8 @@ import { sceneOf, shapeOfCall } from '../../../lib/now/now'
 
 const W = 52
 const H = 34
+const FRAME_W = 34
+const FRAME_H = 22
 
 type NowStageProps = { call: Call; live: boolean; nowMs?: number }
 
@@ -41,12 +43,12 @@ function Picture({ scene, shape, live }: PictureProps) {
     return (
       <span style={summonStyle}>
         <span style={live ? ringStyle : { ...ringStyle, animation: 'none' }} />
-        <AgentSprite subagentType={shape.subagentType} size={26} />
+        <AgentSprite subagentType={shape.subagentType} size={18} />
       </span>
     )
   }
   return (
-    <svg width={W} height={H} viewBox={`0 0 ${W} ${H}`} fill="none" aria-hidden>
+    <svg width={FRAME_W} height={FRAME_H} viewBox={`0 0 ${W} ${H}`} fill="none" aria-hidden>
       <Drawing scene={scene} live={live} />
     </svg>
   )
@@ -108,19 +110,18 @@ function Drawing({ scene, live }: { scene: Scene; live: boolean }) {
         <>
           <rect x={7} y={5} width={38} height={24} rx={3} stroke="currentColor" strokeWidth={1.25} opacity={0.45} />
           <path d="M12 12 L16 15.5 L12 19" {...rule} opacity={0.8} />
-          {[0, 1, 2, 3].map((at) => (
-            <rect
-              key={at}
-              x={20 + at * 6}
-              y={14}
-              width={4}
-              height={3}
-              rx={1}
-              fill="currentColor"
-              opacity={0.7}
-              style={motion(live, `zt-now-tick 1.4s ease-in-out ${at * 0.14}s infinite`)}
-            />
+          {[0, 1, 2].map((at) => (
+            <rect key={at} x={20 + at * 6} y={14} width={4} height={3} rx={1} fill="currentColor" opacity={0.28} />
           ))}
+          <rect
+            x={38}
+            y={14}
+            width={4}
+            height={3}
+            rx={1}
+            fill="currentColor"
+            style={motion(live, 'zt-now-tick 1.1s steps(1, end) infinite')}
+          />
           <line x1={12} y1={24} x2={20} y2={24} {...rule} opacity={0.3} />
         </>
       )
@@ -175,17 +176,18 @@ function motion(live: boolean, animation: string, origin?: string): CSSPropertie
 const rootStyle: CSSProperties = {
   display: 'flex',
   alignItems: 'center',
-  gap: 10,
+  gap: 7,
   minWidth: 0,
   flex: '0 0 auto',
-  padding: '4px 5px',
-  borderRadius: 6,
+  padding: '3px 5px',
+  borderRadius: 5,
+  fontSize: 11.5,
 }
 
 const frameStyle: CSSProperties = {
   flex: '0 0 auto',
-  width: W,
-  height: H,
+  width: FRAME_W,
+  height: FRAME_H,
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
@@ -197,14 +199,14 @@ const summonStyle: CSSProperties = {
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  width: W,
-  height: H,
+  width: FRAME_W,
+  height: FRAME_H,
 }
 
 const ringStyle: CSSProperties = {
   position: 'absolute',
-  width: 30,
-  height: 30,
+  width: 22,
+  height: 22,
   borderRadius: '50%',
   border: '1px solid currentColor',
   animation: 'zt-now-ring 2s ease-out infinite',
@@ -222,17 +224,20 @@ const elapsedStyle: CSSProperties = {
 
 const wordsStyle: CSSProperties = {
   display: 'flex',
-  flexDirection: 'column',
-  gap: 1,
+  alignItems: 'baseline',
+  gap: 7,
+  flex: '1 1 auto',
   minWidth: 0,
 }
 
-const verbStyle: CSSProperties = { fontSize: 12.5 }
+const verbStyle: CSSProperties = { flex: '0 0 auto' }
 
 const targetStyle: CSSProperties = {
   fontFamily: 'var(--zt-mono)',
   fontSize: 11,
-  opacity: 0.55,
+  opacity: 0.75,
+  flex: '1 1 auto',
+  minWidth: 0,
   whiteSpace: 'nowrap',
   overflow: 'hidden',
   textOverflow: 'ellipsis',

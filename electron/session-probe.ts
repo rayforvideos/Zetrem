@@ -1,4 +1,5 @@
 import { spawn } from 'node:child_process'
+import { readFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import { app } from 'electron'
 import { agentEnv } from '@/shared/lib/shell-env/shell-env'
@@ -7,6 +8,8 @@ import type { RunConfig } from '@/entities/agent-session/model/run-config/run-co
 import { ORCHESTRATOR_PROMPT, PERSONA } from '@/entities/agent-session/model/orchestrator/orchestrator'
 import { claudeBin, loginPath } from './login-path/login-path'
 import { recallProject } from './project-memory'
+import { saveFile } from './save-file/save-file'
+import { readKept, stillWorthShowing } from './usage-cache/usage-cache'
 import { handle } from './ipc/ipc'
 import { killTree, killTreeSync } from './kill-tree/kill-tree'
 
@@ -94,6 +97,14 @@ function readReport(bin: string, cwd: string, env: NodeJS.ProcessEnv): Promise<s
   })
 }
 
+function keptPath(): string {
+  return join(app.getPath('userData'), 'usage.json')
+}
+
+async function keep(report: string): Promise<void> {
+  await saveFile(keptPath(), JSON.stringify({ report, atMs: Date.now() })).catch(() => undefined)
+}
+
 export function registerSessionProbe(): void {
   handle('session:probe', async (_event, config: RunConfig): Promise<string | null> => {
     if (inFlight !== null) return inFlight
@@ -109,6 +120,11 @@ export function registerSessionProbe(): void {
     return found
   })
 
+  handle('usage:kept', async (): Promise<string | null> => {
+    const kept = readKept(await readFile(keptPath(), 'utf8').catch(() => ''))
+    return stillWorthShowing(kept, Date.now()) ? kept!.report : null
+  })
+
   handle('session:usage', async (): Promise<string | null> => {
     if (reporting !== null) return reporting
     reporting = (async () => {
@@ -119,6 +135,7 @@ export function registerSessionProbe(): void {
     })().catch(() => null)
     const said = await reporting
     reporting = null
+    if (said !== null) await keep(said)
     return said
   })
 }

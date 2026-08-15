@@ -12,6 +12,11 @@ function count(value: unknown): number {
   return Array.isArray(value) ? value.length : 0
 }
 
+function errorStatus(raw: unknown): string | null {
+  if (typeof raw === 'number' && Number.isFinite(raw)) return String(raw)
+  return typeof raw === 'string' && raw.length > 0 ? raw : null
+}
+
 export function fromStatusLine(
   event: Record<string, unknown>,
   parent: string | null = null,
@@ -148,7 +153,7 @@ function fromResultMetrics(event: Record<string, unknown>): StatusEvent[] {
         ttftMs: typeof event.ttft_ms === 'number' ? event.ttft_ms : null,
         turns: num(event.num_turns),
         contextWindow: window > 0 ? window : null,
-        apiErrorStatus: typeof event.api_error_status === 'string' ? event.api_error_status : null,
+        apiErrorStatus: errorStatus(event.api_error_status),
         stopReason: typeof event.stop_reason === 'string' ? event.stop_reason : null,
       },
     },

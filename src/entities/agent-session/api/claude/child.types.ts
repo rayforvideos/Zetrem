@@ -19,7 +19,13 @@ export type ChildTurnEvent =
       text: string
     }
   | { type: 'childClosed'; toolUseId: string; error?: string }
-  | { type: 'childStarted'; toolUseId: string | null; taskId: string }
+  | {
+      type: 'childStarted'
+      toolUseId: string | null
+      taskId: string
+      taskType: string
+      description: string
+    }
   | {
       type: 'childNotified'
       toolUseId: string | null

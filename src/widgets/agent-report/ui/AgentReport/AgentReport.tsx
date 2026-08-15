@@ -1,4 +1,5 @@
 import type { AgentSession } from '@/entities/agent-session'
+import { useScrollState } from '@/shared/lib/scroll-state/use-scroll-state'
 import { shapeOfLine, tally } from '@/shared/lib/tool-line/tool-line'
 import { personaOf } from '@/entities/agent-session'
 import { AgentSprite } from '@/entities/agent-session/ui/AgentSprite/AgentSprite'
@@ -27,6 +28,7 @@ type AgentReportProps = {
 }
 
 export function AgentReport({ session, sessions, nowMs, onClose, onPick }: AgentReportProps) {
+  const [body] = useScrollState<HTMLDivElement>()
   const runs = runsOf(sessions, session)
   const at = runs.findIndex((run) => run.id === session.id)
   const earlier = stepTo(runs, at, -1)
@@ -37,7 +39,12 @@ export function AgentReport({ session, sessions, nowMs, onClose, onPick }: Agent
   const lead = leadOf(session.headline, session.transcript)
 
   return (
-    <div data-report data-selectable className="zt-scroll flex min-h-0 flex-1 flex-col gap-5 overflow-x-hidden overflow-y-auto">
+    <div
+      ref={body}
+      data-report
+      data-selectable
+      className="zt-scroll zt-fade-y flex min-h-0 flex-1 flex-col gap-5 overflow-x-hidden overflow-y-auto pb-4"
+    >
       <div className="flex items-start justify-between gap-4">
         <div className="flex items-center gap-2.5">
           <AgentSprite
@@ -109,7 +116,8 @@ export function AgentReport({ session, sessions, nowMs, onClose, onPick }: Agent
       )}
 
       {session.transcript.length > 0 && (
-        <div className="flex flex-col gap-2.5 border-t border-border pt-4">
+        <div className="flex flex-col gap-2.5 pt-2">
+          <span className="mb-1 text-xs tracking-[0.08em] text-muted-foreground">What they said</span>
           {session.transcript.map((entry, index) => (
             <p
               key={index}
@@ -125,7 +133,7 @@ export function AgentReport({ session, sessions, nowMs, onClose, onPick }: Agent
         </div>
       )}
 
-      <div className="flex flex-col gap-1 border-t border-border pt-4">
+      <div className="flex flex-col gap-1 pt-2">
         <div className="mb-1 flex items-baseline justify-between gap-4">
           <span className="text-xs tracking-[0.08em] text-muted-foreground">What they did</span>
           <span className="min-w-0 flex-1 text-muted-foreground">

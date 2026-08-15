@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import type { AuthStatus } from '@/entities/auth'
 import { urlFrom } from '@/shared/lib/cli-output/cli-output'
 import { reasonOf } from '@/shared/lib/failure/failure'
+import { troubleLine } from '@/shared/lib/ask/ask'
 
 type Auth = {
   auth: AuthStatus | null
@@ -28,7 +29,7 @@ export function useAuth(): Auth {
     window.desk
       .authStatus()
       .then(setAuth)
-      .catch((cause: unknown) => console.error('could not read sign-in status', cause))
+      .catch((cause: unknown) => setAuthError(troubleLine('Could not read your sign-in', cause)))
       .finally(() => setAuthKnown(true))
   }, [])
 

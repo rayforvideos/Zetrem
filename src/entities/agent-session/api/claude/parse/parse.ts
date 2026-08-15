@@ -9,6 +9,7 @@ import {
   childStateKnown,
 } from '../child'
 import { fromControlCancel, fromControlRequest } from '../permission'
+import { plainTrouble } from '../plain/plain'
 import { fromStatusLine } from '../status/status'
 import {
   deniedLine,
@@ -37,7 +38,7 @@ export function parseClaudeLine(line: string): ClaudeTurnEvent[] {
   try {
     parsed = JSON.parse(line)
   } catch {
-    return []
+    return aside(plainTrouble(line) ?? '')
   }
   if (typeof parsed !== 'object' || parsed === null) return []
   const event = parsed as Record<string, unknown>

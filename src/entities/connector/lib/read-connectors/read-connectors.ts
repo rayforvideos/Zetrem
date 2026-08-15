@@ -6,8 +6,14 @@ function stateOf(said: string): ConnectorState {
   const plain = said.replace(/[^A-Za-z ]/g, '').trim().toLowerCase()
   if (plain.startsWith('connected')) return 'connected'
   if (plain.includes('needs authentication')) return 'needs-auth'
+  if (plain.includes('pending approval')) return 'unapproved'
   if (plain.includes('failed') || plain.includes('error')) return 'failed'
   return 'unknown'
+}
+
+export function canSignIn(connector: Connector): boolean {
+  if (connector.state === 'unapproved') return false
+  return /^https?:\/\//i.test(connector.where.trim())
 }
 
 export function readConnectors(out: string): Connector[] {

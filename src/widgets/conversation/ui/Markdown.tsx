@@ -3,14 +3,7 @@ import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import { cn } from '@/shared/lib/cn'
 import { Separator } from '@/shared/ui/separator'
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/shared/ui/table'
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/shared/ui/table'
 
 export function Markdown({ text, className }: { text: string; className?: string }) {
   return (
@@ -18,19 +11,19 @@ export function Markdown({ text, className }: { text: string; className?: string
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}
         components={{
-          h1: ({ children }) => <h1 className="mt-5 mb-2 text-base font-semibold">{children}</h1>,
-          h2: ({ children }) => <h2 className="mt-5 mb-2 text-base font-semibold">{children}</h2>,
+          h1: ({ children }) => <h1 className="mt-6 mb-2 text-base font-semibold">{children}</h1>,
+          h2: ({ children }) => <h2 className="mt-6 mb-2 text-base font-semibold">{children}</h2>,
           h3: ({ children }) => (
-            <h3 className="mt-4 mb-1.5 text-base font-semibold">{children}</h3>
+            <h3 className="mt-5 mb-1.5 text-base font-semibold">{children}</h3>
           ),
-          p: ({ children }) => <p className="my-2 first:mt-0 last:mb-0">{children}</p>,
+          p: ({ children }) => <p className="my-3.5 first:mt-0 last:mb-0">{children}</p>,
           ul: ({ children }) => (
-            <ul className="my-2 flex flex-col gap-1 pl-1 [&>li]:relative [&>li]:pl-4 [&>li]:before:absolute [&>li]:before:top-[0.62em] [&>li]:before:left-[3px] [&>li]:before:size-[3px] [&>li]:before:rounded-full [&>li]:before:bg-muted-foreground">
+            <ul className="my-3.5 flex flex-col gap-1.5 pl-1 [&>li]:relative [&>li]:pl-4 [&>li]:before:absolute [&>li]:before:top-[0.62em] [&>li]:before:left-[3px] [&>li]:before:size-[3px] [&>li]:before:rounded-full [&>li]:before:bg-muted-foreground">
               {children}
             </ul>
           ),
           ol: ({ children }) => (
-            <ol className="my-2 flex list-decimal flex-col gap-1 pl-5 [&>li]:pl-1">{children}</ol>
+            <ol className="my-3.5 flex list-decimal flex-col gap-1.5 pl-5 [&>li]:pl-1">{children}</ol>
           ),
           strong: ({ children }) => <strong className="font-semibold">{children}</strong>,
           em: ({ children }) => <em className="italic">{children}</em>,
@@ -43,7 +36,7 @@ export function Markdown({ text, className }: { text: string; className?: string
             </a>
           ),
           blockquote: ({ children }) => (
-            <blockquote className="my-2 border-l border-border pl-3 text-muted-foreground">
+            <blockquote className="my-3.5 border-l border-border pl-3 text-muted-foreground">
               {children}
             </blockquote>
           ),

@@ -1,4 +1,4 @@
-import type { RosterMember, RosterState } from '@/entities/agent-session'
+import type { RosterState } from '@/entities/agent-session'
 
 export type Origin = 'project' | 'user' | 'session'
 

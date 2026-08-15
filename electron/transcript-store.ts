@@ -1,17 +1,11 @@
 import { createHash } from 'node:crypto'
-import { mkdir, readFile, readdir, rm, writeFile } from 'node:fs/promises'
+import { mkdir, readFile, readdir, rm } from 'node:fs/promises'
 import { join } from 'node:path'
 import { app } from 'electron'
-import {
-  isChatId,
-  readTranscript,
-  summaryOf,
-} from '@/entities/conversation/lib/transcript/transcript'
-import type {
-  ChatSummary,
-  Transcript,
-} from '@/entities/conversation/lib/transcript/transcript.types'
+import { isChatId, readTranscript, summaryOf } from '@/entities/conversation/lib/transcript/transcript'
+import type { ChatSummary, Transcript } from '@/entities/conversation/lib/transcript/transcript.types'
 import { handle } from './ipc/ipc'
+import { saveFile } from './save-file/save-file'
 
 const CHAT_CAP = 60
 
@@ -79,11 +73,9 @@ export function registerTranscriptStore(): void {
     const transcript = readTranscript(saved)
     if (transcript === null) return
     await mkdir(folder(project), { recursive: true }).catch(() => undefined)
-    await writeFile(
-      chatPath(project, transcript.id),
-      JSON.stringify(transcript),
-      'utf8',
-    ).catch((cause: unknown) => console.error('could not save the conversation', cause))
+    await saveFile(chatPath(project, transcript.id), JSON.stringify(transcript)).catch(
+      (cause: unknown) => console.error('could not save the conversation', cause),
+    )
     await prune(project, await chats(project))
   })
 

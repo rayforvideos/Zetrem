@@ -1,12 +1,8 @@
 import type { AgentEventRefs } from './agent-events.types'
 
 import { sessionStore, statusStore } from '@/entities/agent-session'
-import type {
-  ClaudeTurnEvent,
-  RateLimit,
-  ResultMetrics,
-  StatusEvent,
-} from '@/entities/agent-session'
+import type { ClaudeTurnEvent, RateLimit, ResultMetrics, StatusEvent } from '@/entities/agent-session'
+import { clip } from '@/shared/lib/clip/clip'
 import { formatResetTime } from '@/shared/lib/datetime/datetime'
 import { formatTokens, limitKindLabel } from '@/shared/lib/units/units'
 import { resumedAgent } from '@/entities/agent-session'
@@ -48,6 +44,8 @@ function announce(turn: ClaudeTurnEvent, refs: AgentEventRefs): void {
       return conversation.delta(turn.text)
     case 'thinking':
       return conversation.think(turn.text)
+    case 'notice':
+      return conversation.system(turn.text)
     case 'turnEnded':
       conversation.settleDraft()
       return conversation.setStatus('waiting')
@@ -71,6 +69,8 @@ function announce(turn: ClaudeTurnEvent, refs: AgentEventRefs): void {
         conversation.system(`API error ${turn.metrics.apiErrorStatus}`)
       }
       return conversation.system(turnLine(turn.metrics, statusStore.get().cost.lastTurnUsd))
+    case 'permissionDropped':
+      return drop(turn.requestId, refs)
     case 'permission':
       refs.asks.push(turn)
       if (refs.asks.length === 1) {
@@ -93,7 +93,7 @@ function announce(turn: ClaudeTurnEvent, refs: AgentEventRefs): void {
         subagentType: turn.subagentType,
         model: 'subagent',
         status: 'working',
-        headline: turn.prompt.slice(0, HEADLINE_MAX),
+        headline: clip(turn.prompt, HEADLINE_MAX),
         stream: [],
         transcript: [],
         tokens: 0,
@@ -104,7 +104,7 @@ function announce(turn: ClaudeTurnEvent, refs: AgentEventRefs): void {
     case 'childSay':
       if (!refs.childIds.has(turn.toolUseId)) return
       wake(turn.toolUseId)
-      sessionStore.patch(turn.toolUseId, { headline: turn.text.slice(0, HEADLINE_MAX) })
+      sessionStore.patch(turn.toolUseId, { headline: clip(turn.text, HEADLINE_MAX) })
       return sessionStore.appendTranscript(turn.toolUseId, { role: turn.role, text: turn.text })
     case 'childStream':
       if (!refs.childIds.has(turn.toolUseId)) return
@@ -113,15 +113,18 @@ function announce(turn: ClaudeTurnEvent, refs: AgentEventRefs): void {
     case 'childNotified':
       if (!refs.childIds.has(turn.toolUseId)) return
       if (turn.summary) {
-        sessionStore.patch(turn.toolUseId, { headline: turn.summary.slice(0, HEADLINE_MAX) })
+        sessionStore.patch(turn.toolUseId, { headline: clip(turn.summary, HEADLINE_MAX) })
       }
       return sessionStore.patch(turn.toolUseId, { status: turn.done ? 'reported' : 'working' })
+    case 'childStarted':
+      if (!refs.childIds.has(turn.toolUseId)) return
+      return sessionStore.patch(turn.toolUseId, { taskId: turn.taskId })
     case 'childProgress':
       if (!refs.childIds.has(turn.toolUseId)) return
       wake(turn.toolUseId)
       note(turn.toolUseId, turn.lastTool)
       return sessionStore.patch(turn.toolUseId, {
-        ...(turn.doing ? { headline: turn.doing.slice(0, HEADLINE_MAX) } : {}),
+        ...(turn.doing ? { headline: clip(turn.doing, HEADLINE_MAX) } : {}),
         tokens: turn.tokens,
         lastSeenAtMs: Date.now(),
       })
@@ -130,7 +133,7 @@ function announce(turn: ClaudeTurnEvent, refs: AgentEventRefs): void {
       if (turn.error) {
         return sessionStore.patch(turn.toolUseId, {
           status: 'done',
-          headline: `Failed: ${turn.error.slice(0, 120)}`,
+          headline: `Failed: ${clip(turn.error, 120)}`,
         })
       }
       if (sessionStore.find(turn.toolUseId)?.detached === true) return
@@ -144,8 +147,13 @@ const SEND_TOOL = 'SendMessage'
 
 function addressee(input: unknown): string {
   if (typeof input !== 'object' || input === null) return ''
-  const to = (input as Record<string, unknown>).agent ?? (input as Record<string, unknown>).name
-  return typeof to === 'string' ? to : ''
+  const held = input as Record<string, unknown>
+  const to = held.to ?? held.agent ?? held.name
+  return typeof to === 'string' ? bareName(to) : ''
+}
+
+function bareName(to: string): string {
+  return to.replace(/\s*\[[^\]]*\]\s*$/, '').trim()
 }
 
 function wakeResumed(toolUseId: string, stdout: string, refs: AgentEventRefs): void {
@@ -173,6 +181,24 @@ function wakeResumed(toolUseId: string, stdout: string, refs: AgentEventRefs): v
     tokens: 0,
     contextUsed: 0,
     startedAtMs: Date.now(),
+  })
+}
+
+function drop(requestId: string, refs: AgentEventRefs): void {
+  const at = refs.asks.findIndex((ask) => ask.requestId === requestId)
+  if (at === -1) return
+  const showing = conversation.get().permission?.requestId === requestId
+  refs.asks.splice(at, 1)
+  if (!showing) return
+  const next = refs.asks[0]
+  if (next === undefined) {
+    conversation.setPermission(null)
+    return conversation.setStatus('working')
+  }
+  conversation.setPermission({
+    requestId: next.requestId,
+    toolName: next.toolName,
+    line: next.line,
   })
 }
 

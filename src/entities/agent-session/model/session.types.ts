@@ -22,6 +22,7 @@ export type AgentSession = {
   contextUsed: number
   startedAtMs: number
   detached?: boolean
+  taskId?: string
   lastSeenAtMs?: number
   endedAtMs?: number
   waitingSinceMs?: number

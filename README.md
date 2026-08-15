@@ -4,7 +4,7 @@ A desktop app for running a team of Claude Code agents.
 
 Claude Code is the engine; Zetrem owns the screen. You hand work to named
 teammates, watch what each of them is doing, and approve the moments that need
-a decision — without reading a terminal.
+a decision, without reading a terminal.
 
 The screen answers three questions and nothing else:
 
@@ -38,7 +38,7 @@ npm run package:win     # NSIS installer in release/
 ## How it fits together
 
 ```
-electron/     main process — spawns the CLI, owns the filesystem and IPC
+electron/     main process. Spawns the CLI, owns the filesystem and IPC
 src/app       composition root and the IPC contract
 src/pages     screens
 src/widgets   composed blocks
@@ -61,7 +61,7 @@ in `tests/conventions/`, so `npm test` will tell you if you broke one.
 Claude Code 에이전트 팀을 부리는 데스크톱 앱.
 
 엔진은 Claude Code 이고 화면은 Zetrem 이 갖는다. 이름 있는 팀원에게 일을 맡기고,
-각자 무엇을 하고 있는지 보고, 결정이 필요한 순간에 결재한다 — 터미널을 읽지 않고.
+각자 무엇을 하고 있는지 보고, 결정이 필요한 순간에 결재한다. 터미널을 읽지 않고.
 
 화면은 셋만 답한다.
 
@@ -95,7 +95,7 @@ npm run package:win     # release/ 에 NSIS 설치본
 ## 구조
 
 ```
-electron/     메인 프로세스 — CLI 를 띄우고 파일과 IPC 를 쥔다
+electron/     메인 프로세스. CLI 를 띄우고 파일과 IPC 를 쥔다
 src/app       조립 지점과 IPC 계약
 src/pages     화면
 src/widgets   화면이 배치하는 덩어리

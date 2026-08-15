@@ -28,3 +28,4 @@ describe('Surface', () => {
     expect(html).not.toContain('border-border')
   })
 })
+

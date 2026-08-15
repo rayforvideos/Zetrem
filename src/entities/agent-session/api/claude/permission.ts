@@ -18,6 +18,11 @@ export function permissionAlwaysResult(toolName: string, input: unknown): Permis
   }
 }
 
+export function fromControlCancel(event: Record<string, unknown>): PermissionEvent[] {
+  if (typeof event.request_id !== 'string') return []
+  return [{ type: 'permissionDropped', requestId: event.request_id }]
+}
+
 export function fromControlRequest(event: Record<string, unknown>): PermissionEvent[] {
   const request = event.request as Record<string, unknown> | undefined
   if (request?.subtype !== 'can_use_tool') return []

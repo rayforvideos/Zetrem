@@ -1,7 +1,6 @@
 import type { ModelChoice, PermissionMode, RunConfig } from './run-config.types'
 
 import { agentsArgs } from '../roster-lock/roster-lock'
-import type { Person, RosterLock } from '../roster-lock/roster-lock.types'
 
 export const PERMISSION_MODES: { id: PermissionMode; label: string; hint: string }[] = [
   { id: 'ask', label: 'Ask first', hint: 'Asks before editing files or running commands' },

@@ -49,7 +49,8 @@ export function Stream({ lines, live }: StreamProps) {
 const rootStyle: CSSProperties = {
   marginTop: 16,
   minHeight: 0,
-  flex: '1 1 auto',
+  maxHeight: '45%',
+  flex: '0 1 auto',
   display: 'flex',
   flexDirection: 'column',
   gap: 6,

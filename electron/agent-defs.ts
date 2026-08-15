@@ -1,12 +1,7 @@
 import { join } from 'node:path'
 import { app } from 'electron'
 import type { AgentDefDraft } from '@/entities/agent-def'
-import {
-  listAgentDefs,
-  removeAgentDef,
-  replaceAgentDef,
-  writeAgentDef,
-} from './agent-store/agent-store'
+import { listAgentDefs, removeAgentDef, replaceAgentDef, writeAgentDef } from './agent-store/agent-store'
 import { handle } from './ipc/ipc'
 
 export function agentDir(): string {

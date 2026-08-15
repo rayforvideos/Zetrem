@@ -9,6 +9,7 @@ const existing: AgentDefDraft = {
   character: 'ghost',
   tools: ['Read'],
   knowledge: [],
+  ownCopy: false,
   prompt: 'look closely',
 }
 

@@ -56,7 +56,7 @@ export function observatoryLayout(
   const roomForTiles = areaW - sidebarW - gap
   const terminalW = Math.min(
     areaW - gap - MIN_TILE_W,
-    sidebarW + Math.round(roomForTiles * CONVERSATION_SHARE),
+    Math.max(sidebarW + MIN_TALK_W, sidebarW + Math.round(roomForTiles * CONVERSATION_SHARE)),
   )
   const sideX = margin + terminalW + gap
   const sideW = areaW - terminalW - gap
@@ -85,4 +85,11 @@ const CONVERSATION_SHARE = 0.42
 
 const MIN_TILE_W = 360
 
+const MIN_TALK_W = 340
+
 const SIDE_ROWS_MAX = 3
+
+export function roomToFan(viewport: Viewport, sidebarW: number): boolean {
+  const areaW = viewport.w - LAYOUT.outerMarginPx * 2
+  return areaW - sidebarW - LAYOUT.gapPx - MIN_TALK_W >= MIN_TILE_W
+}

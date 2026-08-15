@@ -11,6 +11,7 @@ function def(overrides: Partial<AgentDef> = {}): AgentDef {
     model: 'haiku',
     tools: [],
     knowledge: [],
+    ownCopy: false,
     prompt: '',
     character: null,
     source: 'project',

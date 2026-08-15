@@ -3,7 +3,7 @@ import { personaOf, useModel } from '@/entities/agent-session'
 import type { AgentSession } from '@/entities/agent-session'
 import { AgentSprite } from '@/entities/agent-session/ui/AgentSprite/AgentSprite'
 import { modelLabel } from '@/shared/lib/model-label/model-label'
-import { StateChip } from './StateChip'
+import { StateChip } from './StateChip/StateChip'
 
 type HeadlineProps = {
   session: AgentSession
@@ -29,13 +29,20 @@ export function Headline({ session, withText = true }: HeadlineProps) {
         <StateChip status={session.status} />
       </div>
       {withText && session.headline.length > 0 && (
-        <div style={textStyle}>{session.headline}</div>
+        <div className="zt-scroll" style={textStyle}>
+          {session.headline}
+        </div>
       )}
     </div>
   )
 }
 
-const rootStyle: CSSProperties = { flex: '0 0 auto' }
+const rootStyle: CSSProperties = {
+  flex: '1 1 auto',
+  minHeight: 0,
+  display: 'flex',
+  flexDirection: 'column',
+}
 
 const identityStyle: CSSProperties = {
   display: 'flex',
@@ -84,12 +91,11 @@ const assignmentStyle: CSSProperties = {
 
 const textStyle: CSSProperties = {
   marginTop: 14,
+  flex: '1 1 auto',
+  minHeight: 0,
   fontFamily: 'var(--zt-serif)',
   fontSize: 15,
   lineHeight: 1.5,
   letterSpacing: '-0.011em',
-  display: '-webkit-box',
-  WebkitLineClamp: 3,
-  WebkitBoxOrient: 'vertical',
-  overflow: 'hidden',
+  overflowY: 'auto',
 }

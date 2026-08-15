@@ -1,5 +1,6 @@
-import { readFile, readdir, mkdir, rm, writeFile } from 'node:fs/promises'
+import { readFile, readdir, mkdir, rm } from 'node:fs/promises'
 import { join, resolve } from 'node:path'
+import { saveFile } from '../save-file/save-file'
 import { fileNameOf, parseAgentDef, toAgentFile } from '@/entities/agent-def'
 import type { AgentDef, AgentDefDraft } from '@/entities/agent-def'
 
@@ -55,6 +56,6 @@ export async function writeAgentDef(dir: string, draft: AgentDefDraft): Promise<
   const root = resolve(dir)
   const path = insideRoster(dir, draft.name)
   await mkdir(root, { recursive: true })
-  await writeFile(path, toAgentFile(draft), 'utf8')
+  await saveFile(path, toAgentFile(draft))
   return path
 }

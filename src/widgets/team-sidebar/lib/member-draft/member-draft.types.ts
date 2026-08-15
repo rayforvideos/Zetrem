@@ -8,4 +8,5 @@ export type MemberFields = {
   model?: string | null
   tools?: string[]
   knowledge?: string[]
+  ownCopy?: boolean
 }

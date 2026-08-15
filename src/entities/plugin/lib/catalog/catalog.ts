@@ -1,10 +1,4 @@
-import type {
-  AvailablePlugin,
-  Catalog,
-  InstalledPlugin,
-  Marketplace,
-  PluginScope,
-} from './catalog.types'
+import type { AvailablePlugin, Catalog, InstalledPlugin, Marketplace, PluginScope } from './catalog.types'
 
 const SCOPES: PluginScope[] = ['user', 'project']
 

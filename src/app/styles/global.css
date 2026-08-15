@@ -200,11 +200,25 @@
 
 .zt-scroll::-webkit-scrollbar-thumb {
   border-radius: 4px;
+  background: transparent;
+  transition: background 400ms ease;
+}
+
+.zt-scroll:hover::-webkit-scrollbar-thumb,
+.zt-scroll[data-scrolling]::-webkit-scrollbar-thumb {
   background: var(--color-border);
 }
 
 .zt-scroll::-webkit-scrollbar-track {
   background: transparent;
+}
+
+.zt-fade-out {
+  mask-image: linear-gradient(to bottom, black calc(100% - 24px), transparent 100%);
+}
+
+.zt-fade-out[data-at-end] {
+  mask-image: none;
 }
 
 @keyframes zt-collapse-down {

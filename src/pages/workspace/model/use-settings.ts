@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { DEFAULT_SETTINGS } from '@/entities/agent-session'
 import type { Settings } from '@/entities/agent-session'
 import { useFailure } from '@/shared/lib/failure/failure'
@@ -15,22 +15,26 @@ export function useSettings(): SettingsSource {
   const [settings, setSettings] = useState<Settings>(DEFAULT_SETTINGS)
   const [loading, setLoading] = useState(true)
   const { failure, clear, report } = useFailure()
+  const held = useRef(settings)
+
+  function hold(next: Settings): void {
+    held.current = next
+    setSettings(next)
+  }
 
   useEffect(() => {
     window.desk
       .readSettings()
-      .then(setSettings)
+      .then(hold)
       .catch(report('Could not read your settings'))
       .finally(() => setLoading(false))
   }, [report])
 
   function update(patch: Partial<Settings>): void {
     clear()
-    setSettings((current) => {
-      const next = { ...current, ...patch }
-      void window.desk.writeSettings(next).catch(report('Could not save your settings'))
-      return next
-    })
+    const next = { ...held.current, ...patch }
+    hold(next)
+    void window.desk.writeSettings(next).catch(report('Could not save your settings'))
   }
 
   return { settings, loading, failure, update }

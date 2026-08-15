@@ -1,49 +1,52 @@
 import { describe, expect, it } from 'vitest'
-import { beganComposing, endedComposing, newComposer, sent } from './composer'
+import { beganComposing, endedComposing, maySendNow, newComposer, sent } from './composer'
 
-describe('composer: knowing whether the box needs clearing once more after a composition', () => {
-  it('owes a clear at the end of a composition that was sent mid-way', () => {
-    const composer = newComposer()
-    beganComposing(composer)
-    sent(composer)
-    expect(endedComposing(composer)).toBe(true)
+describe('the composer never sends a half finished syllable', () => {
+  it('sends at once when nothing is being composed', () => {
+    expect(maySendNow(newComposer())).toBe(true)
   })
 
-  it('owes nothing when there was no composition, as when typing in English', () => {
-    const composer = newComposer()
-    sent(composer)
-    expect(endedComposing(composer)).toBe(false)
+  it('holds the send while a syllable is still being built', () => {
+    const keying = newComposer()
+    beganComposing(keying)
+    expect(maySendNow(keying)).toBe(false)
   })
 
-  it('asks for nothing when a composition ended without a send', () => {
-    const composer = newComposer()
-    beganComposing(composer)
-    expect(endedComposing(composer)).toBe(false)
+  it('sends the moment the syllable is finished, so one press is enough', () => {
+    const keying = newComposer()
+    beganComposing(keying)
+    maySendNow(keying)
+    expect(endedComposing(keying)).toBe(true)
   })
 
-  it('pays the debt once, and does not clear twice for two ends', () => {
-    const composer = newComposer()
-    beganComposing(composer)
-    sent(composer)
-    expect(endedComposing(composer)).toBe(true)
-    expect(endedComposing(composer)).toBe(false)
+  it('does not send on a composition nobody asked to send', () => {
+    const keying = newComposer()
+    beganComposing(keying)
+    expect(endedComposing(keying)).toBe(false)
   })
 
-  it('does not leak state across sends in a row', () => {
-    const composer = newComposer()
-    for (let round = 0; round < 3; round += 1) {
-      beganComposing(composer)
-      sent(composer)
-      expect(endedComposing(composer), `${round}`).toBe(true)
-    }
+  it('owes only one send, however many syllables follow', () => {
+    const keying = newComposer()
+    beganComposing(keying)
+    maySendNow(keying)
+    expect(endedComposing(keying)).toBe(true)
+    beganComposing(keying)
+    expect(endedComposing(keying)).toBe(false)
   })
 
-  it('does not revive an old debt when a new composition starts', () => {
-    const composer = newComposer()
-    beganComposing(composer)
-    sent(composer)
-    endedComposing(composer)
-    beganComposing(composer)
-    expect(endedComposing(composer)).toBe(false)
+  it('forgets what it owed once the send went through another way', () => {
+    const keying = newComposer()
+    beganComposing(keying)
+    maySendNow(keying)
+    sent(keying)
+    expect(endedComposing(keying)).toBe(false)
+  })
+
+  it('sends every time once composing is over', () => {
+    const keying = newComposer()
+    beganComposing(keying)
+    endedComposing(keying)
+    expect(maySendNow(keying)).toBe(true)
+    expect(maySendNow(keying)).toBe(true)
   })
 })

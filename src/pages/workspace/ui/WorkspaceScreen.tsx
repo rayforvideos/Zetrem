@@ -5,15 +5,11 @@ import { GRID_PAD, SIDEBAR } from '@/shared/config/theme'
 import { PanelLeft } from 'lucide-react'
 import { Button } from '@/shared/ui/button'
 import { useFailure } from '@/shared/lib/failure/failure'
-import {
-  WORDMARK_SIGNATURE_OPACITY,
-  WORDMARK_SIZE,
-  Wordmark,
-} from '@/shared/graphics/wordmark/wordmark'
+import { WORDMARK_SIGNATURE_OPACITY, WORDMARK_SIZE, Wordmark } from '@/shared/graphics/wordmark/wordmark'
 import { AgentReport } from '@/widgets/agent-report'
-import { ConversationPane } from '@/widgets/conversation'
+import { Composer, ConversationPane } from '@/widgets/conversation'
 import { PluginShelf, SetupPane } from '@/widgets/setup'
-import { TeamSidebar, team } from '@/widgets/team-sidebar'
+import { TeamSidebar, team, toggled } from '@/widgets/team-sidebar'
 import { TileDeck, useDeck, useFleet } from '@/widgets/tile-deck'
 import { Titlebar } from '@/widgets/titlebar'
 import { remembered } from '../model/remembered/remembered'
@@ -24,19 +20,16 @@ import { useAuth } from '../model/use-auth'
 import { useCliUpdate } from '../model/use-cli-update'
 import { useFocus } from '../model/use-focus'
 import { usePlugins } from '../model/use-plugins'
+import { useOutcomes } from '../model/use-outcomes'
 import { useProjectMemory } from '../model/use-project-memory'
 import { useSessionProbe } from '../model/use-session-probe'
+import { useConnectors } from '../model/use-connectors'
 import { useSettings } from '../model/use-settings'
 import { useSettingsPanel } from '../model/use-settings-panel'
 import { useSidebarWidth } from '../model/use-sidebar-width'
 import { useTranscript } from '../model/use-transcript'
 import { useViewport } from '../model/use-viewport'
-import {
-  crewOf,
-  lockOf,
-  peopleOf,
-  pluginSummary,
-} from '../model/workspace-config/workspace-config'
+import { crewOf, lockOf, peopleOf, pluginSummary } from '../model/workspace-config/workspace-config'
 import { ProjectPicker } from './controls/ProjectPicker'
 
 export function WorkspaceScreen() {
@@ -77,8 +70,10 @@ export function WorkspaceScreen() {
   })
 
   const shelf = usePlugins(gate === 'setup')
+  const wires = useConnectors(shelf.open)
   useSessionProbe(runConfig, gate !== 'holding' && status.session === null)
-  useFleet(deck, children, nowMs)
+  useFleet(deck, children, nowMs, viewport, sidebar.span + GRID_PAD * 2)
+  useOutcomes(children)
 
   const sessionTools = status.session?.tools
   const sessionAgents = status.session?.agents
@@ -155,19 +150,25 @@ export function WorkspaceScreen() {
               statusState={status}
               permission={conv.permission}
               nowMs={nowMs}
-              permissionMode={settings.permissionMode}
-              onPermissionMode={(permissionMode) => update({ permissionMode })}
-              model={settings.model}
-              onModel={(model) => update({ model })}
-              sessionLive={conv.status !== 'done'}
-              addressee={focus.addressee}
-              onClearAddressee={() => focus.address(null)}
-              onSend={(text) => {
-                agent.send(addressed(text, focus.addressee))
-                focus.address(null)
-              }}
               onDecide={agent.decide}
-              onStop={agent.stop}
+              composer={
+                <Composer
+                  empty={conv.turns.length === 0}
+                  busy={conv.status === 'working'}
+                  sessionLive={conv.status !== 'done'}
+                  addressee={focus.addressee}
+                  permissionMode={settings.permissionMode}
+                  model={settings.model}
+                  onSend={(text) => {
+                    agent.send(addressed(text, focus.addressee))
+                    focus.address(null)
+                  }}
+                  onStop={agent.stop}
+                  onClearAddressee={() => focus.address(null)}
+                  onPermissionMode={(permissionMode) => update({ permissionMode })}
+                  onModel={(model) => update({ model })}
+                />
+              }
               onUpdateCli={cliUpdate.start}
               updatingCli={cliUpdate.updating}
               report={
@@ -185,39 +186,38 @@ export function WorkspaceScreen() {
                   className="flex flex-none transition-[margin] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]"
                 >
                   <TeamSidebar
-                    members={team(
-                      defs,
-                      sessionAgentNames,
-                      roster(sessionAgentNames, children),
-                    )}
-                    sessionKnown={status.session !== null}
-                    canWrite
-                    note={teamNote}
-                    onHire={hire}
-                    onPick={focus.pick}
-                    onAddress={focus.address}
-                    onRelease={release}
-                    onEdit={edit}
-                    drafts={drafts}
-                    chats={chat.chats}
-                    openChatId={chat.openId}
-                    nowMs={nowMs}
-                    onOpenChat={(id) => swap(() => chat.open(id))}
-                    onStartChat={() => swap(chat.start)}
-                    onRemoveChat={chat.remove}
-                    knownTools={settings.knownTools}
-                    sessionLive={status.session !== null}
-                    onRestart={() => swap(() => undefined)}
+                    chats={{
+                      chats: chat.chats,
+                      openId: chat.openId,
+                      onOpen: (id) => swap(() => chat.open(id)),
+                      onStart: () => swap(chat.start),
+                      onRemove: chat.remove,
+                    }}
+                    team={{
+                      members: team(defs, sessionAgentNames, roster(sessionAgentNames, children)),
+                      drafts,
+                      knownTools: settings.knownTools,
+                      sessionKnown: status.session !== null,
+                      sessionLive: status.session !== null,
+                      canWrite: true,
+                      note: teamNote,
+                      onHire: hire,
+                      onEdit: edit,
+                      onRelease: release,
+                      onPick: focus.pick,
+                      onAddress: focus.address,
+                      onRestart: () => {
+                        focus.clearAll()
+                        agent.restart()
+                      },
+                    }}
+                    stock={{
+                      stock,
+                      on: settings.stockAgents,
+                      onChange: (name, on) => update({ stockAgents: toggled(settings.stockAgents, name, on) }),
+                    }}
                     status={status}
-                    stock={stock}
-                    stockOn={settings.stockAgents}
-                    onStock={(name, on) =>
-                      update({
-                        stockAgents: on
-                          ? [...settings.stockAgents.filter((held) => held !== name), name]
-                          : settings.stockAgents.filter((held) => held !== name),
-                      })
-                    }
+                    nowMs={nowMs}
                     width={sidebar.width}
                     onResize={sidebar.resize}
                     onResizeEnd={sidebar.commit}
@@ -231,13 +231,18 @@ export function WorkspaceScreen() {
 
       {shelf.open && (
         <PluginShelf
+          connectors={wires.connectors}
+          onConnector={wires.act}
           catalog={shelf.catalog}
           marketplaces={shelf.marketplaces}
-          loading={shelf.loading}
-          busy={shelf.busy}
-          note={shelf.note}
+          loading={shelf.loading || wires.loading}
+          note={wires.note ?? shelf.note}
           onAct={shelf.act}
-          onReload={shelf.reload}
+          busy={shelf.busy ?? wires.busy}
+          onReload={() => {
+            shelf.reload()
+            wires.reload()
+          }}
           onClose={shelf.hide}
         />
       )}

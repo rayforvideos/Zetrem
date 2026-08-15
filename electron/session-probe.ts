@@ -8,7 +8,7 @@ import { ORCHESTRATOR_PROMPT, PERSONA } from '@/entities/agent-session/model/orc
 import { claudeBin, loginPath } from './login-path/login-path'
 import { recallProject } from './project-memory'
 import { handle } from './ipc/ipc'
-import { killTree } from './kill-tree/kill-tree'
+import { killTree, killTreeSync } from './kill-tree/kill-tree'
 
 const PROBE_TIMEOUT_MS = 30_000
 const PROBE_BUFFER_MAX = 200_000
@@ -17,6 +17,12 @@ const REPORT_MAX = 100_000
 
 let inFlight: Promise<string | null> | null = null
 let reporting: Promise<string | null> | null = null
+const asking = new Set<number>()
+
+export function killAllProbes(): void {
+  for (const pid of asking) killTreeSync(pid)
+  asking.clear()
+}
 
 function isInit(line: string): boolean {
   try {
@@ -30,6 +36,7 @@ function isInit(line: string): boolean {
 function readInit(bin: string, args: string[], cwd: string, env: NodeJS.ProcessEnv): Promise<string | null> {
   return new Promise((resolve) => {
     const child = spawn(bin, args, { cwd, env })
+    if (child.pid !== undefined) asking.add(child.pid)
     let settled = false
     let buffer = ''
 
@@ -37,7 +44,10 @@ function readInit(bin: string, args: string[], cwd: string, env: NodeJS.ProcessE
       if (settled) return
       settled = true
       clearTimeout(timer)
-      if (child.pid !== undefined) killTree(child.pid)
+      if (child.pid !== undefined) {
+        asking.delete(child.pid)
+        killTree(child.pid)
+      }
       resolve(line)
     }
     const timer = setTimeout(() => stop(null), PROBE_TIMEOUT_MS)
@@ -59,6 +69,7 @@ function readInit(bin: string, args: string[], cwd: string, env: NodeJS.ProcessE
 function readReport(bin: string, cwd: string, env: NodeJS.ProcessEnv): Promise<string | null> {
   return new Promise((resolve) => {
     const child = spawn(bin, ['-p', '/usage'], { cwd, env })
+    if (child.pid !== undefined) asking.add(child.pid)
     let settled = false
     let out = ''
 
@@ -66,7 +77,10 @@ function readReport(bin: string, cwd: string, env: NodeJS.ProcessEnv): Promise<s
       if (settled) return
       settled = true
       clearTimeout(timer)
-      if (child.pid !== undefined) killTree(child.pid)
+      if (child.pid !== undefined) {
+        asking.delete(child.pid)
+        killTree(child.pid)
+      }
       resolve(text)
     }
     const timer = setTimeout(() => stop(null), REPORT_TIMEOUT_MS)

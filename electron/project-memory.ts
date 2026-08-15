@@ -1,14 +1,15 @@
 import { existsSync } from 'node:fs'
-import { readFile, writeFile } from 'node:fs/promises'
+import { readFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import { app } from 'electron'
+import { saveFile } from './save-file/save-file'
 
 function memoryPath(): string {
   return join(app.getPath('userData'), 'project.json')
 }
 
 export async function rememberProject(path: string): Promise<void> {
-  await writeFile(memoryPath(), JSON.stringify({ path }), 'utf8').catch(() => undefined)
+  await saveFile(memoryPath(), JSON.stringify({ path })).catch(() => undefined)
 }
 
 export async function recallProject(): Promise<string | null> {

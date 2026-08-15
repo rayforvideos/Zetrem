@@ -4,6 +4,8 @@ import { personaOf } from '@/entities/agent-session'
 import { AgentSprite } from '@/entities/agent-session/ui/AgentSprite/AgentSprite'
 import { Button } from '@/shared/ui/button'
 import { ToolIcon } from '@/shared/graphics/tool-icon'
+import { leadOf } from '../../lib/lead/lead'
+import { leftBehind } from '../../lib/left-behind/left-behind'
 
 const STATE: Record<AgentSession['status'], string> = {
   working: 'Working',
@@ -22,6 +24,7 @@ export function AgentReport({ session, nowMs, onClose }: AgentReportProps) {
   const persona = personaOf(session.subagentType || session.label)
   const counted = tally(session.stream)
   const ranMs = (session.endedAtMs ?? nowMs) - session.startedAtMs
+  const lead = leadOf(session.headline, session.transcript)
 
   return (
     <div data-report data-selectable className="zt-scroll flex min-h-0 flex-1 flex-col gap-5 overflow-y-auto px-2">
@@ -44,7 +47,7 @@ export function AgentReport({ session, nowMs, onClose }: AgentReportProps) {
         </Button>
       </div>
 
-      {session.headline.length > 0 && <p className="text-sm leading-relaxed">{session.headline}</p>}
+      {lead !== null && <p className="text-sm leading-relaxed">{lead}</p>}
 
       <dl className="flex gap-6 font-mono text-xs tabular-nums">
         {[
@@ -63,9 +66,8 @@ export function AgentReport({ session, nowMs, onClose }: AgentReportProps) {
       </dl>
 
       {session.outcome && (
-        <p className="font-mono text-xs text-muted-foreground">
-          {session.outcome.branch} · commits {session.outcome.commits} · uncommitted files{' '}
-          {session.outcome.dirtyFiles}
+        <p className="text-sm leading-relaxed text-muted-foreground">
+          {leftBehind(session.outcome)}
         </p>
       )}
 

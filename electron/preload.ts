@@ -43,6 +43,10 @@ contextBridge.exposeInMainWorld('desk', {
     return () => ipcRenderer.removeListener('agent:event', handler)
   },
   probeSession: (config: unknown): Promise<unknown> => ipcRenderer.invoke('session:probe', config),
+  listConnectors: (): Promise<unknown> => ipcRenderer.invoke('connectors:list'),
+  connectorAct: (verb: string, target: string): Promise<unknown> =>
+    ipcRenderer.invoke('connectors:act', verb, target),
+  readOutcome: (taskId: string): Promise<unknown> => ipcRenderer.invoke('outcome:read', taskId),
   sessionUsage: (): Promise<unknown> => ipcRenderer.invoke('session:usage'),
   latestCliVersion: (): Promise<unknown> => ipcRenderer.invoke('cli:latest'),
   runCliUpdate: (): Promise<unknown> => ipcRenderer.invoke('cli:update'),

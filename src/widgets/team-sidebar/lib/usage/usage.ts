@@ -69,3 +69,4 @@ export function waitingLine(status: StatusState, sessionLive: boolean): string |
   if (!sessionLive) return 'Usage shows up once a chat is under way'
   return 'Counting, the first reply carries the numbers'
 }
+

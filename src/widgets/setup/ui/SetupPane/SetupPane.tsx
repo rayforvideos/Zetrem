@@ -5,7 +5,6 @@ import type { Failure } from '@/shared/lib/failure/failure.types'
 import { Alert, AlertDescription, AlertTitle } from '@/shared/ui/alert'
 import { Button } from '@/shared/ui/button'
 import { Field, FieldContent, FieldDescription, FieldGroup, FieldLabel } from '@/shared/ui/field'
-import { Switch } from '@/shared/ui/switch'
 import { ToggleGroup, ToggleGroupItem } from '@/shared/ui/toggle-group'
 import { Spinner } from '@/shared/ui/spinner'
 import { WORDMARK_SIZE, Wordmark } from '@/shared/graphics/wordmark/wordmark'
@@ -59,7 +58,7 @@ export function SetupPane({
 }: SetupPaneProps) {
   return (
     <div className="zt-scroll relative z-[3] h-full overflow-y-auto">
-      <div className="mx-auto flex min-h-full w-full max-w-[560px] flex-col justify-center gap-8 py-8">
+      <div className="mx-auto flex min-h-full w-full max-w-[560px] flex-col gap-8 py-8 [&>*:first-child]:mt-auto [&>*:last-child]:mb-auto">
       <div className="flex flex-col gap-3">
         <Wordmark width={WORDMARK_SIZE.setup} />
         <p className="max-w-[380px] text-sm leading-relaxed break-keep text-muted-foreground">

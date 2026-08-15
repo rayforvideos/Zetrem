@@ -1,53 +1,69 @@
-import type { StatusState } from '@/entities/agent-session'
+import type { UsagePanelProps } from './UsagePanel.types'
+import { CalendarDays, Hourglass, MessageSquare } from 'lucide-react'
+import type { LucideIcon } from 'lucide-react'
 import { cn } from '@/shared/lib/cn'
-import { Progress } from '@/shared/ui/progress'
 import { spendLine, usageRows, waitingLine } from '../../lib/usage/usage'
 
-type UsagePanelProps = {
-  status: StatusState
-  sessionLive: boolean
+
+function markOf(key: string): LucideIcon {
+  if (key === 'context') return MessageSquare
+  if (key === 'five_hour') return Hourglass
+  return CalendarDays
 }
 
-export function UsagePanel({ status, sessionLive }: UsagePanelProps) {
+export function UsagePanel({ status, sessionLive, avatar }: UsagePanelProps) {
   const rows = usageRows(status)
   const spend = spendLine(status)
   const waiting = waitingLine(status, sessionLive)
 
   return (
-    <div data-usage className="flex flex-none flex-col gap-2.5 border-t border-border px-2 py-3">
-      {rows.map((row) => (
-        <div key={row.key} className="flex flex-col gap-1.5" title={row.hint}>
-          <div className="flex items-baseline justify-between gap-2">
-            <span
+    <div data-usage className="flex flex-none flex-col pt-5 pr-3 pb-2">
+      <div className="border-t border-border pt-4 pb-1.5 px-2 text-xs tracking-wide text-muted-foreground">
+        Usage
+      </div>
+
+      {waiting !== null && (
+        <p className="px-2 text-xs leading-snug text-muted-foreground">{waiting}</p>
+      )}
+
+      <div className="flex flex-col gap-0.5">
+        {rows.map((row) => {
+          const Mark = markOf(row.key)
+          return (
+            <div
+              key={row.key}
               className={cn(
-                'truncate text-xs',
+                'flex min-w-0 items-center gap-2.5 rounded-lg px-2 py-1.5',
                 row.warn ? 'text-foreground' : 'text-muted-foreground',
               )}
+              title={row.hint}
             >
-              {row.label}
-            </span>
-            <span className="flex-none font-mono text-xs tabular-nums text-muted-foreground">
-              {row.percent === null ? row.amount : `${row.percent}%`}
-            </span>
-          </div>
-          {row.percent !== null && (
-            <Progress
-              value={row.percent}
-              aria-label={`${row.label} ${row.percent}% used`}
-              className={cn(
-                'h-1 bg-border',
-                row.warn ? '[&>*]:bg-foreground' : '[&>*]:bg-muted-foreground',
-              )}
-            />
-          )}
-          {row.warn && <span className="text-xs leading-none text-foreground">{row.hint}</span>}
-        </div>
-      ))}
+              <span
+                className="flex flex-none items-center justify-center rounded-full border border-border"
+                style={{ width: avatar, height: avatar }}
+              >
+                <Mark className="size-3.5" />
+              </span>
+              <span className="flex min-w-0 flex-1 flex-col gap-0.5">
+                <span className="truncate text-sm leading-tight">{row.label}</span>
+                {row.warn && (
+                  <span className="truncate text-xs leading-tight text-muted-foreground">
+                    {row.hint}
+                  </span>
+                )}
+              </span>
+              <span className="flex-none font-mono text-xs tabular-nums">
+                {row.percent === null ? row.amount : `${row.percent}%`}
+              </span>
+            </div>
+          )
+        })}
+      </div>
+
       {spend !== null && (
-        <span className="font-mono text-xs tabular-nums text-muted-foreground">{spend}</span>
-      )}
-      {waiting !== null && (
-        <span className="text-xs leading-snug text-muted-foreground">{waiting}</span>
+        <span className="px-2 pt-1.5 font-mono text-xs tabular-nums text-muted-foreground">
+          {spend}
+        </span>
       )}
     </div>
   )

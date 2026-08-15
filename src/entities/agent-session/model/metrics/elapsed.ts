@@ -2,7 +2,7 @@ import type { Metric } from '../metric'
 
 export const elapsedMetric: Metric = {
   id: 'elapsed',
-  label: 'Elapsed',
+  label: 'elapsed',
   unit: 's',
   known: () => true,
   read: (session, nowMs) => Math.max(0, Math.floor((nowMs - session.startedAtMs) / 1000)),

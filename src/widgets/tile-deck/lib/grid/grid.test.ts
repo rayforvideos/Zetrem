@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { LAYOUT } from '@/shared/config/motion/motion'
-import { layoutTiles, observatoryLayout, soloRect } from './grid'
+import { layoutTiles, observatoryLayout, soloRect, roomToFan } from './grid'
 
 const viewport = { w: 1440, h: 900 }
 const M = LAYOUT.outerMarginPx
@@ -147,5 +147,36 @@ describe('observatoryLayout: folding the roster away hands its room to the peopl
   it('keeps a floor under tile width, however wide the conversation gets', () => {
     const greedy = observatoryLayout(1, { w: 900, h: 700 }, 700)
     expect(greedy.sessions[0]!.w).toBeGreaterThanOrEqual(360)
+  })
+})
+
+describe('roomToFan: whether the tiles can sit beside the conversation at all', () => {
+  it('fans on a window with room for the column, the conversation and a tile', () => {
+    expect(roomToFan({ w: 1440, h: 900 }, 328)).toBe(true)
+  })
+
+  it('does not fan when what is left for the conversation would be a sliver', () => {
+    expect(roomToFan({ w: 900, h: 640 }, 328)).toBe(false)
+  })
+
+  it('fans on the same narrow window once the column is out of the way', () => {
+    expect(roomToFan({ w: 900, h: 640 }, 0)).toBe(true)
+  })
+
+  it('still fans at the window size people actually use', () => {
+    expect(roomToFan({ w: 1180, h: 760 }, 328)).toBe(true)
+  })
+
+  it('gives the conversation its floor wherever fanning is allowed at all', () => {
+    for (const w of [1180, 1280, 1440, 1920]) {
+      expect(roomToFan({ w, h: 900 }, 328)).toBe(true)
+      const { terminal } = observatoryLayout(2, { w, h: 900 }, 328)
+      expect(terminal.w - 328).toBeGreaterThanOrEqual(340)
+    }
+  })
+
+  it('leaves the tile its floor even where that costs the conversation, since a tile cannot be negative', () => {
+    const { sessions } = observatoryLayout(1, { w: 900, h: 640 }, 328)
+    expect(sessions[0]!.w).toBeGreaterThanOrEqual(360)
   })
 })

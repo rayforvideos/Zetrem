@@ -1,10 +1,12 @@
-export type PermissionEvent = {
-  type: 'permission'
-  requestId: string
-  toolName: string
-  line: string
-  input: unknown
-}
+export type PermissionEvent =
+  | {
+      type: 'permission'
+      requestId: string
+      toolName: string
+      line: string
+      input: unknown
+    }
+  | { type: 'permissionDropped'; requestId: string }
 
 export type PermissionResult =
   | { behavior: 'allow'; updatedInput: unknown }

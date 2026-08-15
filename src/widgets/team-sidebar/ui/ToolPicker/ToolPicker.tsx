@@ -1,18 +1,27 @@
+import { Check } from 'lucide-react'
 import { toolShape } from '@/shared/lib/tool-shape/tool-shape'
-import { cn } from '@/shared/lib/cn'
 import { ToolIcon } from '@/shared/graphics/tool-icon'
 import { Button } from '@/shared/ui/button'
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from '@/shared/ui/command'
 
 type ToolPickerProps = {
   known: string[]
   chosen: string[]
   onToggle(tool: string, on: boolean): void
+  onClear(): void
 }
 
-export function ToolPicker({ known, chosen, onToggle }: ToolPickerProps) {
+export function ToolPicker({ known, chosen, onToggle, onClear }: ToolPickerProps) {
   if (known.length === 0) {
     return (
-      <p className="text-xs text-muted-foreground">
+      <p className="p-3 text-xs text-muted-foreground">
         Reading what this session offers. The list fills in a moment.
       </p>
     )
@@ -20,27 +29,47 @@ export function ToolPicker({ known, chosen, onToggle }: ToolPickerProps) {
   const held = new Set(chosen)
 
   return (
-    <div className="flex flex-wrap gap-1.5">
-      {known.map((tool) => {
-        const on = held.has(tool)
-        return (
-          <Button
-            key={tool}
-            type="button"
-            variant="ghost"
-            size="sm"
-            aria-pressed={on}
-            onClick={() => onToggle(tool, !on)}
-            className={cn(
-              'h-7 rounded-full border px-2.5 font-mono text-xs',
-              on ? 'border-ring bg-card text-foreground' : 'border-border text-muted-foreground',
-            )}
-          >
-            <ToolIcon shape={toolShape(tool, null)} />
-            {tool}
-          </Button>
-        )
-      })}
-    </div>
+    <Command className="bg-transparent">
+      <CommandInput placeholder="Search tools" />
+      <CommandList className="max-h-64">
+        <CommandEmpty className="py-6 text-center text-xs text-muted-foreground">
+          No tool by that name.
+        </CommandEmpty>
+        <CommandGroup>
+          {known.map((tool) => {
+            const on = held.has(tool)
+            return (
+              <CommandItem
+                key={tool}
+                value={tool}
+                onSelect={() => onToggle(tool, !on)}
+                className="gap-2"
+              >
+                <ToolIcon shape={toolShape(tool, null)} />
+                <span className="min-w-0 flex-1 truncate font-mono text-xs">{tool}</span>
+                <span className="flex size-3.5 flex-none items-center justify-center">
+                  {on && <Check className="size-3.5" />}
+                </span>
+              </CommandItem>
+            )
+          })}
+        </CommandGroup>
+      </CommandList>
+      <div className="flex items-center justify-between gap-2 border-t border-border px-3 py-2">
+        <span className="text-xs text-muted-foreground">
+          {chosen.length === 0 ? 'Everything the session has' : `${chosen.length} chosen`}
+        </span>
+        <Button
+          type="button"
+          variant="ghost"
+          size="sm"
+          onClick={onClear}
+          disabled={chosen.length === 0}
+          className="h-7 text-xs text-muted-foreground"
+        >
+          Clear
+        </Button>
+      </div>
+    </Command>
   )
 }

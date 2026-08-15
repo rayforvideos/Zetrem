@@ -4,18 +4,25 @@ import type { AgentSession } from '@/entities/agent-session'
 
 type GaugeProps = { session: AgentSession; nowMs: number }
 
+const CLOCK = 'elapsed'
+
 export function Gauge({ session, nowMs }: GaugeProps) {
   const known = metrics.filter((metric) => metric.known(session))
+  const clock = known.find((metric) => metric.id === CLOCK)
+  const spent = known.filter((metric) => metric.id !== CLOCK)
   if (known.length === 0) return null
+  const running = session.status === 'working' || session.status === 'waiting'
 
   return (
     <div data-gauge style={rootStyle}>
-      {known.map((metric) => (
-        <div key={metric.id} style={itemStyle}>
-          <span style={labelStyle}>{metric.label}</span>
-          <span style={valueStyle}>{metric.format(metric.read(session, nowMs))}</span>
-        </div>
-      ))}
+      <span style={spentStyle}>
+        {spent.map((metric) => `${metric.format(metric.read(session, nowMs))} ${metric.label}`).join(' · ')}
+      </span>
+      {clock !== undefined && (
+        <span data-clock={running ? 'running' : 'settled'} style={clockStyle(running)}>
+          {clock.format(clock.read(session, nowMs))}
+        </span>
+      )}
     </div>
   )
 }
@@ -26,23 +33,22 @@ const rootStyle: CSSProperties = {
   paddingTop: 12,
   borderTop: '1px solid var(--border)',
   display: 'flex',
-  gap: 22,
+  alignItems: 'baseline',
+  justifyContent: 'space-between',
+  gap: 12,
   fontFamily: 'var(--zt-mono)',
   fontVariantNumeric: 'tabular-nums',
+  fontSize: 11.5,
 }
 
-const itemStyle: CSSProperties = {
-  display: 'flex',
-  alignItems: 'baseline',
-  gap: 6,
+const spentStyle: CSSProperties = {
   minWidth: 0,
+  overflow: 'hidden',
+  textOverflow: 'ellipsis',
+  whiteSpace: 'nowrap',
+  opacity: 0.5,
 }
 
-const labelStyle: CSSProperties = {
-  fontSize: 9,
-  letterSpacing: '0.08em',
-  textTransform: 'uppercase',
-  opacity: 0.45,
+function clockStyle(running: boolean): CSSProperties {
+  return { flex: '0 0 auto', opacity: running ? 1 : 0.5 }
 }
-
-const valueStyle: CSSProperties = { fontSize: 11.5 }

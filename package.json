@@ -37,6 +37,7 @@
   "dependencies": {
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "cmdk": "^1.1.1",
     "lucide-react": "^1.31.0",
     "prism-react-renderer": "^2.4.1",
     "radix-ui": "^1.6.7",

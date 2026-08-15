@@ -24,6 +24,7 @@ describe('parseAgentDef: reading a person off disk', () => {
     character: null,
       tools: ['Read', 'Grep'],
       knowledge: [],
+      ownCopy: false,
       prompt: '당신은 코드를 봅니다.\n\n두 번째 문단.',
       source: 'project',
       path: '.claude/agents/code-reviewer.md',
@@ -71,6 +72,7 @@ describe('toAgentFile: writing a new person to disk', () => {
     character: null,
       tools: ['Read'],
       knowledge: [],
+      ownCopy: false,
       prompt: '당신은 찾습니다.',
     }
     const back = parseAgentDef(toAgentFile(draft), 'project', 'p')
@@ -85,6 +87,7 @@ describe('toAgentFile: writing a new person to disk', () => {
     character: null,
       tools: [],
       knowledge: [],
+      ownCopy: false,
       prompt: '본문',
     })
     expect(text).not.toContain('model:')
@@ -99,6 +102,7 @@ describe('toAgentFile: writing a new person to disk', () => {
     character: null,
       tools: [],
       knowledge: [],
+      ownCopy: false,
       prompt: '본문',
     })
     expect(parseAgentDef(text, 'user', 'a')?.description).toBe('코드: 본다')
@@ -124,6 +128,7 @@ describe('attached documents: listed in frontmatter, asked for in the body', () 
     character: null,
     tools: [],
     knowledge: ['docs/architecture.md', 'CONTRIBUTING.md'],
+    ownCopy: false,
     prompt: '당신은 프론트를 맡는다.',
   }
 
@@ -159,5 +164,60 @@ describe('attached documents: listed in frontmatter, asked for in the body', () 
   it('reads an older file with no list as an empty list, not a failure', () => {
     const old = ['---', 'name: Old', 'description: before', '---', '', '옛 프롬프트'].join('\n')
     expect(parseAgentDef(old, 'user', '/o.md')?.knowledge).toEqual([])
+  })
+})
+
+describe('a teammate who works in their own copy of the repository', () => {
+  it('is written as the isolation the CLI understands', () => {
+    const file = toAgentFile({
+      name: 'siena',
+      description: 'reviews',
+      model: null,
+      character: null,
+      tools: [],
+      knowledge: [],
+      ownCopy: true,
+      prompt: 'go',
+    })
+    expect(file).toContain('isolation: worktree')
+  })
+
+  it('says nothing at all for a teammate who works in yours', () => {
+    const file = toAgentFile({
+      name: 'siena',
+      description: 'reviews',
+      model: null,
+      character: null,
+      tools: [],
+      knowledge: [],
+      ownCopy: false,
+      prompt: 'go',
+    })
+    expect(file).not.toContain('isolation')
+  })
+
+  it('reads back what it wrote', () => {
+    const draft = {
+      name: 'siena',
+      description: 'reviews',
+      model: null,
+      character: null,
+      tools: [],
+      knowledge: [],
+      ownCopy: true,
+      prompt: 'go',
+    }
+    const read = parseAgentDef(toAgentFile(draft), 'user', '/siena.md')
+    expect(read?.ownCopy).toBe(true)
+  })
+
+  it('reads a file that never heard of it as working in yours', () => {
+    const read = parseAgentDef('---\nname: old\n---\nbody', 'user', '/old.md')
+    expect(read?.ownCopy).toBe(false)
+  })
+
+  it('does not take some other isolation as its own copy', () => {
+    const read = parseAgentDef('---\nname: x\nisolation: none\n---\nbody', 'user', '/x.md')
+    expect(read?.ownCopy).toBe(false)
   })
 })

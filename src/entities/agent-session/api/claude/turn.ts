@@ -1,6 +1,6 @@
 import type { TurnEvent } from './turn.types'
 
-import type { ChildTurnEvent } from './child.types'
+import { failureLine, retryLine } from './failure/failure'
 import { resultText, toolLine } from './shared'
 
 export function fromAssistant(event: Record<string, unknown>): TurnEvent[] {
@@ -66,8 +66,56 @@ export function fromResult(event: Record<string, unknown>): TurnEvent[] {
       out.push({ type: 'stream', line: `permission denied: ${tool}`, toolUseId: null, input: null })
     }
   }
+  const said = failureLine(str(event.subtype), event.errors)
+  if (said !== null) out.push({ type: 'notice', text: said })
   out.push({ type: 'turnEnded' })
   return out
+}
+
+export function fromStartupTrouble(event: Record<string, unknown>): TurnEvent[] {
+  return [
+    ...troubles(event.mcp_server_errors, 'MCP server'),
+    ...troubles(event.plugin_errors, 'Plugin'),
+  ]
+}
+
+function troubles(raw: unknown, kind: string): TurnEvent[] {
+  if (!Array.isArray(raw)) return []
+  const out: TurnEvent[] = []
+  for (const entry of raw as Record<string, unknown>[]) {
+    const name = str(entry.name) || str(entry.plugin) || 'one'
+    const why = str(entry.message) || str(entry.type) || 'it could not be loaded'
+    out.push({ type: 'notice', text: `${kind} ${name} did not load: ${why}` })
+  }
+  return out
+}
+
+export function fromRetry(event: Record<string, unknown>): TurnEvent[] {
+  return [
+    {
+      type: 'notice',
+      text: retryLine(
+        num(event.attempt, 1),
+        num(event.max_retries, 0),
+        num(event.retry_delay_ms, 0),
+        str(event.error),
+        typeof event.error_status === 'number' ? event.error_status : null,
+      ),
+    },
+  ]
+}
+
+export function fromFallback(event: Record<string, unknown>): TurnEvent[] {
+  const said = str(event.content)
+  return said.length > 0 ? [{ type: 'notice', text: said }] : []
+}
+
+function str(value: unknown): string {
+  return typeof value === 'string' ? value : ''
+}
+
+function num(value: unknown, fallback: number): number {
+  return typeof value === 'number' && Number.isFinite(value) ? value : fallback
 }
 
 export function fromToolResult(event: Record<string, unknown>): TurnEvent[] {

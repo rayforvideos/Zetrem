@@ -1,10 +1,5 @@
 import type { CSSProperties, ReactNode } from 'react'
-import {
-  CHROME_TOP,
-  SHELL_PAD,
-  TRAFFIC_LIGHT,
-  WINDOWS_CONTROLS_WIDTH,
-} from '@/shared/config/theme'
+import { CHROME_TOP, SHELL_PAD, TRAFFIC_LIGHT, WINDOWS_CONTROLS_WIDTH } from '@/shared/config/theme'
 import { isMac } from '@/shared/lib/platform/platform'
 
 type TitlebarProps = {

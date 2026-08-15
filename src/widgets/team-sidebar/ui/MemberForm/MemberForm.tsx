@@ -16,21 +16,10 @@ import {
 import { Input } from '@/shared/ui/input'
 import { Label } from '@/shared/ui/label'
 import { Popover, PopoverContent, PopoverTrigger } from '@/shared/ui/popover'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/shared/ui/select'
+import { Switch } from '@/shared/ui/switch'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/shared/ui/select'
 import { Textarea } from '@/shared/ui/textarea'
-import {
-  characterFor,
-  draftFrom,
-  initialCharacter,
-  toggled,
-  toolSummary,
-} from '../../lib/member-draft/member-draft'
+import { characterFor, draftFrom, initialCharacter, toggled, toolSummary } from '../../lib/member-draft/member-draft'
 import { CharacterPicker } from '../CharacterPicker/CharacterPicker'
 import { ToolPicker } from '../ToolPicker/ToolPicker'
 
@@ -51,8 +40,10 @@ export function MemberForm({ initial, knownTools, onSubmit, onCancel }: MemberFo
   const [model, setModel] = useState(initial?.model ?? null)
   const [tools, setTools] = useState(initial?.tools ?? [])
   const [knowledge, setKnowledge] = useState(initial?.knowledge ?? [])
+  const [ownCopy, setOwnCopy] = useState(initial?.ownCopy ?? false)
   const [picked, setPicked] = useState<CharacterId | null>(initialCharacter(initial))
   const [missing, setMissing] = useState<string | null>(null)
+  const [sheet, setSheet] = useState<HTMLElement | null>(null)
   const character = characterFor(picked, name)
 
   const lack =
@@ -75,6 +66,7 @@ export function MemberForm({ initial, knownTools, onSubmit, onCancel }: MemberFo
   return (
     <Dialog open onOpenChange={(next) => !next && onCancel()}>
       <DialogContent
+        ref={setSheet}
         showCloseButton={false}
         className="h-[min(84vh,720px)] max-w-[min(92vw,900px)] gap-0 overflow-hidden p-0 sm:max-w-[min(92vw,900px)]"
       >
@@ -87,7 +79,7 @@ export function MemberForm({ initial, knownTools, onSubmit, onCancel }: MemberFo
               return
             }
             onSubmit(
-              draftFrom({ name, description, prompt, character, model, tools, knowledge }, initial),
+              draftFrom({ name, description, prompt, character, model, tools, knowledge, ownCopy }, initial),
             )
           }}
         >
@@ -149,6 +141,22 @@ export function MemberForm({ initial, knownTools, onSubmit, onCancel }: MemberFo
                 </Select>
               </Row>
 
+              <Row label="Where they work">
+                <label className="flex items-center gap-2.5 rounded-lg py-1">
+                  <Switch
+                    checked={ownCopy}
+                    onCheckedChange={setOwnCopy}
+                    aria-label="Work in their own copy"
+                  />
+                  <span className="min-w-0 flex-1 text-sm leading-tight">Their own copy</span>
+                </label>
+                <Note>
+                  {ownCopy
+                    ? 'They get a copy of the repository and a branch of their own. Your files stay as they are.'
+                    : 'They edit your files directly, alongside everyone else you have working.'}
+                </Note>
+              </Row>
+
               <Row label="Tools">
                 <Popover>
                   <PopoverTrigger asChild>
@@ -161,12 +169,19 @@ export function MemberForm({ initial, knownTools, onSubmit, onCancel }: MemberFo
                       <ChevronDown className="size-4 flex-none text-muted-foreground" />
                     </Button>
                   </PopoverTrigger>
-                  <PopoverContent align="start" className="flex w-[420px] flex-col gap-3 p-3">
-                    <Note>Nothing chosen means everything. Narrow it to sharpen them.</Note>
+                  <PopoverContent
+                    container={sheet}
+                    collisionBoundary={sheet}
+                    align="start"
+                    side="right"
+                    collisionPadding={16}
+                    className="w-[min(360px,90vw)] max-h-[var(--radix-popover-content-available-height)] overflow-hidden p-0"
+                  >
                     <ToolPicker
                       known={knownTools}
                       chosen={tools}
                       onToggle={(tool, on) => setTools(toggled(tools, tool, on))}
+                      onClear={() => setTools([])}
                     />
                   </PopoverContent>
                 </Popover>

@@ -1,6 +1,7 @@
 import type { AgentDef, AgentDefDraft } from '@/entities/agent-def'
-import type { RunConfig, Settings } from '@/entities/agent-session'
+import type { RunConfig, Settings, WorkOutcome } from '@/entities/agent-session'
 import type { ChatSummary, Transcript } from '@/entities/conversation'
+import type { Connector, ConnectorVerb } from '@/entities/connector'
 import type { Catalog, Marketplace, PluginRun, PluginVerb } from '@/entities/plugin'
 import type { AuthStatus } from '@/entities/auth'
 export type AgentHostEvent =
@@ -35,6 +36,9 @@ export type DeskBridge = {
   respondPermission(id: string, requestId: string, result: unknown): void
   onAgentEvent(listener: (event: AgentHostEvent) => void): () => void
   probeSession(config: Omit<RunConfig, 'persona'>): Promise<string | null>
+  listConnectors(): Promise<Connector[]>
+  connectorAct(verb: ConnectorVerb, target: string): Promise<PluginRun>
+  readOutcome(taskId: string): Promise<WorkOutcome | null>
   sessionUsage(): Promise<string | null>
   latestCliVersion(): Promise<{
     installed: string | null

@@ -1,5 +1,13 @@
 import { describe, expect, it } from 'vitest'
-import { MODELS, PERMISSION_MODES, agentArgs, isReady, PROBE_BUDGET_USD, PROBE_PROMPT, probeArgs } from './run-config'
+import {
+  MODELS,
+  PERMISSION_MODES,
+  agentArgs,
+  isReady,
+  PROBE_BUDGET_USD,
+  PROBE_PROMPT,
+  probeArgs,
+} from './run-config'
 
 describe('agentArgs: what claude is started with', () => {
   const base = {

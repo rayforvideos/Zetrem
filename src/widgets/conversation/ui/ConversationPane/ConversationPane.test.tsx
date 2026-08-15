@@ -5,6 +5,7 @@ import type { ToolActivity, Turn } from '@/entities/conversation'
 import { modifierKey } from '@/shared/lib/platform/platform'
 import { TOOL_OUTPUT_LINES } from '../../lib/limits'
 import { ConversationPane } from './ConversationPane'
+import { Composer } from '../Composer/Composer'
 import { tickOpen } from './Tick'
 
 const STATUS: StatusState = {
@@ -48,20 +49,24 @@ function working(turns: Turn[]): string {
       statusState={{ ...STATUS, cost: { ...STATUS.cost, tokens: { ...STATUS.cost.tokens, out: 1240 } } }}
       permission={null}
       nowMs={12_000}
-      permissionMode="ask"
-      onPermissionMode={() => {}}
-      model="default"
-      onModel={() => {}}
-      sessionLive
-      onSend={() => {}}
       onDecide={() => {}}
-      onStop={() => {}}
       onUpdateCli={() => {}}
       updatingCli={false}
       sidebar={null}
       report={null}
-      addressee={null}
-      onClearAddressee={() => {}}
+      composer={<Composer
+        empty={turns.length === 0}
+        busy={false}
+        sessionLive={false}
+        addressee={null}
+        permissionMode="ask"
+        model="default"
+        onSend={() => {}}
+        onStop={() => {}}
+        onClearAddressee={() => {}}
+        onPermissionMode={() => {}}
+        onModel={() => {}}
+      />}
     />,
   )
 }
@@ -74,20 +79,24 @@ function pane(turns: Turn[], permission: PermissionAsk | null = null): string {
       statusState={STATUS}
       permission={permission}
       nowMs={0}
-      permissionMode="ask"
-      onPermissionMode={() => {}}
-      model="default"
-      onModel={() => {}}
-      sessionLive={false}
-      onSend={() => {}}
       onDecide={() => {}}
-      onStop={() => {}}
       onUpdateCli={() => {}}
       updatingCli={false}
       sidebar={null}
       report={null}
-      addressee={null}
-      onClearAddressee={() => {}}
+      composer={<Composer
+        empty={turns.length === 0}
+        busy={false}
+        sessionLive={false}
+        addressee={null}
+        permissionMode="ask"
+        model="default"
+        onSend={() => {}}
+        onStop={() => {}}
+        onClearAddressee={() => {}}
+        onPermissionMode={() => {}}
+        onModel={() => {}}
+      />}
     />,
   )
 }
@@ -216,32 +225,4 @@ describe('approval: the most important moment in this app', () => {
   })
 })
 
-describe('addressing: who the work goes to is visible where you type', () => {
-  it('puts the named person above the box and asks for them by name', () => {
-    const html = renderToStaticMarkup(
-      <ConversationPane
-        turns={[]}
-        status="done"
-        statusState={STATUS}
-        permission={null}
-        nowMs={0}
-        permissionMode="ask"
-        onPermissionMode={() => {}}
-        model="default"
-        onModel={() => {}}
-        sessionLive={false}
-        onSend={() => {}}
-        onDecide={() => {}}
-        onStop={() => {}}
-        onUpdateCli={() => {}}
-        updatingCli={false}
-        sidebar={null}
-        report={null}
-        addressee="Explore"
-        onClearAddressee={() => {}}
-      />,
-    )
-    expect(html).toContain('To Explore')
-    expect(html).toContain('Task for Explore')
-  })
-})
+

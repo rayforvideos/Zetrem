@@ -36,9 +36,9 @@ describe('the metrics registry', () => {
     }
   })
 
-  it('groups tokens by thousands, because a long number is skimmed', () => {
+  it('shortens a token count, because the exact digits are never the point', () => {
     const tokens = metrics.find((m) => m.id === 'tokens')!
-    expect(tokens.format(tokens.read(session, 4_000))).toBe('4,200')
+    expect(tokens.format(tokens.read(session, 4_000))).toBe('4.2k')
   })
 
   it('counts elapsed from when it started', () => {

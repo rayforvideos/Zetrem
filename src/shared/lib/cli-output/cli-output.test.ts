@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { stripAnsi, urlFrom } from './cli-output'
+import { urlFrom } from './cli-output'
 
 const ESC = '\u001B'
 const BEL = '\u0007'
@@ -32,7 +32,7 @@ describe('what the CLI meant for a terminal never reaches the screen', () => {
     expect(urlFrom('')).toBeNull()
   })
 
-  it('strips escapes without touching visible text', () => {
-    expect(stripAnsi(`${ESC}[1mPaste code${ESC}[0m > `)).toBe('Paste code > ')
+  it('does not take an escape sequence for part of the address', () => {
+    expect(urlFrom(`${ESC}[1m${AUTHORIZE}${ESC}[0m > `)).toBe(AUTHORIZE)
   })
 })

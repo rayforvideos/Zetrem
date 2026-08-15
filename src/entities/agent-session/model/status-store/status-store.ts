@@ -1,6 +1,6 @@
 import type { HookRun, StatusState, UpdateInfo } from './status-store.types'
 
-import type { SessionIdentity, StatusEvent } from '../../api/claude/status/status.types'
+import type { StatusEvent } from '../../api/claude/status/status.types'
 import { withLimit } from '../limits/limits'
 
 const HOOK_KEEP = 5

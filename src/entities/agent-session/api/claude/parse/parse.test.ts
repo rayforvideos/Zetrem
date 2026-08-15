@@ -611,3 +611,163 @@ describe('a nested line belongs to the child, never to the conversation', () => 
     })
   })
 })
+
+describe('a turn that stops short says so, rather than just stopping', () => {
+  it('reports a run that ran out of turns, in the words the CLI used', () => {
+    const events = parseClaudeLine(
+      line({
+        type: 'result',
+        subtype: 'error_max_turns',
+        is_error: true,
+        terminal_reason: 'max_turns',
+        errors: ['Reached maximum number of turns (1)'],
+        duration_ms: 3882,
+      }),
+    )
+    expect(events).toContainEqual({
+      type: 'notice',
+      text: 'Stopped: Reached maximum number of turns (1)',
+    })
+    expect(events.some((event) => event.type === 'turnEnded')).toBe(true)
+  })
+
+  it('reports a run that ran out of money', () => {
+    const events = parseClaudeLine(
+      line({
+        type: 'result',
+        subtype: 'error_max_budget_usd',
+        is_error: true,
+        errors: ['Reached maximum budget ($0.02)'],
+      }),
+    )
+    expect(events).toContainEqual({ type: 'notice', text: 'Stopped: Reached maximum budget ($0.02)' })
+  })
+
+  it('says nothing extra when the turn ended well', () => {
+    const events = parseClaudeLine(line({ type: 'result', subtype: 'success', duration_ms: 10 }))
+    expect(events.some((event) => event.type === 'notice')).toBe(false)
+  })
+
+  it('leaves a subagent failure to the subagent, not to the conversation', () => {
+    const events = parseClaudeLine(
+      line({
+        type: 'result',
+        subtype: 'error_max_turns',
+        parent_tool_use_id: 'toolu_a',
+        errors: ['Reached maximum number of turns (1)'],
+      }),
+    )
+    expect(events).toEqual([])
+  })
+})
+
+describe('the app says when the CLI is retrying rather than looking frozen', () => {
+  it('reads the retry the CLI announced', () => {
+    const events = parseClaudeLine(
+      line({
+        type: 'system',
+        subtype: 'api_retry',
+        attempt: 2,
+        max_retries: 5,
+        retry_delay_ms: 4000,
+        error_status: 529,
+        error: 'overloaded',
+      }),
+    )
+    expect(events).toEqual([
+      { type: 'notice', text: 'The model is overloaded (529). Trying again in 4s, attempt 2 of 5' },
+    ])
+  })
+
+  it('passes on a model swap in the words the CLI wrote', () => {
+    const events = parseClaudeLine(
+      line({ type: 'system', subtype: 'model_fallback', content: 'Switched to Sonnet' }),
+    )
+    expect(events).toEqual([{ type: 'notice', text: 'Switched to Sonnet' }])
+  })
+
+  it('holds back a fallback notice with no words in it', () => {
+    expect(parseClaudeLine(line({ type: 'system', subtype: 'model_fallback' }))).toEqual([])
+  })
+})
+
+describe('a permission request the CLI takes back', () => {
+  it('is read as a request to drop, naming which one', () => {
+    const events = parseClaudeLine(
+      line({ type: 'control_cancel_request', request_id: 'req_7' }),
+    )
+    expect(events).toEqual([{ type: 'permissionDropped', requestId: 'req_7' }])
+  })
+
+  it('is ignored when it names nothing', () => {
+    expect(parseClaudeLine(line({ type: 'control_cancel_request' }))).toEqual([])
+  })
+})
+
+describe('a server or plugin that never loaded says so, instead of just being absent', () => {
+  it('names an MCP server the CLI skipped and why', () => {
+    const events = parseClaudeLine(
+      line({
+        type: 'system',
+        subtype: 'init',
+        session_id: 's',
+        cwd: '/w',
+        model: 'm',
+        tools: [],
+        agents: [],
+        mcp_servers: [],
+        mcp_server_errors: [{ name: 'notion', type: 'url_missing_type', message: 'url entry has no type' }],
+      }),
+    )
+    expect(events).toContainEqual({
+      type: 'notice',
+      text: 'MCP server notion did not load: url entry has no type',
+    })
+  })
+
+  it('names a plugin that failed to load', () => {
+    const events = parseClaudeLine(
+      line({
+        type: 'system',
+        subtype: 'init',
+        session_id: 's',
+        cwd: '/w',
+        model: 'm',
+        tools: [],
+        agents: [],
+        mcp_servers: [],
+        plugin_errors: [{ plugin: 'nx', type: 'missing_path', message: 'no such directory' }],
+      }),
+    )
+    expect(events).toContainEqual({
+      type: 'notice',
+      text: 'Plugin nx did not load: no such directory',
+    })
+  })
+
+  it('says nothing when everything loaded, which is the usual case', () => {
+    const events = parseClaudeLine(
+      line({ type: 'system', subtype: 'init', session_id: 's', cwd: '/w', model: 'm', tools: [], agents: [], mcp_servers: [] }),
+    )
+    expect(events.some((event) => event.type === 'notice')).toBe(false)
+  })
+
+  it('falls back to the skip category when no message came with it', () => {
+    const events = parseClaudeLine(
+      line({
+        type: 'system',
+        subtype: 'init',
+        session_id: 's',
+        cwd: '/w',
+        model: 'm',
+        tools: [],
+        agents: [],
+        mcp_server_errors: [{ name: 'ghost', type: 'reserved_name' }],
+      }),
+    )
+    expect(events).toContainEqual({
+      type: 'notice',
+      text: 'MCP server ghost did not load: reserved_name',
+    })
+  })
+})

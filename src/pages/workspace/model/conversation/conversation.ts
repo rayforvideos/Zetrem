@@ -2,6 +2,7 @@ import type { ConversationState } from './conversation.types'
 
 import type { PermissionAsk, SessionStatus } from '@/entities/agent-session'
 import type { ToolActivity, ToolResult, Turn } from '@/entities/conversation'
+import { heldOutput, heldTurns } from './hold/hold'
 
 type Listener = () => void
 
@@ -11,7 +12,8 @@ let state: ConversationState = EMPTY
 const listeners = new Set<Listener>()
 
 function emit(next: ConversationState): void {
-  state = next
+  const turns = heldTurns(next.turns)
+  state = turns === next.turns ? next : { ...next, turns }
   for (const listener of listeners) listener()
 }
 
@@ -70,9 +72,14 @@ export const conversation = {
       turn.tools.some((tool) => tool.toolUseId === toolUseId),
     )
     if (index === -1) return
+    const held = {
+      ...result,
+      stdout: heldOutput(result.stdout),
+      stderr: heldOutput(result.stderr),
+    }
     const turn = state.turns[index]!
     const tools = turn.tools.map((tool) =>
-      tool.toolUseId === toolUseId ? { ...tool, result } : tool,
+      tool.toolUseId === toolUseId ? { ...tool, result: held } : tool,
     )
     const turns = [...state.turns]
     turns[index] = { ...turn, tools }

@@ -3,7 +3,7 @@ import { shouldRelaunch } from './relaunch'
 import type { Attempt } from './relaunch.types'
 
 function attempt(overrides: Partial<Attempt> = {}): Attempt {
-  return { prompt: '이어서', resumed: true, spoke: false, ...overrides }
+  return { prompt: 'Carry on', resumed: true, spoke: false, ...overrides }
 }
 
 describe('shouldRelaunch: only when picking the old conversation back up failed', () => {
@@ -25,5 +25,9 @@ describe('shouldRelaunch: only when picking the old conversation back up failed'
 
   it('has nothing to retry when nothing was started', () => {
     expect(shouldRelaunch(null, 1)).toBe(false)
+  })
+
+  it('has nothing to retry once the attempt was let go, which is how stopping says so', () => {
+    expect(shouldRelaunch(null, 143)).toBe(false)
   })
 })

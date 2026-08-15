@@ -171,3 +171,4 @@ describe('usageRows: limits read straight from what the CLI printed', () => {
     expect(rows[0]?.hint).toBe('reset time not reported')
   })
 })
+

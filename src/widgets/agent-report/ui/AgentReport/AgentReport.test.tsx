@@ -66,7 +66,6 @@ describe('AgentReport: what has come of it so far', () => {
 
   it('says where the work was left when there is an outcome', () => {
     const html = report({ outcome: { branch: 'feat/x', commits: 2, dirtyFiles: 1 } })
-    expect(html).toContain('feat/x')
-    expect(html).toContain('commits 2')
+    expect(html).toContain('Left 2 commits and 1 file not committed on feat/x')
   })
 })

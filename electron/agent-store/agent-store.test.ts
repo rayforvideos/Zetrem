@@ -15,6 +15,7 @@ const draft = {
   character: null,
   tools: ['Read'],
   knowledge: [],
+  ownCopy: false,
   prompt: '당신은 고친 자리를 봅니다.',
 }
 

@@ -10,7 +10,7 @@ import type { AgentSession, RunConfig, StatusState } from '@/entities/agent-sess
 import { applyAgentEvent } from './agent-events/agent-events'
 import { conversation } from './conversation/conversation'
 import { shouldRelaunch } from './relaunch/relaunch'
-import { SETTLE_QUIET_MS, settled } from './settle/settle'
+import { settled } from './settle/settle'
 import type { Attempt } from './relaunch/relaunch.types'
 import type { ConversationState } from './conversation/conversation.types'
 
@@ -25,6 +25,7 @@ type Agent = {
   decide(allow: boolean, always?: boolean): void
   stop(): void
   reset(): void
+  restart(): void
 }
 
 export function useAgent(config: Omit<RunConfig, 'persona'>): Agent {
@@ -36,7 +37,7 @@ export function useAgent(config: Omit<RunConfig, 'persona'>): Agent {
   const [nowMs, setNowMs] = useState(() => Date.now())
 
   const hostId = useRef<string | null>(null)
-  const asks = useRef<{ requestId: string; toolName: string; input: unknown }[]>([])
+  const asks = useRef<{ requestId: string; toolName: string; line: string; input: unknown }[]>([])
   const childIds = useRef(new Set<string>())
   const sends = useRef(new Map<string, string>())
   const attempt = useRef<Attempt | null>(null)
@@ -46,11 +47,11 @@ export function useAgent(config: Omit<RunConfig, 'persona'>): Agent {
     return () => clearInterval(timer)
   }, [])
 
+  const convStatus = conv.status
   useEffect(() => {
-    for (const id of settled(children, nowMs, SETTLE_QUIET_MS)) {
-      sessionStore.patch(id, { status: 'done' })
-    }
-  }, [children, nowMs])
+    const at = { nowMs, parentWorking: convStatus === 'working' }
+    for (const id of settled(children, at)) sessionStore.patch(id, { status: 'done' })
+  }, [children, nowMs, convStatus])
 
   useEffect(() => {
     const unsubscribe = window.desk.onAgentEvent((event) => {
@@ -112,6 +113,11 @@ export function useAgent(config: Omit<RunConfig, 'persona'>): Agent {
     launch(text, configRef.current.resume ?? null)
   }
 
+  function restart(): void {
+    reset()
+    conversation.system('Session stopped. The next message starts a new one with your team as it is now.')
+  }
+
   function reset(): void {
     const id = hostId.current
     hostId.current = null
@@ -120,6 +126,7 @@ export function useAgent(config: Omit<RunConfig, 'persona'>): Agent {
     childIds.current.clear()
     sends.current.clear()
     sessionStore.clear()
+    statusStore.reset()
     if (id !== null) window.desk.stopAgent(id)
   }
 
@@ -139,7 +146,7 @@ export function useAgent(config: Omit<RunConfig, 'persona'>): Agent {
       conversation.setPermission({
         requestId: next.requestId,
         toolName: next.toolName,
-        line: `${next.toolName} …`,
+        line: next.line,
       })
       return
     }
@@ -148,8 +155,9 @@ export function useAgent(config: Omit<RunConfig, 'persona'>): Agent {
   }
 
   function stop(): void {
+    attempt.current = null
     if (hostId.current) window.desk.stopAgent(hostId.current)
   }
 
-  return { conversation: conv, children, status, nowMs, send, decide, stop, reset }
+  return { conversation: conv, children, status, nowMs, send, decide, stop, reset, restart }
 }

@@ -6,8 +6,8 @@ Zetrem 워드마크(붓글씨 로고)를 화면이 쓸 알파 마스크로 바�
 원본은 흰 바탕에 검은 붓글씨다. 그것을 그대로 화면에 얹으면 두 가지가 깨진다:
 어두운 배경 위 유리에서 글자가 사라지고, 흰 사각형이 유리를 덮는다.
 
-이 앱의 규칙은 "모든 글자는 100% currentColor" 이다 (시각 스펙 §4.2). 그래서 잉크가 있는
-자리만 **알파**로 남기고 색은 CSS 가 입힌다 — `mask-image` 로 이 파일을 씌우고
+이 앱은 모든 글자를 currentColor 로 칠한다. 그래서 잉크가 있는
+자리만 **알파**로 남기고 색은 CSS 가 입힌다. `mask-image` 로 이 파일을 씌우고
 `bg-current` 로 칠하면 워드마크가 배경 사진의 밝기를 따라 극성을 뒤집는다.
 
 PIL 은 이 스크립트에서만 쓰는 개발 도구다. 앱 의존성이 아니므로 package.json 에 없다.
@@ -26,7 +26,7 @@ def main() -> None:
     src = Image.open(SOURCE).convert('RGBA')
     print(f'원본 {src.size[0]}x{src.size[1]}')
 
-    # 흰 바탕에 합성해서 "잉크의 진하기" 하나의 회색조로 만든다 —
+    # 흰 바탕에 합성해서 "잉크의 진하기" 하나의 회색조로 만든다.
     # 원본에 알파가 있든 없든 같은 결과가 나오게
     flat = Image.new('RGB', src.size, (255, 255, 255))
     flat.paste(src, mask=src.split()[3])
@@ -35,10 +35,10 @@ def main() -> None:
     # 잉크가 검을수록 불투명하다
     alpha = gray.point(lambda value: 255 - value)
 
-    # 잉크가 있는 범위로 자른다 — 여백은 레이아웃이 정할 일이지 이미지가 정할 일이 아니다
+    # 잉크가 있는 범위로 자른다. 여백은 레이아웃이 정할 일이지 이미지가 정할 일이 아니다
     box = alpha.getbbox()
     if box is None:
-        raise SystemExit('잉크를 찾지 못했다 — 원본이 비어 있는가?')
+        raise SystemExit('잉크를 찾지 못했다. 원본이 비어 있는가?')
     alpha = alpha.crop(box)
     print(f'잘라낸 뒤 {alpha.size[0]}x{alpha.size[1]}')
 

@@ -2,7 +2,7 @@ import type { Metric } from '../metric'
 
 export const contextMetric: Metric = {
   id: 'context',
-  label: 'Context',
+  label: 'context',
   unit: '%',
   known: (session) => session.contextUsed > 0,
   read: (session) => session.contextUsed * 100,

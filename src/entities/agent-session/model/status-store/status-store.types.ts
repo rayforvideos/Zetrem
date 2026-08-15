@@ -1,4 +1,4 @@
-import type { RateLimit, SessionIdentity, StatusEvent } from '../../api/claude/status/status.types'
+import type { RateLimit, SessionIdentity } from '../../api/claude/status/status.types'
 
 export type HookRun = { name: string; event: string; exitCode: number; ms: number }
 

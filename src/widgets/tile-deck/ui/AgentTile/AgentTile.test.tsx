@@ -37,14 +37,15 @@ describe('AgentTile', () => {
     expect(html).toContain('무언가 이상한 줄 하나')
   })
 
-  it('writes the state in words and not just a dot, because colour alone says nothing', () => {
+  it('writes down only the state that nothing else on the tile can show', () => {
     const working = renderToStaticMarkup(
       <AgentTile session={session()} rect={rect} delayMs={0} nowMs={0} />,
     )
     const waiting = renderToStaticMarkup(
       <AgentTile session={session({ status: 'waiting' })} rect={rect} delayMs={0} nowMs={0} />,
     )
-    expect(working).toContain('Working')
+    expect(working).not.toContain('Working')
+    expect(working).toContain('zt-sprite--busy')
     expect(waiting).toContain('Needs you')
   })
 
@@ -55,7 +56,7 @@ describe('AgentTile', () => {
     expect(html).toContain('가짜 에이전트')
     expect(html).toContain('타일을 만드는 중')
     expect(html).toContain('b.ts')
-    expect(html).toContain('Tokens')
+    expect(html).toContain('tokens')
   })
 
   it('puts the tile where the rectangle says', () => {

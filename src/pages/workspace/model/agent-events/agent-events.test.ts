@@ -510,3 +510,119 @@ describe('a subagent reports what it is doing while it works', () => {
     expect(sessionStore.get()).toEqual([])
   })
 })
+
+describe('a message names the teammate it is sent to', () => {
+  it('reads the recipient from the field SendMessage actually uses', () => {
+    const refs = fakeRefs()
+    applyAgentEvent(
+      { type: 'stream', line: 'SendMessage Karina', toolUseId: 'toolu_s', input: { to: 'Karina', message: 'go on' } },
+      refs,
+    )
+    expect(refs.sends.get('toolu_s')).toBe('Karina')
+  })
+
+  it('drops the disambiguating reference, since that is not the name on screen', () => {
+    const refs = fakeRefs()
+    applyAgentEvent(
+      { type: 'stream', line: 'SendMessage', toolUseId: 'toolu_t', input: { to: 'Karina [3fa9c1]' } },
+      refs,
+    )
+    expect(refs.sends.get('toolu_t')).toBe('Karina')
+  })
+
+  it('still reads the older field names, so nothing that worked stops working', () => {
+    const refs = fakeRefs()
+    applyAgentEvent(
+      { type: 'stream', line: 'SendMessage', toolUseId: 'toolu_u', input: { agent: 'Hardy' } },
+      refs,
+    )
+    expect(refs.sends.get('toolu_u')).toBe('Hardy')
+  })
+
+  it('names a resumed teammate by who was addressed, not by a raw id', () => {
+    const refs = fakeRefs()
+    applyAgentEvent(
+      { type: 'stream', line: 'SendMessage', toolUseId: 'toolu_v', input: { to: 'Karina' } },
+      refs,
+    )
+    applyAgentEvent(
+      {
+        type: 'toolResult',
+        toolUseId: 'toolu_v',
+        stdout: JSON.stringify({ success: true, resumedAgentId: 'a2ca1d0a38717aa60' }),
+        stderr: '',
+        isError: false,
+        interrupted: false,
+      },
+      refs,
+    )
+    const woken = sessionStore.get().find((s) => s.id === 'a2ca1d0a38717aa60')
+    expect(woken?.label).toBe('Karina')
+    expect(woken?.subagentType).toBe('Karina')
+  })
+})
+
+describe('a permission request the CLI takes back is taken off the screen', () => {
+  function ask(refs: AgentEventRefs, id: string): void {
+    applyAgentEvent(
+      { type: 'permission', requestId: id, toolName: 'Bash', line: `Bash ${id}`, input: {} },
+      refs,
+    )
+  }
+
+  it('clears the dialog when the one on screen is withdrawn', () => {
+    const refs = fakeRefs()
+    ask(refs, 'req_1')
+    expect(conversation.get().permission?.requestId).toBe('req_1')
+
+    applyAgentEvent({ type: 'permissionDropped', requestId: 'req_1' }, refs)
+    expect(conversation.get().permission).toBeNull()
+    expect(refs.asks).toHaveLength(0)
+  })
+
+  it('moves to the next one waiting rather than leaving a gap', () => {
+    const refs = fakeRefs()
+    ask(refs, 'req_1')
+    ask(refs, 'req_2')
+    applyAgentEvent({ type: 'permissionDropped', requestId: 'req_1' }, refs)
+
+    expect(conversation.get().permission?.requestId).toBe('req_2')
+    expect(conversation.get().permission?.line).toBe('Bash req_2')
+  })
+
+  it('takes a queued one out without disturbing the one on screen', () => {
+    const refs = fakeRefs()
+    ask(refs, 'req_1')
+    ask(refs, 'req_2')
+    applyAgentEvent({ type: 'permissionDropped', requestId: 'req_2' }, refs)
+
+    expect(conversation.get().permission?.requestId).toBe('req_1')
+    expect(refs.asks.map((held) => held.requestId)).toEqual(['req_1'])
+  })
+
+  it('shrugs off a withdrawal for something it never had', () => {
+    const refs = fakeRefs()
+    ask(refs, 'req_1')
+    applyAgentEvent({ type: 'permissionDropped', requestId: 'req_nope' }, refs)
+
+    expect(conversation.get().permission?.requestId).toBe('req_1')
+    expect(refs.asks).toHaveLength(1)
+  })
+
+  it('goes back to working once the last request is withdrawn', () => {
+    const refs = fakeRefs()
+    ask(refs, 'req_1')
+    applyAgentEvent({ type: 'permissionDropped', requestId: 'req_1' }, refs)
+    expect(conversation.get().status).toBe('working')
+  })
+})
+
+describe('what the CLI reports about itself reaches the conversation', () => {
+  it('puts a notice in the conversation as its own line', () => {
+    const refs = fakeRefs()
+    applyAgentEvent({ type: 'notice', text: 'Stopped: Reached maximum budget ($0.02)' }, refs)
+    const last = conversation.get().turns.at(-1)
+    expect(last?.role).toBe('system')
+    expect(last?.text).toBe('Stopped: Reached maximum budget ($0.02)')
+  })
+})

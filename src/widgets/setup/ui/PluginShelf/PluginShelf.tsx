@@ -3,19 +3,23 @@ import { Plus, RotateCw, Search, Trash2 } from 'lucide-react'
 import type { AvailablePlugin, Catalog, Marketplace, PluginVerb } from '@/entities/plugin'
 import { cn } from '@/shared/lib/cn'
 import { Button } from '@/shared/ui/button'
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from '@/shared/ui/dialog'
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/shared/ui/dialog'
 import { Input } from '@/shared/ui/input'
 import { Spinner } from '@/shared/ui/spinner'
 import { Switch } from '@/shared/ui/switch'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/shared/ui/tabs'
+import type { Connector, ConnectorState, ConnectorVerb } from '@/entities/connector'
+
+const CONNECTOR_STATE: Record<ConnectorState, string> = {
+  connected: 'Connected',
+  'needs-auth': 'Needs signing in',
+  failed: 'Could not connect',
+  unknown: 'Unknown',
+}
 
 type PluginShelfProps = {
+  connectors: Connector[]
+  onConnector(verb: ConnectorVerb, target: string): void
   catalog: Catalog
   marketplaces: Marketplace[]
   loading: boolean
@@ -29,6 +33,8 @@ type PluginShelfProps = {
 const HITS = 20
 
 export function PluginShelf({
+  connectors,
+  onConnector,
   catalog,
   marketplaces,
   loading,
@@ -42,12 +48,12 @@ export function PluginShelf({
     <Dialog open onOpenChange={(next) => !next && onClose()}>
       <DialogContent
         showCloseButton={false}
-        className="max-h-[86vh] gap-0 overflow-hidden p-0 sm:max-w-2xl"
+        className="flex max-h-[86vh] flex-col gap-0 overflow-hidden p-0 sm:max-w-2xl"
       >
-        <DialogHeader className="border-b border-border px-6 py-4 text-left">
-          <DialogTitle className="text-base">Plugins</DialogTitle>
+        <DialogHeader className="flex-none border-b border-border px-6 py-4 text-left">
+          <DialogTitle className="text-base">What the session brings</DialogTitle>
           <DialogDescription>
-            Skills, agents and commands other people wrote. Restart the session to load a change.
+            Plugins and connectors your team can reach. Restart the session to load a change.
           </DialogDescription>
         </DialogHeader>
 
@@ -56,6 +62,7 @@ export function PluginShelf({
             <TabsTrigger value="installed">Installed · {catalog.installed.length}</TabsTrigger>
             <TabsTrigger value="browse">Browse</TabsTrigger>
             <TabsTrigger value="sources">Sources · {marketplaces.length}</TabsTrigger>
+            <TabsTrigger value="connectors">Connectors · {connectors.length}</TabsTrigger>
           </TabsList>
 
           <div className="zt-scroll min-h-0 flex-1 overflow-y-auto px-6 py-4">
@@ -112,10 +119,37 @@ export function PluginShelf({
               ))}
               <AddSource onAdd={(source) => onAct('market-add', source)} />
             </TabsContent>
+
+            <TabsContent value="connectors" className="flex flex-col gap-1">
+              {connectors.length === 0 && (
+                <p className="px-1 py-2 text-xs text-muted-foreground">
+                  No connectors yet. Add one with claude mcp add, and it shows up here.
+                </p>
+              )}
+              {connectors.map((connector) => (
+                <Row
+                  key={connector.name}
+                  title={connector.name}
+                  note={`${CONNECTOR_STATE[connector.state]} · ${connector.where}`}
+                  busy={busy === connector.name}
+                >
+                  {connector.state === 'connected' ? (
+                    <Quietly label="Sign out" onClick={() => onConnector('logout', connector.name)} />
+                  ) : (
+                    <Quietly label="Sign in" onClick={() => onConnector('login', connector.name)} />
+                  )}
+                  <Quietly
+                    label="Remove"
+                    icon={<Trash2 />}
+                    onClick={() => onConnector('remove', connector.name)}
+                  />
+                </Row>
+              ))}
+            </TabsContent>
           </div>
         </Tabs>
 
-        <div className="flex items-center justify-between gap-3 border-t border-border px-6 py-3">
+        <div className="flex flex-none items-center justify-between gap-3 border-t border-border px-6 py-3">
           <span data-plugin-note className="min-w-0 truncate text-xs text-muted-foreground">
             {note ?? ''}
           </span>

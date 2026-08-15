@@ -11,6 +11,7 @@ import { claudeBin, loginPath } from './login-path/login-path'
 import { recallProject } from './project-memory'
 import { handle, on } from './ipc/ipc'
 import { killTree, killTreeSync } from './kill-tree/kill-tree'
+import { killAllProbes } from './session-probe'
 
 const agents = new Map<string, ChildProcessWithoutNullStreams | 'starting'>()
 
@@ -54,17 +55,25 @@ export function registerAgentHost(): void {
 
     agents.set(id, 'starting')
 
-    const project = await recallProject()
-    if (agents.get(id) !== 'starting') return
+    let child: ChildProcessWithoutNullStreams
+    let workspace: string
+    try {
+      const project = await recallProject()
+      if (agents.get(id) !== 'starting') return
 
-    const workspace = project ?? join(app.getPath('userData'), 'agent-workspace')
-    if (!project) mkdirSync(workspace, { recursive: true })
+      workspace = project ?? join(app.getPath('userData'), 'agent-workspace')
+      if (!project) mkdirSync(workspace, { recursive: true })
 
-    const child = spawn(
-      await claudeBin(),
-      agentArgs({ ...config, persona: PERSONA, orchestrator: ORCHESTRATOR_PROMPT }),
-      { cwd: workspace, env: agentEnv(process.env, await loginPath()) },
-    )
+      child = spawn(
+        await claudeBin(),
+        agentArgs({ ...config, persona: PERSONA, orchestrator: ORCHESTRATOR_PROMPT }),
+        { cwd: workspace, env: agentEnv(process.env, await loginPath()) },
+      )
+    } catch (cause: unknown) {
+      console.error(`[agent ${id}] could not start`, cause)
+      agents.delete(id)
+      return fail()
+    }
     agents.set(id, child)
     if (!sender.isDestroyed()) sender.send('agent:event', { id, kind: 'workspace', cwd: workspace })
 
@@ -122,5 +131,6 @@ export function registerAgentHost(): void {
 
   app.on('before-quit', () => {
     killAllAgents()
+    killAllProbes()
   })
 }

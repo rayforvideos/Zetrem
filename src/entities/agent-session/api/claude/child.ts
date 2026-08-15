@@ -51,6 +51,11 @@ export function childNotified(event: Record<string, unknown>): ChildTurnEvent[] 
   ]
 }
 
+export function childStarted(event: Record<string, unknown>): ChildTurnEvent[] {
+  if (typeof event.tool_use_id !== 'string' || typeof event.task_id !== 'string') return []
+  return [{ type: 'childStarted', toolUseId: event.tool_use_id, taskId: event.task_id }]
+}
+
 export function childProgress(event: Record<string, unknown>): ChildTurnEvent[] {
   if (typeof event.tool_use_id !== 'string') return []
   const usage = event.usage as Record<string, unknown> | undefined

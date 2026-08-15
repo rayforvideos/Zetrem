@@ -1,13 +1,17 @@
 import type { ClaudeTurnEvent } from './parse.types'
 
-import { childCloses, childNotified, childProgress, childSays } from '../child'
-import type { ChildTurnEvent } from '../child.types'
-import { fromControlRequest } from '../permission'
-import type { PermissionEvent } from '../permission.types'
+import { childCloses, childNotified, childProgress, childSays, childStarted } from '../child'
+import { fromControlCancel, fromControlRequest } from '../permission'
 import { fromStatusLine } from '../status/status'
-import type { StatusEvent } from '../status/status.types'
-import { fromAssistant, fromResult, fromStreamEvent, fromToolResult } from '../turn'
-import type { TurnEvent } from '../turn.types'
+import {
+  fromAssistant,
+  fromFallback,
+  fromResult,
+  fromRetry,
+  fromStartupTrouble,
+  fromStreamEvent,
+  fromToolResult,
+} from '../turn'
 
 export { permissionAlwaysResult, permissionResult } from '../permission'
 
@@ -39,12 +43,22 @@ function turns(event: Record<string, unknown>, parent: string | null): ClaudeTur
       return fromStreamEvent(event)
     case 'control_request':
       return fromControlRequest(event)
+    case 'control_cancel_request':
+      return fromControlCancel(event)
     case 'system':
       switch (event.subtype) {
         case 'task_notification':
           return childNotified(event)
+        case 'task_started':
+          return childStarted(event)
         case 'task_progress':
           return childProgress(event)
+        case 'init':
+          return parent ? [] : fromStartupTrouble(event)
+        case 'api_retry':
+          return parent ? [] : fromRetry(event)
+        case 'model_fallback':
+          return parent ? [] : fromFallback(event)
         default:
           return []
       }

@@ -10,6 +10,7 @@ export type ChildTurnEvent =
   | { type: 'childSay'; toolUseId: string; role: 'user' | 'assistant'; text: string }
   | { type: 'childStream'; toolUseId: string; line: string }
   | { type: 'childClosed'; toolUseId: string; error?: string }
+  | { type: 'childStarted'; toolUseId: string; taskId: string }
   | { type: 'childNotified'; toolUseId: string; summary: string; done: boolean }
   | {
       type: 'childProgress'

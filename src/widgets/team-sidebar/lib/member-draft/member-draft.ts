@@ -15,6 +15,7 @@ export function draftFrom(fields: MemberFields, initial: AgentDefDraft | null): 
     character: fields.character,
     tools: fields.tools ?? initial?.tools ?? [],
     knowledge: fields.knowledge ?? initial?.knowledge ?? [],
+    ownCopy: fields.ownCopy ?? initial?.ownCopy ?? false,
     prompt: fields.prompt.trim(),
   }
 }

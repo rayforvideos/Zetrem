@@ -1,7 +1,6 @@
 import type { RosterMember, RosterState } from './roster.types'
 
 import type { AgentSession } from '../session.types'
-import type { Persona } from '../persona/persona.types'
 import { personaOf } from '../persona/persona'
 
 const RANK: Record<RosterState, number> = { waiting: 0, working: 1, done: 2, idle: 3 }

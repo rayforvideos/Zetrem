@@ -7,7 +7,9 @@ import { registerAuth } from './auth'
 import { registerCliVersion } from './cli-version'
 import { registerPlugins } from './plugins'
 import { registerSettingsStore } from './settings-store'
-import { registerSessionProbe } from './session-probe'
+import { registerConnectors } from './connectors'
+import { registerWorkOutcome } from './work-outcome'
+import { killAllProbes, registerSessionProbe } from './session-probe'
 import { registerTranscriptStore } from './transcript-store'
 import { recallProject, rememberProject } from './project-memory'
 import { handle } from './ipc/ipc'
@@ -109,6 +111,8 @@ if (!primary) {
   registerAgentDefs()
   registerCliVersion()
   registerSettingsStore()
+  registerConnectors()
+  registerWorkOutcome()
   registerSessionProbe()
   registerTranscriptStore()
   registerPlugins()
@@ -124,6 +128,7 @@ if (!primary) {
 
   app.on('window-all-closed', () => {
     killAllAgents()
+    killAllProbes()
     if (!isMac) app.quit()
   })
 }

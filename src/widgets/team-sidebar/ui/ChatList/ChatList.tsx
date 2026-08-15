@@ -1,24 +1,12 @@
+import type { ChatListProps } from './ChatList.types'
 import { MoreHorizontal, SquarePen } from 'lucide-react'
 import type { ChatSummary } from '@/entities/conversation'
 import { cn } from '@/shared/lib/cn'
 import { Button } from '@/shared/ui/button'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/shared/ui/dropdown-menu'
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/shared/ui/dropdown-menu'
 import { groupChats } from '../../lib/chat-groups/chat-groups'
 import { whenLabel } from '../../lib/when/when'
 
-type ChatListProps = {
-  chats: ChatSummary[]
-  openId: string | null
-  nowMs: number
-  onOpen(id: string): void
-  onStart(): void
-  onRemove(id: string): void
-}
 
 export function ChatList({ chats, openId, nowMs, onOpen, onStart, onRemove }: ChatListProps) {
   return (

@@ -5,6 +5,8 @@ import { Button } from '@/shared/ui/button'
 import { shortName } from '@/entities/connector'
 import type { Connector } from '@/entities/connector'
 import { useScrollState } from '@/shared/lib/scroll-state/use-scroll-state'
+import { callableAgents } from '../../lib/callable/callable'
+import { reachable } from '../../lib/format/format'
 
 type StatusDrawerProps = {
   statusState: StatusState
@@ -13,14 +15,6 @@ type StatusDrawerProps = {
   onRecheck(): void
   onUpdate(): void
   updating: boolean
-}
-
-const CONNECTOR_STATE: Record<string, string> = {
-  connected: 'Connected',
-  'needs-auth': 'Needs auth',
-  unapproved: 'Waiting for approval',
-  failed: 'Failed',
-  unknown: 'Unknown',
 }
 
 function Part({
@@ -92,144 +86,126 @@ export function StatusDrawer({
         data-selectable
         className="zt-scroll zt-fade-y flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto px-4 pt-1 pb-4"
       >
-          {session && (
-            <Part title="Session">
-              {known(session.id) && <Row label="Session">{session.id.slice(0, 8)}</Row>}
-              {known(session.cwd) && <Row label="Working folder">{session.cwd}</Row>}
-              <Row label="Model">{session.model}</Row>
-              {known(session.permissionMode) && (
-                <Row label="Permission mode">{session.permissionMode}</Row>
-              )}
-              {known(session.outputStyle) && <Row label="Output style">{session.outputStyle}</Row>}
-              <Row label="Fast mode">
-                {session.fastMode.state}
-                {session.fastMode.reason ? `: ${session.fastMode.reason}` : ''}
-              </Row>
-              {known(session.apiKeySource) && session.apiKeySource !== 'none' && (
-                <Row label="API key">{session.apiKeySource}</Row>
-              )}
-            </Part>
-          )}
+        {session && (
+          <Part title="Session">
+            {known(session.id) && <Row label="Session">{session.id.slice(0, 8)}</Row>}
+            {known(session.cwd) && <Row label="Working folder">{session.cwd}</Row>}
+            <Row label="Model">{session.model}</Row>
+            {known(session.permissionMode) && (
+              <Row label="Permission mode">{session.permissionMode}</Row>
+            )}
+            {known(session.outputStyle) && <Row label="Output style">{session.outputStyle}</Row>}
+            <Row label="Fast mode">
+              {session.fastMode.state}
+              {session.fastMode.reason ? `: ${session.fastMode.reason}` : ''}
+            </Row>
+            {known(session.apiKeySource) && session.apiKeySource !== 'none' && (
+              <Row label="API key">{session.apiKeySource}</Row>
+            )}
+          </Part>
+        )}
 
-          {hasRun && (
-            <Part title="This chat">
-              <Row label="Context">
-                {n(context.used)}
-                {context.window ? ` / ${n(context.window)}` : ' (window unknown)'}
-              </Row>
-              <Row label="Tokens">
-                cache read {n(cost.tokens.cacheRead)} · cache write {n(cost.tokens.cacheCreate)} ·
-                in {n(cost.tokens.in)} · out {n(cost.tokens.out)}
-              </Row>
-              <Row label="Cost">
-                ${cost.usd.toFixed(4)}
-                {cost.lastTurnUsd > 0 ? ` (this turn $${cost.lastTurnUsd.toFixed(4)})` : ''}
-              </Row>
-              <Row label="Turns">{n(cost.turns)}</Row>
-              <Row label="Duration">
-                {(cost.durationMs / 1000).toFixed(1)}s
-                {cost.ttftMs != null ? ` · first token ${(cost.ttftMs / 1000).toFixed(1)}s` : ''}
-              </Row>
-            </Part>
-          )}
+        {hasRun && (
+          <Part title="This chat">
+            <Row label="Context">
+              {n(context.used)}
+              {context.window ? ` / ${n(context.window)}` : ' (window unknown)'}
+            </Row>
+            <Row label="Tokens">
+              cache read {n(cost.tokens.cacheRead)} · cache write {n(cost.tokens.cacheCreate)} · in{' '}
+              {n(cost.tokens.in)} · out {n(cost.tokens.out)}
+            </Row>
+            <Row label="Cost">
+              ${cost.usd.toFixed(4)}
+              {cost.lastTurnUsd > 0 ? ` (this turn $${cost.lastTurnUsd.toFixed(4)})` : ''}
+            </Row>
+            <Row label="Turns">{n(cost.turns)}</Row>
+            <Row label="Duration">
+              {(cost.durationMs / 1000).toFixed(1)}s
+              {cost.ttftMs != null ? ` · first token ${(cost.ttftMs / 1000).toFixed(1)}s` : ''}
+            </Row>
+          </Part>
+        )}
 
-          {(connectors.length > 0 || (session?.mcp.length ?? 0) > 0) && (
-            <Part
-              title="Connectors"
-              aside={
-                <Button
-                  variant="quiet"
-                  size="bare"
-                  onClick={onRecheck}
-                  disabled={checking}
-                  className="text-xs"
+        {(connectors.length > 0 || (session?.mcp.length ?? 0) > 0) && (
+          <Part
+            title="Connectors"
+            aside={
+              <Button
+                variant="quiet"
+                size="bare"
+                onClick={onRecheck}
+                disabled={checking}
+                className="text-xs"
+              >
+                {checking ? 'Checking…' : 'Recheck'}
+              </Button>
+            }
+          >
+            {[...reachable(statusState, connectors)].map(([name, state]) => (
+              <Row key={name} label={shortName(name)}>
+                <span
+                  className={state === 'connected' ? 'text-muted-foreground' : 'text-foreground'}
                 >
-                  {checking ? 'Checking…' : 'Recheck'}
-                </Button>
-              }
-            >
-              {connectors.length > 0
-                ? connectors.map((connector) => (
-                    <Row key={connector.name} label={shortName(connector.name)}>
-                      <span
-                        className={
-                          connector.state === 'connected'
-                            ? 'text-muted-foreground'
-                            : 'text-foreground'
-                        }
-                      >
-                        {CONNECTOR_STATE[connector.state] ?? connector.state}
-                      </span>
-                    </Row>
-                  ))
-                : (session?.mcp ?? []).map((server) => (
-                    <Row key={server.name} label={shortName(server.name)}>
-                      <span
-                        className={
-                          server.status === 'needs-auth'
-                            ? 'text-foreground'
-                            : 'text-muted-foreground'
-                        }
-                      >
-                        {mcpLabel(server.status)}
-                      </span>
-                    </Row>
-                  ))}
-              {session && (
-                <Row label="Available">
-                  {n(session.counts.tools)} tools · {n(session.counts.commands)} commands ·{' '}
-                  {n(session.counts.agents)} agents · {n(session.counts.skills)} skills ·{' '}
-                  {n(session.counts.plugins)} plugins
-                </Row>
-              )}
-            </Part>
-          )}
+                  {stateLabel(state)}
+                </span>
+              </Row>
+            ))}
+            {session && (
+              <Row label="Available">
+                {n(session.counts.tools)} tools · {n(session.counts.commands)} commands ·{' '}
+                {n(callableAgents(session.tools, session.agents))} of {n(session.counts.agents)}{' '}
+                agents · {n(session.counts.skills)} skills · {n(session.counts.plugins)} plugins
+              </Row>
+            )}
+          </Part>
+        )}
 
-          {hasEnvironment && (
-            <Part title="Environment">
-              {update?.current && (
-                <Row label="CLI">
-                  <span className="flex flex-wrap items-center gap-2">
-                    <span>
-                      {update.current}
-                      {update.latest === null
-                        ? ', could not check for updates'
-                        : stale
-                          ? `, update available: ${update.latest}`
-                          : ', up to date'}
-                      {update.managedBy ? ` (${update.managedBy})` : ''}
-                    </span>
-                    {stale &&
-                      (byHand === null ? (
-                        <Button size="sm" variant="outline" onClick={onUpdate} disabled={updating}>
-                          {updating ? 'Updating…' : 'Update'}
-                        </Button>
-                      ) : (
-                        <code className="rounded-md bg-background px-2 py-1 text-xs select-all">
-                          {byHand}
-                        </code>
-                      ))}
+        {hasEnvironment && (
+          <Part title="Environment">
+            {update?.current && (
+              <Row label="CLI">
+                <span className="flex flex-wrap items-center gap-2">
+                  <span>
+                    {update.current}
+                    {update.latest === null
+                      ? ', could not check for updates'
+                      : stale
+                        ? `, update available: ${update.latest}`
+                        : ', up to date'}
+                    {update.managedBy ? ` (${update.managedBy})` : ''}
                   </span>
-                </Row>
-              )}
-              {session?.memoryPaths.map((path) => (
-                <Row key={path} label="Memory">
-                  {path}
-                </Row>
-              ))}
-              {hooks.map((hook, index) => (
-                <Row key={`${hook.name}-${index}`} label={index === 0 ? 'Hooks' : ''}>
-                  {hook.name} · {hook.exitCode} · {hook.ms}ms
-                </Row>
-              ))}
-            </Part>
+                  {stale &&
+                    (byHand === null ? (
+                      <Button size="sm" variant="outline" onClick={onUpdate} disabled={updating}>
+                        {updating ? 'Updating…' : 'Update'}
+                      </Button>
+                    ) : (
+                      <code className="rounded-md bg-background px-2 py-1 text-xs select-all">
+                        {byHand}
+                      </code>
+                    ))}
+                </span>
+              </Row>
+            )}
+            {session?.memoryPaths.map((path) => (
+              <Row key={path} label="Memory">
+                {path}
+              </Row>
+            ))}
+            {hooks.map((hook, index) => (
+              <Row key={`${hook.name}-${index}`} label={index === 0 ? 'Hooks' : ''}>
+                {hook.name} · {hook.exitCode} · {hook.ms}ms
+              </Row>
+            ))}
+          </Part>
         )}
       </div>
     </div>
   )
 }
 
-function mcpLabel(status: string): string {
+function stateLabel(status: string): string {
   switch (status) {
     case 'connected':
       return 'Connected'
@@ -237,6 +213,12 @@ function mcpLabel(status: string): string {
       return 'Needs auth'
     case 'pending':
       return 'Connecting'
+    case 'unapproved':
+      return 'Waiting for approval'
+    case 'failed':
+      return 'Failed'
+    case 'unknown':
+      return 'Unknown'
     default:
       return status
   }

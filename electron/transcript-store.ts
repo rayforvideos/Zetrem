@@ -72,8 +72,10 @@ export function registerTranscriptStore(): void {
     if (typeof project !== 'string' || project.length === 0) return
     const transcript = readTranscript(saved)
     if (transcript === null) return
+    const kept = transcript.spend === null ? await load(project, transcript.id) : null
+    const merged = kept?.spend == null ? transcript : { ...transcript, spend: kept.spend }
     await mkdir(folder(project), { recursive: true }).catch(() => undefined)
-    await saveFile(chatPath(project, transcript.id), JSON.stringify(transcript)).catch(
+    await saveFile(chatPath(project, merged.id), JSON.stringify(merged)).catch(
       (cause: unknown) => console.error('could not save the conversation', cause),
     )
     await prune(project, await chats(project))

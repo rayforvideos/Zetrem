@@ -54,7 +54,82 @@ describe('agentsArgs: the lock is expressed as the session main agent', () => {
     expect(args).not.toContain('--agent')
   })
 
-  it('passes nothing when nobody was hired', () => {
-    expect(agentsArgs([], { knownTools: ['Read'], alsoCallable: [] }, boss)).toEqual([])
+  it('still locks when nobody was hired, since an empty roster is a decision too', () => {
+    const args = agentsArgs([], { knownTools: ['Read'], alsoCallable: [] }, boss)
+    expect(args).toContain('--agent')
+  })
+})
+
+describe('an empty roster means nobody is callable, not everybody', () => {
+  const lock = { knownTools: ['Read', 'Bash', 'Task'], alsoCallable: [] }
+
+  it('still locks the session when nobody has been hired and none are switched on', () => {
+    const args = agentsArgs([], lock, boss)
+    expect(args).toContain('--agent')
+    expect(args[args.indexOf('--agent') + 1]).toBe(ORCHESTRATOR)
+  })
+
+  it('hands the orchestrator no way to call anyone, rather than leaving the door open', () => {
+    const args = agentsArgs([], lock, boss)
+    const spec = JSON.parse(args[args.indexOf('--agents') + 1] ?? '{}')
+    const tools: string[] = spec[ORCHESTRATOR]?.tools ?? []
+    expect(tools).not.toContain('Task')
+    expect(tools.some((name) => name.startsWith('Agent('))).toBe(false)
+    expect(tools).toContain('Read')
+  })
+
+  it('opens the door again for the stock agents that are switched on', () => {
+    const args = agentsArgs([], { ...lock, alsoCallable: ['Explore'] }, boss)
+    const spec = JSON.parse(args[args.indexOf('--agents') + 1] ?? '{}')
+    expect(spec[ORCHESTRATOR]?.tools).toContain('Agent(Explore)')
+  })
+
+  it('leaves the session alone while the tools are still unknown', () => {
+    expect(agentsArgs([], { knownTools: [], alsoCallable: [] }, boss)).toEqual([])
+  })
+})
+
+describe('the orchestrator is given no way to work off screen', () => {
+  const lock = {
+    knownTools: [
+      'Read',
+      'Bash',
+      'Task',
+      'Workflow',
+      'SendMessage',
+      'ListAgents',
+      'CronCreate',
+      'ScheduleWakeup',
+      'RemoteTrigger',
+      'WebSearch',
+    ],
+    alsoCallable: [],
+  }
+
+  function toolsOf(args: string[]): string[] {
+    const spec = JSON.parse(args[args.indexOf('--agents') + 1] ?? '{}')
+    return spec[ORCHESTRATOR]?.tools ?? []
+  }
+
+  it('keeps the tools that do the work in front of you', () => {
+    const tools = toolsOf(agentsArgs([person()], lock, boss))
+    expect(tools).toEqual(expect.arrayContaining(['Read', 'Bash', 'WebSearch']))
+  })
+
+  it('takes away the ones that hand work to something the app cannot show', () => {
+    const tools = toolsOf(agentsArgs([person()], lock, boss))
+    for (const name of ['Workflow', 'SendMessage', 'ListAgents', 'RemoteTrigger']) {
+      expect(tools, name).not.toContain(name)
+    }
+  })
+
+  it('takes away the ones that put work on a clock nobody is watching', () => {
+    const tools = toolsOf(agentsArgs([person()], lock, boss))
+    expect(tools).not.toContain('CronCreate')
+    expect(tools).not.toContain('ScheduleWakeup')
+  })
+
+  it('still sends out the crew, which is the way work is meant to be handed on', () => {
+    expect(toolsOf(agentsArgs([person()], lock, boss))).toContain('Agent(scout)')
   })
 })

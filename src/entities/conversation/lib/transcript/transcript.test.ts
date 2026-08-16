@@ -122,3 +122,45 @@ describe('readTranscript: reading what was saved without trusting it', () => {
     expect(back?.turns).toHaveLength(1)
   })
 })
+
+describe('a saved chat carries what it cost, so reopening it says the same thing', () => {
+  const turns = [
+    { role: 'user' as const, text: '안녕', tools: [], draft: '', thinking: '', startedAtMs: 0 },
+  ]
+
+  it('keeps the totals beside the words', () => {
+    const spend = {
+      usd: 0.42,
+      turns: 3,
+      tokensOut: 1200,
+      tokensIn: 8,
+      cacheRead: 5000,
+      cacheWrite: 900,
+      durationMs: 1800,
+      contextUsed: 90_000,
+      contextWindow: 1_000_000,
+    }
+    const packed = packTranscript(turns, { id: chatId(1, 'aaa'), sessionId: null, savedAtMs: 0 }, spend)
+    expect(packed.spend).toEqual(spend)
+    expect(readTranscript(JSON.parse(JSON.stringify(packed)))?.spend?.usd).toBe(0.42)
+  })
+
+  it('reads a chat saved before the totals were kept, rather than dropping it', () => {
+    const old = { id: chatId(1, 'aaa'), title: 'x', sessionId: null, savedAtMs: 0, turns }
+    const read = readTranscript(old)
+    expect(read?.turns).toHaveLength(1)
+    expect(read?.spend).toBeNull()
+  })
+
+  it('refuses a spoiled total instead of showing a wrong one', () => {
+    const bad = {
+      id: chatId(1, 'aaa'),
+      title: 'x',
+      sessionId: null,
+      savedAtMs: 0,
+      turns,
+      spend: { usd: 'lots', turns: 3 },
+    }
+    expect(readTranscript(bad)?.spend).toBeNull()
+  })
+})

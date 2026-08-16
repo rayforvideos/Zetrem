@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, useSyncExternalStore } from 'react'
 import { statusStore } from '@/entities/agent-session'
 import { chatId, packTranscript } from '@/entities/conversation'
+import type { ChatSpend } from '@/entities/conversation'
 import type { ChatSummary } from '@/entities/conversation'
 import { conversation } from './conversation/conversation'
 import { troubleLine } from '@/shared/lib/ask/ask'
@@ -28,6 +29,7 @@ export function useTranscript(project: string | null): Chats {
   const [resumeId, setResumeId] = useState<string | null>(null)
   const [ready, setReady] = useState(false)
   const lastSaved = useRef('')
+  const opened = useRef<ChatSpend | null>(null)
   const toldSaveTrouble = useRef(false)
   const loadedFor = useRef<string | null>(null)
 
@@ -70,6 +72,8 @@ export function useTranscript(project: string | null): Chats {
         if (!alive) return
         setOpenId(latest.id)
         setResumeId(saved?.sessionId ?? null)
+        opened.current = saved?.spend ?? null
+        if (saved?.spend != null) statusStore.restoreChat(saved.spend)
         if (saved !== null) conversation.restore(saved.turns)
       })
       .catch(() => undefined)
@@ -93,11 +97,29 @@ export function useTranscript(project: string | null): Chats {
       turnCount: turns.length,
     })
     if (!allowed || project === null || openId === null) return
-    const packed = packTranscript(turns, {
-      id: openId,
-      sessionId: threadToSave({ liveSessionId, probed, resumeId }),
-      savedAtMs: Date.now(),
-    })
+    const spent = statusStore.get()
+    const live = spent.cost.turns > 0
+    const packed = packTranscript(
+      turns,
+      {
+        id: openId,
+        sessionId: threadToSave({ liveSessionId, probed, resumeId }),
+        savedAtMs: Date.now(),
+      },
+      live
+        ? {
+            usd: spent.cost.usd,
+            turns: spent.cost.turns,
+            tokensOut: spent.cost.tokens.out,
+            tokensIn: spent.cost.tokens.in,
+            cacheRead: spent.cost.tokens.cacheRead,
+            cacheWrite: spent.cost.tokens.cacheCreate,
+            durationMs: spent.cost.durationMs,
+            contextUsed: spent.context.used,
+            contextWindow: spent.context.window,
+          }
+        : opened.current,
+    )
     const stamp = `${packed.id}:${packed.sessionId}:${packed.turns.length}:${packed.turns.at(-1)?.text ?? ''}`
     if (stamp === lastSaved.current) return
     lastSaved.current = stamp
@@ -118,6 +140,7 @@ export function useTranscript(project: string | null): Chats {
   function open(id: string): void {
     if (project === null || id === openId) return
     lastSaved.current = ''
+    opened.current = null
     statusStore.reset()
     conversation.reset()
     setOpenId(id)
@@ -127,6 +150,8 @@ export function useTranscript(project: string | null): Chats {
       .then((saved) => {
         if (saved === null) return
         setResumeId(saved.sessionId)
+        opened.current = saved.spend ?? null
+        if (saved.spend != null) statusStore.restoreChat(saved.spend)
         conversation.restore(saved.turns)
       })
       .catch((cause: unknown) => {
@@ -136,6 +161,7 @@ export function useTranscript(project: string | null): Chats {
 
   function start(): void {
     lastSaved.current = ''
+    opened.current = null
     statusStore.reset()
     conversation.reset()
     setOpenId(freshId())

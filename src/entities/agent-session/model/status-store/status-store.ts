@@ -2,6 +2,7 @@ import type { HookRun, StatusState, UpdateInfo } from './status-store.types'
 
 import type { StatusEvent } from '../../api/claude/status/status.types'
 import { withLimit } from '../limits/limits'
+import type { ChatSpend } from '@/entities/conversation'
 import { spentAfter } from '../spend/spend'
 
 const HOOK_KEEP = 5
@@ -94,6 +95,29 @@ export const statusStore = {
   setUpdate(update: UpdateInfo): void {
     emit({ ...state, update })
   },
+  restoreChat(spend: Partial<ChatSpend> | null): void {
+    if (spend === null || spend === undefined) return
+    emit({
+      ...state,
+      context: {
+        used: spend.contextUsed ?? state.context.used,
+        window: spend.contextWindow ?? state.context.window,
+      },
+      cost: {
+        ...state.cost,
+        usd: spend.usd ?? state.cost.usd,
+        turns: spend.turns ?? state.cost.turns,
+        durationMs: spend.durationMs ?? state.cost.durationMs,
+        tokens: {
+          in: spend.tokensIn ?? state.cost.tokens.in,
+          out: spend.tokensOut ?? state.cost.tokens.out,
+          cacheRead: spend.cacheRead ?? state.cost.tokens.cacheRead,
+          cacheCreate: spend.cacheWrite ?? state.cost.tokens.cacheCreate,
+        },
+      },
+    })
+  },
+
   usageRead(atMs: number): void {
     emit({ ...state, usage: 'read', usageAtMs: atMs })
   },

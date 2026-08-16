@@ -193,3 +193,41 @@ describe('statusStore: the last thing known to be true', () => {
     expect(count).toBe(1)
   })
 })
+
+describe('restoreChat: reopening a chat brings its totals back', () => {
+  it('puts back what the chat had spent', () => {
+    statusStore.reset()
+    statusStore.restoreChat({
+      usd: 0.42,
+      turns: 3,
+      tokensOut: 1200,
+      tokensIn: 8,
+      cacheRead: 5000,
+      cacheWrite: 900,
+      durationMs: 1800,
+      contextUsed: 90_000,
+      contextWindow: 1_000_000,
+    })
+    const state = statusStore.get()
+    expect(state.cost.usd).toBe(0.42)
+    expect(state.cost.turns).toBe(3)
+    expect(state.cost.tokens.out).toBe(1200)
+    expect(state.context.used).toBe(90_000)
+    expect(state.context.window).toBe(1_000_000)
+    expect(state.cost.tokens.cacheRead).toBe(5000)
+    expect(state.cost.durationMs).toBe(1800)
+  })
+
+  it('does nothing for a chat saved before the totals were kept', () => {
+    statusStore.reset()
+    statusStore.restoreChat(null)
+    expect(statusStore.get().cost.usd).toBe(0)
+  })
+
+  it('keeps what it has when a field is missing, rather than reading it as zero', () => {
+    statusStore.reset()
+    statusStore.restoreChat({ usd: 1 })
+    expect(statusStore.get().cost.usd).toBe(1)
+    expect(statusStore.get().cost.turns).toBe(0)
+  })
+})

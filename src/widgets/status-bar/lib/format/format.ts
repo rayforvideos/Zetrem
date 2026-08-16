@@ -13,20 +13,30 @@ export function contextPercent(context: { used: number; window: number | null })
 
 type Wired = { connected: number; needsAuth: number; total: number }
 
-function wiredOf(status: StatusState, connectors: Connector[]): Wired | null {
-  if (connectors.length > 0) {
-    return {
-      connected: connectors.filter((one) => one.state === 'connected').length,
-      needsAuth: connectors.filter((one) => one.state === 'needs-auth').length,
-      total: connectors.length,
-    }
+const RANK: Record<string, number> = { 'needs-auth': 0, failed: 1, pending: 2, connected: 3 }
+
+function worse(a: string, b: string): string {
+  return (RANK[a] ?? 2) <= (RANK[b] ?? 2) ? a : b
+}
+
+export function reachable(status: StatusState, connectors: Connector[]): Map<string, string> {
+  const state = new Map<string, string>()
+  for (const one of connectors) state.set(one.name, one.state)
+  for (const server of status.session?.mcp ?? []) {
+    const known = state.get(server.name)
+    state.set(server.name, known === undefined ? server.status : worse(known, server.status))
   }
-  const mcp = status.session?.mcp ?? []
-  if (mcp.length === 0) return null
+  return state
+}
+
+function wiredOf(status: StatusState, connectors: Connector[]): Wired | null {
+  const state = reachable(status, connectors)
+  if (state.size === 0) return null
+  const all = [...state.values()]
   return {
-    connected: mcp.filter((server) => server.status === 'connected').length,
-    needsAuth: mcp.filter((server) => server.status === 'needs-auth').length,
-    total: mcp.length,
+    connected: all.filter((one) => one === 'connected').length,
+    needsAuth: all.filter((one) => one === 'needs-auth').length,
+    total: all.length,
   }
 }
 

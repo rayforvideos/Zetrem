@@ -143,7 +143,7 @@ describe('StatusDrawer', () => {
 })
 
 describe('the connector list is not the one it saw at startup', () => {
-  it('believes a fresh check over the snapshot the session began with', () => {
+  it('shows the worse of the two, since a connector this session never got is one you cannot use', () => {
     const html = renderToStaticMarkup(
       <StatusDrawer
         connectors={[{ name: 'claude.ai Notion', where: 'https://mcp.notion.com/mcp', state: 'connected' }]}
@@ -155,7 +155,7 @@ describe('the connector list is not the one it saw at startup', () => {
       />,
     )
     expect(html).toContain('>Notion<')
-    expect(html).not.toContain('Needs auth')
+    expect(html).toContain('Needs auth')
   })
 
   it('offers a way to ask again, since signing in happens outside the app', () => {

@@ -1,5 +1,5 @@
 import type { ToolActivity, ToolResult, Turn } from '../../model/turn'
-import type { ChatSummary, Transcript } from './transcript.types'
+import type { ChatSpend, ChatSummary, Transcript } from './transcript.types'
 
 const TURN_CAP = 200
 const OUTPUT_CAP = 4000
@@ -25,10 +25,15 @@ export function titleOf(turns: Turn[]): string {
   return line.length <= TITLE_CAP ? line : `${line.slice(0, TITLE_CAP)}…`
 }
 
-export function packTranscript(turns: Turn[], summary: Omit<ChatSummary, 'title'>): Transcript {
+export function packTranscript(
+  turns: Turn[],
+  summary: Omit<ChatSummary, 'title'>,
+  spend: ChatSpend | null = null,
+): Transcript {
   return {
     ...summary,
     title: titleOf(turns),
+    spend,
     turns: turns.slice(-TURN_CAP).map(packTurn),
   }
 }
@@ -60,7 +65,31 @@ export function readTranscript(saved: unknown): Transcript | null {
     title: typeof source.title === 'string' && source.title.length > 0 ? source.title : titleOf(turns),
     sessionId: typeof source.sessionId === 'string' ? source.sessionId : null,
     savedAtMs: typeof source.savedAtMs === 'number' ? source.savedAtMs : 0,
+    spend: readSpend(source.spend),
     turns: turns.slice(-TURN_CAP),
+  }
+}
+
+function num(value: unknown): number | null {
+  return typeof value === 'number' && Number.isFinite(value) && value >= 0 ? value : null
+}
+
+export function readSpend(saved: unknown): ChatSpend | null {
+  if (typeof saved !== 'object' || saved === null) return null
+  const source = saved as Record<string, unknown>
+  const usd = num(source.usd)
+  const turns = num(source.turns)
+  if (usd === null || turns === null) return null
+  return {
+    usd,
+    turns,
+    tokensOut: num(source.tokensOut) ?? 0,
+    tokensIn: num(source.tokensIn) ?? 0,
+    cacheRead: num(source.cacheRead) ?? 0,
+    cacheWrite: num(source.cacheWrite) ?? 0,
+    durationMs: num(source.durationMs) ?? 0,
+    contextUsed: num(source.contextUsed) ?? 0,
+    contextWindow: num(source.contextWindow),
   }
 }
 

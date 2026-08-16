@@ -8,4 +8,4 @@ export {
   summaryOf,
   titleOf,
 } from './lib/transcript/transcript'
-export type { ChatSummary, Transcript } from './lib/transcript/transcript.types'
+export type { ChatSpend, ChatSummary, Transcript } from './lib/transcript/transcript.types'

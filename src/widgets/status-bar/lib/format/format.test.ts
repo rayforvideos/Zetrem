@@ -108,8 +108,8 @@ function withMcp(mcp: { name: string; status: string }[]): StatusState {
   return state({ session: session as never })
 }
 
-describe('the strip counts the connectors the panel is showing, not the ones the session began with', () => {
-  it('believes a fresh check over the startup snapshot', () => {
+describe('the strip counts what this session can actually reach', () => {
+  it('takes the worse of the two, since a connector the session did not get is one you cannot use', () => {
     const stale = withMcp([
       { name: 'claude.ai Notion', status: 'needs-auth' },
       { name: 'playwright', status: 'connected' },
@@ -118,8 +118,8 @@ describe('the strip counts the connectors the panel is showing, not the ones the
       { name: 'claude.ai Notion', where: 'https://mcp.notion.com/mcp', state: 'connected' },
       { name: 'playwright', where: 'npx @playwright/mcp@latest', state: 'connected' },
     ]).filter((cell) => cell.key === 'mcp')
-    expect(mcp?.text).toBe('MCP 2/2')
-    expect(mcp?.warn).toBe(false)
+    expect(mcp?.text).toBe('MCP 1/2 · 1 need auth')
+    expect(mcp?.warn).toBe(true)
   })
 
   it('falls back to the snapshot until the check has come back', () => {
@@ -129,5 +129,51 @@ describe('the strip counts the connectors the panel is showing, not the ones the
     ])
     const [mcp] = cells(stale, []).filter((cell) => cell.key === 'mcp')
     expect(mcp?.text).toBe('MCP 1/2 · 1 need auth')
+  })
+})
+
+describe('the strip reports the session it is in, not the config on disk', () => {
+  const session = (mcp: { name: string; status: string }[]) =>
+    state({
+      session: {
+        id: 's',
+        cwd: '/w',
+        model: 'm',
+        permissionMode: 'ask',
+        outputStyle: 'default',
+        cliVersion: '2.0.0',
+        apiKeySource: 'none',
+        fastMode: { state: 'off', reason: null },
+        mcp,
+        tools: [],
+        agents: [],
+        counts: { tools: 0, commands: 0, agents: 0, skills: 0, plugins: 0 },
+        memoryPaths: [],
+      },
+    })
+
+  it('counts what this session reached, even when the config claims more', () => {
+    const cell = cells(
+      session([
+        { name: 'Gmail', status: 'needs-auth' },
+        { name: 'Figma', status: 'pending' },
+        { name: 'playwright', status: 'connected' },
+      ]),
+      [
+        { name: 'Gmail', where: 'x', state: 'connected' },
+        { name: 'Figma', where: 'y', state: 'connected' },
+        { name: 'playwright', where: 'z', state: 'connected' },
+      ],
+    ).find((one) => one.key === 'mcp')
+    expect(cell?.text).toBe('MCP 1/3 · 1 need auth')
+    expect(cell?.warn).toBe(true)
+  })
+
+  it('falls back to the config while no session has started', () => {
+    const cell = cells(state(), [
+      { name: 'Gmail', where: 'x', state: 'connected' },
+      { name: 'Slack', where: 'y', state: 'needs-auth' },
+    ]).find((one) => one.key === 'mcp')
+    expect(cell?.text).toBe('MCP 1/2 · 1 need auth')
   })
 })

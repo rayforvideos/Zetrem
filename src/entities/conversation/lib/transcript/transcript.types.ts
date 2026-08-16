@@ -7,4 +7,16 @@ export type ChatSummary = {
   savedAtMs: number
 }
 
-export type Transcript = ChatSummary & { turns: Turn[] }
+export type ChatSpend = {
+  usd: number
+  turns: number
+  tokensOut: number
+  tokensIn: number
+  cacheRead: number
+  cacheWrite: number
+  durationMs: number
+  contextUsed: number
+  contextWindow: number | null
+}
+
+export type Transcript = ChatSummary & { turns: Turn[]; spend: ChatSpend | null }

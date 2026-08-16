@@ -2,6 +2,22 @@ import type { Person, RosterLock } from './roster-lock.types'
 
 export const ORCHESTRATOR = 'zetrem'
 
+const ELSEWHERE = [
+  'Task',
+  'Workflow',
+  'SendMessage',
+  'ListAgents',
+  'CronCreate',
+  'CronDelete',
+  'CronList',
+  'ScheduleWakeup',
+  'RemoteTrigger',
+]
+
+export function ownWork(name: string): boolean {
+  return !ELSEWHERE.includes(name) && !name.startsWith('Agent(')
+}
+
 type Spec = Record<string, { description: string; prompt: string; model?: string; tools?: string[] }>
 
 export function peopleSpec(people: Person[]): Spec {
@@ -25,14 +41,14 @@ export function agentsArgs(
   const spec = peopleSpec(people)
   const names = Object.keys(spec)
   const callable = [...names, ...(lock?.alsoCallable ?? [])]
-  const locking = lock !== null && callable.length > 0 && lock.knownTools.length > 0
+  const locking = lock !== null && lock.knownTools.length > 0
 
   if (locking) {
-    const tools = lock.knownTools.filter((name) => name !== 'Task' && !name.startsWith('Agent('))
+    const tools = lock.knownTools.filter(ownWork)
     spec[ORCHESTRATOR] = {
       description: 'The orchestrator Zetrem runs',
       prompt: orchestratorPrompt,
-      tools: [...tools, `Agent(${callable.join(', ')})`],
+      tools: callable.length > 0 ? [...tools, `Agent(${callable.join(', ')})`] : tools,
     }
   }
 

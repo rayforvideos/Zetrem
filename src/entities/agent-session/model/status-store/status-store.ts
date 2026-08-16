@@ -8,6 +8,7 @@ const HOOK_KEEP = 5
 const EMPTY: StatusState = {
   usage: 'unread',
   session: null,
+  probed: false,
   context: { used: 0, window: null },
   cost: {
     usd: 0,
@@ -44,7 +45,7 @@ export const statusStore = {
   },
   apply(event: StatusEvent): void {
     if (event.type === 'session') {
-      emit({ ...state, session: event.session })
+      emit({ ...state, session: event.session, probed: false })
       return
     }
     if (event.type === 'context') {
@@ -105,6 +106,9 @@ export const statusStore = {
   usageUnreadable(): void {
     if (state.usage !== 'unread') return
     emit({ ...state, usage: 'unreadable' })
+  },
+  learnProbe(session: StatusState['session']): void {
+    emit({ ...state, session, probed: true })
   },
   reset(): void {
     pending = new Map()

@@ -1,3 +1,5 @@
+import type { Sent } from '@/entities/attachment'
+
 export type ToolResult = {
   stdout: string
   stderr: string
@@ -17,6 +19,7 @@ export type ToolActivity = {
 export type Turn = {
   role: 'user' | 'assistant' | 'system'
   text: string
+  files?: Sent[]
   tools: ToolActivity[]
   draft: string
   thinking: string

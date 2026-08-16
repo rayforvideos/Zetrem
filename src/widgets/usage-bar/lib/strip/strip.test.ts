@@ -4,6 +4,7 @@ import { chatLine, marksOfStatus, quietLine, spendLine } from './strip'
 
 const EMPTY: StatusState = {
   usage: 'read',
+  probed: false,
   session: null,
   context: { used: 0, window: null },
   limits: [],
@@ -33,10 +34,18 @@ describe('marksOfStatus: every account limit, as a share used', () => {
     expect(marksOfStatus(EMPTY)).toEqual([])
   })
 
-  it('names each limit and rounds its share to a whole percent', () => {
+  it('rounds a share to a whole percent', () => {
     const [mark] = marksOfStatus(state({ limits: [limit('seven_day', { utilization: 0.604 })] }))
-    expect(mark!.label).toBe('Weekly')
     expect(mark!.percent).toBe(60)
+  })
+
+  it('says nothing for the plain limits and names the one tied to a model', () => {
+    const [plain] = marksOfStatus(state({ limits: [limit('seven_day')] }))
+    const [fable] = marksOfStatus(state({ limits: [limit('seven_day_fable')] }))
+    const [session] = marksOfStatus(state({ limits: [limit('five_hour')] }))
+    expect(plain!.label).toBe('')
+    expect(session!.label).toBe('')
+    expect(fable!.label).toBe('Fable')
   })
 
   it('speaks up for a limit that is warning, whatever its share', () => {
@@ -49,7 +58,7 @@ describe('marksOfStatus: every account limit, as a share used', () => {
   it('speaks up for a limit already into overage, which a low share would hide', () => {
     const [mark] = marksOfStatus(state({ limits: [limit('seven_day', { overage: true })] }))
     expect(mark!.warn).toBe(true)
-    expect(mark!.hint).toBe('on overage')
+    expect(mark!.hint).toContain('on overage')
   })
 
   it('speaks up once a limit is nearly full, before anyone else has to', () => {
@@ -105,5 +114,17 @@ describe('quietLine: what to say while there is nothing to show', () => {
 
   it('stops explaining for a chat reading alone, even with no account limits', () => {
     expect(quietLine(state({ usage: 'read', context: { used: 10, window: 100 } }))).toBeNull()
+  })
+})
+
+describe('a reset that has already come round', () => {
+  it('says nothing about time left rather than counting a moment that has passed', () => {
+    const now = 1_700_000_000_000
+    const [mark] = marksOfStatus(
+      state({ limits: [limit('five_hour', { resetsAtMs: now - 60_000, utilization: 0.51 })] }),
+      now,
+    )
+    expect(mark!.left).toBeNull()
+    expect(mark!.percent).toBe(51)
   })
 })

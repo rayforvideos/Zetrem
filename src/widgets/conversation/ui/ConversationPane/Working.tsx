@@ -1,22 +1,24 @@
 import { useEffect, useRef } from 'react'
 import type { Turn } from '@/entities/conversation'
 import { AgentSprite } from '@/entities/agent-session/ui/AgentSprite/AgentSprite'
+import { UserFace } from '@/entities/user'
+import type { FaceId } from '@/entities/user'
 import { ToolIcon } from '@/shared/graphics/tool-icon'
 import { reachOf } from '@/shared/lib/reach/reach'
 import { doingOf, elapsedLabel, tokenLabel } from '../../lib/working/working'
 
 export function Working({
-  turn,
+  turns,
+  face,
   nowMs,
   startedAtMs,
   tokensOut,
-  agent,
 }: {
-  turn: Turn | null
+  turns: Turn[]
+  face: FaceId
   nowMs: number
   startedAtMs: number
   tokensOut: number
-  agent: string
 }) {
   const baseline = useRef<number | null>(null)
   useEffect(() => {
@@ -25,14 +27,14 @@ export function Working({
 
   const spent = tokensOut - (baseline.current ?? tokensOut)
   const tokens = tokenLabel(spent)
-  const doing = doingOf(turn)
+  const doing = doingOf(turns, nowMs)
   const waited = nowMs - startedAtMs
 
   return (
     <div
       data-working
       data-doing={doing.verb.toLowerCase()}
-      className="zt-rise relative flex flex-none items-center gap-3 overflow-hidden rounded-xl px-2.5 py-2"
+      className="zt-rise relative flex flex-none items-center gap-2.5 overflow-hidden rounded-xl py-2 pr-3 pl-4"
     >
       <span
         data-reach
@@ -40,19 +42,23 @@ export function Working({
         className="pointer-events-none absolute inset-y-0 left-0 rounded-xl bg-gradient-to-r from-foreground/8 to-transparent"
         style={{ width: `${reachOf(waited)}%` }}
       />
-      <AgentSprite subagentType={agent} state="working" size={26} className="relative flex-none" />
-      {doing.shape !== null && (
-        <span className="relative flex-none text-muted-foreground">
-          <ToolIcon shape={doing.shape} />
-        </span>
-      )}
+      <span data-face className="relative flex size-6 flex-none items-center">
+        <UserFace face={face} size={24} className="max-w-none" />
+      </span>
       <span className="zt-shimmer relative flex-none text-sm">{doing.verb}</span>
-      {doing.target.length > 0 && (
+      {doing.shape !== null && (
         <span
           data-target
-          className="relative min-w-0 flex-1 truncate font-mono text-xs text-muted-foreground"
+          className="relative flex min-w-0 flex-1 items-center gap-2 font-mono text-xs text-muted-foreground"
         >
-          {doing.target}
+          <span className="flex-none">
+            {doing.shape.kind === 'agent' && doing.shape.subagentType.length > 0 ? (
+              <AgentSprite subagentType={doing.shape.subagentType} size={16} />
+            ) : (
+              <ToolIcon shape={doing.shape} />
+            )}
+          </span>
+          {doing.target.length > 0 && <span className="truncate">{doing.target}</span>}
         </span>
       )}
       <span className="relative ml-auto flex flex-none items-baseline gap-3 font-mono text-xs tabular-nums text-muted-foreground">

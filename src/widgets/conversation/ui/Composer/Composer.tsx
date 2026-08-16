@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react'
 import type { FormEvent, KeyboardEvent } from 'react'
-import { ArrowUp, Shield, Square, X } from 'lucide-react'
+import { ArrowUp, Paperclip, Shield, Square, X } from 'lucide-react'
 import { MODELS, PERMISSION_MODES, modelsWith } from '@/entities/agent-session'
 import type { ModelChoice, PermissionMode } from '@/entities/agent-session'
 import { modifierKey } from '@/shared/lib/platform/platform'
@@ -9,6 +9,7 @@ import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupTextarea } fro
 import { Kbd, KbdGroup } from '@/shared/ui/kbd'
 import { beganComposing, endedComposing, maySendNow, newComposer, sent } from '../../lib/composer/composer'
 import { ChoicePicker } from '../ConversationPane/ChoicePicker'
+import { AttachedRow } from './AttachedRow'
 import type { ComposerProps } from './Composer.types'
 
 export function Composer({
@@ -19,13 +20,18 @@ export function Composer({
   permissionMode,
   model,
   refusedModels,
+  files,
   onSend,
+  onPick,
+  onTake,
+  onDropFile,
   onStop,
   onClearAddressee,
   onPermissionMode,
   onModel,
 }: ComposerProps) {
   const [draft, setDraft] = useState('')
+  const [over, setOver] = useState(false)
   const field = useRef<HTMLTextAreaElement>(null)
   const keying = useRef(newComposer())
 
@@ -36,7 +42,7 @@ export function Composer({
 
   function submit(): void {
     const text = (field.current?.value ?? draft).trim()
-    if (text.length === 0) return
+    if (text.length === 0 && files.length === 0) return
     onSend(text)
     sent(keying.current)
     clearField()
@@ -54,7 +60,22 @@ export function Composer({
   }
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-none flex-col gap-2">
+    <form
+      onSubmit={handleSubmit}
+      onDragOver={(event) => {
+        if (!event.dataTransfer.types.includes('Files')) return
+        event.preventDefault()
+        setOver(true)
+      }}
+      onDragLeave={() => setOver(false)}
+      onDrop={(event) => {
+        if (!event.dataTransfer.types.includes('Files')) return
+        event.preventDefault()
+        setOver(false)
+        onTake([...event.dataTransfer.files])
+      }}
+      className="flex flex-none flex-col gap-2"
+    >
       {addressee !== null && (
         <div className="flex items-center gap-1.5 self-start rounded-full bg-card py-1 pr-1 pl-3 text-xs">
           <span>To {addressee}</span>
@@ -70,7 +91,11 @@ export function Composer({
           </Button>
         </div>
       )}
-      <InputGroup className="rounded-3xl border-border bg-card p-1.5 shadow-none dark:bg-card">
+      <InputGroup
+        data-over={over || undefined}
+        className="rounded-3xl border-border bg-card p-1.5 shadow-none data-[over]:border-foreground/40 dark:bg-card"
+      >
+        <AttachedRow files={files} onRemove={onDropFile} />
         <InputGroupTextarea
           ref={field}
           value={draft}
@@ -80,6 +105,12 @@ export function Composer({
             if (endedComposing(keying.current)) window.setTimeout(submit, 0)
           }}
           onKeyDown={handleKey}
+          onPaste={(event) => {
+            const dropped = [...event.clipboardData.files]
+            if (dropped.length === 0) return
+            event.preventDefault()
+            onTake(dropped)
+          }}
           aria-label={addressee !== null ? `Message for ${addressee}` : 'Message your team'}
           placeholder={
             addressee !== null
@@ -93,6 +124,16 @@ export function Composer({
           autoFocus
         />
         <InputGroupAddon align="block-end" className="gap-1.5 px-1.5 pb-1.5">
+          <InputGroupButton
+            type="button"
+            size="icon-sm"
+            variant="ghost"
+            onClick={onPick}
+            aria-label="Attach a file"
+            className="rounded-full text-muted-foreground"
+          >
+            <Paperclip />
+          </InputGroupButton>
           <ChoicePicker
             icon={<Shield />}
             options={PERMISSION_MODES}
@@ -131,7 +172,7 @@ export function Composer({
                 type="submit"
                 size="icon-sm"
                 variant="default"
-                disabled={draft.trim().length === 0}
+                disabled={draft.trim().length === 0 && files.length === 0}
                 aria-label="Send"
                 className="rounded-full"
               >

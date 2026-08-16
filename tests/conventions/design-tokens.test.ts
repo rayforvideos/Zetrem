@@ -2,7 +2,7 @@ import { readFile, readdir } from 'node:fs/promises'
 import { join } from 'node:path'
 import { describe, expect, it } from 'vitest'
 
-const SPRITE_SURFACES = ['CharacterPicker', 'AgentSprite']
+const SPRITE_SURFACES = ['CharacterPicker', 'AgentSprite', 'YouField']
 
 const REVEALED_ON_HOVER = ['MemberMenu', 'ChatList']
 

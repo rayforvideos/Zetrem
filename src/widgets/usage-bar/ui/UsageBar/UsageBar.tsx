@@ -1,7 +1,10 @@
 import { ChevronDown, ChevronUp } from 'lucide-react'
+import type { ReactNode } from 'react'
 import type { StatusState } from '@/entities/agent-session'
+import type { Connector } from '@/entities/connector'
 import { ClaudeMark } from '@/shared/graphics/ClaudeMark/ClaudeMark'
 import { Button } from '@/shared/ui/button'
+import { Popover, PopoverContent, PopoverTrigger } from '@/shared/ui/popover'
 import { cn } from '@/shared/lib/cn'
 import { USAGE_BAR } from '@/shared/config/theme'
 import { cells } from '@/widgets/status-bar'
@@ -9,16 +12,19 @@ import { chatLine, marksOfStatus, quietLine, spendLine } from '../../lib/strip/s
 
 type UsageBarProps = {
   status: StatusState
+  connectors: Connector[]
+  nowMs: number
   open: boolean
+  details: ReactNode
   onToggle(): void
 }
 
-export function UsageBar({ status, open, onToggle }: UsageBarProps) {
-  const marks = marksOfStatus(status)
+export function UsageBar({ status, connectors, nowMs, open, details, onToggle }: UsageBarProps) {
+  const marks = marksOfStatus(status, nowMs)
   const chat = chatLine(status)
   const spend = spendLine(status)
   const quiet = quietLine(status)
-  const session = cells(status)
+  const session = cells(status, connectors)
 
   return (
     <footer
@@ -45,8 +51,9 @@ export function UsageBar({ status, open, onToggle }: UsageBarProps) {
               style={{ width: `${Math.min(100, Math.max(0, mark.percent))}%` }}
             />
           </span>
-          <span>{mark.label}</span>
+          {mark.label.length > 0 && <span>{mark.label}</span>}
           <span>{mark.percent}%</span>
+          {mark.left !== null && <span className="text-muted-foreground">· {mark.left}</span>}
         </span>
       ))}
 
@@ -76,16 +83,28 @@ export function UsageBar({ status, open, onToggle }: UsageBarProps) {
         {spend !== null && <span data-spend>{spend}</span>}
       </span>
 
-      <Button
-        variant="quiet"
-        size="bare"
-        onClick={onToggle}
-        aria-expanded={open}
-        aria-label="Session details"
-        className="zt-hit flex-none"
-      >
-        {open ? <ChevronDown className="size-3" /> : <ChevronUp className="size-3" />}
-      </Button>
+      <Popover open={open} onOpenChange={onToggle}>
+        <PopoverTrigger asChild>
+          <Button
+            variant="quiet"
+            size="bare"
+            aria-expanded={open}
+            aria-label="Session details"
+            className="zt-hit flex-none"
+          >
+            {open ? <ChevronDown className="size-3" /> : <ChevronUp className="size-3" />}
+          </Button>
+        </PopoverTrigger>
+        <PopoverContent
+          side="top"
+          align="end"
+          sideOffset={10}
+          collisionPadding={12}
+          className="w-[440px] max-w-[calc(100vw-24px)] rounded-2xl border-border bg-card p-0 shadow-2xl"
+        >
+          {details}
+        </PopoverContent>
+      </Popover>
     </footer>
   )
 }

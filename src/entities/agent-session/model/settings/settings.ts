@@ -1,6 +1,7 @@
 import type { Settings } from './settings.types'
 
 import { SIDEBAR } from '@/shared/config/theme'
+import { isFaceId, tidyUserName } from '@/entities/user'
 import { MODELS, PERMISSION_MODES } from '../run-config/run-config'
 import type { ModelChoice, PermissionMode } from '../run-config/run-config.types'
 
@@ -8,6 +9,8 @@ export const DEFAULT_SETTINGS: Settings = {
   permissionMode: 'ask',
   model: 'default',
   refusedModels: [],
+  userName: '',
+  userFace: 'onigiri',
   setupDone: false,
   knownTools: [],
   knownAgents: [],
@@ -42,6 +45,8 @@ export function readSettings(saved: unknown): Settings {
     refusedModels: names(source.refusedModels, []).filter((one): one is ModelChoice =>
       MODEL_IDS.includes(one as ModelChoice),
     ),
+    userName: tidyUserName(typeof source.userName === 'string' ? source.userName : ''),
+    userFace: isFaceId(source.userFace) ? source.userFace : DEFAULT_SETTINGS.userFace,
     setupDone: source.setupDone === true,
     knownTools: names(source.knownTools, DEFAULT_SETTINGS.knownTools),
     knownAgents: names(source.knownAgents, DEFAULT_SETTINGS.knownAgents),

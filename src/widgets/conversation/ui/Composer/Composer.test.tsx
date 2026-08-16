@@ -12,6 +12,10 @@ function box(props: Partial<Parameters<typeof Composer>[0]> = {}): string {
       permissionMode="ask"
       model="default"
       refusedModels={[]}
+      files={[]}
+      onPick={() => {}}
+      onTake={() => {}}
+      onDropFile={() => {}}
       onSend={() => {}}
       onStop={() => {}}
       onClearAddressee={() => {}}
@@ -70,5 +74,37 @@ describe('Composer: the field has a name of its own', () => {
 
   it('names whom it is for once someone has been picked', () => {
     expect(box({ addressee: 'Siena' })).toContain('aria-label="Message for Siena"')
+  })
+})
+
+describe('what you attached, before you send it', () => {
+  const shot = {
+    path: '/w/shot.png',
+    name: 'shot.png',
+    kind: 'image' as const,
+    bytes: 400,
+    mediaType: 'image/png',
+    data: 'AAAA',
+  }
+
+  it('has a way to attach something at all', () => {
+    expect(box()).toContain('aria-label="Attach a file"')
+  })
+
+  it('shows a picture as a picture, with a way to take it back off', () => {
+    const out = box({ files: [shot] })
+    expect(out).toContain('data:image/png;base64,AAAA')
+    expect(out).toContain('aria-label="Remove shot.png"')
+  })
+
+  it('will send with nothing typed, so a picture can be the whole message', () => {
+    expect(box({ files: [shot] })).not.toContain('aria-label="Send" disabled')
+    expect(box()).toContain('disabled')
+  })
+
+  it('shows a file by name rather than pretending to preview it', () => {
+    const out = box({ files: [{ ...shot, path: '/w/a.md', name: 'a.md', kind: 'file', mediaType: null, data: null }] })
+    expect(out).toContain('a.md')
+    expect(out).not.toContain('data:')
   })
 })

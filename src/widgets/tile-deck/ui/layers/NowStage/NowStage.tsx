@@ -2,14 +2,29 @@ import type { CSSProperties } from 'react'
 import type { Call } from '@/entities/agent-session'
 import { AgentSprite } from '@/entities/agent-session/ui/AgentSprite/AgentSprite'
 import { targetOf, verbOf } from '@/shared/lib/tool-verb/tool-verb'
+import { reachOf } from '@/shared/lib/reach/reach'
 import { formatClock } from '@/shared/lib/units/units'
 import type { Scene } from '../../../lib/now/now.types'
 import { sceneOf, shapeOfCall } from '../../../lib/now/now'
 
 const W = 52
 const H = 34
-const FRAME_W = 34
-const FRAME_H = 22
+
+const INK_PAD = 3
+
+const INK_X: Record<Scene, number> = {
+  read: 9,
+  write: 9,
+  run: 7,
+  search: 8,
+  web: 15,
+  summon: 0,
+  think: 15,
+}
+export const ICON_W = 30
+
+const FRAME_W = ICON_W
+const FRAME_H = 20
 
 type NowStageProps = { call: Call; live: boolean; nowMs?: number }
 
@@ -20,6 +35,10 @@ export function NowStage({ call, live, nowMs }: NowStageProps) {
 
   return (
     <div data-now-stage={scene} data-live={live || undefined} style={rootStyle}>
+      <span
+        aria-hidden
+        style={{ ...trackStyle, width: `${reachOf(live && nowMs !== undefined ? nowMs - call.startedAtMs : 0)}%` }}
+      />
       <span style={{ ...frameStyle, opacity: live ? 1 : 0.4 }}>
         <Picture scene={scene} shape={shape} live={live} />
       </span>
@@ -43,12 +62,19 @@ function Picture({ scene, shape, live }: PictureProps) {
     return (
       <span style={summonStyle}>
         <span style={live ? ringStyle : { ...ringStyle, animation: 'none' }} />
-        <AgentSprite subagentType={shape.subagentType} size={18} />
+        <AgentSprite subagentType={shape.subagentType} size={20} />
       </span>
     )
   }
   return (
-    <svg width={FRAME_W} height={FRAME_H} viewBox={`0 0 ${W} ${H}`} fill="none" aria-hidden>
+    <svg
+      width={FRAME_W}
+      height={FRAME_H}
+      viewBox={`${INK_X[scene] - INK_PAD} 3 ${W - 12} ${H - 6}`}
+      preserveAspectRatio="xMinYMid meet"
+      fill="none"
+      aria-hidden
+    >
       <Drawing scene={scene} live={live} />
     </svg>
   )
@@ -173,13 +199,25 @@ function motion(live: boolean, animation: string, origin?: string): CSSPropertie
   return { animation, transformBox: 'fill-box', transformOrigin: origin }
 }
 
+const trackStyle: CSSProperties = {
+  position: 'absolute',
+  left: 0,
+  top: 0,
+  bottom: 0,
+  background: 'linear-gradient(to right, currentColor, transparent)',
+  opacity: 0.13,
+  borderRadius: 5,
+  pointerEvents: 'none',
+}
+
 const rootStyle: CSSProperties = {
+  position: 'relative',
   display: 'flex',
   alignItems: 'center',
   gap: 7,
   minWidth: 0,
   flex: '0 0 auto',
-  padding: '3px 5px',
+  padding: '3px 5px 3px 0',
   borderRadius: 5,
   fontSize: 11.5,
 }
@@ -190,7 +228,7 @@ const frameStyle: CSSProperties = {
   height: FRAME_H,
   display: 'flex',
   alignItems: 'center',
-  justifyContent: 'center',
+  justifyContent: 'flex-start',
   transition: 'opacity 400ms ease',
 }
 
@@ -198,15 +236,15 @@ const summonStyle: CSSProperties = {
   position: 'relative',
   display: 'flex',
   alignItems: 'center',
-  justifyContent: 'center',
+  justifyContent: 'flex-start',
   width: FRAME_W,
   height: FRAME_H,
 }
 
 const ringStyle: CSSProperties = {
   position: 'absolute',
-  width: 22,
-  height: 22,
+  width: 24,
+  height: 24,
   borderRadius: '50%',
   border: '1px solid currentColor',
   animation: 'zt-now-ring 2s ease-out infinite',

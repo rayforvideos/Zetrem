@@ -16,7 +16,7 @@ function resetsOf(said: string | undefined): string | undefined {
   return plain.length > 0 ? plain : undefined
 }
 
-export function readUsage(report: string): RateLimit[] {
+export function readUsage(report: string, nowMs = Date.now()): RateLimit[] {
   const found: RateLimit[] = []
   const held = new Set<string>()
   for (const raw of report.split('\n')) {
@@ -29,11 +29,35 @@ export function readUsage(report: string): RateLimit[] {
     found.push({
       kind,
       utilization,
-      resetsAtMs: 0,
+      resetsAtMs: resetsAtOf(resetsOf(match[4]), nowMs),
       resetsText: resetsOf(match[4]),
       overage: false,
       status: utilization >= HEAVY ? 'allowed_warning' : 'allowed',
     })
   }
   return found
+}
+
+const MONTHS = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec']
+
+const WHEN = /^([a-z]{3})[a-z]*\s+(\d{1,2})\s+at\s+(\d{1,2})(?::(\d{2}))?\s*(am|pm)?$/i
+
+export function resetsAtOf(said: string | undefined, nowMs: number): number {
+  if (said === undefined) return 0
+  const match = WHEN.exec(said.trim())
+  if (match === null) return 0
+  const month = MONTHS.indexOf(match[1]!.toLowerCase())
+  if (month === -1) return 0
+  const day = Number(match[2])
+  const meridiem = match[5]?.toLowerCase()
+  let hour = Number(match[3])
+  if (meridiem === 'pm' && hour < 12) hour += 12
+  if (meridiem === 'am' && hour === 12) hour = 0
+  const minute = Number(match[4] ?? 0)
+  const now = new Date(nowMs)
+  const at = new Date(now.getFullYear(), month, day, hour, minute, 0, 0).getTime()
+  if (at < nowMs - 30 * 24 * 3_600_000) {
+    return new Date(now.getFullYear() + 1, month, day, hour, minute, 0, 0).getTime()
+  }
+  return at
 }

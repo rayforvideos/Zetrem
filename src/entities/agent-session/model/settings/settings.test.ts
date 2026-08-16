@@ -21,6 +21,8 @@ describe('readSettings: reading back what was chosen', () => {
       sidebarOpen: false,
       sidebarWidth: 300,
       refusedModels: ['fable'],
+      userName: 'Ray',
+      userFace: 'ghost',
     }
     expect(readSettings(saved)).toEqual(saved)
   })
@@ -101,5 +103,21 @@ describe('readSettings: models the account has already turned down', () => {
 
   it('drops a name it does not offer, so a spoiled file cannot grey out something real', () => {
     expect(readSettings({ refusedModels: ['fable', 'gpt-9', 7] }).refusedModels).toEqual(['fable'])
+  })
+})
+
+describe('who the person is, kept beside how they like to work', () => {
+  it('keeps the name they gave, tidied', () => {
+    expect(readSettings({ userName: '  Ray  Kim ' }).userName).toBe('Ray Kim')
+  })
+
+  it('starts with no name rather than inventing one', () => {
+    expect(readSettings({}).userName).toBe('')
+  })
+
+  it('keeps a face it knows and falls back for one it does not', () => {
+    expect(readSettings({ userFace: 'capsule' }).userFace).toBe('capsule')
+    expect(readSettings({ userFace: 'heart' }).userFace).toBe('onigiri')
+    expect(readSettings({}).userFace).toBe('onigiri')
   })
 })

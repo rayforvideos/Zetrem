@@ -13,3 +13,12 @@ export function maySave(at: {
   if (at.status === 'working' || at.turnCount === 0) return false
   return true
 }
+
+export function threadToSave(at: {
+  liveSessionId: string | null
+  probed: boolean
+  resumeId: string | null
+}): string | null {
+  if (at.probed) return at.resumeId
+  return at.liveSessionId ?? at.resumeId
+}

@@ -2,6 +2,7 @@ import { relative, resolve } from 'node:path'
 import { BrowserWindow, app, dialog, session, shell } from 'electron'
 import { CHROME_TOP, CONTROL_SYMBOL, GROUND, MIN_WINDOW, TRAFFIC_LIGHT } from '@/shared/config/theme'
 import { killAllAgents, registerAgentHost } from './agent-host'
+import { registerAttachments } from './attachments'
 import { registerAgentDefs } from './agent-defs'
 import { registerAuth } from './auth'
 import { registerCliVersion } from './cli-version'
@@ -46,6 +47,7 @@ function createWindow(): void {
       preload: resolve(import.meta.dirname, '../preload/index.cjs'),
       contextIsolation: true,
       nodeIntegration: false,
+      backgroundThrottling: false,
       sandbox: true,
     },
   })
@@ -59,6 +61,11 @@ function createWindow(): void {
     console.error(`[window] ${line}`)
     win.show()
     void win.webContents.loadURL(troublePage(line))
+  })
+
+  win.webContents.on('did-start-navigation', (details) => {
+    if (!details.isMainFrame) return
+    dropChildren()
   })
 
   win.webContents.on('render-process-gone', (_event, details) => {
@@ -129,6 +136,7 @@ if (!primary) {
   })
 
   registerAgentHost()
+  registerAttachments()
   registerAuth()
   registerAgentDefs()
   registerCliVersion()

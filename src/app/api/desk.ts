@@ -4,6 +4,7 @@ import type { ChatSummary, Transcript } from '@/entities/conversation'
 import type { Connector, ConnectorVerb, NewConnector } from '@/entities/connector'
 import type { Catalog, Marketplace, PluginRun, PluginScope, PluginVerb } from '@/entities/plugin'
 import type { AuthStatus } from '@/entities/auth'
+import type { Attached } from '@/entities/attachment'
 export type AgentHostEvent =
   | { id: string; kind: 'line'; line: string }
   | { id: string; kind: 'workspace'; cwd: string }
@@ -12,10 +13,13 @@ export type AgentHostEvent =
 export type DeskBridge = {
   pickProjectDir(): Promise<string | null>
   restoreProjectDir(): Promise<string | null>
-  startAgent(id: string, prompt: string, config: RunConfig): Promise<void>
+  startAgent(id: string, prompt: string, config: RunConfig, files?: Attached[]): Promise<void>
   readSettings(): Promise<Settings>
   writeSettings(next: Settings): Promise<Settings>
   pickKnowledge(): Promise<string[]>
+  pickFiles(): Promise<string[]>
+  pathForFile(file: File): string
+  readFiles(paths: string[]): Promise<Attached[]>
   pluginCatalog(): Promise<Catalog>
   pluginAvailable(): Promise<Catalog>
   marketplaces(): Promise<Marketplace[]>
@@ -32,7 +36,7 @@ export type DeskBridge = {
   login(): Promise<AuthStatus>
   logout(): Promise<AuthStatus>
   onAuthProgress(listener: (line: string) => void): () => void
-  sendToAgent(id: string, text: string): void
+  sendToAgent(id: string, text: string, files?: Attached[]): void
   stopAgent(id: string): void
   respondPermission(id: string, requestId: string, result: unknown): void
   onAgentEvent(listener: (event: AgentHostEvent) => void): () => void

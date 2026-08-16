@@ -7,11 +7,13 @@ import { Button } from '@/shared/ui/button'
 import { useFailure } from '@/shared/lib/failure/failure'
 import { WORDMARK_SIGNATURE_OPACITY, WORDMARK_SIZE, Wordmark } from '@/shared/graphics/wordmark/wordmark'
 import { AgentReport } from '@/widgets/agent-report'
-import { Composer, ConversationPane } from '@/widgets/conversation'
+import { awayOf, spokeAtMs, Composer, ConversationPane } from '@/widgets/conversation'
 import { PluginShelf, SetupPane } from '@/widgets/setup'
 import { TeamSidebar, team, toggled } from '@/widgets/team-sidebar'
 import { TileDeck, useDeck, useFleet } from '@/widgets/tile-deck'
 import { MOTION } from '@/shared/config/motion/motion'
+import { tidyUserName } from '@/entities/user'
+
 import { layerOver } from '@/shared/lib/modal/modal'
 import { UsageBar } from '@/widgets/usage-bar'
 import { StatusDrawer } from '@/widgets/status-bar'
@@ -29,6 +31,7 @@ import { useOutcomes } from '../model/use-outcomes'
 import { useProjectMemory } from '../model/use-project-memory'
 import { useSessionProbe } from '../model/use-session-probe'
 import { useConnectors } from '../model/use-connectors'
+import { useAttachments } from '../model/use-attachments'
 import { useSettings } from '../model/use-settings'
 import { useSettingsPanel } from '../model/use-settings-panel'
 import { useSidebarWidth } from '../model/use-sidebar-width'
@@ -85,9 +88,11 @@ export function WorkspaceScreen() {
     settingsOpen: panel.open,
   })
 
+  const [drawerOpen, setDrawerOpen] = useState(false)
   const shelf = usePlugins(gate === 'setup')
   const [shelfTab, setShelfTab] = useState('installed')
-  const wires = useConnectors(shelf.open)
+  const attach = useAttachments()
+  const wires = useConnectors(shelf.open || drawerOpen || gate === 'conversation')
   useSessionProbe(runConfig, gate !== 'holding' && status.session === null)
   useFleet(deck, children, nowMs, viewport, sidebar.span + GRID_PAD * 2)
   useOutcomes(children)
@@ -107,7 +112,6 @@ export function WorkspaceScreen() {
   const sessionAgentNames = status.session?.agents ?? []
   const live = sessionLive(status, conv.status)
   const atWork = stirring(conv.status, children)
-  const [drawerOpen, setDrawerOpen] = useState(false)
   useEffect(() => {
     if (!drawerOpen) return
     const onKey = (event: KeyboardEvent): void => {
@@ -124,6 +128,13 @@ export function WorkspaceScreen() {
         if (picked) projectStore.set(picked)
       })
       .catch(reportProject('Could not open that folder'))
+  }
+
+  function reload(patch: Partial<typeof settings>, said: string): void {
+    update(patch)
+    if (status.session === null) return
+    focus.clearAll()
+    agent.restart(said)
   }
 
   function swap(go: () => void): void {
@@ -160,6 +171,12 @@ export function WorkspaceScreen() {
                 onSignIn: auth.login,
                 onSignOut: auth.logout,
               }}
+              you={{
+                name: settings.userName,
+                face: settings.userFace,
+                onName: (next) => update({ userName: next }),
+                onFace: (next) => update({ userFace: next }),
+              }}
               project={{ chosen: project, onChoose: handlePickProject }}
               defaults={{
                 permissionMode: settings.permissionMode,
@@ -188,11 +205,17 @@ export function WorkspaceScreen() {
               status={conv.status}
               statusState={status}
               permission={conv.permission}
+              you={{ name: tidyUserName(settings.userName), face: settings.userFace }}
+              away={awayOf(children, spokeAtMs(conv.turns), nowMs)}
               chores={conv.chores}
               nowMs={nowMs}
               onDecide={agent.decide}
               composer={
                 <Composer
+                  files={attach.files}
+                  onPick={attach.pick}
+                  onTake={attach.take}
+                  onDropFile={attach.drop}
                   empty={conv.turns.length === 0}
                   busy={conv.status === 'working'}
                   sessionLive={live}
@@ -201,13 +224,21 @@ export function WorkspaceScreen() {
                   model={settings.model}
                   refusedModels={settings.refusedModels}
                   onSend={(text) => {
-                    agent.send(text, focus.addressee)
+                    agent.send(text, focus.addressee, attach.files)
+                    attach.clear()
                     focus.address(null)
                   }}
                   onStop={agent.stop}
                   onClearAddressee={() => focus.address(null)}
-                  onPermissionMode={(permissionMode) => update({ permissionMode })}
-                  onModel={(model) => update({ model })}
+                  onPermissionMode={(permissionMode) =>
+                    reload(
+                      { permissionMode },
+                      'Permissions changed. Your next message starts a session that follows them.',
+                    )
+                  }
+                  onModel={(model) =>
+                    reload({ model }, 'Model changed. Your next message starts a session on it.')
+                  }
                 />
               }
               report={
@@ -244,6 +275,7 @@ export function WorkspaceScreen() {
                       drafts,
                       knownTools: settings.knownTools,
                       sessionKnown: status.session !== null,
+                      read: focus.read,
                       sessionLive: live,
                       canWrite: true,
                       note: teamNote,
@@ -307,19 +339,24 @@ export function WorkspaceScreen() {
         />
       )}
 
-      {drawerOpen && gate === 'conversation' && (
-        <div className="zt-scroll absolute inset-x-0 bottom-0 z-[6] max-h-[60%] overflow-y-auto border-t border-border bg-background px-4 pt-3 pb-4">
-          <div className="w-full max-w-3xl">
-            <StatusDrawer
-              statusState={status}
-              onUpdate={cliUpdate.start}
-              updating={cliUpdate.updating}
-            />
-          </div>
-        </div>
-      )}
       </div>
-      <UsageBar status={status} open={drawerOpen} onToggle={() => setDrawerOpen((was) => !was)} />
+      <UsageBar
+        status={status}
+        connectors={wires.connectors}
+        nowMs={nowMs}
+        open={drawerOpen}
+        onToggle={() => setDrawerOpen((was) => !was)}
+        details={
+          <StatusDrawer
+            statusState={status}
+            connectors={wires.connectors}
+            checking={wires.loading}
+            onRecheck={wires.reload}
+            onUpdate={cliUpdate.start}
+            updating={cliUpdate.updating}
+          />
+        }
+      />
       </div>
 
       <Titlebar

@@ -44,6 +44,7 @@ function pane(over: Partial<Flat> = {}): string {
         onSignIn: () => {},
         onSignOut: () => {},
       }}
+      you={{ name: 'Ray', face: 'onigiri', onName: () => {}, onFace: () => {} }}
       project={{ chosen: flat.project, onChoose: () => {} }}
       defaults={{
         permissionMode: flat.permissionMode,

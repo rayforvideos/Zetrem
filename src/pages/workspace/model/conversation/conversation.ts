@@ -1,3 +1,4 @@
+import type { Sent } from '@/entities/attachment'
 import type { ConversationState } from './conversation.types'
 
 import type { PermissionAsk, SessionStatus } from '@/entities/agent-session'
@@ -36,8 +37,8 @@ export const conversation = {
     listeners.add(listener)
     return () => listeners.delete(listener)
   },
-  say(role: Turn['role'], text: string, to?: string): void {
-    const target = to === undefined ? appendable(role) : null
+  say(role: Turn['role'], text: string, to?: string, files?: Sent[]): void {
+    const target = to === undefined && (files ?? []).length === 0 ? appendable(role) : null
     if (target) {
       const merged = { ...target, draft: '', text: joined(target.text, text) }
       emit({ ...state, turns: [...state.turns.slice(0, -1), merged] })
@@ -55,6 +56,7 @@ export const conversation = {
           thinking: '',
           startedAtMs: Date.now(),
           ...(to === undefined ? {} : { to }),
+          ...((files ?? []).length === 0 ? {} : { files }),
         },
       ],
     })

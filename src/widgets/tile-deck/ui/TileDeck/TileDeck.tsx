@@ -5,11 +5,12 @@ import { Surface } from '@/entities/surface'
 import { MOTION, staggerDelay } from '@/shared/config/motion/motion'
 import { CHROME_TOP, GRID_PAD, SHELL_PAD } from '@/shared/config/theme'
 import { attentionId } from '../../lib/attention/attention'
-import { observatoryLayout, soloRect } from '../../lib/grid/grid'
+import { boardLayout, crowded, observatoryLayout, soloRect } from '../../lib/grid/grid'
 import type { Rect, Viewport } from '../../lib/grid/grid.types'
 import type { DeckState } from '../../model/deck-machine/deck-machine.types'
 import { closingIds, visibleIds } from '../../model/deck-machine/deck-machine'
 import { AgentTile } from '../AgentTile/AgentTile'
+import { CrewBoard } from '../CrewBoard/CrewBoard'
 
 type TileDeckProps = {
   state: DeckState
@@ -44,8 +45,11 @@ export function TileDeck({
   const atGrid = state.kind === 'fanned' || (state.kind === 'fanning' && advanced)
 
   const gridSessions = findSessions(visibleIds(state), sessions)
+  const board = crowded(gridSessions.length)
   const placed = observatoryLayout(gridSessions.length, viewport, sidebarW)
-  const terminalRect = atGrid ? placed.terminal : solo
+  const boarded = boardLayout(viewport, sidebarW)
+  const terminalRect = atGrid ? (board ? boarded.terminal : placed.terminal) : solo
+  const [openLane, setOpenLane] = useState<string | null>(null)
   const seats = useRef(new Map<string, Rect>())
 
   const standing: PlacedTile[] = gridSessions.map((session, index) => ({
@@ -104,7 +108,16 @@ export function TileDeck({
           {terminal}
         </Surface>
       </div>
-      {tiles.map((tile) => (
+      {atGrid && board && (
+        <CrewBoard
+          sessions={gridSessions}
+          rect={boarded.board}
+          nowMs={nowMs}
+          openId={openLane}
+          onOpen={setOpenLane}
+        />
+      )}
+      {!board && tiles.map((tile) => (
         <AgentTile
           key={tile.session.id}
           session={tile.session}

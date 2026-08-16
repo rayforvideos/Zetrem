@@ -1,4 +1,4 @@
-import { resumedAgent, sessionStore } from '@/entities/agent-session'
+import { absorbs, resumedAgent, sessionStore } from '@/entities/agent-session'
 import type { ClaudeTurnEvent, TranscriptEntry } from '@/entities/agent-session'
 import { shapeOfLine } from '@/shared/lib/tool-line/tool-line'
 import { resultNote } from '@/shared/lib/tool-shape/tool-shape'
@@ -161,7 +161,9 @@ function closeCall(toolUseId: string, callId: string, failed: boolean, text: str
 function note(toolUseId: string, tool: string): void {
   if (tool.length === 0) return
   const stream = sessionStore.find(toolUseId)?.stream
-  if (stream === undefined || stream.at(-1)?.line === tool) return
+  if (stream === undefined) return
+  const last = stream.at(-1)?.line ?? ''
+  if (last === tool || absorbs(tool, last)) return
   const id = `${tool}-${stream.length}`
   sessionStore.beginCall(toolUseId, { id, line: tool })
   sessionStore.endCall(toolUseId, id, { failed: false, note: '' })

@@ -1,8 +1,6 @@
 import type { ToolShape } from '@/shared/lib/tool-shape/tool-shape.types'
 
-const COMMON = {
-  width: 12,
-  height: 12,
+const BASE = {
   viewBox: '0 0 16 16',
   fill: 'none',
   stroke: 'currentColor',
@@ -13,7 +11,8 @@ const COMMON = {
   'aria-hidden': true,
 }
 
-export function ToolIcon({ shape }: { shape: ToolShape }) {
+export function ToolIcon({ shape, size = 12 }: { shape: ToolShape; size?: number }) {
+  const COMMON = { ...BASE, width: size, height: size }
   switch (shape.kind) {
     case 'file':
       return (

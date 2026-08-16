@@ -63,7 +63,7 @@ export function fromResult(event: Record<string, unknown>): TurnEvent[] {
   if (Array.isArray(denials)) {
     for (const denial of denials as Record<string, unknown>[]) {
       const tool = typeof denial.tool_name === 'string' ? denial.tool_name : 'tool'
-      out.push({ type: 'stream', line: `permission denied: ${tool}`, toolUseId: null, input: null })
+      out.push({ type: 'notice', text: `${tool} was not allowed` })
     }
   }
   const said = stoppedLine({

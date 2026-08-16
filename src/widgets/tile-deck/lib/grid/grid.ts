@@ -40,6 +40,33 @@ export function soloRect(viewport: Viewport): Rect {
   }
 }
 
+function split(viewport: Viewport, sidebarW: number): { terminal: Rect; side: Rect } {
+  const { outerMarginPx: margin, topMarginPx: top, gapPx: gap } = LAYOUT
+  const areaW = viewport.w - margin * 2
+  const areaH = viewport.h - top - margin
+  const roomForTiles = areaW - sidebarW - gap
+  const terminalW = Math.min(
+    areaW - gap - MIN_TILE_W,
+    Math.max(sidebarW + MIN_TALK_W, sidebarW + Math.round(roomForTiles * CONVERSATION_SHARE)),
+  )
+  return {
+    terminal: { x: margin, y: top, w: terminalW, h: areaH },
+    side: { x: margin + terminalW + gap, y: top, w: areaW - terminalW - gap, h: areaH },
+  }
+}
+
+export function crowded(sessionCount: number): boolean {
+  return sessionCount >= LANES_FROM
+}
+
+export function boardLayout(
+  viewport: Viewport,
+  sidebarW = 0,
+): { terminal: Rect; board: Rect } {
+  const { terminal, side } = split(viewport, sidebarW)
+  return { terminal, board: side }
+}
+
 export function observatoryLayout(
   sessionCount: number,
   viewport: Viewport,
@@ -53,14 +80,9 @@ export function observatoryLayout(
     return { terminal: { x: margin, y: top, w: areaW, h: areaH }, sessions: [] }
   }
 
-  const roomForTiles = areaW - sidebarW - gap
-  const terminalW = Math.min(
-    areaW - gap - MIN_TILE_W,
-    Math.max(sidebarW + MIN_TALK_W, sidebarW + Math.round(roomForTiles * CONVERSATION_SHARE)),
-  )
-  const sideX = margin + terminalW + gap
-  const sideW = areaW - terminalW - gap
-  const terminal = { x: margin, y: top, w: terminalW, h: areaH }
+  const { terminal, side } = split(viewport, sidebarW)
+  const sideX = side.x
+  const sideW = side.w
 
   const columns = sessionCount > SIDE_ROWS_MAX ? 2 : 1
   const rows = Math.ceil(sessionCount / columns)
@@ -88,6 +110,8 @@ const MIN_TILE_W = 360
 const MIN_TALK_W = 340
 
 const SIDE_ROWS_MAX = 3
+
+export const LANES_FROM = 7
 
 export function roomToFan(viewport: Viewport, sidebarW: number): boolean {
   const areaW = viewport.w - LAYOUT.outerMarginPx * 2

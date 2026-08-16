@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client'
 import { WorkspaceScreen } from '@/pages/workspace'
 import { Boundary } from './Boundary'
 import { Toaster } from '@/shared/ui/sonner'
+import { USAGE_BAR } from '@/shared/config/theme'
 import './styles/global.css'
 
 window.addEventListener('unhandledrejection', (event) => {
@@ -16,7 +17,12 @@ createRoot(root).render(
   <StrictMode>
     <Boundary>
       <WorkspaceScreen />
-      <Toaster position="bottom-right" richColors closeButton />
+      <Toaster
+        position="bottom-right"
+        offset={{ bottom: USAGE_BAR.height + 12, right: 16 }}
+        richColors
+        closeButton
+      />
     </Boundary>
   </StrictMode>,
 )

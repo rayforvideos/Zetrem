@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { maySave } from './may-save'
+import { maySave, threadToSave } from './may-save'
 
 const ready = {
   ready: true,
@@ -39,5 +39,23 @@ describe('maySave: a chat is only ever written back to the project it came from'
     expect(maySave({ ...ready, ready: false })).toBe(false)
     expect(maySave({ ...ready, openId: null })).toBe(false)
     expect(maySave({ ...ready, project: null })).toBe(false)
+  })
+})
+
+describe('threadToSave: which session a chat should be picked back up from', () => {
+  it('keeps the live session once a real run has one', () => {
+    expect(threadToSave({ liveSessionId: 'live', probed: false, resumeId: 'old' })).toBe('live')
+  })
+
+  it('holds on to the old thread while the only session in hand came from the probe', () => {
+    expect(threadToSave({ liveSessionId: 'probe', probed: true, resumeId: 'old' })).toBe('old')
+  })
+
+  it('saves nothing rather than the probe for a chat that has no thread yet', () => {
+    expect(threadToSave({ liveSessionId: 'probe', probed: true, resumeId: null })).toBeNull()
+  })
+
+  it('falls back to what was resumed when no session has been reported', () => {
+    expect(threadToSave({ liveSessionId: null, probed: false, resumeId: 'old' })).toBe('old')
   })
 })

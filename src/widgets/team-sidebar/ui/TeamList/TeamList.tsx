@@ -28,6 +28,7 @@ export function TeamList({
   drafts,
   knownTools,
   sessionKnown,
+  read,
   sessionLive,
   canWrite,
   note,
@@ -79,6 +80,7 @@ export function TeamList({
       <div className="flex flex-col gap-0.5">
         {members.map((member) => (
           <MemberRow
+            read={read}
             key={member.type}
             member={member}
             avatar={avatar}
@@ -127,6 +129,7 @@ type MemberRowProps = {
   member: TeamMember
   avatar: number
   sessionKnown: boolean
+  read: string[]
   onPick(sessionId: string): void
   onAddress(subagentType: string): void
   onEdit(): void
@@ -137,6 +140,7 @@ function MemberRow({
   member,
   avatar,
   sessionKnown,
+  read,
   onPick,
   onAddress,
   onEdit,
@@ -145,7 +149,7 @@ function MemberRow({
   const state = STATE[member.state] ?? member.note
   const mute = sessionKnown && !member.callable
   const active = member.state !== 'idle'
-  const ran = member.sessionId !== null && !active
+  const unread = member.sessionId !== null && !active && !read.includes(member.sessionId)
   const why = !member.loaded
     ? `${ORIGIN[member.origin]}. Joins from the next session.`
     : 'Not available this session. Unlock it in Settings.'
@@ -174,10 +178,10 @@ function MemberRow({
         <span className="flex min-w-0 flex-col gap-0.5 text-left">
           <span className="flex min-w-0 items-center gap-1.5 text-sm leading-tight">
             <span className="truncate">{member.name}</span>
-            {ran && (
+            {unread && (
               <span
                 data-ran
-                aria-label="Has a run you can read"
+                aria-label="Has a run you have not read"
                 className="size-1 flex-none rounded-full bg-muted-foreground"
               />
             )}

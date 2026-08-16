@@ -13,6 +13,7 @@ export type UsageRead = 'unread' | 'read' | 'unreadable'
 export type StatusState = {
   usage: UsageRead
   session: SessionIdentity | null
+  probed: boolean
   context: { used: number; window: number | null }
   cost: {
     usd: number

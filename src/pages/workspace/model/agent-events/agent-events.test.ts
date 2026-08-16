@@ -486,6 +486,27 @@ describe('a subagent reports what it is doing while it works', () => {
     expect(sessionStore.get().find((s) => s.id === 'toolu_q')?.stream.map((call) => call.line)).toEqual(['Read', 'Bash'])
   })
 
+  it('does not draw a bare tool name under the detailed line of the same call', () => {
+    const refs = fakeRefs()
+    open(refs, 'toolu_twice')
+    applyAgentEvent(
+      { type: 'childStream', toolUseId: 'toolu_twice', callId: 'c1', line: 'Read use-cart.ts' },
+      refs,
+    )
+    applyAgentEvent(
+      { type: 'childCallDone', toolUseId: 'toolu_twice', callId: 'c1', failed: false, text: '' },
+      refs,
+    )
+    applyAgentEvent(
+      { type: 'childProgress', toolUseId: 'toolu_twice', taskId: 'task-twice', doing: 'Reading', lastTool: 'Read', tokens: 2 },
+      refs,
+    )
+
+    expect(
+      sessionStore.get().find((s) => s.id === 'toolu_twice')?.stream.map((call) => call.line),
+    ).toEqual(['Read use-cart.ts'])
+  })
+
   it('never lets a passing action erase what the agent said', () => {
     const refs = fakeRefs()
     open(refs, 'toolu_said')

@@ -5,6 +5,7 @@ import { Button } from '@/shared/ui/button'
 import { Field, FieldContent, FieldDescription, FieldGroup, FieldLabel } from '@/shared/ui/field'
 import { WORDMARK_SIZE, Wordmark } from '@/shared/graphics/wordmark/wordmark'
 import { AccountField } from '../AccountField/AccountField'
+import { YouField } from '../YouField/YouField'
 import { ChoiceField } from '../ChoiceField/ChoiceField'
 import { ProjectField } from '../ProjectField/ProjectField'
 import type { SetupPaneProps } from './SetupPane.types'
@@ -13,6 +14,7 @@ export type { SetupPaneProps } from './SetupPane.types'
 
 export function SetupPane({
   account,
+  you,
   project,
   defaults,
   plugins,
@@ -32,6 +34,12 @@ export function SetupPane({
 
           <FieldGroup className="gap-5">
             <AccountField account={account} />
+            <YouField
+              name={you.name}
+              face={you.face}
+              onName={you.onName}
+              onFace={you.onFace}
+            />
             <ProjectField project={project} />
             <ChoiceField
               label="Permissions"

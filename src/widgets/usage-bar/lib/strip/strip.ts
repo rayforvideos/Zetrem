@@ -1,7 +1,7 @@
 import type { StatusState } from '@/entities/agent-session'
 import type { Mark } from './strip.types'
-import { formatResetTime } from '@/shared/lib/datetime/datetime'
-import { formatTokens, limitKindLabel } from '@/shared/lib/units/units'
+import { formatResetTime, untilLabel } from '@/shared/lib/datetime/datetime'
+import { formatTokens, limitKindLabel, limitTag } from '@/shared/lib/units/units'
 
 const WARN = 0.85
 
@@ -12,14 +12,30 @@ function resetHint(limit: StatusState['limits'][number]): string {
   return 'reset time not reported'
 }
 
-export function marksOfStatus(status: StatusState): Mark[] {
-  return status.limits.map((limit) => ({
-    key: limit.kind,
-    label: limitKindLabel(limit.kind),
-    percent: Math.round(limit.utilization * 100),
-    hint: resetHint(limit),
-    warn: limit.status !== 'allowed' || limit.overage || limit.utilization >= WARN,
-  }))
+function leftLabel(limit: StatusState['limits'][number], nowMs: number): string | null {
+  if (limit.overage) return null
+  if (limit.resetsAtMs > 0) {
+    const left = limit.resetsAtMs - nowMs
+    return left > 0 ? `${untilLabel(left)} left` : null
+  }
+  if (limit.resetsText !== undefined && limit.resetsText.length > 0) {
+    return `resets ${limit.resetsText}`
+  }
+  return null
+}
+
+export function marksOfStatus(status: StatusState, nowMs = Date.now()): Mark[] {
+  return status.limits.map((limit) => {
+    const percent = Math.round(limit.utilization * 100)
+    return {
+      key: limit.kind,
+      label: limitTag(limit.kind),
+      percent,
+      left: leftLabel(limit, nowMs),
+      hint: `${limitKindLabel(limit.kind)} · ${percent}% used · ${resetHint(limit)}`,
+      warn: limit.status !== 'allowed' || limit.overage || limit.utilization >= WARN,
+    }
+  })
 }
 
 export function chatLine(status: StatusState): string | null {

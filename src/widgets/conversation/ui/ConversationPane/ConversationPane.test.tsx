@@ -11,6 +11,7 @@ import { tickOpen } from './Tick'
 const STATUS: StatusState = {
   usage: 'read',
   session: null,
+  probed: false,
   context: { used: 0, window: null },
   cost: {
     usd: 0,
@@ -50,6 +51,8 @@ function working(turns: Turn[]): string {
       statusState={{ ...STATUS, cost: { ...STATUS.cost, tokens: { ...STATUS.cost.tokens, out: 1240 } } }}
       permission={null}
       chores={[]}
+      you={{ name: 'Ray', face: 'onigiri' }}
+      away={null}
       nowMs={12_000}
       onDecide={() => {}}
       sidebar={null}
@@ -62,6 +65,10 @@ function working(turns: Turn[]): string {
         permissionMode="ask"
         model="default"
         refusedModels={[]}
+        files={[]}
+        onPick={() => {}}
+        onTake={() => {}}
+        onDropFile={() => {}}
         onSend={() => {}}
         onStop={() => {}}
         onClearAddressee={() => {}}
@@ -80,6 +87,8 @@ function pane(turns: Turn[], permission: PermissionAsk | null = null): string {
       statusState={STATUS}
       permission={permission}
       chores={[]}
+      you={{ name: 'Ray', face: 'onigiri' }}
+      away={null}
       nowMs={0}
       onDecide={() => {}}
       sidebar={null}
@@ -92,6 +101,10 @@ function pane(turns: Turn[], permission: PermissionAsk | null = null): string {
         permissionMode="ask"
         model="default"
         refusedModels={[]}
+        files={[]}
+        onPick={() => {}}
+        onTake={() => {}}
+        onDropFile={() => {}}
         onSend={() => {}}
         onStop={() => {}}
         onClearAddressee={() => {}}

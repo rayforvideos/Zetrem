@@ -4,7 +4,7 @@ import { chatId, packTranscript } from '@/entities/conversation'
 import type { ChatSummary } from '@/entities/conversation'
 import { conversation } from './conversation/conversation'
 import { troubleLine } from '@/shared/lib/ask/ask'
-import { maySave } from './may-save/may-save'
+import { maySave, threadToSave } from './may-save/may-save'
 
 type Chats = {
   chats: ChatSummary[]
@@ -33,6 +33,7 @@ export function useTranscript(project: string | null): Chats {
 
   const turns = conv.turns
   const liveSessionId = status.session?.id ?? null
+  const probed = status.probed
 
   async function refresh(): Promise<ChatSummary[]> {
     if (project === null) return []
@@ -94,7 +95,7 @@ export function useTranscript(project: string | null): Chats {
     if (!allowed || project === null || openId === null) return
     const packed = packTranscript(turns, {
       id: openId,
-      sessionId: liveSessionId ?? resumeId,
+      sessionId: threadToSave({ liveSessionId, probed, resumeId }),
       savedAtMs: Date.now(),
     })
     const stamp = `${packed.id}:${packed.sessionId}:${packed.turns.length}:${packed.turns.at(-1)?.text ?? ''}`
@@ -112,7 +113,7 @@ export function useTranscript(project: string | null): Chats {
         toldSaveTrouble.current = true
         conversation.system(troubleLine('This chat is not being saved', cause))
       })
-  }, [ready, project, openId, turns, conv.status, liveSessionId, resumeId])
+  }, [ready, project, openId, turns, conv.status, liveSessionId, probed, resumeId])
 
   function open(id: string): void {
     if (project === null || id === openId) return
@@ -152,5 +153,13 @@ export function useTranscript(project: string | null): Chats {
     if (id === openId) start()
   }
 
-  return { chats, openId, resumeId: liveSessionId ?? resumeId, ready, open, start, remove }
+  return {
+    chats,
+    openId,
+    resumeId: threadToSave({ liveSessionId, probed, resumeId }),
+    ready,
+    open,
+    start,
+    remove,
+  }
 }

@@ -6,6 +6,7 @@ function status(session: StatusState['session']): StatusState {
   return {
     usage: 'read',
     session,
+    probed: false,
     context: { used: 0, window: null },
     limits: [],
     cost: {

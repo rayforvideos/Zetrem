@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { readUsage } from './usage-report'
+import { readUsage, resetsAtOf } from './usage-report'
 
 const REPORT = `You are currently using your subscription to power your Claude Code usage
 
@@ -60,5 +60,30 @@ describe('readUsage: reading the limits out of what the CLI prints', () => {
 
   it('says nothing for an empty report rather than inventing a zero', () => {
     expect(readUsage('')).toEqual([])
+  })
+})
+
+describe('resetsAtOf: the words the CLI prints become a moment we can count to', () => {
+  const now = new Date(2026, 7, 16, 1, 0, 0).getTime()
+
+  it('reads a date and a time in the twelve hour clock', () => {
+    const at = resetsAtOf('Aug 16 at 2:09am', now)
+    expect(new Date(at).getHours()).toBe(2)
+    expect(new Date(at).getMinutes()).toBe(9)
+    expect(at - now).toBeGreaterThan(0)
+  })
+
+  it('carries the afternoon over', () => {
+    expect(new Date(resetsAtOf('Aug 20 at 5:59pm', now)).getHours()).toBe(17)
+  })
+
+  it('rolls into next year rather than counting backwards over new year', () => {
+    const at = resetsAtOf('Jan 3 at 9:00am', new Date(2026, 11, 28).getTime())
+    expect(new Date(at).getFullYear()).toBe(2027)
+  })
+
+  it('gives nothing for words it cannot read, so the text is shown as it came', () => {
+    expect(resetsAtOf('sometime soon', now)).toBe(0)
+    expect(resetsAtOf(undefined, now)).toBe(0)
   })
 })

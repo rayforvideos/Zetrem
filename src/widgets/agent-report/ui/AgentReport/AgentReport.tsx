@@ -5,8 +5,7 @@ import { personaOf } from '@/entities/agent-session'
 import { AgentSprite } from '@/entities/agent-session/ui/AgentSprite/AgentSprite'
 import { Button } from '@/shared/ui/button'
 import { ToolIcon } from '@/shared/graphics/tool-icon'
-import { WorkTrace } from '@/shared/graphics/WorkTrace/WorkTrace'
-import { marksOf } from '@/entities/agent-session/lib/marks/marks'
+import { Markdown } from '@/shared/markdown/Markdown/Markdown'
 import { leadOf } from '../../lib/lead/lead'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { leftBehind } from '../../lib/left-behind/left-behind'
@@ -118,28 +117,23 @@ export function AgentReport({ session, sessions, nowMs, onClose, onPick }: Agent
       {session.transcript.length > 0 && (
         <div className="flex flex-col gap-2.5 pt-2">
           <span className="mb-1 text-xs tracking-[0.08em] text-muted-foreground">What they said</span>
-          {session.transcript.map((entry, index) => (
-            <p
-              key={index}
-              className={
-                entry.role === 'user'
-                  ? 'border-l border-border pl-3 text-sm leading-relaxed text-muted-foreground'
-                  : 'text-sm leading-relaxed'
-              }
-            >
-              {entry.text}
-            </p>
-          ))}
+          {session.transcript.map((entry, index) =>
+            entry.role === 'user' ? (
+              <p
+                key={index}
+                className="border-l border-border pl-3 text-sm leading-relaxed whitespace-pre-wrap text-muted-foreground"
+              >
+                {entry.text}
+              </p>
+            ) : (
+              <Markdown key={index} text={entry.text} className="text-sm leading-relaxed" />
+            ),
+          )}
         </div>
       )}
 
       <div className="flex flex-col gap-1 pt-2">
-        <div className="mb-1 flex items-baseline justify-between gap-4">
-          <span className="text-xs tracking-[0.08em] text-muted-foreground">What they did</span>
-          <span className="min-w-0 flex-1 text-muted-foreground">
-            <WorkTrace marks={marksOf(session.stream, nowMs, session.status === 'working')} />
-          </span>
-        </div>
+        <span className="mb-1 text-xs tracking-[0.08em] text-muted-foreground">What they did</span>
         {session.stream.length === 0 && (
           <span className="text-xs text-muted-foreground">Nothing yet</span>
         )}

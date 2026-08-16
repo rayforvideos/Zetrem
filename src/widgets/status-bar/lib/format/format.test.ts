@@ -6,6 +6,7 @@ function state(overrides: Partial<StatusState> = {}): StatusState {
   return {
     usage: 'read',
     session: null,
+    probed: false,
     context: { used: 0, window: null },
     cost: { usd: 0, lastTurnUsd: 0, tokens: { in: 0, out: 0, cacheRead: 0, cacheCreate: 0 }, durationMs: 0, ttftMs: null, turns: 0 },
     limits: [],
@@ -92,5 +93,40 @@ describe('the cells in the status bar', () => {
       update: { current: '2.1.231', latest: '2.1.231', managedBy: null },
     }))
     expect(full.map((c) => c.key)).toEqual(['context', 'mcp', 'update'])
+  })
+})
+
+function withMcp(mcp: { name: string; status: string }[]): StatusState {
+  const session = {
+    id: 's', cwd: '/w', model: 'm', permissionMode: 'ask', outputStyle: 'default',
+    cliVersion: '2.1.231', apiKeySource: 'none', fastMode: { state: 'off', reason: null },
+    tools: [], agents: [],
+    counts: { tools: 0, commands: 0, agents: 0, skills: 0, plugins: 0 }, memoryPaths: [],
+    mcp,
+  }
+  return state({ session: session as never })
+}
+
+describe('the strip counts the connectors the panel is showing, not the ones the session began with', () => {
+  it('believes a fresh check over the startup snapshot', () => {
+    const stale = withMcp([
+      { name: 'claude.ai Notion', status: 'needs-auth' },
+      { name: 'playwright', status: 'connected' },
+    ])
+    const [mcp] = cells(stale, [
+      { name: 'claude.ai Notion', where: 'https://mcp.notion.com/mcp', state: 'connected' },
+      { name: 'playwright', where: 'npx @playwright/mcp@latest', state: 'connected' },
+    ]).filter((cell) => cell.key === 'mcp')
+    expect(mcp?.text).toBe('MCP 2/2')
+    expect(mcp?.warn).toBe(false)
+  })
+
+  it('falls back to the snapshot until the check has come back', () => {
+    const stale = withMcp([
+      { name: 'claude.ai Notion', status: 'needs-auth' },
+      { name: 'playwright', status: 'connected' },
+    ])
+    const [mcp] = cells(stale, []).filter((cell) => cell.key === 'mcp')
+    expect(mcp?.text).toBe('MCP 1/2 · 1 need auth')
   })
 })

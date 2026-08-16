@@ -6,7 +6,7 @@ import { atEnd } from '@/shared/lib/scroll-state/scroll-state'
 import { targetOf, verbOf } from '@/shared/lib/tool-verb/tool-verb'
 import { shapeOfCall } from '../../../lib/now/now'
 import { fillOf } from '../../../lib/fill/fill'
-import { NowStage } from '../NowStage/NowStage'
+import { ICON_W, NowStage } from '../NowStage/NowStage'
 
 type CallLogProps = { calls: Call[]; live: boolean; nowMs: number }
 
@@ -60,7 +60,7 @@ function Row({ call, lit }: { call: Call; lit: boolean }) {
     <div data-call={call.failed ? 'failed' : 'done'} style={lit ? { ...rowStyle, opacity: 0.8 } : rowStyle}>
       <span style={{ ...trackStyle, width: `${fill}%` }} />
       <span style={iconStyle}>
-        <ToolIcon shape={shape} />
+        <ToolIcon shape={shape} size={18} />
       </span>
       <span style={verbStyle}>{verbOf(shape)}</span>
       <span style={targetStyle}>{target}</span>
@@ -90,7 +90,7 @@ const rowStyle: CSSProperties = {
   gap: 7,
   minWidth: 0,
   flex: '0 0 auto',
-  padding: '3px 5px',
+  padding: '3px 5px 3px 0',
   borderRadius: 5,
   opacity: 0.55,
   overflow: 'hidden',
@@ -107,11 +107,18 @@ const trackStyle: CSSProperties = {
   pointerEvents: 'none',
 }
 
-const iconStyle: CSSProperties = { flex: '0 0 auto', display: 'flex' }
+const iconStyle: CSSProperties = {
+  flex: '0 0 auto',
+  display: 'flex',
+  alignItems: 'center',
+  width: ICON_W,
+}
 
 const verbStyle: CSSProperties = { flex: '0 0 auto' }
 
 const targetStyle: CSSProperties = {
+  flex: '1 1 auto',
+  minWidth: 0,
   fontFamily: 'var(--zt-mono)',
   fontSize: 11,
   opacity: 0.75,

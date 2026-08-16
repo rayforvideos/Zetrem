@@ -10,6 +10,8 @@ import {
 import type { AgentSession, ModelChoice, RunConfig, StatusState } from '@/entities/agent-session'
 import { applyAgentEvent } from './agent-events/agent-events'
 import { conversation } from './conversation/conversation'
+import { sentOf, withPaths } from '@/entities/attachment'
+import type { Attached } from '@/entities/attachment'
 import { reasonOf } from '@/shared/lib/failure/failure'
 import { shouldRelaunch } from './relaunch/relaunch'
 import { settled } from './settle/settle'
@@ -23,11 +25,11 @@ type Agent = {
   children: AgentSession[]
   status: StatusState
   nowMs: number
-  send(text: string, to?: string | null): void
+  send(text: string, to?: string | null, files?: Attached[]): void
   decide(allow: boolean, always?: boolean): void
   stop(): void
   reset(): void
-  restart(): void
+  restart(said?: string): void
 }
 
 export function useAgent(
@@ -103,7 +105,7 @@ export function useAgent(
     }
   }, [])
 
-  function launch(text: string, resume: string | null): void {
+  function launch(text: string, resume: string | null, files: Attached[] = []): void {
     statusStore.reset()
     sessionStore.clear()
     childIds.current.clear()
@@ -113,7 +115,7 @@ export function useAgent(
     attempt.current = { prompt: text, resumed: resume !== null, spoke: false }
     conversation.setStatus('working')
     void window.desk
-      .startAgent(id, text, { ...configRef.current, persona: '', resume })
+      .startAgent(id, text, { ...configRef.current, persona: '', resume }, files)
       .catch((cause: unknown) => {
         if (hostId.current !== id) return
         hostId.current = null
@@ -123,20 +125,22 @@ export function useAgent(
       })
   }
 
-  function send(text: string, to: string | null = null): void {
-    conversation.say('user', text, to ?? undefined)
+  function send(text: string, to: string | null = null, files: Attached[] = []): void {
+    conversation.say('user', text, to ?? undefined, sentOf(files))
     conversation.setStatus('working')
-    const dressed = addressed(text, to)
+    const dressed = withPaths(addressed(text, to), files)
     if (hostId.current) {
-      window.desk.sendToAgent(hostId.current, dressed)
+      window.desk.sendToAgent(hostId.current, dressed, files)
       return
     }
-    launch(dressed, configRef.current.resume ?? null)
+    launch(dressed, configRef.current.resume ?? null, files)
   }
 
-  function restart(): void {
+  function restart(said?: string): void {
     reset()
-    conversation.system('Session stopped. The next message starts a new one with your team as it is now.')
+    conversation.system(
+      said ?? 'Session stopped. The next message starts a new one with your team as it is now.',
+    )
   }
 
   function reset(): void {

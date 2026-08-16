@@ -27,6 +27,7 @@ function list(props: Partial<Parameters<typeof TeamList>[0]> = {}): string {
       drafts={new Map()}
       knownTools={[]}
       sessionKnown={false}
+      read={[]}
       sessionLive={false}
       canWrite
       note={null}
@@ -118,5 +119,27 @@ describe('someone you hired can be edited or let go', () => {
     const html = list()
     const at = html.indexOf('More for')
     expect(html.slice(html.lastIndexOf('<button', at), at)).toContain('opacity-0')
+  })
+})
+
+describe('the mark beside a name', () => {
+  const ran = {
+    ...member(),
+    name: 'Joi',
+    type: 'explore',
+    state: 'idle' as const,
+    sessionId: 'run-1',
+  }
+
+  it('marks a run you have not opened', () => {
+    expect(list({ members: [ran] })).toContain('data-ran')
+  })
+
+  it('goes quiet once you have read that run', () => {
+    expect(list({ members: [ran], read: ['run-1'] })).not.toContain('data-ran')
+  })
+
+  it('says nothing for someone who has not run at all', () => {
+    expect(list({ members: [{ ...ran, sessionId: null }] })).not.toContain('data-ran')
   })
 })

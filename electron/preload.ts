@@ -1,11 +1,11 @@
-import { contextBridge, ipcRenderer } from 'electron'
+import { contextBridge, ipcRenderer, webUtils } from 'electron'
 import type { IpcRendererEvent } from 'electron'
 
 contextBridge.exposeInMainWorld('desk', {
   pickProjectDir: (): Promise<unknown> => ipcRenderer.invoke('project:pick'),
   restoreProjectDir: (): Promise<unknown> => ipcRenderer.invoke('project:restore'),
-  startAgent: (id: string, prompt: string, config: unknown): Promise<void> =>
-    ipcRenderer.invoke('agent:start', id, prompt, config),
+  startAgent: (id: string, prompt: string, config: unknown, files?: unknown): Promise<void> =>
+    ipcRenderer.invoke('agent:start', id, prompt, config, files),
   authStatus: (): Promise<unknown> => ipcRenderer.invoke('auth:status'),
   listAgentDefs: (): Promise<unknown> => ipcRenderer.invoke('agents:list'),
   writeAgentDef: (draft: unknown): Promise<unknown> => ipcRenderer.invoke('agents:write', draft),
@@ -15,6 +15,9 @@ contextBridge.exposeInMainWorld('desk', {
   readSettings: (): Promise<unknown> => ipcRenderer.invoke('settings:read'),
   writeSettings: (next: unknown): Promise<unknown> => ipcRenderer.invoke('settings:write', next),
   pickKnowledge: (): Promise<unknown> => ipcRenderer.invoke('agents:pickKnowledge'),
+  pickFiles: (): Promise<unknown> => ipcRenderer.invoke('files:pick'),
+  pathForFile: (file: File): string => webUtils.getPathForFile(file),
+  readFiles: (paths: string[]): Promise<unknown> => ipcRenderer.invoke('files:read', paths),
   pluginCatalog: (): Promise<unknown> => ipcRenderer.invoke('plugins:catalog'),
   pluginAvailable: (): Promise<unknown> => ipcRenderer.invoke('plugins:available'),
   marketplaces: (): Promise<unknown> => ipcRenderer.invoke('plugins:marketplaces'),
@@ -34,7 +37,8 @@ contextBridge.exposeInMainWorld('desk', {
     ipcRenderer.on('auth:progress', handler)
     return () => ipcRenderer.removeListener('auth:progress', handler)
   },
-  sendToAgent: (id: string, text: string): void => ipcRenderer.send('agent:send', id, text),
+  sendToAgent: (id: string, text: string, files?: unknown): void =>
+    ipcRenderer.send('agent:send', id, text, files),
   stopAgent: (id: string): void => ipcRenderer.send('agent:stop', id),
   respondPermission: (id: string, requestId: string, result: unknown): void =>
     ipcRenderer.send('agent:permission', id, requestId, result),

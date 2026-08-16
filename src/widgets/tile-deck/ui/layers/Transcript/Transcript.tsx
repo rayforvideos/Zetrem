@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef } from 'react'
 import type { CSSProperties } from 'react'
 import type { TranscriptEntry } from '@/entities/agent-session'
+import { Markdown } from '@/shared/markdown/Markdown/Markdown'
 import { atEnd } from '@/shared/lib/scroll-state/scroll-state'
 
 type TranscriptProps = { entries: TranscriptEntry[] }
@@ -36,9 +37,9 @@ export function Transcript({ entries }: TranscriptProps) {
         <div
           key={`${index}-${entry.role}`}
           data-said={entry.role}
-          style={entry.role === 'user' ? userStyle : undefined}
+          style={entry.role === 'user' ? userStyle : saidStyle}
         >
-          {entry.text}
+          {entry.role === 'user' ? entry.text : <Markdown text={entry.text} />}
         </div>
       ))}
     </div>
@@ -60,6 +61,11 @@ const rootStyle: CSSProperties = {
   lineHeight: 1.55,
   whiteSpace: 'pre-wrap',
   overflowWrap: 'anywhere',
+}
+
+const saidStyle: CSSProperties = {
+  whiteSpace: 'normal',
+  minWidth: 0,
 }
 
 const userStyle: CSSProperties = {

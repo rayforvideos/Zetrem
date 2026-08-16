@@ -68,7 +68,7 @@ describe('parseClaudeLine', () => {
     expect(events.some((event) => event.type === 'metrics')).toBe(true)
   })
 
-  it('shows a refused permission, because swallowing it leaves no reason on screen', () => {
+  it('says a refused tool in words, not as a tool row named after the refusal', () => {
     const events = parseClaudeLine(
       line({
         type: 'result',
@@ -76,12 +76,8 @@ describe('parseClaudeLine', () => {
         permission_denials: [{ tool_name: 'Bash', tool_input: { command: 'rm -rf /' } }],
       }),
     )
-    expect(events).toContainEqual({
-      type: 'stream',
-      line: 'permission denied: Bash',
-      toolUseId: null,
-      input: null,
-    })
+    expect(events).toContainEqual({ type: 'notice', text: 'Bash was not allowed' })
+    expect(events.some((event) => event.type === 'stream')).toBe(false)
     expect(events).toContainEqual({ type: 'turnEnded' })
   })
 

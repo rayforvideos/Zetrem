@@ -19,10 +19,23 @@ const agents = new Map<string, ChildProcessWithoutNullStreams | 'starting'>()
 
 const LINE_BUFFER_MAX = 1_000_000
 
-function userMessage(text: string): string {
+type Picture = { mediaType: string | null; data: string | null }
+
+function pictures(files: unknown): Picture[] {
+  if (!Array.isArray(files)) return []
+  return (files as Picture[]).filter(
+    (file) => typeof file?.data === 'string' && typeof file?.mediaType === 'string',
+  )
+}
+
+function userMessage(text: string, files: unknown = []): string {
+  const shown = pictures(files).map((file) => ({
+    type: 'image',
+    source: { type: 'base64', media_type: file.mediaType, data: file.data },
+  }))
   return `${JSON.stringify({
     type: 'user',
-    message: { role: 'user', content: [{ type: 'text', text }] },
+    message: { role: 'user', content: [...shown, { type: 'text', text }] },
   })}\n`
 }
 
@@ -44,7 +57,7 @@ export function killAllAgents(): void {
 export function registerAgentHost(): void {
   handle(
     'agent:start',
-    async (event, id: string, prompt: string, config: RunConfig) => {
+    async (event, id: string, prompt: string, config: RunConfig, files: unknown = []) => {
     const sender = event.sender
     const fail = (reason: string | null): void => {
       if (typeof id === 'string' && !sender.isDestroyed()) {
@@ -112,14 +125,14 @@ export function registerAgentHost(): void {
       }
     })
 
-    tell(child.stdin, userMessage(prompt))
+    tell(child.stdin, userMessage(prompt, files))
     },
   )
 
-  on('agent:send', (_event, id: string, text: string) => {
+  on('agent:send', (_event, id: string, text: string, files: unknown = []) => {
     if (typeof id !== 'string' || typeof text !== 'string') return
     const agent = agents.get(id)
-    if (agent && agent !== 'starting') tell(agent.stdin, userMessage(text))
+    if (agent && agent !== 'starting') tell(agent.stdin, userMessage(text, files))
   })
 
   on('agent:permission', (_event, id: string, requestId: string, result: unknown) => {

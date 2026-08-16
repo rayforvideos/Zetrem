@@ -1,19 +1,85 @@
-import type { Turn } from '@/entities/conversation'
+import { personaOf } from '@/entities/agent-session'
+import type { ToolActivity, Turn } from '@/entities/conversation'
 import { toolShape } from '@/shared/lib/tool-shape/tool-shape'
+import type { ToolShape } from '@/shared/lib/tool-shape/tool-shape.types'
 import { targetOf, verbOf } from '@/shared/lib/tool-verb/tool-verb'
 import type { Doing } from './working.types'
 
-export function doingOf(turn: Turn | null): Doing {
-  if (turn === null) return { verb: 'Starting', target: '', shape: null }
-  const last = turn.tools.at(-1)
-  if (last !== undefined && last.result === null) {
-    const shape = toolShape(last.line.split(' ')[0] ?? '', last.input)
+const HANDOFF_MS = 2500
+
+const STARTING: Doing = { verb: 'Starting', target: '', shape: null }
+
+function shapeOf(tool: ToolActivity): ToolShape {
+  return toolShape(tool.line.split(' ')[0] ?? '', tool.input)
+}
+
+function whoOf(shape: ToolShape): string {
+  if (shape.kind !== 'agent') return ''
+  return personaOf(shape.subagentType).name
+}
+
+function crewLine(shape: ToolShape): string {
+  const name = whoOf(shape)
+  const said = shape.kind === 'agent' ? shape.description.trim() : ''
+  if (name.length === 0) return said
+  if (said.length === 0) return name
+  return said.toLowerCase().startsWith(name.toLowerCase()) ? said : `${name} · ${said}`
+}
+
+function reportsBack(tools: ToolActivity[]): number {
+  let count = 0
+  for (let at = tools.length - 1; at >= 0; at -= 1) {
+    if (shapeOf(tools[at]!).kind !== 'agent') break
+    count += 1
+  }
+  return count
+}
+
+function exchangeOf(turns: Turn[]): Turn[] {
+  const asked = turns.findLastIndex((turn) => turn.role === 'user')
+  return turns.slice(asked + 1).filter((turn) => turn.role === 'assistant')
+}
+
+export function doingOf(turns: Turn[], nowMs = 0): Doing {
+  const talk = exchangeOf(turns)
+  const last = talk.at(-1)
+  if (last === undefined) return STARTING
+  const tools = talk.flatMap((turn) => turn.tools)
+
+  const away = tools.filter((one) => one.result === null && shapeOf(one).kind === 'agent')
+  if (away.length > 1) {
+    const shape: ToolShape = { kind: 'agent', subagentType: '', description: '' }
+    return { verb: 'Waiting on', target: `${away.length} teammates`, shape }
+  }
+  if (away.length === 1) {
+    const held = away[0]!
+    const shape = shapeOf(held)
+    const settled = nowMs - held.startedAtMs >= HANDOFF_MS
+    return { verb: settled ? 'Waiting on' : 'Handing off', target: crewLine(shape), shape }
+  }
+
+  const busy = tools.findLast((one) => one.result === null)
+  if (busy !== undefined) {
+    const shape = shapeOf(busy)
     return { verb: verbOf(shape), target: targetOf(shape), shape }
   }
-  if (turn.draft.length > 0 || turn.text.length > 0) {
-    return { verb: 'Writing', target: '', shape: null }
+
+  if (last.draft.length > 0) return { verb: 'Writing', target: '', shape: null }
+  if (last.thinking.length > 0 && last.text.length === 0) {
+    return { verb: 'Thinking', target: '', shape: null }
   }
-  if (turn.thinking.length > 0) return { verb: 'Thinking', target: '', shape: null }
+
+  if (last.text.length === 0) {
+    const back = reportsBack(tools)
+    if (back > 0) {
+      const shape = shapeOf(tools.at(-1)!)
+      const name = whoOf(shape)
+      const target = back > 1 ? `${back} reports` : name.length > 0 ? `${name}'s report` : 'the report'
+      return { verb: 'Reading', target, shape }
+    }
+  }
+
+  if (tools.length === 0 && last.text.length === 0) return STARTING
   return { verb: 'Working', target: '', shape: null }
 }
 

@@ -7,6 +7,7 @@ function state(overrides: Partial<StatusState> = {}): StatusState {
   return {
     usage: 'read',
     session: null,
+    probed: false,
     context: { used: 100_000, window: 1_000_000 },
     cost: {
       usd: 0.19,
@@ -24,8 +25,12 @@ function state(overrides: Partial<StatusState> = {}): StatusState {
   }
 }
 
+const NOW = 1_700_000_000_000
+
 function html(status: StatusState, open = false): string {
-  return renderToStaticMarkup(<UsageBar status={status} open={open} onToggle={() => {}} />)
+  return renderToStaticMarkup(
+    <UsageBar status={status} connectors={[]} nowMs={NOW} open={open} details={null} onToggle={() => {}} />,
+  )
 }
 
 describe('UsageBar: one strip at the foot of the window', () => {
@@ -73,5 +78,36 @@ describe('UsageBar: one strip at the foot of the window', () => {
       ],
     })
     expect(html(limited)).toContain('26%')
+  })
+})
+
+describe('the limits say when they come back, not only how full they are', () => {
+  it('counts down to the reset rather than printing a percentage', () => {
+    const out = html(
+      state({
+        limits: [
+          {
+            kind: 'five_hour',
+            utilization: 0.33,
+            resetsAtMs: NOW + 4 * 3_600_000 + 12 * 60_000,
+            overage: false,
+            status: 'allowed',
+          },
+        ],
+      }),
+    )
+    expect(out).toContain('4h 12m left')
+    expect(out).toContain('title="5-hour · 33% used')
+  })
+
+  it('falls back to the percentage when no reset time was reported', () => {
+    const out = html(
+      state({
+        limits: [
+          { kind: 'five_hour', utilization: 0.33, resetsAtMs: 0, overage: false, status: 'allowed' },
+        ],
+      }),
+    )
+    expect(out).toContain('33%')
   })
 })

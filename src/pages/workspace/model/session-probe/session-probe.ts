@@ -4,7 +4,7 @@ export function learnSession(line: string | null): void {
   if (line === null) return
   if (statusStore.get().session !== null) return
   for (const turn of parseClaudeLine(line)) {
-    if (turn.type === 'session') statusStore.apply(turn)
+    if (turn.type === 'session') statusStore.learnProbe(turn.session)
   }
 }
 

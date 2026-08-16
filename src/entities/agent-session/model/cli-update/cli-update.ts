@@ -23,3 +23,12 @@ export function managerOf(binaryPath: string): string | null {
   if (binaryPath.includes('/node_modules/')) return 'npm'
   return null
 }
+
+export function updateCommand(managedBy: string | null): string | null {
+  switch (managedBy) {
+    case 'Homebrew':
+      return 'brew upgrade claude-code@latest'
+    default:
+      return null
+  }
+}

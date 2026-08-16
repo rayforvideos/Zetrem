@@ -17,6 +17,19 @@ export function limitKindLabel(kind: string): string {
   }
 }
 
+export function limitTag(kind: string): string {
+  switch (kind) {
+    case 'five_hour':
+    case 'seven_day':
+    case 'seven_day_oauth':
+      return ''
+    case 'seven_day_overage':
+      return 'Overage'
+    default:
+      return kind.startsWith('seven_day_') ? titled(kind.slice('seven_day_'.length)) : kind
+  }
+}
+
 function titled(name: string): string {
   return name
     .split('_')

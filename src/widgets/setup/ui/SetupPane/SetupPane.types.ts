@@ -1,6 +1,7 @@
 import type { ModelChoice, PermissionMode } from '@/entities/agent-session'
 import type { AuthStatus } from '@/entities/auth'
 import type { Failure } from '@/shared/lib/failure/failure.types'
+import type { FaceId } from '@/entities/user'
 
 export type Account = {
   auth: AuthStatus | null
@@ -37,8 +38,16 @@ export type Actions = {
   onCancel(): void
 }
 
+export type You = {
+  name: string
+  face: FaceId
+  onName(next: string): void
+  onFace(next: FaceId): void
+}
+
 export type SetupPaneProps = {
   account: Account
+  you: You
   project: Project
   defaults: Defaults
   plugins: Plugins

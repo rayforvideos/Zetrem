@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { TRAFFIC_LIGHT } from '@/shared/config/theme'
 import { LAYOUT } from '@/shared/config/motion/motion'
-import { layoutTiles, observatoryLayout, soloRect, roomToFan } from './grid'
+import { layoutTiles, observatoryLayout, soloRect, roomToFan, boardLayout, crowded } from './grid'
 
 const viewport = { w: 1440, h: 900 }
 const M = LAYOUT.outerMarginPx
@@ -205,5 +205,22 @@ describe('the deck sits clear of the title bar, not tucked under it', () => {
     const { terminal, sessions } = observatoryLayout(1, viewport, 260)
     expect(terminal.y).toBe(sessions[0]!.y)
     expect(terminal.y + terminal.h).toBe(sessions[0]!.y + sessions[0]!.h)
+  })
+})
+
+describe('a crew too big for tiles', () => {
+  const viewport = { w: 1440, h: 900 }
+
+  it('keeps tiles up to six and turns to lanes past that', () => {
+    expect(crowded(6)).toBe(false)
+    expect(crowded(7)).toBe(true)
+  })
+
+  it('gives the board the same column the tiles had, so nothing else moves', () => {
+    const tiles = observatoryLayout(6, viewport, 264)
+    const board = boardLayout(viewport, 264)
+    expect(board.terminal).toEqual(tiles.terminal)
+    expect(board.board.x).toBe(tiles.sessions[0]!.x)
+    expect(board.board.h).toBe(tiles.terminal.h)
   })
 })

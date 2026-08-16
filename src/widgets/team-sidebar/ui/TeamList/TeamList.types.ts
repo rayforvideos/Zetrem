@@ -7,6 +7,7 @@ export type TeamListProps = {
   drafts: Map<string, AgentDefDraft>
   knownTools: string[]
   sessionKnown: boolean
+  read: string[]
   sessionLive: boolean
   canWrite: boolean
   note: TeamNote | null

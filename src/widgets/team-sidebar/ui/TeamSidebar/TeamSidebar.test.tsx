@@ -18,7 +18,7 @@ function bar(props: Partial<Parameters<typeof TeamSidebar>[0]> = {}): string {
         drafts: new Map(),
         knownTools: [],
         sessionKnown: false,
-        read: [],
+    read: [],
         sessionLive: false,
         canWrite: true,
         note: null,
@@ -28,6 +28,8 @@ function bar(props: Partial<Parameters<typeof TeamSidebar>[0]> = {}): string {
         onPick: () => {},
         onAddress: () => {},
         onRestart: () => {},
+        hint: false,
+        onHintSeen: () => {},
       }}
       stock={{ stock: [], on: [], onChange: () => {} }}
       nowMs={0}
@@ -69,6 +71,8 @@ function teamOf() {
         read: [],
     sessionLive: false,
     canWrite: true,
+    hint: false,
+    onHintSeen: () => {},
     note: null,
     onHire: () => {},
     onEdit: () => {},

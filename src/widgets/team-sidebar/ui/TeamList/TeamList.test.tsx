@@ -38,6 +38,8 @@ function list(props: Partial<Parameters<typeof TeamList>[0]> = {}): string {
       onPick={() => {}}
       onAddress={() => {}}
       onRestart={() => {}}
+      hint={false}
+      onHintSeen={() => {}}
       {...props}
     />,
   )
@@ -190,5 +192,21 @@ describe('a name that has been read goes back to being a name', () => {
   it('keeps showing a working teammate their own line, read or not', () => {
     const busy = { ...back, state: 'working' as const }
     expect(list({ members: [busy], read: ['run-1'] })).toContain('src/app/')
+  })
+})
+
+describe('the first teammate is offered, once', () => {
+  it('points at the button while nobody is hired', () => {
+    const html = list({ members: [], hint: true })
+    expect(html).toContain('data-hint')
+    expect(html).toContain('Add your first teammate')
+  })
+
+  it('says nothing once the tip has been put away', () => {
+    expect(list({ members: [], hint: false })).not.toContain('data-hint')
+  })
+
+  it('offers a way to put it away', () => {
+    expect(list({ members: [], hint: true })).toContain('Dismiss this tip')
   })
 })

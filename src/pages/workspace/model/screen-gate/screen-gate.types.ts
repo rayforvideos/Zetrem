@@ -1,4 +1,4 @@
-export type ScreenGate = 'holding' | 'setup' | 'conversation'
+export type ScreenGate = 'holding' | 'welcome' | 'setup' | 'conversation'
 
 export type GateState = {
   settingsLoaded: boolean
@@ -8,5 +8,6 @@ export type GateState = {
   loggedIn: boolean
   hasProject: boolean
   setupDone: boolean
+  onboarded: boolean
   settingsOpen: boolean
 }

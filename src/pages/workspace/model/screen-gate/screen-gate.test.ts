@@ -9,6 +9,7 @@ const known = {
   loggedIn: true,
   hasProject: true,
   setupDone: true,
+  onboarded: true,
   settingsOpen: false,
 }
 
@@ -65,5 +66,40 @@ describe('an unread history is not shown as an empty screen', () => {
 
   it('answers the missing project first, since there is no history without one', () => {
     expect(screenGate({ ...known, chatKnown: false, hasProject: false })).toBe('setup')
+  })
+})
+
+describe('screenGate: the first run says what this is before asking for anything', () => {
+  const ready = {
+    settingsLoaded: true,
+    authKnown: true,
+    projectKnown: true,
+    chatKnown: true,
+    loggedIn: false,
+    hasProject: false,
+    setupDone: false,
+    onboarded: false,
+    settingsOpen: false,
+  }
+
+  it('opens on the welcome, before the account is asked for', () => {
+    expect(screenGate(ready)).toBe('welcome')
+  })
+
+  it('moves on to setup once the welcome has been read', () => {
+    expect(screenGate({ ...ready, onboarded: true })).toBe('setup')
+  })
+
+  it('never shows the welcome again to someone set up', () => {
+    const settled = { ...ready, onboarded: true, setupDone: true, loggedIn: true, hasProject: true }
+    expect(screenGate(settled)).toBe('conversation')
+  })
+
+  it('waits for what it knows before saying anything at all', () => {
+    expect(screenGate({ ...ready, settingsLoaded: false })).toBe('holding')
+  })
+
+  it('lets you open settings from the welcome without being sent back', () => {
+    expect(screenGate({ ...ready, settingsOpen: true })).toBe('setup')
   })
 })

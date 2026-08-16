@@ -5,6 +5,7 @@ import { cn } from '@/shared/lib/cn'
 import { Button } from '@/shared/ui/button'
 import { Empty, EmptyDescription, EmptyHeader, EmptyTitle } from '@/shared/ui/empty'
 import { noteLine } from '../../lib/team-note/team-note'
+import { FirstHint } from '@/widgets/first-hint'
 import { rowStateOf } from '../../lib/row-state/row-state'
 import type { Origin, TeamMember } from '../../lib/team/team.types'
 import type { TeamListProps } from './TeamList.types'
@@ -25,6 +26,7 @@ export function TeamList({
   read,
   sessionLive,
   canWrite,
+  hint,
   note,
   avatar,
   onHire,
@@ -33,6 +35,7 @@ export function TeamList({
   onPick,
   onAddress,
   onRestart,
+  onHintSeen,
 }: TeamListProps) {
   const [editing, setEditing] = useState<'new' | string | null>(null)
   const said = note === null ? null : noteLine(note, sessionLive)
@@ -70,6 +73,14 @@ export function TeamList({
         </span>
         <span className="truncate text-sm font-medium">Add teammate</span>
       </Button>
+
+      {hint && (
+        <FirstHint
+          title="Add your first teammate"
+          body="Write their brief once and the orchestrator can call them from any project."
+          onClose={onHintSeen}
+        />
+      )}
 
       <div className="flex flex-col gap-0.5">
         {members.map((member) => (

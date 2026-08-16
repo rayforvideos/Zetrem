@@ -8,6 +8,8 @@ export type Settings = {
   userName: string
   userFace: FaceId
   setupDone: boolean
+  onboarded: boolean
+  hintsSeen: string[]
   knownTools: string[]
   knownAgents: string[]
   stockAgents: string[]

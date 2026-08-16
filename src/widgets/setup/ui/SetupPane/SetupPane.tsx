@@ -89,6 +89,16 @@ export function SetupPane({
             </span>
           )}
           {actions.reopened && (
+            <Button
+              variant="ghost"
+              onClick={actions.onTour}
+              className="mr-auto rounded-full text-muted-foreground"
+              title="Play the welcome again from the first slide"
+            >
+              Show the welcome again
+            </Button>
+          )}
+          {actions.reopened && (
             <Button variant="ghost" onClick={actions.onCancel} className="rounded-full">
               Cancel
             </Button>

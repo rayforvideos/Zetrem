@@ -15,6 +15,7 @@ import { askedAtMs } from '../../lib/working/working'
 import { Wordmark } from '@/shared/graphics/wordmark/wordmark'
 import { Markdown } from '@/shared/markdown/Markdown/Markdown'
 import { Approval } from './Approval'
+import { FirstHint } from '@/widgets/first-hint'
 import { Greeting } from './Greeting'
 import { Thinking } from './Thinking'
 import { ToolRun } from '../ToolRun/ToolRun'
@@ -38,6 +39,8 @@ type ConversationPaneProps = {
   sidebar: ReactNode
   report: ReactNode
   composer: ReactNode
+  hint: boolean
+  onHintSeen(): void
 }
 
 const UP_SLACK_PX = 2
@@ -55,6 +58,8 @@ export function ConversationPane({
   sidebar,
   report,
   composer,
+  hint,
+  onHintSeen,
 }: ConversationPaneProps) {
   const [attachScroll, scrollRef] = useScrollState<HTMLDivElement>()
   const seen = useRef(0)
@@ -93,6 +98,15 @@ export function ConversationPane({
         <div className="flex min-w-0 flex-1 flex-col items-center justify-center">
           <Wordmark width={196} />
           <Greeting name={you.name} />
+          {hint && (
+            <div className="mt-7 w-full max-w-md">
+              <FirstHint
+                title="Ask for the whole job"
+                body="Say what you want done, not the next step. The orchestrator splits it up and hands the pieces out."
+                onClose={onHintSeen}
+              />
+            </div>
+          )}
           <div className="mt-9 w-full max-w-3xl">{composer}</div>
         </div>
       </div>

@@ -57,6 +57,8 @@ function working(turns: Turn[]): string {
       nowMs={12_000}
       onDecide={() => {}}
       sidebar={null}
+      hint={false}
+      onHintSeen={() => {}}
       report={null}
       composer={<Composer
         empty={turns.length === 0}
@@ -93,6 +95,8 @@ function pane(turns: Turn[], permission: PermissionAsk | null = null): string {
       nowMs={0}
       onDecide={() => {}}
       sidebar={null}
+      hint={false}
+      onHintSeen={() => {}}
       report={null}
       composer={<Composer
         empty={turns.length === 0}

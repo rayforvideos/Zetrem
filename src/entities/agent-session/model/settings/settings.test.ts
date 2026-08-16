@@ -15,6 +15,8 @@ describe('readSettings: reading back what was chosen', () => {
       permissionMode: 'bypass',
       model: 'haiku',
       setupDone: true,
+      onboarded: true,
+      hintsSeen: ['hire-first'],
       knownTools: ['Read', 'Bash'],
       knownAgents: ['Explore', 'Ray'],
       stockAgents: ['Explore'],

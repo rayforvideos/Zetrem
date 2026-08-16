@@ -10,6 +10,7 @@ export type TeamListProps = {
   read: string[]
   sessionLive: boolean
   canWrite: boolean
+  hint: boolean
   note: TeamNote | null
   avatar: number
   onHire(draft: AgentDefDraft): void
@@ -18,4 +19,5 @@ export type TeamListProps = {
   onPick(sessionId: string): void
   onAddress(subagentType: string): void
   onRestart(): void
+  onHintSeen(): void
 }

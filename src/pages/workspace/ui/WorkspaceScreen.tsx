@@ -1,15 +1,28 @@
 import { useEffect, useState, useSyncExternalStore } from 'react'
-import { CrewProvider, roster, stockAgents, withRefused, withoutRefused } from '@/entities/agent-session'
+import {
+  CrewProvider,
+  hintDue,
+  hintSeen,
+  roster,
+  stockAgents,
+  withRefused,
+  withoutRefused,
+} from '@/entities/agent-session'
 import { pickProject, projectStore } from '@/entities/project'
 import { GRID_PAD } from '@/shared/config/theme'
 import { PanelLeft } from 'lucide-react'
 import { Button } from '@/shared/ui/button'
 import { useFailure } from '@/shared/lib/failure/failure'
-import { WORDMARK_SIGNATURE_OPACITY, WORDMARK_SIZE, Wordmark } from '@/shared/graphics/wordmark/wordmark'
+import {
+  WORDMARK_SIGNATURE_OPACITY,
+  WORDMARK_SIZE,
+  Wordmark,
+} from '@/shared/graphics/wordmark/wordmark'
 import { AgentReport } from '@/widgets/agent-report'
 import { awayOf, spokeAtMs, Composer, ConversationPane } from '@/widgets/conversation'
 import { PluginShelf, SetupPane } from '@/widgets/setup'
 import { TeamSidebar, team, toggled } from '@/widgets/team-sidebar'
+import { WelcomePane } from '@/widgets/welcome'
 import { TileDeck, useDeck, useFleet } from '@/widgets/tile-deck'
 import { MOTION } from '@/shared/config/motion/motion'
 import { tidyUserName } from '@/entities/user'
@@ -85,6 +98,7 @@ export function WorkspaceScreen() {
     loggedIn: auth.auth?.state === 'signed-in',
     hasProject: project?.path != null,
     setupDone: settings.setupDone,
+    onboarded: settings.onboarded,
     settingsOpen: panel.open,
   })
 
@@ -112,7 +126,10 @@ export function WorkspaceScreen() {
     if (learned !== null) update(learned)
   }, [sessionTools, sessionAgents, settings.knownTools, settings.knownAgents, update])
 
-  const stock = stockAgents(settings.knownAgents, defs.map((def) => def.name))
+  const stock = stockAgents(
+    settings.knownAgents,
+    defs.map((def) => def.name),
+  )
   const openAgent = children.find((session) => session.id === focus.openAgentId) ?? null
   const sessionAgentNames = status.session?.agents ?? []
   const live = sessionLive(status, conv.status)
@@ -156,220 +173,245 @@ export function WorkspaceScreen() {
         data-activity={status.activity}
         className="flex h-full min-h-0 flex-col"
       >
-      <div className="relative min-h-0 flex-1">
-      <TileDeck
-        state={deck.state}
-        sessions={children}
-        face={settings.userFace}
-        name={tidyUserName(settings.userName)}
-        viewport={viewport}
-        onDismiss={deck.closeOne}
-        nowMs={nowMs}
-        sidebarW={sidebar.span + GRID_PAD * 2}
-        roster={sidebar.open}
-        terminal={
-          gate === 'holding' ? (
-            <div className="relative z-[3] flex h-full items-center justify-center">
-              <Wordmark width={WORDMARK_SIZE.signature} className={WORDMARK_SIGNATURE_OPACITY} />
-            </div>
-          ) : gate === 'setup' ? (
-            <SetupPane
-              account={{
-                auth: auth.auth,
-                error: auth.authError,
-                note: auth.loginNote,
-                signingIn: auth.loggingIn,
-                signingOut: auth.loggingOut,
-                sessionLive: live,
-                onSignIn: auth.login,
-                onSignOut: auth.logout,
-              }}
-              you={{
-                name: settings.userName,
-                face: settings.userFace,
-                onName: (next) => update({ userName: next }),
-                onFace: (next) => update({ userFace: next }),
-              }}
-              project={{ chosen: project, onChoose: handlePickProject }}
-              defaults={{
-                permissionMode: settings.permissionMode,
-                model: settings.model,
-                onPermissionMode: (permissionMode) => update({ permissionMode }),
-                onModel: (model) => update({ model }),
-              }}
-              plugins={{
-                summary: pluginSummary(
-                  shelf.catalog.installed.length,
-                  shelf.marketplaces.length,
-                ),
-                onOpen: shelf.show,
-              }}
-              actions={{
-                reopened: settings.setupDone,
-                canStart: auth.auth?.state === 'signed-in' && project?.path != null,
-                onStart: panel.start,
-                onCancel: panel.cancel,
-              }}
-              notice={settingsFailure ?? projectFailure}
-            />
-          ) : (
-            <ConversationPane
-              turns={conv.turns}
-              status={conv.status}
-              statusState={status}
-              permission={conv.permission}
-              you={{ name: tidyUserName(settings.userName), face: settings.userFace }}
-              away={agent.running ? awayOf(children, spokeAtMs(conv.turns)) : null}
-              chores={conv.chores}
-              nowMs={nowMs}
-              onDecide={agent.decide}
-              composer={
-                <Composer
-                  files={attach.files}
-                  onPick={attach.pick}
-                  onTake={attach.take}
-                  onDropFile={attach.drop}
-                  empty={conv.turns.length === 0}
-                  busy={conv.status === 'working'}
-                  sessionLive={live}
-                  addressee={focus.addressee}
-                  permissionMode={settings.permissionMode}
-                  model={settings.model}
-                  refusedModels={settings.refusedModels}
-                  onSend={(text) => {
-                    agent.send(text, focus.addressee, attach.files)
-                    attach.clear()
-                    focus.address(null)
-                  }}
-                  onStop={agent.stop}
-                  onClearAddressee={() => focus.address(null)}
-                  onPermissionMode={(permissionMode) =>
-                    reload(
-                      { permissionMode },
-                      'Permissions changed. Your next message starts a session that follows them.',
-                    )
-                  }
-                  onModel={(model) =>
-                    reload({ model }, 'Model changed. Your next message starts a session on it.')
-                  }
-                />
-              }
-              report={
-                openAgent === null ? null : (
-                  <AgentReport
-                    session={openAgent}
-                    sessions={children}
-                    nowMs={nowMs}
-                    onClose={() => focus.pick(null)}
-                    onPick={focus.pick}
-                  />
-                )
-              }
-              sidebar={
-                <div
-                  ref={attachSidebar}
-                  data-tucked={sidebar.open ? undefined : ''}
-                  style={{
-                    marginLeft: tuckedBy(sidebar.open, sidebarBoxW, sidebar.width),
-                    transition: `margin ${MOTION.moveMs}ms ${MOTION.easing}`,
-                  }}
-                  className="flex flex-none"
-                >
-                  <TeamSidebar
-                    chats={{
-                      chats: chat.chats,
-                      openId: chat.openId,
-                      onOpen: (id) => swap(() => chat.open(id)),
-                      onStart: () => swap(chat.start),
-                      onRemove: chat.remove,
-                    }}
-                    team={{
-                      members: team(defs, sessionAgentNames, roster(sessionAgentNames, children, conv.status !== 'done')),
-                      drafts,
-                      knownTools: settings.knownTools,
-                      sessionKnown: status.session !== null,
-                      read: focus.read,
-                      sessionLive: live,
-                      canWrite: true,
-                      note: teamNote,
-                      onHire: hire,
-                      onEdit: edit,
-                      onRelease: release,
-                      onPick: focus.pick,
-                      onAddress: focus.address,
-                      onRestart: () => {
-                        focus.clearAll()
-                        agent.restart()
-                      },
-                    }}
-                    stock={{
-                      stock,
-                      on: settings.stockAgents,
-                      onChange: (name, on) => update({ stockAgents: toggled(settings.stockAgents, name, on) }),
-                    }}
-                    nowMs={nowMs}
-                    width={sidebar.width}
-                    onResize={sidebar.resize}
-                    onResizeEnd={sidebar.commit}
+        <div className="relative min-h-0 flex-1">
+          <TileDeck
+            state={deck.state}
+            sessions={children}
+            face={settings.userFace}
+            name={tidyUserName(settings.userName)}
+            viewport={viewport}
+            onDismiss={deck.closeOne}
+            nowMs={nowMs}
+            sidebarW={sidebar.span + GRID_PAD * 2}
+            roster={sidebar.open}
+            terminal={
+              gate === 'welcome' ? (
+                <WelcomePane onDone={() => update({ onboarded: true })} />
+              ) : gate === 'holding' ? (
+                <div className="relative z-[3] flex h-full items-center justify-center">
+                  <Wordmark
+                    width={WORDMARK_SIZE.signature}
+                    className={WORDMARK_SIGNATURE_OPACITY}
                   />
                 </div>
-              }
-            />
-          )
-        }
-      />
-
-      {shelf.open && (
-        <PluginShelf
-          connectors={wires.connectors}
-          onAddConnector={wires.add}
-          onImportConnectors={wires.importDesktop}
-          adding={wires.adding}
-          onConnector={wires.act}
-          catalog={shelf.catalog}
-          marketplaces={shelf.marketplaces}
-          loading={shelfTab === 'connectors' ? wires.loading : shelf.loading}
-          browsing={shelf.browsing}
-          onTab={(value) => {
-            setShelfTab(value)
-            if (value === 'browse') shelf.browse()
-          }}
-          onAct={shelf.act}
-          busy={shelf.busy ?? wires.busy}
-          onReload={() => {
-            if (shelfTab === 'connectors') {
-              wires.reload()
-              return
+              ) : gate === 'setup' ? (
+                <SetupPane
+                  account={{
+                    auth: auth.auth,
+                    error: auth.authError,
+                    note: auth.loginNote,
+                    signingIn: auth.loggingIn,
+                    signingOut: auth.loggingOut,
+                    sessionLive: live,
+                    onSignIn: auth.login,
+                    onSignOut: auth.logout,
+                  }}
+                  you={{
+                    name: settings.userName,
+                    face: settings.userFace,
+                    onName: (next) => update({ userName: next }),
+                    onFace: (next) => update({ userFace: next }),
+                  }}
+                  project={{ chosen: project, onChoose: handlePickProject }}
+                  defaults={{
+                    permissionMode: settings.permissionMode,
+                    model: settings.model,
+                    onPermissionMode: (permissionMode) => update({ permissionMode }),
+                    onModel: (model) => update({ model }),
+                  }}
+                  plugins={{
+                    summary: pluginSummary(
+                      shelf.catalog.installed.length,
+                      shelf.marketplaces.length,
+                    ),
+                    onOpen: shelf.show,
+                  }}
+                  actions={{
+                    reopened: settings.setupDone,
+                    canStart: auth.auth?.state === 'signed-in' && project?.path != null,
+                    onStart: panel.start,
+                    onCancel: panel.cancel,
+                    onTour: () => {
+                      panel.cancel()
+                      update({ onboarded: false, hintsSeen: [] })
+                    },
+                  }}
+                  notice={settingsFailure ?? projectFailure}
+                />
+              ) : (
+                <ConversationPane
+                  turns={conv.turns}
+                  status={conv.status}
+                  statusState={status}
+                  permission={conv.permission}
+                  you={{ name: tidyUserName(settings.userName), face: settings.userFace }}
+                  away={agent.running ? awayOf(children, spokeAtMs(conv.turns)) : null}
+                  chores={conv.chores}
+                  nowMs={nowMs}
+                  hint={hintDue('ask-whole-job', settings.hintsSeen, conv.turns.length === 0)}
+                  onHintSeen={() =>
+                    update({ hintsSeen: hintSeen('ask-whole-job', settings.hintsSeen) })
+                  }
+                  onDecide={agent.decide}
+                  composer={
+                    <Composer
+                      files={attach.files}
+                      onPick={attach.pick}
+                      onTake={attach.take}
+                      onDropFile={attach.drop}
+                      empty={conv.turns.length === 0}
+                      busy={conv.status === 'working'}
+                      sessionLive={live}
+                      addressee={focus.addressee}
+                      permissionMode={settings.permissionMode}
+                      model={settings.model}
+                      refusedModels={settings.refusedModels}
+                      onSend={(text) => {
+                        agent.send(text, focus.addressee, attach.files)
+                        attach.clear()
+                        focus.address(null)
+                      }}
+                      onStop={agent.stop}
+                      onClearAddressee={() => focus.address(null)}
+                      onPermissionMode={(permissionMode) =>
+                        reload(
+                          { permissionMode },
+                          'Permissions changed. Your next message starts a session that follows them.',
+                        )
+                      }
+                      onModel={(model) =>
+                        reload(
+                          { model },
+                          'Model changed. Your next message starts a session on it.',
+                        )
+                      }
+                    />
+                  }
+                  report={
+                    openAgent === null ? null : (
+                      <AgentReport
+                        session={openAgent}
+                        sessions={children}
+                        nowMs={nowMs}
+                        onClose={() => focus.pick(null)}
+                        onPick={focus.pick}
+                      />
+                    )
+                  }
+                  sidebar={
+                    <div
+                      ref={attachSidebar}
+                      data-tucked={sidebar.open ? undefined : ''}
+                      style={{
+                        marginLeft: tuckedBy(sidebar.open, sidebarBoxW, sidebar.width),
+                        transition: `margin ${MOTION.moveMs}ms ${MOTION.easing}`,
+                      }}
+                      className="flex flex-none"
+                    >
+                      <TeamSidebar
+                        chats={{
+                          chats: chat.chats,
+                          openId: chat.openId,
+                          onOpen: (id) => swap(() => chat.open(id)),
+                          onStart: () => swap(chat.start),
+                          onRemove: chat.remove,
+                        }}
+                        team={{
+                          members: team(
+                            defs,
+                            sessionAgentNames,
+                            roster(sessionAgentNames, children, conv.status !== 'done'),
+                          ),
+                          drafts,
+                          knownTools: settings.knownTools,
+                          sessionKnown: status.session !== null,
+                          read: focus.read,
+                          sessionLive: live,
+                          canWrite: true,
+                          hint: hintDue('hire-first', settings.hintsSeen, defs.length === 0),
+                          onHintSeen: () =>
+                            update({ hintsSeen: hintSeen('hire-first', settings.hintsSeen) }),
+                          note: teamNote,
+                          onHire: hire,
+                          onEdit: edit,
+                          onRelease: release,
+                          onPick: focus.pick,
+                          onAddress: focus.address,
+                          onRestart: () => {
+                            focus.clearAll()
+                            agent.restart()
+                          },
+                        }}
+                        stock={{
+                          stock,
+                          on: settings.stockAgents,
+                          onChange: (name, on) =>
+                            update({ stockAgents: toggled(settings.stockAgents, name, on) }),
+                        }}
+                        nowMs={nowMs}
+                        width={sidebar.width}
+                        onResize={sidebar.resize}
+                        onResizeEnd={sidebar.commit}
+                      />
+                    </div>
+                  }
+                />
+              )
             }
-            if (shelfTab === 'browse') {
-              shelf.browse(true)
-              return
-            }
-            shelf.reload()
-          }}
-          project={project?.path ?? null}
-          onClose={shelf.hide}
-        />
-      )}
-
-      </div>
-      <UsageBar
-        status={status}
-        connectors={wires.connectors}
-        nowMs={nowMs}
-        open={drawerOpen}
-        onToggle={() => setDrawerOpen((was) => !was)}
-        details={
-          <StatusDrawer
-            statusState={status}
-            connectors={wires.connectors}
-            checking={wires.loading}
-            onRecheck={wires.reload}
-            onUpdate={cliUpdate.start}
-            updating={cliUpdate.updating}
           />
-        }
-      />
+
+          {shelf.open && (
+            <PluginShelf
+              connectors={wires.connectors}
+              onAddConnector={wires.add}
+              onImportConnectors={wires.importDesktop}
+              adding={wires.adding}
+              onConnector={wires.act}
+              catalog={shelf.catalog}
+              marketplaces={shelf.marketplaces}
+              loading={shelfTab === 'connectors' ? wires.loading : shelf.loading}
+              browsing={shelf.browsing}
+              onTab={(value) => {
+                setShelfTab(value)
+                if (value === 'browse') shelf.browse()
+              }}
+              onAct={shelf.act}
+              busy={shelf.busy ?? wires.busy}
+              onReload={() => {
+                if (shelfTab === 'connectors') {
+                  wires.reload()
+                  return
+                }
+                if (shelfTab === 'browse') {
+                  shelf.browse(true)
+                  return
+                }
+                shelf.reload()
+              }}
+              project={project?.path ?? null}
+              onClose={shelf.hide}
+            />
+          )}
+        </div>
+        {gate !== 'welcome' && (
+          <UsageBar
+            status={status}
+            connectors={wires.connectors}
+            nowMs={nowMs}
+            open={drawerOpen}
+            onToggle={() => setDrawerOpen((was) => !was)}
+            details={
+              <StatusDrawer
+                statusState={status}
+                connectors={wires.connectors}
+                checking={wires.loading}
+                onRecheck={wires.reload}
+                onUpdate={cliUpdate.start}
+                updating={cliUpdate.updating}
+              />
+            }
+          />
+        )}
       </div>
 
       <Titlebar

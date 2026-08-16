@@ -901,3 +901,53 @@ describe('work the CLI sends to the background stays visible while it runs', () 
     expect(conversation.get().chores).toHaveLength(1)
   })
 })
+
+describe('the session that wakes up on its own', () => {
+  it('shows work again when words arrive after the turn had ended', () => {
+    const refs = fakeRefs()
+    applyAgentEvent({ type: 'turnEnded' }, refs)
+    expect(conversation.get().status).toBe('waiting')
+    applyAgentEvent({ type: 'result' } as never, refs)
+    conversation.setStatus('done')
+
+    applyAgentEvent({ type: 'delta', text: '보고를 받아' }, refs)
+    expect(conversation.get().status).toBe('working')
+  })
+
+  it('does not steal a turn that is waiting on your answer', () => {
+    const refs = fakeRefs()
+    applyAgentEvent(
+      {
+        type: 'permission',
+        requestId: 'r1',
+        toolName: 'Write',
+        line: 'Write a.ts',
+        detail: 'a.ts',
+        input: {},
+      },
+      refs,
+    )
+    expect(conversation.get().status).toBe('waiting')
+    applyAgentEvent({ type: 'delta', text: 'x' }, refs)
+    expect(conversation.get().status).toBe('waiting')
+  })
+})
+
+describe('a progress ping that carries no count', () => {
+  it('leaves the tokens a teammate had rather than reading the silence as none', () => {
+    const refs = fakeRefs()
+    applyAgentEvent(
+      { type: 'childOpen', toolUseId: 'toolu_tok', label: '토큰', subagentType: 'Explore', prompt: 'x', background: false },
+      refs,
+    )
+    applyAgentEvent(
+      { type: 'childProgress', toolUseId: 'toolu_tok', taskId: 't1', doing: '', lastTool: '', tokens: 4200 },
+      refs,
+    )
+    applyAgentEvent(
+      { type: 'childProgress', toolUseId: 'toolu_tok', taskId: 't1', doing: '', lastTool: '', tokens: null },
+      refs,
+    )
+    expect(sessionStore.get().find((s) => s.id === 'toolu_tok')?.tokens).toBe(4200)
+  })
+})

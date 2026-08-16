@@ -37,7 +37,7 @@ export type ResultMetrics = {
 
 export type RateLimit = {
   kind: string
-  utilization: number
+  utilization: number | null
   resetsAtMs: number
   resetsText?: string
   overage: boolean

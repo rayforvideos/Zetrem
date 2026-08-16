@@ -10,6 +10,7 @@ import { tickOpen } from './Tick'
 
 const STATUS: StatusState = {
   usage: 'read',
+  usageAtMs: null,
   session: null,
   probed: false,
   context: { used: 0, window: null },

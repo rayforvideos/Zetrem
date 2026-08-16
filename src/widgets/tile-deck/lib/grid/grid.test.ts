@@ -1,7 +1,16 @@
 import { describe, expect, it } from 'vitest'
 import { TRAFFIC_LIGHT } from '@/shared/config/theme'
 import { LAYOUT } from '@/shared/config/motion/motion'
-import { layoutTiles, observatoryLayout, soloRect, roomToFan, boardLayout, crowded } from './grid'
+import {
+  layoutTiles,
+  observatoryLayout,
+  soloRect,
+  roomToFan,
+  boardLayout,
+  crowded,
+  boarded,
+  narrowLayout,
+} from './grid'
 
 const viewport = { w: 1440, h: 900 }
 const M = LAYOUT.outerMarginPx
@@ -211,9 +220,14 @@ describe('the deck sits clear of the title bar, not tucked under it', () => {
 describe('a crew too big for tiles', () => {
   const viewport = { w: 1440, h: 900 }
 
-  it('keeps tiles up to six and turns to lanes past that', () => {
-    expect(crowded(6)).toBe(false)
-    expect(crowded(7)).toBe(true)
+  it('keeps one and two as tiles, and puts three or more on the board', () => {
+    expect(boarded(2)).toBe(false)
+    expect(boarded(3)).toBe(true)
+  })
+
+  it('turns the cards into lanes once there are ten', () => {
+    expect(crowded(9)).toBe(false)
+    expect(crowded(10)).toBe(true)
   })
 
   it('gives the board the same column the tiles had, so nothing else moves', () => {
@@ -222,5 +236,77 @@ describe('a crew too big for tiles', () => {
     expect(board.terminal).toEqual(tiles.terminal)
     expect(board.board.x).toBe(tiles.sessions[0]!.x)
     expect(board.board.h).toBe(tiles.terminal.h)
+  })
+})
+
+describe('a window too narrow for two columns', () => {
+  const tiny = { w: 720, h: 520 }
+
+  it('knows there is no room to fan out at the smallest window', () => {
+    expect(roomToFan(tiny, 0)).toBe(false)
+    expect(roomToFan({ w: 1440, h: 900 }, 0)).toBe(true)
+  })
+
+  it('gives the conversation the whole width and the top, with the crew bar under it', () => {
+    const { bar, body } = narrowLayout(tiny)
+    expect(bar.x).toBe(body.x)
+    expect(bar.w).toBe(body.w)
+    expect(bar.y).toBeGreaterThan(body.y + body.h - 1)
+    expect(bar.x + bar.w).toBeLessThanOrEqual(tiny.w)
+    expect(bar.y + bar.h).toBeLessThanOrEqual(tiny.h)
+  })
+
+  it('hides the crew until you ask for it', () => {
+    expect(narrowLayout(tiny).sheet.h).toBe(0)
+  })
+
+  it('opens the crew under the talk, and never takes the talk off the screen', () => {
+    const shut = narrowLayout(tiny)
+    const { bar, body, sheet } = narrowLayout(tiny, true)
+    expect(sheet.h).toBeGreaterThan(0)
+    expect(body.h).toBeGreaterThan(0)
+    expect(body.h).toBeLessThan(shut.body.h)
+    expect(sheet.y).toBeGreaterThanOrEqual(body.y + body.h)
+    expect(sheet.y + sheet.h).toBeLessThanOrEqual(bar.y)
+    expect(sheet.w).toBe(body.w)
+  })
+
+  it('leaves the bar in the same place whether the crew is open or not', () => {
+    expect(narrowLayout(tiny, true).bar).toEqual(narrowLayout(tiny).bar)
+  })
+
+  it('leaves the conversation more room than the two column split ever could', () => {
+    expect(narrowLayout(tiny).body.w).toBeGreaterThan(boardLayout(tiny, 0).terminal.w)
+  })
+
+  it('keeps the body on screen even when the window is shorter than the bar', () => {
+    const flat = narrowLayout({ w: 720, h: 90 })
+    expect(flat.body.h).toBe(0)
+    expect(flat.body.w).toBeGreaterThan(0)
+    expect(flat.sheet.h).toBe(0)
+    expect(narrowLayout({ w: 720, h: 90 }, true).sheet.h).toBe(0)
+  })
+
+  it('spans the window, since the roster sits inside the talk', () => {
+    const { bar, body } = narrowLayout(tiny)
+    expect(bar.x).toBe(16)
+    expect(body.w).toBe(tiny.w - 32)
+  })
+})
+
+describe('a board too short for cards', () => {
+  it('keeps cards while the board has room for them', () => {
+    expect(crowded(3, 900)).toBe(false)
+    expect(crowded(3, 460)).toBe(false)
+  })
+
+  it('falls back to lanes when the board is a strip', () => {
+    expect(crowded(3, 214)).toBe(true)
+    expect(crowded(1, 214)).toBe(true)
+  })
+
+  it('still counts heads when no height is given', () => {
+    expect(crowded(9)).toBe(false)
+    expect(crowded(10)).toBe(true)
   })
 })

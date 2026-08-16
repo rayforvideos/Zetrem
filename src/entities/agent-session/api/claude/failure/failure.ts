@@ -8,6 +8,8 @@ const REASON: Record<string, string> = {
 
 const MODEL_HELP = /run\s+--model[^.]*\.?/i
 
+const DIAGNOSTIC = /^\[?[a-z0-9_]+\]?(\s+[a-z0-9_]+=\S*)+$/i
+
 export function stoppedLine(event: {
   subtype: string
   isError: boolean
@@ -20,8 +22,10 @@ export function stoppedLine(event: {
   const said = failureLine(event.subtype, event.errors)
   if (said !== null) return said
   if (!event.isError) return null
-  const body = event.result.trim()
-  return body.length > 0 ? `Stopped: ${ourWords(body)}` : 'Stopped: something went wrong'
+  const raw = event.result.trim()
+  if (raw.length === 0) return 'Stopped: something went wrong'
+  const body = ourWords(raw)
+  return body.length > 0 ? `Stopped: ${body}` : 'Stopped'
 }
 
 function modelLine(error: string, result: string): string | null {
@@ -32,13 +36,17 @@ function modelLine(error: string, result: string): string | null {
 }
 
 function ourWords(said: string): string {
-  return said.replace(MODEL_HELP, '').trim()
+  const plain = said.replace(MODEL_HELP, '').trim()
+  return DIAGNOSTIC.test(plain) ? '' : plain
 }
 
 export function failureLine(subtype: string, errors: unknown): string | null {
   if (!subtype.startsWith('error')) return null
   const said = Array.isArray(errors)
-    ? errors.filter((line): line is string => typeof line === 'string' && line.length > 0)
+    ? errors
+        .filter((line): line is string => typeof line === 'string' && line.length > 0)
+        .map((line) => ourWords(line))
+        .filter((line) => line.length > 0)
     : []
   const known = REASON[subtype]
   if (said.length > 0) return `Stopped: ${said.join('. ')}`

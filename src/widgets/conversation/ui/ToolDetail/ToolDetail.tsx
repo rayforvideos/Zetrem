@@ -90,7 +90,7 @@ function Diff({ lines }: { lines: ReturnType<typeof lineDiff> }) {
   return (
     <pre
       data-selectable
-      className="zt-scroll max-h-56 overflow-auto rounded-lg bg-card py-1 font-mono text-xs leading-normal whitespace-pre-wrap"
+      className="zt-scroll max-h-56 overflow-auto rounded-lg bg-card py-1 pr-2.5 font-mono text-xs leading-normal whitespace-pre-wrap"
     >
       {shown.map((line, index) => (
         <div key={index} className={cn('px-2', TONE[line.kind])}>

@@ -129,6 +129,7 @@ const textStyle: CSSProperties = {
   fontSize: 15,
   lineHeight: 1.5,
   letterSpacing: '-0.011em',
+  paddingRight: 10,
   overflowX: 'hidden',
   overflowY: 'auto',
 }

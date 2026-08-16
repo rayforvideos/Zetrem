@@ -4,6 +4,7 @@ import { chatLine, marksOfStatus, quietLine, spendLine } from './strip'
 
 const EMPTY: StatusState = {
   usage: 'read',
+  usageAtMs: null,
   probed: false,
   session: null,
   context: { used: 0, window: null },

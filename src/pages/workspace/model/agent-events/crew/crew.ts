@@ -75,7 +75,7 @@ export function applyCrewEvent(turn: ClaudeTurnEvent, refs: AgentEventRefs): voi
       note(id, turn.lastTool)
       return sessionStore.patch(id, {
         ...(turn.doing ? { doing: turn.doing.trim() } : {}),
-        tokens: turn.tokens,
+        ...(turn.tokens === null ? {} : { tokens: turn.tokens }),
         lastSeenAtMs: Date.now(),
       })
     }

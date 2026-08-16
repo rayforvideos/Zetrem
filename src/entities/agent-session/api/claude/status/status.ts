@@ -169,7 +169,7 @@ function fromRateLimit(event: Record<string, unknown>): StatusEvent[] {
       type: 'limit',
       limit: {
         kind: str(i.rateLimitType, 'unknown'),
-        utilization: num(i.utilization),
+        utilization: typeof i.utilization === 'number' ? i.utilization : null,
         resetsAtMs: num(i.resetsAt) * 1000,
         overage: i.isUsingOverage === true,
         status: str(i.status),

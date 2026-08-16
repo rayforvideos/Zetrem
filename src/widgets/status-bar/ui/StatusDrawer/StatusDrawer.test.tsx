@@ -5,6 +5,7 @@ import { StatusDrawer } from './StatusDrawer'
 
 const full: StatusState = {
   usage: 'read',
+  usageAtMs: null,
   probed: false,
   session: {
     id: 'f77f771b-4d45-4551-b887-202b62a6edc5',

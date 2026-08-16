@@ -71,7 +71,7 @@ describe('saying what is happening while you wait', () => {
     expect(doingOf([away], 40_000).target).toBe('2 teammates')
   })
 
-  it('says it is reading the report once a teammate is back', () => {
+  it('says it is waiting once a teammate has been sent out', () => {
     const back = turn({
       tools: [
         tool('Task', { subagent_type: 'explore', description: 'maps the src tree' }, {
@@ -83,8 +83,8 @@ describe('saying what is happening while you wait', () => {
       ],
     })
     const doing = doingOf([back], 40_000)
-    expect(doing.verb).toBe('Reading')
-    expect(doing.target.endsWith("'s report")).toBe(true)
+    expect(doing.verb).toBe('Waiting on')
+    expect(doing.target.length).toBeGreaterThan(0)
   })
 
   it('does not leave that gap saying nothing in particular', () => {

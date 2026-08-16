@@ -5,6 +5,7 @@ import { cn } from '@/shared/lib/cn'
 import { Button } from '@/shared/ui/button'
 import { Empty, EmptyDescription, EmptyHeader, EmptyTitle } from '@/shared/ui/empty'
 import { noteLine } from '../../lib/team-note/team-note'
+import { rowStateOf } from '../../lib/row-state/row-state'
 import type { Origin, TeamMember } from '../../lib/team/team.types'
 import type { TeamListProps } from './TeamList.types'
 import { MemberForm } from '../MemberForm/MemberForm'
@@ -14,13 +15,6 @@ const ORIGIN: Record<Origin, string> = {
   project: 'This project',
   user: 'Your account',
   session: 'Claude Code',
-}
-
-const STATE: Record<TeamMember['state'], string | null> = {
-  waiting: 'Waiting on you',
-  working: null,
-  done: 'Reported back',
-  idle: null,
 }
 
 export function TeamList({
@@ -146,10 +140,8 @@ function MemberRow({
   onEdit,
   onRelease,
 }: MemberRowProps) {
-  const state = STATE[member.state] ?? member.note
+  const row = rowStateOf(member, read)
   const mute = sessionKnown && !member.callable
-  const active = member.state !== 'idle'
-  const unread = member.sessionId !== null && !active && !read.includes(member.sessionId)
   const why = !member.loaded
     ? `${ORIGIN[member.origin]}. Joins from the next session.`
     : 'Not available this session. Unlock it in Settings.'
@@ -160,34 +152,27 @@ function MemberRow({
         data-member={member.type}
         variant="ghost"
         size="bare"
-        onClick={() => (member.sessionId !== null ? onPick(member.sessionId) : onAddress(member.type))}
+        onClick={() => (row.open !== null ? onPick(row.open) : onAddress(member.type))}
         disabled={mute}
         className={cn(
           'min-w-0 flex-1 justify-start gap-2.5 rounded-lg px-2 py-1.5 text-left disabled:pointer-events-auto',
           mute ? 'text-muted-foreground' : 'text-foreground',
-          active && 'bg-card',
+          row.lit && 'bg-card',
         )}
-        title={member.sessionId !== null ? 'See what they did' : mute ? why : 'Give them a task'}
+        title={row.open !== null ? 'See what they did' : mute ? why : 'Give them a task'}
       >
         <AgentSprite
           subagentType={member.type}
           chosen={member.character}
-          state={member.state}
+          state={row.state}
           size={avatar}
         />
         <span className="flex min-w-0 flex-col gap-0.5 text-left">
           <span className="flex min-w-0 items-center gap-1.5 text-sm leading-tight">
             <span className="truncate">{member.name}</span>
-            {unread && (
-              <span
-                data-ran
-                aria-label="Has a run you have not read"
-                className="size-1 flex-none rounded-full bg-muted-foreground"
-              />
-            )}
           </span>
           <span className="truncate text-xs leading-tight text-muted-foreground">
-            {state ?? member.description ?? ''}
+            {row.now ?? member.description ?? ''}
           </span>
         </span>
       </Button>

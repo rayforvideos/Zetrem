@@ -93,7 +93,12 @@ export function WorkspaceScreen() {
   const [shelfTab, setShelfTab] = useState('installed')
   const attach = useAttachments()
   const wires = useConnectors(shelf.open || drawerOpen || gate === 'conversation')
-  useSessionProbe(runConfig, gate !== 'holding' && status.session === null)
+  useSessionProbe(
+    runConfig,
+    gate !== 'holding' && status.session === null,
+    gate !== 'holding',
+    conv.status === 'working',
+  )
   useFleet(deck, children, nowMs, viewport, sidebar.span + GRID_PAD * 2)
   useOutcomes(children)
 
@@ -145,15 +150,23 @@ export function WorkspaceScreen() {
 
   return (
     <CrewProvider crew={crewOf(defs, status.session?.model ?? null)}>
-      <div data-live={atWork ? '' : undefined} className="flex h-full min-h-0 flex-col">
+      <div
+        data-live={atWork ? '' : undefined}
+        data-talk={conv.status}
+        data-activity={status.activity}
+        className="flex h-full min-h-0 flex-col"
+      >
       <div className="relative min-h-0 flex-1">
       <TileDeck
         state={deck.state}
         sessions={children}
+        face={settings.userFace}
+        name={tidyUserName(settings.userName)}
         viewport={viewport}
         onDismiss={deck.closeOne}
         nowMs={nowMs}
         sidebarW={sidebar.span + GRID_PAD * 2}
+        roster={sidebar.open}
         terminal={
           gate === 'holding' ? (
             <div className="relative z-[3] flex h-full items-center justify-center">
@@ -206,7 +219,7 @@ export function WorkspaceScreen() {
               statusState={status}
               permission={conv.permission}
               you={{ name: tidyUserName(settings.userName), face: settings.userFace }}
-              away={awayOf(children, spokeAtMs(conv.turns), nowMs)}
+              away={agent.running ? awayOf(children, spokeAtMs(conv.turns)) : null}
               chores={conv.chores}
               nowMs={nowMs}
               onDecide={agent.decide}

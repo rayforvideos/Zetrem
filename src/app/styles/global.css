@@ -327,6 +327,21 @@
   animation: zt-rise var(--zt-base) cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
+.zt-enter {
+  animation: zt-settle var(--zt-base) cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes zt-settle {
+  from {
+    opacity: 0;
+    transform: translateY(3px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
 @keyframes zt-fade {
   from {
     opacity: 0;

@@ -102,7 +102,7 @@ export function childProgress(event: Record<string, unknown>): ChildTurnEvent[] 
       taskId: task,
       doing: typeof event.description === 'string' ? event.description : '',
       lastTool: typeof event.last_tool_name === 'string' ? event.last_tool_name : '',
-      tokens: typeof usage?.total_tokens === 'number' ? usage.total_tokens : 0,
+      tokens: typeof usage?.total_tokens === 'number' ? usage.total_tokens : null,
     },
   ]
 }

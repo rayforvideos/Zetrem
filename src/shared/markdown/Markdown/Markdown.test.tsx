@@ -26,3 +26,16 @@ describe('Markdown: what agents write, as people read it', () => {
     expect(draw('| a | b |\n| --- | --- |\n| 1 | 2 |')).toContain('data-slot="table"')
   })
 })
+
+describe('a whole answer the model wrapped in a markdown fence', () => {
+  it('reads it as the markdown it is, not as a block of code', () => {
+    const out = draw('```markdown\n# Title\n\n- one\n- two\n```')
+    expect(out).toContain('<h1')
+    expect(out).toContain('<li>')
+    expect(out).not.toContain('<pre')
+  })
+
+  it('still draws real code as code', () => {
+    expect(draw('```ts\nconst a = 1\n```')).toContain('<pre')
+  })
+})

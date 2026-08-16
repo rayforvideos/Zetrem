@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { MODELS, PERMISSION_MODES } from '@/entities/agent-session'
 import type { ModelChoice, PermissionMode } from '@/entities/agent-session'
 import { Alert, AlertDescription, AlertTitle } from '@/shared/ui/alert'
@@ -21,10 +22,22 @@ export function SetupPane({
   actions,
   notice,
 }: SetupPaneProps) {
+  const { reopened, onCancel } = actions
+
+  useEffect(() => {
+    if (!reopened) return undefined
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key !== 'Escape' || event.defaultPrevented) return
+      onCancel()
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [reopened, onCancel])
+
   return (
     <div className="relative z-[3] flex h-full min-h-0 flex-col">
-      <div className="zt-scroll min-h-0 flex-1 overflow-y-auto">
-        <div className="mx-auto flex min-h-full w-full max-w-[560px] flex-col gap-8 pt-8 pb-20 [&>*:first-child]:mt-auto [&>*:last-child]:mb-auto">
+      <div className="zt-scroll min-h-0 flex-1 overflow-y-auto pr-2.5">
+        <div className="zt-enter mx-auto flex min-h-full w-full max-w-[560px] flex-col gap-8 pt-8 pb-20 [&>*:first-child]:mt-auto [&>*:last-child]:mb-auto">
           <div className="flex flex-col gap-3">
             <Wordmark width={WORDMARK_SIZE.setup} />
             <p className="max-w-[380px] text-sm leading-relaxed break-keep text-muted-foreground">
@@ -34,12 +47,7 @@ export function SetupPane({
 
           <FieldGroup className="gap-5">
             <AccountField account={account} />
-            <YouField
-              name={you.name}
-              face={you.face}
-              onName={you.onName}
-              onFace={you.onFace}
-            />
+            <YouField name={you.name} face={you.face} onName={you.onName} onFace={you.onFace} />
             <ProjectField project={project} />
             <ChoiceField
               label="Permissions"

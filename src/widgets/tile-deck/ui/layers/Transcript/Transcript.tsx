@@ -52,6 +52,7 @@ const rootStyle: CSSProperties = {
   marginTop: 16,
   flex: '1 1 auto',
   minHeight: 0,
+  paddingRight: 8,
   overflowX: 'hidden',
   overflowY: 'auto',
   display: 'flex',

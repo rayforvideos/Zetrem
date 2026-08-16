@@ -2,11 +2,13 @@ import type { HookRun, StatusState, UpdateInfo } from './status-store.types'
 
 import type { StatusEvent } from '../../api/claude/status/status.types'
 import { withLimit } from '../limits/limits'
+import { spentAfter } from '../spend/spend'
 
 const HOOK_KEEP = 5
 
 const EMPTY: StatusState = {
   usage: 'unread',
+  usageAtMs: null,
   session: null,
   probed: false,
   context: { used: 0, window: null },
@@ -58,14 +60,7 @@ export const statusStore = {
       emit({
         ...state,
         context: { ...state.context, window: m.contextWindow ?? state.context.window },
-        cost: {
-          usd: m.costUsd,
-          lastTurnUsd: Math.max(0, m.costUsd - state.cost.usd),
-          tokens: m.tokens,
-          durationMs: m.durationMs,
-          ttftMs: m.ttftMs,
-          turns: m.turns,
-        },
+        cost: spentAfter(state.cost, m),
       })
       return
     }
@@ -99,9 +94,8 @@ export const statusStore = {
   setUpdate(update: UpdateInfo): void {
     emit({ ...state, update })
   },
-  usageRead(): void {
-    if (state.usage === 'read') return
-    emit({ ...state, usage: 'read' })
+  usageRead(atMs: number): void {
+    emit({ ...state, usage: 'read', usageAtMs: atMs })
   },
   usageUnreadable(): void {
     if (state.usage !== 'unread') return

@@ -14,6 +14,7 @@ function state(overrides: Partial<StatusState> = {}): StatusState {
     update: null,
     activity: 'idle',
     ...overrides,
+    usageAtMs: overrides.usageAtMs ?? null,
   }
 }
 

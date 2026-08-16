@@ -25,9 +25,14 @@ export function CallLog({ calls, live, nowMs }: CallLogProps) {
 
   useEffect(() => {
     const el = scrollRef.current
-    if (el === null) return
+    if (el === null) return undefined
     if (following.current) el.scrollTop = el.scrollHeight
     watch()
+    const frame = requestAnimationFrame(() => {
+      if (following.current) el.scrollTop = el.scrollHeight
+      watch()
+    })
+    return () => cancelAnimationFrame(frame)
   }, [calls.length, watch])
 
   if (calls.length === 0) return null
@@ -57,7 +62,10 @@ function Row({ call, lit }: { call: Call; lit: boolean }) {
   const fill = fillOf(call)
 
   return (
-    <div data-call={call.failed ? 'failed' : 'done'} style={lit ? { ...rowStyle, opacity: 0.8 } : rowStyle}>
+    <div
+      data-call={call.failed ? 'failed' : 'done'}
+      style={lit ? { ...rowStyle, opacity: 0.8 } : rowStyle}
+    >
       <span style={{ ...trackStyle, width: `${fill}%` }} />
       <span style={iconStyle}>
         <ToolIcon shape={shape} size={18} />
@@ -75,7 +83,8 @@ function Row({ call, lit }: { call: Call; lit: boolean }) {
 
 const rootStyle: CSSProperties = {
   minHeight: 0,
-  flex: '1 1 auto',
+  flex: '0 1 auto',
+  paddingRight: 8,
   display: 'flex',
   flexDirection: 'column',
   gap: 3,

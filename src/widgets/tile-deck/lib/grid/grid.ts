@@ -55,14 +55,15 @@ function split(viewport: Viewport, sidebarW: number): { terminal: Rect; side: Re
   }
 }
 
-export function crowded(sessionCount: number): boolean {
-  return sessionCount >= LANES_FROM
+export function crowded(sessionCount: number, boardH = Number.POSITIVE_INFINITY): boolean {
+  return sessionCount >= LANES_FROM || boardH < CARDS_NEED_H
 }
 
-export function boardLayout(
-  viewport: Viewport,
-  sidebarW = 0,
-): { terminal: Rect; board: Rect } {
+export function boarded(sessionCount: number): boolean {
+  return sessionCount >= BOARD_FROM
+}
+
+export function boardLayout(viewport: Viewport, sidebarW = 0): { terminal: Rect; board: Rect } {
   const { terminal, side } = split(viewport, sidebarW)
   return { terminal, board: side }
 }
@@ -111,9 +112,39 @@ const MIN_TALK_W = 340
 
 const SIDE_ROWS_MAX = 3
 
-export const LANES_FROM = 7
+export const LANES_FROM = 10
+
+export const BOARD_FROM = 3
+
+const CARDS_NEED_H = 420
 
 export function roomToFan(viewport: Viewport, sidebarW: number): boolean {
   const areaW = viewport.w - LAYOUT.outerMarginPx * 2
   return areaW - sidebarW - LAYOUT.gapPx - MIN_TALK_W >= MIN_TILE_W
+}
+
+export const CREW_BAR_H = 34
+
+const NARROW_MARGIN = 16
+
+const SHEET_SHARE = 0.5
+
+export function narrowLayout(
+  viewport: Viewport,
+  sheetOpen = false,
+): { bar: Rect; body: Rect; sheet: Rect } {
+  const { topMarginPx: top, gapPx: gap } = LAYOUT
+  const left = NARROW_MARGIN
+  const areaW = Math.max(0, viewport.w - left - NARROW_MARGIN)
+  const areaH = Math.max(0, viewport.h - top - NARROW_MARGIN)
+  const shut = Math.max(0, areaH - CREW_BAR_H - gap)
+  const sheetH = sheetOpen ? Math.round(Math.max(0, shut - gap) * SHEET_SHARE) : 0
+  const bodyH = Math.max(0, shut - (sheetOpen ? sheetH + gap : 0))
+  const barY = top + areaH - CREW_BAR_H
+
+  return {
+    body: { x: left, y: top, w: areaW, h: bodyH },
+    bar: { x: left, y: barY, w: areaW, h: CREW_BAR_H },
+    sheet: { x: left, y: top + bodyH + gap, w: areaW, h: sheetH },
+  }
 }

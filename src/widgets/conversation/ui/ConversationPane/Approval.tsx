@@ -44,7 +44,7 @@ export function Approval({
 
       <div
         data-selectable
-        className="zt-scroll flex max-h-52 items-start gap-2 overflow-y-auto font-mono text-sm [overflow-wrap:anywhere]"
+        className="zt-scroll flex max-h-52 items-start gap-2 overflow-y-auto pr-2.5 font-mono text-sm [overflow-wrap:anywhere]"
       >
         <span className="mt-[3px] flex-none text-muted-foreground">
           <ToolIcon shape={shape} />

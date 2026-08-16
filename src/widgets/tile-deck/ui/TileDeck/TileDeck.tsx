@@ -1,16 +1,25 @@
 import { useEffect, useRef, useState } from 'react'
 import type { CSSProperties, ReactNode } from 'react'
 import type { AgentSession } from '@/entities/agent-session'
+import type { FaceId } from '@/entities/user'
 import { Surface } from '@/entities/surface'
 import { MOTION, staggerDelay } from '@/shared/config/motion/motion'
 import { CHROME_TOP, GRID_PAD, SHELL_PAD } from '@/shared/config/theme'
 import { attentionId } from '../../lib/attention/attention'
-import { boardLayout, crowded, observatoryLayout, soloRect } from '../../lib/grid/grid'
+import {
+  boardLayout,
+  boarded,
+  narrowLayout,
+  observatoryLayout,
+  roomToFan,
+  soloRect,
+} from '../../lib/grid/grid'
 import type { Rect, Viewport } from '../../lib/grid/grid.types'
 import type { DeckState } from '../../model/deck-machine/deck-machine.types'
 import { closingIds, visibleIds } from '../../model/deck-machine/deck-machine'
 import { AgentTile } from '../AgentTile/AgentTile'
 import { CrewBoard } from '../CrewBoard/CrewBoard'
+import { CrewSheet } from '../CrewSheet/CrewSheet'
 
 type TileDeckProps = {
   state: DeckState
@@ -18,6 +27,9 @@ type TileDeckProps = {
   viewport: Viewport
   nowMs: number
   sidebarW?: number
+  roster?: boolean
+  face: FaceId
+  name: string
   terminal: ReactNode
   onDismiss?: (id: string) => void
 }
@@ -35,6 +47,9 @@ export function TileDeck({
   viewport,
   nowMs,
   sidebarW = 0,
+  roster = false,
+  face,
+  name,
   terminal,
   onDismiss,
 }: TileDeckProps) {
@@ -45,11 +60,26 @@ export function TileDeck({
   const atGrid = state.kind === 'fanned' || (state.kind === 'fanning' && advanced)
 
   const gridSessions = findSessions(visibleIds(state), sessions)
-  const board = crowded(gridSessions.length)
+  const board = boarded(gridSessions.length)
   const placed = observatoryLayout(gridSessions.length, viewport, sidebarW)
-  const boarded = boardLayout(viewport, sidebarW)
-  const terminalRect = atGrid ? (board ? boarded.terminal : placed.terminal) : solo
+  const placedBoard = boardLayout(viewport, sidebarW)
   const [openLane, setOpenLane] = useState<string | null>(null)
+  const [sheet, setSheet] = useState(false)
+  const narrow = !roomToFan(viewport, sidebarW) && sessions.length > 0
+
+  useEffect(() => {
+    if (narrow && roster) setSheet(false)
+  }, [narrow, roster])
+
+  const tight = narrowLayout(viewport, narrow && sheet)
+  const terminalRect = narrow
+    ? tight.body
+    : atGrid
+      ? board
+        ? placedBoard.terminal
+        : placed.terminal
+      : solo
+  const framed = narrow || atGrid
   const seats = useRef(new Map<string, Rect>())
 
   const standing: PlacedTile[] = gridSessions.map((session, index) => ({
@@ -94,42 +124,61 @@ export function TileDeck({
         }}
       >
         <Surface
-          bare={!atGrid}
+          bare={!framed}
           style={
             {
               height: '100%',
-              padding: atGrid ? GRID_PAD : SHELL_PAD,
-              paddingTop: atGrid ? GRID_PAD : CHROME_TOP,
-              '--zt-shell-pad': `${atGrid ? GRID_PAD : SHELL_PAD}px`,
-              '--zt-shell-pad-top': `${atGrid ? GRID_PAD : CHROME_TOP}px`,
+              padding: framed ? GRID_PAD : SHELL_PAD,
+              paddingTop: framed ? GRID_PAD : CHROME_TOP,
+              '--zt-shell-pad': `${framed ? GRID_PAD : SHELL_PAD}px`,
+              '--zt-shell-pad-top': `${framed ? GRID_PAD : CHROME_TOP}px`,
             } as CSSProperties
           }
         >
           {terminal}
         </Surface>
       </div>
-      {atGrid && board && (
+      {narrow && (
+        <CrewSheet
+          sessions={sessions}
+          bar={tight.bar}
+          sheet={tight.sheet}
+          nowMs={nowMs}
+          face={face}
+          name={name}
+          open={sheet}
+          openId={openLane}
+          onToggle={() => setSheet((was) => !was)}
+          onClose={() => setSheet(false)}
+          onOpen={setOpenLane}
+        />
+      )}
+      {!narrow && atGrid && board && (
         <CrewBoard
           sessions={gridSessions}
-          rect={boarded.board}
+          face={face}
+          name={name}
+          rect={placedBoard.board}
           nowMs={nowMs}
           openId={openLane}
           onOpen={setOpenLane}
         />
       )}
-      {!board && tiles.map((tile) => (
-        <AgentTile
-          key={tile.session.id}
-          session={tile.session}
-          rect={tile.rect}
-          delayMs={tile.delayMs}
-          nowMs={nowMs}
-          sweeping={sweeping}
-          closing={tile.closing}
-          attention={!tile.closing && tile.session.id === attention}
-          onDismiss={onDismiss === undefined ? undefined : () => onDismiss(tile.session.id)}
-        />
-      ))}
+      {!narrow &&
+        !board &&
+        tiles.map((tile) => (
+          <AgentTile
+            key={tile.session.id}
+            session={tile.session}
+            rect={tile.rect}
+            delayMs={tile.delayMs}
+            nowMs={nowMs}
+            sweeping={sweeping}
+            closing={tile.closing}
+            attention={!tile.closing && tile.session.id === attention}
+            onDismiss={onDismiss === undefined ? undefined : () => onDismiss(tile.session.id)}
+          />
+        ))}
     </div>
   )
 }

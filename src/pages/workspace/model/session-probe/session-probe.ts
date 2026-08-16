@@ -24,5 +24,5 @@ export function learnUsage(report: string | null): void {
   for (const limit of readUsage(report)) {
     statusStore.apply({ type: 'limit', limit })
   }
-  statusStore.usageRead()
+  statusStore.usageRead(Date.now())
 }

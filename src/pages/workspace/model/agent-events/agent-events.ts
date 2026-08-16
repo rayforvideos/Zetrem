@@ -10,6 +10,7 @@ import type {
 import { formatResetTime } from '@/shared/lib/datetime/datetime'
 import { formatTokens, limitKindLabel } from '@/shared/lib/units/units'
 import { conversation } from '../conversation/conversation'
+import { stirred } from './stirred/stirred'
 import { SEND_TOOL, applyCrewEvent, isCrewEvent, remember, wakeResumed } from './crew/crew'
 
 export function applyAgentEvent(turn: ClaudeTurnEvent, refs: AgentEventRefs): void {
@@ -51,6 +52,10 @@ function chore(turn: ClaudeTurnEvent): boolean {
 function announce(turn: ClaudeTurnEvent, refs: AgentEventRefs): void {
   if (chore(turn)) return
   if (isCrewEvent(turn)) return applyCrewEvent(turn, refs)
+  const held = conversation.get()
+  if (stirred(turn, { status: held.status, asked: held.permission !== null })) {
+    conversation.setStatus('working')
+  }
   switch (turn.type) {
     case 'headline':
       return conversation.say('assistant', turn.text)
@@ -129,10 +134,10 @@ function drop(requestId: string, refs: AgentEventRefs): void {
 }
 
 export function limitLine(limit: RateLimit): string {
-  const percent = Math.round(limit.utilization * 100)
+  const share = limit.utilization === null ? '' : ` ${Math.round(limit.utilization * 100)}% used,`
   const when = formatResetTime(limit.resetsAtMs)
   const overage = limit.overage ? ' · on overage' : ''
-  return `${limitKindLabel(limit.kind)} limit ${percent}% used, resets ${when}${overage}`
+  return `${limitKindLabel(limit.kind)} limit${share} resets ${when}${overage}`
 }
 
 export function compactedLine(

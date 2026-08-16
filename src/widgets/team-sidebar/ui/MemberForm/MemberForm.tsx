@@ -232,7 +232,7 @@ export function MemberForm({ initial, knownTools, onSubmit, onCancel }: MemberFo
                     them.
                   </Note>
                 ) : (
-                  <div className="zt-scroll flex max-h-28 flex-col gap-1 overflow-y-auto">
+                  <div className="zt-scroll flex max-h-28 flex-col gap-1 overflow-y-auto pr-2.5">
                     {knowledge.map((path) => (
                       <div
                         key={path}

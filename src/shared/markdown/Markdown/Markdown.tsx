@@ -2,10 +2,12 @@ import { Highlight, themes } from 'prism-react-renderer'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import { cn } from '@/shared/lib/cn'
+import { unfenced } from '../unfenced/unfenced'
 import { Separator } from '@/shared/ui/separator'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/shared/ui/table'
 
 export function Markdown({ text, className }: { text: string; className?: string }) {
+  const said = unfenced(text)
   return (
     <div className={cn('zt-md', className)}>
       <ReactMarkdown
@@ -61,7 +63,7 @@ export function Markdown({ text, className }: { text: string; className?: string
           },
         }}
       >
-        {text}
+        {said}
       </ReactMarkdown>
     </div>
   )

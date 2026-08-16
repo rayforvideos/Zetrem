@@ -15,12 +15,14 @@ import type { Attached } from '@/entities/attachment'
 import { reasonOf } from '@/shared/lib/failure/failure'
 import { shouldRelaunch } from './relaunch/relaunch'
 import { settled } from './settle/settle'
+import { afterYouStopped } from './asked-to-stop/asked-to-stop'
 import type { Attempt } from './relaunch/relaunch.types'
 import type { ConversationState } from './conversation/conversation.types'
 
 const CLOCK_MS = 1000
 
 type Agent = {
+  running: boolean
   conversation: ConversationState
   children: AgentSession[]
   status: StatusState
@@ -42,6 +44,7 @@ export function useAgent(
   const children = useSyncExternalStore(sessionStore.subscribe, sessionStore.get, sessionStore.get)
   const status = useSyncExternalStore(statusStore.subscribe, statusStore.get, statusStore.get)
   const [nowMs, setNowMs] = useState(() => Date.now())
+  const [running, setRunning] = useState(false)
 
   const hostId = useRef<string | null>(null)
   const asks = useRef<
@@ -50,6 +53,7 @@ export function useAgent(
   const childIds = useRef(new Set<string>())
   const sends = useRef(new Map<string, string>())
   const attempt = useRef<Attempt | null>(null)
+  const stopping = useRef(false)
   const refused = useRef(onModelRefused)
   refused.current = onModelRefused
 
@@ -70,6 +74,8 @@ export function useAgent(
 
       if (event.kind === 'exit') {
         hostId.current = null
+        setRunning(false)
+        stopping.current = false
         const failed = attempt.current
         attempt.current = null
         if (shouldRelaunch(failed, event.code)) {
@@ -96,7 +102,7 @@ export function useAgent(
         onModelRefused: refused.current,
       }
       for (const turn of parseClaudeLine(event.line)) {
-        applyAgentEvent(turn, refs)
+        applyAgentEvent(afterYouStopped(turn, stopping.current), refs)
       }
     })
     return () => {
@@ -112,6 +118,8 @@ export function useAgent(
     sends.current.clear()
     const id = `agent-${Date.now()}`
     hostId.current = id
+    setRunning(true)
+    stopping.current = false
     attempt.current = { prompt: text, resumed: resume !== null, spoke: false }
     conversation.setStatus('working')
     void window.desk
@@ -119,6 +127,7 @@ export function useAgent(
       .catch((cause: unknown) => {
         if (hostId.current !== id) return
         hostId.current = null
+        setRunning(false)
         attempt.current = null
         conversation.system(`Could not start Claude Code: ${reasonOf(cause)}`)
         conversation.setStatus('done')
@@ -146,6 +155,7 @@ export function useAgent(
   function reset(): void {
     const id = hostId.current
     hostId.current = null
+    setRunning(false)
     attempt.current = null
     asks.current.length = 0
     childIds.current.clear()
@@ -185,8 +195,9 @@ export function useAgent(
 
   function stop(): void {
     attempt.current = null
+    stopping.current = true
     if (hostId.current) window.desk.stopAgent(hostId.current)
   }
 
-  return { conversation: conv, children, status, nowMs, send, decide, stop, reset, restart }
+  return { running, conversation: conv, children, status, nowMs, send, decide, stop, reset, restart }
 }

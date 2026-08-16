@@ -42,7 +42,7 @@ export function AgentReport({ session, sessions, nowMs, onClose, onPick }: Agent
       ref={body}
       data-report
       data-selectable
-      className="zt-scroll zt-fade-y flex min-h-0 flex-1 flex-col gap-5 overflow-x-hidden overflow-y-auto pb-4"
+      className="zt-scroll zt-fade-y flex min-h-0 flex-1 flex-col gap-5 overflow-x-hidden overflow-y-auto pr-2.5 pb-4"
     >
       <div className="flex items-start justify-between gap-4">
         <div className="flex items-center gap-2.5">

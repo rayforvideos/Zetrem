@@ -22,6 +22,7 @@ function state(overrides: Partial<StatusState> = {}): StatusState {
     update: { current: '2.1.231', latest: '2.1.231', managedBy: 'Homebrew' },
     activity: 'idle',
     ...overrides,
+    usageAtMs: overrides.usageAtMs ?? null,
   }
 }
 

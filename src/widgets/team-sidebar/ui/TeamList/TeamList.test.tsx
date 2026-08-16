@@ -122,7 +122,7 @@ describe('someone you hired can be edited or let go', () => {
   })
 })
 
-describe('the mark beside a name', () => {
+describe('the light on a row', () => {
   const ran = {
     ...member(),
     name: 'Joi',
@@ -131,15 +131,64 @@ describe('the mark beside a name', () => {
     sessionId: 'run-1',
   }
 
-  it('marks a run you have not opened', () => {
-    expect(list({ members: [ran] })).toContain('data-ran')
+  it('lights a run you have not opened', () => {
+    expect(row(list({ members: [ran] }))).toContain('bg-card')
   })
 
   it('goes quiet once you have read that run', () => {
-    expect(list({ members: [ran], read: ['run-1'] })).not.toContain('data-ran')
+    expect(row(list({ members: [ran], read: ['run-1'] }))).not.toContain('bg-card')
   })
 
-  it('says nothing for someone who has not run at all', () => {
-    expect(list({ members: [{ ...ran, sessionId: null }] })).not.toContain('data-ran')
+  it('leaves someone who has not run at all plain', () => {
+    expect(row(list({ members: [{ ...ran, sessionId: null }] }))).not.toContain('bg-card')
+  })
+
+  it('never puts a dot beside the name', () => {
+    expect(list({ members: [ran] })).not.toContain('data-ran')
+  })
+})
+
+describe('a run you have already read', () => {
+  const back = { ...member(), name: 'Joi', type: 'explore', state: 'done' as const, sessionId: 'run-1' }
+
+  it('says they reported back until you have looked', () => {
+    expect(list({ members: [back] })).toContain('Reported back')
+  })
+
+  it('goes back to what they are for, once you have looked', () => {
+    const out = list({ members: [back], read: ['run-1'] })
+    expect(out).not.toContain('Reported back')
+    expect(out).toContain('Looks at what changed')
+  })
+
+  it('still says it for a run you have not opened', () => {
+    expect(list({ members: [back], read: ['other'] })).toContain('Reported back')
+  })
+})
+
+describe('a name that has been read goes back to being a name', () => {
+  const back = {
+    ...member(),
+    name: 'Joi',
+    type: 'explore',
+    state: 'done' as const,
+    sessionId: 'run-1',
+    note: '# `src/app/` 정리 결과 ...',
+  }
+
+  it('says they reported back until you have read it', () => {
+    expect(list({ members: [back] })).toContain('Reported back')
+  })
+
+  it('drops the state and what they said once you have read it', () => {
+    const out = list({ members: [back], read: ['run-1'] })
+    expect(out).not.toContain('src/app/')
+    expect(out).not.toContain('Reported back')
+    expect(out).toContain('Looks at what changed')
+  })
+
+  it('keeps showing a working teammate their own line, read or not', () => {
+    const busy = { ...back, state: 'working' as const }
+    expect(list({ members: [busy], read: ['run-1'] })).toContain('src/app/')
   })
 })

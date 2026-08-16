@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useCallback, useEffect, useRef } from 'react'
 import { FileText, Image } from 'lucide-react'
 import type { ReactNode } from 'react'
 import type { PermissionAsk, SessionStatus, StatusState } from '@/entities/agent-session'
@@ -8,6 +8,7 @@ import { personaOf } from '@/entities/agent-session'
 import { AgentSprite } from '@/entities/agent-session/ui/AgentSprite/AgentSprite'
 import type { Turn } from '@/entities/conversation'
 import { cn } from '@/shared/lib/cn'
+import { atEnd } from '@/shared/lib/scroll-state/scroll-state'
 import { useScrollState } from '@/shared/lib/scroll-state/use-scroll-state'
 import { shouldFollow } from '../../lib/follow/follow'
 import { askedAtMs } from '../../lib/working/working'
@@ -39,6 +40,8 @@ type ConversationPaneProps = {
   composer: ReactNode
 }
 
+const UP_SLACK_PX = 2
+
 export function ConversationPane({
   turns,
   status,
@@ -55,17 +58,32 @@ export function ConversationPane({
 }: ConversationPaneProps) {
   const [attachScroll, scrollRef] = useScrollState<HTMLDivElement>()
   const seen = useRef(0)
+  const following = useRef(true)
+  const lastTop = useRef(0)
   const busy = status === 'working'
   const lastIndex = turns.length - 1
+
+  const watch = useCallback(() => {
+    const el = scrollRef.current
+    if (el === null) return
+    const wentUp = el.scrollTop < lastTop.current - UP_SLACK_PX
+    lastTop.current = el.scrollTop
+    if (wentUp) following.current = false
+    else if (atEnd(el.scrollTop, el.scrollHeight, el.clientHeight)) following.current = true
+  }, [scrollRef])
 
   useEffect(() => {
     const el = scrollRef.current
     const before = seen.current
     seen.current = turns.length
-    if (el === null) return
-    if (!shouldFollow(before, turns.length, el.hasAttribute('data-at-end'))) return
+    if (el === null) return undefined
+    if (!shouldFollow(before, turns.length, following.current)) return undefined
     el.scrollTop = el.scrollHeight
-  }, [turns, permission])
+    const frame = requestAnimationFrame(() => {
+      if (following.current) el.scrollTop = el.scrollHeight
+    })
+    return () => cancelAnimationFrame(frame)
+  }, [turns, permission, chores, scrollRef])
 
 
   if (turns.length === 0 && !permission) {
@@ -91,6 +109,7 @@ export function ConversationPane({
           <>
             <div
               ref={attachScroll}
+              onScroll={watch}
               data-selectable
               className="zt-scroll zt-fade-out -mr-2 flex min-h-0 flex-1 flex-col gap-6 overflow-x-hidden overflow-y-auto pr-5 pb-3"
             >

@@ -5,6 +5,7 @@ import { sessionLive, stirring } from './live'
 function status(session: StatusState['session']): StatusState {
   return {
     usage: 'read',
+  usageAtMs: null,
     session,
     probed: false,
     context: { used: 0, window: null },

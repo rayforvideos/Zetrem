@@ -29,6 +29,8 @@ function render(state: DeckState, sessions: AgentSession[]): string {
     <TileDeck
       state={state}
       sessions={sessions}
+      face="onigiri"
+      name="Ray"
       viewport={viewport}
       nowMs={0}
       terminal={<div>터미널</div>}
@@ -38,10 +40,6 @@ function render(state: DeckState, sessions: AgentSession[]): string {
 
 function count(html: string, needle: string): number {
   return html.split(needle).length - 1
-}
-
-function tileChunks(html: string): string[] {
-  return html.split('data-status').slice(1)
 }
 
 const fleet = [0, 1, 2, 3, 4, 5].map((i) => session(`s${i}`))
@@ -67,9 +65,9 @@ describe('TileDeck: the rule about where the eye goes', () => {
       waitingSinceMs: i === 3 ? 10 : 1000 + i,
     }))
     const html = render({ kind: 'fanned', ids, closing: [] }, waitingFleet)
-    const owners = tileChunks(html).filter((chunk) => chunk.includes('opacity:0.85'))
+    const owners = html.split('data-card').slice(1).filter((chunk) => chunk.includes('data-eye'))
     expect(owners).toHaveLength(1)
-    expect(owners[0]).toContain('에이전트 s3')
+    expect(owners[0]).toContain('"s3"')
   })
 
   it('marks nothing when nobody is waiting', () => {
@@ -77,22 +75,19 @@ describe('TileDeck: the rule about where the eye goes', () => {
     expect(count(html, 'data-waiting')).toBe(0)
   })
 
-  it('does not give the eye to a tile that is closing, waiting or not', () => {
+  it('leaves out the one on its way off the board, waiting or not', () => {
     const closingWaiter = { ...session('s9'), status: 'waiting' as const, waitingSinceMs: 1 }
-    const html = render(
-      { kind: 'fanned', ids, closing: ['s9'] },
-      [...fleet, closingWaiter],
-    )
-    expect(count(html, 'opacity:0.85')).toBe(0)
-    expect(count(html, 'data-closing')).toBe(1)
+    const html = render({ kind: 'fanned', ids, closing: ['s9'] }, [...fleet, closingWaiter])
+    expect(count(html, 'data-eye')).toBe(0)
+    expect(html).not.toContain('data-card="s9"')
   })
 
-  it('gives the eye to the one tile that waits', () => {
+  it('gives the eye to the one that waits', () => {
     const one = fleet.map((s, i) =>
       i === 2 ? { ...s, status: 'waiting' as const, waitingSinceMs: 5 } : s,
     )
     const html = render({ kind: 'fanned', ids, closing: [] }, one)
-    expect(count(html, 'opacity:0.85')).toBe(1)
+    expect(count(html, 'data-eye')).toBe(1)
     expect(count(html, 'data-waiting')).toBe(1)
   })
 })
@@ -108,7 +103,13 @@ describe('TileDeck', () => {
     const html = render({ kind: 'fanned', ids, closing: [] }, fleet)
     expect(html).toContain('터미널')
     expect(count(html, 'data-terminal-tile')).toBe(1)
-    expect(count(html, 'data-status')).toBe(6)
+    expect(count(html, 'data-card')).toBe(6)
+  })
+
+  it('keeps the tile to itself when only one is out', () => {
+    const html = render({ kind: 'fanned', ids: ['s0'], closing: [] }, [fleet[0]!])
+    expect(count(html, 'data-status')).toBe(1)
+    expect(html).not.toContain('data-crew-board')
   })
 })
 
@@ -118,6 +119,8 @@ describe('TileDeck: a tile that is leaving', () => {
       <TileDeck
         state={{ kind: 'fanned', ids: ['b'], closing: ['a'] }}
         sessions={[session('a'), session('b')]}
+        face="onigiri"
+        name="Ray"
         viewport={{ w: 1440, h: 900 }}
         nowMs={0}
         terminal={<div />}
@@ -132,6 +135,8 @@ describe('TileDeck: a tile that is leaving', () => {
       <TileDeck
         state={{ kind: 'fanned', ids: ['a', 'b'], closing: [] }}
         sessions={[session('a'), session('b')]}
+        face="onigiri"
+        name="Ray"
         viewport={{ w: 1440, h: 900 }}
         nowMs={0}
         terminal={<div />}
@@ -141,6 +146,8 @@ describe('TileDeck: a tile that is leaving', () => {
       <TileDeck
         state={{ kind: 'fanned', ids: ['b'], closing: ['a'] }}
         sessions={[session('a'), session('b')]}
+        face="onigiri"
+        name="Ray"
         viewport={{ w: 1440, h: 900 }}
         nowMs={0}
         terminal={<div />}

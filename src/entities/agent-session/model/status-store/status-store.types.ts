@@ -12,6 +12,7 @@ export type UsageRead = 'unread' | 'read' | 'unreadable'
 
 export type StatusState = {
   usage: UsageRead
+  usageAtMs: number | null
   session: SessionIdentity | null
   probed: boolean
   context: { used: number; window: number | null }

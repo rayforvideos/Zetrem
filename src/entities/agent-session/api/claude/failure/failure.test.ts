@@ -97,3 +97,41 @@ describe('stoppedLine: what to say when a turn ends badly', () => {
     expect(ended({ subtype: 'error_max_turns', isError: true })).toContain('limit on how many turns')
   })
 })
+
+describe('a stop the CLI explained only to itself', () => {
+  const diagnostic = '[ede_diagnostic] result_type=user last_content_type=n/a stop_reason=null'
+
+  it('says the turn stopped without repeating the diagnostic', () => {
+    expect(
+      stoppedLine({ subtype: 'success', isError: true, error: '', result: diagnostic, errors: null }),
+    ).toBe('Stopped')
+  })
+
+  it('still carries a reason meant for a person', () => {
+    expect(
+      stoppedLine({
+        subtype: 'success',
+        isError: true,
+        error: '',
+        result: 'The file could not be written',
+        errors: null,
+      }),
+    ).toBe('Stopped: The file could not be written')
+  })
+})
+
+describe('a reason list the CLI wrote for itself', () => {
+  it('drops the diagnostic and falls back to words a person can read', () => {
+    expect(
+      failureLine('error_during_execution', [
+        '[ede_diagnostic] result_type=user last_content_type=n/a stop_reason=null',
+      ]),
+    ).toBe('Stopped: Something went wrong while it was working')
+  })
+
+  it('keeps the reasons that were written for a person', () => {
+    expect(
+      failureLine('error_during_execution', ['[ede_diagnostic] a=1', 'The disk is full']),
+    ).toBe('Stopped: The disk is full')
+  })
+})

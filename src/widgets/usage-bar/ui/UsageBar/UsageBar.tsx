@@ -48,12 +48,14 @@ export function UsageBar({ status, connectors, nowMs, open, details, onToggle }:
             <span
               data-fill
               className="absolute inset-y-0 left-0 rounded-full bg-current"
-              style={{ width: `${Math.min(100, Math.max(0, mark.percent))}%` }}
+              style={{ width: `${Math.min(100, Math.max(0, mark.percent ?? 0))}%` }}
             />
           </span>
           {mark.label.length > 0 && <span>{mark.label}</span>}
-          <span>{mark.percent}%</span>
-          {mark.left !== null && <span className="text-muted-foreground">· {mark.left}</span>}
+          {mark.percent !== null && <span>{mark.percent}%</span>}
+          {mark.left !== null && (
+            <span className="hidden text-muted-foreground xl:inline">· {mark.left}</span>
+          )}
         </span>
       ))}
 
@@ -61,7 +63,7 @@ export function UsageBar({ status, connectors, nowMs, open, details, onToggle }:
         <span
           data-quiet={status.usage}
           className={cn(
-            'truncate text-muted-foreground',
+            'hidden min-w-0 truncate text-muted-foreground lg:inline',
             status.usage === 'unread' && 'zt-breath',
           )}
         >
@@ -69,18 +71,26 @@ export function UsageBar({ status, connectors, nowMs, open, details, onToggle }:
         </span>
       )}
 
-      <span className="ml-auto flex min-w-0 flex-none items-center gap-4 text-muted-foreground">
+      <span className="ml-auto flex min-w-0 items-center gap-4 text-muted-foreground">
         {session.map((cell) => (
           <span
             key={cell.key}
             data-session-cell={cell.key}
-            className={cn('flex-none truncate', cell.warn && 'text-foreground')}
+            className={cn('min-w-0 truncate', cell.warn ? 'text-foreground' : 'hidden lg:inline')}
           >
             {cell.text}
           </span>
         ))}
-        {chat !== null && <span data-chat>{chat}</span>}
-        {spend !== null && <span data-spend>{spend}</span>}
+        {chat !== null && (
+          <span data-chat className="hidden flex-none md:inline">
+            {chat}
+          </span>
+        )}
+        {spend !== null && (
+          <span data-spend className="hidden flex-none md:inline">
+            {spend}
+          </span>
+        )}
       </span>
 
       <Popover open={open} onOpenChange={onToggle}>

@@ -51,26 +51,41 @@ export function AgentTile({
       }}
     >
       <div data-presence={closing ? 'leaving' : 'arriving'} style={presenceStyle(closing, delayMs)}>
-      <Surface style={{ height: '100%', padding: 18 }}>
-        {session.status === 'waiting' && (
-          <div data-waiting style={waitingMarkStyle(attention)} />
-        )}
-        <div style={bodyStyle}>
-          <Headline session={session} withText={!transcriptOpen} onDismiss={onDismiss} />
-          {transcriptOpen && <Transcript entries={session.transcript} />}
-          {!sweep && (
-            <div style={footerStyle}>
-              {live && now === null && (session.doing ?? '').length > 0 && (
-                <div data-doing style={doingStyle}>
-                  {session.doing}
+        <Surface style={{ height: '100%', padding: 18 }}>
+          {session.status === 'waiting' && <div data-waiting style={waitingMarkStyle(attention)} />}
+          <div style={bodyStyle}>
+            {transcriptOpen && (
+              <Headline session={session} withText={false} onDismiss={onDismiss} />
+            )}
+            {sweep ? (
+              transcriptOpen ? (
+                <Transcript entries={session.transcript} />
+              ) : (
+                <Headline session={session} onDismiss={onDismiss} />
+              )
+            ) : (
+              <div data-split style={splitStyle}>
+                <div data-said style={paneStyle}>
+                  {transcriptOpen ? (
+                    <Transcript entries={session.transcript} />
+                  ) : (
+                    <Headline session={session} onDismiss={onDismiss} />
+                  )}
                 </div>
-              )}
-              <CallLog calls={session.stream} live={live} nowMs={nowMs} />
-            </div>
-          )}
-          {!sweep && <Gauge session={session} nowMs={nowMs} />}
-        </div>
-      </Surface>
+                <div data-log style={logPaneStyle}>
+                  {session.stream.length > 0 && <span style={logHeadStyle}>What they did</span>}
+                  {live && now === null && (session.doing ?? '').length > 0 && (
+                    <div data-doing style={doingStyle}>
+                      {session.doing}
+                    </div>
+                  )}
+                  <CallLog calls={session.stream} live={live} nowMs={nowMs} />
+                </div>
+              </div>
+            )}
+            {!sweep && <Gauge session={session} nowMs={nowMs} />}
+          </div>
+        </Surface>
       </div>
     </div>
   )
@@ -87,17 +102,40 @@ function presenceStyle(closing: boolean, delayMs: number): CSSProperties {
   }
 }
 
-const footerStyle: CSSProperties = {
-  marginTop: 14,
-  marginBottom: 4,
-  flex: '0 1 auto',
-  maxHeight: '45%',
+const splitStyle: CSSProperties = {
+  display: 'grid',
+  gridTemplateRows: 'minmax(0, 65fr) minmax(0, 35fr)',
+  gap: 14,
+  flex: '1 1 auto',
   minHeight: 0,
+  marginTop: 4,
+}
+
+const paneStyle: CSSProperties = {
   display: 'flex',
   flexDirection: 'column',
-  gap: 6,
+  minHeight: 0,
   minWidth: 0,
+  overflow: 'hidden',
 }
+
+const logPaneStyle: CSSProperties = {
+  display: 'flex',
+  flexDirection: 'column',
+  justifyContent: 'flex-end',
+  gap: 8,
+  minHeight: 0,
+  minWidth: 0,
+  overflow: 'hidden',
+}
+
+const logHeadStyle: CSSProperties = {
+  flex: '0 0 auto',
+  fontSize: 11.5,
+  letterSpacing: '0.08em',
+  color: 'var(--color-muted-foreground)',
+}
+
 
 const doingStyle: CSSProperties = {
   flex: '0 0 auto',

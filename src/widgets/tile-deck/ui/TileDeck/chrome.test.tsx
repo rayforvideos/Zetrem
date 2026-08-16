@@ -8,6 +8,8 @@ function deck(): string {
     <TileDeck
       state={{ kind: 'solo' }}
       sessions={[]}
+      face="onigiri"
+      name="Ray"
       viewport={{ w: 1440, h: 900 }}
       nowMs={0}
       terminal={<div>내용</div>}

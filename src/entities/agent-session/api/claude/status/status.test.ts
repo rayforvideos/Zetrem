@@ -204,3 +204,28 @@ describe('the status parser: the instrument layer', () => {
     expect(fromStatusLine({ type: 'stream_event', event: { type: 'message_start' } })).toEqual([])
   })
 })
+
+describe('a rate limit event as the CLI actually sends it', () => {
+  it('reports no share when the event carries none, rather than reporting none used', () => {
+    const [event] = fromStatusLine({
+      type: 'rate_limit_event',
+      rate_limit_info: {
+        status: 'allowed',
+        resetsAt: 1786831800,
+        rateLimitType: 'five_hour',
+        overageStatus: 'rejected',
+        isUsingOverage: false,
+      },
+    })
+    expect(event).toEqual({
+      type: 'limit',
+      limit: {
+        kind: 'five_hour',
+        utilization: null,
+        resetsAtMs: 1786831800000,
+        overage: false,
+        status: 'allowed',
+      },
+    })
+  })
+})

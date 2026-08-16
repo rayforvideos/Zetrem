@@ -11,8 +11,6 @@ export function spokeAtMs(turns: Turn[]): number {
   return 0
 }
 
-const READ_WINDOW_MS = 120_000
-
 function backAtMs(session: AgentSession): number {
   return session.lastSeenAtMs ?? session.startedAtMs
 }
@@ -22,8 +20,8 @@ function crewLine(session: AgentSession): { name: string; subagentType: string; 
   return { name: personaOf(kind).name, subagentType: kind, doing: session.headline.trim() }
 }
 
-export function awayOf(sessions: AgentSession[], spokeAtMs = 0, nowMs = Date.now()): Away | null {
-  const out = sessions.filter((one) => one.status === 'working')
+export function awayOf(sessions: AgentSession[], spokeAtMs = 0): Away | null {
+  const out = sessions.filter((one) => one.status === 'working' || one.status === 'waiting')
   const first = out[0]
   if (first !== undefined) {
     return {
@@ -38,8 +36,8 @@ export function awayOf(sessions: AgentSession[], spokeAtMs = 0, nowMs = Date.now
   const back = sessions.filter(
     (one) =>
       one.status !== 'working' &&
+      one.status !== 'waiting' &&
       backAtMs(one) > spokeAtMs &&
-      nowMs - backAtMs(one) < READ_WINDOW_MS &&
       one.headline.trim().length > 0,
   )
   const said = back[0]

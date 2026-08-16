@@ -46,3 +46,30 @@ describe('pressing: which limit is the one to worry about', () => {
     expect(pressing([fuller, overage])?.kind).toBe('seven_day')
   })
 })
+
+describe('a limit event that carries no share', () => {
+  const five = (over: Partial<RateLimit> = {}): RateLimit => ({
+    kind: 'five_hour',
+    utilization: 0.47,
+    resetsAtMs: 1000,
+    overage: false,
+    status: 'allowed',
+    ...over,
+  })
+
+  it('keeps the share it already had rather than reading it as nothing used', () => {
+    const held = withLimit([], five())
+    const again = withLimit(held, five({ utilization: null, resetsAtMs: 2000 }))
+    expect(again[0]?.utilization).toBe(0.47)
+    expect(again[0]?.resetsAtMs).toBe(2000)
+  })
+
+  it('takes a real share over the one it was holding', () => {
+    const held = withLimit([], five())
+    expect(withLimit(held, five({ utilization: 0.62 }))[0]?.utilization).toBe(0.62)
+  })
+
+  it('has nothing to keep the first time, and says so', () => {
+    expect(withLimit([], five({ utilization: null }))[0]?.utilization).toBeNull()
+  })
+})

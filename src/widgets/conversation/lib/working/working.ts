@@ -74,8 +74,8 @@ export function doingOf(turns: Turn[], nowMs = 0): Doing {
     if (back > 0) {
       const shape = shapeOf(tools.at(-1)!)
       const name = whoOf(shape)
-      const target = back > 1 ? `${back} reports` : name.length > 0 ? `${name}'s report` : 'the report'
-      return { verb: 'Reading', target, shape }
+      const target = back > 1 ? `${back} teammates` : name.length > 0 ? name : 'a teammate'
+      return { verb: 'Waiting on', target, shape }
     }
   }
 

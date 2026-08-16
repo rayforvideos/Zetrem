@@ -24,7 +24,7 @@ function session(overrides: Partial<AgentSession> = {}): AgentSession {
 describe('awayOf: what the one running the session is waiting on', () => {
   it('says nobody when the crew is idle and nothing came back since it last spoke', () => {
     expect(awayOf([])).toBeNull()
-    expect(awayOf([session({ status: 'done', lastSeenAtMs: 500 })], 900, 1000)).toBeNull()
+    expect(awayOf([session({ status: 'done', lastSeenAtMs: 500 })], 900)).toBeNull()
   })
 
   it('names the one who is out', () => {
@@ -46,27 +46,26 @@ describe('awayOf: what the one running the session is waiting on', () => {
   })
 
   it('holds the row while a report is back but has not been read', () => {
-    const away = awayOf([session({ status: 'reported', lastSeenAtMs: 4000 })], 2000, 5000)
+    const away = awayOf([session({ status: 'reported', lastSeenAtMs: 4000 })], 2000)
     expect(away?.verb).toBe('Reading')
     expect(away?.one).toBe("Explore's report")
     expect(away?.many).toBe('1 reports')
   })
 
   it('lets go once the answer that read it has begun', () => {
-    expect(awayOf([session({ status: 'reported', lastSeenAtMs: 4000 })], 9000, 10_000)).toBeNull()
+    expect(awayOf([session({ status: 'reported', lastSeenAtMs: 4000 })], 9000)).toBeNull()
   })
 
   it('prefers the ones still out over the ones already back', () => {
     const away = awayOf(
       [session({ id: 'a', status: 'reported', lastSeenAtMs: 4000 }), session({ id: 'b' })],
       2000,
-      5000,
     )
     expect(away?.verb).toBe('Waiting on')
   })
 
   it('says nothing about a teammate that never reported anything', () => {
-    expect(awayOf([session({ status: 'done', headline: '', lastSeenAtMs: 4000 })], 2000, 5000)).toBeNull()
+    expect(awayOf([session({ status: 'done', headline: '', lastSeenAtMs: 4000 })], 2000)).toBeNull()
   })
 })
 
@@ -84,10 +83,17 @@ describe('spokeAtMs: when the one running the session last began to answer', () 
   })
 })
 
-describe('a report nobody ever came back to read', () => {
-  it('stops claiming to read it after two minutes of silence', () => {
+describe('a report waiting however long the answer takes to begin', () => {
+  it('keeps saying it is reading, since the session is still there to read it', () => {
     const held = [session({ status: 'reported', lastSeenAtMs: 10_000 })]
-    expect(awayOf(held, 5000, 60_000)?.verb).toBe('Reading')
-    expect(awayOf(held, 5000, 200_000)).toBeNull()
+    expect(awayOf(held, 5000)?.verb).toBe('Reading')
+  })
+})
+
+describe('a teammate stuck on a question of yours', () => {
+  it('counts as out, because they are not coming back until you answer', () => {
+    const away = awayOf([session({ status: 'waiting' })], 0)
+    expect(away?.verb).toBe('Waiting on')
+    expect(away?.count).toBe(1)
   })
 })

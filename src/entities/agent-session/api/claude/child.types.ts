@@ -39,7 +39,7 @@ export type ChildTurnEvent =
       taskId: string
       doing: string
       lastTool: string
-      tokens: number
+      tokens: number | null
     }
   | {
       type: 'childStateKnown'

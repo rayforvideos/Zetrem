@@ -5,7 +5,7 @@ const SOURCE = { width: 720, height: 298 }
 
 export const WORDMARK_SIZE = {
   setup: 200,
-  signature: 100,
+  signature: 200,
 } as const
 
 export const WORDMARK_SIGNATURE_OPACITY = 'text-muted-foreground'

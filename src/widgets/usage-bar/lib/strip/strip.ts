@@ -26,14 +26,15 @@ function leftLabel(limit: StatusState['limits'][number], nowMs: number): string 
 
 export function marksOfStatus(status: StatusState, nowMs = Date.now()): Mark[] {
   return status.limits.map((limit) => {
-    const percent = Math.round(limit.utilization * 100)
+    const percent = limit.utilization === null ? null : Math.round(limit.utilization * 100)
+    const share = percent === null ? 'share unknown' : `${percent}% used`
     return {
       key: limit.kind,
       label: limitTag(limit.kind),
       percent,
       left: leftLabel(limit, nowMs),
-      hint: `${limitKindLabel(limit.kind)} · ${percent}% used · ${resetHint(limit)}`,
-      warn: limit.status !== 'allowed' || limit.overage || limit.utilization >= WARN,
+      hint: `${limitKindLabel(limit.kind)} · ${share} · ${resetHint(limit)}`,
+      warn: limit.status !== 'allowed' || limit.overage || (limit.utilization ?? 0) >= WARN,
     }
   })
 }

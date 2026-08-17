@@ -35,7 +35,7 @@ const full: StatusState = {
 
 describe('StatusDrawer', () => {
   it('says everything about who this session is', () => {
-    const html = renderToStaticMarkup(<StatusDrawer connectors={[]} checking={false} onRecheck={() => {}} statusState={full} onUpdate={() => {}} updating={false} />)
+    const html = renderToStaticMarkup(<StatusDrawer appVersion={null} connectors={[]} checking={false} onRecheck={() => {}} statusState={full} onUpdate={() => {}} updating={false} />)
     expect(html).toContain('f77f771b')
     expect(html).toContain('/Users/sam/workspace/zetrem')
     expect(html).toContain('claude-opus-5[1m]')
@@ -43,7 +43,7 @@ describe('StatusDrawer', () => {
   })
 
   it('breaks out the four token kinds beside context and cost', () => {
-    const html = renderToStaticMarkup(<StatusDrawer connectors={[]} checking={false} onRecheck={() => {}} statusState={full} onUpdate={() => {}} updating={false} />)
+    const html = renderToStaticMarkup(<StatusDrawer appVersion={null} connectors={[]} checking={false} onRecheck={() => {}} statusState={full} onUpdate={() => {}} updating={false} />)
     expect(html).toContain('76,424')
     expect(html).toContain('14,862')
     expect(html).toContain('261')
@@ -51,7 +51,7 @@ describe('StatusDrawer', () => {
   })
 
   it('lists every MCP server and marks the ones needing sign-in', () => {
-    const html = renderToStaticMarkup(<StatusDrawer connectors={[]} checking={false} onRecheck={() => {}} statusState={full} onUpdate={() => {}} updating={false} />)
+    const html = renderToStaticMarkup(<StatusDrawer appVersion={null} connectors={[]} checking={false} onRecheck={() => {}} statusState={full} onUpdate={() => {}} updating={false} />)
     expect(html).toContain('playwright')
     expect(html, '제목이 이미 아는 접두사는 빼고 이름만 보인다').toContain('>Notion<')
     expect(html).not.toContain('claude.ai Notion')
@@ -59,21 +59,21 @@ describe('StatusDrawer', () => {
   })
 
   it('says the version and who manages it', () => {
-    const html = renderToStaticMarkup(<StatusDrawer connectors={[]} checking={false} onRecheck={() => {}} statusState={full} onUpdate={() => {}} updating={false} />)
+    const html = renderToStaticMarkup(<StatusDrawer appVersion={null} connectors={[]} checking={false} onRecheck={() => {}} statusState={full} onUpdate={() => {}} updating={false} />)
     expect(html).toContain('2.1.231')
     expect(html).toContain('Homebrew')
     expect(html).toContain('SessionStart:startup')
   })
 
   it('says nothing about updating while the version in hand is the latest', () => {
-    const calm = renderToStaticMarkup(<StatusDrawer connectors={[]} checking={false} onRecheck={() => {}} statusState={full} onUpdate={() => {}} updating={false} />)
+    const calm = renderToStaticMarkup(<StatusDrawer appVersion={null} connectors={[]} checking={false} onRecheck={() => {}} statusState={full} onUpdate={() => {}} updating={false} />)
     expect(calm).not.toContain('update available')
     expect(calm).not.toContain('brew upgrade')
   })
 
   it('hands a Homebrew install its own command rather than a button that will not do it', () => {
     const stale = { ...full, update: { current: '2.1.231', latest: '2.1.240', managedBy: 'Homebrew' } }
-    const html = renderToStaticMarkup(<StatusDrawer connectors={[]} checking={false} onRecheck={() => {}} statusState={stale} onUpdate={() => {}} updating={false} />)
+    const html = renderToStaticMarkup(<StatusDrawer appVersion={null} connectors={[]} checking={false} onRecheck={() => {}} statusState={stale} onUpdate={() => {}} updating={false} />)
     expect(html).toContain('update available: 2.1.240')
     expect(html).toContain('brew upgrade claude-code@latest')
     expect(html).not.toContain('>Update<')
@@ -81,14 +81,14 @@ describe('StatusDrawer', () => {
 
   it('keeps the button for an install nothing else owns', () => {
     const stale = { ...full, update: { current: '2.1.231', latest: '2.1.240', managedBy: null } }
-    const html = renderToStaticMarkup(<StatusDrawer connectors={[]} checking={false} onRecheck={() => {}} statusState={stale} onUpdate={() => {}} updating={false} />)
+    const html = renderToStaticMarkup(<StatusDrawer appVersion={null} connectors={[]} checking={false} onRecheck={() => {}} statusState={stale} onUpdate={() => {}} updating={false} />)
     expect(html).toContain('>Update<')
     expect(html).not.toContain('brew upgrade')
   })
 
   it('offers no update when the local build is newer, comparing numbers and not strings', () => {
     const newerLocal = { ...full, update: { current: '2.2.0', latest: '2.1.240', managedBy: 'Homebrew' } }
-    const html = renderToStaticMarkup(<StatusDrawer connectors={[]} checking={false} onRecheck={() => {}} statusState={newerLocal} onUpdate={() => {}} updating={false} />)
+    const html = renderToStaticMarkup(<StatusDrawer appVersion={null} connectors={[]} checking={false} onRecheck={() => {}} statusState={newerLocal} onUpdate={() => {}} updating={false} />)
     expect(html).not.toContain('>Update<')
     expect(html).not.toContain('brew upgrade')
     expect(html).not.toContain('새 버전')
@@ -96,7 +96,7 @@ describe('StatusDrawer', () => {
 
   it('leaves out a group it knows nothing about', () => {
     const bare: StatusState = { ...full, session: null, hooks: [], update: null }
-    const html = renderToStaticMarkup(<StatusDrawer connectors={[]} checking={false} onRecheck={() => {}} statusState={bare} onUpdate={() => {}} updating={false} />)
+    const html = renderToStaticMarkup(<StatusDrawer appVersion={null} connectors={[]} checking={false} onRecheck={() => {}} statusState={bare} onUpdate={() => {}} updating={false} />)
     expect(html).not.toContain('claude-opus-5')
     expect(html).not.toContain('SessionStart')
   })
@@ -109,7 +109,7 @@ describe('StatusDrawer', () => {
       update: null,
     }
     const html = renderToStaticMarkup(
-      <StatusDrawer connectors={[]} checking={false} onRecheck={() => {}} statusState={noEnvironment} onUpdate={() => {}} updating={false} />,
+      <StatusDrawer appVersion={null} connectors={[]} checking={false} onRecheck={() => {}} statusState={noEnvironment} onUpdate={() => {}} updating={false} />,
     )
     expect(html).not.toContain('Homebrew')
     expect(html).not.toContain('SessionStart')
@@ -122,7 +122,7 @@ describe('StatusDrawer', () => {
       session: { ...full.session!, id: '', cwd: '', permissionMode: '', outputStyle: '', apiKeySource: '' },
     }
     const html = renderToStaticMarkup(
-      <StatusDrawer connectors={[]} checking={false} onRecheck={() => {}} statusState={emptyFields} onUpdate={() => {}} updating={false} />,
+      <StatusDrawer appVersion={null} connectors={[]} checking={false} onRecheck={() => {}} statusState={emptyFields} onUpdate={() => {}} updating={false} />,
     )
     expect(html).not.toContain('자리')
     expect(html).not.toContain('권한 모드')
@@ -132,12 +132,12 @@ describe('StatusDrawer', () => {
   })
 
   it('leaves the conversation most of the window, however much it has to say', () => {
-    const html = renderToStaticMarkup(<StatusDrawer connectors={[]} checking={false} onRecheck={() => {}} statusState={full} onUpdate={() => {}} updating={false} />)
+    const html = renderToStaticMarkup(<StatusDrawer appVersion={null} connectors={[]} checking={false} onRecheck={() => {}} statusState={full} onUpdate={() => {}} updating={false} />)
     expect(html).toContain('max-h-[min(58vh,560px)]')
   })
 
   it('scrolls its own body rather than growing past what it was given', () => {
-    const html = renderToStaticMarkup(<StatusDrawer connectors={[]} checking={false} onRecheck={() => {}} statusState={full} onUpdate={() => {}} updating={false} />)
+    const html = renderToStaticMarkup(<StatusDrawer appVersion={null} connectors={[]} checking={false} onRecheck={() => {}} statusState={full} onUpdate={() => {}} updating={false} />)
     expect(html).toContain('overflow-y-auto')
   })
 })
@@ -146,6 +146,7 @@ describe('the connector list is not the one it saw at startup', () => {
   it('shows the worse of the two, since a connector this session never got is one you cannot use', () => {
     const html = renderToStaticMarkup(
       <StatusDrawer
+        appVersion={null}
         connectors={[{ name: 'claude.ai Notion', where: 'https://mcp.notion.com/mcp', state: 'connected' }]}
         checking={false}
         onRecheck={() => {}}
@@ -160,7 +161,7 @@ describe('the connector list is not the one it saw at startup', () => {
 
   it('offers a way to ask again, since signing in happens outside the app', () => {
     const html = renderToStaticMarkup(
-      <StatusDrawer connectors={[]} checking={false} onRecheck={() => {}} statusState={full} onUpdate={() => {}} updating={false} />,
+      <StatusDrawer appVersion={null} connectors={[]} checking={false} onRecheck={() => {}} statusState={full} onUpdate={() => {}} updating={false} />,
     )
     expect(html).toContain('Recheck')
   })

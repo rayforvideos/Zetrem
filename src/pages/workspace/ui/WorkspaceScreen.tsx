@@ -103,6 +103,14 @@ export function WorkspaceScreen() {
   })
 
   const [drawerOpen, setDrawerOpen] = useState(false)
+  const [appVersion, setAppVersion] = useState<string | null>(null)
+
+  useEffect(() => {
+    void window.desk
+      .appVersion()
+      .then(setAppVersion)
+      .catch(() => undefined)
+  }, [])
   const shelf = usePlugins(gate === 'setup')
   const [shelfTab, setShelfTab] = useState('installed')
   const attach = useAttachments()
@@ -232,10 +240,6 @@ export function WorkspaceScreen() {
                     canStart: auth.auth?.state === 'signed-in' && project?.path != null,
                     onStart: panel.start,
                     onCancel: panel.cancel,
-                    onTour: () => {
-                      panel.cancel()
-                      update({ onboarded: false, hintsSeen: [] })
-                    },
                   }}
                   notice={settingsFailure ?? projectFailure}
                 />
@@ -403,6 +407,7 @@ export function WorkspaceScreen() {
             onToggle={() => setDrawerOpen((was) => !was)}
             details={
               <StatusDrawer
+                appVersion={appVersion}
                 statusState={status}
                 connectors={wires.connectors}
                 checking={wires.loading}

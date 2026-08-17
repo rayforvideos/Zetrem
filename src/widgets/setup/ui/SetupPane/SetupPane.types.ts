@@ -36,7 +36,6 @@ export type Actions = {
   canStart: boolean
   onStart(): void
   onCancel(): void
-  onTour(): void
 }
 
 export type You = {

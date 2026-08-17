@@ -58,7 +58,6 @@ function pane(over: Partial<Flat> = {}): string {
         canStart: flat.canStart,
         onStart: () => {},
         onCancel: () => {},
-      onTour: () => {},
       }}
       notice={flat.notice}
     />,
@@ -168,15 +167,5 @@ describe('SetupPane: everything to settle before starting, on one screen', () =>
   it('writes what the choice means underneath, since a name does not say what changes', () => {
     expect(pane({ permissionMode: 'bypass' })).toContain('Never asks')
     expect(pane({ model: 'haiku' })).toContain('Fast and cheap')
-  })
-})
-
-describe('the welcome can be watched again', () => {
-  it('offers it once setup has been done, since there is a tour to replay', () => {
-    expect(pane({ reopened: true })).toContain('Show the welcome again')
-  })
-
-  it('keeps it out of the first run, where the tour has only just been seen', () => {
-    expect(pane({ reopened: false })).not.toContain('Show the welcome again')
   })
 })

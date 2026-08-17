@@ -1,5 +1,5 @@
-import { relative, resolve } from 'node:path'
-import { BrowserWindow, app, dialog, session, shell } from 'electron'
+import { join, relative, resolve } from 'node:path'
+import { BrowserWindow, app, dialog, nativeImage, session, shell } from 'electron'
 import { CHROME_TOP, CONTROL_SYMBOL, GROUND, MIN_WINDOW, TRAFFIC_LIGHT } from '@/shared/config/theme'
 import { killAllAgents, registerAgentHost } from './agent-host'
 import { registerAttachments } from './attachments'
@@ -18,12 +18,36 @@ import { loadTroubleLine, troublePage } from './window-trouble/window-trouble'
 
 const isMac = process.platform === 'darwin'
 
+app.setName('Zetrem')
+
 function dropChildren(): void {
   killAllAgents()
   killAllProbes()
 }
 
 if (process.env.ZT_INSPECT) app.commandLine.appendSwitch('remote-debugging-port', process.env.ZT_INSPECT)
+
+function iconPath(): string {
+  return app.isPackaged
+    ? join(process.resourcesPath, 'icon.png')
+    : join(app.getAppPath(), 'resources', 'icon.png')
+}
+
+function wearTheName(): void {
+  app.setAboutPanelOptions({
+    applicationName: 'Zetrem',
+    applicationVersion: app.getVersion(),
+    version: '',
+    copyright: 'Runs on Claude Code',
+  })
+}
+
+function wearTheIcon(): void {
+  if (!isMac || app.dock === undefined) return
+  const art = nativeImage.createFromPath(iconPath())
+  if (art.isEmpty()) return
+  app.dock.setIcon(art)
+}
 
 function createWindow(): void {
   const win = new BrowserWindow({
@@ -146,6 +170,7 @@ if (!primary) {
   registerSessionProbe()
   registerTranscriptStore()
   registerPlugins()
+  handle('app:version', () => app.getVersion())
 
   app
     .whenReady()
@@ -154,6 +179,8 @@ if (!primary) {
         grant(false),
       )
       session.defaultSession.setPermissionCheckHandler(() => false)
+      wearTheIcon()
+      wearTheName()
       createWindow()
       app.on('activate', () => {
         if (BrowserWindow.getAllWindows().length === 0) createWindow()

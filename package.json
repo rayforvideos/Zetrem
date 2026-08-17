@@ -2,20 +2,22 @@
   "name": "zetrem",
   "productName": "Zetrem",
   "description": "A desktop app for running a team of Claude Code agents",
+  "author": "Sangjun Park",
   "license": "UNLICENSED",
-  "version": "0.1.0",
+  "version": "1.0.0-beta.1",
   "private": true,
   "type": "module",
   "main": "out/main/index.js",
   "scripts": {
+    "predev": "node scripts/name-dev-app.mjs",
     "dev": "electron-vite dev",
     "build": "electron-vite build",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
-    "package": "electron-vite build && electron-builder --config electron-builder.json",
-    "package:mac": "electron-vite build && electron-builder --mac --config electron-builder.json",
-    "package:win": "electron-vite build && electron-builder --win --config electron-builder.json"
+    "package": "electron-vite build && electron-builder --config electron-builder.config.cjs",
+    "package:mac": "electron-vite build && electron-builder --mac --config electron-builder.config.cjs",
+    "package:win": "electron-vite build && electron-builder --win --config electron-builder.config.cjs"
   },
   "devDependencies": {
     "@tailwindcss/vite": "^4.3.3",

@@ -12,6 +12,7 @@ contextBridge.exposeInMainWorld('desk', {
   removeAgentDef: (name: string): Promise<void> => ipcRenderer.invoke('agents:remove', name),
   replaceAgentDef: (draft: unknown, previousName: string): Promise<unknown> =>
     ipcRenderer.invoke('agents:replace', draft, previousName),
+  appVersion: (): Promise<unknown> => ipcRenderer.invoke('app:version'),
   readSettings: (): Promise<unknown> => ipcRenderer.invoke('settings:read'),
   writeSettings: (next: unknown): Promise<unknown> => ipcRenderer.invoke('settings:write', next),
   pickKnowledge: (): Promise<unknown> => ipcRenderer.invoke('agents:pickKnowledge'),

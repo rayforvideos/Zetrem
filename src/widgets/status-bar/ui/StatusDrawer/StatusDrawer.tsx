@@ -9,6 +9,7 @@ import { callableAgents } from '../../lib/callable/callable'
 import { reachable } from '../../lib/format/format'
 
 type StatusDrawerProps = {
+  appVersion: string | null
   statusState: StatusState
   connectors: Connector[]
   checking: boolean
@@ -59,6 +60,7 @@ function known(value: string): string | null {
 }
 
 export function StatusDrawer({
+  appVersion,
   statusState,
   connectors,
   checking,
@@ -73,7 +75,10 @@ export function StatusDrawer({
   const byHand = updateCommand(update?.managedBy ?? null)
   const hasRun = cost.usd > 0 || context.used > 0
   const hasEnvironment =
-    Boolean(update?.current) || hooks.length > 0 || (session?.memoryPaths.length ?? 0) > 0
+    appVersion !== null ||
+    Boolean(update?.current) ||
+    hooks.length > 0 ||
+    (session?.memoryPaths.length ?? 0) > 0
 
   return (
     <div data-status-drawer className="flex max-h-[min(58vh,560px)] min-h-0 flex-col">
@@ -163,6 +168,7 @@ export function StatusDrawer({
 
         {hasEnvironment && (
           <Part title="Environment">
+            {appVersion !== null && <Row label="Zetrem">{appVersion}</Row>}
             {update?.current && (
               <Row label="CLI">
                 <span className="flex flex-wrap items-center gap-2">

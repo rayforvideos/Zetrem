@@ -3,7 +3,6 @@ import type { Person, RosterLock } from './roster-lock.types'
 export const ORCHESTRATOR = 'zetrem'
 
 const ELSEWHERE = [
-  'Task',
   'Workflow',
   'SendMessage',
   'ListAgents',
@@ -14,11 +13,7 @@ const ELSEWHERE = [
   'RemoteTrigger',
 ]
 
-export function ownWork(name: string): boolean {
-  return !ELSEWHERE.includes(name) && !name.startsWith('Agent(')
-}
-
-type Spec = Record<string, { description: string; prompt: string; model?: string; tools?: string[] }>
+type Spec = Record<string, { description: string; prompt: string; model?: string }>
 
 export function peopleSpec(people: Person[]): Spec {
   const spec: Spec = {}
@@ -39,20 +34,23 @@ export function agentsArgs(
   orchestratorPrompt: string,
 ): string[] {
   const spec = peopleSpec(people)
-  const names = Object.keys(spec)
-  const callable = [...names, ...(lock?.alsoCallable ?? [])]
-  const locking = lock !== null && lock.knownTools.length > 0
 
-  if (locking) {
-    const tools = lock.knownTools.filter(ownWork)
-    spec[ORCHESTRATOR] = {
-      description: 'The orchestrator Zetrem runs',
-      prompt: orchestratorPrompt,
-      tools: callable.length > 0 ? [...tools, `Agent(${callable.join(', ')})`] : tools,
-    }
+  if (lock === null) {
+    return Object.keys(spec).length === 0 ? [] : ['--agents', JSON.stringify(spec)]
   }
 
-  if (Object.keys(spec).length === 0) return []
-  const args = ['--agents', JSON.stringify(spec)]
-  return locking ? [...args, '--agent', ORCHESTRATOR] : args
+  spec[ORCHESTRATOR] = {
+    description: 'The orchestrator Zetrem runs',
+    prompt: orchestratorPrompt,
+  }
+
+  const barred = [...ELSEWHERE, ...lock.blockedAgents.map((name) => `Agent(${name})`)]
+  return [
+    '--agents',
+    JSON.stringify(spec),
+    '--agent',
+    ORCHESTRATOR,
+    '--disallowedTools',
+    barred.join(','),
+  ]
 }

@@ -9,7 +9,6 @@ export { resumedAgent } from './api/claude/resumed/resumed'
 export type { ResumedAgent } from './api/claude/resumed/resumed.types'
 export { fromStatusLine } from './api/claude/status/status'
 export type {
-  Counts,
   McpServer,
   RateLimit,
   ResultMetrics,
@@ -36,7 +35,7 @@ export { roster } from './model/roster/roster'
 export type { RosterMember, RosterState } from './model/roster/roster.types'
 export type { Persona } from './model/persona/persona.types'
 export { statusStore } from './model/status-store/status-store'
-export type { HookRun, StatusState, UpdateInfo } from './model/status-store/status-store.types'
+export type { StatusState, UpdateInfo } from './model/status-store/status-store.types'
 export { updateCommand, isOutdated, managerOf } from './model/cli-update/cli-update'
 export { pressing, withLimit } from './model/limits/limits'
 export { readUsage } from './model/usage-report/usage-report'

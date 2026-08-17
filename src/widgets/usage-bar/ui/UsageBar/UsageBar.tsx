@@ -13,18 +13,19 @@ import { chatLine, marksOfStatus, quietLine, spendLine } from '../../lib/strip/s
 type UsageBarProps = {
   status: StatusState
   connectors: Connector[]
+  checked: boolean
   nowMs: number
   open: boolean
   details: ReactNode
   onToggle(): void
 }
 
-export function UsageBar({ status, connectors, nowMs, open, details, onToggle }: UsageBarProps) {
+export function UsageBar({ status, connectors, checked, nowMs, open, details, onToggle }: UsageBarProps) {
   const marks = marksOfStatus(status, nowMs)
   const chat = chatLine(status)
   const spend = spendLine(status)
   const quiet = quietLine(status)
-  const session = cells(status, connectors)
+  const session = cells(status, connectors, checked)
 
   return (
     <footer

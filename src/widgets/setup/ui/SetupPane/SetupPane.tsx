@@ -1,4 +1,5 @@
 import { useEffect } from 'react'
+import { startBlocker } from '../../lib/start-blocker/start-blocker'
 import { MODELS, PERMISSION_MODES } from '@/entities/agent-session'
 import type { ModelChoice, PermissionMode } from '@/entities/agent-session'
 import { Alert, AlertDescription, AlertTitle } from '@/shared/ui/alert'
@@ -23,6 +24,8 @@ export function SetupPane({
   notice,
 }: SetupPaneProps) {
   const { reopened, onCancel } = actions
+  const blocker = startBlocker(actions.signedIn, actions.hasProject)
+  const canStart = blocker === null
 
   useEffect(() => {
     if (!reopened) return undefined
@@ -83,17 +86,15 @@ export function SetupPane({
 
       <div data-actions className="zt-veil-up flex-none bg-background">
         <div className="mx-auto flex w-full max-w-[560px] flex-wrap items-center justify-end gap-3 py-4">
-          {!actions.canStart && (
-            <span className="mr-auto text-sm text-muted-foreground">
-              Set your account and project first
-            </span>
+          {blocker !== null && (
+            <span className="mr-auto text-sm text-muted-foreground">{blocker}</span>
           )}
           {actions.reopened && (
             <Button variant="ghost" onClick={actions.onCancel} className="rounded-full">
               Cancel
             </Button>
           )}
-          <Button onClick={actions.onStart} disabled={!actions.canStart} className="rounded-full">
+          <Button onClick={actions.onStart} disabled={!canStart} className="rounded-full">
             {actions.reopened ? 'Done' : 'Start'}
           </Button>
         </div>

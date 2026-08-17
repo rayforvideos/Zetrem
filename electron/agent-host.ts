@@ -11,13 +11,13 @@ import { claudeBin, loginPath } from './login-path/login-path'
 import { exitReason, startTrouble } from './exit-reason/exit-reason'
 import { recallProject } from './project-memory'
 import { handle, on } from './ipc/ipc'
+import { lineReader } from './line-reader/line-reader'
 import { killTree, killTreeSync } from './kill-tree/kill-tree'
 import { tell } from './tell/tell'
 import { killAllProbes } from './session-probe'
 
 const agents = new Map<string, ChildProcessWithoutNullStreams | 'starting'>()
 
-const LINE_BUFFER_MAX = 1_000_000
 
 type Picture = { mediaType: string | null; data: string | null }
 
@@ -91,26 +91,23 @@ export function registerAgentHost(): void {
     }
     agents.set(id, child)
     child.stdin.on('error', () => undefined)
+    child.stdout.setEncoding('utf8')
+    child.stderr.setEncoding('utf8')
     if (!sender.isDestroyed()) sender.send('agent:event', { id, kind: 'workspace', cwd: workspace })
 
-    let buffer = ''
-    child.stdout.on('data', (chunk: Buffer) => {
+    const read = lineReader()
+    child.stdout.on('data', (chunk: string) => {
       if (sender.isDestroyed()) {
         child.kill()
         return
       }
-      buffer += chunk.toString('utf8')
-      if (buffer.length > LINE_BUFFER_MAX) buffer = buffer.slice(-LINE_BUFFER_MAX)
-      const lines = buffer.split('\n')
-      buffer = lines.pop() ?? ''
-      for (const line of lines) {
-        if (line.trim().length === 0) continue
+      for (const line of read.take(chunk)) {
         sender.send('agent:event', { id, kind: 'line', line })
       }
     })
     let lastError = ''
-    child.stderr.on('data', (chunk: Buffer) => {
-      lastError = chunk.toString('utf8').slice(-2000)
+    child.stderr.on('data', (chunk: string) => {
+      lastError = chunk.slice(-2000)
     })
     child.on('exit', (code) => {
       agents.delete(id)

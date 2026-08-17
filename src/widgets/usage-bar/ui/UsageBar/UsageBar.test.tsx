@@ -14,15 +14,13 @@ function state(overrides: Partial<StatusState> = {}): StatusState {
       lastTurnUsd: 0.04,
       tokens: { in: 6, out: 261, cacheRead: 76424, cacheCreate: 14862 },
       durationMs: 10485,
-      ttftMs: 2352,
-      turns: 3,
+      turns: 3
     },
     limits: [],
-    hooks: [],
     update: { current: '2.1.231', latest: '2.1.231', managedBy: 'Homebrew' },
     activity: 'idle',
     ...overrides,
-    usageAtMs: overrides.usageAtMs ?? null,
+    usageAtMs: overrides.usageAtMs ?? null
   }
 }
 
@@ -30,7 +28,7 @@ const NOW = 1_700_000_000_000
 
 function html(status: StatusState, open = false): string {
   return renderToStaticMarkup(
-    <UsageBar status={status} connectors={[]} nowMs={NOW} open={open} details={null} onToggle={() => {}} />,
+    <UsageBar status={status} connectors={[]} checked nowMs={NOW} open={open} details={null} onToggle={() => {}} />,
   )
 }
 
@@ -43,7 +41,7 @@ describe('UsageBar: one strip at the foot of the window', () => {
     const bare = state({
       context: { used: 0, window: null },
       cost: { ...state().cost, usd: 0 },
-      update: null,
+      update: null
     })
     const out = html(bare)
     expect(out).not.toContain('Context')
@@ -74,9 +72,9 @@ describe('UsageBar: one strip at the foot of the window', () => {
           utilization: 0.26,
           status: 'allowed',
           resetsAtMs: 0,
-          overage: false,
-        } as StatusState['limits'][number],
-      ],
+          overage: false
+        } as StatusState['limits'][number]
+      ]
     })
     expect(html(limited)).toContain('26%')
   })
@@ -92,9 +90,9 @@ describe('the limits say when they come back, not only how full they are', () =>
             utilization: 0.33,
             resetsAtMs: NOW + 4 * 3_600_000 + 12 * 60_000,
             overage: false,
-            status: 'allowed',
-          },
-        ],
+            status: 'allowed'
+          }
+        ]
       }),
     )
     expect(out).toContain('4h 12m left')
@@ -105,8 +103,8 @@ describe('the limits say when they come back, not only how full they are', () =>
     const out = html(
       state({
         limits: [
-          { kind: 'five_hour', utilization: 0.33, resetsAtMs: 0, overage: false, status: 'allowed' },
-        ],
+          { kind: 'five_hour', utilization: 0.33, resetsAtMs: 0, overage: false, status: 'allowed' }
+        ]
       }),
     )
     expect(out).toContain('33%')

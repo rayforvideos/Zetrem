@@ -12,16 +12,11 @@ const woke: ClaudeTurnEvent = {
     cwd: '/w',
     model: 'sonnet',
     permissionMode: 'default',
-    outputStyle: 'default',
     cliVersion: '2.0.0',
-    apiKeySource: 'none',
-    fastMode: { state: 'off', reason: null },
     mcp: [],
     tools: [],
-    agents: [],
-    counts: { tools: 0, commands: 0, agents: 0, skills: 0, plugins: 0 },
-    memoryPaths: [],
-  },
+    agents: []
+  }
 }
 
 describe('stirred: the session woke up on its own', () => {

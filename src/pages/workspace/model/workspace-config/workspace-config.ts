@@ -1,4 +1,4 @@
-import { allowedStock, stockAgents } from '@/entities/agent-session'
+import { ORCHESTRATOR, allowedStock, stockAgents } from '@/entities/agent-session'
 import type { Crew, Person, RosterLock, Settings } from '@/entities/agent-session'
 import type { AgentDef } from '@/entities/agent-def'
 
@@ -20,12 +20,14 @@ export function crewOf(defs: AgentDef[], sessionModel: string | null): Crew {
   }
 }
 
-export function lockOf(settings: Settings, defs: AgentDef[]): RosterLock | null {
-  if (settings.knownTools.length === 0) return null
-  const stock = stockAgents(settings.knownAgents, defs.map((def) => def.name))
+export function lockOf(settings: Settings, defs: AgentDef[]): RosterLock {
+  const ourNames = defs.map((def) => def.name)
+  const stock = stockAgents(settings.knownAgents, ourNames)
+  const callable = new Set([...ourNames, ...allowedStock(stock, settings.stockAgents)])
   return {
-    knownTools: settings.knownTools,
-    alsoCallable: allowedStock(stock, settings.stockAgents),
+    blockedAgents: settings.knownAgents.filter(
+      (name) => name.length > 0 && name !== ORCHESTRATOR && !callable.has(name),
+    ),
   }
 }
 

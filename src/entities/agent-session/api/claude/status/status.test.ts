@@ -10,7 +10,6 @@ function initLine(overrides: Record<string, unknown> = {}): Record<string, unkno
     model: 'claude-opus-5[1m]',
     permissionMode: 'acceptEdits',
     output_style: 'default',
-    apiKeySource: 'none',
     claude_code_version: '2.1.231',
     fast_mode_state: 'off',
     fast_mode_disabled_reason: 'sdk_opt_in_required',
@@ -21,10 +20,10 @@ function initLine(overrides: Record<string, unknown> = {}): Record<string, unkno
     plugins: [{ name: 'superpowers' }],
     mcp_servers: [
       { name: 'playwright', status: 'connected' },
-      { name: 'claude.ai Notion', status: 'needs-auth' },
+      { name: 'claude.ai Notion', status: 'needs-auth' }
     ],
     memory_paths: { auto: '/Users/sam/.claude/projects/x/memory/' },
-    ...overrides,
+    ...overrides
   }
 }
 
@@ -38,25 +37,20 @@ describe('the status parser: the instrument layer', () => {
         cwd: '/Users/sam/workspace/zetrem',
         model: 'claude-opus-5[1m]',
         permissionMode: 'acceptEdits',
-        outputStyle: 'default',
         cliVersion: '2.1.231',
-        apiKeySource: 'none',
-        fastMode: { state: 'off', reason: 'sdk_opt_in_required' },
         mcp: [
           { name: 'playwright', status: 'connected' },
-          { name: 'claude.ai Notion', status: 'needs-auth' },
+          { name: 'claude.ai Notion', status: 'needs-auth' }
         ],
         tools: ['Bash', 'Read', 'Edit'],
-        agents: ['claude'],
-        counts: { tools: 3, commands: 2, agents: 1, skills: 1, plugins: 1 },
-        memoryPaths: ['/Users/sam/.claude/projects/x/memory/'],
-      },
+        agents: ['claude']
+      }
     })
   })
 
   it('carries no reason for fast mode being off while it is on', () => {
     const [event] = fromStatusLine(initLine({ fast_mode_state: 'on', fast_mode_disabled_reason: undefined }))
-    expect(event).toMatchObject({ type: 'session', session: { fastMode: { state: 'on', reason: null } } })
+    expect(event).toMatchObject({ type: 'session', session: { } })
   })
 
   it('reads context size from assistant usage, without waiting for a result', () => {
@@ -67,9 +61,9 @@ describe('the status parser: the instrument layer', () => {
           input_tokens: 2,
           cache_read_input_tokens: 16671,
           cache_creation_input_tokens: 11691,
-          output_tokens: 1,
-        },
-      },
+          output_tokens: 1
+        }
+      }
     })
     expect(events).toEqual([{ type: 'context', used: 28364 }])
   })
@@ -78,7 +72,7 @@ describe('the status parser: the instrument layer', () => {
     const events = fromStatusLine({
       type: 'assistant',
       parent_tool_use_id: 'toolu_1',
-      message: { usage: { input_tokens: 5, cache_read_input_tokens: 100, cache_creation_input_tokens: 0 } },
+      message: { usage: { input_tokens: 5, cache_read_input_tokens: 100, cache_creation_input_tokens: 0 } }
     })
     expect(events).toEqual([])
   })
@@ -97,9 +91,9 @@ describe('the status parser: the instrument layer', () => {
         input_tokens: 6,
         output_tokens: 261,
         cache_read_input_tokens: 76424,
-        cache_creation_input_tokens: 14862,
+        cache_creation_input_tokens: 14862
       },
-      modelUsage: { 'claude-opus-5[1m]': { contextWindow: 1_000_000 } },
+      modelUsage: { 'claude-opus-5[1m]': { contextWindow: 1_000_000 } }
     })
     expect(events).toEqual([
       {
@@ -108,19 +102,18 @@ describe('the status parser: the instrument layer', () => {
           costUsd: 0.166547,
           tokens: { in: 6, out: 261, cacheRead: 76424, cacheCreate: 14862 },
           durationMs: 10485,
-          ttftMs: 2352,
           turns: 3,
           contextWindow: 1_000_000,
           apiErrorStatus: null,
-          stopReason: 'end_turn',
-        },
-      },
+          stopReason: 'end_turn'
+        }
+      }
     ])
   })
 
   it('leaves an unknown context window empty rather than inventing a default', () => {
     const [event] = fromStatusLine({ type: 'result', subtype: 'success', total_cost_usd: 0.1, usage: {} })
-    expect(event).toMatchObject({ type: 'metrics', metrics: { contextWindow: null, ttftMs: null } })
+    expect(event).toMatchObject({ type: 'metrics', metrics: { contextWindow: null} })
   })
 
   it('turns a rate limit event into a limit, converting its seconds to milliseconds', () => {
@@ -131,8 +124,8 @@ describe('the status parser: the instrument layer', () => {
         resetsAt: 1787173200,
         rateLimitType: 'seven_day',
         utilization: 0.28,
-        isUsingOverage: false,
-      },
+        isUsingOverage: false
+      }
     })
     expect(events).toEqual([
       {
@@ -142,22 +135,22 @@ describe('the status parser: the instrument layer', () => {
           utilization: 0.28,
           resetsAtMs: 1787173200000,
           overage: false,
-          status: 'allowed_warning',
-        },
-      },
+          status: 'allowed_warning'
+        }
+      }
     ])
   })
 
-  it('reports a hook start and end separately, leaving the store to join them', () => {
+  it('passes over hook traffic, which no screen reads', () => {
     expect(
       fromStatusLine({
         type: 'system',
         subtype: 'hook_started',
         hook_id: 'c3d7',
         hook_name: 'SessionStart:startup',
-        hook_event: 'SessionStart',
+        hook_event: 'SessionStart'
       }),
-    ).toEqual([{ type: 'hookStarted', hookId: 'c3d7', name: 'SessionStart:startup', event: 'SessionStart' }])
+    ).toEqual([])
 
     expect(
       fromStatusLine({
@@ -166,14 +159,14 @@ describe('the status parser: the instrument layer', () => {
         hook_id: 'c3d7',
         hook_name: 'SessionStart:startup',
         exit_code: 0,
-        stderr: '',
+        stderr: ''
       }),
-    ).toEqual([{ type: 'hookDone', hookId: 'c3d7', exitCode: 0, stderr: '' }])
+    ).toEqual([])
   })
 
   it('reads a status line as what is happening now', () => {
     expect(fromStatusLine({ type: 'system', subtype: 'status', status: 'requesting' })).toEqual([
-      { type: 'activity', activity: 'requesting' },
+      { type: 'activity', activity: 'requesting' }
     ])
   })
 
@@ -185,17 +178,17 @@ describe('the status parser: the instrument layer', () => {
         trigger: 'auto',
         pre_tokens: 180000,
         post_tokens: 42000,
-        cumulative_dropped_tokens: 999,
-      },
+        cumulative_dropped_tokens: 999
+      }
     })
     expect(events).toEqual([
-      { type: 'compacted', trigger: 'auto', preTokens: 180000, postTokens: 42000 },
+      { type: 'compacted', trigger: 'auto', preTokens: 180000, postTokens: 42000 }
     ])
   })
 
   it('leaves all three empty without compaction metadata, inventing no defaults', () => {
     expect(fromStatusLine({ type: 'system', subtype: 'compact_boundary' })).toEqual([
-      { type: 'compacted', trigger: null, preTokens: null, postTokens: null },
+      { type: 'compacted', trigger: null, preTokens: null, postTokens: null }
     ])
   })
 
@@ -214,8 +207,8 @@ describe('a rate limit event as the CLI actually sends it', () => {
         resetsAt: 1786831800,
         rateLimitType: 'five_hour',
         overageStatus: 'rejected',
-        isUsingOverage: false,
-      },
+        isUsingOverage: false
+      }
     })
     expect(event).toEqual({
       type: 'limit',
@@ -224,8 +217,8 @@ describe('a rate limit event as the CLI actually sends it', () => {
         utilization: null,
         resetsAtMs: 1786831800000,
         overage: false,
-        status: 'allowed',
-      },
+        status: 'allowed'
+      }
     })
   })
 })

@@ -8,13 +8,12 @@ function state(overrides: Partial<StatusState> = {}): StatusState {
     session: null,
     probed: false,
     context: { used: 0, window: null },
-    cost: { usd: 0, lastTurnUsd: 0, tokens: { in: 0, out: 0, cacheRead: 0, cacheCreate: 0 }, durationMs: 0, ttftMs: null, turns: 0 },
+    cost: { usd: 0, lastTurnUsd: 0, tokens: { in: 0, out: 0, cacheRead: 0, cacheCreate: 0 }, durationMs: 0, turns: 0 },
     limits: [],
-    hooks: [],
     update: null,
     activity: 'idle',
     ...overrides,
-    usageAtMs: overrides.usageAtMs ?? null,
+    usageAtMs: overrides.usageAtMs ?? null
   }
 }
 
@@ -50,15 +49,15 @@ describe('the cells in the status bar', () => {
 
   it('counts connected MCP servers and grows when some need signing in', () => {
     const session = {
-      id: 's', cwd: '/w', model: 'm', permissionMode: 'ask', outputStyle: 'default',
-      cliVersion: '2.1.231', apiKeySource: 'none', fastMode: { state: 'off', reason: null },
+      id: 's', cwd: '/w', model: 'm', permissionMode: 'ask',
+      cliVersion: '2.1.231',
       tools: [],
     agents: [],
-    counts: { tools: 0, commands: 0, agents: 0, skills: 0, plugins: 0 }, memoryPaths: [],
+
       mcp: [
         { name: 'a', status: 'connected' }, { name: 'b', status: 'connected' },
-        { name: 'c', status: 'needs-auth' }, { name: 'd', status: 'pending' },
-      ],
+        { name: 'c', status: 'needs-auth' }, { name: 'd', status: 'pending' }
+      ]
     }
     const found = cells(state({ session })).find((c) => c.key === 'mcp')
     expect(found).toEqual({ key: 'mcp', text: 'MCP 2/4 · 1 need auth', warn: true })
@@ -75,14 +74,14 @@ describe('the cells in the status bar', () => {
 
     const stale = cells(state({ update: { current: '2.1.231', latest: '2.1.240', managedBy: 'Homebrew' } }))
     expect(stale.find((c) => c.key === 'update')).toEqual({
-      key: 'update', text: 'CLI 2.1.231 → 2.1.240 available', warn: true,
+      key: 'update', text: 'CLI 2.1.231 → 2.1.240 available', warn: true
     })
   })
 
   it('does not read an older latest as an update', () => {
     const downgrade = cells(state({ update: { current: '2.1.231', latest: '2.1.200', managedBy: 'Homebrew' } }))
     expect(downgrade.find((c) => c.key === 'update')).toEqual({
-      key: 'update', text: 'CLI 2.1.231', warn: false,
+      key: 'update', text: 'CLI 2.1.231', warn: false
     })
   })
 
@@ -91,7 +90,7 @@ describe('the cells in the status bar', () => {
     const full = cells(state({
       context: { used: 900_000, window: 1_000_000 },
       session: session as never,
-      update: { current: '2.1.231', latest: '2.1.231', managedBy: null },
+      update: { current: '2.1.231', latest: '2.1.231', managedBy: null }
     }))
     expect(full.map((c) => c.key)).toEqual(['context', 'mcp', 'update'])
   })
@@ -99,40 +98,72 @@ describe('the cells in the status bar', () => {
 
 function withMcp(mcp: { name: string; status: string }[]): StatusState {
   const session = {
-    id: 's', cwd: '/w', model: 'm', permissionMode: 'ask', outputStyle: 'default',
-    cliVersion: '2.1.231', apiKeySource: 'none', fastMode: { state: 'off', reason: null },
+    id: 's', cwd: '/w', model: 'm', permissionMode: 'ask',
+    cliVersion: '2.1.231',
     tools: [], agents: [],
-    counts: { tools: 0, commands: 0, agents: 0, skills: 0, plugins: 0 }, memoryPaths: [],
-    mcp,
+
+    mcp
   }
   return state({ session: session as never })
 }
 
 describe('the strip counts what this session can actually reach', () => {
-  it('takes the worse of the two, since a connector the session did not get is one you cannot use', () => {
+  it('believes the health check over the startup snapshot, which is taken before anything has connected', () => {
     const stale = withMcp([
       { name: 'claude.ai Notion', status: 'needs-auth' },
-      { name: 'playwright', status: 'connected' },
+      { name: 'playwright', status: 'connected' }
     ])
     const [mcp] = cells(stale, [
       { name: 'claude.ai Notion', where: 'https://mcp.notion.com/mcp', state: 'connected' },
-      { name: 'playwright', where: 'npx @playwright/mcp@latest', state: 'connected' },
+      { name: 'playwright', where: 'npx @playwright/mcp@latest', state: 'connected' }
     ]).filter((cell) => cell.key === 'mcp')
-    expect(mcp?.text).toBe('MCP 1/2 · 1 need auth')
+    expect(mcp?.text).toBe('MCP 2/2')
+    expect(mcp?.warn).toBe(false)
+  })
+
+  it('still reports trouble the health check itself found', () => {
+    const [mcp] = cells(withMcp([{ name: 'claude.ai Slack', status: 'connected' }]), [
+      { name: 'claude.ai Slack', where: 'https://mcp.slack.com/mcp', state: 'needs-auth' }
+    ]).filter((cell) => cell.key === 'mcp')
+    expect(mcp?.text).toBe('MCP 0/1 · 1 need auth')
     expect(mcp?.warn).toBe(true)
   })
 
   it('falls back to the snapshot until the check has come back', () => {
     const stale = withMcp([
       { name: 'claude.ai Notion', status: 'needs-auth' },
-      { name: 'playwright', status: 'connected' },
+      { name: 'playwright', status: 'connected' }
     ])
     const [mcp] = cells(stale, []).filter((cell) => cell.key === 'mcp')
     expect(mcp?.text).toBe('MCP 1/2 · 1 need auth')
   })
+
+  it('says nothing at all until the health check has come back', () => {
+    const stale = withMcp([
+      { name: 'claude.ai Gmail', status: 'needs-auth' },
+      { name: 'playwright', status: 'connected' },
+    ])
+    const keys = cells(stale, [], false).map((cell) => cell.key)
+    expect(keys, '켤 때마다 3초씩 거짓 경고가 뜨면 안 된다').not.toContain('mcp')
+  })
+
+  it('still says the things that do not wait on the health check', () => {
+    const tight = state({
+      context: { used: 950_000, window: 1_000_000 },
+      update: { current: '2.1.231', latest: '2.1.231', managedBy: null },
+    })
+    expect(cells(tight, [], false).map((cell) => cell.key)).toEqual(['context', 'update'])
+  })
+
+  it('keeps a server the health check never mentioned, rather than losing it', () => {
+    const [mcp] = cells(withMcp([{ name: 'only-in-session', status: 'connected' }]), [
+      { name: 'claude.ai Slack', where: 'https://mcp.slack.com/mcp', state: 'connected' }
+    ]).filter((cell) => cell.key === 'mcp')
+    expect(mcp?.text).toBe('MCP 2/2')
+  })
 })
 
-describe('the strip reports the session it is in, not the config on disk', () => {
+describe('the strip reports the freshest reading it has', () => {
   const session = (mcp: { name: string; status: string }[]) =>
     state({
       session: {
@@ -140,39 +171,34 @@ describe('the strip reports the session it is in, not the config on disk', () =>
         cwd: '/w',
         model: 'm',
         permissionMode: 'ask',
-        outputStyle: 'default',
         cliVersion: '2.0.0',
-        apiKeySource: 'none',
-        fastMode: { state: 'off', reason: null },
         mcp,
         tools: [],
-        agents: [],
-        counts: { tools: 0, commands: 0, agents: 0, skills: 0, plugins: 0 },
-        memoryPaths: [],
-      },
+        agents: []
+      }
     })
 
-  it('counts what this session reached, even when the config claims more', () => {
+  it('clears every remote connector once the check says they came up, since init sees none of them ready', () => {
     const cell = cells(
       session([
         { name: 'Gmail', status: 'needs-auth' },
         { name: 'Figma', status: 'pending' },
-        { name: 'playwright', status: 'connected' },
+        { name: 'playwright', status: 'connected' }
       ]),
       [
         { name: 'Gmail', where: 'x', state: 'connected' },
         { name: 'Figma', where: 'y', state: 'connected' },
-        { name: 'playwright', where: 'z', state: 'connected' },
+        { name: 'playwright', where: 'z', state: 'connected' }
       ],
     ).find((one) => one.key === 'mcp')
-    expect(cell?.text).toBe('MCP 1/3 · 1 need auth')
-    expect(cell?.warn).toBe(true)
+    expect(cell?.text).toBe('MCP 3/3')
+    expect(cell?.warn).toBe(false)
   })
 
   it('falls back to the config while no session has started', () => {
     const cell = cells(state(), [
       { name: 'Gmail', where: 'x', state: 'connected' },
-      { name: 'Slack', where: 'y', state: 'needs-auth' },
+      { name: 'Slack', where: 'y', state: 'needs-auth' }
     ]).find((one) => one.key === 'mcp')
     expect(cell?.text).toBe('MCP 1/2 · 1 need auth')
   })

@@ -18,6 +18,7 @@ const PROBE_TIMEOUT_MS = 5000
 function probe(command: string, args: string[], path: string): Promise<string | null> {
   return new Promise((resolve) => {
     const child = spawn(command, args, { env: agentEnv(process.env, path) })
+    child.stdout.setEncoding('utf8')
     let out = ''
     let settled = false
     const settle = (value: string | null): void => {
@@ -30,8 +31,8 @@ function probe(command: string, args: string[], path: string): Promise<string | 
       child.kill('SIGTERM')
       settle(null)
     }, PROBE_TIMEOUT_MS)
-    child.stdout.on('data', (chunk: Buffer) => {
-      out += chunk.toString('utf8')
+    child.stdout.on('data', (chunk: string) => {
+      out += chunk
     })
     child.on('error', () => settle(null))
     child.on('exit', () => settle(out))
@@ -79,9 +80,11 @@ export function registerCliVersion(): void {
     const bin = await claudeBin()
     return new Promise<{ output: string }>((resolve) => {
       const child = spawn(bin, ['update'], { env: agentEnv(process.env, path) })
+      child.stdout.setEncoding('utf8')
+      child.stderr.setEncoding('utf8')
       let output = ''
-      const take = (chunk: Buffer): void => {
-        output += chunk.toString('utf8')
+      const take = (chunk: string): void => {
+        output += chunk
       }
       let settled = false
       const settle = (text: string): void => {

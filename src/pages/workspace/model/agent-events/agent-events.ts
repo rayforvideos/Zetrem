@@ -24,8 +24,6 @@ function isStatusEvent(turn: ClaudeTurnEvent): turn is StatusEvent {
     case 'context':
     case 'metrics':
     case 'limit':
-    case 'hookStarted':
-    case 'hookDone':
     case 'activity':
     case 'compacted':
       return true

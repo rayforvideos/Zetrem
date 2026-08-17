@@ -33,7 +33,8 @@ export type Plugins = {
 
 export type Actions = {
   reopened: boolean
-  canStart: boolean
+  signedIn: boolean
+  hasProject: boolean
   onStart(): void
   onCancel(): void
 }

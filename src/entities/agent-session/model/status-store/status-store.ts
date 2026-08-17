@@ -1,11 +1,9 @@
-import type { HookRun, StatusState, UpdateInfo } from './status-store.types'
+import type { StatusState, UpdateInfo } from './status-store.types'
 
 import type { StatusEvent } from '../../api/claude/status/status.types'
 import { withLimit } from '../limits/limits'
 import type { ChatSpend } from '@/entities/conversation'
 import { spentAfter } from '../spend/spend'
-
-const HOOK_KEEP = 5
 
 const EMPTY: StatusState = {
   usage: 'unread',
@@ -18,11 +16,9 @@ const EMPTY: StatusState = {
     lastTurnUsd: 0,
     tokens: { in: 0, out: 0, cacheRead: 0, cacheCreate: 0 },
     durationMs: 0,
-    ttftMs: null,
     turns: 0,
   },
   limits: [],
-  hooks: [],
   update: null,
   activity: 'idle',
 }
@@ -30,7 +26,7 @@ const EMPTY: StatusState = {
 type Listener = () => void
 
 let state: StatusState = EMPTY
-let pending = new Map<string, { name: string; event: string; startedAtMs: number }>()
+let carried = 0
 const listeners = new Set<Listener>()
 
 function emit(next: StatusState): void {
@@ -61,29 +57,12 @@ export const statusStore = {
       emit({
         ...state,
         context: { ...state.context, window: m.contextWindow ?? state.context.window },
-        cost: spentAfter(state.cost, m),
+        cost: spentAfter(state.cost, m, carried),
       })
       return
     }
     if (event.type === 'limit') {
       emit({ ...state, limits: withLimit(state.limits, event.limit) })
-      return
-    }
-    if (event.type === 'hookStarted') {
-      pending.set(event.hookId, { name: event.name, event: event.event, startedAtMs: Date.now() })
-      return
-    }
-    if (event.type === 'hookDone') {
-      const started = pending.get(event.hookId)
-      if (!started) return
-      pending.delete(event.hookId)
-      const run: HookRun = {
-        name: started.name,
-        event: started.event,
-        exitCode: event.exitCode,
-        ms: Date.now() - started.startedAtMs,
-      }
-      emit({ ...state, hooks: [run, ...state.hooks].slice(0, HOOK_KEEP) })
       return
     }
     if (event.type === 'activity') {
@@ -97,6 +76,7 @@ export const statusStore = {
   },
   restoreChat(spend: Partial<ChatSpend> | null): void {
     if (spend === null || spend === undefined) return
+    carried = spend.usd ?? carried
     emit({
       ...state,
       context: {
@@ -128,8 +108,13 @@ export const statusStore = {
   learnProbe(session: StatusState['session']): void {
     emit({ ...state, session, probed: true })
   },
-  reset(): void {
-    pending = new Map()
-    emit({ ...EMPTY, update: state.update })
+  reset(keepSpend = false): void {
+    if (!keepSpend) carried = 0
+    emit({
+      ...EMPTY,
+      update: state.update,
+      cost: { ...EMPTY.cost, usd: carried },
+      context: keepSpend ? state.context : EMPTY.context,
+    })
   },
 }

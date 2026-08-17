@@ -12,7 +12,7 @@ describe('what the orchestrator is told', () => {
   })
 
   it('never locks with an empty brief, since nothing told is nothing followed', () => {
-    const args = agentsArgs([person], { knownTools: ['Read'], alsoCallable: [] }, ORCHESTRATOR_PROMPT)
+    const args = agentsArgs([person], { blockedAgents: [] }, ORCHESTRATOR_PROMPT)
     const spec = JSON.parse(args[args.indexOf('--agents') + 1]!)
     expect(spec[ORCHESTRATOR].prompt).toBe(ORCHESTRATOR_PROMPT)
     expect(spec[ORCHESTRATOR].prompt.length).toBeGreaterThan(0)

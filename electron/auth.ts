@@ -52,8 +52,10 @@ export function registerAuth(): void {
         env,
         stdio: ['ignore', 'pipe', 'pipe'],
       })
-      const relay = (chunk: Buffer): void => {
-        if (!sender.isDestroyed()) sender.send('auth:progress', chunk.toString('utf8'))
+      child.stdout.setEncoding('utf8')
+      child.stderr.setEncoding('utf8')
+      const relay = (chunk: string): void => {
+        if (!sender.isDestroyed()) sender.send('auth:progress', chunk)
       }
       child.stdout.on('data', relay)
       child.stderr.on('data', relay)

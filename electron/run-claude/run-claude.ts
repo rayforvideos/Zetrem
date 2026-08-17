@@ -10,6 +10,8 @@ export function runClaude(args: string[], timeoutMs: number, cwd?: string): Prom
         env: agentEnv(process.env, await loginPath()),
         ...(cwd === undefined ? {} : { cwd }),
       })
+      child.stdout.setEncoding('utf8')
+      child.stderr.setEncoding('utf8')
       let out = ''
       let settled = false
       const settle = (value: PluginRun): void => {
@@ -22,11 +24,11 @@ export function runClaude(args: string[], timeoutMs: number, cwd?: string): Prom
         child.kill('SIGTERM')
         settle({ ok: false, out: `${out}\ntimed out` })
       }, timeoutMs)
-      child.stdout.on('data', (chunk: Buffer) => {
-        out += chunk.toString('utf8')
+      child.stdout.on('data', (chunk: string) => {
+        out += chunk
       })
-      child.stderr.on('data', (chunk: Buffer) => {
-        out += chunk.toString('utf8')
+      child.stderr.on('data', (chunk: string) => {
+        out += chunk
       })
       child.on('error', (cause: Error) => settle({ ok: false, out: cause.message }))
       child.on('exit', (code) => settle({ ok: code === 0, out }))

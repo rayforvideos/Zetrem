@@ -6,6 +6,5 @@ export type Person = {
 }
 
 export type RosterLock = {
-  knownTools: string[]
-  alsoCallable: string[]
+  blockedAgents: string[]
 }

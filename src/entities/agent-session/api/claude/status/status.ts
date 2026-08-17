@@ -8,10 +8,6 @@ function num(value: unknown, fallback = 0): number {
   return typeof value === 'number' && Number.isFinite(value) ? value : fallback
 }
 
-function count(value: unknown): number {
-  return Array.isArray(value) ? value.length : 0
-}
-
 function errorStatus(raw: unknown): string | null {
   if (typeof raw === 'number' && Number.isFinite(raw)) return String(raw)
   return typeof raw === 'string' && raw.length > 0 ? raw : null
@@ -41,26 +37,6 @@ function fromSystem(event: Record<string, unknown>): StatusEvent[] {
     const activity = event.status === 'requesting' ? 'requesting' : 'idle'
     return [{ type: 'activity', activity }]
   }
-  if (event.subtype === 'hook_started') {
-    return [
-      {
-        type: 'hookStarted',
-        hookId: str(event.hook_id),
-        name: str(event.hook_name, 'hook'),
-        event: str(event.hook_event),
-      },
-    ]
-  }
-  if (event.subtype === 'hook_response') {
-    return [
-      {
-        type: 'hookDone',
-        hookId: str(event.hook_id),
-        exitCode: num(event.exit_code),
-        stderr: str(event.stderr),
-      },
-    ]
-  }
   if (event.subtype === 'compact_boundary') return [compacted(event)]
   return []
 }
@@ -80,22 +56,12 @@ function compacted(event: Record<string, unknown>): StatusEvent {
 }
 
 function identity(event: Record<string, unknown>): SessionIdentity {
-  const memory = event.memory_paths
   return {
     id: str(event.session_id),
     cwd: str(event.cwd),
     model: str(event.model, 'unknown'),
     permissionMode: str(event.permissionMode),
-    outputStyle: str(event.output_style),
     cliVersion: str(event.claude_code_version),
-    apiKeySource: str(event.apiKeySource),
-    fastMode: {
-      state: str(event.fast_mode_state, 'off'),
-      reason:
-        str(event.fast_mode_state, 'off') === 'off' && typeof event.fast_mode_disabled_reason === 'string'
-          ? event.fast_mode_disabled_reason
-          : null,
-    },
     mcp: Array.isArray(event.mcp_servers)
       ? (event.mcp_servers as Record<string, unknown>[]).map((server) => ({
           name: str(server.name, '?'),
@@ -108,19 +74,6 @@ function identity(event: Record<string, unknown>): SessionIdentity {
     agents: Array.isArray(event.agents)
       ? (event.agents as unknown[]).filter((name): name is string => typeof name === 'string')
       : [],
-    counts: {
-      tools: count(event.tools),
-      commands: count(event.slash_commands),
-      agents: count(event.agents),
-      skills: count(event.skills),
-      plugins: count(event.plugins),
-    },
-    memoryPaths:
-      typeof memory === 'object' && memory !== null
-        ? Object.values(memory as Record<string, unknown>).filter(
-            (path): path is string => typeof path === 'string',
-          )
-        : [],
   }
 }
 
@@ -150,7 +103,6 @@ function fromResultMetrics(event: Record<string, unknown>): StatusEvent[] {
           cacheCreate: num(usage.cache_creation_input_tokens),
         },
         durationMs: num(event.duration_ms),
-        ttftMs: typeof event.ttft_ms === 'number' ? event.ttft_ms : null,
         turns: num(event.num_turns),
         contextWindow: window > 0 ? window : null,
         apiErrorStatus: errorStatus(event.api_error_status),

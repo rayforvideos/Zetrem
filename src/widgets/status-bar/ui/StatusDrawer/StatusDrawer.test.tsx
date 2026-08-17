@@ -11,159 +11,190 @@ const full: StatusState = {
     id: 'f77f771b-4d45-4551-b887-202b62a6edc5',
     cwd: '/Users/sam/workspace/zetrem',
     model: 'claude-opus-5[1m]',
-    permissionMode: 'acceptEdits',
-    outputStyle: 'default',
+    permissionMode: 'bypassPermissions',
     cliVersion: '2.1.231',
-    apiKeySource: 'none',
-    fastMode: { state: 'off', reason: 'sdk_opt_in_required' },
     mcp: [
       { name: 'playwright', status: 'connected' },
       { name: 'claude.ai Notion', status: 'needs-auth' },
     ],
     tools: [],
     agents: [],
-    counts: { tools: 62, commands: 65, agents: 12, skills: 20, plugins: 3 },
-    memoryPaths: ['/Users/sam/.claude/projects/x/memory/'],
   },
   context: { used: 100_000, window: 1_000_000 },
-  cost: { usd: 0.19, lastTurnUsd: 0.04, tokens: { in: 6, out: 261, cacheRead: 76424, cacheCreate: 14862 }, durationMs: 10485, ttftMs: 2352, turns: 3 },
+  cost: { usd: 0.19, lastTurnUsd: 0.04, tokens: { in: 6, out: 261, cacheRead: 76424, cacheCreate: 14862 }, durationMs: 10485, turns: 3 },
   limits: [],
-  hooks: [{ name: 'SessionStart:startup', event: 'SessionStart', exitCode: 0, ms: 12 }],
   update: { current: '2.1.231', latest: '2.1.231', managedBy: 'Homebrew' },
   activity: 'idle',
 }
 
-describe('StatusDrawer', () => {
-  it('says everything about who this session is', () => {
-    const html = renderToStaticMarkup(<StatusDrawer appVersion={null} connectors={[]} checking={false} onRecheck={() => {}} statusState={full} onUpdate={() => {}} updating={false} />)
-    expect(html).toContain('f77f771b')
+function draw(state: StatusState = full, props: Partial<Parameters<typeof StatusDrawer>[0]> = {}) {
+  return renderToStaticMarkup(
+    <StatusDrawer
+      appVersion={null}
+      connectors={[]}
+      checking={false}
+      onRecheck={() => {}}
+      statusState={state}
+      onUpdate={() => {}}
+      updating={false}
+      {...props}
+    />,
+  )
+}
+
+describe('StatusDrawer says where you are and what it costs', () => {
+  it('names the folder and the model, the two things nothing else on screen says', () => {
+    const html = draw()
     expect(html).toContain('/Users/sam/workspace/zetrem')
     expect(html).toContain('claude-opus-5[1m]')
-    expect(html).toContain('sdk_opt_in_required')
   })
 
-  it('breaks out the four token kinds beside context and cost', () => {
-    const html = renderToStaticMarkup(<StatusDrawer appVersion={null} connectors={[]} checking={false} onRecheck={() => {}} statusState={full} onUpdate={() => {}} updating={false} />)
-    expect(html).toContain('76,424')
-    expect(html).toContain('14,862')
-    expect(html).toContain('261')
+  it('gives context and spend as plain numbers, since the bar hides them on a narrow window', () => {
+    const html = draw()
     expect(html).toContain('100,000')
+    expect(html).toContain('1,000,000')
+    expect(html).toContain('$0.19')
   })
 
-  it('lists every MCP server and marks the ones needing sign-in', () => {
-    const html = renderToStaticMarkup(<StatusDrawer appVersion={null} connectors={[]} checking={false} onRecheck={() => {}} statusState={full} onUpdate={() => {}} updating={false} />)
-    expect(html).toContain('playwright')
+  it('drops the numbers nobody acts on', () => {
+    const html = draw()
+    expect(html, '토큰 4종 분해').not.toContain('76,424')
+    expect(html, 'turns').not.toContain('Turns')
+    expect(html, 'duration').not.toContain('10.5s')
+    expect(html, 'session id').not.toContain('f77f771b')
+  })
+
+  it('shows nothing for context and cost before a turn has run', () => {
+    const fresh: StatusState = { ...full, context: { used: 0, window: 1_000_000 }, cost: { ...full.cost, usd: 0 } }
+    const html = draw(fresh)
+    expect(html).not.toContain('Context')
+    expect(html).not.toContain('Cost')
+    expect(html, '자리는 그대로 있다').toContain('claude-opus-5[1m]')
+  })
+})
+
+describe('permission mode speaks only when it is not the ordinary one', () => {
+  it('names a mode that lets the agent act without asking', () => {
+    expect(draw()).toContain('bypassPermissions')
+  })
+
+  it('stays quiet on the default, which is what the reader already assumes', () => {
+    const ordinary: StatusState = { ...full, session: { ...full.session!, permissionMode: 'default' } }
+    expect(draw(ordinary)).not.toContain('Permission')
+  })
+
+  it('stays quiet when the CLI named no mode at all', () => {
+    const unsaid: StatusState = { ...full, session: { ...full.session!, permissionMode: '' } }
+    expect(draw(unsaid)).not.toContain('Permission')
+  })
+})
+
+describe('the connector list answers which one is broken, not which ones are fine', () => {
+  it('raises the one needing sign-in and leaves the healthy one off the list', () => {
+    const html = draw()
     expect(html, '제목이 이미 아는 접두사는 빼고 이름만 보인다').toContain('>Notion<')
     expect(html).not.toContain('claude.ai Notion')
     expect(html).toContain('Needs auth')
+    expect(html, '멀쩡한 건 줄을 차지하지 않는다').not.toContain('>playwright<')
   })
 
-  it('says the version and who manages it', () => {
-    const html = renderToStaticMarkup(<StatusDrawer appVersion={null} connectors={[]} checking={false} onRecheck={() => {}} statusState={full} onUpdate={() => {}} updating={false} />)
+  it('counts the rest in one line rather than listing them', () => {
+    expect(draw()).toContain('1 of 2 connected')
+  })
+
+  it('says only the count when every connector is reachable', () => {
+    const calm: StatusState = {
+      ...full,
+      session: { ...full.session!, mcp: [{ name: 'playwright', status: 'connected' }] },
+    }
+    const html = draw(calm)
+    expect(html).toContain('All 1 connected')
+    expect(html).not.toContain('Needs auth')
+  })
+
+  it('clears a connector the health check found alive, however the startup snapshot saw it', () => {
+    const html = draw(full, {
+      connectors: [{ name: 'claude.ai Notion', where: 'https://mcp.notion.com/mcp', state: 'connected' }],
+    })
+    expect(html, 'Recheck 가 실제로 뭔가를 고칠 수 있어야 한다').not.toContain('Needs auth')
+    expect(html).toContain('All 2 connected')
+  })
+
+  it('offers a way to ask again, since signing in happens outside the app', () => {
+    expect(draw()).toContain('Recheck')
+  })
+
+  it('makes no claim at all until the health check has come back', () => {
+    const html = draw(full, { checked: false })
+    expect(html).toContain('Checking…')
+    expect(html, '아직 모르는 것을 안다고 말하지 않는다').not.toContain('Needs auth')
+    expect(html).not.toContain('connected')
+  })
+
+  it('keeps the Recheck button reachable while it is still checking', () => {
+    expect(draw(full, { checked: false })).toContain('Connectors')
+  })
+
+  it('leaves the group out when it knows of no connector at all', () => {
+    const none: StatusState = { ...full, session: { ...full.session!, mcp: [] } }
+    expect(draw(none)).not.toContain('Connectors')
+  })
+})
+
+describe('the version line carries the update, and nothing else', () => {
+  it('names both versions once it knows them', () => {
+    const html = draw(full, { appVersion: '1.0.0-beta.1' })
+    expect(html).toContain('1.0.0-beta.1')
     expect(html).toContain('2.1.231')
-    expect(html).toContain('Homebrew')
-    expect(html).toContain('SessionStart:startup')
   })
 
   it('says nothing about updating while the version in hand is the latest', () => {
-    const calm = renderToStaticMarkup(<StatusDrawer appVersion={null} connectors={[]} checking={false} onRecheck={() => {}} statusState={full} onUpdate={() => {}} updating={false} />)
-    expect(calm).not.toContain('update available')
-    expect(calm).not.toContain('brew upgrade')
+    const html = draw()
+    expect(html).not.toContain('update available')
+    expect(html).not.toContain('brew upgrade')
   })
 
   it('hands a Homebrew install its own command rather than a button that will not do it', () => {
-    const stale = { ...full, update: { current: '2.1.231', latest: '2.1.240', managedBy: 'Homebrew' } }
-    const html = renderToStaticMarkup(<StatusDrawer appVersion={null} connectors={[]} checking={false} onRecheck={() => {}} statusState={stale} onUpdate={() => {}} updating={false} />)
-    expect(html).toContain('update available: 2.1.240')
+    const stale: StatusState = { ...full, update: { current: '2.1.231', latest: '2.1.240', managedBy: 'Homebrew' } }
+    const html = draw(stale)
+    expect(html).toContain('2.1.240')
     expect(html).toContain('brew upgrade claude-code@latest')
     expect(html).not.toContain('>Update<')
   })
 
   it('keeps the button for an install nothing else owns', () => {
-    const stale = { ...full, update: { current: '2.1.231', latest: '2.1.240', managedBy: null } }
-    const html = renderToStaticMarkup(<StatusDrawer appVersion={null} connectors={[]} checking={false} onRecheck={() => {}} statusState={stale} onUpdate={() => {}} updating={false} />)
+    const stale: StatusState = { ...full, update: { current: '2.1.231', latest: '2.1.240', managedBy: null } }
+    const html = draw(stale)
     expect(html).toContain('>Update<')
     expect(html).not.toContain('brew upgrade')
   })
 
   it('offers no update when the local build is newer, comparing numbers and not strings', () => {
-    const newerLocal = { ...full, update: { current: '2.2.0', latest: '2.1.240', managedBy: 'Homebrew' } }
-    const html = renderToStaticMarkup(<StatusDrawer appVersion={null} connectors={[]} checking={false} onRecheck={() => {}} statusState={newerLocal} onUpdate={() => {}} updating={false} />)
+    const newerLocal: StatusState = { ...full, update: { current: '2.2.0', latest: '2.1.240', managedBy: 'Homebrew' } }
+    const html = draw(newerLocal)
     expect(html).not.toContain('>Update<')
     expect(html).not.toContain('brew upgrade')
-    expect(html).not.toContain('새 버전')
   })
 
-  it('leaves out a group it knows nothing about', () => {
-    const bare: StatusState = { ...full, session: null, hooks: [], update: null }
-    const html = renderToStaticMarkup(<StatusDrawer appVersion={null} connectors={[]} checking={false} onRecheck={() => {}} statusState={bare} onUpdate={() => {}} updating={false} />)
-    expect(html).not.toContain('claude-opus-5')
-    expect(html).not.toContain('SessionStart')
+  it('leaves the line out when it knows neither version', () => {
+    const html = draw({ ...full, update: null })
+    expect(html).not.toContain('CLI')
   })
+})
 
-  it('leaves out the environment group when it has nothing to put in it', () => {
-    const noEnvironment: StatusState = {
-      ...full,
-      session: { ...full.session!, memoryPaths: [] },
-      hooks: [],
-      update: null,
-    }
-    const html = renderToStaticMarkup(
-      <StatusDrawer appVersion={null} connectors={[]} checking={false} onRecheck={() => {}} statusState={noEnvironment} onUpdate={() => {}} updating={false} />,
-    )
-    expect(html).not.toContain('Homebrew')
-    expect(html).not.toContain('SessionStart')
-    expect(html).not.toContain('Environment')
-  })
-
-  it('leaves out a row the CLI gave no value for', () => {
-    const emptyFields: StatusState = {
-      ...full,
-      session: { ...full.session!, id: '', cwd: '', permissionMode: '', outputStyle: '', apiKeySource: '' },
-    }
-    const html = renderToStaticMarkup(
-      <StatusDrawer appVersion={null} connectors={[]} checking={false} onRecheck={() => {}} statusState={emptyFields} onUpdate={() => {}} updating={false} />,
-    )
-    expect(html).not.toContain('자리')
-    expect(html).not.toContain('권한 모드')
-    expect(html).not.toContain('출력 스타일')
-    expect(html).not.toContain('API 키')
-    expect(html).toContain('claude-opus-5[1m]')
-  })
-
+describe('the drawer stays inside the room it was given', () => {
   it('leaves the conversation most of the window, however much it has to say', () => {
-    const html = renderToStaticMarkup(<StatusDrawer appVersion={null} connectors={[]} checking={false} onRecheck={() => {}} statusState={full} onUpdate={() => {}} updating={false} />)
-    expect(html).toContain('max-h-[min(58vh,560px)]')
+    expect(draw()).toContain('max-h-[min(58vh,560px)]')
   })
 
   it('scrolls its own body rather than growing past what it was given', () => {
-    const html = renderToStaticMarkup(<StatusDrawer appVersion={null} connectors={[]} checking={false} onRecheck={() => {}} statusState={full} onUpdate={() => {}} updating={false} />)
-    expect(html).toContain('overflow-y-auto')
+    expect(draw()).toContain('overflow-y-auto')
+  })
+
+  it('draws nothing it was told nothing about', () => {
+    const bare: StatusState = { ...full, session: null, update: null }
+    const html = draw(bare)
+    expect(html).not.toContain('claude-opus-5')
+    expect(html).not.toContain('Connectors')
   })
 })
-
-describe('the connector list is not the one it saw at startup', () => {
-  it('shows the worse of the two, since a connector this session never got is one you cannot use', () => {
-    const html = renderToStaticMarkup(
-      <StatusDrawer
-        appVersion={null}
-        connectors={[{ name: 'claude.ai Notion', where: 'https://mcp.notion.com/mcp', state: 'connected' }]}
-        checking={false}
-        onRecheck={() => {}}
-        statusState={full}
-        onUpdate={() => {}}
-        updating={false}
-      />,
-    )
-    expect(html).toContain('>Notion<')
-    expect(html).toContain('Needs auth')
-  })
-
-  it('offers a way to ask again, since signing in happens outside the app', () => {
-    const html = renderToStaticMarkup(
-      <StatusDrawer appVersion={null} connectors={[]} checking={false} onRecheck={() => {}} statusState={full} onUpdate={() => {}} updating={false} />,
-    )
-    expect(html).toContain('Recheck')
-  })
-})
-

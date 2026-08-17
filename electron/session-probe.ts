@@ -39,6 +39,7 @@ function isInit(line: string): boolean {
 function readInit(bin: string, args: string[], cwd: string, env: NodeJS.ProcessEnv): Promise<string | null> {
   return new Promise((resolve) => {
     const child = spawn(bin, args, { cwd, env })
+    child.stdout.setEncoding('utf8')
     if (child.pid !== undefined) asking.add(child.pid)
     let settled = false
     let buffer = ''
@@ -55,8 +56,8 @@ function readInit(bin: string, args: string[], cwd: string, env: NodeJS.ProcessE
     }
     const timer = setTimeout(() => stop(null), PROBE_TIMEOUT_MS)
 
-    child.stdout.on('data', (chunk: Buffer) => {
-      buffer += chunk.toString('utf8')
+    child.stdout.on('data', (chunk: string) => {
+      buffer += chunk
       if (buffer.length > PROBE_BUFFER_MAX) return stop(null)
       const lines = buffer.split('\n')
       buffer = lines.pop() ?? ''
@@ -72,6 +73,7 @@ function readInit(bin: string, args: string[], cwd: string, env: NodeJS.ProcessE
 function readReport(bin: string, cwd: string, env: NodeJS.ProcessEnv): Promise<string | null> {
   return new Promise((resolve) => {
     const child = spawn(bin, ['-p', '/usage'], { cwd, env })
+    child.stdout.setEncoding('utf8')
     if (child.pid !== undefined) asking.add(child.pid)
     let settled = false
     let out = ''
@@ -88,8 +90,8 @@ function readReport(bin: string, cwd: string, env: NodeJS.ProcessEnv): Promise<s
     }
     const timer = setTimeout(() => stop(null), REPORT_TIMEOUT_MS)
 
-    child.stdout.on('data', (chunk: Buffer) => {
-      out += chunk.toString('utf8')
+    child.stdout.on('data', (chunk: string) => {
+      out += chunk
       if (out.length > REPORT_MAX) stop(out.slice(0, REPORT_MAX))
     })
     child.on('exit', (code) => stop(code === 0 && out.length > 0 ? out : null))

@@ -9,6 +9,7 @@ const KEEP_EXACT = new Set([
   'LC_ALL',
   'LC_CTYPE',
   'SSH_AUTH_SOCK',
+  'CLAUDE_CONFIG_DIR',
   'COMMAND_MODE',
   '__CF_USER_TEXT_ENCODING',
 ])

@@ -78,12 +78,13 @@ describe('the lock: only the people we hired can be called', () => {
       model: 'default' as const,
       persona: '말투',
       people: [{ name: 'scout', description: '찾는다', prompt: '찾아라', model: null }],
-      lock: { knownTools: ['Read', 'Task'], alsoCallable: [] },
+      lock: { blockedAgents: [] },
     })
     expect(args).toContain('--agent')
     expect(args[args.indexOf('--agent') + 1]).toBe('zetrem')
     const spec = JSON.parse(args[args.indexOf('--agents') + 1] as string)
-    expect(spec.zetrem.tools).toEqual(['Read', 'Agent(scout)'])
+    expect(spec.zetrem).not.toHaveProperty('tools')
+    expect(args[args.indexOf('--disallowedTools') + 1]).toContain('Workflow')
   })
 
   it('leaves the CLI default orchestrator alone when not locking', () => {
@@ -107,7 +108,7 @@ describe('what a locked orchestrator is told', () => {
       persona: '말투',
       orchestrator: '너는 오케스트레이터다',
       people: [{ name: 'scout', description: '찾는다', prompt: '찾아라', model: null }],
-      lock: { knownTools: ['Read'], alsoCallable: [] },
+      lock: { blockedAgents: [] },
     })
     const spec = JSON.parse(args[args.indexOf('--agents') + 1] as string)
     expect(spec.zetrem.prompt).toBe('너는 오케스트레이터다')
@@ -120,7 +121,7 @@ describe('what a locked orchestrator is told', () => {
       model: 'default' as const,
       persona: '말투',
       people: [{ name: 'scout', description: '찾는다', prompt: '찾아라', model: null }],
-      lock: { knownTools: ['Read'], alsoCallable: [] },
+      lock: { blockedAgents: [] },
     })
     expect(JSON.parse(args[args.indexOf('--agents') + 1] as string).zetrem.prompt).toBe('말투')
   })

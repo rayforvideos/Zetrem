@@ -49,25 +49,40 @@ describe('crewOf: the faces and models the screen draws by', () => {
 describe('lockOf: who the orchestrator may call', () => {
   const settings = { ...DEFAULT_SETTINGS, knownTools: ['Read', 'Bash'] }
 
-  it('does not lock before the tools are known, since locking would take them all away', () => {
-    expect(lockOf(DEFAULT_SETTINGS, [def('Ray')])).toBe(null)
+  it('locks from the first run, since the lock no longer costs the session its tools', () => {
+    expect(lockOf(DEFAULT_SETTINGS, [def('Ray')]).blockedAgents).toEqual([])
   })
 
-  it('adds the built-in agents that were switched on', () => {
+  it('bars the built-in agents that were left switched off, and only those', () => {
     const lock = lockOf(
       { ...settings, knownAgents: ['Explore', 'Plan', 'Ray'], stockAgents: ['Explore'] },
       [def('Ray')],
     )
-    expect(lock?.alsoCallable).toEqual(['Explore'])
+    expect(lock.blockedAgents).toEqual(['Plan'])
   })
 
-  it('adds none when none were switched on', () => {
+  it('bars every built-in agent when none were switched on', () => {
     const lock = lockOf({ ...settings, knownAgents: ['Explore'] }, [def('Ray')])
-    expect(lock?.alsoCallable).toEqual([])
+    expect(lock.blockedAgents).toEqual(['Explore'])
   })
 
-  it('carries the tools the session reported', () => {
-    expect(lockOf(settings, [])?.knownTools).toEqual(['Read', 'Bash'])
+  it('never bars someone we hired, whose whole point is being callable', () => {
+    const lock = lockOf({ ...settings, knownAgents: ['Explore', 'Ray'] }, [def('Ray')])
+    expect(lock.blockedAgents).not.toContain('Ray')
+  })
+
+  it('never bars the orchestrator seat itself', () => {
+    const lock = lockOf({ ...settings, knownAgents: ['zetrem', 'Explore'] }, [])
+    expect(lock.blockedAgents).not.toContain('zetrem')
+  })
+
+  it('bars a plugin agent, which has no switch and was never callable', () => {
+    const lock = lockOf({ ...settings, knownAgents: ['nx:ci-monitor-subagent'] }, [])
+    expect(lock.blockedAgents).toEqual(['nx:ci-monitor-subagent'])
+  })
+
+  it('bars nobody before it has heard of any agent', () => {
+    expect(lockOf({ ...settings, knownAgents: [] }, []).blockedAgents).toEqual([])
   })
 })
 

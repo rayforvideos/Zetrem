@@ -11,10 +11,9 @@ const INIT = JSON.stringify({
   permissionMode: 'ask',
   output_style: 'default',
   claude_code_version: '2.1.232',
-  apiKeySource: 'none',
   tools: ['Read', 'Bash'],
   agents: ['Explore', 'Siena'],
-  mcp_servers: [],
+  mcp_servers: []
 })
 
 describe('learnSession: taking the session in without anyone speaking', () => {
@@ -78,7 +77,7 @@ describe('learnUsage: taking the account limits from what the CLI printed', () =
     learnUsage('Current week (all models): 52% used · resets Aug 20 at 6am')
     statusStore.apply({
       type: 'limit',
-      limit: { kind: 'seven_day', utilization: 0.6, resetsAtMs: 1787173200000, overage: false, status: 'allowed' },
+      limit: { kind: 'seven_day', utilization: 0.6, resetsAtMs: 1787173200000, overage: false, status: 'allowed' }
     })
     expect(statusStore.get().limits).toHaveLength(1)
     expect(statusStore.get().limits[0]?.utilization).toBeCloseTo(0.6, 5)

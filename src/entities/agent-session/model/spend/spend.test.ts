@@ -8,7 +8,6 @@ const before: StatusState['cost'] = {
   lastTurnUsd: 0.4,
   tokens: { in: 10, out: 20, cacheRead: 30, cacheCreate: 40 },
   durationMs: 5000,
-  ttftMs: 900,
   turns: 3,
 }
 
@@ -18,7 +17,6 @@ function metrics(over: Partial<ResultMetrics> = {}): ResultMetrics {
     costUsd: 1.9,
     tokens: { in: 12, out: 25, cacheRead: 33, cacheCreate: 44 },
     durationMs: 7000,
-    ttftMs: 800,
     turns: 4,
     contextWindow: null,
     apiErrorStatus: null,
@@ -51,5 +49,22 @@ describe('spentAfter: what a turn adds to what a session has spent', () => {
     const fresh = { ...before, usd: 0, turns: 0, tokens: { in: 0, out: 0, cacheRead: 0, cacheCreate: 0 } }
     const empty = { in: 0, out: 0, cacheRead: 0, cacheCreate: 0 }
     expect(spentAfter(fresh, metrics({ tokens: empty })).tokens).toEqual(empty)
+  })
+})
+
+describe('a resumed chat keeps paying on top of what it already cost', () => {
+  const fresh: StatusState['cost'] = { ...before, usd: 0.9, lastTurnUsd: 0, turns: 0 }
+
+  it('adds the new process total to what the chat had already spent', () => {
+    expect(spentAfter(fresh, metrics({ costUsd: 0.25 }), 0.9).usd).toBeCloseTo(1.15, 5)
+  })
+
+  it('never reads lower than what the chat had spent, since a chat cannot get cheaper', () => {
+    expect(spentAfter(fresh, metrics({ costUsd: 0 }), 0.9).usd).toBe(0.9)
+  })
+
+  it('counts only the new process when nothing was carried over', () => {
+    const empty = { ...before, usd: 0, lastTurnUsd: 0, turns: 0 }
+    expect(spentAfter(empty, metrics({ costUsd: 0.25 })).usd).toBeCloseTo(0.25, 5)
   })
 })

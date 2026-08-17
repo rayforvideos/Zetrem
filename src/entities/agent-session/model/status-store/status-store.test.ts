@@ -7,21 +7,18 @@ beforeEach(() => {
 
 const session = {
   id: 's1', cwd: '/w', model: 'claude-opus-5[1m]', permissionMode: 'acceptEdits',
-  outputStyle: 'default', cliVersion: '2.1.231', apiKeySource: 'none',
-  fastMode: { state: 'off', reason: 'sdk_opt_in_required' },
+  cliVersion: '2.1.231',
   mcp: [{ name: 'playwright', status: 'connected' }],
   tools: [],
-    agents: [],
-  counts: { tools: 3, commands: 2, agents: 1, skills: 1, plugins: 1 },
-  memoryPaths: [],
+  agents: [],
 }
 
 function metrics(costUsd: number, contextWindow: number | null = 1_000_000) {
   return {
     costUsd,
     tokens: { in: 6, out: 261, cacheRead: 76424, cacheCreate: 14862 },
-    durationMs: 10485, ttftMs: 2352, turns: 3,
-    contextWindow, apiErrorStatus: null, stopReason: 'end_turn',
+    durationMs: 10485, turns: 3,
+    contextWindow, apiErrorStatus: null, stopReason: 'end_turn'
   }
 }
 
@@ -71,7 +68,7 @@ describe('statusStore: the last thing known to be true', () => {
   it('holds the latest limit warning', () => {
     statusStore.apply({
       type: 'limit',
-      limit: { kind: 'seven_day', utilization: 0.28, resetsAtMs: 1787173200000, overage: false, status: 'allowed_warning' },
+      limit: { kind: 'seven_day', utilization: 0.28, resetsAtMs: 1787173200000, overage: false, status: 'allowed_warning' }
     })
     expect(statusStore.get().limits[0]?.utilization).toBe(0.28)
   })
@@ -79,11 +76,11 @@ describe('statusStore: the last thing known to be true', () => {
   it('keeps a five hour and a weekly limit side by side, since one does not replace the other', () => {
     statusStore.apply({
       type: 'limit',
-      limit: { kind: 'seven_day', utilization: 0.5, resetsAtMs: 1787173200000, overage: false, status: 'allowed' },
+      limit: { kind: 'seven_day', utilization: 0.5, resetsAtMs: 1787173200000, overage: false, status: 'allowed' }
     })
     statusStore.apply({
       type: 'limit',
-      limit: { kind: 'five_hour', utilization: 0.1, resetsAtMs: 1787000000000, overage: false, status: 'allowed' },
+      limit: { kind: 'five_hour', utilization: 0.1, resetsAtMs: 1787000000000, overage: false, status: 'allowed' }
     })
     expect(statusStore.get().limits.map((limit) => limit.kind)).toEqual(['five_hour', 'seven_day'])
   })
@@ -92,35 +89,27 @@ describe('statusStore: the last thing known to be true', () => {
     for (const utilization of [0.2, 0.4]) {
       statusStore.apply({
         type: 'limit',
-        limit: { kind: 'seven_day', utilization, resetsAtMs: 1787173200000, overage: false, status: 'allowed' },
+        limit: { kind: 'seven_day', utilization, resetsAtMs: 1787173200000, overage: false, status: 'allowed' }
       })
     }
     expect(statusStore.get().limits).toHaveLength(1)
     expect(statusStore.get().limits[0]?.utilization).toBe(0.4)
   })
 
-  it('joins the start and end of a hook by its id', () => {
-    statusStore.apply({ type: 'hookStarted', hookId: 'c3d7', name: 'SessionStart:startup', event: 'SessionStart' })
-    expect(statusStore.get().hooks).toHaveLength(0)
-    statusStore.apply({ type: 'hookDone', hookId: 'c3d7', exitCode: 0, stderr: '' })
-    const [hook] = statusStore.get().hooks
-    expect(hook).toMatchObject({ name: 'SessionStart:startup', event: 'SessionStart', exitCode: 0 })
-    expect(typeof hook!.ms).toBe('number')
+  it('keeps what the chat already cost when the next message resumes it', () => {
+    statusStore.restoreChat({ usd: 0.58 })
+    statusStore.reset(true)
+    expect(statusStore.get().cost.usd, '이어 말했다고 값이 싸질 수는 없다').toBe(0.58)
+    statusStore.apply({ type: 'metrics', metrics: metrics(0.23) })
+    expect(statusStore.get().cost.usd).toBeCloseTo(0.81, 5)
   })
 
-  it('drops an unpaired hook end, rather than showing a row with no name', () => {
-    statusStore.apply({ type: 'hookDone', hookId: 'none', exitCode: 1, stderr: 'x' })
-    expect(statusStore.get().hooks).toEqual([])
-  })
-
-  it('keeps the last five hooks, so the drawer is not a hook log', () => {
-    for (let i = 0; i < 7; i += 1) {
-      statusStore.apply({ type: 'hookStarted', hookId: `h${i}`, name: `훅${i}`, event: 'PreToolUse' })
-      statusStore.apply({ type: 'hookDone', hookId: `h${i}`, exitCode: 0, stderr: '' })
-    }
-    const hooks = statusStore.get().hooks
-    expect(hooks).toHaveLength(5)
-    expect(hooks[0]!.name).toBe('훅6')
+  it('starts a brand new chat from nothing, so the last chat does not follow it', () => {
+    statusStore.restoreChat({ usd: 0.58 })
+    statusStore.reset()
+    expect(statusStore.get().cost.usd).toBe(0)
+    statusStore.apply({ type: 'metrics', metrics: metrics(0.23) })
+    expect(statusStore.get().cost.usd).toBeCloseTo(0.23, 5)
   })
 
   it('holds what is in progress', () => {
@@ -133,20 +122,13 @@ describe('statusStore: the last thing known to be true', () => {
     expect(statusStore.get().update).toEqual({ current: '2.1.231', latest: '2.1.240', managedBy: 'Homebrew' })
   })
 
-  it('clears pending hooks on reset, so an old session cannot report into a new one', () => {
-    statusStore.apply({ type: 'hookStarted', hookId: 'x', name: 'n', event: 'e' })
-    statusStore.reset()
-    statusStore.apply({ type: 'hookDone', hookId: 'x', exitCode: 0, stderr: '' })
-    expect(statusStore.get().hooks).toEqual([])
-  })
-
   it('lets go of everything from the last session, or the new one measures against the old cost', () => {
     statusStore.apply({ type: 'session', session })
     statusStore.apply({ type: 'context', used: 28364 })
     statusStore.apply({ type: 'metrics', metrics: metrics(0.9) })
     statusStore.apply({
       type: 'limit',
-      limit: { kind: 'seven_day', utilization: 0.28, resetsAtMs: 1787173200000, overage: false, status: 'allowed_warning' },
+      limit: { kind: 'seven_day', utilization: 0.28, resetsAtMs: 1787173200000, overage: false, status: 'allowed_warning' }
     })
 
     statusStore.reset()
@@ -206,7 +188,7 @@ describe('restoreChat: reopening a chat brings its totals back', () => {
       cacheWrite: 900,
       durationMs: 1800,
       contextUsed: 90_000,
-      contextWindow: 1_000_000,
+      contextWindow: 1_000_000
     })
     const state = statusStore.get()
     expect(state.cost.usd).toBe(0.42)

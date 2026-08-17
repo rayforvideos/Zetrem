@@ -55,7 +55,8 @@ function pane(over: Partial<Flat> = {}): string {
       plugins={{ summary: 'none', onOpen: () => {} }}
       actions={{
         reopened: flat.reopened,
-        canStart: flat.canStart,
+        signedIn: flat.auth?.state === 'signed-in',
+        hasProject: flat.project != null,
         onStart: () => {},
         onCancel: () => {},
       }}
@@ -74,20 +75,19 @@ describe('SetupPane: everything to settle before starting, on one screen', () =>
 
   it('locks Start without an account and a project, and says why', () => {
     const html = pane()
-    expect(html).toContain('Set your account and project first')
+    expect(html).toContain('Sign in and choose a project folder')
     const start = html.slice(html.lastIndexOf('<button', html.indexOf('>Start<')))
     expect(start).toContain('disabled=""')
   })
 
   it('opens Start once both are set, so the test above cannot pass by accident', () => {
     const html = pane({
-      canStart: true,
       auth: { state: 'signed-in', email: 'sam@example.com', orgName: null },
       project: { name: 'zetrem', path: '/tmp/zetrem' },
     })
     const start = html.slice(html.lastIndexOf('<button', html.indexOf('>Start<')))
     expect(start).not.toContain('disabled=""')
-    expect(html).not.toContain('Set your account and project first')
+    expect(html).not.toContain('Sign in')
   })
 
   it('offers a way out while signed in, because no way to switch accounts is a trap', () => {

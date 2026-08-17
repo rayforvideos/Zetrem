@@ -1,6 +1,18 @@
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/shared/ui/alert-dialog'
 import { Button } from '@/shared/ui/button'
 import { Field, FieldDescription, FieldLabel } from '@/shared/ui/field'
 import { Spinner } from '@/shared/ui/spinner'
+import { SIGN_OUT_TITLE, signOutHint, signOutWarning } from '../../lib/sign-out-warning/sign-out-warning'
 import type { Account } from '../SetupPane/SetupPane.types'
 
 export function AccountField({ account }: { account: Account }) {
@@ -23,19 +35,34 @@ export function AccountField({ account }: { account: Account }) {
                 <span className="text-muted-foreground"> · {auth.orgName}</span>
               )}
             </span>
-            <Button
-              size="sm"
-              variant="ghost"
-              onClick={account.onSignOut}
-              disabled={account.signingOut}
-              className="rounded-full text-muted-foreground"
-            >
-              {account.signingOut && <Spinner data-icon="inline-start" />}
-              {account.signingOut ? 'Signing out…' : 'Sign out'}
-            </Button>
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  disabled={account.signingOut}
+                  className="rounded-full text-muted-foreground"
+                >
+                  {account.signingOut && <Spinner data-icon="inline-start" />}
+                  {account.signingOut ? 'Signing out…' : 'Sign out'}
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent data-sign-out-confirm>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>{SIGN_OUT_TITLE}</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    {signOutWarning(account.sessionLive)}
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Stay signed in</AlertDialogCancel>
+                  <AlertDialogAction onClick={account.onSignOut}>Sign out</AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
           </div>
           <FieldDescription className={account.error !== null ? 'text-destructive' : undefined}>
-            {account.error ?? whenSignedOut(account.sessionLive)}
+            {account.error ?? signOutHint(account.sessionLive)}
           </FieldDescription>
         </>
       ) : (
@@ -64,8 +91,3 @@ export function AccountField({ account }: { account: Account }) {
   )
 }
 
-function whenSignedOut(sessionLive: boolean): string {
-  return sessionLive
-    ? 'Signing out stops the running session. You can sign back in as anyone.'
-    : 'Sign out to use a different Anthropic account.'
-}

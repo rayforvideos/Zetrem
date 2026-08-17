@@ -1,13 +1,17 @@
 import { createHash } from 'node:crypto'
-import { mkdir, readFile, readdir, rm } from 'node:fs/promises'
+import { mkdir, readFile, readdir, rm, stat } from 'node:fs/promises'
 import { join } from 'node:path'
 import { app } from 'electron'
 import { isChatId, readTranscript, summaryOf } from '@/entities/conversation/lib/transcript/transcript'
 import type { ChatSummary, Transcript } from '@/entities/conversation/lib/transcript/transcript.types'
 import { handle } from './ipc/ipc'
+import { queue } from './queue/queue'
 import { saveFile } from './save-file/save-file'
+import { staleChats } from './stale-chats/stale-chats'
 
 const CHAT_CAP = 60
+
+const queued = queue()
 
 function folder(project: string): string {
   const key = createHash('sha256').update(project).digest('hex').slice(0, 32)
@@ -48,9 +52,26 @@ async function chats(project: string): Promise<Transcript[]> {
   return found.sort((a, b) => b.savedAtMs - a.savedAtMs)
 }
 
-async function prune(project: string, keep: Transcript[]): Promise<void> {
-  for (const stale of keep.slice(CHAT_CAP)) {
-    await rm(chatPath(project, stale.id), { force: true }).catch(() => undefined)
+async function prune(project: string): Promise<void> {
+  let names: string[]
+  try {
+    names = (await readdir(folder(project))).filter((name) => name.endsWith('.json'))
+  } catch {
+    return
+  }
+  if (names.length <= CHAT_CAP) return
+  const dated = await Promise.all(
+    names.map(async (name) => {
+      const path = join(folder(project), name)
+      const at = await stat(path).then(
+        (info) => info.mtimeMs,
+        () => 0,
+      )
+      return { path, at }
+    }),
+  )
+  for (const path of staleChats(dated, CHAT_CAP)) {
+    await rm(path, { force: true }).catch(() => undefined)
   }
 }
 
@@ -72,18 +93,20 @@ export function registerTranscriptStore(): void {
     if (typeof project !== 'string' || project.length === 0) return
     const transcript = readTranscript(saved)
     if (transcript === null) return
-    const kept = transcript.spend === null ? await load(project, transcript.id) : null
-    const merged = kept?.spend == null ? transcript : { ...transcript, spend: kept.spend }
-    await mkdir(folder(project), { recursive: true }).catch(() => undefined)
-    await saveFile(chatPath(project, merged.id), JSON.stringify(merged)).catch(
-      (cause: unknown) => console.error('could not save the conversation', cause),
-    )
-    await prune(project, await chats(project))
+    await queued(async () => {
+      const kept = transcript.spend === null ? await load(project, transcript.id) : null
+      const merged = kept?.spend == null ? transcript : { ...transcript, spend: kept.spend }
+      await mkdir(folder(project), { recursive: true }).catch(() => undefined)
+      await saveFile(chatPath(project, merged.id), JSON.stringify(merged)).catch(
+        (cause: unknown) => console.error('could not save the conversation', cause),
+      )
+      await prune(project)
+    })
   })
 
   handle('transcript:forget', async (_event, project: unknown, id: unknown): Promise<void> => {
     const target = named(project, id)
     if (target === null) return
-    await rm(chatPath(target.project, target.id), { force: true }).catch(() => undefined)
+    await queued(() => rm(chatPath(target.project, target.id), { force: true }).catch(() => undefined))
   })
 }

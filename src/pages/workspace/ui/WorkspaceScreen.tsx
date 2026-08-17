@@ -124,15 +124,16 @@ export function WorkspaceScreen() {
   useFleet(deck, children, nowMs, viewport, sidebar.span + GRID_PAD * 2)
   useOutcomes(children)
 
+  const probedSession = status.probed
   const sessionTools = status.session?.tools
   const sessionAgents = status.session?.agents
   useEffect(() => {
     const learned = remembered(
-      { tools: sessionTools, agents: sessionAgents },
+      { tools: sessionTools, agents: sessionAgents, probed: probedSession },
       { tools: settings.knownTools, agents: settings.knownAgents },
     )
     if (learned !== null) update(learned)
-  }, [sessionTools, sessionAgents, settings.knownTools, settings.knownAgents, update])
+  }, [probedSession, sessionTools, sessionAgents, settings.knownTools, settings.knownAgents, update])
 
   const stock = stockAgents(
     settings.knownAgents,
@@ -237,7 +238,8 @@ export function WorkspaceScreen() {
                   }}
                   actions={{
                     reopened: settings.setupDone,
-                    canStart: auth.auth?.state === 'signed-in' && project?.path != null,
+                    signedIn: auth.auth?.state === 'signed-in',
+                    hasProject: project?.path != null,
                     onStart: panel.start,
                     onCancel: panel.cancel,
                   }}
@@ -402,6 +404,7 @@ export function WorkspaceScreen() {
           <UsageBar
             status={status}
             connectors={wires.connectors}
+            checked={wires.checked}
             nowMs={nowMs}
             open={drawerOpen}
             onToggle={() => setDrawerOpen((was) => !was)}
@@ -410,6 +413,7 @@ export function WorkspaceScreen() {
                 appVersion={appVersion}
                 statusState={status}
                 connectors={wires.connectors}
+                checked={wires.checked}
                 checking={wires.loading}
                 onRecheck={wires.reload}
                 onUpdate={cliUpdate.start}

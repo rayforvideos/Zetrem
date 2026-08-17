@@ -6,6 +6,7 @@ import { outcomeLine, useAsk } from '@/shared/lib/ask/ask'
 type Connectors = {
   connectors: Connector[]
   loading: boolean
+  checked: boolean
   busy: string | null
   note: string | null
   adding: boolean
@@ -26,6 +27,7 @@ const ADDING = 'adding'
 export function useConnectors(wanted: boolean): Connectors {
   const [connectors, setConnectors] = useState<Connector[]>([])
   const [loading, setLoading] = useState(false)
+  const [checked, setChecked] = useState(false)
   const asked = useRef(false)
   const { busy, note, say, ask } = useAsk()
 
@@ -34,7 +36,9 @@ export function useConnectors(wanted: boolean): Connectors {
     setLoading(true)
     void ask('list', 'Could not read your connectors', () => window.desk.listConnectors())
       .then((found) => {
-        if (found !== null) setConnectors(found)
+        if (found === null) return
+        setConnectors(found)
+        setChecked(true)
       })
       .finally(() => setLoading(false))
   }
@@ -79,6 +83,7 @@ export function useConnectors(wanted: boolean): Connectors {
   return {
     connectors,
     loading,
+    checked,
     busy,
     note,
     adding: busy === ADDING,

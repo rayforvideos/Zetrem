@@ -112,7 +112,7 @@ export function useAgent(
   }, [])
 
   function launch(text: string, resume: string | null, files: Attached[] = []): void {
-    statusStore.reset()
+    statusStore.reset(resume !== null)
     sessionStore.clear()
     childIds.current.clear()
     sends.current.clear()

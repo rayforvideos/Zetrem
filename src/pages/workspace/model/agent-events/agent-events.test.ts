@@ -10,7 +10,6 @@ function fakeMetrics(costUsd: number, overrides: Partial<ResultMetrics> = {}): R
     costUsd,
     tokens: { in: 10, out: 100, cacheRead: 0, cacheCreate: 0 },
     durationMs: 1000,
-    ttftMs: null,
     turns: 1,
     contextWindow: null,
     apiErrorStatus: null,

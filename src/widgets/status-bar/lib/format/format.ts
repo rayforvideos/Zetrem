@@ -13,19 +13,10 @@ export function contextPercent(context: { used: number; window: number | null })
 
 type Wired = { connected: number; needsAuth: number; total: number }
 
-const RANK: Record<string, number> = { 'needs-auth': 0, failed: 1, pending: 2, connected: 3 }
-
-function worse(a: string, b: string): string {
-  return (RANK[a] ?? 2) <= (RANK[b] ?? 2) ? a : b
-}
-
 export function reachable(status: StatusState, connectors: Connector[]): Map<string, string> {
   const state = new Map<string, string>()
+  for (const server of status.session?.mcp ?? []) state.set(server.name, server.status)
   for (const one of connectors) state.set(one.name, one.state)
-  for (const server of status.session?.mcp ?? []) {
-    const known = state.get(server.name)
-    state.set(server.name, known === undefined ? server.status : worse(known, server.status))
-  }
   return state
 }
 
@@ -40,7 +31,11 @@ function wiredOf(status: StatusState, connectors: Connector[]): Wired | null {
   }
 }
 
-export function cells(status: StatusState, connectors: Connector[] = []): Cell[] {
+export function cells(
+  status: StatusState,
+  connectors: Connector[] = [],
+  checked = true,
+): Cell[] {
   const out: Cell[] = []
 
   const percent = contextPercent(status.context)
@@ -48,7 +43,7 @@ export function cells(status: StatusState, connectors: Connector[] = []): Cell[]
     out.push({ key: 'context', text: `Context ${100 - percent}% left, compacting soon`, warn: true })
   }
 
-  const wired = wiredOf(status, connectors)
+  const wired = checked ? wiredOf(status, connectors) : null
   if (wired !== null) {
     out.push({
       key: 'mcp',

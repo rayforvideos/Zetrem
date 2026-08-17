@@ -15,12 +15,10 @@ function status(session: StatusState['session']): StatusState {
       turns: 0,
       lastTurnUsd: 0,
       durationMs: 0,
-      ttftMs: null,
-      tokens: { in: 0, out: 0, cacheRead: 0, cacheCreate: 0 },
+      tokens: { in: 0, out: 0, cacheRead: 0, cacheCreate: 0 }
     },
-    hooks: [],
     update: null,
-    activity: 'idle',
+    activity: 'idle'
   }
 }
 

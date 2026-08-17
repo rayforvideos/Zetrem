@@ -19,13 +19,11 @@ const STATUS: StatusState = {
     lastTurnUsd: 0,
     tokens: { in: 0, out: 0, cacheRead: 0, cacheCreate: 0 },
     durationMs: 0,
-    ttftMs: null,
-    turns: 0,
+    turns: 0
   },
   limits: [],
-  hooks: [],
   update: null,
-  activity: 'idle',
+  activity: 'idle'
 }
 
 function tool(overrides: Partial<ToolActivity> = {}): ToolActivity {
@@ -40,7 +38,7 @@ function turn(overrides: Partial<Turn> = {}): Turn {
     draft: '',
     thinking: '',
     startedAtMs: 0,
-    ...overrides,
+    ...overrides
   }
 }
 
@@ -136,8 +134,8 @@ describe('ConversationPane: the screen does not lie', () => {
     const stdout = Array.from({ length: TOOL_OUTPUT_LINES + 60 }, (_, i) => `줄${i}`).join('\n')
     const html = pane([
       turn({
-        tools: [tool({ result: { stdout, stderr: '', isError: true, interrupted: false } })],
-      }),
+        tools: [tool({ result: { stdout, stderr: '', isError: true, interrupted: false } })]
+      })
     ])
     expect(html).toContain(`줄${TOOL_OUTPUT_LINES - 1}`)
     expect(html).not.toContain(`줄${TOOL_OUTPUT_LINES}\n`)
@@ -154,7 +152,7 @@ describe('ConversationPane: the screen does not lie', () => {
 
   it('cannot open a row with nothing behind it, rather than opening an empty drawer', () => {
     const html = pane([
-      turn({ tools: [tool({ line: 'Bash ls', toolUseId: 'tk1', input: { command: 'ls' } })] }),
+      turn({ tools: [tool({ line: 'Bash ls', toolUseId: 'tk1', input: { command: 'ls' } })] })
     ])
     const button = tickButton(html, 'tk1')
     expect(button).toContain('disabled=""')
@@ -168,10 +166,10 @@ describe('ConversationPane: the screen does not lie', () => {
           tool({
             line: 'Bash ls',
             toolUseId: 'tk2',
-            result: { stdout: 'a.ts', stderr: '', isError: false, interrupted: false },
-          }),
-        ],
-      }),
+            result: { stdout: 'a.ts', stderr: '', isError: false, interrupted: false }
+          })
+        ]
+      })
     ])
     expect(tickButton(html, 'tk2')).not.toContain('disabled=""')
   })
@@ -204,8 +202,8 @@ describe('the screen is not blank while an answer is on its way', () => {
     const html = working([
       turn({
         startedAtMs: 2_000,
-        tools: [tool({ line: 'Bash npm test', input: { command: 'npm test' } })],
-      }),
+        tools: [tool({ line: 'Bash npm test', input: { command: 'npm test' } })]
+      })
     ])
     expect(html).toContain('Running')
     expect(html).toContain('10s')
@@ -243,5 +241,4 @@ describe('approval: the most important moment in this app', () => {
     expect(html).toContain('SomeTool')
   })
 })
-
 

@@ -21,6 +21,7 @@ const HOST_ENV = {
   TERM_PROGRAM_VERSION: '1.4.169',
   __CFBundleIdentifier: 'com.stablyai.orca',
   AI_AGENT: 'claude-code_2-1-229_agent',
+  CLAUDE_CONFIG_DIR: '/Users/sam/.config/claude',
   CLAUDECODE: '1',
   CLAUDE_CODE_CHILD_SESSION: '1',
   CLAUDE_CODE_MESSAGING_SOCKET: '/tmp/cc-socks/1.sock',
@@ -98,5 +99,26 @@ describe('agentEnv: what an agent inherits', () => {
 
   it('leaves empty values out, because spawn takes strings only', () => {
     expect('HOME' in agentEnv({ HOME: undefined })).toBe(false)
+  })
+})
+
+describe('the child reads the same Claude Code settings we do', () => {
+  it('carries the config dir through, or the agent sees other connectors than the app', () => {
+    const env = agentEnv(HOST_ENV)
+    expect(env.CLAUDE_CONFIG_DIR, '설정이 갈리면 화면과 실행이 어긋난다').toBe(
+      '/Users/sam/.config/claude',
+    )
+  })
+
+  it('still drops the marks of the session that spawned it', () => {
+    const env = agentEnv(HOST_ENV)
+    for (const key of ['CLAUDECODE', 'CLAUDE_CODE_CHILD_SESSION', 'CLAUDE_CODE_MESSAGING_SOCKET']) {
+      expect(key in env, key).toBe(false)
+    }
+  })
+
+  it('says nothing about a config dir the parent never set', () => {
+    const { CLAUDE_CONFIG_DIR: _gone, ...without } = HOST_ENV
+    expect('CLAUDE_CONFIG_DIR' in agentEnv(without)).toBe(false)
   })
 })

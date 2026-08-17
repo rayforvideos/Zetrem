@@ -18,6 +18,7 @@ export type DeskBridge = {
   readSettings(): Promise<Settings>
   writeSettings(next: Settings): Promise<Settings>
   pickKnowledge(): Promise<string[]>
+  authoredAgents(): Promise<string[]>
   pickFiles(): Promise<string[]>
   pathForFile(file: File): string
   readFiles(paths: string[]): Promise<Attached[]>

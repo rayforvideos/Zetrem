@@ -12,5 +12,6 @@ export default defineConfig({
       'tests/**/*.test.ts',
       'tests/**/*.test.tsx',
     ],
+    exclude: ['**/node_modules/**', 'tests/contract/**'],
   },
 })

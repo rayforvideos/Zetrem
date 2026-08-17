@@ -16,6 +16,7 @@ contextBridge.exposeInMainWorld('desk', {
   readSettings: (): Promise<unknown> => ipcRenderer.invoke('settings:read'),
   writeSettings: (next: unknown): Promise<unknown> => ipcRenderer.invoke('settings:write', next),
   pickKnowledge: (): Promise<unknown> => ipcRenderer.invoke('agents:pickKnowledge'),
+  authoredAgents: (): Promise<string[]> => ipcRenderer.invoke('agents:authored'),
   pickFiles: (): Promise<unknown> => ipcRenderer.invoke('files:pick'),
   pathForFile: (file: File): string => webUtils.getPathForFile(file),
   readFiles: (paths: string[]): Promise<unknown> => ipcRenderer.invoke('files:read', paths),

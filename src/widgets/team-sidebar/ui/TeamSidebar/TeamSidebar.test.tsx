@@ -82,3 +82,21 @@ function teamOf() {
     onRestart: () => {},
   }
 }
+
+describe('the sidebar holds our own people and what Claude Code brings, and nothing else', () => {
+  it('has a place for the team and a place for the builtins', () => {
+    const html = bar({ stock: { stock: ['Explore'], on: [], onChange: () => {} } })
+    expect(html).toContain('Your team')
+    expect(html).toContain('Claude Code')
+    expect(html).toContain('Explore')
+  })
+
+  it('names no other source, since agents from elsewhere do not belong here', () => {
+    const html = bar({ stock: { stock: ['Explore'], on: [], onChange: () => {} } })
+    expect(html).not.toContain('.claude/agents')
+  })
+
+  it('says it is still reading while Claude Code has named nobody', () => {
+    expect(bar()).toContain('Reading which agents Claude Code brings')
+  })
+})

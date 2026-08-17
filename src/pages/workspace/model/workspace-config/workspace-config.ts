@@ -20,9 +20,9 @@ export function crewOf(defs: AgentDef[], sessionModel: string | null): Crew {
   }
 }
 
-export function lockOf(settings: Settings, defs: AgentDef[]): RosterLock {
+export function lockOf(settings: Settings, defs: AgentDef[], authored: string[] = []): RosterLock {
   const ourNames = defs.map((def) => def.name)
-  const stock = stockAgents(settings.knownAgents, ourNames)
+  const stock = stockAgents(settings.knownAgents, ourNames, authored)
   const callable = new Set([...ourNames, ...allowedStock(stock, settings.stockAgents)])
   return {
     blockedAgents: settings.knownAgents.filter(

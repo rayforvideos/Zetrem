@@ -99,3 +99,25 @@ describe('pluginSummary: one line about plugins', () => {
     expect(pluginSummary(0, 0)).toContain('Add a marketplace')
   })
 })
+
+describe('an agent from the person own .claude folder is not zetrem business', () => {
+  const wrote = { ...DEFAULT_SETTINGS, knownAgents: ['Explore', 'Ray'], stockAgents: ['Explore'] }
+
+  it('bars it, since zetrem carries our own people and the builtins and nothing else', () => {
+    expect(lockOf(wrote, [], ['Ray']).blockedAgents).toContain('Ray')
+  })
+
+  it('leaves the builtin that is switched on alone', () => {
+    expect(lockOf(wrote, [], ['Ray']).blockedAgents).not.toContain('Explore')
+  })
+
+  it('bars it even if a stale setting still lists it as switched on', () => {
+    const stale = { ...wrote, stockAgents: ['Explore', 'Ray'] }
+    expect(lockOf(stale, [], ['Ray']).blockedAgents, '목록에 없으니 켤 수도 없다').toContain('Ray')
+  })
+
+  it('keeps someone hired in zetrem callable even when a file shares the name', () => {
+    const hired = { ...wrote, knownAgents: ['Ray'] }
+    expect(lockOf(hired, [def('Ray')], ['Ray']).blockedAgents).not.toContain('Ray')
+  })
+})

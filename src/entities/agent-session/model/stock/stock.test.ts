@@ -17,6 +17,22 @@ describe('stockAgents: what the session lists, minus our own, is what Claude Cod
     expect(stockAgents(known, ['Ray', 'Joi'])).toEqual(['Explore', 'general-purpose', 'Plan'])
   })
 
+  it('leaves out one the person wrote themselves, which Claude Code did not bring', () => {
+    expect(stockAgents(known, ['Joi'], ['Ray']), 'Ray 는 .claude/agents 에 직접 쓴 것이다').toEqual([
+      'Explore',
+      'general-purpose',
+      'Plan',
+    ])
+  })
+
+  it('keeps the builtins when the person wrote none', () => {
+    expect(stockAgents(['Explore', 'Plan'], [], [])).toEqual(['Explore', 'Plan'])
+  })
+
+  it('matches a written name however the session spells its case', () => {
+    expect(stockAgents(['Explore', 'Ray'], [], ['ray'])).toEqual(['Explore'])
+  })
+
   it('writes no names down, and follows whatever the session gives', () => {
     expect(stockAgents(['Brand New Agent'], [])).toEqual(['Brand New Agent'])
   })

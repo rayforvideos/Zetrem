@@ -18,7 +18,8 @@
     "test:watch": "vitest",
     "package": "electron-vite build && electron-builder --config electron-builder.config.cjs",
     "package:mac": "electron-vite build && electron-builder --mac --config electron-builder.config.cjs",
-    "package:win": "electron-vite build && electron-builder --win --config electron-builder.config.cjs"
+    "package:win": "electron-vite build && electron-builder --win --config electron-builder.config.cjs",
+    "test:contract": "vitest run --config vitest.contract.config.ts"
   },
   "devDependencies": {
     "@tailwindcss/vite": "^4.3.3",

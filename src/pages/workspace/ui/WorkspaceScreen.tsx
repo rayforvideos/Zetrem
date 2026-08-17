@@ -43,6 +43,7 @@ import { usePlugins } from '../model/use-plugins'
 import { useOutcomes } from '../model/use-outcomes'
 import { useProjectMemory } from '../model/use-project-memory'
 import { useSessionProbe } from '../model/use-session-probe'
+import { useAuthoredAgents } from '../model/use-authored-agents'
 import { useConnectors } from '../model/use-connectors'
 import { useAttachments } from '../model/use-attachments'
 import { useSettings } from '../model/use-settings'
@@ -61,12 +62,13 @@ export function WorkspaceScreen() {
   const { defs, drafts, hire, edit, release, note: teamNote } = useAgentDefs()
   const { failure: projectFailure, report: reportProject } = useFailure()
 
+  const authored = useAuthoredAgents(project?.path ?? null)
   const chat = useTranscript(project?.path ?? null)
   const runConfig = {
     permissionMode: settings.permissionMode,
     model: settings.model,
     people: peopleOf(defs),
-    lock: lockOf(settings, defs),
+    lock: lockOf(settings, defs, authored),
     resume: chat.resumeId,
   }
   const agent = useAgent(runConfig, (model) =>
@@ -138,6 +140,7 @@ export function WorkspaceScreen() {
   const stock = stockAgents(
     settings.knownAgents,
     defs.map((def) => def.name),
+    authored,
   )
   const openAgent = children.find((session) => session.id === focus.openAgentId) ?? null
   const sessionAgentNames = status.session?.agents ?? []

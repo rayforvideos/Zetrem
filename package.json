@@ -10,9 +10,10 @@
   "main": "out/main/index.js",
   "scripts": {
     "predev": "node scripts/name-dev-app.mjs",
-    "dev": "electron-vite dev",
+    "dev": "electron-vite dev --watch",
     "build": "electron-vite build",
     "typecheck": "tsc --noEmit",
+    "peek": "node --experimental-websocket scripts/peek.mjs",
     "test": "vitest run",
     "test:watch": "vitest",
     "package": "electron-vite build && electron-builder --config electron-builder.config.cjs",

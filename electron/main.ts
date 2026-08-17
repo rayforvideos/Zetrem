@@ -25,7 +25,8 @@ function dropChildren(): void {
   killAllProbes()
 }
 
-if (process.env.ZT_INSPECT) app.commandLine.appendSwitch('remote-debugging-port', process.env.ZT_INSPECT)
+const inspectPort = process.env.ZT_INSPECT ?? (process.env.ELECTRON_RENDERER_URL ? '0' : null)
+if (inspectPort !== null) app.commandLine.appendSwitch('remote-debugging-port', inspectPort)
 
 function iconPath(): string {
   return app.isPackaged

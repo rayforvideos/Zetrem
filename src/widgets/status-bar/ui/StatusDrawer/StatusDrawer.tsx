@@ -105,7 +105,6 @@ export function StatusDrawer({
                 {context.window ? ` / ${n(context.window)}` : ' (window unknown)'}
               </Row>
             )}
-            {hasRun && <Row label={t`Cost`}>${cost.usd.toFixed(2)}</Row>}
           </Card>
         )}
 

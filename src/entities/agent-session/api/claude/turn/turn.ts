@@ -1,8 +1,9 @@
 import { t } from '@lingui/core/macro'
+import { modelRefusedIn } from '../../../model/refused/refused'
 import type { TurnEvent } from './turn.types'
 
-import { retryLine, stoppedLine } from './failure/failure'
-import { resultText, toolLine } from './shared'
+import { retryLine, stoppedLine } from '../failure/failure'
+import { resultText, toolLine } from '../shared'
 
 export function fromAssistant(event: Record<string, unknown>): TurnEvent[] {
   const message = event.message as Record<string, unknown> | undefined
@@ -74,7 +75,12 @@ export function fromResult(event: Record<string, unknown>): TurnEvent[] {
     result: str(event.result),
     errors: event.errors,
   })
-  if (said !== null) out.push({ type: 'notice', text: said })
+  if (said !== null) {
+    // Read the model off what the CLI wrote, not off `said`: stoppedLine has
+    // already rewritten it for the screen and dropped the name.
+    const refused = modelRefusedIn(str(event.result))
+    out.push(refused === null ? { type: 'notice', text: said } : { type: 'notice', text: said, refused })
+  }
   out.push({ type: 'turnEnded' })
   return out
 }

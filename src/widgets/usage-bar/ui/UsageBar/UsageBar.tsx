@@ -8,7 +8,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/shared/ui/popover'
 import { cn } from '@/shared/lib/cn'
 import { USAGE_BAR } from '@/shared/config/theme'
 import { cells } from '@/widgets/status-bar'
-import { chatLine, marksOfStatus, quietLine, spendLine } from '../../lib/strip/strip'
+import { chatLine, marksOfStatus, quietLine } from '../../lib/strip/strip'
 import { t } from '@lingui/core/macro'
 
 type UsageBarProps = {
@@ -24,7 +24,6 @@ type UsageBarProps = {
 export function UsageBar({ status, connectors, checked, nowMs, open, details, onToggle }: UsageBarProps) {
   const marks = marksOfStatus(status, nowMs)
   const chat = chatLine(status)
-  const spend = spendLine(status)
   const quiet = quietLine(status)
   const session = cells(status, connectors, checked)
 
@@ -86,11 +85,6 @@ export function UsageBar({ status, connectors, checked, nowMs, open, details, on
         {chat !== null && (
           <span data-chat className="hidden flex-none md:inline">
             {chat}
-          </span>
-        )}
-        {spend !== null && (
-          <span data-spend className="hidden flex-none md:inline">
-            {spend}
           </span>
         )}
       </span>

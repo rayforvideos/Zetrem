@@ -1,7 +1,7 @@
 import type { ChildTurnEvent } from '../child.types'
 import type { PermissionEvent } from '../permission.types'
 import type { StatusEvent } from '../status/status.types'
-import type { TurnEvent } from '../turn.types'
+import type { TurnEvent } from '../turn/turn.types'
 
 export type { PermissionAlwaysResult, PermissionResult } from '../permission.types'
 

@@ -58,11 +58,6 @@ export function chatLine(status: StatusState): string | null {
   return t`this chat ${percent}%`
 }
 
-export function spendLine(status: StatusState): string | null {
-  if (status.cost.usd <= 0) return null
-  return `$${status.cost.usd.toFixed(2)}`
-}
-
 export function quietLine(status: StatusState): string | null {
   if (status.limits.length > 0 || chatLine(status) !== null) return null
   if (status.usage === 'unread') return t`Reading usage…`

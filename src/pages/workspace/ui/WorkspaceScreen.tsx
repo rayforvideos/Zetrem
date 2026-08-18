@@ -198,7 +198,7 @@ export function WorkspaceScreen() {
         data-live={atWork ? '' : undefined}
         data-talk={conv.status}
         data-activity={status.activity}
-        data-spent={`${status.cost.turns}:${status.cost.usd.toFixed(4)}:${status.context.used}`}
+        data-spent={`${status.cost.turns}:${status.context.used}`}
         className="flex h-full min-h-0 flex-col"
       >
         <div className="relative min-h-0 flex-1">

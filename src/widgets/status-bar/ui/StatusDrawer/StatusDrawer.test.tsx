@@ -49,11 +49,14 @@ describe('StatusDrawer says where you are and what it costs', () => {
     expect(html).toContain('claude-opus-5[1m]')
   })
 
-  it('gives context and spend as plain numbers, since the bar hides them on a narrow window', () => {
+  it('gives context as plain numbers, since the bar hides them on a narrow window', () => {
     const html = draw()
     expect(html).toContain('100,000')
     expect(html).toContain('1,000,000')
-    expect(html).toContain('$0.19')
+  })
+
+  it('puts no price on the session, which reports usage and not money', () => {
+    expect(draw()).not.toContain('$')
   })
 
   it('drops the numbers nobody acts on', () => {

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import type { StatusState } from '@/entities/agent-session'
-import { chatLine, marksOfStatus, quietLine, spendLine } from './strip'
+import { chatLine, marksOfStatus, quietLine } from './strip'
 
 const EMPTY: StatusState = {
   usage: 'read',
@@ -81,16 +81,6 @@ describe('chatLine: what this chat is using of its window', () => {
 
   it('falls back to a count when the window size was never reported', () => {
     expect(chatLine(state({ context: { used: 40_000, window: null } }))).toBe('this chat 40.0k')
-  })
-})
-
-describe('spendLine: what this session has cost', () => {
-  it('says nothing until something has been spent', () => {
-    expect(spendLine(EMPTY)).toBeNull()
-  })
-
-  it('gives the running total to the cent', () => {
-    expect(spendLine(state({ cost: { ...EMPTY.cost, usd: 0.6177 } }))).toBe('$0.62')
   })
 })
 

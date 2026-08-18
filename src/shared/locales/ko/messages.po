@@ -13,11 +13,11 @@ msgstr ""
 "Language-Team: \n"
 "Plural-Forms: \n"
 
-#: src/pages/workspace/model/agent-events/agent-events.ts:139
+#: src/pages/workspace/model/agent-events/agent-events.ts:138
 msgid " · on overage"
 msgstr " · 초과분 사용 중"
 
-#: src/pages/workspace/model/agent-events/agent-events.ts:137
+#: src/pages/workspace/model/agent-events/agent-events.ts:136
 msgid " {pct}% used,"
 msgstr " {pct}% 사용,"
 
@@ -32,13 +32,13 @@ msgid "{0} left"
 msgstr "{0} 남음"
 
 #. placeholder {0}: limitKindLabel(limit.kind)
-#: src/pages/workspace/model/agent-events/agent-events.ts:140
+#: src/pages/workspace/model/agent-events/agent-events.ts:139
 msgid "{0} limit{share} resets {when}{overage}"
 msgstr "{0} 한도{share} {when} 초기화{overage}"
 
 #. placeholder {0}: n(reached)
 #. placeholder {1}: n(wired.length)
-#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:137
+#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:136
 msgid "{0} of {1} connected"
 msgstr "{1}개 중 {0}개 연결됨"
 
@@ -67,7 +67,7 @@ msgstr "{0}시간 전"
 msgid "{0}m ago"
 msgstr "{0}분 전"
 
-#: src/pages/workspace/model/agent-events/agent-events.ts:149
+#: src/pages/workspace/model/agent-events/agent-events.ts:148
 msgid "{base}. Earlier turns live on as a summary."
 msgstr "{base}. 앞선 대화는 요약으로 남습니다."
 
@@ -79,7 +79,7 @@ msgstr "{from}이(가) 거절해서 {to}이(가) 대신 처리했습니다"
 msgid "{installed} installed from {sources, plural, one {# source} other {# sources}}"
 msgstr "{sources, plural, other {출처 #곳}}에서 {installed}개 설치됨"
 
-#: src/entities/agent-session/api/claude/turn.ts:95
+#: src/entities/agent-session/api/claude/turn/turn.ts:101
 msgid "{kind} {name} did not load: {why}"
 msgstr "{kind} {name}을(를) 불러오지 못했습니다: {why}"
 
@@ -145,7 +145,7 @@ msgid "{target} updated. Restart the session to load it."
 msgstr "{target} 업데이트했습니다. 세션을 다시 시작해야 불러옵니다."
 
 #: src/entities/agent-session/api/claude/aside/aside.ts:16
-#: src/entities/agent-session/api/claude/turn.ts:67
+#: src/entities/agent-session/api/claude/turn/turn.ts:68
 msgid "{tool} was not allowed"
 msgstr "{tool} 사용이 허용되지 않았습니다"
 
@@ -270,7 +270,7 @@ msgid "Added {name}. Sign in if it asks."
 msgstr "{name} 추가했습니다. 로그인을 요구하면 로그인하세요."
 
 #. placeholder {0}: n(reached)
-#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:136
+#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:135
 msgid "All {0} connected"
 msgstr "{0}개 모두 연결됨"
 
@@ -296,7 +296,7 @@ msgid "any moment"
 msgstr "곧"
 
 #. placeholder {0}: turn.metrics.apiErrorStatus
-#: src/pages/workspace/model/agent-events/agent-events.ts:95
+#: src/pages/workspace/model/agent-events/agent-events.ts:94
 msgid "API error {0}"
 msgstr "API 오류 {0}"
 
@@ -325,7 +325,7 @@ msgstr "첨부"
 msgid "Attach a file"
 msgstr "파일 첨부"
 
-#: src/pages/workspace/model/agent-events/agent-events.ts:156
+#: src/pages/workspace/model/agent-events/agent-events.ts:155
 msgid "auto"
 msgstr "자동"
 
@@ -383,8 +383,8 @@ msgstr "폴더 바꾸기…"
 msgid "Character"
 msgstr "캐릭터"
 
-#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:123
-#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:134
+#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:122
+#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:133
 msgid "Checking…"
 msgstr "확인하는 중…"
 
@@ -434,7 +434,7 @@ msgstr "복잡한 일에. 느리고 비쌉니다"
 msgid "Connected"
 msgstr "연결됨"
 
-#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:172
+#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:171
 msgid "Connecting"
 msgstr "연결하는 중"
 
@@ -446,7 +446,7 @@ msgstr "커넥터 주소"
 msgid "Connector name"
 msgstr "커넥터 이름"
 
-#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:114
+#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:113
 msgid "Connectors"
 msgstr "커넥터"
 
@@ -464,13 +464,9 @@ msgstr "컨텍스트"
 msgid "Context {0}% left, compacting soon"
 msgstr "컨텍스트 {0}% 남음, 곧 압축됩니다"
 
-#: src/pages/workspace/model/agent-events/agent-events.ts:148
+#: src/pages/workspace/model/agent-events/agent-events.ts:147
 msgid "Conversation compacted here"
 msgstr "여기서 대화가 압축됐습니다"
-
-#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:108
-msgid "Cost"
-msgstr "비용"
 
 #. placeholder {0}: said(verb)
 #: src/pages/workspace/model/use-plugins.ts:66
@@ -521,7 +517,7 @@ msgstr "{target}에 연결하지 못했습니다"
 msgid "Could not read the plugin shelf"
 msgstr "플러그인 목록을 읽지 못했습니다"
 
-#: src/widgets/usage-bar/lib/strip/strip.ts:69
+#: src/widgets/usage-bar/lib/strip/strip.ts:64
 msgid "Could not read usage"
 msgstr "사용량을 읽지 못했습니다"
 
@@ -663,7 +659,7 @@ msgstr "이 세션이 가진 전부"
 msgid "Face"
 msgstr "얼굴"
 
-#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:176
+#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:175
 msgid "Failed"
 msgstr "실패"
 
@@ -746,7 +742,7 @@ msgstr "설치됨 · {0}"
 msgid "Installed for this folder. Anyone who opens it gets them."
 msgstr "이 폴더에 설치했습니다. 이 폴더를 여는 사람은 모두 갖게 됩니다."
 
-#: src/entities/agent-session/api/claude/turn.ts:94
+#: src/entities/agent-session/api/claude/turn/turn.ts:100
 msgid "it could not be loaded"
 msgstr "불러올 수 없었습니다"
 
@@ -803,7 +799,7 @@ msgstr "관리"
 msgid "Managed on claude.ai. Sign in or out here, remove them there."
 msgstr "claude.ai에서 관리합니다. 로그인과 로그아웃은 여기서, 삭제는 거기서 하세요."
 
-#: src/pages/workspace/model/agent-events/agent-events.ts:157
+#: src/pages/workspace/model/agent-events/agent-events.ts:156
 msgid "manual"
 msgstr "수동"
 
@@ -814,7 +810,7 @@ msgstr "수동"
 msgid "MCP {0}/{1} · {2} need auth"
 msgstr "MCP {0}/{1} · {2}개 로그인 필요"
 
-#: src/entities/agent-session/api/claude/turn.ts:84
+#: src/entities/agent-session/api/claude/turn/turn.ts:90
 msgid "MCP server"
 msgstr "MCP 서버"
 
@@ -854,7 +850,7 @@ msgstr "이름"
 msgid "Name them, say when they should be called, and write their standing instructions. The orchestrator reads that middle line to decide who gets the job."
 msgstr "이름을 정하고, 언제 부를지 적고, 늘 지킬 지침을 씁니다. 오케스트레이터는 그 가운데 줄을 읽고 누구에게 맡길지 정합니다."
 
-#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:170
+#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:169
 msgid "Needs auth"
 msgstr "로그인 필요"
 
@@ -887,7 +883,7 @@ msgstr "새 팀원"
 msgid "Next"
 msgstr "다음"
 
-#: src/widgets/usage-bar/lib/strip/strip.ts:70
+#: src/widgets/usage-bar/lib/strip/strip.ts:65
 msgid "No account limits reported"
 msgstr "계정 한도 정보가 없습니다"
 
@@ -988,7 +984,7 @@ msgstr "하던 자리에서 이어받았습니다"
 msgid "Planning"
 msgstr "계획하는 중"
 
-#: src/entities/agent-session/api/claude/turn.ts:85
+#: src/entities/agent-session/api/claude/turn/turn.ts:91
 msgid "Plugin"
 msgstr "플러그인"
 
@@ -1038,7 +1034,7 @@ msgstr "보고 읽는 중"
 msgid "Reading the catalog…"
 msgstr "목록을 읽는 중…"
 
-#: src/widgets/usage-bar/lib/strip/strip.ts:68
+#: src/widgets/usage-bar/lib/strip/strip.ts:63
 msgid "Reading usage…"
 msgstr "사용량 읽는 중…"
 
@@ -1050,7 +1046,7 @@ msgstr "이 세션이 무엇을 주는지 읽는 중입니다. 곧 목록이 채
 msgid "Reading which agents Claude Code brings. They will be listed here."
 msgstr "클로드 코드가 데려오는 에이전트를 읽는 중입니다. 여기에 나열됩니다."
 
-#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:123
+#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:122
 msgid "Recheck"
 msgstr "다시 확인"
 
@@ -1157,7 +1153,7 @@ msgstr "무엇을 했는지 보기"
 msgid "Send"
 msgstr "보내기"
 
-#: src/widgets/usage-bar/ui/UsageBar/UsageBar.tsx:104
+#: src/widgets/usage-bar/ui/UsageBar/UsageBar.tsx:98
 msgid "Session details"
 msgstr "세션 상세"
 
@@ -1370,8 +1366,8 @@ msgid "The CLI does the work. Zetrem shows it while it happens: what was asked, 
 msgstr "일은 CLI가 합니다. Zetrem은 그 일이 벌어지는 동안 보여줍니다. 무엇을 시켰는지, 누가 맡았는지, 지금까지 무엇을 실행했는지."
 
 #: src/entities/agent-session/model/choices/choices.ts:22
-msgid "The hardest problems. Turn it on once with /model fable in the Claude Code CLI"
-msgstr "가장 어려운 문제에. 클로드 코드 CLI에서 /model fable로 한 번 켜야 합니다"
+msgid "The hardest problems. Slowest and priciest of these"
+msgstr "가장 어려운 문제용. 이 중 가장 느리고 가장 비쌉니다"
 
 #: src/entities/agent-session/api/claude/aside/aside.ts:31
 msgid "The model"
@@ -1464,9 +1460,9 @@ msgstr "클로드 코드 CLI 자체를 로그아웃합니다. 이 컴퓨터에�
 msgid "This signs out the Claude Code CLI itself, so every terminal, editor and app using it on this computer is signed out too. The session running here stops."
 msgstr "클로드 코드 CLI 자체를 로그아웃합니다. 이 컴퓨터에서 CLI를 쓰는 터미널과 편집기와 앱이 모두 함께 로그아웃됩니다. 여기서 돌고 있는 세션도 멈춥니다."
 
-#: src/pages/workspace/model/agent-events/agent-events.ts:165
-msgid "This turn: {out} out · {seconds}s{cost}"
-msgstr "이번 턴: {out} 출력 · {seconds}초{cost}"
+#: src/pages/workspace/model/agent-events/agent-events.ts:163
+msgid "This turn: {out} out · {seconds}s"
+msgstr "이번 턴: {out} 출력 · {seconds}초"
 
 #: src/widgets/conversation/ui/ConversationPane/Thinking.tsx:20
 msgid "Thought · {paragraphs} paragraphs"
@@ -1484,7 +1480,7 @@ msgstr "오늘"
 msgid "Todo list"
 msgstr "할 일 목록"
 
-#: src/entities/agent-session/api/claude/turn.ts:66
+#: src/entities/agent-session/api/claude/turn/turn.ts:67
 msgid "tool"
 msgstr "도구"
 
@@ -1501,15 +1497,15 @@ msgid "under a minute"
 msgstr "1분 이내"
 
 #: src/widgets/setup/ui/PluginShelf/PluginShelf.tsx:41
-#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:178
+#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:177
 msgid "Unknown"
 msgstr "알 수 없음"
 
-#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:155
+#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:154
 msgid "Update"
 msgstr "업데이트"
 
-#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:155
+#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:154
 msgid "Updating…"
 msgstr "업데이트하는 중…"
 
@@ -1517,7 +1513,7 @@ msgstr "업데이트하는 중…"
 msgid "Use https, or http only for a server on this machine"
 msgstr "https를 쓰세요. http는 이 컴퓨터의 서버일 때만 됩니다"
 
-#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:174
+#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:173
 msgid "Waiting for approval"
 msgstr "승인 대기 중"
 

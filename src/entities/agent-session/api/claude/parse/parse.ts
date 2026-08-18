@@ -25,7 +25,7 @@ import {
   fromStartupTrouble,
   fromStreamEvent,
   fromToolResult,
-} from '../turn'
+} from '../turn/turn'
 
 export { permissionAlwaysResult, permissionResult } from '../permission'
 

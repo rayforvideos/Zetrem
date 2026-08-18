@@ -1,6 +1,6 @@
 import type { AgentEventRefs } from './agent-events.types'
 
-import { modelRefusedIn, statusStore } from '@/entities/agent-session'
+import { statusStore } from '@/entities/agent-session'
 import type {
   ClaudeTurnEvent,
   RateLimit,
@@ -68,8 +68,7 @@ function announce(turn: ClaudeTurnEvent, refs: AgentEventRefs): void {
     case 'thinking':
       return conversation.think(turn.text)
     case 'notice': {
-      const refused = modelRefusedIn(turn.text)
-      if (refused !== null) refs.onModelRefused(refused)
+      if (turn.refused !== undefined) refs.onModelRefused(turn.refused)
       return conversation.system(turn.text)
     }
     case 'turnEnded':
@@ -94,7 +93,7 @@ function announce(turn: ClaudeTurnEvent, refs: AgentEventRefs): void {
       if (turn.metrics.apiErrorStatus) {
         conversation.system(t`API error ${turn.metrics.apiErrorStatus}`)
       }
-      return conversation.system(turnLine(turn.metrics, statusStore.get().cost.lastTurnUsd))
+      return conversation.system(turnLine(turn.metrics))
     case 'permissionDropped':
       return drop(turn.requestId, refs)
     case 'permission':
@@ -158,9 +157,8 @@ export function triggerLabel(trigger: string | null): string | null {
   return null
 }
 
-export function turnLine(metrics: ResultMetrics, turnUsd: number): string {
+export function turnLine(metrics: ResultMetrics): string {
   const seconds = (metrics.durationMs / 1000).toFixed(1)
-  const cost = turnUsd > 0 ? ` · $${turnUsd.toFixed(4)}` : ''
   const out = metrics.tokens.out.toLocaleString('en-US')
-  return t`This turn: ${out} out · ${seconds}s${cost}`
+  return t`This turn: ${out} out · ${seconds}s`
 }

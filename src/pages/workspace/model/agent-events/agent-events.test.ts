@@ -29,7 +29,7 @@ beforeEach(() => {
 })
 
 describe('applyAgentEvent: the order has to be nailed down', () => {
-  it('reports what this turn cost, not what the session has spent', () => {
+  it('reports each turn on its own, and never puts a price on it', () => {
     const refs = fakeRefs()
     applyAgentEvent({ type: 'metrics', metrics: fakeMetrics(0.1) }, refs)
     applyAgentEvent({ type: 'metrics', metrics: fakeMetrics(0.16) }, refs)
@@ -40,9 +40,7 @@ describe('applyAgentEvent: the order has to be nailed down', () => {
       .map((turn) => turn.text)
 
     expect(lines).toHaveLength(2)
-    expect(lines[0]).toContain('$0.1000')
-    expect(lines[1]).toContain('$0.0600')
-    expect(lines[1]).not.toContain('$0.1600')
+    for (const line of lines) expect(line).not.toContain('$')
   })
 
   it('puts a line in the conversation when a limit is not allowed', () => {
@@ -187,12 +185,12 @@ describe('limitLine: a limit states facts and nothing else', () => {
 })
 
 describe('turnLine: what a turn came to', () => {
-  it('leaves the cost out when there is none', () => {
-    expect(turnLine(fakeMetrics(0), 0)).not.toContain('$')
+  it('counts what was written and how long it took', () => {
+    expect(turnLine(fakeMetrics(0))).toContain('out')
   })
 
-  it('writes the cost to four decimals when there is one', () => {
-    expect(turnLine(fakeMetrics(0.1), 0.04)).toContain('$0.0400')
+  it('never puts a price on it, since the app reports usage and not money', () => {
+    expect(turnLine(fakeMetrics(0.1))).not.toContain('$')
   })
 })
 

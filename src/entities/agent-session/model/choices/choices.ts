@@ -19,7 +19,7 @@ export const MODELS: { id: ModelChoice; label: Said; hint: MessageDescriptor }[]
   {
     id: 'fable',
     label: 'Fable',
-    hint: msg`The hardest problems. Turn it on once with /model fable in the Claude Code CLI`,
+    hint: msg`The hardest problems. Slowest and priciest of these`,
   },
   { id: 'opus', label: 'Opus', hint: msg`Complex work. Slower and pricier` },
   { id: 'sonnet', label: 'Sonnet', hint: msg`Balanced for most tasks` },

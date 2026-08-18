@@ -39,3 +39,15 @@ describe('withRefused: keeping the list of what has been turned down', () => {
     expect(withoutRefused(['opus'], 'fable')).toEqual(['opus'])
   })
 })
+
+describe('the other sentence the CLI writes for a model it cannot reach', () => {
+  it('reads the name out of a deployment refusal', () => {
+    expect(
+      modelRefusedIn('The model opus is not available on your Bedrock deployment. Try switching to sonnet.'),
+    ).toBe('opus')
+  })
+
+  it('still reads the named form', () => {
+    expect(modelRefusedIn("There's an issue with the selected model (fable).")).toBe('fable')
+  })
+})

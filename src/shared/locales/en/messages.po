@@ -13,11 +13,11 @@ msgstr ""
 "Language-Team: \n"
 "Plural-Forms: \n"
 
-#: src/pages/workspace/model/agent-events/agent-events.ts:139
+#: src/pages/workspace/model/agent-events/agent-events.ts:138
 msgid " · on overage"
 msgstr " · on overage"
 
-#: src/pages/workspace/model/agent-events/agent-events.ts:137
+#: src/pages/workspace/model/agent-events/agent-events.ts:136
 msgid " {pct}% used,"
 msgstr " {pct}% used,"
 
@@ -32,13 +32,13 @@ msgid "{0} left"
 msgstr "{0} left"
 
 #. placeholder {0}: limitKindLabel(limit.kind)
-#: src/pages/workspace/model/agent-events/agent-events.ts:140
+#: src/pages/workspace/model/agent-events/agent-events.ts:139
 msgid "{0} limit{share} resets {when}{overage}"
 msgstr "{0} limit{share} resets {when}{overage}"
 
 #. placeholder {0}: n(reached)
 #. placeholder {1}: n(wired.length)
-#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:137
+#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:136
 msgid "{0} of {1} connected"
 msgstr "{0} of {1} connected"
 
@@ -67,7 +67,7 @@ msgstr "{0}h ago"
 msgid "{0}m ago"
 msgstr "{0}m ago"
 
-#: src/pages/workspace/model/agent-events/agent-events.ts:149
+#: src/pages/workspace/model/agent-events/agent-events.ts:148
 msgid "{base}. Earlier turns live on as a summary."
 msgstr "{base}. Earlier turns live on as a summary."
 
@@ -79,7 +79,7 @@ msgstr "{from} declined this, so {to} took it"
 msgid "{installed} installed from {sources, plural, one {# source} other {# sources}}"
 msgstr "{installed} installed from {sources, plural, one {# source} other {# sources}}"
 
-#: src/entities/agent-session/api/claude/turn.ts:95
+#: src/entities/agent-session/api/claude/turn/turn.ts:101
 msgid "{kind} {name} did not load: {why}"
 msgstr "{kind} {name} did not load: {why}"
 
@@ -145,7 +145,7 @@ msgid "{target} updated. Restart the session to load it."
 msgstr "{target} updated. Restart the session to load it."
 
 #: src/entities/agent-session/api/claude/aside/aside.ts:16
-#: src/entities/agent-session/api/claude/turn.ts:67
+#: src/entities/agent-session/api/claude/turn/turn.ts:68
 msgid "{tool} was not allowed"
 msgstr "{tool} was not allowed"
 
@@ -270,7 +270,7 @@ msgid "Added {name}. Sign in if it asks."
 msgstr "Added {name}. Sign in if it asks."
 
 #. placeholder {0}: n(reached)
-#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:136
+#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:135
 msgid "All {0} connected"
 msgstr "All {0} connected"
 
@@ -296,7 +296,7 @@ msgid "any moment"
 msgstr "any moment"
 
 #. placeholder {0}: turn.metrics.apiErrorStatus
-#: src/pages/workspace/model/agent-events/agent-events.ts:95
+#: src/pages/workspace/model/agent-events/agent-events.ts:94
 msgid "API error {0}"
 msgstr "API error {0}"
 
@@ -325,7 +325,7 @@ msgstr "Attach"
 msgid "Attach a file"
 msgstr "Attach a file"
 
-#: src/pages/workspace/model/agent-events/agent-events.ts:156
+#: src/pages/workspace/model/agent-events/agent-events.ts:155
 msgid "auto"
 msgstr "auto"
 
@@ -383,8 +383,8 @@ msgstr "Change folder…"
 msgid "Character"
 msgstr "Character"
 
-#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:123
-#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:134
+#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:122
+#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:133
 msgid "Checking…"
 msgstr "Checking…"
 
@@ -434,7 +434,7 @@ msgstr "Complex work. Slower and pricier"
 msgid "Connected"
 msgstr "Connected"
 
-#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:172
+#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:171
 msgid "Connecting"
 msgstr "Connecting"
 
@@ -446,7 +446,7 @@ msgstr "Connector address"
 msgid "Connector name"
 msgstr "Connector name"
 
-#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:114
+#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:113
 msgid "Connectors"
 msgstr "Connectors"
 
@@ -464,13 +464,9 @@ msgstr "Context"
 msgid "Context {0}% left, compacting soon"
 msgstr "Context {0}% left, compacting soon"
 
-#: src/pages/workspace/model/agent-events/agent-events.ts:148
+#: src/pages/workspace/model/agent-events/agent-events.ts:147
 msgid "Conversation compacted here"
 msgstr "Conversation compacted here"
-
-#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:108
-msgid "Cost"
-msgstr "Cost"
 
 #. placeholder {0}: said(verb)
 #: src/pages/workspace/model/use-plugins.ts:66
@@ -521,7 +517,7 @@ msgstr "Could not reach {target}"
 msgid "Could not read the plugin shelf"
 msgstr "Could not read the plugin shelf"
 
-#: src/widgets/usage-bar/lib/strip/strip.ts:69
+#: src/widgets/usage-bar/lib/strip/strip.ts:64
 msgid "Could not read usage"
 msgstr "Could not read usage"
 
@@ -663,7 +659,7 @@ msgstr "Everything the session has"
 msgid "Face"
 msgstr "Face"
 
-#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:176
+#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:175
 msgid "Failed"
 msgstr "Failed"
 
@@ -746,7 +742,7 @@ msgstr "Installed · {0}"
 msgid "Installed for this folder. Anyone who opens it gets them."
 msgstr "Installed for this folder. Anyone who opens it gets them."
 
-#: src/entities/agent-session/api/claude/turn.ts:94
+#: src/entities/agent-session/api/claude/turn/turn.ts:100
 msgid "it could not be loaded"
 msgstr "it could not be loaded"
 
@@ -803,7 +799,7 @@ msgstr "Manage"
 msgid "Managed on claude.ai. Sign in or out here, remove them there."
 msgstr "Managed on claude.ai. Sign in or out here, remove them there."
 
-#: src/pages/workspace/model/agent-events/agent-events.ts:157
+#: src/pages/workspace/model/agent-events/agent-events.ts:156
 msgid "manual"
 msgstr "manual"
 
@@ -814,7 +810,7 @@ msgstr "manual"
 msgid "MCP {0}/{1} · {2} need auth"
 msgstr "MCP {0}/{1} · {2} need auth"
 
-#: src/entities/agent-session/api/claude/turn.ts:84
+#: src/entities/agent-session/api/claude/turn/turn.ts:90
 msgid "MCP server"
 msgstr "MCP server"
 
@@ -854,7 +850,7 @@ msgstr "Name"
 msgid "Name them, say when they should be called, and write their standing instructions. The orchestrator reads that middle line to decide who gets the job."
 msgstr "Name them, say when they should be called, and write their standing instructions. The orchestrator reads that middle line to decide who gets the job."
 
-#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:170
+#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:169
 msgid "Needs auth"
 msgstr "Needs auth"
 
@@ -887,7 +883,7 @@ msgstr "New teammate"
 msgid "Next"
 msgstr "Next"
 
-#: src/widgets/usage-bar/lib/strip/strip.ts:70
+#: src/widgets/usage-bar/lib/strip/strip.ts:65
 msgid "No account limits reported"
 msgstr "No account limits reported"
 
@@ -988,7 +984,7 @@ msgstr "Picked up where they left off"
 msgid "Planning"
 msgstr "Planning"
 
-#: src/entities/agent-session/api/claude/turn.ts:85
+#: src/entities/agent-session/api/claude/turn/turn.ts:91
 msgid "Plugin"
 msgstr "Plugin"
 
@@ -1038,7 +1034,7 @@ msgstr "Reading reports"
 msgid "Reading the catalog…"
 msgstr "Reading the catalog…"
 
-#: src/widgets/usage-bar/lib/strip/strip.ts:68
+#: src/widgets/usage-bar/lib/strip/strip.ts:63
 msgid "Reading usage…"
 msgstr "Reading usage…"
 
@@ -1050,7 +1046,7 @@ msgstr "Reading what this session offers. The list fills in a moment."
 msgid "Reading which agents Claude Code brings. They will be listed here."
 msgstr "Reading which agents Claude Code brings. They will be listed here."
 
-#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:123
+#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:122
 msgid "Recheck"
 msgstr "Recheck"
 
@@ -1157,7 +1153,7 @@ msgstr "See what they did"
 msgid "Send"
 msgstr "Send"
 
-#: src/widgets/usage-bar/ui/UsageBar/UsageBar.tsx:104
+#: src/widgets/usage-bar/ui/UsageBar/UsageBar.tsx:98
 msgid "Session details"
 msgstr "Session details"
 
@@ -1370,8 +1366,8 @@ msgid "The CLI does the work. Zetrem shows it while it happens: what was asked, 
 msgstr "The CLI does the work. Zetrem shows it while it happens: what was asked, who is on it, and what they have run so far."
 
 #: src/entities/agent-session/model/choices/choices.ts:22
-msgid "The hardest problems. Turn it on once with /model fable in the Claude Code CLI"
-msgstr "The hardest problems. Turn it on once with /model fable in the Claude Code CLI"
+msgid "The hardest problems. Slowest and priciest of these"
+msgstr "The hardest problems. Slowest and priciest of these"
 
 #: src/entities/agent-session/api/claude/aside/aside.ts:31
 msgid "The model"
@@ -1464,9 +1460,9 @@ msgstr "This signs out the Claude Code CLI itself, so every terminal, editor and
 msgid "This signs out the Claude Code CLI itself, so every terminal, editor and app using it on this computer is signed out too. The session running here stops."
 msgstr "This signs out the Claude Code CLI itself, so every terminal, editor and app using it on this computer is signed out too. The session running here stops."
 
-#: src/pages/workspace/model/agent-events/agent-events.ts:165
-msgid "This turn: {out} out · {seconds}s{cost}"
-msgstr "This turn: {out} out · {seconds}s{cost}"
+#: src/pages/workspace/model/agent-events/agent-events.ts:163
+msgid "This turn: {out} out · {seconds}s"
+msgstr "This turn: {out} out · {seconds}s"
 
 #: src/widgets/conversation/ui/ConversationPane/Thinking.tsx:20
 msgid "Thought · {paragraphs} paragraphs"
@@ -1484,7 +1480,7 @@ msgstr "Today"
 msgid "Todo list"
 msgstr "Todo list"
 
-#: src/entities/agent-session/api/claude/turn.ts:66
+#: src/entities/agent-session/api/claude/turn/turn.ts:67
 msgid "tool"
 msgstr "tool"
 
@@ -1501,15 +1497,15 @@ msgid "under a minute"
 msgstr "under a minute"
 
 #: src/widgets/setup/ui/PluginShelf/PluginShelf.tsx:41
-#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:178
+#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:177
 msgid "Unknown"
 msgstr "Unknown"
 
-#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:155
+#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:154
 msgid "Update"
 msgstr "Update"
 
-#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:155
+#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:154
 msgid "Updating…"
 msgstr "Updating…"
 
@@ -1517,7 +1513,7 @@ msgstr "Updating…"
 msgid "Use https, or http only for a server on this machine"
 msgstr "Use https, or http only for a server on this machine"
 
-#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:174
+#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:173
 msgid "Waiting for approval"
 msgstr "Waiting for approval"
 

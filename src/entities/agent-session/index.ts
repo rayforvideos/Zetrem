@@ -26,7 +26,7 @@ export type {
 export { sessionStore } from './model/session-store/session-store'
 export { personaOf } from './model/persona/persona'
 export { addressed } from './model/dispatch/dispatch'
-export { AGENT_NAME, ORCHESTRATOR_PROMPT, PERSONA } from './model/orchestrator/orchestrator'
+export { ORCHESTRATOR_PROMPT, PERSONA } from './model/orchestrator/orchestrator'
 export { ORCHESTRATOR, agentsArgs, peopleSpec } from './model/roster-lock/roster-lock'
 export type { Person, RosterLock } from './model/roster-lock/roster-lock.types'
 export { nudgeFor } from './model/nudge/nudge'

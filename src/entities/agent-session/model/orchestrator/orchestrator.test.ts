@@ -2,13 +2,13 @@ import { readFile } from 'node:fs/promises'
 import { describe, expect, it } from 'vitest'
 import { agentArgs } from '../run-config/run-config'
 import { ORCHESTRATOR, agentsArgs } from '../roster-lock/roster-lock'
-import { ORCHESTRATOR_PROMPT } from './orchestrator'
+import { ORCHESTRATOR_PROMPT, PERSONA } from './orchestrator'
 
 const person = { name: 'Explore', description: '', prompt: '찾아본다', model: null, tools: [] }
 
 describe('what the orchestrator is told', () => {
-  it('tells it to answer in the language it was asked in', () => {
-    expect(ORCHESTRATOR_PROMPT).toContain('language the person writes')
+  it('says nothing about which language to answer in, which the CLI decides', () => {
+    expect(ORCHESTRATOR_PROMPT.toLowerCase()).not.toContain('language')
   })
 
   it('never locks with an empty brief, since nothing told is nothing followed', () => {
@@ -44,5 +44,27 @@ describe('what the orchestrator is told', () => {
       lock: null,
     })
     expect(args).not.toContain('--append-system-prompt')
+  })
+})
+
+describe('the app does not shape the answer itself', () => {
+  const said = `${PERSONA} ${ORCHESTRATOR_PROMPT}`.toLowerCase()
+
+  it('never asks for a line narrating what it is about to do', () => {
+    for (const phrase of ['open every reply', 'one sentence saying what you are doing']) {
+      expect(said, 'Zetrem 이 답변 앞에 문장을 덧붙이게 하면 CLI 와 답이 달라진다').not.toContain(phrase)
+    }
+  })
+
+  it('never renames the assistant, since the answer should read as Claude Code', () => {
+    expect(said).not.toContain('you are zeta')
+  })
+
+  it('adds nothing at all outside the orchestrator, so a plain session is untouched', () => {
+    expect(PERSONA).toBe('')
+  })
+
+  it('still says how to hand work to a teammate, which is the app working, not the answer', () => {
+    expect(ORCHESTRATOR_PROMPT).toContain('subagent_type')
   })
 })

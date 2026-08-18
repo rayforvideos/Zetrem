@@ -6,6 +6,7 @@ import { registerAttachments } from './attachments'
 import { registerAgentDefs } from './agent-defs'
 import { registerAuth } from './auth'
 import { registerCliVersion } from './cli-version'
+import { registerNudge } from './nudge'
 import { registerPlugins } from './plugins'
 import { registerSettingsStore } from './settings-store'
 import { registerConnectors } from './connectors'
@@ -171,6 +172,7 @@ if (!primary) {
   registerSessionProbe()
   registerTranscriptStore()
   registerPlugins()
+  registerNudge()
   handle('app:version', () => app.getVersion())
 
   app

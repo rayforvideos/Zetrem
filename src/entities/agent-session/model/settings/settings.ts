@@ -15,6 +15,7 @@ export const DEFAULT_SETTINGS: Settings = {
   onboarded: false,
   hintsSeen: [],
   knownTools: [],
+  notify: true,
   knownAgents: [],
   stockAgents: [],
   sidebarOpen: true,
@@ -55,6 +56,7 @@ export function readSettings(saved: unknown): Settings {
     knownTools: names(source.knownTools, DEFAULT_SETTINGS.knownTools),
     knownAgents: names(source.knownAgents, DEFAULT_SETTINGS.knownAgents),
     stockAgents: names(source.stockAgents, DEFAULT_SETTINGS.stockAgents),
+    notify: source.notify !== false,
     sidebarOpen: source.sidebarOpen !== false,
     sidebarWidth: sidebarWidth(source.sidebarWidth),
   }

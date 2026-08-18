@@ -44,6 +44,7 @@ import { useOutcomes } from '../model/use-outcomes'
 import { useProjectMemory } from '../model/use-project-memory'
 import { useSessionProbe } from '../model/use-session-probe'
 import { useAuthoredAgents } from '../model/use-authored-agents'
+import { useNudge } from '../model/use-nudge'
 import { useConnectors } from '../model/use-connectors'
 import { useAttachments } from '../model/use-attachments'
 import { useSettings } from '../model/use-settings'
@@ -123,6 +124,7 @@ export function WorkspaceScreen() {
     gate !== 'holding',
     conv.status === 'working',
   )
+  useNudge(settings.notify, conv.status, conv.permission)
   useFleet(deck, children, nowMs, viewport, sidebar.span + GRID_PAD * 2)
   useOutcomes(children)
 
@@ -230,6 +232,8 @@ export function WorkspaceScreen() {
                     permissionMode: settings.permissionMode,
                     model: settings.model,
                     onPermissionMode: (permissionMode) => update({ permissionMode }),
+                    notify: settings.notify,
+                    onNotify: (on) => update({ notify: on }),
                     onModel: (model) => update({ model }),
                   }}
                   plugins={{

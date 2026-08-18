@@ -10,6 +10,7 @@ type Flat = {
   project: { name: string; path: string } | null
   permissionMode: PermissionMode
   model: ModelChoice
+  notify: boolean
   reopened: boolean
   canStart: boolean
   sessionLive: boolean
@@ -24,6 +25,7 @@ function pane(over: Partial<Flat> = {}): string {
     project: null,
     permissionMode: 'ask',
     model: 'default',
+    notify: true,
     reopened: false,
     canStart: false,
     sessionLive: false,
@@ -49,6 +51,8 @@ function pane(over: Partial<Flat> = {}): string {
       defaults={{
         permissionMode: flat.permissionMode,
         model: flat.model,
+        notify: flat.notify,
+        onNotify: () => {},
         onPermissionMode: () => {},
         onModel: () => {},
       }}
@@ -167,5 +171,26 @@ describe('SetupPane: everything to settle before starting, on one screen', () =>
   it('writes what the choice means underneath, since a name does not say what changes', () => {
     expect(pane({ permissionMode: 'bypass' })).toContain('Never asks')
     expect(pane({ model: 'haiku' })).toContain('Fast and cheap')
+  })
+})
+
+describe('being told when the work is done is something you can turn off', () => {
+  it('offers the switch and says when it would speak', () => {
+    const html = pane()
+    expect(html).toContain('Notifications')
+    expect(html, '언제 울리는지 모르면 켤지 말지 정할 수 없다').toContain('behind another window')
+  })
+
+  function switchState(html: string): string | undefined {
+    const tag = html.split('<').find((one) => one.includes('aria-label="Notifications"'))
+    return /data-state="([a-z]+)"/.exec(tag ?? '')?.[1]
+  }
+
+  it('shows it on when it is on', () => {
+    expect(switchState(pane({ notify: true }))).toBe('checked')
+  })
+
+  it('shows it off when it is off', () => {
+    expect(switchState(pane({ notify: false }))).toBe('unchecked')
   })
 })

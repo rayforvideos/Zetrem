@@ -13,6 +13,7 @@ export type Settings = {
   knownTools: string[]
   knownAgents: string[]
   stockAgents: string[]
+  notify: boolean
   sidebarOpen: boolean
   sidebarWidth: number
 }

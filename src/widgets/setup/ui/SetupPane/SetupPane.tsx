@@ -4,6 +4,7 @@ import { MODELS, PERMISSION_MODES } from '@/entities/agent-session'
 import type { ModelChoice, PermissionMode } from '@/entities/agent-session'
 import { Alert, AlertDescription, AlertTitle } from '@/shared/ui/alert'
 import { Button } from '@/shared/ui/button'
+import { Switch } from '@/shared/ui/switch'
 import { Field, FieldContent, FieldDescription, FieldGroup, FieldLabel } from '@/shared/ui/field'
 import { WORDMARK_SIZE, Wordmark } from '@/shared/graphics/wordmark/wordmark'
 import { AccountField } from '../AccountField/AccountField'
@@ -64,6 +65,21 @@ export function SetupPane({
               chosen={defaults.model}
               onChoose={(id) => defaults.onModel(id as ModelChoice)}
             />
+            <Field orientation="horizontal" className="rounded-2xl bg-card p-4">
+              <FieldContent>
+                <FieldLabel htmlFor="notify">Notifications</FieldLabel>
+                <FieldDescription>
+                  Tells you when the work is done or something needs your say-so, and only while
+                  Zetrem is behind another window.
+                </FieldDescription>
+              </FieldContent>
+              <Switch
+                id="notify"
+                checked={defaults.notify}
+                onCheckedChange={defaults.onNotify}
+                aria-label="Notifications"
+              />
+            </Field>
             <Field orientation="horizontal" className="rounded-2xl bg-card p-4">
               <FieldContent>
                 <FieldLabel>Plugins</FieldLabel>

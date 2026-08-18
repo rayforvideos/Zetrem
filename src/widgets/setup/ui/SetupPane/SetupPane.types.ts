@@ -22,6 +22,8 @@ export type Project = {
 export type Defaults = {
   permissionMode: PermissionMode
   model: ModelChoice
+  notify: boolean
+  onNotify(on: boolean): void
   onPermissionMode(mode: PermissionMode): void
   onModel(model: ModelChoice): void
 }

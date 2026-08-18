@@ -20,6 +20,7 @@ describe('readSettings: reading back what was chosen', () => {
       knownTools: ['Read', 'Bash'],
       knownAgents: ['Explore', 'Ray'],
       stockAgents: ['Explore'],
+      notify: false,
       sidebarOpen: false,
       sidebarWidth: 300,
       refusedModels: ['fable'],
@@ -121,5 +122,20 @@ describe('who the person is, kept beside how they like to work', () => {
     expect(readSettings({ userFace: 'capsule' }).userFace).toBe('capsule')
     expect(readSettings({ userFace: 'heart' }).userFace).toBe('onigiri')
     expect(readSettings({}).userFace).toBe('onigiri')
+  })
+})
+
+describe('being told when the work is done', () => {
+  it('is on to begin with, since that is why you leave the window', () => {
+    expect(readSettings(null).notify).toBe(true)
+  })
+
+  it('stays off once it has been turned off', () => {
+    expect(readSettings({ notify: false }).notify).toBe(false)
+  })
+
+  it('reads anything that is not a plain false as on', () => {
+    expect(readSettings({ notify: 'yes' }).notify).toBe(true)
+    expect(readSettings({}).notify).toBe(true)
   })
 })

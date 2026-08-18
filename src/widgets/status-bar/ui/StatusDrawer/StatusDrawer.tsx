@@ -48,7 +48,7 @@ function Row({ label, children }: { label: string; children: ReactNode }) {
 }
 
 function n(value: number): string {
-  return value.toLocaleString('ko-KR')
+  return value.toLocaleString('en-US')
 }
 
 function known(value: string): string | null {

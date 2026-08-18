@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { appliesHere, removableHere, switchableHere, whereLine } from './where'
 
-const HERE = '/Users/sam/workspace/arch-test-app'
+const HERE = '/Users/sam/workspace/a-project'
 const ELSEWHERE = '/Users/sam/workspace/another-project'
 
 describe('appliesHere: whether the session in this window actually loads it', () => {

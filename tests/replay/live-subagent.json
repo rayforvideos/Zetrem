@@ -283,7 +283,7 @@
    {
     "name": "uq-api",
     "path": "/Users/sam/.claude/plugins/cache/acme/uq-api/0.1.5",
-    "source": "inhouse-api@acme",
+    "source": "uq-api@acme",
     "version": "0.1.5"
    }
   ],

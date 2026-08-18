@@ -1,5 +1,5 @@
 import { readFile, readdir, mkdir, rm } from 'node:fs/promises'
-import { join, resolve } from 'node:path'
+import { isAbsolute, join, relative, resolve } from 'node:path'
 import { saveFile } from '../save-file/save-file'
 import { fileNameOf, parseAgentDef, toAgentFile } from '@/entities/agent-def'
 import type { AgentDef, AgentDefDraft } from '@/entities/agent-def'
@@ -33,7 +33,11 @@ export async function listAgentDefs(dir: string): Promise<AgentDef[]> {
 function insideRoster(dir: string, name: string): string {
   const root = resolve(dir)
   const path = resolve(root, fileNameOf(name))
-  if (!path.startsWith(`${root}/`)) throw new Error('refusing to touch a path outside the roster')
+  // Comparing against `${root}/` assumed one separator, so on Windows this
+  // refused every legitimate path. Ask the path library what is inside instead.
+  const step = relative(root, path)
+  const escapes = step.length === 0 || step.startsWith('..') || isAbsolute(step)
+  if (escapes) throw new Error('refusing to touch a path outside the roster')
   return path
 }
 

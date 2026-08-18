@@ -1,3 +1,4 @@
+import { baseName } from '@/shared/lib/base-name/base-name'
 import type { AttachKind, Attached, Sent } from './attachment.types'
 
 export const IMAGE_MAX_BYTES = 10 * 1024 * 1024
@@ -11,7 +12,7 @@ const IMAGE_TYPES: Record<string, string> = {
 }
 
 export function nameOf(path: string): string {
-  return path.split('/').pop() ?? path
+  return baseName(path)
 }
 
 export function imageTypeOf(path: string): string | null {

@@ -1,0 +1,12 @@
+# Keep text in the repository with LF, whatever the machine checking it out.
+# Tests read these files and match on newlines, and a CRLF checkout broke them.
+* text=auto eol=lf
+
+*.png binary
+*.ico binary
+*.icns binary
+*.jpg binary
+*.webp binary
+*.woff binary
+*.woff2 binary
+*.ttf binary

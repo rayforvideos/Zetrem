@@ -122,3 +122,36 @@ describe('the child reads the same Claude Code settings we do', () => {
     expect('CLAUDE_CONFIG_DIR' in agentEnv(without)).toBe(false)
   })
 })
+
+describe('a Windows agent gets the environment Windows needs', () => {
+  const WINDOWS = {
+    USERPROFILE: 'C:\\Users\\sam',
+    APPDATA: 'C:\\Users\\sam\\AppData\\Roaming',
+    LOCALAPPDATA: 'C:\\Users\\sam\\AppData\\Local',
+    SystemRoot: 'C:\\Windows',
+    windir: 'C:\\Windows',
+    COMSPEC: 'C:\\Windows\\system32\\cmd.exe',
+    PATHEXT: '.COM;.EXE;.BAT;.CMD',
+    TEMP: 'C:\\Users\\sam\\AppData\\Local\\Temp',
+    USERNAME: 'sam',
+    OneDriveConsumer: 'C:\\Users\\sam\\OneDrive',
+  }
+
+  it('keeps the home the CLI writes its credentials under', () => {
+    const env = agentEnv(WINDOWS)
+    expect(env.USERPROFILE).toBe('C:\\Users\\sam')
+    expect(env.APPDATA).toBe('C:\\Users\\sam\\AppData\\Roaming')
+  })
+
+  it('keeps SystemRoot, without which many Windows calls will not run', () => {
+    expect(agentEnv(WINDOWS).SystemRoot).toBe('C:\\Windows')
+  })
+
+  it('reads a name whatever case the shell gave it', () => {
+    expect(agentEnv(WINDOWS).windir).toBe('C:\\Windows')
+  })
+
+  it('still drops what it was never asked to carry', () => {
+    expect(agentEnv(WINDOWS)).not.toHaveProperty('OneDriveConsumer')
+  })
+})

@@ -15,14 +15,15 @@ permissions:
 
 jobs:
   check:
-    name: check (node ${{ matrix.node }})
-    # The app is built and signed on macOS, so that is where its checks belong.
-    runs-on: macos-latest
+    name: check (${{ matrix.os }}, node ${{ matrix.node }})
+    # The app ships for macOS and Windows, so both run the checks. 20.19 is what
+    # it is developed on and 22.19 is what .nvmrc asks for; both are claimed to
+    # work, so both are tested rather than trusted.
+    runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
-        # 20.19 is what the app is developed on; 22.19 is what .nvmrc asks for.
-        # Both are claimed to work, so both are tested rather than trusted.
+        os: [macos-latest, windows-latest]
         node: ['20.19', '22.19']
     steps:
       - uses: actions/checkout@v5
@@ -49,3 +50,51 @@ jobs:
           npm run i18n:extract -- --clean
           git diff --exit-code -- src/shared/locales \
             || (echo "::error::카탈로그가 원문과 다르다. npm run i18n:extract 를 돌려 커밋해라" && exit 1)
+
+  # Temporary: find a way to run a .cmd on Windows that keeps an argument
+  # containing JSON intact, since --agents carries exactly that.
+  probe-cmd-spawn:
+    name: probe (windows spawn of .cmd)
+    runs-on: windows-latest
+    steps:
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20.19'
+      - shell: bash
+        run: |
+          cat > show.mjs <<'JS'
+          console.log('SAW ' + JSON.stringify(process.argv.slice(2)))
+          JS
+          printf '@echo off\r\nnode "%%~dp0show.mjs" %%*\r\n' > fake.cmd
+          cat > probe.mjs <<'JS'
+          import { spawnSync } from 'node:child_process'
+          import { resolve } from 'node:path'
+          const file = resolve('fake.cmd')
+          const json = '{"scout":{"description":"finds things","prompt":"go go"}}'
+          const args = ['--agents', json, '--model', 'sonnet']
+          const quote = (a) => `"${a.replaceAll('"', '\\"')}"`
+          const tries = {
+            plain: [file, args, {}],
+            shellTrue: [file, args, { shell: true }],
+            cmdArgv: [process.env.COMSPEC, ['/d', '/s', '/c', file, ...args], {}],
+            cmdVerbatim: [
+              process.env.COMSPEC,
+              ['/d', '/s', '/c', [quote(file), ...args.map(quote)].join(' ')],
+              { windowsVerbatimArguments: true },
+            ],
+          }
+          for (const [way, [cmd, argv, opts]] of Object.entries(tries)) {
+            const r = spawnSync(cmd, argv, { encoding: 'utf8', ...opts })
+            const saw = (r.stdout ?? '').split('\n').find((l) => l.startsWith('SAW '))
+            let intact = false
+            try { intact = JSON.parse(saw.slice(4))[1] === json } catch {}
+            console.log(JSON.stringify({
+              way,
+              error: r.error ? String(r.error.code ?? r.error.message) : null,
+              status: r.status,
+              intact,
+              saw: (saw ?? (r.stderr ?? '').trim()).slice(0, 180),
+            }))
+          }
+          JS
+          node probe.mjs

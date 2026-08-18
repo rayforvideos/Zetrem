@@ -1,3 +1,30 @@
+// The allowlist was written on a Mac, and every name in it was a POSIX one. On
+// Windows that left a child with almost no environment: no home, so the CLI
+// could not find the credentials it had just written, and no SystemRoot, which
+// a great many Windows APIs need before they will run at all.
+const KEEP_WINDOWS = [
+  'USERPROFILE',
+  'HOMEDRIVE',
+  'HOMEPATH',
+  'APPDATA',
+  'LOCALAPPDATA',
+  'PROGRAMDATA',
+  'PROGRAMFILES',
+  'PROGRAMFILES(X86)',
+  'SYSTEMROOT',
+  'SYSTEMDRIVE',
+  'WINDIR',
+  'COMSPEC',
+  'PATHEXT',
+  'TEMP',
+  'TMP',
+  'USERNAME',
+  'USERDOMAIN',
+  'COMPUTERNAME',
+  'NUMBER_OF_PROCESSORS',
+  'PROCESSOR_ARCHITECTURE',
+]
+
 const KEEP_EXACT = new Set([
   'HOME',
   'USER',
@@ -31,8 +58,10 @@ export function agentEnv(
   for (const [key, value] of Object.entries(source)) {
     if (value === undefined) continue
     const lower = key.toLowerCase()
+    // Windows names arrive in whatever case the shell felt like, so compare folded.
     const keep =
       KEEP_EXACT.has(key) ||
+      KEEP_WINDOWS.includes(key.toUpperCase()) ||
       KEEP_PREFIX.some((prefix) => key.startsWith(prefix)) ||
       KEEP_PREFIX_CI.some((prefix) => lower.startsWith(prefix))
     if (keep) env[key] = value

@@ -10,7 +10,7 @@ type Line = { id: string; said: string }
 function catalog(tongue: string): Line[] {
   const po = readFileSync(join(LOCALES, tongue, 'messages.po'), 'utf8')
   const found: Line[] = []
-  for (const [, id, said] of po.matchAll(/^msgid "((?:[^"\\]|\\.)*)"\nmsgstr "((?:[^"\\]|\\.)*)"/gm)) {
+  for (const [, id, said] of po.matchAll(/^msgid "((?:[^"\\]|\\.)*)"\r?\nmsgstr "((?:[^"\\]|\\.)*)"/gm)) {
     if (id === undefined || id.length === 0) continue
     found.push({ id, said: said ?? '' })
   }
@@ -33,9 +33,15 @@ describe('the catalogs are what the app actually says', () => {
     const paths = tongues.map((one) => join(LOCALES, one, 'messages.po'))
     const before = paths.map((path) => readFileSync(path, 'utf8'))
     try {
-      execFileSync('npx', ['lingui', 'extract', '--clean'], { stdio: 'pipe' })
+      // Not `npx`: on Windows that is npx.cmd, and Node refuses to spawn a .cmd
+      // without a shell. Run the CLI's own entry point with the node we are in.
+      execFileSync(
+        process.execPath,
+        [join('node_modules', '@lingui', 'cli', 'dist', 'lingui.js'), 'extract', '--clean'],
+        { stdio: 'pipe' },
+      )
       const after = paths.map((path) => readFileSync(path, 'utf8'))
-      const strip = (po: string): string => po.replace(/"POT-Creation-Date:[^"]*"\n/, '')
+      const strip = (po: string): string => po.replace(/"POT-Creation-Date:[^"]*"\r?\n/, '')
       expect(
         after.map(strip),
         '문구를 고쳤으면 npm run i18n:extract 로 카탈로그를 맞춰야 한다',
@@ -43,7 +49,9 @@ describe('the catalogs are what the app actually says', () => {
     } finally {
       paths.forEach((path, at) => writeFileSync(path, before[at] ?? ''))
     }
-  })
+    // Running the extractor is the slow part, and a CI runner is slower than a
+    // laptop. The old five-second default failed here for want of time, not truth.
+  }, 120_000)
 })
 
 describe('a line that has been translated is translated properly', () => {

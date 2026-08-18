@@ -10,7 +10,6 @@ function def(name: string): AgentDef {
     character: null,
     tools: [],
     knowledge: [],
-    ownCopy: false,
     prompt: '',
     source: 'user',
     path: `/${name}.md`,

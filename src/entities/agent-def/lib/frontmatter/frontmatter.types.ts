@@ -5,7 +5,6 @@ export type AgentDef = {
   model: string | null
   tools: string[]
   knowledge: string[]
-  ownCopy: boolean
   prompt: string
   source: 'project' | 'user'
   path: string
@@ -18,6 +17,5 @@ export type AgentDefDraft = {
   model: string | null
   tools: string[]
   knowledge: string[]
-  ownCopy: boolean
   prompt: string
 }

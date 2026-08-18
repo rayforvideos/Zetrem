@@ -8,7 +8,6 @@ import { ToolIcon } from '@/shared/graphics/tool-icon'
 import { Markdown } from '@/shared/markdown/Markdown/Markdown'
 import { leadOf } from '../../lib/lead/lead'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
-import { leftBehind } from '../../lib/left-behind/left-behind'
 import { runsOf, stepTo } from '../../lib/runs/runs'
 import { i18n } from '@lingui/core'
 import { msg, t } from '@lingui/core/macro'
@@ -110,12 +109,6 @@ export function AgentReport({ session, sessions, nowMs, onClose, onPick }: Agent
             </span>
           ))}
       </dl>
-
-      {session.outcome && (
-        <p className="text-sm leading-relaxed text-muted-foreground">
-          {leftBehind(session.outcome)}
-        </p>
-      )}
 
       {session.transcript.length > 0 && (
         <div className="flex flex-col gap-2.5 pt-2">

@@ -16,7 +16,6 @@ import {
 import { Input } from '@/shared/ui/input'
 import { Label } from '@/shared/ui/label'
 import { Popover, PopoverContent, PopoverTrigger } from '@/shared/ui/popover'
-import { Switch } from '@/shared/ui/switch'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/shared/ui/select'
 import { Textarea } from '@/shared/ui/textarea'
 import { characterFor, draftFrom, initialCharacter, toggled, toolSummary } from '../../lib/member-draft/member-draft'
@@ -45,7 +44,6 @@ export function MemberForm({ initial, knownTools, onSubmit, onCancel }: MemberFo
   const [model, setModel] = useState(initial?.model ?? null)
   const [tools, setTools] = useState(initial?.tools ?? [])
   const [knowledge, setKnowledge] = useState(initial?.knowledge ?? [])
-  const [ownCopy, setOwnCopy] = useState(initial?.ownCopy ?? false)
   const [picked, setPicked] = useState<CharacterId | null>(initialCharacter(initial))
   const [missing, setMissing] = useState<string | null>(null)
   const [sheet, setSheet] = useState<HTMLElement | null>(null)
@@ -84,7 +82,7 @@ export function MemberForm({ initial, knownTools, onSubmit, onCancel }: MemberFo
               return
             }
             onSubmit(
-              draftFrom({ name, description, prompt, character, model, tools, knowledge, ownCopy }, initial),
+              draftFrom({ name, description, prompt, character, model, tools, knowledge }, initial),
             )
           }}
         >
@@ -148,22 +146,6 @@ export function MemberForm({ initial, knownTools, onSubmit, onCancel }: MemberFo
                     ))}
                   </SelectContent>
                 </Select>
-              </Row>
-
-              <Row label={t`Where they work`}>
-                <label className="flex items-center gap-2.5 rounded-lg py-1">
-                  <Switch
-                    checked={ownCopy}
-                    onCheckedChange={setOwnCopy}
-                    aria-label={t`Work in their own copy`}
-                  />
-                  <span className="min-w-0 flex-1 text-sm leading-tight">{t`Their own copy`}</span>
-                </label>
-                <Note>
-                  {ownCopy
-                    ? t`They get a copy of the repository and a branch of their own. Your files stay as they are.`
-                    : t`They edit your files directly, alongside everyone else you have working.`}
-                </Note>
               </Row>
 
               <Row label={t`Tools`}>

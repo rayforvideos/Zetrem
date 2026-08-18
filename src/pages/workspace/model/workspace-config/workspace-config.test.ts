@@ -11,7 +11,6 @@ function def(name: string, overrides: Partial<AgentDef> = {}): AgentDef {
     character: null,
     tools: [],
     knowledge: [],
-    ownCopy: false,
     prompt: 'go',
     source: 'user',
     path: `/${name}.md`,

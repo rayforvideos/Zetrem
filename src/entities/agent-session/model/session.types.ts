@@ -28,7 +28,6 @@ export type AgentSession = {
   lastSeenAtMs?: number
   endedAtMs?: number
   waitingSinceMs?: number
-  outcome?: WorkOutcome | null
   permission?: PermissionAsk | null
 }
 
@@ -44,10 +43,4 @@ export type Call = {
 export type TranscriptEntry = {
   role: 'user' | 'assistant'
   text: string
-}
-
-export type WorkOutcome = {
-  branch: string
-  commits: number
-  dirtyFiles: number
 }

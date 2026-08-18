@@ -59,7 +59,6 @@ export function useAgentDefs() {
         character: def.character,
         tools: def.tools,
         knowledge: def.knowledge,
-        ownCopy: def.ownCopy,
         prompt: def.prompt,
       },
     ]),

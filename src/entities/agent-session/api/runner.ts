@@ -1,4 +1,4 @@
-import type { PermissionAsk, RunnerId, SessionStatus, WorkOutcome } from '../model/session.types'
+import type { PermissionAsk, RunnerId, SessionStatus } from '../model/session.types'
 
 export type RunSink = {
   headline(text: string): void
@@ -7,7 +7,6 @@ export type RunSink = {
   status(next: SessionStatus): void
   permission(ask: PermissionAsk | null): void
   message(role: 'user' | 'assistant', text: string): void
-  outcome(outcome: WorkOutcome): void
   child(event: ChildEvent): void
 }
 

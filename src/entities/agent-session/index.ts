@@ -22,7 +22,6 @@ export type {
   RunnerId,
   SessionStatus,
   TranscriptEntry,
-  WorkOutcome,
 } from './model/session.types'
 export { sessionStore } from './model/session-store/session-store'
 export { personaOf } from './model/persona/persona'
@@ -50,7 +49,6 @@ export { CHARACTERS, characterOf, isCharacterId, moodOf } from './model/characte
 export type { CharacterId, MemberState, Mood } from './model/character/character.types'
 export { CrewProvider, useModel } from './model/crew/crew'
 export type { Crew, CrewEntry } from './model/crew/crew.types'
-export { branchOf, copyNameOf, outcomeOf } from './lib/worktree/worktree'
 export { modelRefusedIn, withRefused, withoutRefused } from './model/refused/refused'
 export { hintDue, hintSeen } from './model/hints/hints'
 export type { HintId } from './model/hints/hints.types'

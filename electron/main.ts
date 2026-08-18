@@ -10,7 +10,6 @@ import { registerNudge } from './nudge'
 import { registerPlugins } from './plugins'
 import { registerSettingsStore } from './settings-store'
 import { registerConnectors } from './connectors'
-import { registerWorkOutcome } from './work-outcome'
 import { killAllProbes, registerSessionProbe } from './session-probe'
 import { registerTranscriptStore } from './transcript-store'
 import { recallProject, rememberProject } from './project-memory'
@@ -168,7 +167,6 @@ if (!primary) {
   registerCliVersion()
   registerSettingsStore()
   registerConnectors()
-  registerWorkOutcome()
   registerSessionProbe()
   registerTranscriptStore()
   registerPlugins()

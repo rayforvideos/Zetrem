@@ -1,5 +1,5 @@
 import type { AgentDef, AgentDefDraft } from '@/entities/agent-def'
-import type { RunConfig, Settings, WorkOutcome } from '@/entities/agent-session'
+import type { RunConfig, Settings } from '@/entities/agent-session'
 import type { ChatSummary, Transcript } from '@/entities/conversation'
 import type { Connector, ConnectorVerb, NewConnector } from '@/entities/connector'
 import type { Catalog, Marketplace, PluginRun, PluginScope, PluginVerb } from '@/entities/plugin'
@@ -49,7 +49,6 @@ export type DeskBridge = {
   connectorAct(verb: ConnectorVerb, target: string): Promise<PluginRun>
   addConnector(draft: NewConnector, taken: string[]): Promise<PluginRun>
   importConnectors(): Promise<PluginRun>
-  readOutcome(taskId: string): Promise<WorkOutcome | null>
   sessionUsage(): Promise<string | null>
   keptUsage(): Promise<string | null>
   latestCliVersion(): Promise<{

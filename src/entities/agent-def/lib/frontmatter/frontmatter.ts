@@ -1,7 +1,6 @@
 import type { AgentDef, AgentDefDraft } from './frontmatter.types'
 
 const FENCE = '---'
-const WORKTREE = 'worktree'
 
 export function parseAgentDef(
   text: string,
@@ -22,7 +21,6 @@ export function parseAgentDef(
   const character = fields.get('character')
   const tools = fields.get('tools') ?? fields.get('allowed-tools')
   const knowledge = fields.get('knowledge')
-  const isolation = fields.get('isolation')
 
   return {
     name,
@@ -35,7 +33,6 @@ export function parseAgentDef(
       : typeof knowledge === 'string'
         ? splitList(knowledge)
         : [],
-    ownCopy: isolation === WORKTREE,
     prompt: ownWords(lines.slice(close + 1).join('\n')),
     source,
     path,
@@ -50,7 +47,6 @@ export function toAgentFile(draft: AgentDefDraft): string {
   if (draft.character !== null) head.push(`character: ${draft.character}`)
   if (draft.tools.length > 0) head.push(`tools: ${draft.tools.join(', ')}`)
   if (draft.knowledge.length > 0) head.push(`knowledge: ${draft.knowledge.join(', ')}`)
-  if (draft.ownCopy) head.push(`isolation: ${WORKTREE}`)
   head.push(FENCE, '')
   return `${head.join('\n')}${draft.prompt.trim()}\n${readingOrder(draft.knowledge)}`
 }

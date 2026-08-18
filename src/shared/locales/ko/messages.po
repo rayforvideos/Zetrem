@@ -21,20 +21,6 @@ msgstr " · 초과분 사용 중"
 msgid " {pct}% used,"
 msgstr " {pct}% 사용,"
 
-#: src/widgets/agent-report/lib/left-behind/left-behind.ts:16
-msgid " and "
-msgstr "와 "
-
-#. placeholder {0}: outcome.commits
-#: src/widgets/agent-report/lib/left-behind/left-behind.ts:7
-msgid "{0, plural, one {# commit} other {# commits}}"
-msgstr "{0, plural, other {커밋 #개}}"
-
-#. placeholder {0}: outcome.dirtyFiles
-#: src/widgets/agent-report/lib/left-behind/left-behind.ts:11
-msgid "{0, plural, one {# file not committed} other {# files not committed}}"
-msgstr "{0, plural, other {커밋 안 된 파일 #개}}"
-
 #. placeholder {0}: chosen.length
 #: src/widgets/team-sidebar/ui/ToolPicker/ToolPicker.tsx:61
 msgid "{0} chosen"
@@ -227,11 +213,11 @@ msgstr "이름은 하이픈으로 시작할 수 없습니다"
 msgid "A plugin brings these. Turn the plugin off to lose them."
 msgstr "플러그인이 데려온 것입니다. 플러그인을 끄면 함께 사라집니다."
 
-#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:269
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:251
 msgid "A running session cannot call them. Restart it, or they join the next one."
 msgstr "실행 중인 세션은 이 팀원을 부를 수 없습니다. 세션을 다시 시작하거나, 다음 세션부터 함께합니다."
 
-#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:270
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:252
 msgid "A running session keeps the old brief until it is restarted"
 msgstr "실행 중인 세션은 다시 시작하기 전까지 이전 지시문을 씁니다"
 
@@ -323,7 +309,7 @@ msgstr "다음 단계 말고 일 전체를 맡기세요. 오케스트레이터�
 msgid "Asks before editing files or running commands"
 msgstr "파일을 고치거나 명령을 실행하기 전에 묻습니다"
 
-#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:229
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:211
 msgid "Attach"
 msgstr "첨부"
 
@@ -364,7 +350,7 @@ msgid "Browse"
 msgstr "둘러보기"
 
 #: src/widgets/setup/ui/SetupPane/SetupPane.tsx:118
-#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:274
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:256
 #: src/widgets/team-sidebar/ui/MemberMenu/MemberMenu.tsx:66
 msgid "Cancel"
 msgstr "취소"
@@ -377,7 +363,7 @@ msgstr "장바구니 합계와 반올림"
 msgid "Change"
 msgstr "바꾸기"
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:462
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:460
 msgid "Change account, project, and permissions"
 msgstr "계정과 프로젝트, 권한을 바꿉니다"
 
@@ -424,7 +410,7 @@ msgstr "지우기"
 msgid "CLI {0} → {latest} available"
 msgstr "CLI {0} → {latest} 사용 가능"
 
-#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:90
+#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:89
 msgid "Close report"
 msgstr "보고서 닫기"
 
@@ -507,7 +493,7 @@ msgstr "저장된 대화 목록을 읽지 못했습니다"
 msgid "Could not open that chat"
 msgstr "그 대화를 열지 못했습니다"
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:169
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:167
 msgid "Could not open that folder"
 msgstr "그 폴더를 열지 못했습니다"
 
@@ -559,7 +545,7 @@ msgstr "설정을 읽지 못했습니다"
 msgid "Could not read your sign-in"
 msgstr "로그인 상태를 읽지 못했습니다"
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:93
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:92
 msgid "Could not reopen your last project"
 msgstr "마지막 프로젝트를 다시 열지 못했습니다"
 
@@ -580,7 +566,7 @@ msgstr "Claude Code를 실행하지 못했습니다: {said}"
 msgid "Could not start the update"
 msgstr "업데이트를 시작하지 못했습니다"
 
-#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:277
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:259
 msgid "Create"
 msgstr "만들기"
 
@@ -604,7 +590,7 @@ msgstr "대화 삭제"
 msgid "Dismiss this tip"
 msgstr "이 안내 닫기"
 
-#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:234
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:216
 msgid "Documents they are told to read first. Long ones cost nothing until they open them."
 msgstr "먼저 읽으라고 일러둘 문서입니다. 길어도 열기 전까지는 비용이 들지 않습니다."
 
@@ -612,7 +598,7 @@ msgstr "먼저 읽으라고 일러둘 문서입니다. 길어도 열기 전까�
 msgid "Don't ask again this session"
 msgstr "이번 세션에서는 다시 묻지 않기"
 
-#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:21
+#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:20
 #: src/widgets/setup/ui/SetupPane/SetupPane.tsx:122
 #: src/widgets/tile-deck/ui/layers/StateChip/StateChip.tsx:11
 msgid "Done"
@@ -626,7 +612,7 @@ msgstr "끌어서 크기 조절, 더블클릭하면 원래대로"
 msgid "Each file read, each command run, each edit made, as it happens. Nothing is summarised after the fact."
 msgstr "읽은 파일 하나, 실행한 명령 하나, 고친 자리 하나까지 그때그때 보입니다. 끝난 뒤에 요약해서 알려주는 법이 없습니다."
 
-#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:72
+#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:71
 msgid "Earlier run"
 msgstr "이전 실행"
 
@@ -635,7 +621,7 @@ msgid "Edit"
 msgstr "수정"
 
 #. placeholder {0}: initial.name
-#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:95
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:93
 msgid "Edit {0}"
 msgstr "{0} 수정"
 
@@ -659,12 +645,12 @@ msgstr "실행한 것은 전부 화면에 있습니다"
 msgid "Everyone you send out gets a card with their name, their task and their clock. Press one to read what they were asked and what they wrote back."
 msgstr "내보낸 사람마다 카드가 하나씩 생깁니다. 이름과 맡은 일, 흘러가는 시계가 함께 있습니다. 눌러 보면 무엇을 시켰고 무엇이라 답했는지 나옵니다."
 
-#: src/widgets/team-sidebar/lib/member-draft/member-draft.ts:35
+#: src/widgets/team-sidebar/lib/member-draft/member-draft.ts:34
 #: src/widgets/team-sidebar/ui/ToolPicker/ToolPicker.tsx:61
 msgid "Everything the session has"
 msgstr "이 세션이 가진 전부"
 
-#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:130
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:128
 #: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:186
 msgid "Face"
 msgstr "얼굴"
@@ -709,7 +695,7 @@ msgstr "시작하기"
 msgid "Give it a name"
 msgstr "이름을 지어주세요"
 
-#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:56
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:54
 msgid "Give them a name"
 msgstr "이름을 지어주세요"
 
@@ -726,8 +712,8 @@ msgstr "넘기는 중"
 msgid "Held up"
 msgstr "멈춰 있음"
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:447
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:448
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:445
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:446
 msgid "Hide team sidebar"
 msgstr "팀 사이드바 접기"
 
@@ -785,17 +771,9 @@ msgstr "이름은 {NAME_MAX}자 이내로 지어 주세요"
 msgid "Language"
 msgstr "언어"
 
-#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:84
+#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:83
 msgid "Later run"
 msgstr "다음 실행"
-
-#: src/widgets/agent-report/lib/left-behind/left-behind.ts:17
-msgid "Left {what} on {branch}"
-msgstr "{branch}에 {what} 남겼습니다"
-
-#: src/widgets/agent-report/lib/left-behind/left-behind.ts:15
-msgid "Left nothing on {branch}"
-msgstr "{branch}에 남긴 것이 없습니다"
 
 #: src/widgets/conversation/lib/greetings/greetings.ts:7
 msgid "Let's get to work with your cute little agents!"
@@ -842,11 +820,11 @@ msgstr "팀에게 말하기"
 
 #: src/widgets/setup/ui/SetupPane/SetupPane.tsx:72
 #: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:98
-#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:134
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:132
 msgid "Model"
 msgstr "모델"
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:304
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:302
 msgid "Model changed. Your next message starts a session on it."
 msgstr "모델을 바꿨습니다. 다음 메시지부터 새 모델로 시작합니다."
 
@@ -859,7 +837,7 @@ msgstr "{0} 더 보기"
 msgid "More for {name}"
 msgstr "{name} 더 보기"
 
-#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:108
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:106
 #: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:171
 msgid "Name"
 msgstr "이름"
@@ -893,7 +871,7 @@ msgstr "그만두기"
 msgid "New chat"
 msgstr "새 대화"
 
-#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:95
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:93
 msgid "New teammate"
 msgstr "새 팀원"
 
@@ -913,7 +891,7 @@ msgstr "아직 커넥터가 없습니다"
 msgid "No connectors yet. Add one below, or bring over what Claude Desktop already has."
 msgstr "아직 커넥터가 없습니다. 아래에서 추가하거나 Claude Desktop에 있는 것을 가져오세요."
 
-#: src/pages/workspace/model/use-agent-defs.ts:73
+#: src/pages/workspace/model/use-agent-defs.ts:72
 msgid "No handler registered"
 msgstr "처리할 곳이 없습니다"
 
@@ -929,7 +907,7 @@ msgstr "그런 이름의 도구가 없습니다."
 msgid "Not available this session. Unlock it in Settings."
 msgstr "이번 세션에서는 쓸 수 없습니다. 설정에서 켜세요."
 
-#: src/widgets/team-sidebar/lib/member-draft/member-draft.ts:34
+#: src/widgets/team-sidebar/lib/member-draft/member-draft.ts:33
 msgid "Not known yet"
 msgstr "아직 모릅니다"
 
@@ -945,7 +923,7 @@ msgstr "더 추가할 것이 없습니다. 등록한 곳의 플러그인을 모�
 msgid "Nothing written yet."
 msgstr "아직 쓴 것이 없습니다."
 
-#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:141
+#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:134
 msgid "Nothing yet"
 msgstr "아직 없음"
 
@@ -986,7 +964,7 @@ msgstr "권한"
 msgid "Permissions"
 msgstr "권한"
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:298
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:296
 msgid "Permissions changed. Your next message starts a session that follows them."
 msgstr "권한을 바꿨습니다. 다음 메시지부터 바뀐 권한으로 시작합니다."
 
@@ -1040,7 +1018,7 @@ msgstr "웹에 접속할까요?"
 
 #: src/shared/lib/tool-verb/tool-verb.ts:7
 #: src/widgets/conversation/lib/away/away.ts:48
-#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:220
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:202
 msgid "Reading"
 msgstr "읽는 중"
 
@@ -1087,7 +1065,7 @@ msgstr "팀에서 내보내기"
 msgid "Removed"
 msgstr "삭제했습니다"
 
-#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:20
+#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:19
 #: src/widgets/team-sidebar/lib/row-state/row-state.ts:9
 #: src/widgets/tile-deck/ui/layers/StateChip/StateChip.tsx:10
 msgid "Reported back"
@@ -1107,11 +1085,11 @@ msgstr "{when} 초기화"
 msgid "Restart session"
 msgstr "세션 다시 시작"
 
-#: src/pages/workspace/model/use-agent-defs.ts:74
+#: src/pages/workspace/model/use-agent-defs.ts:73
 msgid "Restart Zetrem. This build does not know that yet."
 msgstr "Zetrem을 다시 시작하세요. 이 빌드는 아직 그것을 모릅니다."
 
-#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:125
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:123
 #: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:178
 msgid "Reviews the front end"
 msgstr "프론트엔드를 살펴봅니다"
@@ -1124,12 +1102,12 @@ msgstr "이 명령을 실행할까요?"
 msgid "Running"
 msgstr "실행하는 중"
 
-#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:140
-#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:143
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:138
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:141
 msgid "Same as the session"
 msgstr "세션과 같게"
 
-#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:277
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:259
 msgid "Save"
 msgstr "저장"
 
@@ -1141,7 +1119,7 @@ msgstr "말 한마디면 팀 전체가 깨어납니다."
 msgid "Say what you want done, not the next step. The orchestrator splits it up and hands the pieces out."
 msgstr "다음 단계가 아니라 원하는 결과를 말하세요. 오케스트레이터가 알아서 쪼개 나눠 줍니다."
 
-#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:210
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:192
 #: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:199
 msgid "Say what you would change and why, in that order."
 msgstr "무엇을 바꿀지, 왜인지 순서대로 적으세요."
@@ -1187,7 +1165,7 @@ msgstr "몇 가지만 정하면 바로 일을 시작합니다"
 msgid "Set for everyone on your account. They cannot be removed or turned off here."
 msgstr "계정 전체에 설정된 것입니다. 여기서는 지우거나 끌 수 없습니다."
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:464
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:462
 msgid "Settings"
 msgstr "설정"
 
@@ -1195,8 +1173,8 @@ msgstr "설정"
 msgid "share unknown"
 msgstr "사용량 알 수 없음"
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:447
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:448
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:445
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:446
 msgid "Show team sidebar"
 msgstr "팀 사이드바 펼치기"
 
@@ -1275,7 +1253,7 @@ msgstr "일하던 중에 무언가 잘못됐습니다"
 msgid "Sources · {0}"
 msgstr "마켓플레이스 · {0}"
 
-#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:215
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:197
 #: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:202
 msgid "Standing instructions. Write it the way you would brief a person."
 msgstr "늘 지킬 지침입니다. 사람에게 일을 맡기듯 적으세요."
@@ -1399,7 +1377,7 @@ msgstr "모델이 이것을 거절했습니다"
 msgid "The model is overloaded"
 msgstr "모델에 부하가 걸렸습니다"
 
-#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:127
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:125
 #: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:181
 msgid "The orchestrator reads this to pick who gets the job."
 msgstr "오케스트레이터가 이 줄을 읽고 누구에게 맡길지 정합니다."
@@ -1432,7 +1410,7 @@ msgstr "세션을 닫는 중입니다: {why}"
 msgid "The team is warm and waiting, {you}."
 msgstr "{you}, 팀은 몸 다 풀고 기다리는 중입니다."
 
-#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:202
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:184
 #: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:196
 msgid "Their brief"
 msgstr "지시문"
@@ -1440,18 +1418,6 @@ msgstr "지시문"
 #: src/widgets/team-sidebar/ui/MemberMenu/MemberMenu.tsx:62
 msgid "Their file is deleted and they leave the roster. A session already running keeps them until it ends. This cannot be undone."
 msgstr "파일이 지워지고 명단에서 빠집니다. 이미 돌고 있는 세션은 끝날 때까지 그대로 데리고 있습니다. 되돌릴 수 없습니다."
-
-#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:160
-msgid "Their own copy"
-msgstr "따로 복사해서 작업"
-
-#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:165
-msgid "They edit your files directly, alongside everyone else you have working."
-msgstr "지금 이 폴더의 파일을 다른 팀원들과 함께 직접 고칩니다."
-
-#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:164
-msgid "They get a copy of the repository and a branch of their own. Your files stay as they are."
-msgstr "저장소 사본과 자기 브랜치를 받습니다. 당신 파일은 그대로 있습니다."
 
 #: src/widgets/conversation/lib/greetings/greetings.ts:12
 msgid "They read fast and they never get bored."
@@ -1514,7 +1480,7 @@ msgstr "할 일 목록"
 msgid "tool"
 msgstr "도구"
 
-#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:169
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:151
 msgid "Tools"
 msgstr "도구"
 
@@ -1562,7 +1528,7 @@ msgstr "CLI에서 승인을 기다리는 중"
 msgid "Waiting on"
 msgstr "기다리는 중"
 
-#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:19
+#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:18
 #: src/widgets/team-sidebar/lib/row-state/row-state.ts:8
 msgid "Waiting on you"
 msgstr "당신을 기다리는 중"
@@ -1592,40 +1558,32 @@ msgstr "무슨 일을 맡길까요?"
 msgid "What the session brings"
 msgstr "이 세션이 가진 것"
 
-#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:139
+#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:132
 #: src/widgets/tile-deck/ui/AgentTile/AgentTile.tsx:77
 #: src/widgets/tile-deck/ui/CrewBoard/CrewBoard.tsx:124
 #: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:136
 msgid "What they did"
 msgstr "무엇을 했는지"
 
-#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:122
+#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:115
 msgid "What they said"
 msgstr "무엇이라 했는지"
 
-#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:98
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:96
 msgid "What you write here is the whole of what they know when they start."
 msgstr "여기 적은 것이 그가 시작할 때 아는 전부입니다."
 
-#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:120
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:118
 #: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:176
 msgid "When to call them"
 msgstr "언제 부를지"
-
-#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:153
-msgid "Where they work"
-msgstr "작업 공간"
 
 #: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:22
 msgid "Why the last item drops"
 msgstr "마지막 항목이 사라지는 이유"
 
-#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:158
-msgid "Work in their own copy"
-msgstr "따로 복사해서 작업"
-
 #: src/shared/lib/tool-verb/tool-verb.ts:30
-#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:18
+#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:17
 #: src/widgets/conversation/lib/working/working.ts:86
 #: src/widgets/tile-deck/ui/layers/StateChip/StateChip.tsx:8
 msgid "Working"
@@ -1643,7 +1601,7 @@ msgstr "지시문을 한 번만 써 두면 어느 프로젝트에서든 오케�
 msgid "Write this file?"
 msgstr "이 파일을 쓸까요?"
 
-#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:58
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:56
 msgid "Write what they do, and how"
 msgstr "무슨 일을 어떻게 하는지 적으세요"
 
@@ -1672,7 +1630,7 @@ msgstr "열쇠는 당신이 쥡니다"
 msgid "You stopped this"
 msgstr "당신이 멈췄습니다"
 
-#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:208
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:190
 #: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:198
 msgid "You take the front end. Read the markup before you judge the styles."
 msgstr "프런트엔드를 맡으세요. 스타일을 평가하기 전에 마크업부터 읽으세요."

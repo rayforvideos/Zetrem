@@ -40,7 +40,6 @@ import { useAuth } from '../model/use-auth'
 import { useCliUpdate } from '../model/use-cli-update'
 import { useFocus } from '../model/use-focus'
 import { usePlugins } from '../model/use-plugins'
-import { useOutcomes } from '../model/use-outcomes'
 import { useProjectMemory } from '../model/use-project-memory'
 import { useSessionProbe } from '../model/use-session-probe'
 import { useAuthoredAgents } from '../model/use-authored-agents'
@@ -129,7 +128,6 @@ export function WorkspaceScreen() {
   )
   useNudge(settings.notify, conv.status, conv.permission)
   useFleet(deck, children, nowMs, viewport, sidebar.span + GRID_PAD * 2)
-  useOutcomes(children)
 
   const probedSession = status.probed
   const sessionTools = status.session?.tools

@@ -7,4 +7,5 @@ export type NudgeAt = {
   watching: boolean
   reason: NudgeReason
   tool: string
+  asked?: boolean
 }

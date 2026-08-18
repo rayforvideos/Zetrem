@@ -75,7 +75,7 @@ msgstr "{base}. 앞선 대화는 요약으로 남습니다."
 msgid "{from} declined this, so {to} took it"
 msgstr "{from}이(가) 거절해서 {to}이(가) 대신 처리했습니다"
 
-#: src/pages/workspace/model/workspace-config/workspace-config.ts:37
+#: src/pages/workspace/model/workspace-config/workspace-config.ts:39
 msgid "{installed} installed from {sources, plural, one {# source} other {# sources}}"
 msgstr "{sources, plural, other {출처 #곳}}에서 {installed}개 설치됨"
 
@@ -87,9 +87,17 @@ msgstr "{kind} {name}을(를) 불러오지 못했습니다: {why}"
 msgid "{live} of {all} connected"
 msgstr "{all}개 중 {live}개 연결됨"
 
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:385
+msgid "{name} can be called now. Your next message starts a session that can reach them."
+msgstr "다음 메시지부터 {name} 포함해서 새 세션이 시작됩니다."
+
 #: src/widgets/team-sidebar/ui/StockList/StockList.tsx:32
 msgid "{name} can be called this session"
 msgstr "{name}은(는) 이번 세션에서 부를 수 있습니다"
+
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:386
+msgid "{name} is off. Your next message starts a session without them."
+msgstr "다음 메시지부터 {name} 없이 새 세션이 시작됩니다."
 
 #: src/entities/attachment/lib/heavy-line/heavy-line.ts:7
 msgid "{name} is over {max}MB, so it cannot be sent as a picture. Point at it by path instead."
@@ -241,7 +249,7 @@ msgstr "추가"
 msgid "Add a marketplace"
 msgstr "마켓플레이스 추가"
 
-#: src/pages/workspace/model/workspace-config/workspace-config.ts:36
+#: src/pages/workspace/model/workspace-config/workspace-config.ts:38
 msgid "Add a marketplace to bring in skills and agents"
 msgstr "마켓플레이스를 추가하면 스킬과 에이전트가 들어옵니다"
 
@@ -363,7 +371,7 @@ msgstr "장바구니 합계와 반올림"
 msgid "Change"
 msgstr "바꾸기"
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:460
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:481
 msgid "Change account, project, and permissions"
 msgstr "계정과 프로젝트, 권한을 바꿉니다"
 
@@ -493,7 +501,7 @@ msgstr "저장된 대화 목록을 읽지 못했습니다"
 msgid "Could not open that chat"
 msgstr "그 대화를 열지 못했습니다"
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:167
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:179
 msgid "Could not open that folder"
 msgstr "그 폴더를 열지 못했습니다"
 
@@ -545,7 +553,7 @@ msgstr "설정을 읽지 못했습니다"
 msgid "Could not read your sign-in"
 msgstr "로그인 상태를 읽지 못했습니다"
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:92
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:93
 msgid "Could not reopen your last project"
 msgstr "마지막 프로젝트를 다시 열지 못했습니다"
 
@@ -712,8 +720,8 @@ msgstr "넘기는 중"
 msgid "Held up"
 msgstr "멈춰 있음"
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:445
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:446
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:466
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:467
 msgid "Hide team sidebar"
 msgstr "팀 사이드바 접기"
 
@@ -824,7 +832,7 @@ msgstr "팀에게 말하기"
 msgid "Model"
 msgstr "모델"
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:302
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:318
 msgid "Model changed. Your next message starts a session on it."
 msgstr "모델을 바꿨습니다. 다음 메시지부터 새 모델로 시작합니다."
 
@@ -964,7 +972,7 @@ msgstr "권한"
 msgid "Permissions"
 msgstr "권한"
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:296
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:312
 msgid "Permissions changed. Your next message starts a session that follows them."
 msgstr "권한을 바꿨습니다. 다음 메시지부터 바뀐 권한으로 시작합니다."
 
@@ -1165,7 +1173,7 @@ msgstr "몇 가지만 정하면 바로 일을 시작합니다"
 msgid "Set for everyone on your account. They cannot be removed or turned off here."
 msgstr "계정 전체에 설정된 것입니다. 여기서는 지우거나 끌 수 없습니다."
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:462
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:483
 msgid "Settings"
 msgstr "설정"
 
@@ -1173,8 +1181,8 @@ msgstr "설정"
 msgid "share unknown"
 msgstr "사용량 알 수 없음"
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:445
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:446
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:466
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:467
 msgid "Show team sidebar"
 msgstr "팀 사이드바 펼치기"
 
@@ -1513,7 +1521,7 @@ msgstr "https를 쓰세요. http는 이 컴퓨터의 서버일 때만 됩니다"
 msgid "Waiting for approval"
 msgstr "승인 대기 중"
 
-#: src/entities/agent-session/model/nudge/nudge.ts:10
+#: src/entities/agent-session/model/nudge/nudge.ts:13
 msgid "Waiting for your approval"
 msgstr "승인을 기다리는 중입니다"
 
@@ -1534,7 +1542,7 @@ msgid "Waiting on you"
 msgstr "당신을 기다리는 중"
 
 #. placeholder {0}: at.tool
-#: src/entities/agent-session/model/nudge/nudge.ts:10
+#: src/entities/agent-session/model/nudge/nudge.ts:13
 msgid "Waiting to run {0}"
 msgstr "{0} 실행을 기다립니다"
 
@@ -1680,7 +1688,7 @@ msgstr "조직 정책이 이것을 허용하지 않습니다"
 msgid "Your team"
 msgstr "내 팀"
 
-#: src/entities/agent-session/model/nudge/nudge.ts:13
+#: src/entities/agent-session/model/nudge/nudge.ts:16
 msgid "Your team has finished."
 msgstr "팀이 일을 마쳤습니다."
 
@@ -1701,10 +1709,10 @@ msgstr "Zetrem이 그 요청을 이해하지 못했습니다"
 msgid "Zetrem greets you by this name, and your face marks the work in flight."
 msgstr "Zetrem이 이 이름으로 부르고, 얼굴은 진행 중인 일에 표시됩니다."
 
-#: src/entities/agent-session/model/nudge/nudge.ts:13
+#: src/entities/agent-session/model/nudge/nudge.ts:16
 msgid "Zetrem is done"
 msgstr "일이 끝났습니다"
 
-#: src/entities/agent-session/model/nudge/nudge.ts:9
+#: src/entities/agent-session/model/nudge/nudge.ts:12
 msgid "Zetrem needs you"
 msgstr "Zetrem이 기다립니다"

@@ -75,7 +75,7 @@ msgstr "{base}. Earlier turns live on as a summary."
 msgid "{from} declined this, so {to} took it"
 msgstr "{from} declined this, so {to} took it"
 
-#: src/pages/workspace/model/workspace-config/workspace-config.ts:37
+#: src/pages/workspace/model/workspace-config/workspace-config.ts:39
 msgid "{installed} installed from {sources, plural, one {# source} other {# sources}}"
 msgstr "{installed} installed from {sources, plural, one {# source} other {# sources}}"
 
@@ -87,9 +87,17 @@ msgstr "{kind} {name} did not load: {why}"
 msgid "{live} of {all} connected"
 msgstr "{live} of {all} connected"
 
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:385
+msgid "{name} can be called now. Your next message starts a session that can reach them."
+msgstr "{name} can be called now. Your next message starts a session that can reach them."
+
 #: src/widgets/team-sidebar/ui/StockList/StockList.tsx:32
 msgid "{name} can be called this session"
 msgstr "{name} can be called this session"
+
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:386
+msgid "{name} is off. Your next message starts a session without them."
+msgstr "{name} is off. Your next message starts a session without them."
 
 #: src/entities/attachment/lib/heavy-line/heavy-line.ts:7
 msgid "{name} is over {max}MB, so it cannot be sent as a picture. Point at it by path instead."
@@ -241,7 +249,7 @@ msgstr "Add"
 msgid "Add a marketplace"
 msgstr "Add a marketplace"
 
-#: src/pages/workspace/model/workspace-config/workspace-config.ts:36
+#: src/pages/workspace/model/workspace-config/workspace-config.ts:38
 msgid "Add a marketplace to bring in skills and agents"
 msgstr "Add a marketplace to bring in skills and agents"
 
@@ -363,7 +371,7 @@ msgstr "Cart totals and rounding"
 msgid "Change"
 msgstr "Change"
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:460
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:481
 msgid "Change account, project, and permissions"
 msgstr "Change account, project, and permissions"
 
@@ -493,7 +501,7 @@ msgstr "Could not list your saved chats"
 msgid "Could not open that chat"
 msgstr "Could not open that chat"
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:167
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:179
 msgid "Could not open that folder"
 msgstr "Could not open that folder"
 
@@ -545,7 +553,7 @@ msgstr "Could not read your settings"
 msgid "Could not read your sign-in"
 msgstr "Could not read your sign-in"
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:92
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:93
 msgid "Could not reopen your last project"
 msgstr "Could not reopen your last project"
 
@@ -712,8 +720,8 @@ msgstr "Handing off"
 msgid "Held up"
 msgstr "Held up"
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:445
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:446
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:466
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:467
 msgid "Hide team sidebar"
 msgstr "Hide team sidebar"
 
@@ -824,7 +832,7 @@ msgstr "Message your team"
 msgid "Model"
 msgstr "Model"
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:302
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:318
 msgid "Model changed. Your next message starts a session on it."
 msgstr "Model changed. Your next message starts a session on it."
 
@@ -964,7 +972,7 @@ msgstr "Permission"
 msgid "Permissions"
 msgstr "Permissions"
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:296
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:312
 msgid "Permissions changed. Your next message starts a session that follows them."
 msgstr "Permissions changed. Your next message starts a session that follows them."
 
@@ -1165,7 +1173,7 @@ msgstr "Set a few things and your agents get to work!"
 msgid "Set for everyone on your account. They cannot be removed or turned off here."
 msgstr "Set for everyone on your account. They cannot be removed or turned off here."
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:462
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:483
 msgid "Settings"
 msgstr "Settings"
 
@@ -1173,8 +1181,8 @@ msgstr "Settings"
 msgid "share unknown"
 msgstr "share unknown"
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:445
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:446
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:466
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:467
 msgid "Show team sidebar"
 msgstr "Show team sidebar"
 
@@ -1513,7 +1521,7 @@ msgstr "Use https, or http only for a server on this machine"
 msgid "Waiting for approval"
 msgstr "Waiting for approval"
 
-#: src/entities/agent-session/model/nudge/nudge.ts:10
+#: src/entities/agent-session/model/nudge/nudge.ts:13
 msgid "Waiting for your approval"
 msgstr "Waiting for your approval"
 
@@ -1534,7 +1542,7 @@ msgid "Waiting on you"
 msgstr "Waiting on you"
 
 #. placeholder {0}: at.tool
-#: src/entities/agent-session/model/nudge/nudge.ts:10
+#: src/entities/agent-session/model/nudge/nudge.ts:13
 msgid "Waiting to run {0}"
 msgstr "Waiting to run {0}"
 
@@ -1680,7 +1688,7 @@ msgstr "Your organisation does not allow this"
 msgid "Your team"
 msgstr "Your team"
 
-#: src/entities/agent-session/model/nudge/nudge.ts:13
+#: src/entities/agent-session/model/nudge/nudge.ts:16
 msgid "Your team has finished."
 msgstr "Your team has finished."
 
@@ -1701,10 +1709,10 @@ msgstr "Zetrem did not understand that request"
 msgid "Zetrem greets you by this name, and your face marks the work in flight."
 msgstr "Zetrem greets you by this name, and your face marks the work in flight."
 
-#: src/entities/agent-session/model/nudge/nudge.ts:13
+#: src/entities/agent-session/model/nudge/nudge.ts:16
 msgid "Zetrem is done"
 msgstr "Zetrem is done"
 
-#: src/entities/agent-session/model/nudge/nudge.ts:9
+#: src/entities/agent-session/model/nudge/nudge.ts:12
 msgid "Zetrem needs you"
 msgstr "Zetrem needs you"

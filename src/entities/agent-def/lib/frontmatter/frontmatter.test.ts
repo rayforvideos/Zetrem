@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { fileNameOf, parseAgentDef, toAgentFile } from './frontmatter'
+import { briefOf, fileNameOf, parseAgentDef, toAgentFile } from './frontmatter'
 
 const FILE = `---
 name: code-reviewer
@@ -180,5 +180,37 @@ describe('teammates all work in the folder you opened', () => {
     const read = parseAgentDef('---\nname: x\nisolation: worktree\n---\nbody', 'user', '/x.md')
     expect(read?.name).toBe('x')
     expect(read?.prompt).toBe('body')
+  })
+})
+
+describe('briefOf: the brief as the session must receive it', () => {
+  it('adds the reading order, which --agents carries no other way', () => {
+    expect(briefOf('go', ['/a.md', '/b.md'])).toBe(
+      'go\n\nRead these before you start, and work by what they say:\n- /a.md\n- /b.md',
+    )
+  })
+
+  it('keeps our own marker out of it, since that is plumbing and not an instruction', () => {
+    expect(briefOf('go', ['/a.md'])).not.toContain('zetrem:knowledge')
+  })
+
+  it('leaves a brief with nothing attached exactly as written', () => {
+    expect(briefOf('go', [])).toBe('go')
+  })
+
+  it('survives the round trip through a file', () => {
+    const draft = {
+      name: 'siena',
+      description: 'reviews',
+      model: null,
+      character: null,
+      tools: [],
+      knowledge: ['/a.md'],
+      prompt: 'go',
+    }
+    const read = parseAgentDef(toAgentFile(draft), 'user', '/siena.md')
+    expect(read?.prompt).toBe('go')
+    expect(read?.knowledge).toEqual(['/a.md'])
+    expect(briefOf(read?.prompt ?? '', read?.knowledge ?? [])).toBe(briefOf('go', ['/a.md']))
   })
 })

@@ -9,6 +9,7 @@ function person(overrides: Partial<Parameters<typeof peopleSpec>[0][number]> = {
     description: '찾아본다',
     prompt: '당신은 찾습니다.',
     model: 'haiku' as string | null,
+    tools: [] as string[],
     ...overrides,
   }
 }
@@ -18,6 +19,19 @@ describe('peopleSpec: handing the people we hired to the session', () => {
     expect(peopleSpec([person()])).toEqual({
       scout: { description: '찾아본다', prompt: '당신은 찾습니다.', model: 'haiku' },
     })
+  })
+
+  it('names the tools a person was given, since the session cannot guess the pick', () => {
+    expect(peopleSpec([person({ tools: ['Read', 'Glob'] })]).scout).toHaveProperty('tools', [
+      'Read',
+      'Glob',
+    ])
+  })
+
+  it('says nothing about tools when none were picked, so they inherit the whole session', () => {
+    expect(peopleSpec([person()]).scout, '툴을 열거하면 열거한 것 말고는 전부 잃는다').not.toHaveProperty(
+      'tools',
+    )
   })
 
   it('leaves the model out for someone with none, rather than inventing one', () => {

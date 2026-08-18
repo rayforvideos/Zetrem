@@ -1,5 +1,6 @@
 import { ORCHESTRATOR, allowedStock, stockAgents } from '@/entities/agent-session'
 import type { Crew, Person, RosterLock, Settings } from '@/entities/agent-session'
+import { briefOf } from '@/entities/agent-def'
 import type { AgentDef } from '@/entities/agent-def'
 import { plural, t } from '@lingui/core/macro'
 
@@ -7,8 +8,9 @@ export function peopleOf(defs: AgentDef[]): Person[] {
   return defs.map((def) => ({
     name: def.name,
     description: def.description,
-    prompt: def.prompt,
+    prompt: briefOf(def.prompt, def.knowledge),
     model: def.model,
+    tools: def.tools,
   }))
 }
 

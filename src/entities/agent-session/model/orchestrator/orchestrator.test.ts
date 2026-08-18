@@ -4,7 +4,7 @@ import { agentArgs } from '../run-config/run-config'
 import { ORCHESTRATOR, agentsArgs } from '../roster-lock/roster-lock'
 import { ORCHESTRATOR_PROMPT } from './orchestrator'
 
-const person = { name: 'Explore', description: '', prompt: '찾아본다', model: null }
+const person = { name: 'Explore', description: '', prompt: '찾아본다', model: null, tools: [] }
 
 describe('what the orchestrator is told', () => {
   it('tells it to answer in the language it was asked in', () => {

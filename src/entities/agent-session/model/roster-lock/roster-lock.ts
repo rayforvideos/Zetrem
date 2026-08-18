@@ -13,16 +13,19 @@ const ELSEWHERE = [
   'RemoteTrigger',
 ]
 
-type Spec = Record<string, { description: string; prompt: string; model?: string }>
+type Spec = Record<string, { description: string; prompt: string; model?: string; tools?: string[] }>
 
 export function peopleSpec(people: Person[]): Spec {
   const spec: Spec = {}
   for (const person of people) {
     if (person.name.length === 0 || person.prompt.trim().length === 0) continue
+    // Naming tools makes the list exhaustive: the teammate loses everything not
+    // named. An empty pick means "whatever the session has", so it stays off.
     spec[person.name] = {
       description: person.description.length > 0 ? person.description : person.name,
       prompt: person.prompt,
       ...(person.model === null ? {} : { model: person.model }),
+      ...(person.tools.length === 0 ? {} : { tools: person.tools }),
     }
   }
   return spec

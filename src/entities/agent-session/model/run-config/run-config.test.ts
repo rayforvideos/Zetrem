@@ -71,7 +71,7 @@ describe('the lock: only the people we hired can be called', () => {
       permissionMode: 'ask' as const,
       model: 'default' as const,
       persona: '말투',
-      people: [{ name: 'scout', description: '찾는다', prompt: '찾아라', model: null }],
+      people: [{ name: 'scout', description: '찾는다', prompt: '찾아라', model: null, tools: [] }],
       lock: { blockedAgents: [] },
     })
     expect(args).toContain('--agent')
@@ -86,7 +86,7 @@ describe('the lock: only the people we hired can be called', () => {
       permissionMode: 'ask' as const,
       model: 'default' as const,
       persona: '말투',
-      people: [{ name: 'scout', description: '찾는다', prompt: '찾아라', model: null }],
+      people: [{ name: 'scout', description: '찾는다', prompt: '찾아라', model: null, tools: [] }],
       lock: null,
     })
     expect(args).toContain('--agents')
@@ -101,7 +101,7 @@ describe('what a locked orchestrator is told', () => {
       model: 'default' as const,
       persona: '말투',
       orchestrator: '너는 오케스트레이터다',
-      people: [{ name: 'scout', description: '찾는다', prompt: '찾아라', model: null }],
+      people: [{ name: 'scout', description: '찾는다', prompt: '찾아라', model: null, tools: [] }],
       lock: { blockedAgents: [] },
     })
     const spec = JSON.parse(args[args.indexOf('--agents') + 1] as string)
@@ -114,7 +114,7 @@ describe('what a locked orchestrator is told', () => {
       permissionMode: 'ask' as const,
       model: 'default' as const,
       persona: '말투',
-      people: [{ name: 'scout', description: '찾는다', prompt: '찾아라', model: null }],
+      people: [{ name: 'scout', description: '찾는다', prompt: '찾아라', model: null, tools: [] }],
       lock: { blockedAgents: [] },
     })
     expect(JSON.parse(args[args.indexOf('--agents') + 1] as string).zetrem.prompt).toBe('말투')

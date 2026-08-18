@@ -3,6 +3,7 @@ export type Person = {
   description: string
   prompt: string
   model: string | null
+  tools: string[]
 }
 
 export type RosterLock = {

@@ -86,3 +86,21 @@ describe('the notice speaks whichever language the app speaks', () => {
     expect(nudgeFor(at())?.title).toBe('Zetrem is done')
   })
 })
+
+describe('a turn that stopped to ask is not a turn that finished', () => {
+  const at = { wanted: true, watching: false, tool: '' }
+
+  it('says nothing about being done while approval is pending', () => {
+    expect(nudgeFor({ ...at, reason: 'done', asked: true })).toBeNull()
+  })
+
+  it('still says it is done when nothing is pending', () => {
+    expect(nudgeFor({ ...at, reason: 'done', asked: false })?.reason).toBe('done')
+  })
+
+  it('still asks for approval, which is the notice worth acting on', () => {
+    expect(nudgeFor({ ...at, reason: 'permission', tool: 'Bash', asked: true })?.reason).toBe(
+      'permission',
+    )
+  })
+})

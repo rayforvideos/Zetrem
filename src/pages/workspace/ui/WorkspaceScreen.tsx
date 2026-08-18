@@ -32,6 +32,7 @@ import { UsageBar } from '@/widgets/usage-bar'
 import { StatusDrawer } from '@/widgets/status-bar'
 import { Titlebar } from '@/widgets/titlebar'
 import { remembered } from '../model/remembered/remembered'
+import { learnedStock } from '../model/learned-stock/learned-stock'
 import { screenGate } from '../model/screen-gate/screen-gate'
 import { sessionLive, stirring } from '../model/live/live'
 import { useAgent } from '../model/use-agent'
@@ -137,7 +138,18 @@ export function WorkspaceScreen() {
       { tools: sessionTools, agents: sessionAgents, probed: probedSession },
       { tools: settings.knownTools, agents: settings.knownAgents },
     )
-    if (learned !== null) update(learned)
+    const turnedOn =
+      learned?.knownAgents === undefined
+        ? null
+        : learnedStock(
+            learned.knownAgents,
+            settings.knownAgents,
+            settings.stockAgents,
+            defs.map((def) => def.name),
+            authored,
+          )
+    if (learned === null && turnedOn === null) return
+    update({ ...learned, ...(turnedOn === null ? {} : { stockAgents: turnedOn }) })
   }, [probedSession, sessionTools, sessionAgents, settings.knownTools, settings.knownAgents, update])
 
   const stock = stockAgents(
@@ -220,7 +232,11 @@ export function WorkspaceScreen() {
                     signingOut: auth.loggingOut,
                     sessionLive: live,
                     onSignIn: auth.login,
-                    onSignOut: auth.logout,
+                    onSignOut: () => {
+                      // The warning says the running session stops. Stop it, rather
+                      // than leaving it holding credentials the user just revoked.
+                      swap(auth.logout)
+                    },
                   }}
                   you={{
                     name: settings.userName,
@@ -363,7 +379,12 @@ export function WorkspaceScreen() {
                           stock,
                           on: settings.stockAgents,
                           onChange: (name, on) =>
-                            update({ stockAgents: toggled(settings.stockAgents, name, on) }),
+                            reload(
+                              { stockAgents: toggled(settings.stockAgents, name, on) },
+                              on
+                                ? t`${name} can be called now. Your next message starts a session that can reach them.`
+                                : t`${name} is off. Your next message starts a session without them.`,
+                            ),
                         }}
                         nowMs={nowMs}
                         width={sidebar.width}

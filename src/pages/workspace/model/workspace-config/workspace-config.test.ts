@@ -21,7 +21,7 @@ function def(name: string, overrides: Partial<AgentDef> = {}): AgentDef {
 describe('peopleOf: what the session is told about our team', () => {
   it('carries the name, description, brief and model', () => {
     expect(peopleOf([def('Ray', { model: 'sonnet' })])).toEqual([
-      { name: 'Ray', description: 'Ray does things', prompt: 'go', model: 'sonnet' },
+      { name: 'Ray', description: 'Ray does things', prompt: 'go', model: 'sonnet', tools: [] },
     ])
   })
 
@@ -118,5 +118,21 @@ describe('an agent from the person own .claude folder is not zetrem business', (
   it('keeps someone hired in zetrem callable even when a file shares the name', () => {
     const hired = { ...wrote, knownAgents: ['Ray'] }
     expect(lockOf(hired, [def('Ray')], ['Ray']).blockedAgents).not.toContain('Ray')
+  })
+})
+
+describe('what reaches the session is what the form collected', () => {
+  it('carries the tools a teammate was given', () => {
+    expect(peopleOf([def('Ray', { tools: ['Read', 'Glob'] })])[0]?.tools).toEqual(['Read', 'Glob'])
+  })
+
+  it('puts the reading order in the brief, the only channel --agents leaves for it', () => {
+    const brief = peopleOf([def('Ray', { prompt: '보라', knowledge: ['/a.md'] })])[0]?.prompt ?? ''
+    expect(brief).toContain('보라')
+    expect(brief).toContain('/a.md')
+  })
+
+  it('leaves a brief alone when nothing was attached', () => {
+    expect(peopleOf([def('Ray', { prompt: '보라' })])[0]?.prompt).toBe('보라')
   })
 })

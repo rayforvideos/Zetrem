@@ -51,16 +51,26 @@ export function toAgentFile(draft: AgentDefDraft): string {
   return `${head.join('\n')}${draft.prompt.trim()}\n${readingOrder(draft.knowledge)}`
 }
 
-function readingOrder(knowledge: string[]): string {
-  if (knowledge.length === 0) return ''
-  const lines = [
-    '',
-    READING_MARK,
+// The brief as the CLI must receive it. The reading order is part of what the
+// teammate is told, so it has to ride in the prompt: --agents carries no other
+// channel for it, and the file this app writes is its own store, not the CLI's.
+export function briefOf(prompt: string, knowledge: string[]): string {
+  if (knowledge.length === 0) return prompt.trim()
+  return [prompt.trim(), '', ...readingLines(knowledge)].join('\n').trimEnd()
+}
+
+function readingLines(knowledge: string[]): string[] {
+  return [
     'Read these before you start, and work by what they say:',
     ...knowledge.map((path) => `- ${path}`),
-    '',
   ]
-  return lines.join('\n')
+}
+
+// The file keeps a marker so parsing can tell the brief from the reading order.
+// What the CLI is sent does not: the marker is our plumbing, not an instruction.
+function readingOrder(knowledge: string[]): string {
+  if (knowledge.length === 0) return ''
+  return ['', READING_MARK, ...readingLines(knowledge), ''].join('\n')
 }
 
 function ownWords(body: string): string {

@@ -19,9 +19,15 @@ export function useNudge(
     const settled = wasWorking.current && !working
     wasWorking.current = working
     if (!settled) return
-    const nudge = nudgeFor({ wanted, watching: watching(), reason: 'done', tool: '' })
+    const nudge = nudgeFor({
+      wanted,
+      watching: watching(),
+      reason: 'done',
+      tool: '',
+      asked: permission !== null,
+    })
     if (nudge !== null) window.desk.nudge(nudge.title, nudge.body)
-  }, [status, wanted])
+  }, [status, wanted, permission])
 
   useEffect(() => {
     if (permission === null) {

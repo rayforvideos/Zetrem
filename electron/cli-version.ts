@@ -4,6 +4,7 @@ import { managerOf } from '@/entities/agent-session/model/cli-update/cli-update'
 import { agentEnv } from '@/shared/lib/shell-env/shell-env'
 import { claudeBin, findCommand, loginPath } from './login-path/login-path'
 import { handle } from './ipc/ipc'
+import { launchFor } from './spawn-claude/spawn-claude'
 
 const REGISTRY = 'https://registry.npmjs.org/@anthropic-ai/claude-code/latest'
 
@@ -17,7 +18,8 @@ const PROBE_TIMEOUT_MS = 5000
 
 function probe(command: string, args: string[], path: string): Promise<string | null> {
   return new Promise((resolve) => {
-    const child = spawn(command, args, { env: agentEnv(process.env, path) })
+    const launch = launchFor(command, args)
+    const child = spawn(launch.command, launch.args, { env: agentEnv(process.env, path) })
     child.stdout.setEncoding('utf8')
     let out = ''
     let settled = false
@@ -79,7 +81,8 @@ export function registerCliVersion(): void {
     const path = await loginPath()
     const bin = await claudeBin()
     return new Promise<{ output: string }>((resolve) => {
-      const child = spawn(bin, ['update'], { env: agentEnv(process.env, path) })
+      const run = launchFor(bin, ['update'])
+      const child = spawn(run.command, run.args, { env: agentEnv(process.env, path) })
       child.stdout.setEncoding('utf8')
       child.stderr.setEncoding('utf8')
       let output = ''

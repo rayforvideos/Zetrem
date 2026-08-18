@@ -12,7 +12,7 @@ moments that need you, without reading a terminal.</p>
   <a href="https://github.com/rayforvideos/Zetrem/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/rayforvideos/Zetrem/ci.yml?branch=master&style=for-the-badge&label=CI" alt="CI status"></a>
   <a href="https://github.com/rayforvideos/Zetrem/releases"><img src="https://img.shields.io/badge/status-beta-orange?style=for-the-badge" alt="Beta"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue?style=for-the-badge" alt="MIT licence"></a>
-  <img src="https://img.shields.io/badge/platform-macOS-black?style=for-the-badge&logo=apple&logoColor=white" alt="macOS">
+  <img src="https://img.shields.io/badge/platform-macOS%20%7C%20Windows-black?style=for-the-badge" alt="macOS and Windows">
 </p>
 
 <p>
@@ -75,9 +75,9 @@ npm run package:mac     # .app in release/
 npm run package:win     # NSIS installer in release/
 ```
 
-macOS is the platform this is developed and released on. A Windows target is
-configured and the platform-specific paths are handled, but no Windows build has
-been tested yet. Reports welcome.
+Both platforms run the full checks on every push. macOS is where releases are
+signed and notarised; the Windows installer is unsigned for now, so Windows will
+warn on first run.
 
 Signing happens automatically when a Developer ID certificate is in your
 keychain. Set `CSC_NAME` if you have more than one.
@@ -161,8 +161,8 @@ npm run package:mac     # release/ 에 .app
 npm run package:win     # release/ 에 NSIS 설치본
 ```
 
-macOS 에서 개발하고 배포한다. Windows 타깃은 설정해 두었고 플랫폼별 경로도
-처리하지만, Windows 빌드를 실제로 해 본 적은 없다. 제보를 환영한다.
+두 플랫폼 모두 푸시마다 전체 검사를 돌린다. 서명과 공증은 macOS 쪽에만
+있어서, Windows 설치본은 아직 서명되지 않았고 처음 실행할 때 경고가 뜬다.
 
 키체인에 Developer ID 인증서가 있으면 서명은 자동으로 붙는다. 인증서가 여럿이면
 `CSC_NAME` 을 지정하면 된다.

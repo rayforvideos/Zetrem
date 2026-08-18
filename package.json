@@ -20,7 +20,8 @@
     "package:win": "electron-vite build && electron-builder --win --config electron-builder.config.cjs",
     "test:contract": "vitest run --config vitest.contract.config.ts",
     "i18n:extract": "lingui extract",
-    "i18n:compile": "lingui compile"
+    "i18n:compile": "lingui compile",
+    "smoke": "node --experimental-websocket scripts/smoke.mjs"
   },
   "devDependencies": {
     "@lingui/babel-plugin-lingui-macro": "^5.9.5",

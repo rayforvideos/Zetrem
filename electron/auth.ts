@@ -5,6 +5,7 @@ import { agentEnv } from '@/shared/lib/shell-env/shell-env'
 import type { AuthStatus } from '@/entities/auth'
 import { claudeBin, loginPath } from './login-path/login-path'
 import { handle } from './ipc/ipc'
+import { launchFor } from './spawn-claude/spawn-claude'
 
 const execFileAsync = promisify(execFile)
 
@@ -48,7 +49,8 @@ export function registerAuth(): void {
     const env = agentEnv(process.env, await loginPath())
     const bin = await claudeBin()
     await new Promise<void>((resolve) => {
-      const child = spawn(bin, ['auth', 'login'], {
+      const launch = launchFor(bin, ['auth', 'login'])
+      const child = spawn(launch.command, launch.args, {
         env,
         stdio: ['ignore', 'pipe', 'pipe'],
       })

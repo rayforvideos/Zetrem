@@ -16,6 +16,7 @@ import { lineReader } from './line-reader/line-reader'
 import { killTree, killTreeSync } from './kill-tree/kill-tree'
 import { tell } from './tell/tell'
 import { killAllProbes } from './session-probe'
+import { launchFor } from './spawn-claude/spawn-claude'
 
 const agents = new Map<string, ChildProcessWithoutNullStreams | 'starting'>()
 
@@ -80,11 +81,14 @@ export function registerAgentHost(): void {
       workspace = project ?? join(app.getPath('userData'), 'agent-workspace')
       if (!project) mkdirSync(workspace, { recursive: true })
 
-      child = spawn(
+      const launch = launchFor(
         await claudeBin(),
         agentArgs({ ...config, persona: PERSONA, orchestrator: ORCHESTRATOR_PROMPT }),
-        { cwd: workspace, env: agentEnv(process.env, await loginPath()) },
       )
+      child = spawn(launch.command, launch.args, {
+        cwd: workspace,
+        env: agentEnv(process.env, await loginPath()),
+      })
     } catch (cause: unknown) {
       console.error(`[agent ${id}] could not start`, cause)
       agents.delete(id)

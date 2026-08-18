@@ -12,6 +12,7 @@ import { saveFile } from './save-file/save-file'
 import { readKept, stillWorthShowing } from './usage-cache/usage-cache'
 import { handle } from './ipc/ipc'
 import { killTree, killTreeSync } from './kill-tree/kill-tree'
+import { launchFor } from './spawn-claude/spawn-claude'
 
 const PROBE_TIMEOUT_MS = 30_000
 const PROBE_BUFFER_MAX = 200_000
@@ -38,7 +39,8 @@ function isInit(line: string): boolean {
 
 function readInit(bin: string, args: string[], cwd: string, env: NodeJS.ProcessEnv): Promise<string | null> {
   return new Promise((resolve) => {
-    const child = spawn(bin, args, { cwd, env })
+    const launch = launchFor(bin, args)
+    const child = spawn(launch.command, launch.args, { cwd, env })
     child.stdout.setEncoding('utf8')
     if (child.pid !== undefined) asking.add(child.pid)
     let settled = false
@@ -72,7 +74,8 @@ function readInit(bin: string, args: string[], cwd: string, env: NodeJS.ProcessE
 
 function readReport(bin: string, cwd: string, env: NodeJS.ProcessEnv): Promise<string | null> {
   return new Promise((resolve) => {
-    const child = spawn(bin, ['-p', '/usage'], { cwd, env })
+    const ask = launchFor(bin, ['-p', '/usage'])
+    const child = spawn(ask.command, ask.args, { cwd, env })
     child.stdout.setEncoding('utf8')
     if (child.pid !== undefined) asking.add(child.pid)
     let settled = false

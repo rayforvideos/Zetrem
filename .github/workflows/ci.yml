@@ -46,55 +46,86 @@ jobs:
         run: npm run build
 
       - name: Translations are in step with the source
+        # Windows runners default to PowerShell, which does not read a backslash
+        # as a line continuation.
+        shell: bash
         run: |
           npm run i18n:extract -- --clean
           git diff --exit-code -- src/shared/locales \
             || (echo "::error::카탈로그가 원문과 다르다. npm run i18n:extract 를 돌려 커밋해라" && exit 1)
 
-  # Temporary: find a way to run a .cmd on Windows that keeps an argument
-  # containing JSON intact, since --agents carries exactly that.
-  probe-cmd-spawn:
-    name: probe (windows spawn of .cmd)
-    runs-on: windows-latest
+  # What the unit tests cannot answer: whether the way the app launches the CLI
+  # works against the CLI as it is really installed. On Windows npm leaves a
+  # claude.cmd shim on the PATH, which is the case that used to fail outright.
+  launch:
+    name: launch (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-latest, windows-latest]
     steps:
+      - uses: actions/checkout@v5
       - uses: actions/setup-node@v4
         with:
           node-version: '20.19'
-      - shell: bash
+          cache: npm
+      - run: npm ci
+      - name: Install the CLI the way a person would
+        run: npm i -g @anthropic-ai/claude-code
+      - name: What ended up on the PATH
+        shell: bash
         run: |
-          cat > show.mjs <<'JS'
-          console.log('SAW ' + JSON.stringify(process.argv.slice(2)))
-          JS
-          printf '@echo off\r\nnode "%%~dp0show.mjs" %%*\r\n' > fake.cmd
-          cat > probe.mjs <<'JS'
-          import { spawnSync } from 'node:child_process'
-          import { resolve } from 'node:path'
-          const file = resolve('fake.cmd')
-          const json = '{"scout":{"description":"finds things","prompt":"go go"}}'
-          const args = ['--agents', json, '--model', 'sonnet']
-          const quote = (a) => `"${a.replaceAll('"', '\\"')}"`
-          const tries = {
-            plain: [file, args, {}],
-            shellTrue: [file, args, { shell: true }],
-            cmdArgv: [process.env.COMSPEC, ['/d', '/s', '/c', file, ...args], {}],
-            cmdVerbatim: [
-              process.env.COMSPEC,
-              ['/d', '/s', '/c', [quote(file), ...args.map(quote)].join(' ')],
-              { windowsVerbatimArguments: true },
-            ],
-          }
-          for (const [way, [cmd, argv, opts]] of Object.entries(tries)) {
-            const r = spawnSync(cmd, argv, { encoding: 'utf8', ...opts })
-            const saw = (r.stdout ?? '').split('\n').find((l) => l.startsWith('SAW '))
-            let intact = false
-            try { intact = JSON.parse(saw.slice(4))[1] === json } catch {}
-            console.log(JSON.stringify({
-              way,
-              error: r.error ? String(r.error.code ?? r.error.message) : null,
-              status: r.status,
-              intact,
-              saw: (saw ?? (r.stderr ?? '').trim()).slice(0, 180),
-            }))
-          }
-          JS
-          node probe.mjs
+          echo "which: $(command -v claude || echo none)"
+          ls "$(npm prefix -g)/bin" 2>/dev/null | grep -i claude || true
+          ls "$(npm prefix -g)" 2>/dev/null | grep -i claude || true
+      - name: Launch it the way the app does
+        run: npm run test:contract -- tests/contract/launch.contract.test.ts
+
+  # Proves the installer for each platform can actually be produced.
+  package:
+    name: package (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-latest, windows-latest]
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20.19'
+          cache: npm
+      - run: npm ci
+      - name: Package
+        # No certificates on a runner, so this builds unsigned. It is the build
+        # that is being tested, not the signature.
+        env:
+          CSC_IDENTITY_AUTO_DISCOVERY: 'false'
+        # --publish never: on a runner electron-builder otherwise tries to publish
+        # a release and stops for want of a token.
+        run: npm run ${{ matrix.os == 'windows-latest' && 'package:win' || 'package:mac' }} -- --publish never
+      - name: What came out
+        shell: bash
+        run: ls -la release/ | head -20
+
+  # The one thing no other check can answer: whether the app opens and its window
+  # draws anything. A platform that only compiles is not a platform that works.
+  smoke:
+    name: smoke (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-latest, windows-latest]
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20.19'
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - name: Open the app and read its window
+        run: npm run smoke
+

@@ -4,10 +4,13 @@ import { toolShape } from '@/shared/lib/tool-shape/tool-shape'
 import type { ToolShape } from '@/shared/lib/tool-shape/tool-shape.types'
 import { targetOf, verbOf } from '@/shared/lib/tool-verb/tool-verb'
 import type { Doing } from './working.types'
+import { t } from '@lingui/core/macro'
 
 const HANDOFF_MS = 2500
 
-const STARTING: Doing = { verb: 'Starting', target: '', shape: null }
+function starting(): Doing {
+  return { verb: t`Starting`, target: '', shape: null }
+}
 
 function shapeOf(tool: ToolActivity): ToolShape {
   return toolShape(tool.line.split(' ')[0] ?? '', tool.input)
@@ -43,19 +46,19 @@ function exchangeOf(turns: Turn[]): Turn[] {
 export function doingOf(turns: Turn[], nowMs = 0): Doing {
   const talk = exchangeOf(turns)
   const last = talk.at(-1)
-  if (last === undefined) return STARTING
+  if (last === undefined) return starting()
   const tools = talk.flatMap((turn) => turn.tools)
 
   const away = tools.filter((one) => one.result === null && shapeOf(one).kind === 'agent')
   if (away.length > 1) {
     const shape: ToolShape = { kind: 'agent', subagentType: '', description: '' }
-    return { verb: 'Waiting on', target: `${away.length} teammates`, shape }
+    return { verb: t`Waiting on`, target: t`${away.length} teammates`, shape }
   }
   if (away.length === 1) {
     const held = away[0]!
     const shape = shapeOf(held)
     const settled = nowMs - held.startedAtMs >= HANDOFF_MS
-    return { verb: settled ? 'Waiting on' : 'Handing off', target: crewLine(shape), shape }
+    return { verb: settled ? t`Waiting on` : t`Handing off`, target: crewLine(shape), shape }
   }
 
   const busy = tools.findLast((one) => one.result === null)
@@ -64,9 +67,9 @@ export function doingOf(turns: Turn[], nowMs = 0): Doing {
     return { verb: verbOf(shape), target: targetOf(shape), shape }
   }
 
-  if (last.draft.length > 0) return { verb: 'Writing', target: '', shape: null }
+  if (last.draft.length > 0) return { verb: t`Writing`, target: '', shape: null }
   if (last.thinking.length > 0 && last.text.length === 0) {
-    return { verb: 'Thinking', target: '', shape: null }
+    return { verb: t`Thinking`, target: '', shape: null }
   }
 
   if (last.text.length === 0) {
@@ -75,12 +78,12 @@ export function doingOf(turns: Turn[], nowMs = 0): Doing {
       const shape = shapeOf(tools.at(-1)!)
       const name = whoOf(shape)
       const target = back > 1 ? `${back} teammates` : name.length > 0 ? name : 'a teammate'
-      return { verb: 'Waiting on', target, shape }
+      return { verb: t`Waiting on`, target, shape }
     }
   }
 
-  if (tools.length === 0 && last.text.length === 0) return STARTING
-  return { verb: 'Working', target: '', shape: null }
+  if (tools.length === 0 && last.text.length === 0) return starting()
+  return { verb: t`Working`, target: '', shape: null }
 }
 
 export function askedAtMs(turns: Turn[], fallbackMs: number): number {

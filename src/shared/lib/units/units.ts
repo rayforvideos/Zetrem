@@ -1,3 +1,4 @@
+import { t } from '@lingui/core/macro'
 export function formatTokens(tokens: number): string {
   if (tokens < 1000) return `${tokens}`
   return `${(tokens / 1000).toFixed(1)}k`
@@ -6,14 +7,16 @@ export function formatTokens(tokens: number): string {
 export function limitKindLabel(kind: string): string {
   switch (kind) {
     case 'five_hour':
-      return '5-hour'
+      return t`5-hour`
     case 'seven_day':
     case 'seven_day_oauth':
-      return 'Weekly'
+      return t`Weekly`
     case 'seven_day_overage':
-      return 'Weekly overage'
+      return t`Weekly overage`
     default:
-      return kind.startsWith('seven_day_') ? `Weekly ${titled(kind.slice('seven_day_'.length))}` : kind
+      if (!kind.startsWith('seven_day_')) return kind
+      const rest = titled(kind.slice('seven_day_'.length))
+      return t`Weekly ${rest}`
   }
 }
 

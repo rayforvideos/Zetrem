@@ -36,10 +36,3 @@ export function needingAuth(connectors: Connector[]): Connector[] {
   return connectors.filter((connector) => connector.state === 'needs-auth')
 }
 
-export function connectorSummary(connectors: Connector[]): string {
-  if (connectors.length === 0) return 'No connectors yet'
-  const live = connectors.filter((connector) => connector.state === 'connected').length
-  const waiting = needingAuth(connectors).length
-  const head = `${live} of ${connectors.length} connected`
-  return waiting > 0 ? `${head}, ${waiting} need signing in` : head
-}

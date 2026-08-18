@@ -1,6 +1,7 @@
 import { ORCHESTRATOR, allowedStock, stockAgents } from '@/entities/agent-session'
 import type { Crew, Person, RosterLock, Settings } from '@/entities/agent-session'
 import type { AgentDef } from '@/entities/agent-def'
+import { plural, t } from '@lingui/core/macro'
 
 export function peopleOf(defs: AgentDef[]): Person[] {
   return defs.map((def) => ({
@@ -32,6 +33,6 @@ export function lockOf(settings: Settings, defs: AgentDef[], authored: string[] 
 }
 
 export function pluginSummary(installed: number, sources: number): string {
-  if (installed === 0 && sources === 0) return 'Add a marketplace to bring in skills and agents'
-  return `${installed} installed from ${sources} ${sources === 1 ? 'source' : 'sources'}`
+  if (installed === 0 && sources === 0) return t`Add a marketplace to bring in skills and agents`
+  return t`${installed} installed from ${plural(sources, { one: '# source', other: '# sources' })}`
 }

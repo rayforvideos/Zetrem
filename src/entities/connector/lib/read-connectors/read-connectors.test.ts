@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
-import { canSignIn, connectorSummary, needingAuth, readConnectors } from './read-connectors'
+import { canSignIn, needingAuth, readConnectors } from './read-connectors'
+import { connectorSummary } from '../summary/summary'
 import type { Connector } from './read-connectors.types'
 
 const REAL = `Checking MCP server health…
@@ -67,7 +68,7 @@ describe('connectorSummary: one line about the connectors', () => {
   })
 
   it('says how many are waiting on you, since that is the actionable part', () => {
-    expect(connectorSummary(readConnectors(REAL))).toContain('1 need signing in')
+    expect(connectorSummary(readConnectors(REAL))).toContain('1 needs signing in')
   })
 
   it('leaves the waiting clause out when nobody is waiting', () => {

@@ -1,3 +1,4 @@
+import { t } from '@lingui/core/macro'
 import type { Cell } from './format.types'
 
 import { isOutdated } from '@/entities/agent-session'
@@ -40,7 +41,7 @@ export function cells(
 
   const percent = contextPercent(status.context)
   if (percent !== null && percent >= CONTEXT_WARN * 100) {
-    out.push({ key: 'context', text: `Context ${100 - percent}% left, compacting soon`, warn: true })
+    out.push({ key: 'context', text: t`Context ${100 - percent}% left, compacting soon`, warn: true })
   }
 
   const wired = checked ? wiredOf(status, connectors) : null
@@ -49,7 +50,7 @@ export function cells(
       key: 'mcp',
       text:
         wired.needsAuth > 0
-          ? `MCP ${wired.connected}/${wired.total} · ${wired.needsAuth} need auth`
+          ? t`MCP ${wired.connected}/${wired.total} · ${wired.needsAuth} need auth`
           : `MCP ${wired.connected}/${wired.total}`,
       warn: wired.needsAuth > 0,
     })
@@ -58,9 +59,10 @@ export function cells(
   const update = status.update
   if (update?.current) {
     const stale = isOutdated(update.current, update.latest)
+    const latest = update.latest ?? ''
     out.push({
       key: 'update',
-      text: stale ? `CLI ${update.current} → ${update.latest} available` : `CLI ${update.current}`,
+      text: stale ? t`CLI ${update.current} → ${latest} available` : `CLI ${update.current}`,
       warn: stale,
     })
   }

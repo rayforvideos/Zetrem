@@ -1,6 +1,7 @@
 import type { CSSProperties } from 'react'
 import { X } from 'lucide-react'
 import { Button } from '@/shared/ui/button'
+import { t } from '@lingui/core/macro'
 
 export function FirstHint({
   title,
@@ -21,7 +22,7 @@ export function FirstHint({
         variant="ghost"
         size="icon-xs"
         onClick={onClose}
-        aria-label="Dismiss this tip"
+        aria-label={t`Dismiss this tip`}
         className="-mt-0.5 flex-none rounded-full text-muted-foreground"
       >
         <X />

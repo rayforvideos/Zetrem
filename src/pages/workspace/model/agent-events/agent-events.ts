@@ -12,6 +12,7 @@ import { formatTokens, limitKindLabel } from '@/shared/lib/units/units'
 import { conversation } from '../conversation/conversation'
 import { stirred } from './stirred/stirred'
 import { SEND_TOOL, applyCrewEvent, isCrewEvent, remember, wakeResumed } from './crew/crew'
+import { t } from '@lingui/core/macro'
 
 export function applyAgentEvent(turn: ClaudeTurnEvent, refs: AgentEventRefs): void {
   if (isStatusEvent(turn)) statusStore.apply(turn)
@@ -91,7 +92,7 @@ function announce(turn: ClaudeTurnEvent, refs: AgentEventRefs): void {
       )
     case 'metrics':
       if (turn.metrics.apiErrorStatus) {
-        conversation.system(`API error ${turn.metrics.apiErrorStatus}`)
+        conversation.system(t`API error ${turn.metrics.apiErrorStatus}`)
       }
       return conversation.system(turnLine(turn.metrics, statusStore.get().cost.lastTurnUsd))
     case 'permissionDropped':
@@ -132,10 +133,11 @@ function drop(requestId: string, refs: AgentEventRefs): void {
 }
 
 export function limitLine(limit: RateLimit): string {
-  const share = limit.utilization === null ? '' : ` ${Math.round(limit.utilization * 100)}% used,`
+  const pct = limit.utilization === null ? null : Math.round(limit.utilization * 100)
+  const share = pct === null ? '' : t` ${pct}% used,`
   const when = formatResetTime(limit.resetsAtMs)
-  const overage = limit.overage ? ' · on overage' : ''
-  return `${limitKindLabel(limit.kind)} limit${share} resets ${when}${overage}`
+  const overage = limit.overage ? t` · on overage` : ''
+  return t`${limitKindLabel(limit.kind)} limit${share} resets ${when}${overage}`
 }
 
 export function compactedLine(
@@ -143,21 +145,22 @@ export function compactedLine(
   preTokens: number | null,
   postTokens: number | null,
 ): string {
-  const base = 'Conversation compacted here'
-  if (preTokens === null || postTokens === null) return `${base}. Earlier turns live on as a summary.`
+  const base = t`Conversation compacted here`
+  if (preTokens === null || postTokens === null) return t`${base}. Earlier turns live on as a summary.`
   const shrink = `${formatTokens(preTokens)} → ${formatTokens(postTokens)}`
   const cause = triggerLabel(trigger)
   return cause ? `${base} (${cause}): ${shrink}` : `${base}: ${shrink}`
 }
 
 export function triggerLabel(trigger: string | null): string | null {
-  if (trigger === 'auto') return 'auto'
-  if (trigger === 'manual') return 'manual'
+  if (trigger === 'auto') return t`auto`
+  if (trigger === 'manual') return t`manual`
   return null
 }
 
 export function turnLine(metrics: ResultMetrics, turnUsd: number): string {
   const seconds = (metrics.durationMs / 1000).toFixed(1)
   const cost = turnUsd > 0 ? ` · $${turnUsd.toFixed(4)}` : ''
-  return `This turn: ${metrics.tokens.out.toLocaleString('en-US')} out · ${seconds}s${cost}`
+  const out = metrics.tokens.out.toLocaleString('en-US')
+  return t`This turn: ${out} out · ${seconds}s${cost}`
 }

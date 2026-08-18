@@ -6,6 +6,7 @@ import { ToolIcon } from '@/shared/graphics/tool-icon'
 import { Item, ItemContent, ItemMedia } from '@/shared/ui/item'
 import { changeCount } from '../lib/change-count/change-count'
 import { noteParts } from '../lib/tool-note/tool-note'
+import { t } from '@lingui/core/macro'
 
 export function ToolLine({ tool }: { tool: ToolActivity }) {
   const name = tool.line.split(' ')[0] ?? ''
@@ -90,7 +91,7 @@ function body(shape: ToolShape) {
       )
     }
     case 'todo':
-      return <span className="text-muted-foreground">Todo list</span>
+      return <span className="text-muted-foreground">{t`Todo list`}</span>
     default:
       return <span>{shape.name}</span>
   }

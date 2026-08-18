@@ -5,10 +5,11 @@ import type { Connector, ConnectorVerb, NewConnector } from '@/entities/connecto
 import type { Catalog, Marketplace, PluginRun, PluginScope, PluginVerb } from '@/entities/plugin'
 import type { AuthStatus } from '@/entities/auth'
 import type { Attached } from '@/entities/attachment'
+import type { ExitReason } from '@/entities/agent-session/lib/exit-line/exit-line.types'
 export type AgentHostEvent =
   | { id: string; kind: 'line'; line: string }
   | { id: string; kind: 'workspace'; cwd: string }
-  | { id: string; kind: 'exit'; code: number | null; reason: string | null }
+  | { id: string; kind: 'exit'; code: number | null; reason: ExitReason | null }
 
 export type DeskBridge = {
   pickProjectDir(): Promise<string | null>

@@ -1,17 +1,19 @@
 import type { InstalledPlugin } from '../catalog/catalog.types'
 import type { PluginGroup, PluginGroupKey } from './groups.types'
+import { msg } from '@lingui/core/macro'
+import type { MessageDescriptor } from '@lingui/core'
 
-const ORDER: { key: PluginGroupKey; title: string; note: string | null }[] = [
-  { key: 'yours', title: 'Yours', note: null },
+const ORDER: { key: PluginGroupKey; title: MessageDescriptor; note: MessageDescriptor | null }[] = [
+  { key: 'yours', title: msg`Yours`, note: null },
   {
     key: 'project',
-    title: 'This project',
-    note: 'Installed for this folder. Anyone who opens it gets them.',
+    title: msg`This project`,
+    note: msg`Installed for this folder. Anyone who opens it gets them.`,
   },
   {
     key: 'organisation',
-    title: 'Your organisation',
-    note: 'Set for everyone on your account. They cannot be removed or turned off here.',
+    title: msg`Your organisation`,
+    note: msg`Set for everyone on your account. They cannot be removed or turned off here.`,
   },
 ]
 

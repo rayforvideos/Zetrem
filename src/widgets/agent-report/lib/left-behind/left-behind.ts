@@ -1,13 +1,18 @@
+import { plural, t } from '@lingui/core/macro'
 import type { WorkOutcome } from '@/entities/agent-session'
 
 export function leftBehind(outcome: WorkOutcome): string {
   const parts: string[] = []
   if (outcome.commits > 0) {
-    parts.push(outcome.commits === 1 ? '1 commit' : `${outcome.commits} commits`)
+    parts.push(plural(outcome.commits, { one: '# commit', other: '# commits' }))
   }
   if (outcome.dirtyFiles > 0) {
-    parts.push(outcome.dirtyFiles === 1 ? '1 file not committed' : `${outcome.dirtyFiles} files not committed`)
+    parts.push(
+      plural(outcome.dirtyFiles, { one: '# file not committed', other: '# files not committed' }),
+    )
   }
-  if (parts.length === 0) return `Left nothing on ${outcome.branch}`
-  return `Left ${parts.join(' and ')} on ${outcome.branch}`
+  const branch = outcome.branch
+  if (parts.length === 0) return t`Left nothing on ${branch}`
+  const what = parts.join(t` and `)
+  return t`Left ${what} on ${branch}`
 }

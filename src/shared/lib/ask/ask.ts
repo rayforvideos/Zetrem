@@ -2,8 +2,9 @@ import { useRef, useState } from 'react'
 import { toast } from 'sonner'
 import { reasonOf } from '../failure/failure'
 import type { Asking, Ran } from './ask.types'
+import { t } from '@lingui/core/macro'
 
-export function lastLine(out: string, fallback = 'That did not work'): string {
+export function lastLine(out: string, fallback = t`That did not work`): string {
   const lines = out
     .split('\n')
     .map((line) => line.trim())

@@ -1,4 +1,4 @@
-import type { AgentSession } from '@/entities/agent-session'
+import type { AgentSession, SessionStatus } from '@/entities/agent-session'
 import { useScrollState } from '@/shared/lib/scroll-state/use-scroll-state'
 import { shapeOfLine, tally } from '@/shared/lib/tool-line/tool-line'
 import { personaOf } from '@/entities/agent-session'
@@ -10,12 +10,15 @@ import { leadOf } from '../../lib/lead/lead'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { leftBehind } from '../../lib/left-behind/left-behind'
 import { runsOf, stepTo } from '../../lib/runs/runs'
+import { i18n } from '@lingui/core'
+import { msg, t } from '@lingui/core/macro'
+import type { MessageDescriptor } from '@lingui/core'
 
-const STATE: Record<AgentSession['status'], string> = {
-  working: 'Working',
-  waiting: 'Waiting on you',
-  reported: 'Reported back',
-  done: 'Done',
+const STATE: Record<SessionStatus, MessageDescriptor> = {
+  working: msg`Working`,
+  waiting: msg`Waiting on you`,
+  reported: msg`Reported back`,
+  done: msg`Done`,
 }
 
 type AgentReportProps = {
@@ -54,7 +57,7 @@ export function AgentReport({ session, sessions, nowMs, onClose, onPick }: Agent
           <span className="flex flex-col">
             <span className="text-base leading-tight">{persona.name}</span>
             <span className="font-mono text-xs text-muted-foreground">
-              {STATE[session.status]} · {Math.max(0, Math.round(ranMs / 1000))}s · {session.model}
+              {i18n._(STATE[session.status])} · {Math.max(0, Math.round(ranMs / 1000))}s · {session.model}
             </span>
           </span>
         </div>
@@ -66,7 +69,7 @@ export function AgentReport({ session, sessions, nowMs, onClose, onPick }: Agent
                 size="bare"
                 disabled={earlier === null}
                 onClick={() => earlier !== null && onPick(earlier)}
-                aria-label="Earlier run"
+                aria-label={t`Earlier run`}
               >
                 <ChevronLeft className="size-3.5" />
               </Button>
@@ -78,13 +81,13 @@ export function AgentReport({ session, sessions, nowMs, onClose, onPick }: Agent
                 size="bare"
                 disabled={later === null}
                 onClick={() => later !== null && onPick(later)}
-                aria-label="Later run"
+                aria-label={t`Later run`}
               >
                 <ChevronRight className="size-3.5" />
               </Button>
             </span>
           )}
-          <Button variant="quiet" size="bare" onClick={onClose} aria-label="Close report">
+          <Button variant="quiet" size="bare" onClick={onClose} aria-label={t`Close report`}>
             Close
           </Button>
         </div>
@@ -116,7 +119,7 @@ export function AgentReport({ session, sessions, nowMs, onClose, onPick }: Agent
 
       {session.transcript.length > 0 && (
         <div className="flex flex-col gap-2.5 pt-2">
-          <span className="mb-1 text-xs tracking-[0.08em] text-muted-foreground">What they said</span>
+          <span className="mb-1 text-xs tracking-[0.08em] text-muted-foreground">{t`What they said`}</span>
           {session.transcript.map((entry, index) =>
             entry.role === 'user' ? (
               <p
@@ -133,9 +136,9 @@ export function AgentReport({ session, sessions, nowMs, onClose, onPick }: Agent
       )}
 
       <div className="flex flex-col gap-1 pt-2">
-        <span className="mb-1 text-xs tracking-[0.08em] text-muted-foreground">What they did</span>
+        <span className="mb-1 text-xs tracking-[0.08em] text-muted-foreground">{t`What they did`}</span>
         {session.stream.length === 0 && (
-          <span className="text-xs text-muted-foreground">Nothing yet</span>
+          <span className="text-xs text-muted-foreground">{t`Nothing yet`}</span>
         )}
         {session.stream.map((call) => {
           const shape = shapeOfLine(call.line)

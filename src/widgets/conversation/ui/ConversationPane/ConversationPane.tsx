@@ -23,6 +23,7 @@ import { Working } from './Working'
 import { Away } from './Away'
 import { Chores } from './Chores'
 import type { Away as Waiting } from '../../lib/away/away.types'
+import { t } from '@lingui/core/macro'
 
 const BUBBLE = 'rounded-2xl rounded-br-md bg-muted px-4 py-2.5'
 
@@ -101,8 +102,8 @@ export function ConversationPane({
           {hint && (
             <div className="mt-7 w-full max-w-md">
               <FirstHint
-                title="Ask for the whole job"
-                body="Say what you want done, not the next step. The orchestrator splits it up and hands the pieces out."
+                title={t`Ask for the whole job`}
+                body={t`Say what you want done, not the next step. The orchestrator splits it up and hands the pieces out.`}
                 onClose={onHintSeen}
               />
             </div>

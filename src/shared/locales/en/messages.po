@@ -1,0 +1,1752 @@
+msgid ""
+msgstr ""
+"POT-Creation-Date: 2026-08-18 11:15+0900\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: @lingui/cli\n"
+"Language: en\n"
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: \n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Plural-Forms: \n"
+
+#: src/pages/workspace/model/agent-events/agent-events.ts:139
+msgid " · on overage"
+msgstr " · on overage"
+
+#: src/pages/workspace/model/agent-events/agent-events.ts:137
+msgid " {pct}% used,"
+msgstr " {pct}% used,"
+
+#: src/widgets/agent-report/lib/left-behind/left-behind.ts:16
+msgid " and "
+msgstr " and "
+
+#. placeholder {0}: outcome.commits
+#: src/widgets/agent-report/lib/left-behind/left-behind.ts:7
+msgid "{0, plural, one {# commit} other {# commits}}"
+msgstr "{0, plural, one {# commit} other {# commits}}"
+
+#. placeholder {0}: outcome.dirtyFiles
+#: src/widgets/agent-report/lib/left-behind/left-behind.ts:11
+msgid "{0, plural, one {# file not committed} other {# files not committed}}"
+msgstr "{0, plural, one {# file not committed} other {# files not committed}}"
+
+#. placeholder {0}: chosen.length
+#: src/widgets/team-sidebar/ui/ToolPicker/ToolPicker.tsx:61
+msgid "{0} chosen"
+msgstr "{0} chosen"
+
+#. placeholder {0}: untilLabel(left)
+#: src/widgets/usage-bar/lib/strip/strip.ts:26
+msgid "{0} left"
+msgstr "{0} left"
+
+#. placeholder {0}: limitKindLabel(limit.kind)
+#: src/pages/workspace/model/agent-events/agent-events.ts:140
+msgid "{0} limit{share} resets {when}{overage}"
+msgstr "{0} limit{share} resets {when}{overage}"
+
+#. placeholder {0}: n(reached)
+#. placeholder {1}: n(wired.length)
+#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:137
+msgid "{0} of {1} connected"
+msgstr "{0} of {1} connected"
+
+#. placeholder {0}: away.length
+#: src/widgets/conversation/lib/working/working.ts:55
+msgid "{0} teammates"
+msgstr "{0} teammates"
+
+#. placeholder {0}: i18n._(ORIGIN[member.origin])
+#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:160
+msgid "{0}. Joins from the next session."
+msgstr "{0}. Joins from the next session."
+
+#. placeholder {0}: Math.floor(gap / DAY)
+#: src/widgets/team-sidebar/lib/when/when.ts:13
+msgid "{0}d ago"
+msgstr "{0}d ago"
+
+#. placeholder {0}: Math.floor(gap / HOUR)
+#: src/widgets/team-sidebar/lib/when/when.ts:12
+msgid "{0}h ago"
+msgstr "{0}h ago"
+
+#. placeholder {0}: Math.floor(gap / MINUTE)
+#: src/widgets/team-sidebar/lib/when/when.ts:11
+msgid "{0}m ago"
+msgstr "{0}m ago"
+
+#: src/pages/workspace/model/agent-events/agent-events.ts:149
+msgid "{base}. Earlier turns live on as a summary."
+msgstr "{base}. Earlier turns live on as a summary."
+
+#: src/entities/agent-session/api/claude/aside/aside.ts:23
+msgid "{from} declined this, so {to} took it"
+msgstr "{from} declined this, so {to} took it"
+
+#: src/pages/workspace/model/workspace-config/workspace-config.ts:37
+msgid "{installed} installed from {sources, plural, one {# source} other {# sources}}"
+msgstr "{installed} installed from {sources, plural, one {# source} other {# sources}}"
+
+#: src/entities/agent-session/api/claude/turn.ts:95
+msgid "{kind} {name} did not load: {why}"
+msgstr "{kind} {name} did not load: {why}"
+
+#: src/entities/connector/lib/summary/summary.ts:11
+msgid "{live} of {all} connected"
+msgstr "{live} of {all} connected"
+
+#: src/widgets/team-sidebar/ui/StockList/StockList.tsx:32
+msgid "{name} can be called this session"
+msgstr "{name} can be called this session"
+
+#: src/entities/attachment/lib/heavy-line/heavy-line.ts:7
+msgid "{name} is over {max}MB, so it cannot be sent as a picture. Point at it by path instead."
+msgstr "{name} is over {max}MB, so it cannot be sent as a picture. Point at it by path instead."
+
+#: src/widgets/usage-bar/lib/strip/strip.ts:38
+msgid "{percent}% used"
+msgstr "{percent}% used"
+
+#: src/widgets/tile-deck/lib/headcount/headcount.ts:15
+msgid "{reported} reported back"
+msgstr "{reported} reported back"
+
+#: src/widgets/conversation/lib/limits.ts:6
+msgid "{rest, plural, one {# more line} other {# more lines}}"
+msgstr "{rest, plural, one {# more line} other {# more lines}}"
+
+#: src/pages/workspace/model/use-plugins.ts:111
+msgid "{target} added"
+msgstr "{target} added"
+
+#: src/pages/workspace/model/use-plugins.ts:101
+msgid "{target} installed. Restart the session to load it."
+msgstr "{target} installed. Restart the session to load it."
+
+#: src/pages/workspace/model/use-plugins.ts:107
+msgid "{target} off. The running session keeps it until it ends."
+msgstr "{target} off. The running session keeps it until it ends."
+
+#: src/pages/workspace/model/use-plugins.ts:105
+msgid "{target} on. Restart the session to load it."
+msgstr "{target} on. Restart the session to load it."
+
+#: src/pages/workspace/model/use-plugins.ts:115
+msgid "{target} refreshed"
+msgstr "{target} refreshed"
+
+#: src/pages/workspace/model/use-plugins.ts:103
+#: src/pages/workspace/model/use-plugins.ts:113
+msgid "{target} removed"
+msgstr "{target} removed"
+
+#: src/pages/workspace/model/use-plugins.ts:109
+msgid "{target} updated. Restart the session to load it."
+msgstr "{target} updated. Restart the session to load it."
+
+#: src/entities/agent-session/api/claude/aside/aside.ts:16
+#: src/entities/agent-session/api/claude/turn.ts:67
+msgid "{tool} was not allowed"
+msgstr "{tool} was not allowed"
+
+#: src/entities/agent-session/api/claude/aside/aside.ts:16
+msgid "{tool} was not allowed: {why}"
+msgstr "{tool} was not allowed: {why}"
+
+#: src/entities/connector/lib/summary/summary.ts:13
+msgid "{waiting, plural, one {# needs signing in} other {# need signing in}}"
+msgstr "{waiting, plural, one {# needs signing in} other {# need signing in}}"
+
+#: src/widgets/tile-deck/lib/headcount/headcount.ts:14
+msgid "{waiting} waiting on you"
+msgstr "{waiting} waiting on you"
+
+#: src/entities/agent-session/api/claude/failure/failure.ts:69
+msgid "{what}. Trying again in {seconds}, attempt {which}"
+msgstr "{what}. Trying again in {seconds}, attempt {which}"
+
+#: src/entities/agent-session/api/claude/aside/aside.ts:34
+msgid "{who} declined this and there is nothing to fall back to"
+msgstr "{who} declined this and there is nothing to fall back to"
+
+#: src/entities/agent-session/api/claude/aside/aside.ts:33
+msgid "{who} declined this and there is nothing to fall back to. {said}"
+msgstr "{who} declined this and there is nothing to fall back to. {said}"
+
+#: src/entities/agent-session/api/claude/failure/failure.ts:38
+msgid "{who} is not available on your account. Pick another in Settings."
+msgstr "{who} is not available on your account. Pick another in Settings."
+
+#: src/widgets/team-sidebar/lib/team-note/team-note.ts:9
+msgid "{who} is ready. The running session cannot call them yet."
+msgstr "{who} is ready. The running session cannot call them yet."
+
+#: src/widgets/team-sidebar/lib/team-note/team-note.ts:10
+msgid "{who} is ready. They join the next session."
+msgstr "{who} is ready. They join the next session."
+
+#: src/widgets/team-sidebar/lib/team-note/team-note.ts:18
+msgid "{who} left the team."
+msgstr "{who} left the team."
+
+#: src/widgets/team-sidebar/lib/team-note/team-note.ts:17
+msgid "{who} left the team. The running session keeps them until it ends."
+msgstr "{who} left the team. The running session keeps them until it ends."
+
+#: src/widgets/team-sidebar/lib/team-note/team-note.ts:13
+msgid "{who} updated. The running session holds the old brief."
+msgstr "{who} updated. The running session holds the old brief."
+
+#: src/widgets/team-sidebar/lib/team-note/team-note.ts:14
+msgid "{who} updated. This applies from the next session."
+msgstr "{who} updated. This applies from the next session."
+
+#: src/widgets/tile-deck/lib/headcount/headcount.ts:13
+msgid "{working} working"
+msgstr "{working} working"
+
+#: src/widgets/conversation/lib/greetings/greetings.ts:8
+msgid "{you}, who should take this one?"
+msgstr "{you}, who should take this one?"
+
+#: src/shared/lib/units/units.ts:10
+msgid "5-hour"
+msgstr "5-hour"
+
+#: src/entities/connector/lib/refusal-why/refusal-why.ts:12
+msgid "A name cannot start with a dash"
+msgstr "A name cannot start with a dash"
+
+#: src/entities/connector/lib/groups/groups.ts:17
+msgid "A plugin brings these. Turn the plugin off to lose them."
+msgstr "A plugin brings these. Turn the plugin off to lose them."
+
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:269
+msgid "A running session cannot call them. Restart it, or they join the next one."
+msgstr "A running session cannot call them. Restart it, or they join the next one."
+
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:270
+msgid "A running session keeps the old brief until it is restarted"
+msgstr "A running session keeps the old brief until it is restarted"
+
+#: src/widgets/welcome/lib/slides/slides.ts:32
+msgid "A teammate is a brief you write once"
+msgstr "A teammate is a brief you write once"
+
+#: src/entities/agent-session/api/claude/aside/aside.ts:14
+msgid "A tool"
+msgstr "A tool"
+
+#: src/widgets/setup/ui/AccountField/AccountField.tsx:25
+msgid "Account"
+msgstr "Account"
+
+#: src/widgets/setup/ui/AddConnector/AddConnector.tsx:95
+msgid "Add"
+msgstr "Add"
+
+#: src/widgets/setup/ui/PluginShelf/PluginShelf.tsx:338
+msgid "Add a marketplace"
+msgstr "Add a marketplace"
+
+#: src/pages/workspace/model/workspace-config/workspace-config.ts:36
+msgid "Add a marketplace to bring in skills and agents"
+msgstr "Add a marketplace to bring in skills and agents"
+
+#: src/widgets/setup/ui/AddConnector/AddConnector.tsx:49
+msgid "Add one by address"
+msgstr "Add one by address"
+
+#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:77
+msgid "Add teammate"
+msgstr "Add teammate"
+
+#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:82
+msgid "Add your first teammate"
+msgstr "Add your first teammate"
+
+#: src/pages/workspace/model/use-connectors.ts:71
+msgid "Added {name}. Sign in if it asks."
+msgstr "Added {name}. Sign in if it asks."
+
+#. placeholder {0}: n(reached)
+#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:136
+msgid "All {0} connected"
+msgstr "All {0} connected"
+
+#: src/entities/agent-session/model/choices/choices.ts:13
+#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:44
+msgid "Allow all"
+msgstr "Allow all"
+
+#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:96
+msgid "Allow this?"
+msgstr "Allow this?"
+
+#: src/widgets/setup/lib/tongues/tongues.ts:6
+msgid "Always English"
+msgstr "Always English"
+
+#: src/widgets/setup/lib/tongues/tongues.ts:7
+msgid "Always Korean"
+msgstr "Always Korean"
+
+#: src/shared/lib/datetime/datetime.ts:21
+msgid "any moment"
+msgstr "any moment"
+
+#. placeholder {0}: turn.metrics.apiErrorStatus
+#: src/pages/workspace/model/agent-events/agent-events.ts:95
+msgid "API error {0}"
+msgstr "API error {0}"
+
+#: src/entities/agent-session/model/choices/choices.ts:7
+#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:44
+msgid "Ask first"
+msgstr "Ask first"
+
+#: src/widgets/conversation/ui/ConversationPane/ConversationPane.tsx:105
+msgid "Ask for the whole job"
+msgstr "Ask for the whole job"
+
+#: src/widgets/welcome/lib/slides/slides.ts:15
+msgid "Ask for the whole job, not the next step. The orchestrator plans it, hands pieces out, and answers you when the pieces come back."
+msgstr "Ask for the whole job, not the next step. The orchestrator plans it, hands pieces out, and answers you when the pieces come back."
+
+#: src/entities/agent-session/model/choices/choices.ts:7
+msgid "Asks before editing files or running commands"
+msgstr "Asks before editing files or running commands"
+
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:229
+msgid "Attach"
+msgstr "Attach"
+
+#: src/widgets/conversation/ui/Composer/Composer.tsx:133
+msgid "Attach a file"
+msgstr "Attach a file"
+
+#: src/pages/workspace/model/agent-events/agent-events.ts:156
+msgid "auto"
+msgstr "auto"
+
+#: src/entities/agent-session/model/choices/choices.ts:10
+msgid "Auto-edit"
+msgstr "Auto-edit"
+
+#: src/widgets/welcome/ui/WelcomePane/WelcomePane.tsx:126
+msgid "Back"
+msgstr "Back"
+
+#: src/entities/agent-session/model/choices/choices.ts:25
+msgid "Balanced for most tasks"
+msgstr "Balanced for most tasks"
+
+#: src/widgets/conversation/lib/greetings/greetings.ts:11
+msgid "Big job? Split it. They like company."
+msgstr "Big job? Split it. They like company."
+
+#: src/entities/agent-session/api/claude/failure/failure.ts:83
+msgid "Billing refused the request"
+msgstr "Billing refused the request"
+
+#: src/pages/workspace/model/use-connectors.ts:82
+msgid "Brought over what Claude Desktop had."
+msgstr "Brought over what Claude Desktop had."
+
+#: src/widgets/setup/ui/PluginShelf/PluginShelf.tsx:106
+msgid "Browse"
+msgstr "Browse"
+
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:118
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:274
+#: src/widgets/team-sidebar/ui/MemberMenu/MemberMenu.tsx:66
+msgid "Cancel"
+msgstr "Cancel"
+
+#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:29
+msgid "Cart totals and rounding"
+msgstr "Cart totals and rounding"
+
+#: src/widgets/setup/ui/ProjectField/ProjectField.tsx:22
+msgid "Change"
+msgstr "Change"
+
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:462
+msgid "Change account, project, and permissions"
+msgstr "Change account, project, and permissions"
+
+#: src/pages/workspace/ui/controls/ProjectPicker.tsx:52
+msgid "Change folder…"
+msgstr "Change folder…"
+
+#: src/widgets/team-sidebar/ui/CharacterPicker/CharacterPicker.tsx:20
+msgid "Character"
+msgstr "Character"
+
+#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:123
+#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:134
+msgid "Checking…"
+msgstr "Checking…"
+
+#: src/widgets/setup/lib/start-blocker/start-blocker.ts:7
+msgid "Choose a project folder"
+msgstr "Choose a project folder"
+
+#: src/widgets/setup/ui/ProjectField/ProjectField.tsx:22
+msgid "Choose folder"
+msgstr "Choose folder"
+
+#: src/pages/workspace/ui/controls/ProjectPicker.tsx:22
+msgid "Choose project"
+msgstr "Choose project"
+
+#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:21
+#: src/widgets/team-sidebar/ui/TeamSidebar/TeamSidebar.tsx:51
+msgid "Claude Code"
+msgstr "Claude Code"
+
+#: src/widgets/welcome/lib/slides/slides.ts:8
+msgid "Claude Code, given a screen"
+msgstr "Claude Code, given a screen"
+
+#: src/widgets/conversation/ui/Composer/Composer.tsx:88
+msgid "Clear"
+msgstr "Clear"
+
+#. placeholder {0}: update.current
+#: src/widgets/status-bar/lib/format/format.ts:65
+msgid "CLI {0} → {latest} available"
+msgstr "CLI {0} → {latest} available"
+
+#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:90
+msgid "Close report"
+msgstr "Close report"
+
+#: src/widgets/tile-deck/ui/layers/Headline/Headline.tsx:41
+msgid "Close this tile. The run stays in the sidebar."
+msgstr "Close this tile. The run stays in the sidebar."
+
+#: src/entities/agent-session/model/choices/choices.ts:24
+msgid "Complex work. Slower and pricier"
+msgstr "Complex work. Slower and pricier"
+
+#: src/widgets/setup/ui/PluginShelf/PluginShelf.tsx:37
+msgid "Connected"
+msgstr "Connected"
+
+#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:172
+msgid "Connecting"
+msgstr "Connecting"
+
+#: src/widgets/setup/ui/AddConnector/AddConnector.tsx:84
+msgid "Connector address"
+msgstr "Connector address"
+
+#: src/widgets/setup/ui/AddConnector/AddConnector.tsx:75
+msgid "Connector name"
+msgstr "Connector name"
+
+#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:114
+msgid "Connectors"
+msgstr "Connectors"
+
+#. placeholder {0}: connectors.length
+#: src/widgets/setup/ui/PluginShelf/PluginShelf.tsx:108
+msgid "Connectors · {0}"
+msgstr "Connectors · {0}"
+
+#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:103
+msgid "Context"
+msgstr "Context"
+
+#. placeholder {0}: 100 - percent
+#: src/widgets/status-bar/lib/format/format.ts:44
+msgid "Context {0}% left, compacting soon"
+msgstr "Context {0}% left, compacting soon"
+
+#: src/pages/workspace/model/agent-events/agent-events.ts:148
+msgid "Conversation compacted here"
+msgstr "Conversation compacted here"
+
+#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:108
+msgid "Cost"
+msgstr "Cost"
+
+#. placeholder {0}: said(verb)
+#: src/pages/workspace/model/use-plugins.ts:66
+msgid "Could not {0} {target}"
+msgstr "Could not {0} {target}"
+
+#: src/pages/workspace/model/use-connectors.ts:66
+msgid "Could not add {name}"
+msgstr "Could not add {name}"
+
+#: src/pages/workspace/model/use-connectors.ts:77
+msgid "Could not bring over Claude Desktop"
+msgstr "Could not bring over Claude Desktop"
+
+#: src/widgets/setup/ui/PluginShelf/PluginShelf.tsx:40
+msgid "Could not connect"
+msgstr "Could not connect"
+
+#: src/pages/workspace/model/use-transcript.ts:178
+msgid "Could not forget that chat"
+msgstr "Could not forget that chat"
+
+#: src/pages/workspace/model/use-transcript.ts:44
+msgid "Could not list your saved chats"
+msgstr "Could not list your saved chats"
+
+#: src/pages/workspace/model/use-transcript.ts:159
+msgid "Could not open that chat"
+msgstr "Could not open that chat"
+
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:169
+msgid "Could not open that folder"
+msgstr "Could not open that folder"
+
+#: src/pages/workspace/model/use-attachments.ts:55
+msgid "Could not open the file picker"
+msgstr "Could not open the file picker"
+
+#: src/pages/workspace/model/use-agent.ts:84
+msgid "Could not pick that conversation back up. Starting a new one."
+msgstr "Could not pick that conversation back up. Starting a new one."
+
+#: src/pages/workspace/model/use-connectors.ts:55
+msgid "Could not reach {target}"
+msgstr "Could not reach {target}"
+
+#: src/pages/workspace/model/use-plugins.ts:42
+msgid "Could not read the plugin shelf"
+msgstr "Could not read the plugin shelf"
+
+#: src/widgets/usage-bar/lib/strip/strip.ts:69
+msgid "Could not read usage"
+msgstr "Could not read usage"
+
+#: src/pages/workspace/model/use-plugins.ts:56
+msgid "Could not read what is available"
+msgstr "Could not read what is available"
+
+#: src/pages/workspace/model/use-attachments.ts:48
+msgid "Could not read what you attached"
+msgstr "Could not read what you attached"
+
+#: src/pages/workspace/model/use-attachments.ts:83
+msgid "Could not read what you pasted"
+msgstr "Could not read what you pasted"
+
+#: src/pages/workspace/model/use-connectors.ts:40
+msgid "Could not read your connectors"
+msgstr "Could not read your connectors"
+
+#: src/pages/workspace/model/use-plugins.ts:43
+msgid "Could not read your marketplaces"
+msgstr "Could not read your marketplaces"
+
+#: src/pages/workspace/model/use-settings.ts:42
+msgid "Could not read your settings"
+msgstr "Could not read your settings"
+
+#: src/pages/workspace/model/use-auth.ts:33
+msgid "Could not read your sign-in"
+msgstr "Could not read your sign-in"
+
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:93
+msgid "Could not reopen your last project"
+msgstr "Could not reopen your last project"
+
+#: src/pages/workspace/model/use-settings.ts:30
+#: src/pages/workspace/model/use-settings.ts:52
+msgid "Could not save your settings"
+msgstr "Could not save your settings"
+
+#: src/entities/agent-session/lib/exit-line/exit-line.ts:9
+msgid "Could not start Claude Code"
+msgstr "Could not start Claude Code"
+
+#: src/entities/agent-session/lib/exit-line/exit-line.ts:11
+msgid "Could not start Claude Code: {said}"
+msgstr "Could not start Claude Code: {said}"
+
+#: src/pages/workspace/model/use-cli-update.ts:35
+msgid "Could not start the update"
+msgstr "Could not start the update"
+
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:277
+msgid "Create"
+msgstr "Create"
+
+#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:109
+msgid "Create a teammate and they'll show up here."
+msgstr "Create a teammate and they'll show up here."
+
+#: src/widgets/welcome/lib/slides/slides.ts:39
+msgid "Decide what may run without asking, watch what is left of your limits along the foot, and stop anything mid-flight."
+msgstr "Decide what may run without asking, watch what is left of your limits along the foot, and stop anything mid-flight."
+
+#: src/entities/agent-session/model/choices/choices.ts:18
+msgid "Default"
+msgstr "Default"
+
+#: src/widgets/team-sidebar/ui/ChatList/ChatList.tsx:98
+msgid "Delete chat"
+msgstr "Delete chat"
+
+#: src/widgets/first-hint/ui/FirstHint/FirstHint.tsx:25
+msgid "Dismiss this tip"
+msgstr "Dismiss this tip"
+
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:234
+msgid "Documents they are told to read first. Long ones cost nothing until they open them."
+msgstr "Documents they are told to read first. Long ones cost nothing until they open them."
+
+#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:76
+msgid "Don't ask again this session"
+msgstr "Don't ask again this session"
+
+#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:21
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:122
+#: src/widgets/tile-deck/ui/layers/StateChip/StateChip.tsx:11
+msgid "Done"
+msgstr "Done"
+
+#: src/widgets/team-sidebar/ui/SidebarGrip/SidebarGrip.tsx:64
+msgid "Drag to resize, double-click to reset"
+msgstr "Drag to resize, double-click to reset"
+
+#: src/widgets/welcome/lib/slides/slides.ts:27
+msgid "Each file read, each command run, each edit made, as it happens. Nothing is summarised after the fact."
+msgstr "Each file read, each command run, each edit made, as it happens. Nothing is summarised after the fact."
+
+#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:72
+msgid "Earlier run"
+msgstr "Earlier run"
+
+#: src/widgets/team-sidebar/ui/MemberMenu/MemberMenu.tsx:49
+msgid "Edit"
+msgstr "Edit"
+
+#. placeholder {0}: initial.name
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:95
+msgid "Edit {0}"
+msgstr "Edit {0}"
+
+#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:91
+msgid "Edit this file?"
+msgstr "Edit this file?"
+
+#: src/shared/lib/tool-verb/tool-verb.ts:11
+msgid "Editing"
+msgstr "Editing"
+
+#: src/entities/agent-session/model/choices/choices.ts:11
+msgid "Edits files freely, asks before running commands"
+msgstr "Edits files freely, asks before running commands"
+
+#: src/widgets/welcome/lib/slides/slides.ts:26
+msgid "Every command is on screen"
+msgstr "Every command is on screen"
+
+#: src/widgets/welcome/lib/slides/slides.ts:21
+msgid "Everyone you send out gets a card with their name, their task and their clock. Press one to read what they were asked and what they wrote back."
+msgstr "Everyone you send out gets a card with their name, their task and their clock. Press one to read what they were asked and what they wrote back."
+
+#: src/widgets/team-sidebar/lib/member-draft/member-draft.ts:35
+#: src/widgets/team-sidebar/ui/ToolPicker/ToolPicker.tsx:61
+msgid "Everything the session has"
+msgstr "Everything the session has"
+
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:130
+#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:186
+msgid "Face"
+msgstr "Face"
+
+#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:176
+msgid "Failed"
+msgstr "Failed"
+
+#: src/entities/agent-session/model/choices/choices.ts:26
+msgid "Fast and cheap. Good for quick questions"
+msgstr "Fast and cheap. Good for quick questions"
+
+#: src/shared/lib/tool-verb/tool-verb.ts:24
+msgid "Fetching"
+msgstr "Fetching"
+
+#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:78
+msgid "Find why checkout drops the last item"
+msgstr "Find why checkout drops the last item"
+
+#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:97
+msgid "Folder"
+msgstr "Folder"
+
+#: src/widgets/setup/lib/tongues/tongues.ts:5
+msgid "Follows the language your computer is set to"
+msgstr "Follows the language your computer is set to"
+
+#: src/entities/agent-session/model/choices/choices.ts:18
+msgid "Follows your account setting"
+msgstr "Follows your account setting"
+
+#: src/entities/connector/lib/groups/groups.ts:16
+msgid "From plugins"
+msgstr "From plugins"
+
+#: src/widgets/welcome/ui/WelcomePane/WelcomePane.tsx:132
+msgid "Get started"
+msgstr "Get started"
+
+#: src/entities/connector/lib/refusal-why/refusal-why.ts:8
+msgid "Give it a name"
+msgstr "Give it a name"
+
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:56
+msgid "Give them a name"
+msgstr "Give them a name"
+
+#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:176
+msgid "Give them a task"
+msgstr "Give them a task"
+
+#: src/shared/lib/tool-verb/tool-verb.ts:26
+#: src/widgets/conversation/lib/working/working.ts:61
+msgid "Handing off"
+msgstr "Handing off"
+
+#: src/widgets/tile-deck/lib/leading/leading.ts:11
+msgid "Held up"
+msgstr "Held up"
+
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:447
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:448
+msgid "Hide team sidebar"
+msgstr "Hide team sidebar"
+
+#: src/widgets/setup/ui/AccountField/AccountField.tsx:83
+msgid "If the browser did not open, <0>open this link</0>."
+msgstr "If the browser did not open, <0>open this link</0>."
+
+#: src/widgets/setup/ui/AddConnector/AddConnector.tsx:39
+msgid "Import from Claude Desktop"
+msgstr "Import from Claude Desktop"
+
+#: src/widgets/conversation/ui/ConversationPane/Chores.tsx:30
+msgid "In the background"
+msgstr "In the background"
+
+#. placeholder {0}: here.length
+#: src/widgets/setup/ui/PluginShelf/PluginShelf.tsx:105
+msgid "Installed · {0}"
+msgstr "Installed · {0}"
+
+#: src/entities/plugin/lib/groups/groups.ts:11
+msgid "Installed for this folder. Anyone who opens it gets them."
+msgstr "Installed for this folder. Anyone who opens it gets them."
+
+#: src/entities/agent-session/api/claude/turn.ts:94
+msgid "it could not be loaded"
+msgstr "it could not be loaded"
+
+#: src/entities/agent-session/api/claude/failure/failure.ts:7
+msgid "It could not produce the shape the answer had to take"
+msgstr "It could not produce the shape the answer had to take"
+
+#: src/entities/agent-session/api/claude/failure/failure.ts:5
+msgid "It reached the limit on how many turns one message may take"
+msgstr "It reached the limit on how many turns one message may take"
+
+#: src/entities/agent-session/api/claude/failure/failure.ts:6
+msgid "It reached the spending limit set for this run"
+msgstr "It reached the spending limit set for this run"
+
+#: src/widgets/team-sidebar/lib/when/when.ts:10
+msgid "just now"
+msgstr "just now"
+
+#: src/widgets/conversation/ui/Composer/Composer.tsx:121
+#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:89
+msgid "Keep going"
+msgstr "Keep going"
+
+#: src/entities/connector/lib/refusal-why/refusal-why.ts:10
+msgid "Keep the name under {NAME_MAX} characters"
+msgstr "Keep the name under {NAME_MAX} characters"
+
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:60
+msgid "Language"
+msgstr "Language"
+
+#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:84
+msgid "Later run"
+msgstr "Later run"
+
+#: src/widgets/agent-report/lib/left-behind/left-behind.ts:17
+msgid "Left {what} on {branch}"
+msgstr "Left {what} on {branch}"
+
+#: src/widgets/agent-report/lib/left-behind/left-behind.ts:15
+msgid "Left nothing on {branch}"
+msgstr "Left nothing on {branch}"
+
+#: src/widgets/conversation/lib/greetings/greetings.ts:7
+msgid "Let's get to work with your cute little agents!"
+msgstr "Let's get to work with your cute little agents!"
+
+#: src/entities/connector/lib/refusal-why/refusal-why.ts:14
+msgid "Letters, numbers, hyphens and underscores only"
+msgstr "Letters, numbers, hyphens and underscores only"
+
+#: src/widgets/setup/ui/AddConnector/AddConnector.tsx:99
+msgid "Letters, numbers, hyphens. Sign in after adding if it asks."
+msgstr "Letters, numbers, hyphens. Sign in after adding if it asks."
+
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:97
+msgid "Manage"
+msgstr "Manage"
+
+#: src/entities/connector/lib/groups/groups.ts:12
+msgid "Managed on claude.ai. Sign in or out here, remove them there."
+msgstr "Managed on claude.ai. Sign in or out here, remove them there."
+
+#: src/pages/workspace/model/agent-events/agent-events.ts:157
+msgid "manual"
+msgstr "manual"
+
+#. placeholder {0}: wired.connected
+#. placeholder {1}: wired.total
+#. placeholder {2}: wired.needsAuth
+#: src/widgets/status-bar/lib/format/format.ts:53
+msgid "MCP {0}/{1} · {2} need auth"
+msgstr "MCP {0}/{1} · {2} need auth"
+
+#: src/entities/agent-session/api/claude/turn.ts:84
+msgid "MCP server"
+msgstr "MCP server"
+
+#: src/widgets/conversation/ui/Composer/Composer.tsx:115
+msgid "Message for {addressee}"
+msgstr "Message for {addressee}"
+
+#: src/widgets/conversation/ui/Composer/Composer.tsx:115
+msgid "Message your team"
+msgstr "Message your team"
+
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:72
+#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:98
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:134
+msgid "Model"
+msgstr "Model"
+
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:304
+msgid "Model changed. Your next message starts a session on it."
+msgstr "Model changed. Your next message starts a session on it."
+
+#. placeholder {0}: named(chat.title)
+#: src/widgets/team-sidebar/ui/ChatList/ChatList.tsx:90
+msgid "More for {0}"
+msgstr "More for {0}"
+
+#: src/widgets/team-sidebar/ui/MemberMenu/MemberMenu.tsx:41
+msgid "More for {name}"
+msgstr "More for {name}"
+
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:108
+#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:171
+msgid "Name"
+msgstr "Name"
+
+#: src/widgets/welcome/lib/slides/slides.ts:33
+msgid "Name them, say when they should be called, and write their standing instructions. The orchestrator reads that middle line to decide who gets the job."
+msgstr "Name them, say when they should be called, and write their standing instructions. The orchestrator reads that middle line to decide who gets the job."
+
+#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:170
+msgid "Needs auth"
+msgstr "Needs auth"
+
+#: src/widgets/setup/ui/PluginShelf/PluginShelf.tsx:38
+msgid "Needs signing in"
+msgstr "Needs signing in"
+
+#: src/widgets/tile-deck/ui/layers/StateChip/StateChip.tsx:9
+msgid "Needs you"
+msgstr "Needs you"
+
+#: src/entities/agent-session/model/choices/choices.ts:13
+msgid "Never asks. Anything can run"
+msgstr "Never asks. Anything can run"
+
+#: src/widgets/setup/ui/AddConnector/AddConnector.tsx:49
+msgid "Never mind"
+msgstr "Never mind"
+
+#: src/widgets/team-sidebar/lib/named/named.ts:5
+#: src/widgets/team-sidebar/ui/ChatList/ChatList.tsx:25
+msgid "New chat"
+msgstr "New chat"
+
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:95
+msgid "New teammate"
+msgstr "New teammate"
+
+#: src/widgets/welcome/ui/WelcomePane/WelcomePane.tsx:134
+msgid "Next"
+msgstr "Next"
+
+#: src/widgets/usage-bar/lib/strip/strip.ts:70
+msgid "No account limits reported"
+msgstr "No account limits reported"
+
+#: src/entities/connector/lib/summary/summary.ts:7
+msgid "No connectors yet"
+msgstr "No connectors yet"
+
+#: src/widgets/setup/ui/PluginShelf/PluginShelf.tsx:194
+msgid "No connectors yet. Add one below, or bring over what Claude Desktop already has."
+msgstr "No connectors yet. Add one below, or bring over what Claude Desktop already has."
+
+#: src/pages/workspace/model/use-agent-defs.ts:73
+msgid "No handler registered"
+msgstr "No handler registered"
+
+#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:107
+msgid "No one here yet"
+msgstr "No one here yet"
+
+#: src/widgets/team-sidebar/ui/ToolPicker/ToolPicker.tsx:37
+msgid "No tool by that name."
+msgstr "No tool by that name."
+
+#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:161
+msgid "Not available this session. Unlock it in Settings."
+msgstr "Not available this session. Unlock it in Settings."
+
+#: src/widgets/team-sidebar/lib/member-draft/member-draft.ts:34
+msgid "Not known yet"
+msgstr "Not known yet"
+
+#: src/widgets/setup/ui/PluginShelf/PluginShelf.tsx:113
+msgid "Nothing installed yet."
+msgstr "Nothing installed yet."
+
+#: src/widgets/setup/ui/PluginShelf/PluginShelf.tsx:302
+msgid "Nothing left to add. Every plugin your sources offer is installed."
+msgstr "Nothing left to add. Every plugin your sources offer is installed."
+
+#: src/widgets/tile-deck/ui/CrewBoard/CrewBoard.tsx:120
+msgid "Nothing written yet."
+msgstr "Nothing written yet."
+
+#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:141
+msgid "Nothing yet"
+msgstr "Nothing yet"
+
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:79
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:88
+msgid "Notifications"
+msgstr "Notifications"
+
+#: src/widgets/team-sidebar/lib/chat-groups/chat-groups.ts:28
+msgid "Older"
+msgstr "Older"
+
+#: src/widgets/usage-bar/lib/strip/strip.ts:10
+msgid "on overage"
+msgstr "on overage"
+
+#: src/widgets/tile-deck/lib/leading/leading.ts:9
+msgid "On your own"
+msgstr "On your own"
+
+#: src/widgets/conversation/lib/greetings/greetings.ts:14
+msgid "One of you writes, one of you checks. Deal?"
+msgstr "One of you writes, one of you checks. Deal?"
+
+#: src/widgets/tile-deck/lib/leading/leading.ts:10
+msgid "Orchestrating"
+msgstr "Orchestrating"
+
+#: src/entities/connector/lib/refusal-why/refusal-why.ts:18
+msgid "Paste the server address"
+msgstr "Paste the server address"
+
+#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:100
+msgid "Permission"
+msgstr "Permission"
+
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:66
+msgid "Permissions"
+msgstr "Permissions"
+
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:298
+msgid "Permissions changed. Your next message starts a session that follows them."
+msgstr "Permissions changed. Your next message starts a session that follows them."
+
+#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:69
+msgid "Pick a project first"
+msgstr "Pick a project first"
+
+#: src/pages/workspace/model/agent-events/crew/crew.ts:121
+msgid "Picked up where they left off"
+msgstr "Picked up where they left off"
+
+#: src/shared/lib/tool-verb/tool-verb.ts:28
+msgid "Planning"
+msgstr "Planning"
+
+#: src/entities/agent-session/api/claude/turn.ts:85
+msgid "Plugin"
+msgstr "Plugin"
+
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:93
+msgid "Plugins"
+msgstr "Plugins"
+
+#: src/widgets/setup/ui/PluginShelf/PluginShelf.tsx:95
+msgid "Plugins and connectors your team can reach. Restart the session to load a change."
+msgstr "Plugins and connectors your team can reach. Restart the session to load a change."
+
+#: src/widgets/conversation/lib/greetings/greetings.ts:13
+msgid "Point at a problem, {you}. They will pile on."
+msgstr "Point at a problem, {you}. They will pile on."
+
+#: src/widgets/team-sidebar/lib/chat-groups/chat-groups.ts:12
+msgid "Previous 30 days"
+msgstr "Previous 30 days"
+
+#: src/widgets/team-sidebar/lib/chat-groups/chat-groups.ts:11
+msgid "Previous 7 days"
+msgstr "Previous 7 days"
+
+#: src/widgets/setup/ui/ProjectField/ProjectField.tsx:9
+msgid "Project"
+msgstr "Project"
+
+#: src/entities/agent-session/api/claude/failure/failure.ts:75
+msgid "Rate limited"
+msgstr "Rate limited"
+
+#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:94
+msgid "Reach out to the web?"
+msgstr "Reach out to the web?"
+
+#: src/shared/lib/tool-verb/tool-verb.ts:7
+#: src/widgets/conversation/lib/away/away.ts:48
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:220
+msgid "Reading"
+msgstr "Reading"
+
+#: src/widgets/tile-deck/lib/leading/leading.ts:12
+msgid "Reading reports"
+msgstr "Reading reports"
+
+#: src/widgets/setup/ui/PluginShelf/PluginShelf.tsx:297
+msgid "Reading the catalog…"
+msgstr "Reading the catalog…"
+
+#: src/widgets/usage-bar/lib/strip/strip.ts:68
+msgid "Reading usage…"
+msgstr "Reading usage…"
+
+#: src/widgets/team-sidebar/ui/ToolPicker/ToolPicker.tsx:26
+msgid "Reading what this session offers. The list fills in a moment."
+msgstr "Reading what this session offers. The list fills in a moment."
+
+#: src/widgets/team-sidebar/ui/StockList/StockList.tsx:13
+msgid "Reading which agents Claude Code brings. They will be listed here."
+msgstr "Reading which agents Claude Code brings. They will be listed here."
+
+#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:123
+msgid "Recheck"
+msgstr "Recheck"
+
+#: src/widgets/setup/ui/PluginShelf/PluginShelf.tsx:137
+#: src/widgets/setup/ui/PluginShelf/PluginShelf.tsx:182
+#: src/widgets/setup/ui/PluginShelf/PluginShelf.tsx:224
+#: src/widgets/team-sidebar/ui/MemberMenu/MemberMenu.tsx:67
+msgid "Remove"
+msgstr "Remove"
+
+#: src/widgets/team-sidebar/ui/MemberMenu/MemberMenu.tsx:60
+msgid "Remove {name}?"
+msgstr "Remove {name}?"
+
+#: src/widgets/team-sidebar/ui/MemberMenu/MemberMenu.tsx:51
+msgid "Remove from team"
+msgstr "Remove from team"
+
+#: src/pages/workspace/model/use-connectors.ts:25
+msgid "Removed"
+msgstr "Removed"
+
+#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:20
+#: src/widgets/team-sidebar/lib/row-state/row-state.ts:9
+#: src/widgets/tile-deck/ui/layers/StateChip/StateChip.tsx:10
+msgid "Reported back"
+msgstr "Reported back"
+
+#: src/widgets/usage-bar/lib/strip/strip.ts:19
+msgid "reset time not reported"
+msgstr "reset time not reported"
+
+#: src/widgets/usage-bar/lib/strip/strip.ts:13
+#: src/widgets/usage-bar/lib/strip/strip.ts:17
+#: src/widgets/usage-bar/lib/strip/strip.ts:30
+msgid "resets {when}"
+msgstr "resets {when}"
+
+#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:127
+msgid "Restart session"
+msgstr "Restart session"
+
+#: src/pages/workspace/model/use-agent-defs.ts:74
+msgid "Restart Zetrem. This build does not know that yet."
+msgstr "Restart Zetrem. This build does not know that yet."
+
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:125
+#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:178
+msgid "Reviews the front end"
+msgstr "Reviews the front end"
+
+#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:86
+msgid "Run this command?"
+msgstr "Run this command?"
+
+#: src/shared/lib/tool-verb/tool-verb.ts:20
+msgid "Running"
+msgstr "Running"
+
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:140
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:143
+msgid "Same as the session"
+msgstr "Same as the session"
+
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:277
+msgid "Save"
+msgstr "Save"
+
+#: src/widgets/conversation/lib/greetings/greetings.ts:9
+msgid "Say the word and the whole team wakes up."
+msgstr "Say the word and the whole team wakes up."
+
+#: src/widgets/conversation/ui/ConversationPane/ConversationPane.tsx:106
+msgid "Say what you want done, not the next step. The orchestrator splits it up and hands the pieces out."
+msgstr "Say what you want done, not the next step. The orchestrator splits it up and hands the pieces out."
+
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:210
+#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:199
+msgid "Say what you would change and why, in that order."
+msgstr "Say what you would change and why, in that order."
+
+#. placeholder {0}: pool.length
+#: src/widgets/setup/ui/PluginShelf/PluginShelf.tsx:290
+msgid "Search {0} plugins"
+msgstr "Search {0} plugins"
+
+#: src/widgets/setup/ui/PluginShelf/PluginShelf.tsx:291
+msgid "Search plugins"
+msgstr "Search plugins"
+
+#: src/widgets/team-sidebar/ui/ToolPicker/ToolPicker.tsx:34
+msgid "Search tools"
+msgstr "Search tools"
+
+#: src/shared/lib/tool-verb/tool-verb.ts:22
+msgid "Searching"
+msgstr "Searching"
+
+#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:176
+msgid "See what they did"
+msgstr "See what they did"
+
+#: src/widgets/conversation/ui/Composer/Composer.tsx:177
+msgid "Send"
+msgstr "Send"
+
+#: src/widgets/usage-bar/ui/UsageBar/UsageBar.tsx:104
+msgid "Session details"
+msgstr "Session details"
+
+#: src/pages/workspace/model/use-agent.ts:153
+msgid "Session stopped. The next message starts a new one with your team as it is now."
+msgstr "Session stopped. The next message starts a new one with your team as it is now."
+
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:51
+msgid "Set a few things and your agents get to work!"
+msgstr "Set a few things and your agents get to work!"
+
+#: src/entities/plugin/lib/groups/groups.ts:16
+msgid "Set for everyone on your account. They cannot be removed or turned off here."
+msgstr "Set for everyone on your account. They cannot be removed or turned off here."
+
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:464
+msgid "Settings"
+msgstr "Settings"
+
+#: src/widgets/usage-bar/lib/strip/strip.ts:38
+msgid "share unknown"
+msgstr "share unknown"
+
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:447
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:448
+msgid "Show team sidebar"
+msgstr "Show team sidebar"
+
+#: src/widgets/setup/ui/PluginShelf/PluginShelf.tsx:220
+msgid "Sign in"
+msgstr "Sign in"
+
+#: src/widgets/setup/lib/start-blocker/start-blocker.ts:6
+msgid "Sign in and choose a project folder"
+msgstr "Sign in and choose a project folder"
+
+#: src/widgets/setup/lib/start-blocker/start-blocker.ts:7
+msgid "Sign in to your Anthropic account"
+msgstr "Sign in to your Anthropic account"
+
+#: src/entities/agent-session/api/claude/failure/failure.ts:81
+msgid "Sign in was refused"
+msgstr "Sign in was refused"
+
+#: src/widgets/setup/ui/AccountField/AccountField.tsx:79
+msgid "Sign in with Anthropic"
+msgstr "Sign in with Anthropic"
+
+#: src/widgets/setup/ui/AccountField/AccountField.tsx:49
+#: src/widgets/setup/ui/AccountField/AccountField.tsx:61
+#: src/widgets/setup/ui/PluginShelf/PluginShelf.tsx:216
+msgid "Sign out"
+msgstr "Sign out"
+
+#: src/widgets/setup/lib/sign-out-warning/sign-out-warning.ts:4
+msgid "Sign out of Claude Code everywhere?"
+msgstr "Sign out of Claude Code everywhere?"
+
+#: src/pages/workspace/model/use-connectors.ts:23
+msgid "Signed in to"
+msgstr "Signed in to"
+
+#: src/pages/workspace/model/use-connectors.ts:24
+msgid "Signed out of"
+msgstr "Signed out of"
+
+#: src/widgets/setup/ui/AccountField/AccountField.tsx:79
+msgid "Signing in through your browser…"
+msgstr "Signing in through your browser…"
+
+#: src/widgets/setup/lib/sign-out-warning/sign-out-warning.ts:15
+msgid "Signing out stops the running session, and every other Claude Code on this computer."
+msgstr "Signing out stops the running session, and every other Claude Code on this computer."
+
+#: src/widgets/setup/ui/AccountField/AccountField.tsx:49
+msgid "Signing out…"
+msgstr "Signing out…"
+
+#: src/widgets/setup/lib/sign-out-warning/sign-out-warning.ts:16
+msgid "Signs out every Claude Code on this computer, not just Zetrem."
+msgstr "Signs out every Claude Code on this computer, not just Zetrem."
+
+#: src/widgets/welcome/ui/WelcomePane/WelcomePane.tsx:95
+msgid "Skip"
+msgstr "Skip"
+
+#: src/app/Boundary.tsx:38
+msgid "Something broke. Here is what happened."
+msgstr "Something broke. Here is what happened."
+
+#: src/entities/agent-session/api/claude/failure/failure.ts:9
+msgid "Something went wrong"
+msgstr "Something went wrong"
+
+#: src/entities/agent-session/api/claude/failure/failure.ts:8
+msgid "Something went wrong while it was working"
+msgstr "Something went wrong while it was working"
+
+#. placeholder {0}: marketplaces.length
+#: src/widgets/setup/ui/PluginShelf/PluginShelf.tsx:107
+msgid "Sources · {0}"
+msgstr "Sources · {0}"
+
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:215
+#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:202
+msgid "Standing instructions. Write it the way you would brief a person."
+msgstr "Standing instructions. Write it the way you would brief a person."
+
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:122
+msgid "Start"
+msgstr "Start"
+
+#: src/widgets/team-sidebar/ui/ChatList/ChatList.tsx:22
+msgid "Start a conversation from scratch"
+msgstr "Start a conversation from scratch"
+
+#: src/widgets/conversation/lib/working/working.ts:12
+msgid "Starting"
+msgstr "Starting"
+
+#: src/widgets/setup/ui/AccountField/AccountField.tsx:60
+msgid "Stay signed in"
+msgstr "Stay signed in"
+
+#: src/pages/workspace/model/use-auth.ts:67
+msgid "Still signed in. Sign out did not take effect."
+msgstr "Still signed in. Sign out did not take effect."
+
+#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:33
+msgid "Stock rules"
+msgstr "Stock rules"
+
+#: src/widgets/conversation/ui/Composer/Composer.tsx:166
+msgid "Stop"
+msgstr "Stop"
+
+#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:124
+msgid "Stop the running session so the next message starts one that knows them"
+msgstr "Stop the running session so the next message starts one that knows them"
+
+#: src/entities/agent-session/api/claude/failure/failure.ts:31
+msgid "Stopped"
+msgstr "Stopped"
+
+#. placeholder {0}: i18n._(known)
+#. placeholder {0}: said.join('. ')
+#: src/entities/agent-session/api/claude/failure/failure.ts:55
+#: src/entities/agent-session/api/claude/failure/failure.ts:56
+msgid "Stopped: {0}"
+msgstr "Stopped: {0}"
+
+#: src/entities/agent-session/api/claude/failure/failure.ts:31
+msgid "Stopped: {body}"
+msgstr "Stopped: {body}"
+
+#: src/entities/agent-session/api/claude/failure/failure.ts:56
+msgid "Stopped: {subtype}"
+msgstr "Stopped: {subtype}"
+
+#: src/entities/agent-session/api/claude/failure/failure.ts:29
+msgid "Stopped: something went wrong"
+msgstr "Stopped: something went wrong"
+
+#: src/widgets/setup/lib/tongues/tongues.ts:5
+msgid "System"
+msgstr "System"
+
+#: src/widgets/conversation/ui/Composer/Composer.tsx:118
+msgid "Task for {addressee}"
+msgstr "Task for {addressee}"
+
+#: src/widgets/team-sidebar/ui/SidebarGrip/SidebarGrip.tsx:50
+msgid "Team board width"
+msgstr "Team board width"
+
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:81
+msgid "Tells you when the work is done or something needs your say-so, and only while Zetrem is behind another window."
+msgstr "Tells you when the work is done or something needs your say-so, and only while Zetrem is behind another window."
+
+#: src/shared/lib/ask/ask.ts:7
+msgid "That did not work"
+msgstr "That did not work"
+
+#: src/entities/connector/lib/refusal-why/refusal-why.ts:20
+msgid "That is not a web address"
+msgstr "That is not a web address"
+
+#: src/entities/agent-session/api/claude/failure/failure.ts:37
+msgid "That model"
+msgstr "That model"
+
+#: src/entities/agent-session/api/claude/failure/failure.ts:87
+msgid "That model was not found"
+msgstr "That model was not found"
+
+#: src/entities/connector/lib/refusal-why/refusal-why.ts:22
+msgid "The address has to be http or https"
+msgstr "The address has to be http or https"
+
+#: src/entities/agent-session/api/claude/failure/failure.ts:89
+msgid "The answer hit the output limit"
+msgstr "The answer hit the output limit"
+
+#: src/entities/agent-session/lib/exit-line/exit-line.ts:6
+msgid "The claude command was not found. Install the Claude Code CLI, then try again."
+msgstr "The claude command was not found. Install the Claude Code CLI, then try again."
+
+#: src/widgets/welcome/lib/slides/slides.ts:9
+msgid "The CLI does the work. Zetrem shows it while it happens: what was asked, who is on it, and what they have run so far."
+msgstr "The CLI does the work. Zetrem shows it while it happens: what was asked, who is on it, and what they have run so far."
+
+#: src/entities/agent-session/model/choices/choices.ts:22
+msgid "The hardest problems. Turn it on once with /model fable in the Claude Code CLI"
+msgstr "The hardest problems. Turn it on once with /model fable in the Claude Code CLI"
+
+#: src/entities/agent-session/api/claude/aside/aside.ts:31
+msgid "The model"
+msgstr "The model"
+
+#: src/entities/agent-session/api/claude/aside/aside.ts:25
+msgid "The model declined this"
+msgstr "The model declined this"
+
+#: src/entities/agent-session/api/claude/failure/failure.ts:77
+msgid "The model is overloaded"
+msgstr "The model is overloaded"
+
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:127
+#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:181
+msgid "The orchestrator reads this to pick who gets the job."
+msgstr "The orchestrator reads this to pick who gets the job."
+
+#: src/entities/agent-session/api/claude/failure/failure.ts:93
+msgid "The request failed"
+msgstr "The request failed"
+
+#: src/entities/agent-session/api/claude/failure/failure.ts:85
+msgid "The request was rejected"
+msgstr "The request was rejected"
+
+#: src/widgets/conversation/ui/Composer/Composer.tsx:152
+msgid "The running session keeps its model. This applies from the next one."
+msgstr "The running session keeps its model. This applies from the next one."
+
+#: src/entities/agent-session/api/claude/failure/failure.ts:79
+msgid "The server had a problem"
+msgstr "The server had a problem"
+
+#: src/entities/agent-session/api/claude/aside/aside.ts:39
+msgid "The session is closing"
+msgstr "The session is closing"
+
+#: src/entities/agent-session/api/claude/aside/aside.ts:39
+msgid "The session is closing: {why}"
+msgstr "The session is closing: {why}"
+
+#: src/widgets/conversation/lib/greetings/greetings.ts:10
+msgid "The team is warm and waiting, {you}."
+msgstr "The team is warm and waiting, {you}."
+
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:202
+#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:196
+msgid "Their brief"
+msgstr "Their brief"
+
+#: src/widgets/team-sidebar/ui/MemberMenu/MemberMenu.tsx:62
+msgid "Their file is deleted and they leave the roster. A session already running keeps them until it ends. This cannot be undone."
+msgstr "Their file is deleted and they leave the roster. A session already running keeps them until it ends. This cannot be undone."
+
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:160
+msgid "Their own copy"
+msgstr "Their own copy"
+
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:165
+msgid "They edit your files directly, alongside everyone else you have working."
+msgstr "They edit your files directly, alongside everyone else you have working."
+
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:164
+msgid "They get a copy of the repository and a branch of their own. Your files stay as they are."
+msgstr "They get a copy of the repository and a branch of their own. Your files stay as they are."
+
+#: src/widgets/conversation/lib/greetings/greetings.ts:12
+msgid "They read fast and they never get bored."
+msgstr "They read fast and they never get bored."
+
+#: src/widgets/conversation/lib/working/working.ts:72
+msgid "Thinking"
+msgstr "Thinking"
+
+#: src/widgets/usage-bar/lib/strip/strip.ts:58
+msgid "this chat {percent}%"
+msgstr "this chat {percent}%"
+
+#: src/widgets/usage-bar/lib/strip/strip.ts:55
+msgid "this chat {size}"
+msgstr "this chat {size}"
+
+#: src/pages/workspace/model/use-transcript.ts:137
+msgid "This chat is not being saved"
+msgstr "This chat is not being saved"
+
+#: src/entities/plugin/lib/groups/groups.ts:10
+#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:19
+msgid "This project"
+msgstr "This project"
+
+#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:87
+msgid "This session"
+msgstr "This session"
+
+#: src/widgets/setup/lib/sign-out-warning/sign-out-warning.ts:10
+msgid "This signs out the Claude Code CLI itself, so every terminal, editor and app using it on this computer is signed out too."
+msgstr "This signs out the Claude Code CLI itself, so every terminal, editor and app using it on this computer is signed out too."
+
+#: src/widgets/setup/lib/sign-out-warning/sign-out-warning.ts:9
+msgid "This signs out the Claude Code CLI itself, so every terminal, editor and app using it on this computer is signed out too. The session running here stops."
+msgstr "This signs out the Claude Code CLI itself, so every terminal, editor and app using it on this computer is signed out too. The session running here stops."
+
+#: src/pages/workspace/model/agent-events/agent-events.ts:165
+msgid "This turn: {out} out · {seconds}s{cost}"
+msgstr "This turn: {out} out · {seconds}s{cost}"
+
+#: src/widgets/conversation/ui/ConversationPane/Thinking.tsx:20
+msgid "Thought · {paragraphs} paragraphs"
+msgstr "Thought · {paragraphs} paragraphs"
+
+#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:81
+msgid "Three teammates are on it: the checkout flow, the cart totals and the stock rules. I will fold their reports into one answer."
+msgstr "Three teammates are on it: the checkout flow, the cart totals and the stock rules. I will fold their reports into one answer."
+
+#: src/widgets/team-sidebar/lib/chat-groups/chat-groups.ts:9
+msgid "Today"
+msgstr "Today"
+
+#: src/widgets/conversation/ui/ToolLine.tsx:94
+msgid "Todo list"
+msgstr "Todo list"
+
+#: src/entities/agent-session/api/claude/turn.ts:66
+msgid "tool"
+msgstr "tool"
+
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:169
+msgid "Tools"
+msgstr "Tools"
+
+#: src/widgets/team-sidebar/ui/StockList/StockList.tsx:33
+msgid "Turn on to let the team call {name}"
+msgstr "Turn on to let the team call {name}"
+
+#: src/shared/lib/datetime/datetime.ts:22
+msgid "under a minute"
+msgstr "under a minute"
+
+#: src/widgets/setup/ui/PluginShelf/PluginShelf.tsx:41
+#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:178
+msgid "Unknown"
+msgstr "Unknown"
+
+#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:155
+msgid "Update"
+msgstr "Update"
+
+#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:155
+msgid "Updating…"
+msgstr "Updating…"
+
+#: src/entities/connector/lib/refusal-why/refusal-why.ts:24
+msgid "Use https, or http only for a server on this machine"
+msgstr "Use https, or http only for a server on this machine"
+
+#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:174
+msgid "Waiting for approval"
+msgstr "Waiting for approval"
+
+#: src/entities/agent-session/model/nudge/nudge.ts:10
+msgid "Waiting for your approval"
+msgstr "Waiting for your approval"
+
+#: src/widgets/setup/ui/PluginShelf/PluginShelf.tsx:39
+msgid "Waiting for your approval in the CLI"
+msgstr "Waiting for your approval in the CLI"
+
+#: src/widgets/conversation/lib/away/away.ts:29
+#: src/widgets/conversation/lib/working/working.ts:55
+#: src/widgets/conversation/lib/working/working.ts:61
+#: src/widgets/conversation/lib/working/working.ts:81
+msgid "Waiting on"
+msgstr "Waiting on"
+
+#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:19
+#: src/widgets/team-sidebar/lib/row-state/row-state.ts:8
+msgid "Waiting on you"
+msgstr "Waiting on you"
+
+#. placeholder {0}: at.tool
+#: src/entities/agent-session/model/nudge/nudge.ts:10
+msgid "Waiting to run {0}"
+msgstr "Waiting to run {0}"
+
+#: src/shared/lib/units/units.ts:13
+msgid "Weekly"
+msgstr "Weekly"
+
+#: src/shared/lib/units/units.ts:19
+msgid "Weekly {rest}"
+msgstr "Weekly {rest}"
+
+#: src/shared/lib/units/units.ts:15
+msgid "Weekly overage"
+msgstr "Weekly overage"
+
+#: src/widgets/conversation/ui/Composer/Composer.tsx:120
+msgid "What should they work on?"
+msgstr "What should they work on?"
+
+#: src/widgets/setup/ui/PluginShelf/PluginShelf.tsx:93
+msgid "What the session brings"
+msgstr "What the session brings"
+
+#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:139
+#: src/widgets/tile-deck/ui/AgentTile/AgentTile.tsx:77
+#: src/widgets/tile-deck/ui/CrewBoard/CrewBoard.tsx:124
+#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:136
+msgid "What they did"
+msgstr "What they did"
+
+#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:122
+msgid "What they said"
+msgstr "What they said"
+
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:98
+msgid "What you write here is the whole of what they know when they start."
+msgstr "What you write here is the whole of what they know when they start."
+
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:120
+#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:176
+msgid "When to call them"
+msgstr "When to call them"
+
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:153
+msgid "Where they work"
+msgstr "Where they work"
+
+#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:22
+msgid "Why the last item drops"
+msgstr "Why the last item drops"
+
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:158
+msgid "Work in their own copy"
+msgstr "Work in their own copy"
+
+#: src/shared/lib/tool-verb/tool-verb.ts:30
+#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:18
+#: src/widgets/conversation/lib/working/working.ts:86
+#: src/widgets/tile-deck/ui/layers/StateChip/StateChip.tsx:8
+msgid "Working"
+msgstr "Working"
+
+#: src/widgets/tile-deck/lib/leading/leading.ts:13
+msgid "Wrapped up"
+msgstr "Wrapped up"
+
+#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:83
+msgid "Write their brief once and the orchestrator can call them from any project."
+msgstr "Write their brief once and the orchestrator can call them from any project."
+
+#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:88
+msgid "Write this file?"
+msgstr "Write this file?"
+
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:58
+msgid "Write what they do, and how"
+msgstr "Write what they do, and how"
+
+#: src/shared/lib/tool-verb/tool-verb.ts:9
+#: src/widgets/conversation/lib/working/working.ts:70
+msgid "Writing"
+msgstr "Writing"
+
+#: src/widgets/team-sidebar/lib/chat-groups/chat-groups.ts:10
+msgid "Yesterday"
+msgstr "Yesterday"
+
+#: src/widgets/setup/ui/YouField/YouField.tsx:23
+msgid "You"
+msgstr "You"
+
+#: src/entities/connector/lib/refusal-why/refusal-why.ts:16
+msgid "You already have a connector by that name"
+msgstr "You already have a connector by that name"
+
+#: src/widgets/welcome/lib/slides/slides.ts:38
+msgid "You keep the keys"
+msgstr "You keep the keys"
+
+#: src/pages/workspace/model/asked-to-stop/asked-to-stop.ts:6
+msgid "You stopped this"
+msgstr "You stopped this"
+
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:208
+#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:198
+msgid "You take the front end. Read the markup before you judge the styles."
+msgstr "You take the front end. Read the markup before you judge the styles."
+
+#: src/widgets/welcome/lib/slides/slides.ts:14
+msgid "You talk on the left"
+msgstr "You talk on the left"
+
+#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:20
+msgid "Your account"
+msgstr "Your account"
+
+#: src/entities/agent-session/model/choices/choices.ts:36
+msgid "Your account turned this one down. Try it again if your plan changed."
+msgstr "Your account turned this one down. Try it again if your plan changed."
+
+#: src/entities/connector/lib/groups/groups.ts:11
+msgid "Your Claude account"
+msgstr "Your Claude account"
+
+#: src/widgets/tile-deck/lib/headcount/headcount.ts:17
+msgid "Your crew · {out, plural, one {# out} other {# out}}"
+msgstr "Your crew · {out, plural, one {# out} other {# out}}"
+
+#: src/widgets/tile-deck/lib/headcount/headcount.ts:19
+msgid "Your crew · {what}"
+msgstr "Your crew · {what}"
+
+#: src/widgets/setup/ui/YouField/YouField.tsx:36
+msgid "Your face"
+msgstr "Your face"
+
+#: src/widgets/setup/ui/YouField/YouField.tsx:28
+#: src/widgets/setup/ui/YouField/YouField.tsx:29
+msgid "Your name"
+msgstr "Your name"
+
+#: src/entities/plugin/lib/groups/groups.ts:15
+msgid "Your organisation"
+msgstr "Your organisation"
+
+#: src/entities/agent-session/api/claude/failure/failure.ts:91
+msgid "Your organisation does not allow this"
+msgstr "Your organisation does not allow this"
+
+#: src/widgets/team-sidebar/ui/TeamSidebar/TeamSidebar.tsx:48
+msgid "Your team"
+msgstr "Your team"
+
+#: src/entities/agent-session/model/nudge/nudge.ts:13
+msgid "Your team has finished."
+msgstr "Your team has finished."
+
+#: src/widgets/welcome/lib/slides/slides.ts:20
+msgid "Your team works on the right"
+msgstr "Your team works on the right"
+
+#: src/entities/connector/lib/groups/groups.ts:8
+#: src/entities/plugin/lib/groups/groups.ts:7
+msgid "Yours"
+msgstr "Yours"
+
+#: src/entities/connector/lib/refusal-why/refusal-why.ts:26
+msgid "Zetrem did not understand that request"
+msgstr "Zetrem did not understand that request"
+
+#: src/widgets/setup/ui/YouField/YouField.tsx:62
+msgid "Zetrem greets you by this name, and your face marks the work in flight."
+msgstr "Zetrem greets you by this name, and your face marks the work in flight."
+
+#: src/entities/agent-session/model/nudge/nudge.ts:13
+msgid "Zetrem is done"
+msgstr "Zetrem is done"
+
+#: src/entities/agent-session/model/nudge/nudge.ts:9
+msgid "Zetrem needs you"
+msgstr "Zetrem needs you"

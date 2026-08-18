@@ -1,3 +1,4 @@
+import { t } from '@lingui/core/macro'
 export function formatResetTime(ms: number, timeZone?: string): string {
   const parts = new Intl.DateTimeFormat('en-CA', {
     timeZone,
@@ -17,8 +18,8 @@ const HOUR = 60 * MINUTE
 const DAY = 24 * HOUR
 
 export function untilLabel(ms: number): string {
-  if (ms <= 0) return 'any moment'
-  if (ms < MINUTE) return 'under a minute'
+  if (ms <= 0) return t`any moment`
+  if (ms < MINUTE) return t`under a minute`
   if (ms < HOUR) return `${Math.floor(ms / MINUTE)}m`
   if (ms < DAY) {
     const hours = Math.floor(ms / HOUR)

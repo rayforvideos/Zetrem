@@ -3,6 +3,7 @@ import type { CharacterId } from '@/entities/agent-session'
 import { spriteSrc } from '@/entities/agent-session/ui/AgentSprite/AgentSprite'
 import { cn } from '@/shared/lib/cn'
 import { RadioGroup, RadioGroupItem } from '@/shared/ui/radio-group'
+import { t } from '@lingui/core/macro'
 
 export function CharacterPicker({
   value,
@@ -16,7 +17,7 @@ export function CharacterPicker({
       value={value}
       onValueChange={(next) => onChange(next as CharacterId)}
       className="grid grid-cols-5 gap-1"
-      aria-label="Character"
+      aria-label={t`Character`}
     >
       {CHARACTERS.map((character) => (
         <label

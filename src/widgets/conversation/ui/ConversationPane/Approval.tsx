@@ -6,6 +6,7 @@ import { layerOver } from '@/shared/lib/modal/modal'
 import { Button } from '@/shared/ui/button'
 import { Kbd, KbdGroup } from '@/shared/ui/kbd'
 import { ToolIcon } from '@/shared/graphics/tool-icon'
+import { t } from '@lingui/core/macro'
 
 export function Approval({
   ask,
@@ -72,7 +73,7 @@ export function Approval({
           onClick={() => onDecide(true, true)}
           className="rounded-full text-muted-foreground"
         >
-          Don't ask again this session
+          {t`Don't ask again this session`}
         </Button>
       </div>
     </div>
@@ -82,16 +83,16 @@ export function Approval({
 function verbOf(toolName: string): string {
   switch (toolName) {
     case 'Bash':
-      return 'Run this command?'
+      return t`Run this command?`
     case 'Write':
-      return 'Write this file?'
+      return t`Write this file?`
     case 'Edit':
     case 'MultiEdit':
-      return 'Edit this file?'
+      return t`Edit this file?`
     case 'WebFetch':
     case 'WebSearch':
-      return 'Reach out to the web?'
+      return t`Reach out to the web?`
     default:
-      return 'Allow this?'
+      return t`Allow this?`
   }
 }

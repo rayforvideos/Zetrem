@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { alreadyHeld, heavyLine, kindOf, nameOf, tooHeavy } from '@/entities/attachment'
 import type { Attached } from '@/entities/attachment'
 import { toast } from 'sonner'
+import { t } from '@lingui/core/macro'
 
 type Attachments = {
   files: Attached[]
@@ -44,14 +45,14 @@ export function useAttachments(): Attachments {
     void window.desk
       .readFiles(paths)
       .then(keep)
-      .catch(() => toast.error('Could not read what you attached'))
+      .catch(() => toast.error(t`Could not read what you attached`))
   }
 
   function pick(): void {
     void window.desk
       .pickFiles()
       .then(fromPaths)
-      .catch(() => toast.error('Could not open the file picker'))
+      .catch(() => toast.error(t`Could not open the file picker`))
   }
 
   function take(dropped: File[]): void {
@@ -79,7 +80,7 @@ export function useAttachments(): Attachments {
     if (pasted.length > 0) {
       void Promise.all(pasted)
         .then(keep)
-        .catch(() => toast.error('Could not read what you pasted'))
+        .catch(() => toast.error(t`Could not read what you pasted`))
     }
   }
 

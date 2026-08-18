@@ -3,6 +3,7 @@ import type { AuthStatus } from '@/entities/auth'
 import { urlFrom } from '@/shared/lib/cli-output/cli-output'
 import { reasonOf } from '@/shared/lib/failure/failure'
 import { troubleLine } from '@/shared/lib/ask/ask'
+import { t } from '@lingui/core/macro'
 
 type Auth = {
   auth: AuthStatus | null
@@ -29,7 +30,7 @@ export function useAuth(): Auth {
     window.desk
       .authStatus()
       .then(setAuth)
-      .catch((cause: unknown) => setAuthError(troubleLine('Could not read your sign-in', cause)))
+      .catch((cause: unknown) => setAuthError(troubleLine(t`Could not read your sign-in`, cause)))
       .finally(() => setAuthKnown(true))
   }, [])
 
@@ -63,7 +64,7 @@ export function useAuth(): Auth {
       .then((next) => {
         setAuth(next)
         if (next.state === 'signed-in') {
-          setAuthError('Still signed in. Sign out did not take effect.')
+          setAuthError(t`Still signed in. Sign out did not take effect.`)
         }
       })
       .catch((cause: unknown) => setAuthError(reasonOf(cause)))

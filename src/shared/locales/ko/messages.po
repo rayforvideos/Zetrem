@@ -1,0 +1,1752 @@
+msgid ""
+msgstr ""
+"POT-Creation-Date: 2026-08-18 11:15+0900\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: @lingui/cli\n"
+"Language: ko\n"
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: \n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Plural-Forms: \n"
+
+#: src/pages/workspace/model/agent-events/agent-events.ts:139
+msgid " · on overage"
+msgstr " · 초과분 사용 중"
+
+#: src/pages/workspace/model/agent-events/agent-events.ts:137
+msgid " {pct}% used,"
+msgstr " {pct}% 사용,"
+
+#: src/widgets/agent-report/lib/left-behind/left-behind.ts:16
+msgid " and "
+msgstr "와 "
+
+#. placeholder {0}: outcome.commits
+#: src/widgets/agent-report/lib/left-behind/left-behind.ts:7
+msgid "{0, plural, one {# commit} other {# commits}}"
+msgstr "{0, plural, other {커밋 #개}}"
+
+#. placeholder {0}: outcome.dirtyFiles
+#: src/widgets/agent-report/lib/left-behind/left-behind.ts:11
+msgid "{0, plural, one {# file not committed} other {# files not committed}}"
+msgstr "{0, plural, other {커밋 안 된 파일 #개}}"
+
+#. placeholder {0}: chosen.length
+#: src/widgets/team-sidebar/ui/ToolPicker/ToolPicker.tsx:61
+msgid "{0} chosen"
+msgstr "{0}개 선택됨"
+
+#. placeholder {0}: untilLabel(left)
+#: src/widgets/usage-bar/lib/strip/strip.ts:26
+msgid "{0} left"
+msgstr "{0} 남음"
+
+#. placeholder {0}: limitKindLabel(limit.kind)
+#: src/pages/workspace/model/agent-events/agent-events.ts:140
+msgid "{0} limit{share} resets {when}{overage}"
+msgstr "{0} 한도{share} {when} 초기화{overage}"
+
+#. placeholder {0}: n(reached)
+#. placeholder {1}: n(wired.length)
+#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:137
+msgid "{0} of {1} connected"
+msgstr "{1}개 중 {0}개 연결됨"
+
+#. placeholder {0}: away.length
+#: src/widgets/conversation/lib/working/working.ts:55
+msgid "{0} teammates"
+msgstr "팀원 {0}명"
+
+#. placeholder {0}: i18n._(ORIGIN[member.origin])
+#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:160
+msgid "{0}. Joins from the next session."
+msgstr "{0}. 다음 세션부터 함께합니다."
+
+#. placeholder {0}: Math.floor(gap / DAY)
+#: src/widgets/team-sidebar/lib/when/when.ts:13
+msgid "{0}d ago"
+msgstr "{0}일 전"
+
+#. placeholder {0}: Math.floor(gap / HOUR)
+#: src/widgets/team-sidebar/lib/when/when.ts:12
+msgid "{0}h ago"
+msgstr "{0}시간 전"
+
+#. placeholder {0}: Math.floor(gap / MINUTE)
+#: src/widgets/team-sidebar/lib/when/when.ts:11
+msgid "{0}m ago"
+msgstr "{0}분 전"
+
+#: src/pages/workspace/model/agent-events/agent-events.ts:149
+msgid "{base}. Earlier turns live on as a summary."
+msgstr "{base}. 앞선 대화는 요약으로 남습니다."
+
+#: src/entities/agent-session/api/claude/aside/aside.ts:23
+msgid "{from} declined this, so {to} took it"
+msgstr "{from}이(가) 거절해서 {to}이(가) 대신 처리했습니다"
+
+#: src/pages/workspace/model/workspace-config/workspace-config.ts:37
+msgid "{installed} installed from {sources, plural, one {# source} other {# sources}}"
+msgstr "{sources, plural, other {출처 #곳}}에서 {installed}개 설치됨"
+
+#: src/entities/agent-session/api/claude/turn.ts:95
+msgid "{kind} {name} did not load: {why}"
+msgstr "{kind} {name}을(를) 불러오지 못했습니다: {why}"
+
+#: src/entities/connector/lib/summary/summary.ts:11
+msgid "{live} of {all} connected"
+msgstr "{all}개 중 {live}개 연결됨"
+
+#: src/widgets/team-sidebar/ui/StockList/StockList.tsx:32
+msgid "{name} can be called this session"
+msgstr "{name}은(는) 이번 세션에서 부를 수 있습니다"
+
+#: src/entities/attachment/lib/heavy-line/heavy-line.ts:7
+msgid "{name} is over {max}MB, so it cannot be sent as a picture. Point at it by path instead."
+msgstr "{name}이(가) {max}MB를 넘어 그림으로 보낼 수 없습니다. 대신 경로로 알려 주세요."
+
+#: src/widgets/usage-bar/lib/strip/strip.ts:38
+msgid "{percent}% used"
+msgstr "{percent}% 사용"
+
+#: src/widgets/tile-deck/lib/headcount/headcount.ts:15
+msgid "{reported} reported back"
+msgstr "{reported}명 보고 완료"
+
+#: src/widgets/conversation/lib/limits.ts:6
+msgid "{rest, plural, one {# more line} other {# more lines}}"
+msgstr "{rest, plural, other {#줄 더}}"
+
+#: src/pages/workspace/model/use-plugins.ts:111
+msgid "{target} added"
+msgstr "{target} 추가했습니다"
+
+#: src/pages/workspace/model/use-plugins.ts:101
+msgid "{target} installed. Restart the session to load it."
+msgstr "{target} 설치했습니다. 세션을 다시 시작해야 불러옵니다."
+
+#: src/pages/workspace/model/use-plugins.ts:107
+msgid "{target} off. The running session keeps it until it ends."
+msgstr "{target} 껐습니다. 실행 중인 세션은 끝날 때까지 그대로 씁니다."
+
+#: src/pages/workspace/model/use-plugins.ts:105
+msgid "{target} on. Restart the session to load it."
+msgstr "{target} 켰습니다. 세션을 다시 시작해야 불러옵니다."
+
+#: src/pages/workspace/model/use-plugins.ts:115
+msgid "{target} refreshed"
+msgstr "{target} 새로 고쳤습니다"
+
+#: src/pages/workspace/model/use-plugins.ts:103
+#: src/pages/workspace/model/use-plugins.ts:113
+msgid "{target} removed"
+msgstr "{target} 삭제했습니다"
+
+#: src/pages/workspace/model/use-plugins.ts:109
+msgid "{target} updated. Restart the session to load it."
+msgstr "{target} 업데이트했습니다. 세션을 다시 시작해야 불러옵니다."
+
+#: src/entities/agent-session/api/claude/aside/aside.ts:16
+#: src/entities/agent-session/api/claude/turn.ts:67
+msgid "{tool} was not allowed"
+msgstr "{tool} 사용이 허용되지 않았습니다"
+
+#: src/entities/agent-session/api/claude/aside/aside.ts:16
+msgid "{tool} was not allowed: {why}"
+msgstr "{tool} 사용이 허용되지 않았습니다: {why}"
+
+#: src/entities/connector/lib/summary/summary.ts:13
+msgid "{waiting, plural, one {# needs signing in} other {# need signing in}}"
+msgstr "{waiting, plural, other {#개는 로그인이 필요합니다}}"
+
+#: src/widgets/tile-deck/lib/headcount/headcount.ts:14
+msgid "{waiting} waiting on you"
+msgstr "{waiting}명 대기 중"
+
+#: src/entities/agent-session/api/claude/failure/failure.ts:69
+msgid "{what}. Trying again in {seconds}, attempt {which}"
+msgstr "{what}. {seconds} 뒤 다시 시도합니다. {which}번째"
+
+#: src/entities/agent-session/api/claude/aside/aside.ts:34
+msgid "{who} declined this and there is nothing to fall back to"
+msgstr "{who}이(가) 거절했고 대신할 모델이 없습니다"
+
+#: src/entities/agent-session/api/claude/aside/aside.ts:33
+msgid "{who} declined this and there is nothing to fall back to. {said}"
+msgstr "{who}이(가) 거절했고 대신할 모델이 없습니다. {said}"
+
+#: src/entities/agent-session/api/claude/failure/failure.ts:38
+msgid "{who} is not available on your account. Pick another in Settings."
+msgstr "{who}은(는) 이 계정에서 쓸 수 없습니다. 설정에서 다른 모델을 고르세요."
+
+#: src/widgets/team-sidebar/lib/team-note/team-note.ts:9
+msgid "{who} is ready. The running session cannot call them yet."
+msgstr "{who} 준비됐습니다. 실행 중인 세션은 아직 부를 수 없습니다."
+
+#: src/widgets/team-sidebar/lib/team-note/team-note.ts:10
+msgid "{who} is ready. They join the next session."
+msgstr "{who} 준비됐습니다. 다음 세션부터 함께합니다."
+
+#: src/widgets/team-sidebar/lib/team-note/team-note.ts:18
+msgid "{who} left the team."
+msgstr "{who}이(가) 팀에서 나갔습니다."
+
+#: src/widgets/team-sidebar/lib/team-note/team-note.ts:17
+msgid "{who} left the team. The running session keeps them until it ends."
+msgstr "{who}이(가) 팀에서 나갔습니다. 실행 중인 세션은 끝날 때까지 유지합니다."
+
+#: src/widgets/team-sidebar/lib/team-note/team-note.ts:13
+msgid "{who} updated. The running session holds the old brief."
+msgstr "{who} 수정했습니다. 실행 중인 세션은 이전 지시문을 그대로 씁니다."
+
+#: src/widgets/team-sidebar/lib/team-note/team-note.ts:14
+msgid "{who} updated. This applies from the next session."
+msgstr "{who} 수정했습니다. 다음 세션부터 적용됩니다."
+
+#: src/widgets/tile-deck/lib/headcount/headcount.ts:13
+msgid "{working} working"
+msgstr "{working}명 작업 중"
+
+#: src/widgets/conversation/lib/greetings/greetings.ts:8
+msgid "{you}, who should take this one?"
+msgstr "{you}, 이건 누구한테 맡길까요?"
+
+#: src/shared/lib/units/units.ts:10
+msgid "5-hour"
+msgstr "5시간"
+
+#: src/entities/connector/lib/refusal-why/refusal-why.ts:12
+msgid "A name cannot start with a dash"
+msgstr "이름은 하이픈으로 시작할 수 없습니다"
+
+#: src/entities/connector/lib/groups/groups.ts:17
+msgid "A plugin brings these. Turn the plugin off to lose them."
+msgstr "플러그인이 데려온 것입니다. 플러그인을 끄면 함께 사라집니다."
+
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:269
+msgid "A running session cannot call them. Restart it, or they join the next one."
+msgstr "실행 중인 세션은 이 팀원을 부를 수 없습니다. 세션을 다시 시작하거나, 다음 세션부터 함께합니다."
+
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:270
+msgid "A running session keeps the old brief until it is restarted"
+msgstr "실행 중인 세션은 다시 시작하기 전까지 이전 지시문을 씁니다"
+
+#: src/widgets/welcome/lib/slides/slides.ts:32
+msgid "A teammate is a brief you write once"
+msgstr "팀원은 한 번 써두는 지시문입니다"
+
+#: src/entities/agent-session/api/claude/aside/aside.ts:14
+msgid "A tool"
+msgstr "어떤 도구"
+
+#: src/widgets/setup/ui/AccountField/AccountField.tsx:25
+msgid "Account"
+msgstr "계정"
+
+#: src/widgets/setup/ui/AddConnector/AddConnector.tsx:95
+msgid "Add"
+msgstr "추가"
+
+#: src/widgets/setup/ui/PluginShelf/PluginShelf.tsx:338
+msgid "Add a marketplace"
+msgstr "마켓플레이스 추가"
+
+#: src/pages/workspace/model/workspace-config/workspace-config.ts:36
+msgid "Add a marketplace to bring in skills and agents"
+msgstr "마켓플레이스를 추가하면 스킬과 에이전트가 들어옵니다"
+
+#: src/widgets/setup/ui/AddConnector/AddConnector.tsx:49
+msgid "Add one by address"
+msgstr "주소로 추가하기"
+
+#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:77
+msgid "Add teammate"
+msgstr "팀원 추가"
+
+#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:82
+msgid "Add your first teammate"
+msgstr "첫 팀원을 만들어 보세요"
+
+#: src/pages/workspace/model/use-connectors.ts:71
+msgid "Added {name}. Sign in if it asks."
+msgstr "{name} 추가했습니다. 로그인을 요구하면 로그인하세요."
+
+#. placeholder {0}: n(reached)
+#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:136
+msgid "All {0} connected"
+msgstr "{0}개 모두 연결됨"
+
+#: src/entities/agent-session/model/choices/choices.ts:13
+#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:44
+msgid "Allow all"
+msgstr "전부 허용"
+
+#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:96
+msgid "Allow this?"
+msgstr "허용할까요?"
+
+#: src/widgets/setup/lib/tongues/tongues.ts:6
+msgid "Always English"
+msgstr "항상 영어로"
+
+#: src/widgets/setup/lib/tongues/tongues.ts:7
+msgid "Always Korean"
+msgstr "항상 한국어로"
+
+#: src/shared/lib/datetime/datetime.ts:21
+msgid "any moment"
+msgstr "곧"
+
+#. placeholder {0}: turn.metrics.apiErrorStatus
+#: src/pages/workspace/model/agent-events/agent-events.ts:95
+msgid "API error {0}"
+msgstr "API 오류 {0}"
+
+#: src/entities/agent-session/model/choices/choices.ts:7
+#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:44
+msgid "Ask first"
+msgstr "먼저 묻기"
+
+#: src/widgets/conversation/ui/ConversationPane/ConversationPane.tsx:105
+msgid "Ask for the whole job"
+msgstr "일 전체를 맡기세요"
+
+#: src/widgets/welcome/lib/slides/slides.ts:15
+msgid "Ask for the whole job, not the next step. The orchestrator plans it, hands pieces out, and answers you when the pieces come back."
+msgstr "다음 단계 말고 일 전체를 맡기세요. 오케스트레이터가 계획을 세워 조각으로 나눠 보내고, 결과가 돌아오면 하나로 묶어 답합니다."
+
+#: src/entities/agent-session/model/choices/choices.ts:7
+msgid "Asks before editing files or running commands"
+msgstr "파일을 고치거나 명령을 실행하기 전에 묻습니다"
+
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:229
+msgid "Attach"
+msgstr "첨부"
+
+#: src/widgets/conversation/ui/Composer/Composer.tsx:133
+msgid "Attach a file"
+msgstr "파일 첨부"
+
+#: src/pages/workspace/model/agent-events/agent-events.ts:156
+msgid "auto"
+msgstr "자동"
+
+#: src/entities/agent-session/model/choices/choices.ts:10
+msgid "Auto-edit"
+msgstr "자동 편집"
+
+#: src/widgets/welcome/ui/WelcomePane/WelcomePane.tsx:126
+msgid "Back"
+msgstr "이전"
+
+#: src/entities/agent-session/model/choices/choices.ts:25
+msgid "Balanced for most tasks"
+msgstr "대부분의 일에 무난합니다"
+
+#: src/widgets/conversation/lib/greetings/greetings.ts:11
+msgid "Big job? Split it. They like company."
+msgstr "일이 큰가요? 나누세요. 여럿이 붙는 걸 좋아합니다."
+
+#: src/entities/agent-session/api/claude/failure/failure.ts:83
+msgid "Billing refused the request"
+msgstr "결제가 거절됐습니다"
+
+#: src/pages/workspace/model/use-connectors.ts:82
+msgid "Brought over what Claude Desktop had."
+msgstr "Claude Desktop에 있던 것을 가져왔습니다."
+
+#: src/widgets/setup/ui/PluginShelf/PluginShelf.tsx:106
+msgid "Browse"
+msgstr "둘러보기"
+
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:118
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:274
+#: src/widgets/team-sidebar/ui/MemberMenu/MemberMenu.tsx:66
+msgid "Cancel"
+msgstr "취소"
+
+#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:29
+msgid "Cart totals and rounding"
+msgstr "장바구니 합계와 반올림"
+
+#: src/widgets/setup/ui/ProjectField/ProjectField.tsx:22
+msgid "Change"
+msgstr "바꾸기"
+
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:462
+msgid "Change account, project, and permissions"
+msgstr "계정과 프로젝트, 권한을 바꿉니다"
+
+#: src/pages/workspace/ui/controls/ProjectPicker.tsx:52
+msgid "Change folder…"
+msgstr "폴더 바꾸기…"
+
+#: src/widgets/team-sidebar/ui/CharacterPicker/CharacterPicker.tsx:20
+msgid "Character"
+msgstr "캐릭터"
+
+#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:123
+#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:134
+msgid "Checking…"
+msgstr "확인하는 중…"
+
+#: src/widgets/setup/lib/start-blocker/start-blocker.ts:7
+msgid "Choose a project folder"
+msgstr "프로젝트 폴더를 고르세요"
+
+#: src/widgets/setup/ui/ProjectField/ProjectField.tsx:22
+msgid "Choose folder"
+msgstr "폴더 고르기"
+
+#: src/pages/workspace/ui/controls/ProjectPicker.tsx:22
+msgid "Choose project"
+msgstr "프로젝트 고르기"
+
+#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:21
+#: src/widgets/team-sidebar/ui/TeamSidebar/TeamSidebar.tsx:51
+msgid "Claude Code"
+msgstr "클로드 코드"
+
+#: src/widgets/welcome/lib/slides/slides.ts:8
+msgid "Claude Code, given a screen"
+msgstr "화면이 생긴 클로드 코드"
+
+#: src/widgets/conversation/ui/Composer/Composer.tsx:88
+msgid "Clear"
+msgstr "지우기"
+
+#. placeholder {0}: update.current
+#: src/widgets/status-bar/lib/format/format.ts:65
+msgid "CLI {0} → {latest} available"
+msgstr "CLI {0} → {latest} 사용 가능"
+
+#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:90
+msgid "Close report"
+msgstr "보고서 닫기"
+
+#: src/widgets/tile-deck/ui/layers/Headline/Headline.tsx:41
+msgid "Close this tile. The run stays in the sidebar."
+msgstr "이 타일을 닫습니다. 기록은 사이드바에 남습니다."
+
+#: src/entities/agent-session/model/choices/choices.ts:24
+msgid "Complex work. Slower and pricier"
+msgstr "복잡한 일에. 느리고 비쌉니다"
+
+#: src/widgets/setup/ui/PluginShelf/PluginShelf.tsx:37
+msgid "Connected"
+msgstr "연결됨"
+
+#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:172
+msgid "Connecting"
+msgstr "연결하는 중"
+
+#: src/widgets/setup/ui/AddConnector/AddConnector.tsx:84
+msgid "Connector address"
+msgstr "커넥터 주소"
+
+#: src/widgets/setup/ui/AddConnector/AddConnector.tsx:75
+msgid "Connector name"
+msgstr "커넥터 이름"
+
+#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:114
+msgid "Connectors"
+msgstr "커넥터"
+
+#. placeholder {0}: connectors.length
+#: src/widgets/setup/ui/PluginShelf/PluginShelf.tsx:108
+msgid "Connectors · {0}"
+msgstr "커넥터 · {0}"
+
+#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:103
+msgid "Context"
+msgstr "컨텍스트"
+
+#. placeholder {0}: 100 - percent
+#: src/widgets/status-bar/lib/format/format.ts:44
+msgid "Context {0}% left, compacting soon"
+msgstr "컨텍스트 {0}% 남음, 곧 압축됩니다"
+
+#: src/pages/workspace/model/agent-events/agent-events.ts:148
+msgid "Conversation compacted here"
+msgstr "여기서 대화가 압축됐습니다"
+
+#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:108
+msgid "Cost"
+msgstr "비용"
+
+#. placeholder {0}: said(verb)
+#: src/pages/workspace/model/use-plugins.ts:66
+msgid "Could not {0} {target}"
+msgstr "{target}을(를) {0}하지 못했습니다"
+
+#: src/pages/workspace/model/use-connectors.ts:66
+msgid "Could not add {name}"
+msgstr "{name}을(를) 추가하지 못했습니다"
+
+#: src/pages/workspace/model/use-connectors.ts:77
+msgid "Could not bring over Claude Desktop"
+msgstr "Claude Desktop에서 가져오지 못했습니다"
+
+#: src/widgets/setup/ui/PluginShelf/PluginShelf.tsx:40
+msgid "Could not connect"
+msgstr "연결하지 못했습니다"
+
+#: src/pages/workspace/model/use-transcript.ts:178
+msgid "Could not forget that chat"
+msgstr "그 대화를 지우지 못했습니다"
+
+#: src/pages/workspace/model/use-transcript.ts:44
+msgid "Could not list your saved chats"
+msgstr "저장된 대화 목록을 읽지 못했습니다"
+
+#: src/pages/workspace/model/use-transcript.ts:159
+msgid "Could not open that chat"
+msgstr "그 대화를 열지 못했습니다"
+
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:169
+msgid "Could not open that folder"
+msgstr "그 폴더를 열지 못했습니다"
+
+#: src/pages/workspace/model/use-attachments.ts:55
+msgid "Could not open the file picker"
+msgstr "파일 선택 창을 열지 못했습니다"
+
+#: src/pages/workspace/model/use-agent.ts:84
+msgid "Could not pick that conversation back up. Starting a new one."
+msgstr "그 대화를 이어받지 못했습니다. 새로 시작합니다."
+
+#: src/pages/workspace/model/use-connectors.ts:55
+msgid "Could not reach {target}"
+msgstr "{target}에 연결하지 못했습니다"
+
+#: src/pages/workspace/model/use-plugins.ts:42
+msgid "Could not read the plugin shelf"
+msgstr "플러그인 목록을 읽지 못했습니다"
+
+#: src/widgets/usage-bar/lib/strip/strip.ts:69
+msgid "Could not read usage"
+msgstr "사용량을 읽지 못했습니다"
+
+#: src/pages/workspace/model/use-plugins.ts:56
+msgid "Could not read what is available"
+msgstr "설치할 수 있는 것을 읽지 못했습니다"
+
+#: src/pages/workspace/model/use-attachments.ts:48
+msgid "Could not read what you attached"
+msgstr "첨부한 것을 읽지 못했습니다"
+
+#: src/pages/workspace/model/use-attachments.ts:83
+msgid "Could not read what you pasted"
+msgstr "붙여넣은 것을 읽지 못했습니다"
+
+#: src/pages/workspace/model/use-connectors.ts:40
+msgid "Could not read your connectors"
+msgstr "커넥터를 읽지 못했습니다"
+
+#: src/pages/workspace/model/use-plugins.ts:43
+msgid "Could not read your marketplaces"
+msgstr "마켓플레이스를 읽지 못했습니다"
+
+#: src/pages/workspace/model/use-settings.ts:42
+msgid "Could not read your settings"
+msgstr "설정을 읽지 못했습니다"
+
+#: src/pages/workspace/model/use-auth.ts:33
+msgid "Could not read your sign-in"
+msgstr "로그인 상태를 읽지 못했습니다"
+
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:93
+msgid "Could not reopen your last project"
+msgstr "마지막 프로젝트를 다시 열지 못했습니다"
+
+#: src/pages/workspace/model/use-settings.ts:30
+#: src/pages/workspace/model/use-settings.ts:52
+msgid "Could not save your settings"
+msgstr "설정을 저장하지 못했습니다"
+
+#: src/entities/agent-session/lib/exit-line/exit-line.ts:9
+msgid "Could not start Claude Code"
+msgstr "Claude Code를 실행하지 못했습니다"
+
+#: src/entities/agent-session/lib/exit-line/exit-line.ts:11
+msgid "Could not start Claude Code: {said}"
+msgstr "Claude Code를 실행하지 못했습니다: {said}"
+
+#: src/pages/workspace/model/use-cli-update.ts:35
+msgid "Could not start the update"
+msgstr "업데이트를 시작하지 못했습니다"
+
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:277
+msgid "Create"
+msgstr "만들기"
+
+#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:109
+msgid "Create a teammate and they'll show up here."
+msgstr "팀원을 만들면 여기에 나타납니다."
+
+#: src/widgets/welcome/lib/slides/slides.ts:39
+msgid "Decide what may run without asking, watch what is left of your limits along the foot, and stop anything mid-flight."
+msgstr "무엇을 묻지 않고 실행해도 되는지 정하고, 남은 한도를 아래쪽에서 지켜보고, 무엇이든 도중에 멈출 수 있습니다."
+
+#: src/entities/agent-session/model/choices/choices.ts:18
+msgid "Default"
+msgstr "기본값"
+
+#: src/widgets/team-sidebar/ui/ChatList/ChatList.tsx:98
+msgid "Delete chat"
+msgstr "대화 삭제"
+
+#: src/widgets/first-hint/ui/FirstHint/FirstHint.tsx:25
+msgid "Dismiss this tip"
+msgstr "이 안내 닫기"
+
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:234
+msgid "Documents they are told to read first. Long ones cost nothing until they open them."
+msgstr "먼저 읽으라고 일러둘 문서입니다. 길어도 열기 전까지는 비용이 들지 않습니다."
+
+#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:76
+msgid "Don't ask again this session"
+msgstr "이번 세션에서는 다시 묻지 않기"
+
+#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:21
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:122
+#: src/widgets/tile-deck/ui/layers/StateChip/StateChip.tsx:11
+msgid "Done"
+msgstr "완료"
+
+#: src/widgets/team-sidebar/ui/SidebarGrip/SidebarGrip.tsx:64
+msgid "Drag to resize, double-click to reset"
+msgstr "끌어서 크기 조절, 더블클릭하면 원래대로"
+
+#: src/widgets/welcome/lib/slides/slides.ts:27
+msgid "Each file read, each command run, each edit made, as it happens. Nothing is summarised after the fact."
+msgstr "읽은 파일 하나, 실행한 명령 하나, 고친 자리 하나까지 그때그때 보입니다. 끝난 뒤에 요약해서 알려주는 법이 없습니다."
+
+#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:72
+msgid "Earlier run"
+msgstr "이전 실행"
+
+#: src/widgets/team-sidebar/ui/MemberMenu/MemberMenu.tsx:49
+msgid "Edit"
+msgstr "수정"
+
+#. placeholder {0}: initial.name
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:95
+msgid "Edit {0}"
+msgstr "{0} 수정"
+
+#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:91
+msgid "Edit this file?"
+msgstr "이 파일을 고칠까요?"
+
+#: src/shared/lib/tool-verb/tool-verb.ts:11
+msgid "Editing"
+msgstr "고치는 중"
+
+#: src/entities/agent-session/model/choices/choices.ts:11
+msgid "Edits files freely, asks before running commands"
+msgstr "파일은 알아서 고치고, 명령을 실행할 때만 묻습니다"
+
+#: src/widgets/welcome/lib/slides/slides.ts:26
+msgid "Every command is on screen"
+msgstr "실행한 것은 전부 화면에 있습니다"
+
+#: src/widgets/welcome/lib/slides/slides.ts:21
+msgid "Everyone you send out gets a card with their name, their task and their clock. Press one to read what they were asked and what they wrote back."
+msgstr "내보낸 사람마다 카드가 하나씩 생깁니다. 이름과 맡은 일, 흘러가는 시계가 함께 있습니다. 눌러 보면 무엇을 시켰고 무엇이라 답했는지 나옵니다."
+
+#: src/widgets/team-sidebar/lib/member-draft/member-draft.ts:35
+#: src/widgets/team-sidebar/ui/ToolPicker/ToolPicker.tsx:61
+msgid "Everything the session has"
+msgstr "이 세션이 가진 전부"
+
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:130
+#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:186
+msgid "Face"
+msgstr "얼굴"
+
+#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:176
+msgid "Failed"
+msgstr "실패"
+
+#: src/entities/agent-session/model/choices/choices.ts:26
+msgid "Fast and cheap. Good for quick questions"
+msgstr "빠르고 쌉니다. 간단한 질문에 좋습니다"
+
+#: src/shared/lib/tool-verb/tool-verb.ts:24
+msgid "Fetching"
+msgstr "가져오는 중"
+
+#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:78
+msgid "Find why checkout drops the last item"
+msgstr "결제 단계에서 마지막 항목이 빠지는 이유를 찾아줘"
+
+#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:97
+msgid "Folder"
+msgstr "폴더"
+
+#: src/widgets/setup/lib/tongues/tongues.ts:5
+msgid "Follows the language your computer is set to"
+msgstr "컴퓨터에 설정된 언어를 따릅니다"
+
+#: src/entities/agent-session/model/choices/choices.ts:18
+msgid "Follows your account setting"
+msgstr "계정 설정을 따릅니다"
+
+#: src/entities/connector/lib/groups/groups.ts:16
+msgid "From plugins"
+msgstr "플러그인에서"
+
+#: src/widgets/welcome/ui/WelcomePane/WelcomePane.tsx:132
+msgid "Get started"
+msgstr "시작하기"
+
+#: src/entities/connector/lib/refusal-why/refusal-why.ts:8
+msgid "Give it a name"
+msgstr "이름을 지어주세요"
+
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:56
+msgid "Give them a name"
+msgstr "이름을 지어주세요"
+
+#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:176
+msgid "Give them a task"
+msgstr "일을 맡기기"
+
+#: src/shared/lib/tool-verb/tool-verb.ts:26
+#: src/widgets/conversation/lib/working/working.ts:61
+msgid "Handing off"
+msgstr "넘기는 중"
+
+#: src/widgets/tile-deck/lib/leading/leading.ts:11
+msgid "Held up"
+msgstr "멈춰 있음"
+
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:447
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:448
+msgid "Hide team sidebar"
+msgstr "팀 사이드바 접기"
+
+#: src/widgets/setup/ui/AccountField/AccountField.tsx:83
+msgid "If the browser did not open, <0>open this link</0>."
+msgstr "브라우저가 열리지 않았다면 <0>이 링크를 여세요</0>."
+
+#: src/widgets/setup/ui/AddConnector/AddConnector.tsx:39
+msgid "Import from Claude Desktop"
+msgstr "Claude Desktop에서 가져오기"
+
+#: src/widgets/conversation/ui/ConversationPane/Chores.tsx:30
+msgid "In the background"
+msgstr "뒤에서 도는 중"
+
+#. placeholder {0}: here.length
+#: src/widgets/setup/ui/PluginShelf/PluginShelf.tsx:105
+msgid "Installed · {0}"
+msgstr "설치됨 · {0}"
+
+#: src/entities/plugin/lib/groups/groups.ts:11
+msgid "Installed for this folder. Anyone who opens it gets them."
+msgstr "이 폴더에 설치했습니다. 이 폴더를 여는 사람은 모두 갖게 됩니다."
+
+#: src/entities/agent-session/api/claude/turn.ts:94
+msgid "it could not be loaded"
+msgstr "불러올 수 없었습니다"
+
+#: src/entities/agent-session/api/claude/failure/failure.ts:7
+msgid "It could not produce the shape the answer had to take"
+msgstr "답이 갖춰야 할 형태를 만들지 못했습니다"
+
+#: src/entities/agent-session/api/claude/failure/failure.ts:5
+msgid "It reached the limit on how many turns one message may take"
+msgstr "한 메시지에 쓸 수 있는 턴을 다 썼습니다"
+
+#: src/entities/agent-session/api/claude/failure/failure.ts:6
+msgid "It reached the spending limit set for this run"
+msgstr "이번 실행에 정해둔 지출 한도에 닿았습니다"
+
+#: src/widgets/team-sidebar/lib/when/when.ts:10
+msgid "just now"
+msgstr "방금"
+
+#: src/widgets/conversation/ui/Composer/Composer.tsx:121
+#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:89
+msgid "Keep going"
+msgstr "이어서 말하세요"
+
+#: src/entities/connector/lib/refusal-why/refusal-why.ts:10
+msgid "Keep the name under {NAME_MAX} characters"
+msgstr "이름은 {NAME_MAX}자 이내로 지어 주세요"
+
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:60
+msgid "Language"
+msgstr "언어"
+
+#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:84
+msgid "Later run"
+msgstr "다음 실행"
+
+#: src/widgets/agent-report/lib/left-behind/left-behind.ts:17
+msgid "Left {what} on {branch}"
+msgstr "{branch}에 {what} 남겼습니다"
+
+#: src/widgets/agent-report/lib/left-behind/left-behind.ts:15
+msgid "Left nothing on {branch}"
+msgstr "{branch}에 남긴 것이 없습니다"
+
+#: src/widgets/conversation/lib/greetings/greetings.ts:7
+msgid "Let's get to work with your cute little agents!"
+msgstr "작고 귀여운 에이전트들과 일 시작해볼까요!"
+
+#: src/entities/connector/lib/refusal-why/refusal-why.ts:14
+msgid "Letters, numbers, hyphens and underscores only"
+msgstr "영문, 숫자, 하이픈, 밑줄만 쓸 수 있습니다"
+
+#: src/widgets/setup/ui/AddConnector/AddConnector.tsx:99
+msgid "Letters, numbers, hyphens. Sign in after adding if it asks."
+msgstr "영문, 숫자, 하이픈. 추가한 뒤 로그인을 요구하면 로그인하세요."
+
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:97
+msgid "Manage"
+msgstr "관리"
+
+#: src/entities/connector/lib/groups/groups.ts:12
+msgid "Managed on claude.ai. Sign in or out here, remove them there."
+msgstr "claude.ai에서 관리합니다. 로그인과 로그아웃은 여기서, 삭제는 거기서 하세요."
+
+#: src/pages/workspace/model/agent-events/agent-events.ts:157
+msgid "manual"
+msgstr "수동"
+
+#. placeholder {0}: wired.connected
+#. placeholder {1}: wired.total
+#. placeholder {2}: wired.needsAuth
+#: src/widgets/status-bar/lib/format/format.ts:53
+msgid "MCP {0}/{1} · {2} need auth"
+msgstr "MCP {0}/{1} · {2}개 로그인 필요"
+
+#: src/entities/agent-session/api/claude/turn.ts:84
+msgid "MCP server"
+msgstr "MCP 서버"
+
+#: src/widgets/conversation/ui/Composer/Composer.tsx:115
+msgid "Message for {addressee}"
+msgstr "{addressee}에게 보낼 말"
+
+#: src/widgets/conversation/ui/Composer/Composer.tsx:115
+msgid "Message your team"
+msgstr "팀에게 말하기"
+
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:72
+#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:98
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:134
+msgid "Model"
+msgstr "모델"
+
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:304
+msgid "Model changed. Your next message starts a session on it."
+msgstr "모델을 바꿨습니다. 다음 메시지부터 새 모델로 시작합니다."
+
+#. placeholder {0}: named(chat.title)
+#: src/widgets/team-sidebar/ui/ChatList/ChatList.tsx:90
+msgid "More for {0}"
+msgstr "{0} 더 보기"
+
+#: src/widgets/team-sidebar/ui/MemberMenu/MemberMenu.tsx:41
+msgid "More for {name}"
+msgstr "{name} 더 보기"
+
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:108
+#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:171
+msgid "Name"
+msgstr "이름"
+
+#: src/widgets/welcome/lib/slides/slides.ts:33
+msgid "Name them, say when they should be called, and write their standing instructions. The orchestrator reads that middle line to decide who gets the job."
+msgstr "이름을 정하고, 언제 부를지 적고, 늘 지킬 지침을 씁니다. 오케스트레이터는 그 가운데 줄을 읽고 누구에게 맡길지 정합니다."
+
+#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:170
+msgid "Needs auth"
+msgstr "로그인 필요"
+
+#: src/widgets/setup/ui/PluginShelf/PluginShelf.tsx:38
+msgid "Needs signing in"
+msgstr "로그인이 필요합니다"
+
+#: src/widgets/tile-deck/ui/layers/StateChip/StateChip.tsx:9
+msgid "Needs you"
+msgstr "기다리는 중"
+
+#: src/entities/agent-session/model/choices/choices.ts:13
+msgid "Never asks. Anything can run"
+msgstr "묻지 않습니다. 무엇이든 실행됩니다"
+
+#: src/widgets/setup/ui/AddConnector/AddConnector.tsx:49
+msgid "Never mind"
+msgstr "그만두기"
+
+#: src/widgets/team-sidebar/lib/named/named.ts:5
+#: src/widgets/team-sidebar/ui/ChatList/ChatList.tsx:25
+msgid "New chat"
+msgstr "새 대화"
+
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:95
+msgid "New teammate"
+msgstr "새 팀원"
+
+#: src/widgets/welcome/ui/WelcomePane/WelcomePane.tsx:134
+msgid "Next"
+msgstr "다음"
+
+#: src/widgets/usage-bar/lib/strip/strip.ts:70
+msgid "No account limits reported"
+msgstr "계정 한도 정보가 없습니다"
+
+#: src/entities/connector/lib/summary/summary.ts:7
+msgid "No connectors yet"
+msgstr "아직 커넥터가 없습니다"
+
+#: src/widgets/setup/ui/PluginShelf/PluginShelf.tsx:194
+msgid "No connectors yet. Add one below, or bring over what Claude Desktop already has."
+msgstr "아직 커넥터가 없습니다. 아래에서 추가하거나 Claude Desktop에 있는 것을 가져오세요."
+
+#: src/pages/workspace/model/use-agent-defs.ts:73
+msgid "No handler registered"
+msgstr "처리할 곳이 없습니다"
+
+#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:107
+msgid "No one here yet"
+msgstr "아직 아무도 없습니다"
+
+#: src/widgets/team-sidebar/ui/ToolPicker/ToolPicker.tsx:37
+msgid "No tool by that name."
+msgstr "그런 이름의 도구가 없습니다."
+
+#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:161
+msgid "Not available this session. Unlock it in Settings."
+msgstr "이번 세션에서는 쓸 수 없습니다. 설정에서 켜세요."
+
+#: src/widgets/team-sidebar/lib/member-draft/member-draft.ts:34
+msgid "Not known yet"
+msgstr "아직 모릅니다"
+
+#: src/widgets/setup/ui/PluginShelf/PluginShelf.tsx:113
+msgid "Nothing installed yet."
+msgstr "아직 설치한 것이 없습니다."
+
+#: src/widgets/setup/ui/PluginShelf/PluginShelf.tsx:302
+msgid "Nothing left to add. Every plugin your sources offer is installed."
+msgstr "더 추가할 것이 없습니다. 등록한 곳의 플러그인을 모두 설치했습니다."
+
+#: src/widgets/tile-deck/ui/CrewBoard/CrewBoard.tsx:120
+msgid "Nothing written yet."
+msgstr "아직 쓴 것이 없습니다."
+
+#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:141
+msgid "Nothing yet"
+msgstr "아직 없음"
+
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:79
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:88
+msgid "Notifications"
+msgstr "알림"
+
+#: src/widgets/team-sidebar/lib/chat-groups/chat-groups.ts:28
+msgid "Older"
+msgstr "그 이전"
+
+#: src/widgets/usage-bar/lib/strip/strip.ts:10
+msgid "on overage"
+msgstr "초과분 사용 중"
+
+#: src/widgets/tile-deck/lib/leading/leading.ts:9
+msgid "On your own"
+msgstr "혼자 일하는 중"
+
+#: src/widgets/conversation/lib/greetings/greetings.ts:14
+msgid "One of you writes, one of you checks. Deal?"
+msgstr "한 명은 쓰고 한 명은 검사하고, 어때요?"
+
+#: src/widgets/tile-deck/lib/leading/leading.ts:10
+msgid "Orchestrating"
+msgstr "지휘하는 중"
+
+#: src/entities/connector/lib/refusal-why/refusal-why.ts:18
+msgid "Paste the server address"
+msgstr "서버 주소를 붙여넣으세요"
+
+#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:100
+msgid "Permission"
+msgstr "권한"
+
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:66
+msgid "Permissions"
+msgstr "권한"
+
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:298
+msgid "Permissions changed. Your next message starts a session that follows them."
+msgstr "권한을 바꿨습니다. 다음 메시지부터 바뀐 권한으로 시작합니다."
+
+#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:69
+msgid "Pick a project first"
+msgstr "먼저 프로젝트를 고르세요"
+
+#: src/pages/workspace/model/agent-events/crew/crew.ts:121
+msgid "Picked up where they left off"
+msgstr "하던 자리에서 이어받았습니다"
+
+#: src/shared/lib/tool-verb/tool-verb.ts:28
+msgid "Planning"
+msgstr "계획하는 중"
+
+#: src/entities/agent-session/api/claude/turn.ts:85
+msgid "Plugin"
+msgstr "플러그인"
+
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:93
+msgid "Plugins"
+msgstr "플러그인"
+
+#: src/widgets/setup/ui/PluginShelf/PluginShelf.tsx:95
+msgid "Plugins and connectors your team can reach. Restart the session to load a change."
+msgstr "팀이 쓸 수 있는 플러그인과 커넥터입니다. 바꾼 것은 세션을 다시 시작해야 반영됩니다."
+
+#: src/widgets/conversation/lib/greetings/greetings.ts:13
+msgid "Point at a problem, {you}. They will pile on."
+msgstr "{you}, 문제를 가리키기만 하세요. 우르르 달려듭니다."
+
+#: src/widgets/team-sidebar/lib/chat-groups/chat-groups.ts:12
+msgid "Previous 30 days"
+msgstr "지난 30일"
+
+#: src/widgets/team-sidebar/lib/chat-groups/chat-groups.ts:11
+msgid "Previous 7 days"
+msgstr "지난 7일"
+
+#: src/widgets/setup/ui/ProjectField/ProjectField.tsx:9
+msgid "Project"
+msgstr "프로젝트"
+
+#: src/entities/agent-session/api/claude/failure/failure.ts:75
+msgid "Rate limited"
+msgstr "요청이 너무 잦습니다"
+
+#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:94
+msgid "Reach out to the web?"
+msgstr "웹에 접속할까요?"
+
+#: src/shared/lib/tool-verb/tool-verb.ts:7
+#: src/widgets/conversation/lib/away/away.ts:48
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:220
+msgid "Reading"
+msgstr "읽는 중"
+
+#: src/widgets/tile-deck/lib/leading/leading.ts:12
+msgid "Reading reports"
+msgstr "보고 읽는 중"
+
+#: src/widgets/setup/ui/PluginShelf/PluginShelf.tsx:297
+msgid "Reading the catalog…"
+msgstr "목록을 읽는 중…"
+
+#: src/widgets/usage-bar/lib/strip/strip.ts:68
+msgid "Reading usage…"
+msgstr "사용량 읽는 중…"
+
+#: src/widgets/team-sidebar/ui/ToolPicker/ToolPicker.tsx:26
+msgid "Reading what this session offers. The list fills in a moment."
+msgstr "이 세션이 무엇을 주는지 읽는 중입니다. 곧 목록이 채워집니다."
+
+#: src/widgets/team-sidebar/ui/StockList/StockList.tsx:13
+msgid "Reading which agents Claude Code brings. They will be listed here."
+msgstr "클로드 코드가 데려오는 에이전트를 읽는 중입니다. 여기에 나열됩니다."
+
+#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:123
+msgid "Recheck"
+msgstr "다시 확인"
+
+#: src/widgets/setup/ui/PluginShelf/PluginShelf.tsx:137
+#: src/widgets/setup/ui/PluginShelf/PluginShelf.tsx:182
+#: src/widgets/setup/ui/PluginShelf/PluginShelf.tsx:224
+#: src/widgets/team-sidebar/ui/MemberMenu/MemberMenu.tsx:67
+msgid "Remove"
+msgstr "삭제"
+
+#: src/widgets/team-sidebar/ui/MemberMenu/MemberMenu.tsx:60
+msgid "Remove {name}?"
+msgstr "{name}을(를) 내보낼까요?"
+
+#: src/widgets/team-sidebar/ui/MemberMenu/MemberMenu.tsx:51
+msgid "Remove from team"
+msgstr "팀에서 내보내기"
+
+#: src/pages/workspace/model/use-connectors.ts:25
+msgid "Removed"
+msgstr "삭제했습니다"
+
+#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:20
+#: src/widgets/team-sidebar/lib/row-state/row-state.ts:9
+#: src/widgets/tile-deck/ui/layers/StateChip/StateChip.tsx:10
+msgid "Reported back"
+msgstr "보고 옴"
+
+#: src/widgets/usage-bar/lib/strip/strip.ts:19
+msgid "reset time not reported"
+msgstr "초기화 시각을 알 수 없음"
+
+#: src/widgets/usage-bar/lib/strip/strip.ts:13
+#: src/widgets/usage-bar/lib/strip/strip.ts:17
+#: src/widgets/usage-bar/lib/strip/strip.ts:30
+msgid "resets {when}"
+msgstr "{when} 초기화"
+
+#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:127
+msgid "Restart session"
+msgstr "세션 다시 시작"
+
+#: src/pages/workspace/model/use-agent-defs.ts:74
+msgid "Restart Zetrem. This build does not know that yet."
+msgstr "Zetrem을 다시 시작하세요. 이 빌드는 아직 그것을 모릅니다."
+
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:125
+#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:178
+msgid "Reviews the front end"
+msgstr "프론트엔드를 살펴봅니다"
+
+#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:86
+msgid "Run this command?"
+msgstr "이 명령을 실행할까요?"
+
+#: src/shared/lib/tool-verb/tool-verb.ts:20
+msgid "Running"
+msgstr "실행하는 중"
+
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:140
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:143
+msgid "Same as the session"
+msgstr "세션과 같게"
+
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:277
+msgid "Save"
+msgstr "저장"
+
+#: src/widgets/conversation/lib/greetings/greetings.ts:9
+msgid "Say the word and the whole team wakes up."
+msgstr "말 한마디면 팀 전체가 깨어납니다."
+
+#: src/widgets/conversation/ui/ConversationPane/ConversationPane.tsx:106
+msgid "Say what you want done, not the next step. The orchestrator splits it up and hands the pieces out."
+msgstr "다음 단계가 아니라 원하는 결과를 말하세요. 오케스트레이터가 알아서 쪼개 나눠 줍니다."
+
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:210
+#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:199
+msgid "Say what you would change and why, in that order."
+msgstr "무엇을 바꿀지, 왜인지 순서대로 적으세요."
+
+#. placeholder {0}: pool.length
+#: src/widgets/setup/ui/PluginShelf/PluginShelf.tsx:290
+msgid "Search {0} plugins"
+msgstr "플러그인 {0}개에서 검색"
+
+#: src/widgets/setup/ui/PluginShelf/PluginShelf.tsx:291
+msgid "Search plugins"
+msgstr "플러그인 검색"
+
+#: src/widgets/team-sidebar/ui/ToolPicker/ToolPicker.tsx:34
+msgid "Search tools"
+msgstr "도구 검색"
+
+#: src/shared/lib/tool-verb/tool-verb.ts:22
+msgid "Searching"
+msgstr "찾는 중"
+
+#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:176
+msgid "See what they did"
+msgstr "무엇을 했는지 보기"
+
+#: src/widgets/conversation/ui/Composer/Composer.tsx:177
+msgid "Send"
+msgstr "보내기"
+
+#: src/widgets/usage-bar/ui/UsageBar/UsageBar.tsx:104
+msgid "Session details"
+msgstr "세션 상세"
+
+#: src/pages/workspace/model/use-agent.ts:153
+msgid "Session stopped. The next message starts a new one with your team as it is now."
+msgstr "세션을 멈췄습니다. 다음 메시지부터 지금 팀 구성으로 새로 시작합니다."
+
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:51
+msgid "Set a few things and your agents get to work!"
+msgstr "몇 가지만 정하면 바로 일을 시작합니다"
+
+#: src/entities/plugin/lib/groups/groups.ts:16
+msgid "Set for everyone on your account. They cannot be removed or turned off here."
+msgstr "계정 전체에 설정된 것입니다. 여기서는 지우거나 끌 수 없습니다."
+
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:464
+msgid "Settings"
+msgstr "설정"
+
+#: src/widgets/usage-bar/lib/strip/strip.ts:38
+msgid "share unknown"
+msgstr "사용량 알 수 없음"
+
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:447
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:448
+msgid "Show team sidebar"
+msgstr "팀 사이드바 펼치기"
+
+#: src/widgets/setup/ui/PluginShelf/PluginShelf.tsx:220
+msgid "Sign in"
+msgstr "로그인"
+
+#: src/widgets/setup/lib/start-blocker/start-blocker.ts:6
+msgid "Sign in and choose a project folder"
+msgstr "로그인하고 프로젝트 폴더를 고르세요"
+
+#: src/widgets/setup/lib/start-blocker/start-blocker.ts:7
+msgid "Sign in to your Anthropic account"
+msgstr "Anthropic 계정으로 로그인하세요"
+
+#: src/entities/agent-session/api/claude/failure/failure.ts:81
+msgid "Sign in was refused"
+msgstr "로그인이 거절됐습니다"
+
+#: src/widgets/setup/ui/AccountField/AccountField.tsx:79
+msgid "Sign in with Anthropic"
+msgstr "Anthropic 계정으로 로그인"
+
+#: src/widgets/setup/ui/AccountField/AccountField.tsx:49
+#: src/widgets/setup/ui/AccountField/AccountField.tsx:61
+#: src/widgets/setup/ui/PluginShelf/PluginShelf.tsx:216
+msgid "Sign out"
+msgstr "로그아웃"
+
+#: src/widgets/setup/lib/sign-out-warning/sign-out-warning.ts:4
+msgid "Sign out of Claude Code everywhere?"
+msgstr "이 컴퓨터의 클로드 코드를 전부 로그아웃할까요?"
+
+#: src/pages/workspace/model/use-connectors.ts:23
+msgid "Signed in to"
+msgstr "로그인했습니다:"
+
+#: src/pages/workspace/model/use-connectors.ts:24
+msgid "Signed out of"
+msgstr "로그아웃했습니다:"
+
+#: src/widgets/setup/ui/AccountField/AccountField.tsx:79
+msgid "Signing in through your browser…"
+msgstr "브라우저에서 로그인하는 중…"
+
+#: src/widgets/setup/lib/sign-out-warning/sign-out-warning.ts:15
+msgid "Signing out stops the running session, and every other Claude Code on this computer."
+msgstr "돌고 있는 세션이 멈추고, 이 컴퓨터의 다른 클로드 코드도 전부 로그아웃됩니다."
+
+#: src/widgets/setup/ui/AccountField/AccountField.tsx:49
+msgid "Signing out…"
+msgstr "로그아웃하는 중…"
+
+#: src/widgets/setup/lib/sign-out-warning/sign-out-warning.ts:16
+msgid "Signs out every Claude Code on this computer, not just Zetrem."
+msgstr "Zetrem만이 아니라 이 컴퓨터의 클로드 코드를 전부 로그아웃합니다."
+
+#: src/widgets/welcome/ui/WelcomePane/WelcomePane.tsx:95
+msgid "Skip"
+msgstr "건너뛰기"
+
+#: src/app/Boundary.tsx:38
+msgid "Something broke. Here is what happened."
+msgstr "무언가 잘못됐습니다. 무슨 일이 있었는지 알려드립니다."
+
+#: src/entities/agent-session/api/claude/failure/failure.ts:9
+msgid "Something went wrong"
+msgstr "무언가 잘못됐습니다"
+
+#: src/entities/agent-session/api/claude/failure/failure.ts:8
+msgid "Something went wrong while it was working"
+msgstr "일하던 중에 무언가 잘못됐습니다"
+
+#. placeholder {0}: marketplaces.length
+#: src/widgets/setup/ui/PluginShelf/PluginShelf.tsx:107
+msgid "Sources · {0}"
+msgstr "마켓플레이스 · {0}"
+
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:215
+#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:202
+msgid "Standing instructions. Write it the way you would brief a person."
+msgstr "늘 지킬 지침입니다. 사람에게 일을 맡기듯 적으세요."
+
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:122
+msgid "Start"
+msgstr "시작"
+
+#: src/widgets/team-sidebar/ui/ChatList/ChatList.tsx:22
+msgid "Start a conversation from scratch"
+msgstr "새 대화를 시작합니다"
+
+#: src/widgets/conversation/lib/working/working.ts:12
+msgid "Starting"
+msgstr "시작하는 중"
+
+#: src/widgets/setup/ui/AccountField/AccountField.tsx:60
+msgid "Stay signed in"
+msgstr "로그인 유지"
+
+#: src/pages/workspace/model/use-auth.ts:67
+msgid "Still signed in. Sign out did not take effect."
+msgstr "아직 로그인 상태입니다. 로그아웃이 되지 않았습니다."
+
+#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:33
+msgid "Stock rules"
+msgstr "재고 규칙"
+
+#: src/widgets/conversation/ui/Composer/Composer.tsx:166
+msgid "Stop"
+msgstr "멈추기"
+
+#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:124
+msgid "Stop the running session so the next message starts one that knows them"
+msgstr "지금 세션을 멈추면 다음 메시지부터 이 팀원을 압니다"
+
+#: src/entities/agent-session/api/claude/failure/failure.ts:31
+msgid "Stopped"
+msgstr "멈췄습니다"
+
+#. placeholder {0}: i18n._(known)
+#. placeholder {0}: said.join('. ')
+#: src/entities/agent-session/api/claude/failure/failure.ts:55
+#: src/entities/agent-session/api/claude/failure/failure.ts:56
+msgid "Stopped: {0}"
+msgstr "멈췄습니다: {0}"
+
+#: src/entities/agent-session/api/claude/failure/failure.ts:31
+msgid "Stopped: {body}"
+msgstr "멈췄습니다: {body}"
+
+#: src/entities/agent-session/api/claude/failure/failure.ts:56
+msgid "Stopped: {subtype}"
+msgstr "멈췄습니다: {subtype}"
+
+#: src/entities/agent-session/api/claude/failure/failure.ts:29
+msgid "Stopped: something went wrong"
+msgstr "멈췄습니다: 무언가 잘못됐습니다"
+
+#: src/widgets/setup/lib/tongues/tongues.ts:5
+msgid "System"
+msgstr "시스템 설정"
+
+#: src/widgets/conversation/ui/Composer/Composer.tsx:118
+msgid "Task for {addressee}"
+msgstr "{addressee}에게 맡길 일"
+
+#: src/widgets/team-sidebar/ui/SidebarGrip/SidebarGrip.tsx:50
+msgid "Team board width"
+msgstr "팀 보드 너비"
+
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:81
+msgid "Tells you when the work is done or something needs your say-so, and only while Zetrem is behind another window."
+msgstr "일이 끝났거나 승인을 기다릴 때 알려줍니다. Zetrem이 다른 창 뒤에 있을 때만 울립니다."
+
+#: src/shared/lib/ask/ask.ts:7
+msgid "That did not work"
+msgstr "되지 않았습니다"
+
+#: src/entities/connector/lib/refusal-why/refusal-why.ts:20
+msgid "That is not a web address"
+msgstr "웹 주소가 아닙니다"
+
+#: src/entities/agent-session/api/claude/failure/failure.ts:37
+msgid "That model"
+msgstr "그 모델"
+
+#: src/entities/agent-session/api/claude/failure/failure.ts:87
+msgid "That model was not found"
+msgstr "그 모델을 찾지 못했습니다"
+
+#: src/entities/connector/lib/refusal-why/refusal-why.ts:22
+msgid "The address has to be http or https"
+msgstr "주소는 http나 https여야 합니다"
+
+#: src/entities/agent-session/api/claude/failure/failure.ts:89
+msgid "The answer hit the output limit"
+msgstr "답이 출력 한도에 닿았습니다"
+
+#: src/entities/agent-session/lib/exit-line/exit-line.ts:6
+msgid "The claude command was not found. Install the Claude Code CLI, then try again."
+msgstr "claude 명령을 찾지 못했습니다. Claude Code CLI를 설치한 뒤 다시 시도하세요."
+
+#: src/widgets/welcome/lib/slides/slides.ts:9
+msgid "The CLI does the work. Zetrem shows it while it happens: what was asked, who is on it, and what they have run so far."
+msgstr "일은 CLI가 합니다. Zetrem은 그 일이 벌어지는 동안 보여줍니다. 무엇을 시켰는지, 누가 맡았는지, 지금까지 무엇을 실행했는지."
+
+#: src/entities/agent-session/model/choices/choices.ts:22
+msgid "The hardest problems. Turn it on once with /model fable in the Claude Code CLI"
+msgstr "가장 어려운 문제에. 클로드 코드 CLI에서 /model fable로 한 번 켜야 합니다"
+
+#: src/entities/agent-session/api/claude/aside/aside.ts:31
+msgid "The model"
+msgstr "모델"
+
+#: src/entities/agent-session/api/claude/aside/aside.ts:25
+msgid "The model declined this"
+msgstr "모델이 이것을 거절했습니다"
+
+#: src/entities/agent-session/api/claude/failure/failure.ts:77
+msgid "The model is overloaded"
+msgstr "모델에 부하가 걸렸습니다"
+
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:127
+#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:181
+msgid "The orchestrator reads this to pick who gets the job."
+msgstr "오케스트레이터가 이 줄을 읽고 누구에게 맡길지 정합니다."
+
+#: src/entities/agent-session/api/claude/failure/failure.ts:93
+msgid "The request failed"
+msgstr "요청이 실패했습니다"
+
+#: src/entities/agent-session/api/claude/failure/failure.ts:85
+msgid "The request was rejected"
+msgstr "요청이 거부됐습니다"
+
+#: src/widgets/conversation/ui/Composer/Composer.tsx:152
+msgid "The running session keeps its model. This applies from the next one."
+msgstr "지금 도는 세션은 쓰던 모델을 그대로 씁니다. 다음 세션부터 바뀝니다."
+
+#: src/entities/agent-session/api/claude/failure/failure.ts:79
+msgid "The server had a problem"
+msgstr "서버에 문제가 있었습니다"
+
+#: src/entities/agent-session/api/claude/aside/aside.ts:39
+msgid "The session is closing"
+msgstr "세션을 닫는 중입니다"
+
+#: src/entities/agent-session/api/claude/aside/aside.ts:39
+msgid "The session is closing: {why}"
+msgstr "세션을 닫는 중입니다: {why}"
+
+#: src/widgets/conversation/lib/greetings/greetings.ts:10
+msgid "The team is warm and waiting, {you}."
+msgstr "{you}, 팀은 몸 다 풀고 기다리는 중입니다."
+
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:202
+#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:196
+msgid "Their brief"
+msgstr "지시문"
+
+#: src/widgets/team-sidebar/ui/MemberMenu/MemberMenu.tsx:62
+msgid "Their file is deleted and they leave the roster. A session already running keeps them until it ends. This cannot be undone."
+msgstr "파일이 지워지고 명단에서 빠집니다. 이미 돌고 있는 세션은 끝날 때까지 그대로 데리고 있습니다. 되돌릴 수 없습니다."
+
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:160
+msgid "Their own copy"
+msgstr "따로 복사해서 작업"
+
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:165
+msgid "They edit your files directly, alongside everyone else you have working."
+msgstr "지금 이 폴더의 파일을 다른 팀원들과 함께 직접 고칩니다."
+
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:164
+msgid "They get a copy of the repository and a branch of their own. Your files stay as they are."
+msgstr "저장소 사본과 자기 브랜치를 받습니다. 당신 파일은 그대로 있습니다."
+
+#: src/widgets/conversation/lib/greetings/greetings.ts:12
+msgid "They read fast and they never get bored."
+msgstr "빨리 읽고, 지루해하는 법이 없습니다."
+
+#: src/widgets/conversation/lib/working/working.ts:72
+msgid "Thinking"
+msgstr "생각하는 중"
+
+#: src/widgets/usage-bar/lib/strip/strip.ts:58
+msgid "this chat {percent}%"
+msgstr "이 대화 {percent}%"
+
+#: src/widgets/usage-bar/lib/strip/strip.ts:55
+msgid "this chat {size}"
+msgstr "이 대화 {size}"
+
+#: src/pages/workspace/model/use-transcript.ts:137
+msgid "This chat is not being saved"
+msgstr "이 대화가 저장되지 않고 있습니다"
+
+#: src/entities/plugin/lib/groups/groups.ts:10
+#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:19
+msgid "This project"
+msgstr "이 프로젝트"
+
+#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:87
+msgid "This session"
+msgstr "이번 세션"
+
+#: src/widgets/setup/lib/sign-out-warning/sign-out-warning.ts:10
+msgid "This signs out the Claude Code CLI itself, so every terminal, editor and app using it on this computer is signed out too."
+msgstr "클로드 코드 CLI 자체를 로그아웃합니다. 이 컴퓨터에서 CLI를 쓰는 터미널과 편집기와 앱이 모두 함께 로그아웃됩니다."
+
+#: src/widgets/setup/lib/sign-out-warning/sign-out-warning.ts:9
+msgid "This signs out the Claude Code CLI itself, so every terminal, editor and app using it on this computer is signed out too. The session running here stops."
+msgstr "클로드 코드 CLI 자체를 로그아웃합니다. 이 컴퓨터에서 CLI를 쓰는 터미널과 편집기와 앱이 모두 함께 로그아웃됩니다. 여기서 돌고 있는 세션도 멈춥니다."
+
+#: src/pages/workspace/model/agent-events/agent-events.ts:165
+msgid "This turn: {out} out · {seconds}s{cost}"
+msgstr "이번 턴: {out} 출력 · {seconds}초{cost}"
+
+#: src/widgets/conversation/ui/ConversationPane/Thinking.tsx:20
+msgid "Thought · {paragraphs} paragraphs"
+msgstr "생각 · {paragraphs}단락"
+
+#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:81
+msgid "Three teammates are on it: the checkout flow, the cart totals and the stock rules. I will fold their reports into one answer."
+msgstr "팀원 셋이 붙었습니다. 결제 흐름, 장바구니 합계, 재고 규칙을 각각 봅니다. 보고를 모아 하나로 정리해 드릴게요."
+
+#: src/widgets/team-sidebar/lib/chat-groups/chat-groups.ts:9
+msgid "Today"
+msgstr "오늘"
+
+#: src/widgets/conversation/ui/ToolLine.tsx:94
+msgid "Todo list"
+msgstr "할 일 목록"
+
+#: src/entities/agent-session/api/claude/turn.ts:66
+msgid "tool"
+msgstr "도구"
+
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:169
+msgid "Tools"
+msgstr "도구"
+
+#: src/widgets/team-sidebar/ui/StockList/StockList.tsx:33
+msgid "Turn on to let the team call {name}"
+msgstr "켜면 팀이 {name}을(를) 부를 수 있습니다"
+
+#: src/shared/lib/datetime/datetime.ts:22
+msgid "under a minute"
+msgstr "1분 이내"
+
+#: src/widgets/setup/ui/PluginShelf/PluginShelf.tsx:41
+#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:178
+msgid "Unknown"
+msgstr "알 수 없음"
+
+#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:155
+msgid "Update"
+msgstr "업데이트"
+
+#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:155
+msgid "Updating…"
+msgstr "업데이트하는 중…"
+
+#: src/entities/connector/lib/refusal-why/refusal-why.ts:24
+msgid "Use https, or http only for a server on this machine"
+msgstr "https를 쓰세요. http는 이 컴퓨터의 서버일 때만 됩니다"
+
+#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:174
+msgid "Waiting for approval"
+msgstr "승인 대기 중"
+
+#: src/entities/agent-session/model/nudge/nudge.ts:10
+msgid "Waiting for your approval"
+msgstr "승인을 기다리는 중입니다"
+
+#: src/widgets/setup/ui/PluginShelf/PluginShelf.tsx:39
+msgid "Waiting for your approval in the CLI"
+msgstr "CLI에서 승인을 기다리는 중"
+
+#: src/widgets/conversation/lib/away/away.ts:29
+#: src/widgets/conversation/lib/working/working.ts:55
+#: src/widgets/conversation/lib/working/working.ts:61
+#: src/widgets/conversation/lib/working/working.ts:81
+msgid "Waiting on"
+msgstr "기다리는 중"
+
+#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:19
+#: src/widgets/team-sidebar/lib/row-state/row-state.ts:8
+msgid "Waiting on you"
+msgstr "당신을 기다리는 중"
+
+#. placeholder {0}: at.tool
+#: src/entities/agent-session/model/nudge/nudge.ts:10
+msgid "Waiting to run {0}"
+msgstr "{0} 실행을 기다립니다"
+
+#: src/shared/lib/units/units.ts:13
+msgid "Weekly"
+msgstr "주간"
+
+#: src/shared/lib/units/units.ts:19
+msgid "Weekly {rest}"
+msgstr "주간 {rest}"
+
+#: src/shared/lib/units/units.ts:15
+msgid "Weekly overage"
+msgstr "주간 초과분"
+
+#: src/widgets/conversation/ui/Composer/Composer.tsx:120
+msgid "What should they work on?"
+msgstr "무슨 일을 맡길까요?"
+
+#: src/widgets/setup/ui/PluginShelf/PluginShelf.tsx:93
+msgid "What the session brings"
+msgstr "이 세션이 가진 것"
+
+#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:139
+#: src/widgets/tile-deck/ui/AgentTile/AgentTile.tsx:77
+#: src/widgets/tile-deck/ui/CrewBoard/CrewBoard.tsx:124
+#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:136
+msgid "What they did"
+msgstr "무엇을 했는지"
+
+#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:122
+msgid "What they said"
+msgstr "무엇이라 했는지"
+
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:98
+msgid "What you write here is the whole of what they know when they start."
+msgstr "여기 적은 것이 그가 시작할 때 아는 전부입니다."
+
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:120
+#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:176
+msgid "When to call them"
+msgstr "언제 부를지"
+
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:153
+msgid "Where they work"
+msgstr "작업 공간"
+
+#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:22
+msgid "Why the last item drops"
+msgstr "마지막 항목이 사라지는 이유"
+
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:158
+msgid "Work in their own copy"
+msgstr "따로 복사해서 작업"
+
+#: src/shared/lib/tool-verb/tool-verb.ts:30
+#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:18
+#: src/widgets/conversation/lib/working/working.ts:86
+#: src/widgets/tile-deck/ui/layers/StateChip/StateChip.tsx:8
+msgid "Working"
+msgstr "일하는 중"
+
+#: src/widgets/tile-deck/lib/leading/leading.ts:13
+msgid "Wrapped up"
+msgstr "마무리됨"
+
+#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:83
+msgid "Write their brief once and the orchestrator can call them from any project."
+msgstr "지시문을 한 번만 써 두면 어느 프로젝트에서든 오케스트레이터가 부를 수 있습니다."
+
+#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:88
+msgid "Write this file?"
+msgstr "이 파일을 쓸까요?"
+
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:58
+msgid "Write what they do, and how"
+msgstr "무슨 일을 어떻게 하는지 적으세요"
+
+#: src/shared/lib/tool-verb/tool-verb.ts:9
+#: src/widgets/conversation/lib/working/working.ts:70
+msgid "Writing"
+msgstr "쓰는 중"
+
+#: src/widgets/team-sidebar/lib/chat-groups/chat-groups.ts:10
+msgid "Yesterday"
+msgstr "어제"
+
+#: src/widgets/setup/ui/YouField/YouField.tsx:23
+msgid "You"
+msgstr "당신"
+
+#: src/entities/connector/lib/refusal-why/refusal-why.ts:16
+msgid "You already have a connector by that name"
+msgstr "같은 이름의 커넥터가 이미 있습니다"
+
+#: src/widgets/welcome/lib/slides/slides.ts:38
+msgid "You keep the keys"
+msgstr "열쇠는 당신이 쥡니다"
+
+#: src/pages/workspace/model/asked-to-stop/asked-to-stop.ts:6
+msgid "You stopped this"
+msgstr "당신이 멈췄습니다"
+
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:208
+#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:198
+msgid "You take the front end. Read the markup before you judge the styles."
+msgstr "프런트엔드를 맡으세요. 스타일을 평가하기 전에 마크업부터 읽으세요."
+
+#: src/widgets/welcome/lib/slides/slides.ts:14
+msgid "You talk on the left"
+msgstr "왼쪽에서 말을 겁니다"
+
+#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:20
+msgid "Your account"
+msgstr "내 계정"
+
+#: src/entities/agent-session/model/choices/choices.ts:36
+msgid "Your account turned this one down. Try it again if your plan changed."
+msgstr "계정이 이 모델을 거절했습니다. 요금제가 바뀌었다면 다시 시도해 보세요."
+
+#: src/entities/connector/lib/groups/groups.ts:11
+msgid "Your Claude account"
+msgstr "내 Claude 계정"
+
+#: src/widgets/tile-deck/lib/headcount/headcount.ts:17
+msgid "Your crew · {out, plural, one {# out} other {# out}}"
+msgstr "내 팀 · {out, plural, other {#명 나가 있음}}"
+
+#: src/widgets/tile-deck/lib/headcount/headcount.ts:19
+msgid "Your crew · {what}"
+msgstr "내 팀 · {what}"
+
+#: src/widgets/setup/ui/YouField/YouField.tsx:36
+msgid "Your face"
+msgstr "얼굴"
+
+#: src/widgets/setup/ui/YouField/YouField.tsx:28
+#: src/widgets/setup/ui/YouField/YouField.tsx:29
+msgid "Your name"
+msgstr "이름을 적으세요"
+
+#: src/entities/plugin/lib/groups/groups.ts:15
+msgid "Your organisation"
+msgstr "조직"
+
+#: src/entities/agent-session/api/claude/failure/failure.ts:91
+msgid "Your organisation does not allow this"
+msgstr "조직 정책이 이것을 허용하지 않습니다"
+
+#: src/widgets/team-sidebar/ui/TeamSidebar/TeamSidebar.tsx:48
+msgid "Your team"
+msgstr "내 팀"
+
+#: src/entities/agent-session/model/nudge/nudge.ts:13
+msgid "Your team has finished."
+msgstr "팀이 일을 마쳤습니다."
+
+#: src/widgets/welcome/lib/slides/slides.ts:20
+msgid "Your team works on the right"
+msgstr "팀은 오른쪽에서 일합니다"
+
+#: src/entities/connector/lib/groups/groups.ts:8
+#: src/entities/plugin/lib/groups/groups.ts:7
+msgid "Yours"
+msgstr "내 것"
+
+#: src/entities/connector/lib/refusal-why/refusal-why.ts:26
+msgid "Zetrem did not understand that request"
+msgstr "Zetrem이 그 요청을 이해하지 못했습니다"
+
+#: src/widgets/setup/ui/YouField/YouField.tsx:62
+msgid "Zetrem greets you by this name, and your face marks the work in flight."
+msgstr "Zetrem이 이 이름으로 부르고, 얼굴은 진행 중인 일에 표시됩니다."
+
+#: src/entities/agent-session/model/nudge/nudge.ts:13
+msgid "Zetrem is done"
+msgstr "일이 끝났습니다"
+
+#: src/entities/agent-session/model/nudge/nudge.ts:9
+msgid "Zetrem needs you"
+msgstr "Zetrem이 기다립니다"

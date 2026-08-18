@@ -7,6 +7,7 @@ import { StockList } from '../StockList/StockList'
 import type { StockListProps } from '../StockList/StockList.types'
 import { TeamList } from '../TeamList/TeamList'
 import type { TeamListProps } from '../TeamList/TeamList.types'
+import { t } from '@lingui/core/macro'
 
 const AVATAR = 24
 
@@ -44,10 +45,10 @@ export function TeamSidebar({
       >
         <ChatList {...chats} nowMs={nowMs} />
 
-        <Heading>Your team</Heading>
+        <Heading>{t`Your team`}</Heading>
         <TeamList {...team} avatar={AVATAR} />
 
-        <Heading>Claude Code</Heading>
+        <Heading>{t`Claude Code`}</Heading>
         <StockList {...stock} avatar={AVATAR} />
       </div>
 

@@ -23,6 +23,8 @@ import { characterFor, draftFrom, initialCharacter, toggled, toolSummary } from 
 import { CharacterPicker } from '../CharacterPicker/CharacterPicker'
 import { ToolPicker } from '../ToolPicker/ToolPicker'
 import { useScrollState } from '@/shared/lib/scroll-state/use-scroll-state'
+import { t } from '@lingui/core/macro'
+import { read } from '@/shared/lib/say/read'
 
 const INHERIT = 'inherit'
 const AVATAR = 32
@@ -51,9 +53,9 @@ export function MemberForm({ initial, knownTools, onSubmit, onCancel }: MemberFo
 
   const lack =
     name.trim().length === 0
-      ? 'Give them a name'
+      ? t`Give them a name`
       : prompt.trim().length === 0
-        ? 'Write what they do, and how'
+        ? t`Write what they do, and how`
         : null
 
   function attach(): void {
@@ -90,10 +92,10 @@ export function MemberForm({ initial, knownTools, onSubmit, onCancel }: MemberFo
             <AgentSprite subagentType={name} chosen={character} state="idle" size={AVATAR} />
             <span className="flex min-w-0 flex-col">
               <DialogTitle className="truncate text-base">
-                {initial === null ? 'New teammate' : `Edit ${initial.name}`}
+                {initial === null ? t`New teammate` : t`Edit ${initial.name}`}
               </DialogTitle>
               <DialogDescription>
-                What you write here is the whole of what they know when they start.
+                {t`What you write here is the whole of what they know when they start.`}
               </DialogDescription>
             </span>
           </DialogHeader>
@@ -103,7 +105,7 @@ export function MemberForm({ initial, knownTools, onSubmit, onCancel }: MemberFo
               ref={side}
               className="zt-scroll zt-fade-y flex w-[264px] flex-none flex-col gap-4 overflow-y-auto border-r border-border px-5 py-5"
             >
-              <Row label="Name" htmlFor="member-name">
+              <Row label={t`Name`} htmlFor="member-name">
                 <Input
                   id="member-name"
                   value={name}
@@ -115,56 +117,56 @@ export function MemberForm({ initial, knownTools, onSubmit, onCancel }: MemberFo
                 />
               </Row>
 
-              <Row label="When to call them" htmlFor="member-description">
+              <Row label={t`When to call them`} htmlFor="member-description">
                 <Input
                   id="member-description"
                   value={description}
                   onChange={(event) => setDescription(event.target.value)}
-                  placeholder="Reviews the front end"
+                  placeholder={t`Reviews the front end`}
                 />
-                <Note>The orchestrator reads this to pick who gets the job.</Note>
+                <Note>{t`The orchestrator reads this to pick who gets the job.`}</Note>
               </Row>
 
-              <Row label="Face">
+              <Row label={t`Face`}>
                 <CharacterPicker value={character} onChange={setPicked} />
               </Row>
 
-              <Row label="Model" htmlFor="member-model">
+              <Row label={t`Model`} htmlFor="member-model">
                 <Select
                   value={model ?? INHERIT}
                   onValueChange={(next) => setModel(next === INHERIT ? null : next)}
                 >
                   <SelectTrigger id="member-model" className="w-full">
-                    <SelectValue placeholder="Same as the session" />
+                    <SelectValue placeholder={t`Same as the session`} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value={INHERIT}>Same as the session</SelectItem>
+                    <SelectItem value={INHERIT}>{t`Same as the session`}</SelectItem>
                     {MODELS.filter((choice) => choice.id !== 'default').map((choice) => (
                       <SelectItem key={choice.id} value={choice.id}>
-                        {choice.label}
+                        {read(choice.label)}
                       </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
               </Row>
 
-              <Row label="Where they work">
+              <Row label={t`Where they work`}>
                 <label className="flex items-center gap-2.5 rounded-lg py-1">
                   <Switch
                     checked={ownCopy}
                     onCheckedChange={setOwnCopy}
-                    aria-label="Work in their own copy"
+                    aria-label={t`Work in their own copy`}
                   />
-                  <span className="min-w-0 flex-1 text-sm leading-tight">Their own copy</span>
+                  <span className="min-w-0 flex-1 text-sm leading-tight">{t`Their own copy`}</span>
                 </label>
                 <Note>
                   {ownCopy
-                    ? 'They get a copy of the repository and a branch of their own. Your files stay as they are.'
-                    : 'They edit your files directly, alongside everyone else you have working.'}
+                    ? t`They get a copy of the repository and a branch of their own. Your files stay as they are.`
+                    : t`They edit your files directly, alongside everyone else you have working.`}
                 </Note>
               </Row>
 
-              <Row label="Tools">
+              <Row label={t`Tools`}>
                 <Popover>
                   <PopoverTrigger asChild>
                     <Button
@@ -197,24 +199,25 @@ export function MemberForm({ initial, knownTools, onSubmit, onCancel }: MemberFo
 
             <div className="flex min-h-0 min-w-0 flex-1 flex-col gap-4 px-6 py-5">
               <div className="flex min-h-0 flex-1 flex-col gap-2">
-                <Label htmlFor="member-prompt">Their brief</Label>
+                <Label htmlFor="member-prompt">{t`Their brief`}</Label>
                 <Textarea
                   id="member-prompt"
                   value={prompt}
                   onChange={(event) => setPrompt(event.target.value)}
                   placeholder={
-                    'You take the front end. Read the markup before you judge the styles.\n\n' +
-                    'Say what you would change and why, in that order.'
+                    t`You take the front end. Read the markup before you judge the styles.` +
+                    '\n\n' +
+                    t`Say what you would change and why, in that order.`
                   }
                   aria-invalid={missing !== null && prompt.trim().length === 0}
                   className="zt-scroll min-h-0 flex-1 resize-none font-mono text-sm leading-relaxed"
                 />
-                <Note>Standing instructions. Write it the way you would brief a person.</Note>
+                <Note>{t`Standing instructions. Write it the way you would brief a person.`}</Note>
               </div>
 
               <div className="flex flex-none flex-col gap-2">
                 <div className="flex items-center justify-between gap-2">
-                  <Label>Reading</Label>
+                  <Label>{t`Reading`}</Label>
                   <Button
                     type="button"
                     variant="ghost"
@@ -223,13 +226,12 @@ export function MemberForm({ initial, knownTools, onSubmit, onCancel }: MemberFo
                     className="h-7 text-muted-foreground"
                   >
                     <Paperclip className="size-3.5" />
-                    Attach
+                    {t`Attach`}
                   </Button>
                 </div>
                 {knowledge.length === 0 ? (
                   <Note>
-                    Documents they are told to read first. Long ones cost nothing until they open
-                    them.
+                    {t`Documents they are told to read first. Long ones cost nothing until they open them.`}
                   </Note>
                 ) : (
                   <div className="zt-scroll flex max-h-28 flex-col gap-1 overflow-y-auto pr-2.5">
@@ -264,15 +266,15 @@ export function MemberForm({ initial, knownTools, onSubmit, onCancel }: MemberFo
             <span className="text-xs text-muted-foreground">
               {missing ??
                 (initial === null
-                  ? 'A running session cannot call them. Restart it, or they join the next one.'
-                  : 'A running session keeps the old brief until it is restarted')}
+                  ? t`A running session cannot call them. Restart it, or they join the next one.`
+                  : t`A running session keeps the old brief until it is restarted`)}
             </span>
             <span className="flex items-center gap-2">
               <Button type="button" variant="ghost" onClick={onCancel} className="rounded-full">
-                Cancel
+                {t`Cancel`}
               </Button>
               <Button type="submit" className="rounded-full">
-                {initial === null ? 'Create' : 'Save'}
+                {initial === null ? t`Create` : t`Save`}
               </Button>
             </span>
           </DialogFooter>

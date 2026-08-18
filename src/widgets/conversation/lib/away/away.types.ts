@@ -1,5 +1,5 @@
 export type Away = {
-  verb: 'Waiting on' | 'Reading'
+  verb: string
   count: number
   name: string
   subagentType: string

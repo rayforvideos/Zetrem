@@ -2,24 +2,32 @@ import type { StatusState } from '@/entities/agent-session'
 import type { Mark } from './strip.types'
 import { formatResetTime, untilLabel } from '@/shared/lib/datetime/datetime'
 import { formatTokens, limitKindLabel, limitTag } from '@/shared/lib/units/units'
+import { t } from '@lingui/core/macro'
 
 const WARN = 0.85
 
 function resetHint(limit: StatusState['limits'][number]): string {
-  if (limit.overage) return 'on overage'
-  if (limit.resetsText !== undefined) return `resets ${limit.resetsText}`
-  if (limit.resetsAtMs > 0) return `resets ${formatResetTime(limit.resetsAtMs)}`
-  return 'reset time not reported'
+  if (limit.overage) return t`on overage`
+  if (limit.resetsText !== undefined) {
+    const when = limit.resetsText
+    return t`resets ${when}`
+  }
+  if (limit.resetsAtMs > 0) {
+    const when = formatResetTime(limit.resetsAtMs)
+    return t`resets ${when}`
+  }
+  return t`reset time not reported`
 }
 
 function leftLabel(limit: StatusState['limits'][number], nowMs: number): string | null {
   if (limit.overage) return null
   if (limit.resetsAtMs > 0) {
     const left = limit.resetsAtMs - nowMs
-    return left > 0 ? `${untilLabel(left)} left` : null
+    return left > 0 ? t`${untilLabel(left)} left` : null
   }
   if (limit.resetsText !== undefined && limit.resetsText.length > 0) {
-    return `resets ${limit.resetsText}`
+    const when = limit.resetsText
+    return t`resets ${when}`
   }
   return null
 }
@@ -27,7 +35,7 @@ function leftLabel(limit: StatusState['limits'][number], nowMs: number): string 
 export function marksOfStatus(status: StatusState, nowMs = Date.now()): Mark[] {
   return status.limits.map((limit) => {
     const percent = limit.utilization === null ? null : Math.round(limit.utilization * 100)
-    const share = percent === null ? 'share unknown' : `${percent}% used`
+    const share = percent === null ? t`share unknown` : t`${percent}% used`
     return {
       key: limit.kind,
       label: limitTag(limit.kind),
@@ -42,8 +50,12 @@ export function marksOfStatus(status: StatusState, nowMs = Date.now()): Mark[] {
 export function chatLine(status: StatusState): string | null {
   const { used, window } = status.context
   if (used === 0) return null
-  if (window === null || window <= 0) return `this chat ${formatTokens(used)}`
-  return `this chat ${Math.round((used / window) * 100)}%`
+  if (window === null || window <= 0) {
+    const size = formatTokens(used)
+    return t`this chat ${size}`
+  }
+  const percent = Math.round((used / window) * 100)
+  return t`this chat ${percent}%`
 }
 
 export function spendLine(status: StatusState): string | null {
@@ -53,7 +65,7 @@ export function spendLine(status: StatusState): string | null {
 
 export function quietLine(status: StatusState): string | null {
   if (status.limits.length > 0 || chatLine(status) !== null) return null
-  if (status.usage === 'unread') return 'Reading usage…'
-  if (status.usage === 'unreadable') return 'Could not read usage'
-  return 'No account limits reported'
+  if (status.usage === 'unread') return t`Reading usage…`
+  if (status.usage === 'unreadable') return t`Could not read usage`
+  return t`No account limits reported`
 }

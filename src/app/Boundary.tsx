@@ -1,5 +1,6 @@
 import { Component } from 'react'
 import type { ErrorInfo, ReactNode } from 'react'
+import { t } from '@lingui/core/macro'
 
 type State = { error: Error | null; stack: string }
 
@@ -34,7 +35,7 @@ export class Boundary extends Component<{ children: ReactNode }, State> {
           lineHeight: 1.7,
         }}
       >
-        <p style={{ fontSize: 15, marginBottom: 16 }}>Something broke. Here is what happened.</p>
+        <p style={{ fontSize: 15, marginBottom: 16 }}>{t`Something broke. Here is what happened.`}</p>
         <pre style={{ whiteSpace: 'pre-wrap', margin: 0 }}>{error.message}</pre>
         <pre style={{ whiteSpace: 'pre-wrap', opacity: 0.45, marginTop: 16 }}>
           {error.stack ?? ''}

@@ -28,10 +28,6 @@ export function tooHeavy(file: { kind: AttachKind; bytes: number }): boolean {
   return file.kind === 'image' && file.bytes > IMAGE_MAX_BYTES
 }
 
-export function heavyLine(name: string): string {
-  return `${name} is over ${Math.round(IMAGE_MAX_BYTES / 1024 / 1024)}MB, so it cannot be sent as a picture. Point at it by path instead.`
-}
-
 export function sentOf(files: Attached[]): Sent[] {
   return files.map((file) => ({ name: file.name, kind: file.kind, path: file.path }))
 }

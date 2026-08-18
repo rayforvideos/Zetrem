@@ -5,6 +5,7 @@ import { cn } from '@/shared/lib/cn'
 import { Field, FieldDescription, FieldLabel } from '@/shared/ui/field'
 import { Input } from '@/shared/ui/input'
 import { RadioGroup, RadioGroupItem } from '@/shared/ui/radio-group'
+import { t } from '@lingui/core/macro'
 
 export function YouField({
   name,
@@ -19,20 +20,20 @@ export function YouField({
 }) {
   return (
     <Field>
-      <FieldLabel className="text-muted-foreground">You</FieldLabel>
+      <FieldLabel className="text-muted-foreground">{t`You`}</FieldLabel>
       <div className="flex items-center gap-2.5">
         <Input
           value={name}
           onChange={(event) => onName(tidyUserName(event.target.value))}
-          placeholder="Your name"
-          aria-label="Your name"
+          placeholder={t`Your name`}
+          aria-label={t`Your name`}
           className="h-11 min-w-0 flex-1 rounded-xl bg-card px-3.5"
         />
         <RadioGroup
           value={face}
           onValueChange={(next) => onFace(next as FaceId)}
           className="flex flex-none gap-1"
-          aria-label="Your face"
+          aria-label={t`Your face`}
         >
           {FACES.map((one) => (
             <label
@@ -58,7 +59,7 @@ export function YouField({
         </RadioGroup>
       </div>
       <FieldDescription>
-        Zetrem greets you by this name, and your face marks the work in flight.
+        {t`Zetrem greets you by this name, and your face marks the work in flight.`}
       </FieldDescription>
     </Field>
   )

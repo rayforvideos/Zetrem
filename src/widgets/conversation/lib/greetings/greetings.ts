@@ -1,21 +1,24 @@
+import { i18n } from '@lingui/core'
+import { msg } from '@lingui/core/macro'
+
 const YOU = '{you}'
 
 const GREETINGS = [
-  "Let's get to work with your cute little agents!",
-  `${YOU}, who should take this one?`,
-  'Say the word and the whole team wakes up.',
-  `The team is warm and waiting, ${YOU}.`,
-  'Big job? Split it. They like company.',
-  'They read fast and they never get bored.',
-  `Point at a problem, ${YOU}. They will pile on.`,
-  'One of you writes, one of you checks. Deal?',
+  msg`Let's get to work with your cute little agents!`,
+  msg`{you}, who should take this one?`,
+  msg`Say the word and the whole team wakes up.`,
+  msg`The team is warm and waiting, {you}.`,
+  msg`Big job? Split it. They like company.`,
+  msg`They read fast and they never get bored.`,
+  msg`Point at a problem, {you}. They will pile on.`,
+  msg`One of you writes, one of you checks. Deal?`,
 ] as const
 
 export const GREETING_MS = 6000
 
 export function greetingsFor(name: string): string[] {
-  if (name.length === 0) return GREETINGS.filter((line) => !line.includes(YOU))
-  return GREETINGS.map((line) => line.replaceAll(YOU, name))
+  const lines = name.length === 0 ? GREETINGS.filter((line) => !(line.message ?? '').includes(YOU)) : GREETINGS
+  return lines.map((line) => i18n._(line.id, { you: name }, { message: line.message }))
 }
 
 export function greetingCount(name = ''): number {

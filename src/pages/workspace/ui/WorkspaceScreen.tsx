@@ -45,6 +45,7 @@ import { useProjectMemory } from '../model/use-project-memory'
 import { useSessionProbe } from '../model/use-session-probe'
 import { useAuthoredAgents } from '../model/use-authored-agents'
 import { useNudge } from '../model/use-nudge'
+import { useSay } from '../model/use-say'
 import { useConnectors } from '../model/use-connectors'
 import { useAttachments } from '../model/use-attachments'
 import { useSettings } from '../model/use-settings'
@@ -56,6 +57,7 @@ import { useOffsetWidth } from '@/shared/lib/offset-width/use-offset-width'
 import { tuckedBy } from '../model/tuck/tuck'
 import { crewOf, lockOf, peopleOf, pluginSummary } from '../model/workspace-config/workspace-config'
 import { ProjectPicker } from './controls/ProjectPicker'
+import { t } from '@lingui/core/macro'
 
 export function WorkspaceScreen() {
   const { settings, loading, failure: settingsFailure, update } = useSettings()
@@ -83,11 +85,12 @@ export function WorkspaceScreen() {
     update({ refusedModels: withoutRefused(settings.refusedModels, settings.model) })
   }, [status.cost.turns, settings.model, settings.refusedModels])
 
+  useSay(settings.tongue, !loading)
   const auth = useAuth()
   const cliUpdate = useCliUpdate(status.session?.cliVersion ?? null)
   const deck = useDeck()
   const viewport = useViewport()
-  const projectKnown = useProjectMemory(reportProject('Could not reopen your last project'))
+  const projectKnown = useProjectMemory(reportProject(t`Could not reopen your last project`))
   const panel = useSettingsPanel(settings, update)
   const sidebar = useSidebarWidth(settings, update, viewport.w)
   const [attachSidebar, sidebarBoxW] = useOffsetWidth<HTMLDivElement>()
@@ -163,7 +166,7 @@ export function WorkspaceScreen() {
       .then((picked) => {
         if (picked) projectStore.set(picked)
       })
-      .catch(reportProject('Could not open that folder'))
+      .catch(reportProject(t`Could not open that folder`))
   }
 
   function reload(patch: Partial<typeof settings>, said: string): void {
@@ -232,6 +235,8 @@ export function WorkspaceScreen() {
                     permissionMode: settings.permissionMode,
                     model: settings.model,
                     onPermissionMode: (permissionMode) => update({ permissionMode }),
+                    tongue: settings.tongue,
+                    onTongue: (next) => update({ tongue: next }),
                     notify: settings.notify,
                     onNotify: (on) => update({ notify: on }),
                     onModel: (model) => update({ model }),
@@ -290,13 +295,13 @@ export function WorkspaceScreen() {
                       onPermissionMode={(permissionMode) =>
                         reload(
                           { permissionMode },
-                          'Permissions changed. Your next message starts a session that follows them.',
+                          t`Permissions changed. Your next message starts a session that follows them.`,
                         )
                       }
                       onModel={(model) =>
                         reload(
                           { model },
-                          'Model changed. Your next message starts a session on it.',
+                          t`Model changed. Your next message starts a session on it.`,
                         )
                       }
                     />
@@ -439,8 +444,8 @@ export function WorkspaceScreen() {
               size="bare"
               onClick={sidebar.toggle}
               aria-pressed={sidebar.open}
-              aria-label={sidebar.open ? 'Hide team sidebar' : 'Show team sidebar'}
-              title={sidebar.open ? 'Hide team sidebar' : 'Show team sidebar'}
+              aria-label={sidebar.open ? t`Hide team sidebar` : t`Show team sidebar`}
+              title={sidebar.open ? t`Hide team sidebar` : t`Show team sidebar`}
               className="zt-hit"
             >
               <PanelLeft className="size-3.5" />
@@ -454,9 +459,9 @@ export function WorkspaceScreen() {
             size="bare"
             onClick={panel.show}
             className="zt-hit text-xs"
-            title="Change account, project, and permissions"
+            title={t`Change account, project, and permissions`}
           >
-            Settings
+            {t`Settings`}
           </Button>
         )}
         <ProjectPicker />

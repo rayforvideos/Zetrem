@@ -1,12 +1,12 @@
 import { describe, expect, it } from 'vitest'
 import type { ClaudeTurnEvent } from '@/entities/agent-session'
-import { STOPPED_BY_YOU, afterYouStopped } from './asked-to-stop'
+import { afterYouStopped, stoppedByYou } from './asked-to-stop'
 
 const stopped: ClaudeTurnEvent = { type: 'notice', text: 'Stopped: Something went wrong while it was working' }
 
 describe('afterYouStopped: whose doing it was', () => {
   it('says it was yours when you were the one who stopped it', () => {
-    expect(afterYouStopped(stopped, true)).toEqual({ type: 'notice', text: STOPPED_BY_YOU })
+    expect(afterYouStopped(stopped, true)).toEqual({ type: 'notice', text: stoppedByYou() })
   })
 
   it('leaves the reason alone when nobody asked it to stop', () => {

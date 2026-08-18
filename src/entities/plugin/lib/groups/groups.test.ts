@@ -43,7 +43,7 @@ describe('groupsOf: who a plugin belongs to is a heading, not a suffix on every 
   it('names a lone group that is not yours, since that is the thing worth saying', () => {
     const groups = groupsOf([plugin('a', 'managed')])
     expect(groups[0]?.titled).toBe(true)
-    expect(groups[0]?.title).toBe('Your organisation')
+    expect(groups[0]?.title.message).toBe('Your organisation')
   })
 
   it('files a scope it does not know with your own, rather than dropping it', () => {
@@ -59,12 +59,12 @@ describe('groupsOf: who a plugin belongs to is a heading, not a suffix on every 
 describe('a group that takes controls away says why', () => {
   it('explains what an organisation plugin cannot do, where the missing buttons are', () => {
     const [group] = groupsOf([plugin('a', 'managed')])
-    expect(group?.note).toContain('cannot be removed or turned off')
+    expect(group?.note?.message).toContain('cannot be removed or turned off')
   })
 
   it('explains who else a project plugin belongs to', () => {
     const [group] = groupsOf([plugin('a', 'project')])
-    expect(group?.note).toContain('this folder')
+    expect(group?.note?.message).toContain('this folder')
   })
 
   it('has nothing to explain about your own', () => {

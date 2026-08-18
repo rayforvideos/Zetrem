@@ -2,6 +2,7 @@ import { Check } from 'lucide-react'
 import { toolShape } from '@/shared/lib/tool-shape/tool-shape'
 import { ToolIcon } from '@/shared/graphics/tool-icon'
 import { Button } from '@/shared/ui/button'
+import { t } from '@lingui/core/macro'
 import {
   Command,
   CommandEmpty,
@@ -22,7 +23,7 @@ export function ToolPicker({ known, chosen, onToggle, onClear }: ToolPickerProps
   if (known.length === 0) {
     return (
       <p className="p-3 text-xs text-muted-foreground">
-        Reading what this session offers. The list fills in a moment.
+        {t`Reading what this session offers. The list fills in a moment.`}
       </p>
     )
   }
@@ -30,10 +31,10 @@ export function ToolPicker({ known, chosen, onToggle, onClear }: ToolPickerProps
 
   return (
     <Command className="bg-transparent">
-      <CommandInput placeholder="Search tools" />
+      <CommandInput placeholder={t`Search tools`} />
       <CommandList className="max-h-64">
         <CommandEmpty className="py-6 text-center text-xs text-muted-foreground">
-          No tool by that name.
+          {t`No tool by that name.`}
         </CommandEmpty>
         <CommandGroup>
           {known.map((tool) => {
@@ -57,7 +58,7 @@ export function ToolPicker({ known, chosen, onToggle, onClear }: ToolPickerProps
       </CommandList>
       <div className="flex items-center justify-between gap-2 border-t border-border px-3 py-2">
         <span className="text-xs text-muted-foreground">
-          {chosen.length === 0 ? 'Everything the session has' : `${chosen.length} chosen`}
+          {chosen.length === 0 ? t`Everything the session has` : t`${chosen.length} chosen`}
         </span>
         <Button
           type="button"

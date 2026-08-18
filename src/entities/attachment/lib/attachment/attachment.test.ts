@@ -3,7 +3,6 @@ import type { Attached } from './attachment.types'
 import {
   IMAGE_MAX_BYTES,
   alreadyHeld,
-  heavyLine,
   imageTypeOf,
   kindOf,
   nameOf,
@@ -12,6 +11,7 @@ import {
   tooHeavy,
   withPaths,
 } from './attachment'
+import { heavyLine } from '../heavy-line/heavy-line'
 
 function file(overrides: Partial<Attached> = {}): Attached {
   return {

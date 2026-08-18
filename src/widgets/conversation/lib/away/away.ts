@@ -2,6 +2,7 @@ import type { AgentSession } from '@/entities/agent-session'
 import { personaOf } from '@/entities/agent-session'
 import type { Turn } from '@/entities/conversation'
 import type { Away } from './away.types'
+import { t } from '@lingui/core/macro'
 
 export function spokeAtMs(turns: Turn[]): number {
   for (let at = turns.length - 1; at >= 0; at -= 1) {
@@ -25,7 +26,7 @@ export function awayOf(sessions: AgentSession[], spokeAtMs = 0): Away | null {
   const first = out[0]
   if (first !== undefined) {
     return {
-      verb: 'Waiting on',
+      verb: t`Waiting on`,
       count: out.length,
       ...crewLine(first),
       sinceMs: Math.min(...out.map((one) => one.startedAtMs)),
@@ -44,7 +45,7 @@ export function awayOf(sessions: AgentSession[], spokeAtMs = 0): Away | null {
   if (said === undefined) return null
   const who = crewLine(said)
   return {
-    verb: 'Reading',
+    verb: t`Reading`,
     count: back.length,
     ...who,
     doing: '',

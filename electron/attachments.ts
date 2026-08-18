@@ -1,8 +1,8 @@
 import { readFile, stat } from 'node:fs/promises'
 import { basename } from 'node:path'
 import { dialog } from 'electron'
-import { IMAGE_MAX_BYTES, imageTypeOf, kindOf } from '@/entities/attachment'
-import type { Attached } from '@/entities/attachment'
+import { IMAGE_MAX_BYTES, imageTypeOf, kindOf } from '@/entities/attachment/lib/attachment/attachment'
+import type { Attached } from '@/entities/attachment/lib/attachment/attachment.types'
 import { recallProject } from './project-memory'
 import { handle } from './ipc/ipc'
 

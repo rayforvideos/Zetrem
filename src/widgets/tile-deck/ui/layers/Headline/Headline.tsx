@@ -6,6 +6,7 @@ import { modelLabel } from '@/shared/lib/model-label/model-label'
 import { X } from 'lucide-react'
 import { Button } from '@/shared/ui/button'
 import { StateChip } from '../StateChip/StateChip'
+import { t } from '@lingui/core/macro'
 
 type HeadlineProps = {
   session: AgentSession
@@ -37,7 +38,7 @@ export function Headline({ session, withText = true, onDismiss }: HeadlineProps)
             data-dismiss
             onClick={onDismiss}
             aria-label={`Close ${persona ? persona.name : session.label}`}
-            title="Close this tile. The run stays in the sidebar."
+            title={t`Close this tile. The run stays in the sidebar.`}
             className="zt-hit"
             style={dismissStyle}
           >

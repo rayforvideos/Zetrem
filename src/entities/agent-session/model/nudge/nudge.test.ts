@@ -1,4 +1,5 @@
-import { describe, expect, it } from 'vitest'
+import { afterEach, describe, expect, it } from 'vitest'
+import { i18n } from '@lingui/core'
 import { nudgeFor } from './nudge'
 import type { NudgeAt } from './nudge.types'
 
@@ -61,5 +62,27 @@ describe('the notice speaks for the app, not for the conversation', () => {
 
   it('says the same thing however long the work ran', () => {
     expect(nudgeFor(at())?.body).toBe(nudgeFor(at())?.body)
+  })
+})
+
+describe('the notice speaks whichever language the app speaks', () => {
+  afterEach(() => i18n.activate('en'))
+
+  it('says the finished notice in Korean', () => {
+    i18n.activate('ko')
+    expect(nudgeFor(at())).toEqual({
+      reason: 'done',
+      title: '일이 끝났습니다',
+      body: '팀이 일을 마쳤습니다.',
+    })
+  })
+
+  it('puts the tool where Korean wants it, which is not where English does', () => {
+    i18n.activate('ko')
+    expect(nudgeFor(at({ reason: 'permission', tool: 'Bash' }))?.body).toBe('Bash 실행을 기다립니다')
+  })
+
+  it('stays English while the app is English', () => {
+    expect(nudgeFor(at())?.title).toBe('Zetrem is done')
   })
 })

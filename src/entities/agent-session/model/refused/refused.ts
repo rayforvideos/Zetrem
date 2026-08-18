@@ -23,15 +23,3 @@ export function withRefused(held: ModelChoice[], model: ModelChoice): ModelChoic
 export function withoutRefused(held: ModelChoice[], model: ModelChoice): ModelChoice[] {
   return held.filter((one) => one !== model)
 }
-
-export function modelsWith(
-  models: { id: ModelChoice; label: string; hint: string }[],
-  refused: ModelChoice[],
-): { id: ModelChoice; label: string; hint: string }[] {
-  if (refused.length === 0) return models
-  return models.map((model) =>
-    refused.includes(model.id)
-      ? { ...model, hint: 'Your account turned this one down. Try it again if your plan changed.' }
-      : model,
-  )
-}

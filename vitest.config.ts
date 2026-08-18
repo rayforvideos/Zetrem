@@ -1,10 +1,14 @@
 import { resolve } from 'node:path'
 import { defineConfig } from 'vitest/config'
+import react from '@vitejs/plugin-react'
+import { lingui } from '@lingui/vite-plugin'
 
 export default defineConfig({
+  plugins: [react({ babel: { plugins: ['@lingui/babel-plugin-lingui-macro'] } }), lingui()],
   resolve: { alias: { '@': resolve('src') } },
   test: {
     environment: 'node',
+    setupFiles: ['tests/setup-i18n.ts'],
     include: [
       'src/**/*.test.ts',
       'src/**/*.test.tsx',

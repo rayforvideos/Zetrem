@@ -2,8 +2,9 @@ import type { Settings } from './settings.types'
 
 import { SIDEBAR } from '@/shared/config/theme'
 import { isFaceId, tidyUserName } from '@/entities/user'
-import { MODELS, PERMISSION_MODES } from '../run-config/run-config'
 import type { ModelChoice, PermissionMode } from '../run-config/run-config.types'
+
+const TONGUES = ['system', 'en', 'ko']
 
 export const DEFAULT_SETTINGS: Settings = {
   permissionMode: 'ask',
@@ -15,6 +16,7 @@ export const DEFAULT_SETTINGS: Settings = {
   onboarded: false,
   hintsSeen: [],
   knownTools: [],
+  tongue: 'system',
   notify: true,
   knownAgents: [],
   stockAgents: [],
@@ -22,8 +24,8 @@ export const DEFAULT_SETTINGS: Settings = {
   sidebarWidth: SIDEBAR.width,
 }
 
-const MODE_IDS: PermissionMode[] = PERMISSION_MODES.map((mode) => mode.id)
-const MODEL_IDS: ModelChoice[] = MODELS.map((model) => model.id)
+const MODE_IDS: PermissionMode[] = ['ask', 'acceptEdits', 'bypass']
+const MODEL_IDS: ModelChoice[] = ['default', 'fable', 'opus', 'sonnet', 'haiku']
 
 function names(saved: unknown, fallback: string[]): string[] {
   if (!Array.isArray(saved)) return fallback
@@ -56,6 +58,7 @@ export function readSettings(saved: unknown): Settings {
     knownTools: names(source.knownTools, DEFAULT_SETTINGS.knownTools),
     knownAgents: names(source.knownAgents, DEFAULT_SETTINGS.knownAgents),
     stockAgents: names(source.stockAgents, DEFAULT_SETTINGS.stockAgents),
+    tongue: TONGUES.includes(source.tongue as string) ? (source.tongue as Settings['tongue']) : 'system',
     notify: source.notify !== false,
     sidebarOpen: source.sidebarOpen !== false,
     sidebarWidth: sidebarWidth(source.sidebarWidth),

@@ -9,6 +9,7 @@ import type { RunConfig } from '@/entities/agent-session/model/run-config/run-co
 import { ORCHESTRATOR_PROMPT, PERSONA } from '@/entities/agent-session/model/orchestrator/orchestrator'
 import { claudeBin, loginPath } from './login-path/login-path'
 import { exitReason, startTrouble } from './exit-reason/exit-reason'
+import type { ExitReason } from './exit-reason/exit-reason.types'
 import { recallProject } from './project-memory'
 import { handle, on } from './ipc/ipc'
 import { lineReader } from './line-reader/line-reader'
@@ -59,7 +60,7 @@ export function registerAgentHost(): void {
     'agent:start',
     async (event, id: string, prompt: string, config: RunConfig, files: unknown = []) => {
     const sender = event.sender
-    const fail = (reason: string | null): void => {
+    const fail = (reason: ExitReason | null): void => {
       if (typeof id === 'string' && !sender.isDestroyed()) {
         sender.send('agent:event', { id, kind: 'exit', code: -1, reason })
       }

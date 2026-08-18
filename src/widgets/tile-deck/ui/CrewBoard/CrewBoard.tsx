@@ -18,6 +18,7 @@ import { attentionId } from '../../lib/attention/attention'
 import { CallLog } from '../layers/CallLog/CallLog'
 import { Transcript } from '../layers/Transcript/Transcript'
 import { CrewCard } from './CrewCard'
+import { t } from '@lingui/core/macro'
 
 type CrewBoardProps = {
   sessions: AgentSession[]
@@ -116,11 +117,11 @@ export function CrewBoard({
                   {open.transcript.length > 0 ? (
                     <Transcript entries={open.transcript} />
                   ) : (
-                    <p style={quietStyle}>Nothing written yet.</p>
+                    <p style={quietStyle}>{t`Nothing written yet.`}</p>
                   )}
                 </div>
                 <div data-crew-log style={logPaneStyle}>
-                  {open.stream.length > 0 && <span style={logHeadStyle}>What they did</span>}
+                  {open.stream.length > 0 && <span style={logHeadStyle}>{t`What they did`}</span>}
                   <CallLog calls={open.stream} live={open.status === 'working'} nowMs={nowMs} />
                 </div>
               </div>

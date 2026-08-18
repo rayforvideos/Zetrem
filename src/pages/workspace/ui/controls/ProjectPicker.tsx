@@ -3,6 +3,7 @@ import { Folder } from 'lucide-react'
 import { pickProject, projectStore } from '@/entities/project'
 import { Button } from '@/shared/ui/button'
 import { Popover, PopoverContent, PopoverTrigger } from '@/shared/ui/popover'
+import { t } from '@lingui/core/macro'
 
 export function ProjectPicker() {
   const project = useSyncExternalStore(projectStore.subscribe, projectStore.get, projectStore.get)
@@ -18,7 +19,7 @@ export function ProjectPicker() {
   if (project === null) {
     return (
       <Button variant="quiet" size="bare" onClick={choose} className="zt-hit text-xs">
-        Choose project
+        {t`Choose project`}
       </Button>
     )
   }
@@ -48,7 +49,7 @@ export function ProjectPicker() {
             </div>
           </div>
           <Button size="sm" variant="secondary" onClick={choose} className="rounded-full">
-            Change folder…
+            {t`Change folder…`}
           </Button>
         </div>
       </PopoverContent>

@@ -4,6 +4,7 @@ import { cn } from '@/shared/lib/cn'
 import { Button } from '@/shared/ui/button'
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/shared/ui/collapsible'
 import { Markdown } from '@/shared/markdown/Markdown/Markdown'
+import { t } from '@lingui/core/macro'
 
 export function Thinking({ text }: { text: string }) {
   const [open, setOpen] = useState(false)
@@ -16,7 +17,7 @@ export function Thinking({ text }: { text: string }) {
           size="xs"
           className="self-start rounded-full font-mono tracking-wide text-muted-foreground"
         >
-          Thought · {paragraphs} paragraphs
+          {t`Thought · ${paragraphs} paragraphs`}
           <ChevronDown data-icon="inline-end" className={cn(open && 'rotate-180')} />
         </Button>
       </CollapsibleTrigger>

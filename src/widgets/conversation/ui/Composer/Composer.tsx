@@ -11,6 +11,7 @@ import { beganComposing, endedComposing, maySendNow, newComposer, sent } from '.
 import { ChoicePicker } from '../ConversationPane/ChoicePicker'
 import { AttachedRow } from './AttachedRow'
 import type { ComposerProps } from './Composer.types'
+import { t } from '@lingui/core/macro'
 
 export function Composer({
   empty,
@@ -84,7 +85,7 @@ export function Composer({
             variant="ghost"
             size="icon-xs"
             onClick={onClearAddressee}
-            aria-label="Clear"
+            aria-label={t`Clear`}
             className="rounded-full text-muted-foreground"
           >
             <X />
@@ -111,13 +112,13 @@ export function Composer({
             event.preventDefault()
             onTake(dropped)
           }}
-          aria-label={addressee !== null ? `Message for ${addressee}` : 'Message your team'}
+          aria-label={addressee !== null ? t`Message for ${addressee}` : t`Message your team`}
           placeholder={
             addressee !== null
-              ? `Task for ${addressee}`
+              ? t`Task for ${addressee}`
               : empty
-                ? 'What should they work on?'
-                : 'Keep going'
+                ? t`What should they work on?`
+                : t`Keep going`
           }
           rows={1}
           className="max-h-40 min-h-11 py-2.5 text-base"
@@ -129,7 +130,7 @@ export function Composer({
             size="icon-sm"
             variant="ghost"
             onClick={onPick}
-            aria-label="Attach a file"
+            aria-label={t`Attach a file`}
             className="rounded-full text-muted-foreground"
           >
             <Paperclip />
@@ -148,7 +149,7 @@ export function Composer({
             label="Model"
             note={
               sessionLive
-                ? 'The running session keeps its model. This applies from the next one.'
+                ? t`The running session keeps its model. This applies from the next one.`
                 : null
             }
           />
@@ -162,7 +163,7 @@ export function Composer({
                 size="icon-sm"
                 variant="default"
                 onClick={onStop}
-                aria-label="Stop"
+                aria-label={t`Stop`}
                 className="rounded-full"
               >
                 <Square />
@@ -173,7 +174,7 @@ export function Composer({
                 size="icon-sm"
                 variant="default"
                 disabled={draft.trim().length === 0 && files.length === 0}
-                aria-label="Send"
+                aria-label={t`Send`}
                 className="rounded-full"
               >
                 <ArrowUp />

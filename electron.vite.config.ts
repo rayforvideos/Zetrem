@@ -3,6 +3,7 @@ import { defineConfig } from 'electron-vite'
 import type { Plugin } from 'vite'
 import tailwindcss from '@tailwindcss/vite'
 import react from '@vitejs/plugin-react'
+import { lingui } from '@lingui/vite-plugin'
 
 function contentSecurityPolicy(): Plugin {
   return {
@@ -52,7 +53,15 @@ export default defineConfig({
     build: { rollupOptions: { input: resolve('index.html') } },
     resolve: { alias: { '@': resolve('src') } },
     plugins: [
-      react({ babel: { plugins: [['babel-plugin-react-compiler', { target: '19' }]] } }),
+      react({
+        babel: {
+          plugins: [
+            ['babel-plugin-react-compiler', { target: '19' }],
+            '@lingui/babel-plugin-lingui-macro',
+          ],
+        },
+      }),
+      lingui(),
       tailwindcss(),
       contentSecurityPolicy(),
     ],

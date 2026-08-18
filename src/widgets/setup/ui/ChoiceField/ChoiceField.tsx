@@ -1,7 +1,9 @@
+import { read } from '@/shared/lib/say/read'
+import type { Said } from '@/shared/lib/say/read.types'
 import { Field, FieldDescription, FieldLabel } from '@/shared/ui/field'
 import { ToggleGroup, ToggleGroupItem } from '@/shared/ui/toggle-group'
 
-type Option = { id: string; label: string; hint: string }
+type Option = { id: string; label: Said; hint: Said }
 
 type ChoiceFieldProps = {
   label: string
@@ -11,7 +13,8 @@ type ChoiceFieldProps = {
 }
 
 export function hintOf(options: readonly Option[], chosen: string): string {
-  return options.find((option) => option.id === chosen)?.hint ?? ''
+  const found = options.find((option) => option.id === chosen)?.hint
+  return found === undefined ? '' : read(found)
 }
 
 export function ChoiceField({ label, options, chosen, onChoose }: ChoiceFieldProps) {
@@ -33,7 +36,7 @@ export function ChoiceField({ label, options, chosen, onChoose }: ChoiceFieldPro
               value={option.id}
               className="rounded-full border-transparent px-4"
             >
-              {option.label}
+              {read(option.label)}
             </ToggleGroupItem>
           ))}
         </ToggleGroup>

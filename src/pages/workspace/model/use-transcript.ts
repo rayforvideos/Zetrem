@@ -6,6 +6,7 @@ import type { ChatSummary } from '@/entities/conversation'
 import { conversation } from './conversation/conversation'
 import { troubleLine } from '@/shared/lib/ask/ask'
 import { maySave, threadToSave } from './may-save/may-save'
+import { t } from '@lingui/core/macro'
 
 type Chats = {
   chats: ChatSummary[]
@@ -40,7 +41,7 @@ export function useTranscript(project: string | null): Chats {
   async function refresh(): Promise<ChatSummary[]> {
     if (project === null) return []
     const found = await window.desk.listChats(project).catch((cause: unknown) => {
-      conversation.system(troubleLine('Could not list your saved chats', cause))
+      conversation.system(troubleLine(t`Could not list your saved chats`, cause))
       return null
     })
     if (found === null) return []
@@ -133,7 +134,7 @@ export function useTranscript(project: string | null): Chats {
         lastSaved.current = ''
         if (toldSaveTrouble.current) return
         toldSaveTrouble.current = true
-        conversation.system(troubleLine('This chat is not being saved', cause))
+        conversation.system(troubleLine(t`This chat is not being saved`, cause))
       })
   }, [ready, project, openId, turns, conv.status, liveSessionId, probed, resumeId])
 
@@ -155,7 +156,7 @@ export function useTranscript(project: string | null): Chats {
         conversation.restore(saved.turns)
       })
       .catch((cause: unknown) => {
-        conversation.system(troubleLine('Could not open that chat', cause))
+        conversation.system(troubleLine(t`Could not open that chat`, cause))
       })
   }
 
@@ -174,7 +175,7 @@ export function useTranscript(project: string | null): Chats {
       .forgetTranscript(project, id)
       .then(() => refresh())
       .catch((cause: unknown) => {
-        conversation.system(troubleLine('Could not forget that chat', cause))
+        conversation.system(troubleLine(t`Could not forget that chat`, cause))
       })
     if (id === openId) start()
   }

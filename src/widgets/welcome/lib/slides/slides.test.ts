@@ -10,8 +10,8 @@ describe('the welcome is a few slides you can walk either way', () => {
   it('has something to say on every slide', () => {
     expect(SLIDES.length).toBeGreaterThan(2)
     for (const slide of SLIDES) {
-      expect(slide.title.length).toBeGreaterThan(0)
-      expect(slide.body.length).toBeGreaterThan(20)
+      expect(slide.title.message?.length ?? 0).toBeGreaterThan(0)
+      expect(slide.body.message?.length ?? 0).toBeGreaterThan(20)
     }
   })
 

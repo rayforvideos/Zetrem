@@ -1,3 +1,4 @@
+import { t } from '@lingui/core/macro'
 import type { TurnEvent } from './turn.types'
 
 import { retryLine, stoppedLine } from './failure/failure'
@@ -62,8 +63,8 @@ export function fromResult(event: Record<string, unknown>): TurnEvent[] {
   const denials = event.permission_denials
   if (Array.isArray(denials)) {
     for (const denial of denials as Record<string, unknown>[]) {
-      const tool = typeof denial.tool_name === 'string' ? denial.tool_name : 'tool'
-      out.push({ type: 'notice', text: `${tool} was not allowed` })
+      const tool = typeof denial.tool_name === 'string' ? denial.tool_name : t`tool`
+      out.push({ type: 'notice', text: t`${tool} was not allowed` })
     }
   }
   const said = stoppedLine({
@@ -80,8 +81,8 @@ export function fromResult(event: Record<string, unknown>): TurnEvent[] {
 
 export function fromStartupTrouble(event: Record<string, unknown>): TurnEvent[] {
   return [
-    ...troubles(event.mcp_server_errors, 'MCP server'),
-    ...troubles(event.plugin_errors, 'Plugin'),
+    ...troubles(event.mcp_server_errors, t`MCP server`),
+    ...troubles(event.plugin_errors, t`Plugin`),
   ]
 }
 
@@ -90,8 +91,8 @@ function troubles(raw: unknown, kind: string): TurnEvent[] {
   const out: TurnEvent[] = []
   for (const entry of raw as Record<string, unknown>[]) {
     const name = str(entry.name) || str(entry.plugin) || 'one'
-    const why = str(entry.message) || str(entry.type) || 'it could not be loaded'
-    out.push({ type: 'notice', text: `${kind} ${name} did not load: ${why}` })
+    const why = str(entry.message) || str(entry.type) || t`it could not be loaded`
+    out.push({ type: 'notice', text: t`${kind} ${name} did not load: ${why}` })
   }
   return out
 }

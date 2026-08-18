@@ -5,3 +5,6 @@ release/
 .DS_Store
 .idea/
 .playwright-mcp/
+
+# compiled message catalogs, built from the .po files
+src/shared/locales/*/messages.js

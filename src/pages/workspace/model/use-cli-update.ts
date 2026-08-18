@@ -1,3 +1,4 @@
+import { t } from '@lingui/core/macro'
 import { useEffect, useRef, useState } from 'react'
 import { conversation } from './conversation/conversation'
 import { statusStore } from '@/entities/agent-session'
@@ -31,7 +32,7 @@ export function useCliUpdate(cliVersion: string | null): { updating: boolean; st
         conversation.system(output)
         void query()
       })
-      .catch(() => conversation.system('Could not start the update'))
+      .catch(() => conversation.system(t`Could not start the update`))
       .finally(() => setUpdating(false))
   }
 

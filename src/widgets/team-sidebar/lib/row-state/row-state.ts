@@ -1,12 +1,13 @@
 import type { RosterState } from '@/entities/agent-session'
 import type { TeamMember } from '../team/team.types'
 import type { RowState } from './row-state.types'
+import { t } from '@lingui/core/macro'
 
-const SAID: Record<RosterState, string | null> = {
-  waiting: 'Waiting on you',
-  working: null,
-  done: 'Reported back',
-  idle: null,
+// Read at call time, never at import: the locale is not up yet when this module loads.
+function said(state: RosterState): string | null {
+  if (state === 'waiting') return t`Waiting on you`
+  if (state === 'done') return t`Reported back`
+  return null
 }
 
 function over(state: RosterState): boolean {
@@ -21,7 +22,7 @@ export function rowStateOf(member: TeamMember, read: string[]): RowState {
 
   return {
     state,
-    now: settled ? null : (SAID[member.state] ?? member.note),
+    now: settled ? null : (said(member.state) ?? member.note),
     lit: state !== 'idle' || unread,
     open: settled ? null : member.sessionId,
   }

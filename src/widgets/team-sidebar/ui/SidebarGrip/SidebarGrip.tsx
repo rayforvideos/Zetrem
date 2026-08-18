@@ -2,6 +2,7 @@ import { useRef } from 'react'
 import type { PointerEvent as ReactPointerEvent, KeyboardEvent } from 'react'
 import { SIDEBAR } from '@/shared/config/theme'
 import { draggedWidth, nudgedWidth } from '../../lib/sidebar-width/sidebar-width'
+import { t } from '@lingui/core/macro'
 
 type SidebarGripProps = {
   width: number
@@ -46,7 +47,7 @@ export function SidebarGrip({ width, onResize, onResizeEnd }: SidebarGripProps) 
       data-grip
       role="separator"
       aria-orientation="vertical"
-      aria-label="Team board width"
+      aria-label={t`Team board width`}
       aria-valuenow={width}
       aria-valuemin={SIDEBAR.min}
       aria-valuemax={SIDEBAR.max}
@@ -60,7 +61,7 @@ export function SidebarGrip({ width, onResize, onResizeEnd }: SidebarGripProps) 
         onResize(SIDEBAR.width)
         onResizeEnd(SIDEBAR.width)
       }}
-      title="Drag to resize, double-click to reset"
+      title={t`Drag to resize, double-click to reset`}
       className="group/grip absolute inset-y-0 right-0 z-10 flex w-3 cursor-col-resize items-center justify-center focus-visible:outline-none"
     >
       <span className="h-10 w-0.5 rounded-full bg-transparent transition-colors duration-150 group-hover/grip:bg-muted-foreground group-focus-visible/grip:bg-muted-foreground group-active/grip:bg-foreground" />

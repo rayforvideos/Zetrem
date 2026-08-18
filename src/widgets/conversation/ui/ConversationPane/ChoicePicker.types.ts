@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react'
+import type { Said } from '@/shared/lib/say/read.types'
 
-export type Choice = { id: string; label: string; hint: string }
+export type Choice = { id: string; label: Said; hint: Said }
 
 export type ChoicePickerProps = {
   icon?: ReactNode

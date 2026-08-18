@@ -1,23 +1,33 @@
+import { t } from '@lingui/core/macro'
 import type { ToolShape } from '../tool-shape/tool-shape.types'
 
-const FILE_VERBS = { read: 'Reading', write: 'Writing', edit: 'Editing' } as const
+function fileVerb(verb: 'read' | 'write' | 'edit'): string {
+  switch (verb) {
+    case 'read':
+      return t`Reading`
+    case 'write':
+      return t`Writing`
+    default:
+      return t`Editing`
+  }
+}
 
 export function verbOf(shape: ToolShape): string {
   switch (shape.kind) {
     case 'file':
-      return FILE_VERBS[shape.verb]
+      return fileVerb(shape.verb)
     case 'command':
-      return 'Running'
+      return t`Running`
     case 'search':
-      return 'Searching'
+      return t`Searching`
     case 'web':
-      return 'Fetching'
+      return t`Fetching`
     case 'agent':
-      return 'Handing off'
+      return t`Handing off`
     case 'todo':
-      return 'Planning'
+      return t`Planning`
     default:
-      return 'Working'
+      return t`Working`
   }
 }
 

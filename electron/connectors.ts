@@ -1,6 +1,8 @@
-import { readConnectors, refusalOf, tidyName } from '@/entities/connector'
-import type { Connector, ConnectorVerb, NewConnector } from '@/entities/connector'
-import type { PluginRun } from '@/entities/plugin'
+import { readConnectors } from '@/entities/connector/lib/read-connectors/read-connectors'
+import { refusalOf, tidyName } from '@/entities/connector/lib/new-connector/new-connector'
+import type { Connector, ConnectorVerb } from '@/entities/connector/lib/read-connectors/read-connectors.types'
+import type { NewConnector } from '@/entities/connector/lib/new-connector/new-connector.types'
+import type { PluginRun } from '@/entities/plugin/lib/catalog/catalog.types'
 import { runClaude } from './run-claude/run-claude'
 import { recallProject } from './project-memory'
 import { handle } from './ipc/ipc'
@@ -32,7 +34,7 @@ export function registerConnectors(): void {
       const name = named(target)
       const word = typeof verb === 'string' ? VERBS[verb as ConnectorVerb] : undefined
       if (name === null || word === undefined) {
-        return { ok: false, out: 'Zetrem did not understand that request' }
+        return { ok: false, out: 'garbled' }
       }
       return runClaude(['mcp', word, name], ACT_TIMEOUT_MS, await here())
     },
@@ -43,11 +45,11 @@ export function registerConnectors(): void {
     async (_event, draft: unknown, taken: unknown): Promise<PluginRun> => {
       const wanted = draft as NewConnector
       if (typeof wanted?.name !== 'string' || typeof wanted?.url !== 'string') {
-        return { ok: false, out: 'Zetrem did not understand that request' }
+        return { ok: false, out: 'garbled' }
       }
       const held = Array.isArray(taken) ? taken.filter((one): one is string => typeof one === 'string') : []
       const refused = refusalOf(wanted, held)
-      if (refused !== null) return { ok: false, out: refused.why }
+      if (refused !== null) return { ok: false, out: refused.code }
       return runClaude(
         ['mcp', 'add', '--transport', 'http', tidyName(wanted.name), wanted.url.trim()],
         ACT_TIMEOUT_MS,

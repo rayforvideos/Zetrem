@@ -11,11 +11,14 @@ import type { Origin, TeamMember } from '../../lib/team/team.types'
 import type { TeamListProps } from './TeamList.types'
 import { MemberForm } from '../MemberForm/MemberForm'
 import { MemberMenu } from '../MemberMenu/MemberMenu'
+import { msg, t } from '@lingui/core/macro'
+import { i18n } from '@lingui/core'
+import type { MessageDescriptor } from '@lingui/core'
 
-const ORIGIN: Record<Origin, string> = {
-  project: 'This project',
-  user: 'Your account',
-  session: 'Claude Code',
+const ORIGIN: Record<Origin, MessageDescriptor> = {
+  project: msg`This project`,
+  user: msg`Your account`,
+  session: msg`Claude Code`,
 }
 
 export function TeamList({
@@ -63,7 +66,7 @@ export function TeamList({
         onClick={() => setEditing('new')}
         disabled={!canWrite}
         className="min-w-0 justify-start gap-2.5 rounded-xl bg-card px-2 py-1.5 text-left disabled:pointer-events-auto"
-        title={canWrite ? undefined : 'Pick a project first'}
+        title={canWrite ? undefined : t`Pick a project first`}
       >
         <span
           className="flex flex-none items-center justify-center rounded-full border border-border text-muted-foreground"
@@ -71,13 +74,13 @@ export function TeamList({
         >
           <Plus />
         </span>
-        <span className="truncate text-sm font-medium">Add teammate</span>
+        <span className="truncate text-sm font-medium">{t`Add teammate`}</span>
       </Button>
 
       {hint && (
         <FirstHint
-          title="Add your first teammate"
-          body="Write their brief once and the orchestrator can call them from any project."
+          title={t`Add your first teammate`}
+          body={t`Write their brief once and the orchestrator can call them from any project.`}
           onClose={onHintSeen}
         />
       )}
@@ -101,9 +104,9 @@ export function TeamList({
       {members.length === 0 && editing === null && (
         <Empty className="flex-none items-start justify-start gap-2 px-2.5 py-2 text-left md:px-2.5 md:py-2">
           <EmptyHeader className="items-start text-left">
-            <EmptyTitle className="text-sm">No one here yet</EmptyTitle>
+            <EmptyTitle className="text-sm">{t`No one here yet`}</EmptyTitle>
             <EmptyDescription className="text-xs">
-              Create a teammate and they'll show up here.
+              {t`Create a teammate and they'll show up here.`}
             </EmptyDescription>
           </EmptyHeader>
         </Empty>
@@ -118,10 +121,10 @@ export function TeamList({
               size="sm"
               onClick={onRestart}
               className="h-7 rounded-lg border border-border px-2.5 text-xs"
-              title="Stop the running session so the next message starts one that knows them"
+              title={t`Stop the running session so the next message starts one that knows them`}
             >
               <RotateCcw className="size-3.5" />
-              Restart session
+              {t`Restart session`}
             </Button>
           )}
         </div>
@@ -154,8 +157,8 @@ function MemberRow({
   const row = rowStateOf(member, read)
   const mute = sessionKnown && !member.callable
   const why = !member.loaded
-    ? `${ORIGIN[member.origin]}. Joins from the next session.`
-    : 'Not available this session. Unlock it in Settings.'
+    ? t`${i18n._(ORIGIN[member.origin])}. Joins from the next session.`
+    : t`Not available this session. Unlock it in Settings.`
 
   return (
     <div className="group/member relative flex items-center gap-0.5">
@@ -170,7 +173,7 @@ function MemberRow({
           mute ? 'text-muted-foreground' : 'text-foreground',
           row.lit && 'bg-card',
         )}
-        title={row.open !== null ? 'See what they did' : mute ? why : 'Give them a task'}
+        title={row.open !== null ? t`See what they did` : mute ? why : t`Give them a task`}
       >
         <AgentSprite
           subagentType={member.type}

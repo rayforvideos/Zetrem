@@ -51,6 +51,8 @@ function pane(over: Partial<Flat> = {}): string {
       defaults={{
         permissionMode: flat.permissionMode,
         model: flat.model,
+        tongue: 'system' as const,
+        onTongue: () => {},
         notify: flat.notify,
         onNotify: () => {},
         onPermissionMode: () => {},
@@ -161,7 +163,7 @@ describe('SetupPane: everything to settle before starting, on one screen', () =>
     const groups = [...html.matchAll(/<div[^>]*data-slot="toggle-group"[^>]*class="([^"]*)"/g)].map(
       (match) => match[1] as string,
     )
-    expect(groups, '권한과 모델 두 벌이 선다').toHaveLength(2)
+    expect(groups, '언어·권한·모델 세 벌이 선다').toHaveLength(3)
     for (const cls of groups) {
       expect(cls, '내용만큼만 넓어야 한다').toContain('w-fit')
       expect(cls, '칸 전체로 늘어나면 알약 안에 빈 꼬리가 남는다').not.toContain('w-full')

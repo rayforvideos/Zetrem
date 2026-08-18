@@ -1,7 +1,10 @@
 import { useEffect } from 'react'
 import { startBlocker } from '../../lib/start-blocker/start-blocker'
+import { tongueChoices } from '../../lib/tongues/tongues'
 import { MODELS, PERMISSION_MODES } from '@/entities/agent-session'
-import type { ModelChoice, PermissionMode } from '@/entities/agent-session'
+import type { ModelChoice, PermissionMode, Settings } from '@/entities/agent-session'
+import { i18n } from '@lingui/core'
+import { t } from '@lingui/core/macro'
 import { Alert, AlertDescription, AlertTitle } from '@/shared/ui/alert'
 import { Button } from '@/shared/ui/button'
 import { Switch } from '@/shared/ui/switch'
@@ -45,7 +48,7 @@ export function SetupPane({
           <div className="flex flex-col gap-3">
             <Wordmark width={WORDMARK_SIZE.setup} />
             <p className="max-w-[380px] text-sm leading-relaxed break-keep text-muted-foreground">
-              Set a few things and your agents get to work!
+              {t`Set a few things and your agents get to work!`}
             </p>
           </div>
 
@@ -54,39 +57,44 @@ export function SetupPane({
             <YouField name={you.name} face={you.face} onName={you.onName} onFace={you.onFace} />
             <ProjectField project={project} />
             <ChoiceField
-              label="Permissions"
+              label={t`Language`}
+              options={tongueChoices()}
+              chosen={defaults.tongue}
+              onChoose={(id) => defaults.onTongue(id as Settings['tongue'])}
+            />
+            <ChoiceField
+              label={t`Permissions`}
               options={PERMISSION_MODES}
               chosen={defaults.permissionMode}
               onChoose={(id) => defaults.onPermissionMode(id as PermissionMode)}
             />
             <ChoiceField
-              label="Model"
+              label={t`Model`}
               options={MODELS}
               chosen={defaults.model}
               onChoose={(id) => defaults.onModel(id as ModelChoice)}
             />
             <Field orientation="horizontal" className="rounded-2xl bg-card p-4">
               <FieldContent>
-                <FieldLabel htmlFor="notify">Notifications</FieldLabel>
+                <FieldLabel htmlFor="notify">{t`Notifications`}</FieldLabel>
                 <FieldDescription>
-                  Tells you when the work is done or something needs your say-so, and only while
-                  Zetrem is behind another window.
+                  {t`Tells you when the work is done or something needs your say-so, and only while Zetrem is behind another window.`}
                 </FieldDescription>
               </FieldContent>
               <Switch
                 id="notify"
                 checked={defaults.notify}
                 onCheckedChange={defaults.onNotify}
-                aria-label="Notifications"
+                aria-label={t`Notifications`}
               />
             </Field>
             <Field orientation="horizontal" className="rounded-2xl bg-card p-4">
               <FieldContent>
-                <FieldLabel>Plugins</FieldLabel>
+                <FieldLabel>{t`Plugins`}</FieldLabel>
                 <FieldDescription>{plugins.summary}</FieldDescription>
               </FieldContent>
               <Button variant="ghost" onClick={plugins.onOpen} className="rounded-full">
-                Manage
+                {t`Manage`}
               </Button>
             </Field>
           </FieldGroup>
@@ -103,15 +111,15 @@ export function SetupPane({
       <div data-actions className="zt-veil-up flex-none bg-background">
         <div className="mx-auto flex w-full max-w-[560px] flex-wrap items-center justify-end gap-3 py-4">
           {blocker !== null && (
-            <span className="mr-auto text-sm text-muted-foreground">{blocker}</span>
+            <span className="mr-auto text-sm text-muted-foreground">{i18n._(blocker)}</span>
           )}
           {actions.reopened && (
             <Button variant="ghost" onClick={actions.onCancel} className="rounded-full">
-              Cancel
+              {t`Cancel`}
             </Button>
           )}
           <Button onClick={actions.onStart} disabled={!canStart} className="rounded-full">
-            {actions.reopened ? 'Done' : 'Start'}
+            {actions.reopened ? t`Done` : t`Start`}
           </Button>
         </div>
       </div>

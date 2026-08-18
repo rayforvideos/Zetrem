@@ -1,3 +1,4 @@
+import { t } from '@lingui/core/macro'
 import type { AgentDefDraft } from '@/entities/agent-def'
 import { characterOf, isCharacterId } from '@/entities/agent-session'
 import type { CharacterId } from '@/entities/agent-session'
@@ -30,7 +31,7 @@ export function toggled(held: string[], name: string, on: boolean): string[] {
 }
 
 export function toolSummary(chosen: string[], known: string[]): string {
-  if (known.length === 0) return 'Not known yet'
-  if (chosen.length === 0) return 'Everything the session has'
+  if (known.length === 0) return t`Not known yet`
+  if (chosen.length === 0) return t`Everything the session has`
   return `${chosen.length} of ${known.length}`
 }

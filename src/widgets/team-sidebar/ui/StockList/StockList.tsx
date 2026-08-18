@@ -3,13 +3,14 @@ import { personaOf } from '@/entities/agent-session'
 import { AgentSprite } from '@/entities/agent-session/ui/AgentSprite/AgentSprite'
 import { cn } from '@/shared/lib/cn'
 import { Switch } from '@/shared/ui/switch'
+import { t } from '@lingui/core/macro'
 
 
 export function StockList({ stock, on, avatar, onChange }: StockListProps) {
   if (stock.length === 0) {
     return (
       <p data-stock-empty className="px-2 text-xs leading-snug text-muted-foreground">
-        Reading which agents Claude Code brings. They will be listed here.
+        {t`Reading which agents Claude Code brings. They will be listed here.`}
       </p>
     )
   }
@@ -28,8 +29,8 @@ export function StockList({ stock, on, avatar, onChange }: StockListProps) {
             )}
             title={
               callable
-                ? `${name} can be called this session`
-                : `Turn on to let the team call ${name}`
+                ? t`${name} can be called this session`
+                : t`Turn on to let the team call ${name}`
             }
           >
             <AgentSprite

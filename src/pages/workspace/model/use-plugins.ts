@@ -7,6 +7,7 @@ import type {
   PluginVerb,
 } from '@/entities/plugin'
 import { outcomeLine, useAsk } from '@/shared/lib/ask/ask'
+import { t } from '@lingui/core/macro'
 
 type Shelf = {
   open: boolean
@@ -38,8 +39,8 @@ export function usePlugins(wanted: boolean): Shelf {
   function reload(): void {
     setLoading(true)
     void Promise.all([
-      ask('catalog', 'Could not read the plugin shelf', () => window.desk.pluginCatalog()),
-      ask('marketplaces', 'Could not read your marketplaces', () => window.desk.marketplaces()),
+      ask('catalog', t`Could not read the plugin shelf`, () => window.desk.pluginCatalog()),
+      ask('marketplaces', t`Could not read your marketplaces`, () => window.desk.marketplaces()),
     ])
       .then(([found, markets]) => {
         setCatalog(found ?? EMPTY)
@@ -52,7 +53,7 @@ export function usePlugins(wanted: boolean): Shelf {
     if (asked.current && !again) return
     asked.current = true
     setBrowsing(true)
-    void ask('available', 'Could not read what is available', () => window.desk.pluginAvailable())
+    void ask('available', t`Could not read what is available`, () => window.desk.pluginAvailable())
       .then((found) => setAvailable(found?.available ?? []))
       .finally(() => setBrowsing(false))
   }
@@ -62,7 +63,7 @@ export function usePlugins(wanted: boolean): Shelf {
   }, [open, wanted])
 
   function act(verb: PluginVerb, target: string, scope?: PluginScope): void {
-    void ask(target, `Could not ${said(verb)} ${target}`, () =>
+    void ask(target, t`Could not ${said(verb)} ${target}`, () =>
       window.desk.pluginAct(verb, target, scope),
     ).then((result) => {
       if (result === null) return
@@ -97,20 +98,20 @@ function said(verb: PluginVerb): string {
 function doneLine(verb: PluginVerb, target: string): string {
   switch (verb) {
     case 'install':
-      return `${target} installed. Restart the session to load it.`
+      return t`${target} installed. Restart the session to load it.`
     case 'uninstall':
-      return `${target} removed`
+      return t`${target} removed`
     case 'enable':
-      return `${target} on. Restart the session to load it.`
+      return t`${target} on. Restart the session to load it.`
     case 'disable':
-      return `${target} off. The running session keeps it until it ends.`
+      return t`${target} off. The running session keeps it until it ends.`
     case 'update':
-      return `${target} updated. Restart the session to load it.`
+      return t`${target} updated. Restart the session to load it.`
     case 'market-add':
-      return `${target} added`
+      return t`${target} added`
     case 'market-remove':
-      return `${target} removed`
+      return t`${target} removed`
     case 'market-update':
-      return `${target} refreshed`
+      return t`${target} refreshed`
   }
 }

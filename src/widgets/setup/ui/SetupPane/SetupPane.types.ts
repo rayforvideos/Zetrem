@@ -22,6 +22,8 @@ export type Project = {
 export type Defaults = {
   permissionMode: PermissionMode
   model: ModelChoice
+  tongue: 'system' | 'en' | 'ko'
+  onTongue(next: 'system' | 'en' | 'ko'): void
   notify: boolean
   onNotify(on: boolean): void
   onPermissionMode(mode: PermissionMode): void

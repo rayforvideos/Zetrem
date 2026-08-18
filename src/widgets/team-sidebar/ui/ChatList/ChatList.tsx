@@ -6,6 +6,9 @@ import { Button } from '@/shared/ui/button'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/shared/ui/dropdown-menu'
 import { groupChats } from '../../lib/chat-groups/chat-groups'
 import { whenLabel } from '../../lib/when/when'
+import { i18n } from '@lingui/core'
+import { t } from '@lingui/core/macro'
+import { named } from '../../lib/named/named'
 
 
 export function ChatList({ chats, openId, nowMs, onOpen, onStart, onRemove }: ChatListProps) {
@@ -16,16 +19,16 @@ export function ChatList({ chats, openId, nowMs, onOpen, onStart, onRemove }: Ch
         size="bare"
         onClick={onStart}
         className="mb-1 h-9 w-full min-w-0 justify-start gap-2 rounded-lg px-2 text-left text-sm font-medium"
-        title="Start a conversation from scratch"
+        title={t`Start a conversation from scratch`}
       >
         <SquarePen className="size-4 flex-none text-muted-foreground" />
-        <span className="truncate">New chat</span>
+        <span className="truncate">{t`New chat`}</span>
       </Button>
 
       {groupChats(chats, nowMs).map((group) => (
-        <div key={group.label} className="flex flex-col">
+        <div key={group.label.message} className="flex flex-col">
           <div className="mt-3 mb-0.5 px-2 text-xs tracking-wide text-muted-foreground">
-            {group.label}
+            {i18n._(group.label)}
           </div>
           {group.chats.map((chat) => (
             <Row
@@ -68,9 +71,9 @@ function Row({
           'h-8 w-full min-w-0 justify-start rounded-lg px-2 text-left text-sm',
           open ? 'bg-card text-foreground' : 'text-muted-foreground hover:bg-card/60',
         )}
-        title={`${chat.title} · ${whenLabel(chat.savedAtMs, nowMs)}`}
+        title={`${named(chat.title)} · ${whenLabel(chat.savedAtMs, nowMs)}`}
       >
-        <span className="truncate">{chat.title}</span>
+        <span className="truncate">{named(chat.title)}</span>
       </Button>
       <div
         className={cn(
@@ -84,7 +87,7 @@ function Row({
             <Button
               variant="ghost"
               size="icon-xs"
-              aria-label={`More for ${chat.title}`}
+              aria-label={t`More for ${named(chat.title)}`}
               className="rounded-md text-muted-foreground"
             >
               <MoreHorizontal />
@@ -92,7 +95,7 @@ function Row({
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-44">
             <DropdownMenuItem variant="destructive" onSelect={() => onRemove(chat.id)}>
-              Delete chat
+              {t`Delete chat`}
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

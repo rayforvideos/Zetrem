@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { MoreHorizontal } from 'lucide-react'
 import { Button } from '@/shared/ui/button'
+import { t } from '@lingui/core/macro'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -37,7 +38,7 @@ export function MemberMenu({
           <Button
             variant="ghost"
             size="icon-xs"
-            aria-label={`More for ${name}`}
+            aria-label={t`More for ${name}`}
             className="rounded-md text-muted-foreground opacity-0 group-hover/member:opacity-100 focus-visible:opacity-100 data-[state=open]:opacity-100"
           >
             <MoreHorizontal />
@@ -45,9 +46,9 @@ export function MemberMenu({
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-44">
           <DropdownMenuGroup>
-            <DropdownMenuItem onSelect={onEdit}>Edit</DropdownMenuItem>
+            <DropdownMenuItem onSelect={onEdit}>{t`Edit`}</DropdownMenuItem>
             <DropdownMenuItem variant="destructive" onSelect={() => setAsking(true)}>
-              Remove from team
+              {t`Remove from team`}
             </DropdownMenuItem>
           </DropdownMenuGroup>
         </DropdownMenuContent>
@@ -56,15 +57,14 @@ export function MemberMenu({
       <AlertDialog open={asking} onOpenChange={setAsking}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Remove {name}?</AlertDialogTitle>
+            <AlertDialogTitle>{t`Remove ${name}?`}</AlertDialogTitle>
             <AlertDialogDescription>
-              Their file is deleted and they leave the roster. A session already running keeps them
-              until it ends. This cannot be undone.
+              {t`Their file is deleted and they leave the roster. A session already running keeps them until it ends. This cannot be undone.`}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={onRelease}>Remove</AlertDialogAction>
+            <AlertDialogCancel>{t`Cancel`}</AlertDialogCancel>
+            <AlertDialogAction onClick={onRelease}>{t`Remove`}</AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>

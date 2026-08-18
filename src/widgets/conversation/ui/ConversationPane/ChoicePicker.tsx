@@ -1,5 +1,6 @@
 import { ChevronDown } from 'lucide-react'
 import { cn } from '@/shared/lib/cn'
+import { read } from '@/shared/lib/say/read'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -27,10 +28,10 @@ export function ChoicePicker({
           size="xs"
           className="rounded-full text-muted-foreground hover:text-foreground"
           aria-label={label}
-          title={current?.hint}
+          title={current === undefined ? undefined : read(current.hint)}
         >
           {icon}
-          {current?.label ?? label}
+          {current === undefined ? label : read(current.label)}
           <ChevronDown />
         </InputGroupButton>
       </DropdownMenuTrigger>
@@ -40,9 +41,9 @@ export function ChoicePicker({
           {options.map((option) => (
             <DropdownMenuItem key={option.id} onSelect={() => onSelect(option.id)}>
               <span className={cn(option.id === selected ? '' : 'text-muted-foreground')}>
-                <span className="block text-sm">{option.label}</span>
+                <span className="block text-sm">{read(option.label)}</span>
                 <span className="block text-xs leading-snug text-muted-foreground">
-                  {option.hint}
+                  {read(option.hint)}
                 </span>
               </span>
             </DropdownMenuItem>

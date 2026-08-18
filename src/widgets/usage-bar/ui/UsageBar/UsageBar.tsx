@@ -9,6 +9,7 @@ import { cn } from '@/shared/lib/cn'
 import { USAGE_BAR } from '@/shared/config/theme'
 import { cells } from '@/widgets/status-bar'
 import { chatLine, marksOfStatus, quietLine, spendLine } from '../../lib/strip/strip'
+import { t } from '@lingui/core/macro'
 
 type UsageBarProps = {
   status: StatusState
@@ -100,7 +101,7 @@ export function UsageBar({ status, connectors, checked, nowMs, open, details, on
             variant="quiet"
             size="bare"
             aria-expanded={open}
-            aria-label="Session details"
+            aria-label={t`Session details`}
             className="zt-hit flex-none"
           >
             {open ? <ChevronDown className="size-3" /> : <ChevronUp className="size-3" />}

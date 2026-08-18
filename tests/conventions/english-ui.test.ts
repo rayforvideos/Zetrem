@@ -5,6 +5,7 @@ import { describe, expect, it } from 'vitest'
 const HANGUL = /[가-힣]/
 const LOCALE = /toLocale(?:String|DateString|TimeString)\(\s*'([a-zA-Z-]+)'/g
 const ENGLISH_LOCALES = new Set(['en-US', 'en-CA', 'en-GB'])
+const BOOK = join('src', 'shared', 'lib', 'say')
 
 function sources(dir: string): string[] {
   return readdirSync(dir, { withFileTypes: true }).flatMap((one) => {
@@ -17,24 +18,37 @@ function sources(dir: string): string[] {
 
 const FILES = [...sources('src'), ...sources('electron')]
 
-describe('the app speaks English, whatever language the conversation is in', () => {
-  it('writes no Korean into anything that ships', () => {
+describe('Korean lives in the dictionary, not scattered through the app', () => {
+  it('keeps Hangul out of every file but the book it is written in', () => {
     const found = FILES.filter((path) => {
+      if (path.startsWith(BOOK)) return false
       const body = readFileSync(path, 'utf8')
       return body
         .split('\n')
-        .some((line) => HANGUL.test(line) && !line.includes('가-힣'))
+        .some((line) => HANGUL.test(line) && !line.includes('가-힣') && !line.includes("'한국어'"))
     })
-    expect(found, '제품 문구는 영어다. 한국어는 대화와 테스트에만 쓴다').toEqual([])
+    expect(found, '한국어는 사전에 모아 둔다. 흩어지면 어느 쪽이 진짜인지 알 수 없다').toEqual([])
   })
 
-  it('formats every number and date in an English locale', () => {
+  it('writes the English line, never a key nobody can read', () => {
+    const invented = FILES.flatMap((path) =>
+      [...readFileSync(path, 'utf8').matchAll(/\bt\('([a-z]+(?:[._][a-z]+)+)'\)/g)].map(
+        ([, key]) => `${path}: ${key}`,
+      ),
+    )
+    expect(invented, "t('sidebar.builtins') 같은 키를 만들지 않는다").toEqual([])
+  })
+})
+
+describe('numbers and dates follow the language being spoken', () => {
+  it('hardcodes no locale but the English default', () => {
     const wrong: string[] = []
     for (const path of FILES) {
+      if (path.startsWith(BOOK)) continue
       for (const [, locale] of readFileSync(path, 'utf8').matchAll(LOCALE)) {
         if (locale !== undefined && !ENGLISH_LOCALES.has(locale)) wrong.push(`${path}: ${locale}`)
       }
     }
-    expect(wrong, '한 곳만 다른 로케일이면 화면에서 자릿수가 어긋난다').toEqual([])
+    expect(wrong, '로케일은 say 가 정한다').toEqual([])
   })
 })

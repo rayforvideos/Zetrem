@@ -1,6 +1,7 @@
+import type { MessageDescriptor } from '@lingui/core'
 import type { ChatSummary } from '@/entities/conversation'
 
 export type ChatGroup = {
-  label: string
+  label: MessageDescriptor
   chats: ChatSummary[]
 }

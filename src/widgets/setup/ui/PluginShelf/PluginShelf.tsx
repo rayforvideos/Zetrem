@@ -28,13 +28,17 @@ import type {
 } from '@/entities/connector'
 import { ConnectorMark } from '../ConnectorMark/ConnectorMark'
 import { AddConnector } from '../AddConnector/AddConnector'
+import { t } from '@lingui/core/macro'
+import { i18n } from '@lingui/core'
+import { msg } from '@lingui/core/macro'
+import type { MessageDescriptor } from '@lingui/core'
 
-const CONNECTOR_STATE: Record<ConnectorState, string> = {
-  connected: 'Connected',
-  'needs-auth': 'Needs signing in',
-  unapproved: 'Waiting for your approval in the CLI',
-  failed: 'Could not connect',
-  unknown: 'Unknown',
+const CONNECTOR_STATE: Record<ConnectorState, MessageDescriptor> = {
+  connected: msg`Connected`,
+  'needs-auth': msg`Needs signing in`,
+  unapproved: msg`Waiting for your approval in the CLI`,
+  failed: msg`Could not connect`,
+  unknown: msg`Unknown`,
 }
 
 type PluginShelfProps = {
@@ -86,9 +90,9 @@ export function PluginShelf({
         className="flex h-[min(86vh,720px)] flex-col gap-0 overflow-hidden p-0 sm:max-w-2xl"
       >
         <DialogHeader className="flex-none border-b border-border px-6 py-4 text-left">
-          <DialogTitle className="text-base">What the session brings</DialogTitle>
+          <DialogTitle className="text-base">{t`What the session brings`}</DialogTitle>
           <DialogDescription>
-            Plugins and connectors your team can reach. Restart the session to load a change.
+            {t`Plugins and connectors your team can reach. Restart the session to load a change.`}
           </DialogDescription>
         </DialogHeader>
 
@@ -98,15 +102,15 @@ export function PluginShelf({
           className="flex min-h-0 flex-1 flex-col gap-0"
         >
           <TabsList className="mx-6 mt-4 w-fit">
-            <TabsTrigger value="installed">Installed · {here.length}</TabsTrigger>
-            <TabsTrigger value="browse">Browse</TabsTrigger>
-            <TabsTrigger value="sources">Sources · {marketplaces.length}</TabsTrigger>
-            <TabsTrigger value="connectors">Connectors · {connectors.length}</TabsTrigger>
+            <TabsTrigger value="installed">{t`Installed · ${here.length}`}</TabsTrigger>
+            <TabsTrigger value="browse">{t`Browse`}</TabsTrigger>
+            <TabsTrigger value="sources">{t`Sources · ${marketplaces.length}`}</TabsTrigger>
+            <TabsTrigger value="connectors">{t`Connectors · ${connectors.length}`}</TabsTrigger>
           </TabsList>
 
           <div ref={body} className="zt-scroll zt-fade-y min-h-0 flex-1 overflow-y-auto px-4 py-4">
             <TabsContent value="installed" className="flex flex-col gap-5">
-              {here.length === 0 && <Quiet>Nothing installed yet.</Quiet>}
+              {here.length === 0 && <Quiet>{t`Nothing installed yet.`}</Quiet>}
               {groups.map((group) => (
                 <section key={group.key} className="flex flex-col gap-1.5">
                   {group.titled && (
@@ -130,7 +134,7 @@ export function PluginShelf({
                   <Slot width="w-9">
                     {removableHere(plugin.scope, plugin.projectPath, project) && (
                       <Quietly
-                        label="Remove"
+                        label={t`Remove`}
                         icon={<Trash2 />}
                         onClick={() => onAct('uninstall', plugin.id, plugin.scope)}
                       />
@@ -175,7 +179,7 @@ export function PluginShelf({
                 >
                   <Quietly label="Refresh" onClick={() => onAct('market-update', market.name)} />
                   <Quietly
-                    label="Remove"
+                    label={t`Remove`}
                     icon={<Trash2 />}
                     onClick={() => onAct('market-remove', market.name)}
                   />
@@ -187,7 +191,7 @@ export function PluginShelf({
             <TabsContent value="connectors" className="flex flex-col gap-5">
               {connectors.length === 0 && (
                 <p className="px-2 py-2 text-xs text-muted-foreground">
-                  No connectors yet. Add one below, or bring over what Claude Desktop already has.
+                  {t`No connectors yet. Add one below, or bring over what Claude Desktop already has.`}
                 </p>
               )}
               {wires.map((group) => (
@@ -200,7 +204,7 @@ export function PluginShelf({
                 <Row
                   key={connector.name}
                   title={shortName(connector.name)}
-                  note={[CONNECTOR_STATE[connector.state], connector.where]
+                  note={[i18n._(CONNECTOR_STATE[connector.state]), connector.where]
                     .filter(Boolean)
                     .join(' · ')}
                   busy={busy === connector.name}
@@ -209,15 +213,15 @@ export function PluginShelf({
                   {canSignIn(connector) &&
                     (connector.state === 'connected' ? (
                       <Quietly
-                        label="Sign out"
+                        label={t`Sign out`}
                         onClick={() => onConnector('logout', connector.name)}
                       />
                     ) : (
-                      <Quietly label="Sign in" onClick={() => onConnector('login', connector.name)} />
+                      <Quietly label={t`Sign in`} onClick={() => onConnector('login', connector.name)} />
                     ))}
                   {removableConnector(connector.name) && (
                     <Quietly
-                      label="Remove"
+                      label={t`Remove`}
                       icon={<Trash2 />}
                       onClick={() => onConnector('remove', connector.name)}
                     />
@@ -283,19 +287,19 @@ function Browse({
         <Input
           value={query}
           onChange={(event) => setQuery(event.target.value)}
-          placeholder={`Search ${pool.length} plugins`}
-          aria-label="Search plugins"
+          placeholder={t`Search ${pool.length} plugins`}
+          aria-label={t`Search plugins`}
           autoFocus
           className="h-9 border-0 bg-transparent px-0 shadow-none focus-visible:ring-0 dark:bg-transparent"
         />
       </div>
 
-      {loading && <Quiet>Reading the catalog…</Quiet>}
+      {loading && <Quiet>{t`Reading the catalog…`}</Quiet>}
       {!loading && hits.length === 0 && needle.length > 0 && (
         <Quiet>Nothing matches “{needle}”.</Quiet>
       )}
       {!loading && pool.length === 0 && needle.length === 0 && (
-        <Quiet>Nothing left to add. Every plugin your sources offer is installed.</Quiet>
+        <Quiet>{t`Nothing left to add. Every plugin your sources offer is installed.`}</Quiet>
       )}
 
       <div className="-mx-2 flex flex-col gap-0.5 rounded-xl bg-card/50 px-2 py-1.5 empty:hidden">
@@ -331,7 +335,7 @@ function AddSource({ onAdd }: { onAdd(source: string): void }) {
         value={source}
         onChange={(event) => setSource(event.target.value)}
         placeholder="owner/repo, a URL, or a folder"
-        aria-label="Add a marketplace"
+        aria-label={t`Add a marketplace`}
         className="h-8 rounded-lg text-sm"
       />
       <Button type="submit" size="sm" variant="ghost" className="flex-none rounded-lg">
@@ -358,8 +362,8 @@ function GroupName({
   note,
 }: {
   kind: GroupKind
-  title: string
-  note: string | null
+  title: MessageDescriptor
+  note: MessageDescriptor | null
 }) {
   return (
     <div className="flex flex-col gap-0.5 px-2">
@@ -367,10 +371,10 @@ function GroupName({
         <span className="flex-none text-muted-foreground [&_svg]:size-3.5">
           {GROUP_MARK[kind]}
         </span>
-        {title}
+        {i18n._(title)}
       </span>
       {note !== null && (
-        <span className="pl-[22px] text-xs leading-snug text-muted-foreground/70">{note}</span>
+        <span className="pl-[22px] text-xs leading-snug text-muted-foreground/70">{i18n._(note)}</span>
       )}
     </div>
   )

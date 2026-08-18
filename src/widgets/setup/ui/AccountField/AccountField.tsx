@@ -10,9 +10,11 @@ import {
   AlertDialogTrigger,
 } from '@/shared/ui/alert-dialog'
 import { Button } from '@/shared/ui/button'
+import { t } from '@lingui/core/macro'
+import { Trans } from '@lingui/react/macro'
 import { Field, FieldDescription, FieldLabel } from '@/shared/ui/field'
 import { Spinner } from '@/shared/ui/spinner'
-import { SIGN_OUT_TITLE, signOutHint, signOutWarning } from '../../lib/sign-out-warning/sign-out-warning'
+import { signOutHint, signOutTitle, signOutWarning } from '../../lib/sign-out-warning/sign-out-warning'
 import type { Account } from '../SetupPane/SetupPane.types'
 
 export function AccountField({ account }: { account: Account }) {
@@ -20,7 +22,7 @@ export function AccountField({ account }: { account: Account }) {
 
   return (
     <Field>
-      <FieldLabel className="text-muted-foreground">Account</FieldLabel>
+      <FieldLabel className="text-muted-foreground">{t`Account`}</FieldLabel>
       {auth?.state === 'cli-missing' ? (
         <FieldDescription className="text-foreground">
           <code className="font-mono">claude</code> command not found. Install it, then reopen
@@ -44,19 +46,19 @@ export function AccountField({ account }: { account: Account }) {
                   className="rounded-full text-muted-foreground"
                 >
                   {account.signingOut && <Spinner data-icon="inline-start" />}
-                  {account.signingOut ? 'Signing out…' : 'Sign out'}
+                  {account.signingOut ? t`Signing out…` : t`Sign out`}
                 </Button>
               </AlertDialogTrigger>
               <AlertDialogContent data-sign-out-confirm>
                 <AlertDialogHeader>
-                  <AlertDialogTitle>{SIGN_OUT_TITLE}</AlertDialogTitle>
+                  <AlertDialogTitle>{signOutTitle()}</AlertDialogTitle>
                   <AlertDialogDescription>
                     {signOutWarning(account.sessionLive)}
                   </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
-                  <AlertDialogCancel>Stay signed in</AlertDialogCancel>
-                  <AlertDialogAction onClick={account.onSignOut}>Sign out</AlertDialogAction>
+                  <AlertDialogCancel>{t`Stay signed in`}</AlertDialogCancel>
+                  <AlertDialogAction onClick={account.onSignOut}>{t`Sign out`}</AlertDialogAction>
                 </AlertDialogFooter>
               </AlertDialogContent>
             </AlertDialog>
@@ -74,15 +76,17 @@ export function AccountField({ account }: { account: Account }) {
             className="rounded-full"
           >
             {account.signingIn && <Spinner data-icon="inline-start" />}
-            {account.signingIn ? 'Signing in through your browser…' : 'Sign in with Anthropic'}
+            {account.signingIn ? t`Signing in through your browser…` : t`Sign in with Anthropic`}
           </Button>
           {account.note !== '' && (
             <FieldDescription className="w-full break-all">
-              If the browser did not open,{' '}
-              <a href={account.note} data-selectable className="underline underline-offset-2">
-                open this link
-              </a>
-              .
+              <Trans>
+                If the browser did not open,{' '}
+                <a href={account.note} data-selectable className="underline underline-offset-2">
+                  open this link
+                </a>
+                .
+              </Trans>
             </FieldDescription>
           )}
         </div>

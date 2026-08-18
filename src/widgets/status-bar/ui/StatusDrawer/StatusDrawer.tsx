@@ -6,6 +6,7 @@ import { shortName } from '@/entities/connector'
 import type { Connector } from '@/entities/connector'
 import { useScrollState } from '@/shared/lib/scroll-state/use-scroll-state'
 import { reachable } from '../../lib/format/format'
+import { t } from '@lingui/core/macro'
 
 type StatusDrawerProps = {
   appVersion: string | null
@@ -83,7 +84,7 @@ export function StatusDrawer({
   return (
     <div data-status-drawer className="flex max-h-[min(58vh,560px)] min-h-0 flex-col">
       <div className="flex-none px-4 pt-3 pb-2">
-        <span className="text-xs tracking-[0.08em] text-muted-foreground">This session</span>
+        <span className="text-xs tracking-[0.08em] text-muted-foreground">{t`This session`}</span>
       </div>
 
       <div
@@ -93,24 +94,24 @@ export function StatusDrawer({
       >
         {(session !== null || hasRun) && (
           <Card>
-            {session && known(session.cwd) && <Row label="Folder">{session.cwd}</Row>}
-            {session && <Row label="Model">{session.model}</Row>}
+            {session && known(session.cwd) && <Row label={t`Folder`}>{session.cwd}</Row>}
+            {session && <Row label={t`Model`}>{session.model}</Row>}
             {session && loud(session.permissionMode) && (
-              <Row label="Permission">{session.permissionMode}</Row>
+              <Row label={t`Permission`}>{session.permissionMode}</Row>
             )}
             {hasRun && (
-              <Row label="Context">
+              <Row label={t`Context`}>
                 {n(context.used)}
                 {context.window ? ` / ${n(context.window)}` : ' (window unknown)'}
               </Row>
             )}
-            {hasRun && <Row label="Cost">${cost.usd.toFixed(2)}</Row>}
+            {hasRun && <Row label={t`Cost`}>${cost.usd.toFixed(2)}</Row>}
           </Card>
         )}
 
         {(wired.length > 0 || !checked) && (
           <Part
-            title="Connectors"
+            title={t`Connectors`}
             aside={
               <Button
                 variant="quiet"
@@ -119,7 +120,7 @@ export function StatusDrawer({
                 disabled={checking}
                 className="text-xs"
               >
-                {checking ? 'Checking…' : 'Recheck'}
+                {checking ? t`Checking…` : t`Recheck`}
               </Button>
             }
           >
@@ -130,10 +131,10 @@ export function StatusDrawer({
             ))}
             <div className="font-mono text-xs text-muted-foreground tabular-nums">
               {!checked
-                ? 'Checking…'
+                ? t`Checking…`
                 : trouble.length === 0
-                  ? `All ${n(reached)} connected`
-                  : `${n(reached)} of ${n(wired.length)} connected`}
+                  ? t`All ${n(reached)} connected`
+                  : t`${n(reached)} of ${n(wired.length)} connected`}
             </div>
           </Part>
         )}
@@ -151,7 +152,7 @@ export function StatusDrawer({
             {stale &&
               (byHand === null ? (
                 <Button size="sm" variant="outline" onClick={onUpdate} disabled={updating}>
-                  {updating ? 'Updating…' : 'Update'}
+                  {updating ? t`Updating…` : t`Update`}
                 </Button>
               ) : (
                 <code className="rounded-md bg-muted px-2 py-1 text-xs select-all">{byHand}</code>
@@ -166,15 +167,15 @@ export function StatusDrawer({
 function stateLabel(status: string): string {
   switch (status) {
     case 'needs-auth':
-      return 'Needs auth'
+      return t`Needs auth`
     case 'pending':
-      return 'Connecting'
+      return t`Connecting`
     case 'unapproved':
-      return 'Waiting for approval'
+      return t`Waiting for approval`
     case 'failed':
-      return 'Failed'
+      return t`Failed`
     case 'unknown':
-      return 'Unknown'
+      return t`Unknown`
     default:
       return status
   }

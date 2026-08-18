@@ -1,5 +1,5 @@
 import { spawn } from 'node:child_process'
-import type { PluginRun } from '@/entities/plugin'
+import type { PluginRun } from '@/entities/plugin/lib/catalog/catalog.types'
 import { agentEnv } from '@/shared/lib/shell-env/shell-env'
 import { claudeBin, loginPath } from '../login-path/login-path'
 

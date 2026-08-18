@@ -19,14 +19,20 @@
     "package": "electron-vite build && electron-builder --config electron-builder.config.cjs",
     "package:mac": "electron-vite build && electron-builder --mac --config electron-builder.config.cjs",
     "package:win": "electron-vite build && electron-builder --win --config electron-builder.config.cjs",
-    "test:contract": "vitest run --config vitest.contract.config.ts"
+    "test:contract": "vitest run --config vitest.contract.config.ts",
+    "i18n:extract": "lingui extract",
+    "i18n:compile": "lingui compile"
   },
   "devDependencies": {
+    "@lingui/babel-plugin-lingui-macro": "^5.9.5",
+    "@lingui/cli": "^5.9.5",
+    "@lingui/vite-plugin": "^5.9.5",
     "@tailwindcss/vite": "^4.3.3",
     "@types/node": "26.2.0",
     "@types/react": "19.2.18",
     "@types/react-dom": "19.2.4",
     "@vitejs/plugin-react": "5.2.0",
+    "babel-plugin-macros": "^3.1.0",
     "babel-plugin-react-compiler": "^1.0.0",
     "electron": "43.4.0",
     "electron-builder": "26.15.3",
@@ -39,6 +45,8 @@
     "vitest": "4.1.10"
   },
   "dependencies": {
+    "@lingui/core": "^5.9.5",
+    "@lingui/react": "^5.9.5",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cmdk": "^1.1.1",

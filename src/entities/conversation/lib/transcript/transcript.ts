@@ -5,7 +5,8 @@ const TURN_CAP = 200
 const OUTPUT_CAP = 4000
 const TITLE_CAP = 60
 
-export const UNTITLED = 'New chat'
+// An untitled chat stays empty here. Naming it is the screen's job.
+export const UNTITLED = ''
 
 const CHAT_ID = /^chat-[0-9a-z]{1,32}-[0-9a-z]{1,16}$/
 

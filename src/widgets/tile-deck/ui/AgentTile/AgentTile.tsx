@@ -7,6 +7,7 @@ import { Gauge } from '../layers/Gauge/Gauge'
 import { Headline } from '../layers/Headline/Headline'
 import { CallLog } from '../layers/CallLog/CallLog'
 import { Transcript } from '../layers/Transcript/Transcript'
+import { t } from '@lingui/core/macro'
 
 type AgentTileProps = {
   session: AgentSession
@@ -73,7 +74,7 @@ export function AgentTile({
                   )}
                 </div>
                 <div data-log style={logPaneStyle}>
-                  {session.stream.length > 0 && <span style={logHeadStyle}>What they did</span>}
+                  {session.stream.length > 0 && <span style={logHeadStyle}>{t`What they did`}</span>}
                   {live && now === null && (session.doing ?? '').length > 0 && (
                     <div data-doing style={doingStyle}>
                       {session.doing}

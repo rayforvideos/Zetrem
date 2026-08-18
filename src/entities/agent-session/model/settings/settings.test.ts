@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { SIDEBAR } from '@/shared/config/theme'
-import { MODELS, PERMISSION_MODES } from '../run-config/run-config'
+import { MODELS, PERMISSION_MODES } from '../choices/choices'
 import { DEFAULT_SETTINGS, readSettings } from './settings'
 
 describe('readSettings: reading back what was chosen', () => {
@@ -20,6 +20,7 @@ describe('readSettings: reading back what was chosen', () => {
       knownTools: ['Read', 'Bash'],
       knownAgents: ['Explore', 'Ray'],
       stockAgents: ['Explore'],
+      tongue: 'ko',
       notify: false,
       sidebarOpen: false,
       sidebarWidth: 300,
@@ -137,5 +138,21 @@ describe('being told when the work is done', () => {
   it('reads anything that is not a plain false as on', () => {
     expect(readSettings({ notify: 'yes' }).notify).toBe(true)
     expect(readSettings({}).notify).toBe(true)
+  })
+})
+
+describe('which language the app speaks', () => {
+  it('follows the machine until told otherwise', () => {
+    expect(readSettings(null).tongue).toBe('system')
+  })
+
+  it('keeps a language that was chosen by hand', () => {
+    expect(readSettings({ tongue: 'ko' }).tongue).toBe('ko')
+    expect(readSettings({ tongue: 'en' }).tongue).toBe('en')
+  })
+
+  it('falls back to following the machine for a language it does not speak', () => {
+    expect(readSettings({ tongue: 'ja' }).tongue).toBe('system')
+    expect(readSettings({ tongue: 7 }).tongue).toBe('system')
   })
 })

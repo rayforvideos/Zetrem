@@ -1,5 +1,6 @@
-import { describe, expect, it } from 'vitest'
-import { SIGN_OUT_TITLE, signOutHint, signOutWarning } from './sign-out-warning'
+import { afterEach, describe, expect, it } from 'vitest'
+import { i18n } from '@lingui/core'
+import { signOutHint, signOutTitle, signOutWarning } from './sign-out-warning'
 
 describe('signing out is machine wide, and the words have to say so', () => {
   it('warns that it reaches past this app, since it clears the CLI credential', () => {
@@ -17,7 +18,7 @@ describe('signing out is machine wide, and the words have to say so', () => {
   })
 
   it('asks before doing it, rather than stating it as a fact', () => {
-    expect(SIGN_OUT_TITLE.endsWith('?')).toBe(true)
+    expect(signOutTitle().endsWith('?')).toBe(true)
   })
 
   it('says the reach in the quiet hint too, before anyone reaches for the button', () => {
@@ -29,5 +30,27 @@ describe('signing out is machine wide, and the words have to say so', () => {
     for (const said of [signOutHint(true), signOutHint(false), signOutWarning(true)]) {
       expect(said).not.toContain('different Anthropic account')
     }
+  })
+})
+
+describe('the warning speaks whichever language the app is speaking', () => {
+  afterEach(() => i18n.activate('en'))
+
+  it('says it in Korean once the app is Korean', () => {
+    i18n.activate('ko')
+    expect(signOutTitle()).toContain('로그아웃')
+    expect(signOutWarning(false), '이 컴퓨터 전체라는 사실이 한국어에서도 남아야 한다').toContain(
+      '이 컴퓨터',
+    )
+  })
+
+  it('still adds the running session in Korean', () => {
+    i18n.activate('ko')
+    expect(signOutWarning(true)).toContain('세션도 멈춥니다')
+  })
+
+  it('keeps the quiet hint in Korean too', () => {
+    i18n.activate('ko')
+    expect(signOutHint(false)).toContain('전부 로그아웃')
   })
 })

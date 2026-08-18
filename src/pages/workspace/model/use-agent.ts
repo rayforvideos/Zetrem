@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, useSyncExternalStore } from 'react'
 import {
   addressed,
+  exitLine,
   parseClaudeLine,
   permissionAlwaysResult,
   permissionResult,
@@ -18,6 +19,7 @@ import { settled } from './settle/settle'
 import { afterYouStopped } from './asked-to-stop/asked-to-stop'
 import type { Attempt } from './relaunch/relaunch.types'
 import type { ConversationState } from './conversation/conversation.types'
+import { t } from '@lingui/core/macro'
 
 const CLOCK_MS = 1000
 
@@ -79,12 +81,12 @@ export function useAgent(
         const failed = attempt.current
         attempt.current = null
         if (shouldRelaunch(failed, event.code)) {
-          conversation.system('Could not pick that conversation back up. Starting a new one.')
+          conversation.system(t`Could not pick that conversation back up. Starting a new one.`)
           launch(failed!.prompt, null)
           return
         }
         conversation.settleDraft()
-        if (event.reason !== null) conversation.system(event.reason)
+        if (event.reason !== null) conversation.system(exitLine(event.reason))
         conversation.setStatus('done')
         conversation.setPermission(null)
         conversation.clearChores()
@@ -148,7 +150,7 @@ export function useAgent(
   function restart(said?: string): void {
     reset()
     conversation.system(
-      said ?? 'Session stopped. The next message starts a new one with your team as it is now.',
+      said ?? t`Session stopped. The next message starts a new one with your team as it is now.`,
     )
   }
 

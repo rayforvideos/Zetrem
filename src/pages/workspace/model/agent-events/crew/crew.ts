@@ -4,6 +4,7 @@ import { shapeOfLine } from '@/shared/lib/tool-line/tool-line'
 import { resultNote } from '@/shared/lib/tool-shape/tool-shape'
 import { clip } from '@/shared/lib/clip/clip'
 import type { AgentEventRefs } from '../agent-events.types'
+import { t } from '@lingui/core/macro'
 
 const NOTE_MAX = 48
 
@@ -117,7 +118,7 @@ export function wakeResumed(toolUseId: string, stdout: string, refs: AgentEventR
     subagentType: name,
     model: 'subagent',
     status: 'working',
-    headline: 'Picked up where they left off',
+    headline: t`Picked up where they left off`,
     stream: [],
     transcript: [],
     tokens: 0,

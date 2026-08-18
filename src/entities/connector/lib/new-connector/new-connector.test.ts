@@ -48,13 +48,13 @@ describe('refusalOf: why a connector cannot be added yet', () => {
   })
 
   it('refuses a name that opens with a dash, which reads as an option', () => {
-    expect(refusalOf(draft('--transport', 'https://a.dev/mcp'), none)?.why).toContain('dash')
+    expect(refusalOf(draft('--transport', 'https://a.dev/mcp'), none)?.code).toBe('name-dash')
   })
 
   it('refuses a name already taken, since the second would replace the first', () => {
     const said = refusalOf(draft('sentry', 'https://a.dev/mcp'), ['Sentry'])
     expect(said?.field).toBe('name')
-    expect(said?.why).toContain('already')
+    expect(said?.code).toBe('name-taken')
   })
 
   it('refuses something that is not an address at all', () => {
@@ -68,7 +68,7 @@ describe('refusalOf: why a connector cannot be added yet', () => {
   })
 
   it('insists on https out on the network, where plain http would be read by anyone', () => {
-    expect(refusalOf(draft('X', 'http://mcp.example.com/mcp'), none)?.why).toContain('https')
+    expect(refusalOf(draft('X', 'http://mcp.example.com/mcp'), none)?.code).toBe('url-insecure')
   })
 
   it('allows plain http to a server on this machine, which never leaves it', () => {

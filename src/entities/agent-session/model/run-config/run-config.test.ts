@@ -1,13 +1,6 @@
 import { describe, expect, it } from 'vitest'
-import {
-  MODELS,
-  PERMISSION_MODES,
-  agentArgs,
-  isReady,
-  PROBE_BUDGET_USD,
-  PROBE_PROMPT,
-  probeArgs,
-} from './run-config'
+import { agentArgs, isReady, PROBE_BUDGET_USD, PROBE_PROMPT, probeArgs } from './run-config'
+import { MODELS, PERMISSION_MODES } from '../choices/choices'
 
 describe('agentArgs: what claude is started with', () => {
   const base = {
@@ -57,8 +50,9 @@ describe('agentArgs: what claude is started with', () => {
   it('gives every choice a label and a hint, since a name alone does not say what it sets', () => {
     expect(PERMISSION_MODES).toHaveLength(3)
     for (const choice of [...PERMISSION_MODES, ...MODELS]) {
-      expect(choice.label.length).toBeGreaterThan(0)
-      expect(choice.hint.length, choice.label).toBeGreaterThan(0)
+      const label = typeof choice.label === 'string' ? choice.label : (choice.label.message ?? '')
+      expect(label.length).toBeGreaterThan(0)
+      expect(choice.hint.message?.length ?? 0, label).toBeGreaterThan(0)
     }
   })
 })

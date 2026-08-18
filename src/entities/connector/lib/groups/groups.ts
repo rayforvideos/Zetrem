@@ -1,18 +1,20 @@
 import type { Connector } from '../read-connectors/read-connectors.types'
 import { originOf } from '../origin/origin'
 import type { ConnectorGroup, ConnectorOrigin } from './groups.types'
+import { msg } from '@lingui/core/macro'
+import type { MessageDescriptor } from '@lingui/core'
 
-const ORDER: { key: ConnectorOrigin; title: string; note: string | null }[] = [
-  { key: 'yours', title: 'Yours', note: null },
+const ORDER: { key: ConnectorOrigin; title: MessageDescriptor; note: MessageDescriptor | null }[] = [
+  { key: 'yours', title: msg`Yours`, note: null },
   {
     key: 'account',
-    title: 'Your Claude account',
-    note: 'Managed on claude.ai. Sign in or out here, remove them there.',
+    title: msg`Your Claude account`,
+    note: msg`Managed on claude.ai. Sign in or out here, remove them there.`,
   },
   {
     key: 'plugin',
-    title: 'From plugins',
-    note: 'A plugin brings these. Turn the plugin off to lose them.',
+    title: msg`From plugins`,
+    note: msg`A plugin brings these. Turn the plugin off to lose them.`,
   },
 ]
 

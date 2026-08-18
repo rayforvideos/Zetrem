@@ -10,7 +10,7 @@ function chat(savedAtMs: number, id = `chat-${savedAtMs.toString(36)}-a`): ChatS
 }
 
 function labels(chats: ChatSummary[]): string[] {
-  return groupChats(chats, now).map((group) => group.label)
+  return groupChats(chats, now).map((group) => group.label.message ?? '')
 }
 
 describe('groupChats: saying when by grouping, not by stamping each row', () => {
@@ -34,7 +34,7 @@ describe('groupChats: saying when by grouping, not by stamping each row', () => 
 
   it('keeps the order it was given, which is newest first', () => {
     const groups = groupChats([chat(now - 60_000), chat(now - DAY), chat(now - 4 * DAY)], now)
-    expect(groups.map((g) => g.label)).toEqual(['Today', 'Yesterday', 'Previous 7 days'])
+    expect(groups.map((g) => g.label.message)).toEqual(['Today', 'Yesterday', 'Previous 7 days'])
   })
 
   it('groups nothing into nothing', () => {

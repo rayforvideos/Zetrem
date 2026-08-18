@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import type { AgentDef, AgentDefDraft } from '@/entities/agent-def'
 import type { TeamNote } from '@/widgets/team-sidebar'
+import { t } from '@lingui/core/macro'
 
 export function useAgentDefs() {
   const [defs, setDefs] = useState<AgentDef[]>([])
@@ -69,7 +70,7 @@ export function useAgentDefs() {
 
 function reasonOf(cause: unknown): string {
   const text = cause instanceof Error ? cause.message : String(cause)
-  return text.includes('No handler registered')
-    ? 'Restart Zetrem. This build does not know that yet.'
+  return text.includes(t`No handler registered`)
+    ? t`Restart Zetrem. This build does not know that yet.`
     : text
 }

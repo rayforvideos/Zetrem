@@ -1,4 +1,6 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
+import { i18n } from '@lingui/core'
+import { t } from '@lingui/core/macro'
 import { ArrowLeft, ArrowRight } from 'lucide-react'
 import { WORDMARK_SIZE, Wordmark } from '@/shared/graphics/wordmark/wordmark'
 import { cn } from '@/shared/lib/cn'
@@ -76,8 +78,8 @@ export function WelcomePane({ onDone }: { onDone(): void }) {
         <MockScreen focus={slide.focus} scale={scale} />
 
         <div key={slide.key} className="zt-enter flex max-w-[540px] flex-col gap-2.5 text-center">
-          <h1 className="text-xl leading-tight">{slide.title}</h1>
-          <p className="text-sm leading-relaxed break-keep text-muted-foreground">{slide.body}</p>
+          <h1 className="text-xl leading-tight">{i18n._(slide.title)}</h1>
+          <p className="text-sm leading-relaxed break-keep text-muted-foreground">{i18n._(slide.body)}</p>
         </div>
       </div>
 
@@ -90,9 +92,7 @@ export function WelcomePane({ onDone }: { onDone(): void }) {
                 size="sm"
                 onClick={onDone}
                 className="rounded-full text-muted-foreground"
-              >
-                Skip
-              </Button>
+              >{t`Skip`}</Button>
             )}
           </span>
 
@@ -103,7 +103,7 @@ export function WelcomePane({ onDone }: { onDone(): void }) {
                 variant="ghost"
                 size="bare"
                 onClick={() => setAt(index)}
-                aria-label={one.title}
+                aria-label={i18n._(one.title)}
                 aria-current={index === at}
                 className="size-4 rounded-full"
               >
@@ -123,19 +123,15 @@ export function WelcomePane({ onDone }: { onDone(): void }) {
               size="icon"
               onClick={() => walk(-1)}
               disabled={at === 0}
-              aria-label="Back"
+              aria-label={t`Back`}
               className="rounded-full"
             >
               <ArrowLeft />
             </Button>
             {end ? (
-              <Button onClick={finish} className="rounded-full px-5">
-                Get started
-              </Button>
+              <Button onClick={finish} className="rounded-full px-5">{t`Get started`}</Button>
             ) : (
-              <Button variant="ghost" onClick={() => walk(1)} className="rounded-full px-4">
-                Next
-                <ArrowRight />
+              <Button variant="ghost" onClick={() => walk(1)} className="rounded-full px-4">{t`Next`}<ArrowRight />
               </Button>
             )}
           </span>

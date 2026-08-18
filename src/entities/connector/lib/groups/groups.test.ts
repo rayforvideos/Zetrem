@@ -33,7 +33,7 @@ describe('connectorGroupsOf: a connector sits with the others it shares a fate w
 
   it('tells you where the ones you cannot remove are managed instead', () => {
     const [group] = connectorGroupsOf([connector('claude.ai Slack')])
-    expect(group?.note).toContain('claude.ai')
+    expect(group?.note?.message).toContain('claude.ai')
     expect(group?.titled).toBe(true)
   })
 

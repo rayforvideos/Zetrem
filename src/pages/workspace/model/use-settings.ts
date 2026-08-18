@@ -4,6 +4,7 @@ import type { Settings } from '@/entities/agent-session'
 import { useFailure } from '@/shared/lib/failure/failure'
 import { onRead, onUpdate } from './settings-writes/settings-writes'
 import type { Failure } from '@/shared/lib/failure/failure.types'
+import { t } from '@lingui/core/macro'
 
 type SettingsSource = {
   settings: Settings
@@ -26,7 +27,7 @@ export function useSettings(): SettingsSource {
   }
 
   useEffect(() => {
-    const save = report('Could not save your settings')
+    const save = report(t`Could not save your settings`)
     window.desk
       .readSettings()
       .then((saved) => {
@@ -38,7 +39,7 @@ export function useSettings(): SettingsSource {
       })
       .catch((cause: unknown) => {
         read.current = true
-        report('Could not read your settings')(cause)
+        report(t`Could not read your settings`)(cause)
       })
       .finally(() => setLoading(false))
   }, [report])
@@ -48,7 +49,7 @@ export function useSettings(): SettingsSource {
     const step = onUpdate(held.current, patch, read.current, waiting.current)
     waiting.current = step.waiting
     hold(step.next)
-    if (step.save) void window.desk.writeSettings(step.next).catch(report('Could not save your settings'))
+    if (step.save) void window.desk.writeSettings(step.next).catch(report(t`Could not save your settings`))
   }
 
   return { settings, loading, failure, update }

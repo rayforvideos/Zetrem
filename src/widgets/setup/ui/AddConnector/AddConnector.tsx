@@ -1,9 +1,10 @@
 import { useState } from 'react'
 import { Plus } from 'lucide-react'
-import { refusalOf } from '@/entities/connector'
+import { refusalOf, refusalWhy } from '@/entities/connector'
 import type { NewConnector } from '@/entities/connector'
 import { Button } from '@/shared/ui/button'
 import { Input } from '@/shared/ui/input'
+import { t } from '@lingui/core/macro'
 
 export function AddConnector({
   taken,
@@ -35,7 +36,7 @@ export function AddConnector({
           className="rounded-lg"
         >
           <Plus />
-          Import from Claude Desktop
+          {t`Import from Claude Desktop`}
         </Button>
         <Button
           type="button"
@@ -45,7 +46,7 @@ export function AddConnector({
           onClick={() => setOpen(!open)}
           className="zt-hit text-xs"
         >
-          {open ? 'Never mind' : 'Add one by address'}
+          {open ? t`Never mind` : t`Add one by address`}
         </Button>
       </div>
 
@@ -71,7 +72,7 @@ export function AddConnector({
               value={name}
               onChange={(event) => setName(event.target.value)}
               placeholder="sentry"
-              aria-label="Connector name"
+              aria-label={t`Connector name`}
               aria-invalid={showing?.field === 'name'}
               className="h-8 w-40 flex-none rounded-lg text-sm"
               autoFocus
@@ -80,7 +81,7 @@ export function AddConnector({
               value={url}
               onChange={(event) => setUrl(event.target.value)}
               placeholder="https://mcp.sentry.dev/mcp"
-              aria-label="Connector address"
+              aria-label={t`Connector address`}
               aria-invalid={showing?.field === 'url'}
               className="h-8 rounded-lg text-sm"
             />
@@ -91,11 +92,11 @@ export function AddConnector({
               disabled={busy}
               className="flex-none rounded-lg"
             >
-              Add
+              {t`Add`}
             </Button>
           </div>
           <span data-refusal className="text-xs text-muted-foreground">
-            {showing?.why ?? 'Letters, numbers, hyphens. Sign in after adding if it asks.'}
+            {(showing === null ? null : refusalWhy(showing.code)) ?? t`Letters, numbers, hyphens. Sign in after adding if it asks.`}
           </span>
         </form>
       )}

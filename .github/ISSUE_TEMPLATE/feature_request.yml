@@ -1,0 +1,24 @@
+name: Feature request
+description: Something Zetrem should do and does not.
+labels: [enhancement]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: What are you trying to do
+      description: The situation, not the solution. What is awkward today?
+    validations:
+      required: true
+
+  - type: textarea
+    id: idea
+    attributes:
+      label: What you have in mind
+      description: Optional. A rough shape is fine.
+
+  - type: markdown
+    attributes:
+      value: |
+        One thing worth knowing before you write: Zetrem gives back what the CLI
+        gives. Anything that changes the model's answer — a persona, a style
+        rule, an added instruction — is out of scope on purpose.

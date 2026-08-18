@@ -1,0 +1,51 @@
+name: CI
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    name: check (node ${{ matrix.node }})
+    # The app is built and signed on macOS, so that is where its checks belong.
+    runs-on: macos-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        # 20.19 is what the app is developed on; 22.19 is what .nvmrc asks for.
+        # Both are claimed to work, so both are tested rather than trusted.
+        node: ['20.19', '22.19']
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+          cache: npm
+
+      - run: npm ci
+
+      - name: Types
+        run: npm run typecheck
+
+      - name: Tests
+        # Includes tests/conventions, which is where this repo's rules live.
+        run: npm test
+
+      - name: Build
+        run: npm run build
+
+      - name: Translations are in step with the source
+        run: |
+          npm run i18n:extract -- --clean
+          git diff --exit-code -- src/shared/locales \
+            || (echo "::error::카탈로그가 원문과 다르다. npm run i18n:extract 를 돌려 커밋해라" && exit 1)

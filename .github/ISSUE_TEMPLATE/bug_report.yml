@@ -1,0 +1,65 @@
+name: Bug report
+description: Something behaves differently from what the screen or the docs say.
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Zetrem runs the Claude Code CLI. If the same prompt behaves the same way
+        in a terminal, the bug is probably in the CLI rather than here — saying
+        which you tried helps a lot.
+
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened
+      description: What you saw, and what you expected instead.
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: How to see it again
+      placeholder: |
+        1. …
+        2. …
+        3. …
+    validations:
+      required: true
+
+  - type: input
+    id: cli
+    attributes:
+      label: Claude Code version
+      description: "`claude --version`"
+      placeholder: 2.1.234
+    validations:
+      required: true
+
+  - type: input
+    id: zetrem
+    attributes:
+      label: Zetrem version
+      description: Settings shows it, or read it from package.json.
+      placeholder: 1.0.0-beta.1
+    validations:
+      required: true
+
+  - type: dropdown
+    id: os
+    attributes:
+      label: Operating system
+      options:
+        - macOS
+        - Windows
+        - Other
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: terminal
+    attributes:
+      label: Did you try the same thing in a terminal?
+      options:
+        - label: The CLI behaves correctly on its own, so this looks like a Zetrem bug.

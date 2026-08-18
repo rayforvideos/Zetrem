@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Question or idea
+    url: https://github.com/rayforvideos/Zetrem/discussions
+    about: Ask anything, or float an idea before it becomes work.
+  - name: Security issue
+    url: https://github.com/rayforvideos/Zetrem/security/policy
+    about: Report a vulnerability privately. Please do not open a public issue.

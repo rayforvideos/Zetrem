@@ -58,5 +58,16 @@
     "remark-gfm": "^4.0.1",
     "sonner": "^2.0.8",
     "tailwind-merge": "^3.6.0"
+  },
+  "engines": {
+    "node": ">=20.19"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rayforvideos/Zetrem.git"
+  },
+  "homepage": "https://github.com/rayforvideos/Zetrem",
+  "bugs": {
+    "url": "https://github.com/rayforvideos/Zetrem/issues"
   }
 }

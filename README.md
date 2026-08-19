@@ -2,11 +2,11 @@
 
 <img src="docs/media/hero.png" alt="Zetrem: three teammates working on one question" width="820" />
 
-<h1>Zetrem</h1>
+<h1>Zetrem 1.0 beta</h1>
 
-<p><strong>Claude Code, given a screen.</strong><br/>
-Hand work to named teammates, watch what each of them is doing, and approve the
-moments that need you, without reading a terminal.</p>
+<p>A desktop app for running a team of Claude Code agents. Hand work to named
+teammates, see what each of them is doing, and answer when one needs approval.
+The Claude Code CLI does the work itself, unchanged.</p>
 
 <p>
   <a href="https://github.com/rayforvideos/Zetrem/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/rayforvideos/Zetrem/ci.yml?branch=master&style=for-the-badge&label=CI" alt="CI status"></a>
@@ -15,50 +15,63 @@ moments that need you, without reading a terminal.</p>
   <img src="https://img.shields.io/badge/platform-macOS%20%7C%20Windows-black?style=for-the-badge" alt="macOS and Windows">
 </p>
 
-<p>
-  <a href="#what-it-is">What it is</a> ·
-  <a href="#running-it">Running it</a> ·
-  <a href="#how-it-fits-together">Architecture</a> ·
-  <a href="CONTRIBUTING.md">Contributing</a> ·
-  <a href="#한국어">한국어</a>
+<p align="center">
+  <strong>
+    <a href="#why-zetrem">Why Zetrem</a> ·
+    <a href="#running-it">Running it</a> ·
+    <a href="#how-zetrem-works">How it works</a> ·
+    <a href="CONTRIBUTING.md">Contributing</a> ·
+    <a href="#한국어">한국어</a>
+  </strong>
 </p>
 
 </div>
 
 ---
 
-> **Beta.** It is used daily by the person who wrote it, and the tests are real,
-> but it has not been through many other hands yet.
+> **Beta.** In daily use by its author and checked on both platforms by CI, but
+> not yet tested widely.
 
 ---
 
-## What it is
+## Table of Contents
 
-Claude Code is the engine; Zetrem owns the screen. The CLI does the work,
-unchanged. Zetrem passes it no persona, no style rules and no instructions of
-its own, so an answer here is the answer you would get in a terminal.
+- [Why Zetrem](#why-zetrem)
+- [Running it](#running-it)
+- [How Zetrem works](#how-zetrem-works)
+- [Making a teammate](#making-a-teammate)
+- [What it can do](#what-it-can-do)
+- [Building](#building)
+- [How it fits together](#how-it-fits-together)
+- [Contributing](#contributing)
+- [Data and network](#data-and-network)
+- [Licence](#licence)
+- [한국어](#한국어)
 
-The screen answers three questions and nothing else:
+---
 
-- who is doing what right now
-- what has been done
-- what needs my decision
+## Why Zetrem
 
-### A teammate is a brief you write once
+Claude Code splits large jobs across subagents, but a terminal shows the result
+as one stream. With three agents running, their output interleaves, tool calls
+cut in, and a question waiting for approval can scroll past in the middle of it.
 
-<div align="center">
-<img src="docs/media/teammate.png" alt="Writing a teammate: a name, when to call them, and their standing brief" width="740" />
-</div>
+Zetrem lays that same information out on a screen:
 
-Name them, say when they should be called, and write their standing
-instructions. The orchestrator reads that middle line to decide who gets the
-job. Teammates live with you, not with a project, so they are there in every
-folder you open.
+- who is working on what
+- what has finished so far
+- whether anything is waiting for approval
+
+It does not touch the answers. No persona, no style rules and no extra
+instructions are passed to the CLI, so the same question gets the same reply it
+would get in a terminal.
+
+---
 
 ## Running it
 
-You need the [Claude Code](https://claude.com/claude-code) CLI on your `PATH`
-and signed in, and Node 20.19 or newer.
+You need the [Claude Code](https://claude.com/claude-code) CLI on your `PATH` and
+signed in, and Node 20.19 or newer.
 
 ```bash
 npm install
@@ -68,6 +81,57 @@ npm run dev
 On first launch, pick an account and a project folder, choose how far agents may
 go without asking, and start.
 
+---
+
+## How Zetrem works
+
+When you hand over a job, this is what happens:
+
+1. **Zetrem starts one Claude Code session** with your teammates declared to it,
+   and reads its `stream-json` output.
+2. **The orchestrator decides who gets what.** It can read, edit and run things
+   itself, or hand a piece to a teammate whose brief fits.
+3. **Each teammate gets a tile** carrying their name, what they were asked, how
+   long they have been at it, and every tool call they have made.
+4. **It asks on screen when approval is needed.** Depending on the permission
+   mode, editing a file or running a command waits for an answer.
+5. **It gathers the reports into one reply.** Conversations are saved per
+   project, so reopening one continues where it stopped.
+6. **It notifies you** when work finishes or needs approval, but only while the
+   window is behind another.
+
+---
+
+## Making a teammate
+
+<div align="center">
+<img src="docs/media/teammate.png" alt="Writing a teammate: a name, when to call them, and their standing brief" width="740" />
+</div>
+
+A teammate is three things: a name, when to call them, and their standing
+instructions. The orchestrator reads the middle one to decide who gets a job.
+Teammates are stored per user rather than per project, so they are available in
+any folder.
+
+You can also restrict a teammate to certain tools, or attach documents for them
+to read first. Both are passed to the session.
+
+---
+
+## What it can do
+
+| | |
+|---|---|
+| **Teammates** | Created in the app, stored per user. Callable from any project, each with its own model, tools and reading list. |
+| **Built-in agents** | The agents Claude Code provides. Each can be switched off. |
+| **Permission modes** | Ask first · Auto-edit (edits files, asks before commands) · Allow all. |
+| **Connectors** | Add, sign into and remove MCP servers in the app. |
+| **Plugins** | Browse and install marketplaces in the app. |
+| **Usage** | Shows your account limits, including per-model limits where they exist. |
+| **Languages** | English and Korean. [Adding one](docs/translating.md) means a PO file. |
+
+---
+
 ## Building
 
 ```bash
@@ -75,12 +139,10 @@ npm run package:mac     # .app in release/
 npm run package:win     # NSIS installer in release/
 ```
 
-Both platforms run the full checks on every push. macOS is where releases are
-signed and notarised; the Windows installer is unsigned for now, so Windows will
-warn on first run.
+CI runs the full checks on both platforms on every push, including a smoke test
+that launches the app and confirms the window renders.
 
-Signing happens automatically when a Developer ID certificate is in your
-keychain. Set `CSC_NAME` if you have more than one.
+---
 
 ## How it fits together
 
@@ -93,55 +155,82 @@ src/entities  domain concepts
 src/shared    things with no domain knowledge
 ```
 
-The renderer never touches Node. Everything it needs crosses a narrow,
-sender-checked IPC bridge defined in `src/app/api/desk.ts`.
+The renderer uses no Node APIs. Everything it needs goes through the IPC defined
+in `src/app/api/desk.ts`, which checks that each request came from where it
+should have.
 
-Rules this repo holds itself to live in `tests/conventions/`. Folder layout,
-where types go, that the UI says nothing in Korean outside the dictionary, that
-the main process compiles no translation macro, and that commits name their
-kind. `npm test` tells you which one you broke.
+Project conventions are enforced by tests in `tests/conventions/`: folder layout,
+where type files go, no Korean in the UI outside the dictionary, no translation
+macro in the main process, and a type on every commit message. `npm test` reports
+which one a change broke.
+
+---
 
 ## Contributing
 
 Read [CONTRIBUTING.md](CONTRIBUTING.md), then open an issue or a pull request.
 Translations into a new language are the easiest place to start:
-[docs/translating.md](docs/translating.md).
+[docs/translating.md](docs/translating.md). Cutting a release is
+[docs/releasing.md](docs/releasing.md), which only the maintainer needs.
+
+Security issues go through [SECURITY.md](SECURITY.md), privately.
+
+---
+
+## Data and network
+
+There is no analytics, no crash reporting and no account of ours. Zetrem makes
+one request of its own, to `registry.npmjs.org`, to check whether a newer Claude
+Code has been published. All other traffic is the CLI you installed, using your
+account.
+
+Conversations, teammates and settings are files in the app's data directory.
+Signing in and out is handled by the CLI, so signing out here signs out every
+Claude Code on the computer.
+
+---
 
 ## Licence
 
 [MIT](LICENSE). © 2026 Sangjun Park.
 
-Zetrem does not bundle Claude Code; it runs the one you installed, under
-Anthropic's terms with you.
+Zetrem does not ship Claude Code. It runs the CLI you installed, and those terms
+are between Anthropic and you.
 
 ---
 
 <a name="한국어"></a>
 
-# 한국어
+<div align="center">
 
-**Claude Code 에 화면을 준 것.** 이름 있는 팀원에게 일을 맡기고, 각자 무엇을
-하고 있는지 보고, 결정이 필요한 순간에만 손을 댄다. 터미널을 읽지 않고.
+<h1>Zetrem 1.0 베타</h1>
 
-## 무엇인가
+<p>Claude Code 에이전트 팀을 화면에서 다루는 데스크톱 앱. 이름을 붙인 팀원에게
+일을 맡기고, 각자 무엇을 하는지 보고, 승인이 필요할 때 답한다. 실제 작업은
+Claude Code CLI 가 그대로 처리한다.</p>
 
-엔진은 Claude Code 이고 화면은 Zetrem 이 갖는다. 일은 CLI 가 그대로 한다.
-Zetrem 은 페르소나도, 말투 규칙도, 자기 지시도 넘기지 않는다. 그래서 여기서
-받은 답은 터미널에서 받았을 답과 같다.
+</div>
 
-화면은 셋만 답한다.
+---
 
-- 지금 누가 무엇을 하고 있나
-- 여태 무엇이 되었나
-- 내가 지금 결정할 것이 있나
+## 왜 Zetrem 인가
 
-### 팀원은 한 번 써 두는 지시문이다
+Claude Code 는 큰 작업을 여러 서브에이전트로 나눠서 처리한다. 그런데 터미널에는
+그 결과가 한 줄기로만 흐른다. 에이전트 셋이 동시에 움직이면 출력이 뒤섞이고, 도구
+호출이 끼어들고, 승인을 기다리는 질문도 그 사이에 섞여 지나간다.
 
-이름을 주고, 언제 부를지 적고, 늘 지킬 지시를 쓴다. 오케스트레이터는 가운데
-줄을 읽고 누구에게 맡길지 정한다. 팀원은 프로젝트가 아니라 당신에게 붙어
-있어서, 어느 폴더를 열든 거기 있다.
+Zetrem 은 이 정보를 화면에 나눠서 보여준다.
 
-## 띄우기
+- 지금 누가 무엇을 하고 있는지
+- 지금까지 무엇이 끝났는지
+- 승인을 기다리는 것이 있는지
+
+대신 응답 자체에는 손대지 않는다. CLI 에 페르소나나 말투 규칙 같은 추가 지시를
+넘기지 않으므로, 같은 질문이면 터미널에서 받는 답과 같은 답이 나온다.
+
+---
+
+## 실행하기
 
 `PATH` 에 로그인된 [Claude Code](https://claude.com/claude-code) CLI 와
 Node 20.19 이상이 필요하다.
@@ -151,8 +240,54 @@ npm install
 npm run dev
 ```
 
-처음 켜면 계정과 프로젝트 폴더를 고르고, 에이전트가 묻지 않고 어디까지 해도
+처음 켜면 계정과 프로젝트 폴더를 고른다. 에이전트가 묻지 않고 어디까지 해도
 되는지 정한 뒤 시작한다.
+
+---
+
+## 동작 방식
+
+작업을 요청하면 다음 순서로 진행된다.
+
+1. **Zetrem 이 Claude Code 세션 하나를 띄운다.** 팀원을 함께 알려주고
+   `stream-json` 출력을 읽는다.
+2. **오케스트레이터가 누구에게 줄지 정한다.** 직접 읽고 고치고 실행하거나
+   지시문이 맞는 팀원에게 한 조각을 넘긴다.
+3. **팀원마다 타일이 생긴다.** 이름, 무엇을 맡았는지, 얼마나 붙들고 있는지,
+   지금까지 부른 도구가 거기 있다.
+4. **승인이 필요하면 화면에서 묻는다.** 권한 모드에 따라 파일 수정이나 명령
+   실행 전에 사용자 응답을 기다린다.
+5. **팀원들의 보고를 하나로 정리해 답한다.** 대화는 프로젝트마다 저장되므로
+   다시 열면 이어서 진행할 수 있다.
+6. **작업이 끝나거나 승인이 필요할 때 알림을 보낸다.** 창이 다른 창 뒤에 있을
+   때만.
+
+---
+
+## 팀원 만들기
+
+이름, 언제 부를지, 지시문 세 가지를 적으면 팀원이 만들어진다. 오케스트레이터는
+'언제 부를지'를 읽고 누구에게 맡길지 정한다. 팀원은 프로젝트가 아니라 사용자
+단위로 저장되므로 어느 폴더에서든 쓸 수 있다.
+
+쓸 도구를 제한하거나, 먼저 읽을 문서를 첨부할 수도 있다. 둘 다 실제로 세션에
+전달된다.
+
+---
+
+## 주요 기능
+
+| | |
+|---|---|
+| **팀원** | 앱에서 만들고 사용자 단위로 저장된다. 어느 프로젝트에서든 부를 수 있고, 모델·도구·읽을 문서를 각각 지정한다. |
+| **빌트인 에이전트** | Claude Code 가 제공하는 에이전트. 개별로 끌 수 있다. |
+| **권한 모드** | 먼저 묻기 · 자동 편집(파일은 자유롭게, 명령은 묻고) · 전부 허용. |
+| **커넥터** | MCP 서버를 앱에서 추가·로그인·삭제한다. |
+| **플러그인** | 마켓플레이스를 앱에서 둘러보고 설치한다. |
+| **사용량** | 계정 한도를 표시한다. 모델별 한도가 따로 있으면 그것도 함께. |
+| **언어** | 영어와 한국어를 지원한다. [추가](docs/translating.md)는 PO 파일 하나다. |
+
+---
 
 ## 빌드
 
@@ -161,11 +296,10 @@ npm run package:mac     # release/ 에 .app
 npm run package:win     # release/ 에 NSIS 설치본
 ```
 
-두 플랫폼 모두 푸시마다 전체 검사를 돌린다. 서명과 공증은 macOS 쪽에만
-있어서, Windows 설치본은 아직 서명되지 않았고 처음 실행할 때 경고가 뜬다.
+두 플랫폼 모두 푸시할 때마다 CI 에서 전체 검사를 돌린다. 앱을 실행해 창이
+그려지는지 확인하는 검사도 포함된다.
 
-키체인에 Developer ID 인증서가 있으면 서명은 자동으로 붙는다. 인증서가 여럿이면
-`CSC_NAME` 을 지정하면 된다.
+---
 
 ## 구조
 
@@ -178,22 +312,40 @@ src/entities  도메인 개념
 src/shared    도메인을 모르는 것들
 ```
 
-렌더러는 Node 를 만지지 않는다. 필요한 것은 전부 `src/app/api/desk.ts` 에
-정의된, 보낸 쪽을 검사하는 좁은 IPC 다리를 건넌다.
+렌더러에서는 Node API 를 쓰지 않는다. 필요한 기능은 모두 `src/app/api/desk.ts`
+에 정의된 IPC 를 거치며, 이때 요청을 보낸 쪽이 맞는지 확인한다.
 
-이 저장소가 스스로에게 지우는 규칙은 `tests/conventions/` 에 있다. 폴더 배치,
-타입이 있을 자리, 사전 밖에서 한국어를 쓰지 않을 것, 메인 프로세스가 번역
-매크로를 컴파일하지 않을 것, 커밋이 종류를 밝힐 것. 어기면 `npm test` 가
-어느 것인지 말한다.
+프로젝트 규약은 `tests/conventions/` 의 테스트로 강제한다. 폴더 구조, 타입 파일
+위치, 사전 밖에서 한국어를 쓰지 않을 것, 메인 프로세스에 번역 매크로가 들어가지
+않을 것, 커밋 메시지가 종류를 밝힐 것 등이다. 어기면 `npm test` 가 알려준다.
+
+---
 
 ## 기여
 
-[CONTRIBUTING.md](CONTRIBUTING.md) 를 읽고 이슈나 PR 을 열면 된다. 새 언어
-번역이 가장 시작하기 쉽다: [docs/translating.md](docs/translating.md).
+[CONTRIBUTING.md](CONTRIBUTING.md) 를 읽고 이슈나 PR 을 열면 된다. 새 언어 번역이
+가장 시작하기 쉽다: [docs/translating.md](docs/translating.md). 릴리스를 만드는
+일은 [docs/releasing.md](docs/releasing.md) 에 있다. 메인테이너만 보면 된다.
+
+보안 문제는 [SECURITY.md](SECURITY.md) 를 따라 비공개로 알려주면 된다.
+
+---
+
+## 데이터와 네트워크
+
+수집하는 분석 데이터나 오류 리포트가 없고, 별도 계정도 만들지 않는다. Zetrem 이
+직접 보내는 요청은 하나뿐이다. Claude Code 새 버전이 나왔는지 확인하려고
+`registry.npmjs.org` 에 조회한다. 나머지 통신은 모두 사용자가 설치한 CLI 가 사용자
+계정으로 처리한다.
+
+대화·팀원·설정은 앱 데이터 디렉터리에 파일로 저장된다. 로그인과 로그아웃은 CLI 가
+관리하므로, 여기서 로그아웃하면 그 컴퓨터의 모든 Claude Code 가 로그아웃된다.
+
+---
 
 ## 라이선스
 
 [MIT](LICENSE). © 2026 Sangjun Park.
 
-Zetrem 은 Claude Code 를 번들하지 않는다. 당신이 설치한 것을 실행하며, 그쪽
-약관은 Anthropic 과 당신 사이에 있다.
+Zetrem 은 Claude Code 를 포함해서 배포하지 않는다. 사용자가 설치한 CLI 를 실행할
+뿐이며, 그 이용 약관은 Anthropic 과 사용자 사이의 것이다.

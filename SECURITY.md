@@ -9,7 +9,7 @@ You will get an answer within a week. If a fix is needed, you will hear how it
 is going until it ships, and you will be credited in the release notes unless
 you would rather not be.
 
-## What this app touches
+## What the app has access to
 
 Worth knowing when judging whether something is a Zetrem problem:
 
@@ -29,7 +29,7 @@ Worth knowing when judging whether something is a Zetrem problem:
 ## Out of scope
 
 An agent doing something destructive that you approved, and anything that
-requires an attacker to already control your machine or your keychain.
+assumes an attacker already controls your machine or your keychain.
 
 —— 한국어 ——
 
@@ -40,27 +40,27 @@ requires an attacker to already control your machine or your keychain.
 공개 이슈로 올리지 마세요. GitHub 의 비공개 신고 양식을 써 주세요:
 [취약점 신고하기](https://github.com/rayforvideos/Zetrem/security/advisories/new).
 
-일주일 안에 답을 드립니다. 고쳐야 하는 것이면 배포될 때까지 진행 상황을
-알려드리고, 원치 않으신다고 하지 않는 한 릴리스 노트에 이름을 남깁니다.
+일주일 안에 답변드립니다. 수정이 필요하면 배포될 때까지 진행 상황을 알려드리고,
+원하지 않으시면 빼드리되 기본적으로 릴리스 노트에 이름을 남깁니다.
 
-## 이 앱이 닿는 것
+## 이 앱이 접근하는 것
 
-Zetrem 문제인지 판단할 때 알아두면 좋은 것들입니다.
+Zetrem 쪽 문제인지 판단할 때 참고할 내용입니다.
 
-- **Zetrem 은 Claude Code 를 번들하지 않습니다.** `PATH` 에 있는 `claude` 를
-  실행할 뿐이므로, CLI 자체의 취약점은
-  [Anthropic](https://github.com/anthropics/claude-code/security) 쪽입니다.
-- **로그인은 CLI 의 것입니다.** Zetrem 은 `claude auth` 를 부를 뿐 자격 증명을
-  보지도 저장하지도 않습니다. 로그아웃하면 기기 전체 키체인 항목이 지워져서,
+- **Zetrem 은 Claude Code 를 포함해서 배포하지 않습니다.** `PATH` 에 있는
+  `claude` 를 실행하므로, CLI 자체의 취약점은
+  [Anthropic](https://github.com/anthropics/claude-code/security) 에 신고해 주세요.
+- **로그인은 CLI 가 처리합니다.** Zetrem 은 `claude auth` 를 실행할 뿐이고 자격
+  증명을 읽거나 저장하지 않습니다. 로그아웃하면 시스템 키체인 항목이 지워지므로,
   이 앱뿐 아니라 그 컴퓨터의 모든 Claude Code 가 로그아웃됩니다.
-- **에이전트는 당신의 권한으로 돕니다.** 고른 권한 모드가 묻지 않고 할 수 있는
-  범위를 정하며, "전부 허용" 은 CLI 에 `--dangerously-skip-permissions` 를
-  넘깁니다.
-- **작업물은 로컬에 남습니다.** 대화와 팀원과 설정은 앱 자기 디렉터리에
-  기록됩니다. Zetrem 은 이미 실행 중인 CLI 를 통하지 않고는 아무것도 보내지
-  않습니다.
+- **에이전트는 사용자 권한으로 실행됩니다.** 선택한 권한 모드가 확인 없이 할 수
+  있는 범위를 정합니다. "전부 허용" 은 CLI 에 `--dangerously-skip-permissions` 를
+  전달합니다.
+- **데이터는 로컬에 저장됩니다.** 대화·팀원·설정은 앱 데이터 디렉터리에
+  기록됩니다. Zetrem 이 직접 외부로 보내는 것은 없고, 통신은 모두 사용자가 실행한
+  CLI 를 거칩니다.
 
 ## 범위 밖
 
-당신이 승인한 에이전트의 파괴적인 동작, 그리고 공격자가 이미 당신의 컴퓨터나
-키체인을 쥐고 있어야 성립하는 것.
+사용자가 승인한 에이전트가 파괴적인 동작을 한 경우, 그리고 공격자가 이미 그
+컴퓨터나 키체인을 장악한 상태를 전제하는 경우는 대상이 아닙니다.

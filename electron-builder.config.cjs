@@ -1,10 +1,6 @@
 /**
- * Signing happens whenever the Developer ID certificate is on this machine.
- * Notarising needs Apple's servers, so it only runs when the credentials are
- * in the environment:
- *   APPLE_ID, APPLE_APP_SPECIFIC_PASSWORD, APPLE_TEAM_ID
- * Without them the build still produces a signed dmg and zip, which open with
- * a right click on the machine that built them.
+ * Notarising needs Apple's servers, so it only runs when the credentials are in
+ * the environment. See docs/releasing.md for the rest.
  */
 const notarising =
   Boolean(process.env.APPLE_ID) &&

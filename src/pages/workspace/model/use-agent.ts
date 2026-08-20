@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState, useSyncExternalStore } from 'react'
 import {
   addressed,
-  exitLine,
   parseClaudeLine,
   permissionAlwaysResult,
   permissionResult,
@@ -15,6 +14,7 @@ import { sentOf, withPaths } from '@/entities/attachment'
 import type { Attached } from '@/entities/attachment'
 import { reasonOf } from '@/shared/lib/failure/failure'
 import { shouldRelaunch } from './relaunch/relaunch'
+import { beginSession, closeSession } from './session-bookkeeping/session-bookkeeping'
 import { settled } from './settle/settle'
 import { afterYouStopped } from './asked-to-stop/asked-to-stop'
 import type { Attempt } from './relaunch/relaunch.types'
@@ -75,8 +75,7 @@ export function useAgent(
       if (event.id !== hostId.current) return
 
       if (event.kind === 'exit') {
-        // A user-initiated stop also exits with a reason, but that is not trouble.
-        const trouble = !stopping.current && event.reason !== null
+        const stopped = stopping.current
         hostId.current = null
         setRunning(false)
         stopping.current = false
@@ -87,16 +86,12 @@ export function useAgent(
           launch(failed!.prompt, null)
           return
         }
-        conversation.settleDraft()
-        if (event.reason !== null) conversation.system(exitLine(event.reason))
-        conversation.setStatus('done')
-        conversation.setPermission(null)
-        conversation.setTrouble(trouble)
-        asks.current.length = 0
-        statusStore.apply({ type: 'activity', activity: 'idle' })
-        conversation.clearChores()
-        for (const childId of childIds.current) sessionStore.patch(childId, { status: 'done' })
-        childIds.current.clear()
+        closeSession({
+          reason: event.reason,
+          stopped,
+          asks: asks.current,
+          childIds: childIds.current,
+        })
         return
       }
       if (event.kind === 'workspace') return
@@ -119,18 +114,17 @@ export function useAgent(
   }, [])
 
   function launch(text: string, resume: string | null, files: Attached[] = []): void {
-    statusStore.reset(resume !== null)
-    sessionStore.clear()
-    childIds.current.clear()
-    sends.current.clear()
-    asks.current.length = 0
+    beginSession({
+      resumed: resume !== null,
+      asks: asks.current,
+      sends: sends.current,
+      childIds: childIds.current,
+    })
     const id = `agent-${Date.now()}`
     hostId.current = id
     setRunning(true)
     stopping.current = false
     attempt.current = { prompt: text, resumed: resume !== null, spoke: false }
-    conversation.setStatus('working')
-    conversation.setTrouble(false)
     void window.desk
       .startAgent(id, text, { ...configRef.current, persona: '', resume }, files)
       .catch((cause: unknown) => {

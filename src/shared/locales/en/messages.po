@@ -534,7 +534,7 @@ msgstr "Could not open that folder"
 msgid "Could not open the file picker"
 msgstr "Could not open the file picker"
 
-#: src/pages/workspace/model/use-agent.ts:86
+#: src/pages/workspace/model/use-agent.ts:85
 msgid "Could not pick that conversation back up. Starting a new one."
 msgstr "Could not pick that conversation back up. Starting a new one."
 
@@ -1194,7 +1194,7 @@ msgstr "Send"
 msgid "Session details"
 msgstr "Session details"
 
-#: src/pages/workspace/model/use-agent.ts:161
+#: src/pages/workspace/model/use-agent.ts:155
 msgid "Session stopped. The next message starts a new one with your team as it is now."
 msgstr "Session stopped. The next message starts a new one with your team as it is now."
 

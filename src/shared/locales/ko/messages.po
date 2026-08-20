@@ -534,7 +534,7 @@ msgstr "그 폴더를 열지 못했습니다"
 msgid "Could not open the file picker"
 msgstr "파일 선택 창을 열지 못했습니다"
 
-#: src/pages/workspace/model/use-agent.ts:86
+#: src/pages/workspace/model/use-agent.ts:85
 msgid "Could not pick that conversation back up. Starting a new one."
 msgstr "그 대화를 이어받지 못했습니다. 새로 시작합니다."
 
@@ -1194,7 +1194,7 @@ msgstr "보내기"
 msgid "Session details"
 msgstr "세션 상세"
 
-#: src/pages/workspace/model/use-agent.ts:161
+#: src/pages/workspace/model/use-agent.ts:155
 msgid "Session stopped. The next message starts a new one with your team as it is now."
 msgstr "세션을 멈췄습니다. 다음 메시지부터 지금 팀 구성으로 새로 시작합니다."
 

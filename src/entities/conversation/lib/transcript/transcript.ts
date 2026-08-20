@@ -1,3 +1,4 @@
+import type { Sent } from '../../../attachment/lib/attachment/attachment.types'
 import type { ToolActivity, ToolResult, Turn } from '../../model/turn'
 import type { ChatSpend, ChatSummary, Transcript } from './transcript.types'
 
@@ -59,7 +60,7 @@ export function readTranscript(saved: unknown): Transcript | null {
   if (typeof saved !== 'object' || saved === null) return null
   const source = saved as Record<string, unknown>
   if (!isChatId(source.id) || !Array.isArray(source.turns)) return null
-  const turns = source.turns.filter(isTurn)
+  const turns = source.turns.map(readTurn).filter((turn): turn is Turn => turn !== null)
   if (turns.length === 0) return null
   return {
     id: source.id,
@@ -99,16 +100,54 @@ export function summaryOf(transcript: Transcript): ChatSummary {
   return { id, title, sessionId, savedAtMs }
 }
 
-function isTurn(value: unknown): value is Turn {
-  if (typeof value !== 'object' || value === null) return false
+function isRole(value: unknown): value is Turn['role'] {
+  return value === 'user' || value === 'assistant' || value === 'system'
+}
+
+// A turn from an older schema, or a partially corrupted file, must not carry
+// bad shapes into the renderer. Unknown fields default rather than reject.
+function readTurn(value: unknown): Turn | null {
+  if (typeof value !== 'object' || value === null) return null
   const turn = value as Record<string, unknown>
-  switch (turn.role) {
-    case 'user':
-    case 'assistant':
-    case 'system':
-      break
-    default:
-      return false
+  if (!isRole(turn.role) || typeof turn.text !== 'string') return null
+  const result: Turn = {
+    role: turn.role,
+    text: turn.text,
+    tools: Array.isArray(turn.tools)
+      ? turn.tools.map(readTool).filter((tool): tool is ToolActivity => tool !== null)
+      : [],
+    draft: typeof turn.draft === 'string' ? turn.draft : '',
+    thinking: typeof turn.thinking === 'string' ? turn.thinking : '',
+    startedAtMs: num(turn.startedAtMs) ?? 0,
   }
-  return typeof turn.text === 'string' && Array.isArray(turn.tools)
+  if (typeof turn.to === 'string') result.to = turn.to
+  if (Array.isArray(turn.files)) {
+    result.files = turn.files.filter((file): file is Sent => typeof file === 'object' && file !== null)
+  }
+  return result
+}
+
+function readTool(value: unknown): ToolActivity | null {
+  if (typeof value !== 'object' || value === null) return null
+  const tool = value as Record<string, unknown>
+  if (typeof tool.line !== 'string') return null
+  return {
+    line: tool.line,
+    toolUseId: typeof tool.toolUseId === 'string' ? tool.toolUseId : null,
+    input: tool.input,
+    result: readToolResult(tool.result),
+    startedAtMs: num(tool.startedAtMs) ?? 0,
+    endedAtMs: num(tool.endedAtMs),
+  }
+}
+
+function readToolResult(value: unknown): ToolResult | null {
+  if (typeof value !== 'object' || value === null) return null
+  const result = value as Record<string, unknown>
+  return {
+    stdout: typeof result.stdout === 'string' ? result.stdout : '',
+    stderr: typeof result.stderr === 'string' ? result.stderr : '',
+    isError: result.isError === true,
+    interrupted: result.interrupted === true,
+  }
 }

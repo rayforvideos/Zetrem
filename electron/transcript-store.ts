@@ -1,5 +1,5 @@
 import { createHash } from 'node:crypto'
-import { mkdir, readFile, readdir, rm, stat } from 'node:fs/promises'
+import { mkdir, readFile, readdir, rename, rm, stat } from 'node:fs/promises'
 import { join } from 'node:path'
 import { app } from 'electron'
 import { isChatId, readTranscript, summaryOf } from '@/entities/conversation/lib/transcript/transcript'
@@ -29,11 +29,23 @@ function named(project: unknown, id: unknown): { project: string; id: string } |
 }
 
 async function load(project: string, id: string): Promise<Transcript | null> {
+  const path = chatPath(project, id)
+  let text: string
   try {
-    return readTranscript(JSON.parse(await readFile(chatPath(project, id), 'utf8')))
+    text = await readFile(path, 'utf8')
   } catch {
     return null
   }
+  try {
+    const transcript = readTranscript(JSON.parse(text))
+    if (transcript !== null) return transcript
+  } catch {
+    // fall through to quarantine below
+  }
+  // A file that reads but does not parse into a transcript would otherwise be
+  // re-parsed on every list. Move it aside so it stops costing anything.
+  await rename(path, `${path}.broken`).catch(() => undefined)
+  return null
 }
 
 async function chats(project: string): Promise<Transcript[]> {

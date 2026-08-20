@@ -121,6 +121,78 @@ describe('readTranscript: reading what was saved without trusting it', () => {
     expect(back?.sessionId).toBe(null)
     expect(back?.turns).toHaveLength(1)
   })
+
+  it('leaves a legacy-good turn unchanged', () => {
+    const good: Turn = {
+      role: 'assistant',
+      text: '했습니다',
+      tools: [
+        {
+          line: 'Bash npm run build',
+          toolUseId: 't1',
+          input: { cmd: 'npm run build' },
+          result: { stdout: 'ok', stderr: '', isError: false, interrupted: false },
+          startedAtMs: 10,
+          endedAtMs: 20,
+        },
+      ],
+      draft: '',
+      thinking: '골똘히',
+      startedAtMs: 5,
+      to: 'agent-1',
+    }
+    const back = readTranscript({ id: summary.id, turns: [good] })
+    expect(back?.turns[0]).toEqual(good)
+  })
+
+  it('drops a junk tool entry but keeps the turn it lives on', () => {
+    const back = readTranscript({
+      id: summary.id,
+      turns: [turn({ tools: [123, { line: 'ok', startedAtMs: 0 }] as never })],
+    })
+    expect(back?.turns).toHaveLength(1)
+    expect(back?.turns[0]!.tools).toHaveLength(1)
+    expect(back?.turns[0]!.tools[0]!.line).toBe('ok')
+  })
+
+  it('fills in missing draft, thinking and startedAtMs with defaults', () => {
+    const back = readTranscript({
+      id: summary.id,
+      turns: [{ role: 'assistant', text: '됩니다', tools: [] }],
+    })
+    expect(back?.turns[0]).toEqual({
+      role: 'assistant',
+      text: '됩니다',
+      tools: [],
+      draft: '',
+      thinking: '',
+      startedAtMs: 0,
+    })
+  })
+
+  it('normalizes a malformed tool result instead of dropping the tool', () => {
+    const back = readTranscript({
+      id: summary.id,
+      turns: [
+        turn({
+          tools: [
+            {
+              line: 'Bash echo hi',
+              result: { stdout: 'hi', isError: 'yes' },
+            } as never,
+          ],
+        }),
+      ],
+    })
+    expect(back?.turns[0]!.tools[0]!.result).toEqual({
+      stdout: 'hi',
+      stderr: '',
+      isError: false,
+      interrupted: false,
+    })
+    expect(back?.turns[0]!.tools[0]!.toolUseId).toBe(null)
+    expect(back?.turns[0]!.tools[0]!.endedAtMs).toBe(null)
+  })
 })
 
 describe('a saved chat carries what it cost, so reopening it says the same thing', () => {

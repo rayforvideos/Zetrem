@@ -278,7 +278,7 @@ msgstr "Added {name}. Sign in if it asks."
 msgid "All {0} connected"
 msgstr "All {0} connected"
 
-#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:58
+#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:72
 msgid "Allow"
 msgstr "Allow"
 
@@ -287,7 +287,7 @@ msgstr "Allow"
 msgid "Allow all"
 msgstr "Allow all"
 
-#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:96
+#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:110
 msgid "Allow this?"
 msgstr "Allow this?"
 
@@ -598,7 +598,7 @@ msgstr "Default"
 msgid "Delete chat"
 msgstr "Delete chat"
 
-#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:67
+#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:81
 msgid "Deny"
 msgstr "Deny"
 
@@ -610,7 +610,7 @@ msgstr "Dismiss this tip"
 msgid "Documents they are told to read first. Long ones cost nothing until they open them."
 msgstr "Documents they are told to read first. Long ones cost nothing until they open them."
 
-#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:76
+#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:90
 msgid "Don't ask again this session"
 msgstr "Don't ask again this session"
 
@@ -641,7 +641,7 @@ msgstr "Edit"
 msgid "Edit {0}"
 msgstr "Edit {0}"
 
-#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:91
+#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:105
 msgid "Edit this file?"
 msgstr "Edit this file?"
 
@@ -1032,7 +1032,7 @@ msgstr "Project"
 msgid "Rate limited"
 msgstr "Rate limited"
 
-#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:94
+#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:108
 msgid "Reach out to the web?"
 msgstr "Reach out to the web?"
 
@@ -1114,7 +1114,7 @@ msgstr "Restart Zetrem. This build does not know that yet."
 msgid "Reviews the front end"
 msgstr "Reviews the front end"
 
-#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:86
+#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:100
 msgid "Run this command?"
 msgstr "Run this command?"
 
@@ -1617,7 +1617,7 @@ msgstr "Wrapped up"
 msgid "Write their brief once and the orchestrator can call them from any project."
 msgstr "Write their brief once and the orchestrator can call them from any project."
 
-#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:88
+#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:102
 msgid "Write this file?"
 msgstr "Write this file?"
 

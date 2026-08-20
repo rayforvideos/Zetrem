@@ -1,8 +1,9 @@
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import type { PermissionAsk } from '@/entities/agent-session'
 import { toolShape } from '@/shared/lib/tool-shape/tool-shape'
 import { modifierKey } from '@/shared/lib/platform/platform'
 import { layerOver } from '@/shared/lib/modal/modal'
+import { armed } from '@/shared/lib/arming/arming'
 import { Button } from '@/shared/ui/button'
 import { Kbd, KbdGroup } from '@/shared/ui/kbd'
 import { ToolIcon } from '@/shared/graphics/tool-icon'
@@ -15,21 +16,34 @@ export function Approval({
   ask: PermissionAsk
   onDecide(allow: boolean, always?: boolean): void
 }) {
+  // Tracks when this ask was shown, so a decision aimed at the previous ask
+  // (a held keyboard shortcut, or a second click) cannot land on this one.
+  const shownAtRef = useRef(Date.now())
+  useEffect(() => {
+    shownAtRef.current = Date.now()
+  }, [ask.requestId])
+
+  function decide(allow: boolean, always?: boolean): void {
+    if (!armed(shownAtRef.current, Date.now())) return
+    onDecide(allow, always)
+  }
+
   useEffect(() => {
     function onKey(event: globalThis.KeyboardEvent): void {
+      if (event.repeat) return
       if (layerOver(document)) return
       if (event.key === 'Enter' && (event.metaKey || event.ctrlKey)) {
         event.preventDefault()
-        onDecide(true)
+        decide(true)
       }
       if (event.key === 'Escape') {
         event.preventDefault()
-        onDecide(false)
+        decide(false)
       }
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
-  }, [onDecide])
+  }, [ask.requestId, onDecide])
 
   const shape = toolShape(ask.toolName, null)
 
@@ -54,7 +68,7 @@ export function Approval({
       </div>
 
       <div className="flex flex-wrap items-center gap-2">
-        <Button size="sm" onClick={() => onDecide(true)} className="rounded-full">
+        <Button size="sm" onClick={() => decide(true)} className="rounded-full">
           {t`Allow`}
           <KbdGroup>
             <Kbd className="bg-primary-foreground/15 text-primary-foreground/70">
@@ -63,14 +77,14 @@ export function Approval({
             <Kbd className="bg-primary-foreground/15 text-primary-foreground/70">Enter</Kbd>
           </KbdGroup>
         </Button>
-        <Button size="sm" variant="secondary" onClick={() => onDecide(false)} className="rounded-full">
+        <Button size="sm" variant="secondary" onClick={() => decide(false)} className="rounded-full">
           {t`Deny`}
           <Kbd>Esc</Kbd>
         </Button>
         <Button
           size="sm"
           variant="ghost"
-          onClick={() => onDecide(true, true)}
+          onClick={() => decide(true, true)}
           className="rounded-full text-muted-foreground"
         >
           {t`Don't ask again this session`}

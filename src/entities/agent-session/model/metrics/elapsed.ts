@@ -7,6 +7,7 @@ export const elapsedMetric: Metric = {
   label: 'elapsed',
   unit: 's',
   known: () => true,
-  read: (session, nowMs) => Math.max(0, Math.floor((nowMs - session.startedAtMs) / 1000)),
+  read: (session, nowMs) =>
+    Math.max(0, Math.floor(((session.endedAtMs ?? nowMs) - session.startedAtMs) / 1000)),
   format: (value) => formatClock(value),
 }

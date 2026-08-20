@@ -46,6 +46,13 @@ describe('the metrics registry', () => {
     expect(elapsed.read(session, 4_000)).toBe(3)
   })
 
+  it('freezes elapsed at the end time once a session is done', () => {
+    const elapsed = metrics.find((m) => m.id === 'elapsed')!
+    const done: AgentSession = { ...session, status: 'done', endedAtMs: 4_000 }
+    expect(elapsed.read(done, 4_000)).toBe(3)
+    expect(elapsed.read(done, 60_000)).toBe(3)
+  })
+
   it('reports context as a percentage', () => {
     const context = metrics.find((m) => m.id === 'context')!
     expect(context.read(session, 4_000)).toBeCloseTo(42, 5)

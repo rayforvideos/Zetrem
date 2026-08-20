@@ -6,6 +6,7 @@ import type { ChatSummary } from '@/entities/conversation'
 import { conversation } from './conversation/conversation'
 import { troubleLine } from '@/shared/lib/ask/ask'
 import { maySave, threadToSave } from './may-save/may-save'
+import { stampOf } from './save-stamp/save-stamp'
 import { t } from '@lingui/core/macro'
 
 type Chats = {
@@ -121,7 +122,7 @@ export function useTranscript(project: string | null): Chats {
           }
         : opened.current,
     )
-    const stamp = `${packed.id}:${packed.sessionId}:${packed.turns.length}:${packed.turns.at(-1)?.text ?? ''}`
+    const stamp = stampOf(packed)
     if (stamp === lastSaved.current) return
     lastSaved.current = stamp
     void window.desk

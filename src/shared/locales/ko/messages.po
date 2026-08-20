@@ -514,15 +514,15 @@ msgstr "Claude Desktop에서 가져오지 못했습니다"
 msgid "Could not connect"
 msgstr "연결하지 못했습니다"
 
-#: src/pages/workspace/model/use-transcript.ts:178
+#: src/pages/workspace/model/use-transcript.ts:179
 msgid "Could not forget that chat"
 msgstr "그 대화를 지우지 못했습니다"
 
-#: src/pages/workspace/model/use-transcript.ts:44
+#: src/pages/workspace/model/use-transcript.ts:45
 msgid "Could not list your saved chats"
 msgstr "저장된 대화 목록을 읽지 못했습니다"
 
-#: src/pages/workspace/model/use-transcript.ts:159
+#: src/pages/workspace/model/use-transcript.ts:160
 msgid "Could not open that chat"
 msgstr "그 대화를 열지 못했습니다"
 
@@ -1476,7 +1476,7 @@ msgstr "이 대화 {percent}%"
 msgid "this chat {size}"
 msgstr "이 대화 {size}"
 
-#: src/pages/workspace/model/use-transcript.ts:137
+#: src/pages/workspace/model/use-transcript.ts:138
 msgid "This chat is not being saved"
 msgstr "이 대화가 저장되지 않고 있습니다"
 

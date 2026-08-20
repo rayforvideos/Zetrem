@@ -514,15 +514,15 @@ msgstr "Could not bring over Claude Desktop"
 msgid "Could not connect"
 msgstr "Could not connect"
 
-#: src/pages/workspace/model/use-transcript.ts:178
+#: src/pages/workspace/model/use-transcript.ts:179
 msgid "Could not forget that chat"
 msgstr "Could not forget that chat"
 
-#: src/pages/workspace/model/use-transcript.ts:44
+#: src/pages/workspace/model/use-transcript.ts:45
 msgid "Could not list your saved chats"
 msgstr "Could not list your saved chats"
 
-#: src/pages/workspace/model/use-transcript.ts:159
+#: src/pages/workspace/model/use-transcript.ts:160
 msgid "Could not open that chat"
 msgstr "Could not open that chat"
 
@@ -1476,7 +1476,7 @@ msgstr "this chat {percent}%"
 msgid "this chat {size}"
 msgstr "this chat {size}"
 
-#: src/pages/workspace/model/use-transcript.ts:137
+#: src/pages/workspace/model/use-transcript.ts:138
 msgid "This chat is not being saved"
 msgstr "This chat is not being saved"
 

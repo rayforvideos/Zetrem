@@ -8,3 +8,4 @@ release/
 
 # compiled message catalogs, built from the .po files
 src/shared/locales/*/messages.js
+.superpowers/

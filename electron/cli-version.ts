@@ -4,6 +4,7 @@ import { managerOf } from '@/entities/agent-session/model/cli-update/cli-update'
 import { agentEnv } from '@/shared/lib/shell-env/shell-env'
 import { claudeBin, findCommand, loginPath } from './login-path/login-path'
 import { handle } from './ipc/ipc'
+import { killTree } from './kill-tree/kill-tree'
 import { launchFor } from './spawn-claude/spawn-claude'
 
 const REGISTRY = 'https://registry.npmjs.org/@anthropic-ai/claude-code/latest'
@@ -19,7 +20,10 @@ const PROBE_TIMEOUT_MS = 5000
 function probe(command: string, args: string[], path: string): Promise<string | null> {
   return new Promise((resolve) => {
     const launch = launchFor(command, args)
-    const child = spawn(launch.command, launch.args, { env: agentEnv(process.env, path) })
+    const child = spawn(launch.command, launch.args, {
+      env: agentEnv(process.env, path),
+      windowsHide: true,
+    })
     child.stdout.setEncoding('utf8')
     let out = ''
     let settled = false
@@ -30,7 +34,10 @@ function probe(command: string, args: string[], path: string): Promise<string | 
       resolve(value)
     }
     const timer = setTimeout(() => {
-      child.kill('SIGTERM')
+      // SIGTERM on Windows only reaches the cmd.exe wrapper, leaving the
+      // real process running; kill the whole tree instead.
+      if (child.pid !== undefined) killTree(child.pid)
+      else child.kill()
       settle(null)
     }, PROBE_TIMEOUT_MS)
     child.stdout.on('data', (chunk: string) => {
@@ -82,7 +89,10 @@ export function registerCliVersion(): void {
     const bin = await claudeBin()
     return new Promise<{ output: string }>((resolve) => {
       const run = launchFor(bin, ['update'])
-      const child = spawn(run.command, run.args, { env: agentEnv(process.env, path) })
+      const child = spawn(run.command, run.args, {
+        env: agentEnv(process.env, path),
+        windowsHide: true,
+      })
       child.stdout.setEncoding('utf8')
       child.stderr.setEncoding('utf8')
       let output = ''
@@ -97,7 +107,10 @@ export function registerCliVersion(): void {
         resolve({ output: text })
       }
       const timer = setTimeout(() => {
-        child.kill('SIGTERM')
+        // SIGTERM on Windows only reaches the cmd.exe wrapper, leaving the
+        // real process running; kill the whole tree instead.
+        if (child.pid !== undefined) killTree(child.pid)
+        else child.kill()
         settle(
           `${output.trim().slice(-2000)}\nUpdate did not finish within 3 minutes and was stopped — try running claude update in your terminal`.trim(),
         )

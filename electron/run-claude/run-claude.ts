@@ -2,6 +2,7 @@ import { spawn } from 'node:child_process'
 import type { PluginRun } from '@/entities/plugin/lib/catalog/catalog.types'
 import { agentEnv } from '@/shared/lib/shell-env/shell-env'
 import { claudeBin, loginPath } from '../login-path/login-path'
+import { killTree } from '../kill-tree/kill-tree'
 import { launchFor } from '../spawn-claude/spawn-claude'
 
 export function runClaude(args: string[], timeoutMs: number, cwd?: string): Promise<PluginRun> {
@@ -10,6 +11,7 @@ export function runClaude(args: string[], timeoutMs: number, cwd?: string): Prom
       const launch = launchFor(await claudeBin(), args)
       const child = spawn(launch.command, launch.args, {
         env: agentEnv(process.env, await loginPath()),
+        windowsHide: true,
         ...(cwd === undefined ? {} : { cwd }),
       })
       child.stdout.setEncoding('utf8')
@@ -23,7 +25,10 @@ export function runClaude(args: string[], timeoutMs: number, cwd?: string): Prom
         resolve(value)
       }
       const timer = setTimeout(() => {
-        child.kill('SIGTERM')
+        // SIGTERM on Windows only reaches the cmd.exe wrapper, leaving the
+        // real process running; kill the whole tree instead.
+        if (child.pid !== undefined) killTree(child.pid)
+        else child.kill()
         settle({ ok: false, out: `${out}\ntimed out` })
       }, timeoutMs)
       child.stdout.on('data', (chunk: string) => {

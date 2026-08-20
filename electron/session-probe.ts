@@ -40,7 +40,7 @@ function isInit(line: string): boolean {
 function readInit(bin: string, args: string[], cwd: string, env: NodeJS.ProcessEnv): Promise<string | null> {
   return new Promise((resolve) => {
     const launch = launchFor(bin, args)
-    const child = spawn(launch.command, launch.args, { cwd, env })
+    const child = spawn(launch.command, launch.args, { cwd, env, windowsHide: true })
     child.stdout.setEncoding('utf8')
     if (child.pid !== undefined) asking.add(child.pid)
     let settled = false
@@ -75,7 +75,7 @@ function readInit(bin: string, args: string[], cwd: string, env: NodeJS.ProcessE
 function readReport(bin: string, cwd: string, env: NodeJS.ProcessEnv): Promise<string | null> {
   return new Promise((resolve) => {
     const ask = launchFor(bin, ['-p', '/usage'])
-    const child = spawn(ask.command, ask.args, { cwd, env })
+    const child = spawn(ask.command, ask.args, { cwd, env, windowsHide: true })
     child.stdout.setEncoding('utf8')
     if (child.pid !== undefined) asking.add(child.pid)
     let settled = false

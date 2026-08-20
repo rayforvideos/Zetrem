@@ -1,5 +1,5 @@
-import { join, relative, resolve } from 'node:path'
-import { BrowserWindow, app, dialog, nativeImage, session, shell } from 'electron'
+import { relative, resolve } from 'node:path'
+import { BrowserWindow, app, dialog, session, shell } from 'electron'
 import { CHROME_TOP, CONTROL_SYMBOL, GROUND, MIN_WINDOW, TRAFFIC_LIGHT } from '@/shared/config/theme'
 import { killAllAgents, registerAgentHost } from './agent-host/agent-host'
 import { registerAttachments } from './attachments/attachments'
@@ -28,12 +28,6 @@ function dropChildren(): void {
 const inspectPort = process.env.ZT_INSPECT ?? (process.env.ELECTRON_RENDERER_URL ? '0' : null)
 if (inspectPort !== null) app.commandLine.appendSwitch('remote-debugging-port', inspectPort)
 
-function iconPath(): string {
-  return app.isPackaged
-    ? join(process.resourcesPath, 'icon.png')
-    : join(app.getAppPath(), 'resources', 'icon.png')
-}
-
 function wearTheName(): void {
   app.setAboutPanelOptions({
     applicationName: 'Zetrem',
@@ -41,13 +35,6 @@ function wearTheName(): void {
     version: '',
     copyright: 'Runs on Claude Code',
   })
-}
-
-function wearTheIcon(): void {
-  if (!isMac || app.dock === undefined) return
-  const art = nativeImage.createFromPath(iconPath())
-  if (art.isEmpty()) return
-  app.dock.setIcon(art)
 }
 
 function createWindow(): void {
@@ -182,7 +169,6 @@ if (!primary) {
         grant(false),
       )
       session.defaultSession.setPermissionCheckHandler(() => false)
-      wearTheIcon()
       wearTheName()
       createWindow()
       app.on('activate', () => {

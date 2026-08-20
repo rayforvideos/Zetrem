@@ -60,12 +60,6 @@ module.exports = {
     "oneClick": false,
     "allowToChangeInstallationDirectory": true
   },
-  "extraResources": [
-    {
-      "from": "resources/icon.png",
-      "to": "icon.png"
-    }
-  ],
   "dmg": {
     "title": "Zetrem ${version}",
     "background": "build/dmg-background.tiff",

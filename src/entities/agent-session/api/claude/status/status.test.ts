@@ -111,6 +111,47 @@ describe('the status parser: the instrument layer', () => {
     ])
   })
 
+  it('picks the context window of the model that carried the chat, not the first key', () => {
+    const events = fromStatusLine({
+      type: 'result',
+      subtype: 'success',
+      total_cost_usd: 0.2,
+      usage: {},
+      modelUsage: {
+        'claude-haiku-4-5': {
+          inputTokens: 8,
+          outputTokens: 40,
+          cacheReadInputTokens: 0,
+          cacheCreationInputTokens: 0,
+          contextWindow: 200_000
+        },
+        'claude-sonnet-5': {
+          inputTokens: 8,
+          outputTokens: 349,
+          cacheReadInputTokens: 82511,
+          cacheCreationInputTokens: 36479,
+          contextWindow: 1_000_000
+        }
+      }
+    })
+    expect(events).toEqual([
+      expect.objectContaining({ type: 'metrics', metrics: expect.objectContaining({ contextWindow: 1_000_000 }) })
+    ])
+  })
+
+  it('keeps a single model unchanged', () => {
+    const events = fromStatusLine({
+      type: 'result',
+      subtype: 'success',
+      total_cost_usd: 0.1,
+      usage: {},
+      modelUsage: { 'claude-opus-5[1m]': { contextWindow: 1_000_000 } }
+    })
+    expect(events).toEqual([
+      expect.objectContaining({ type: 'metrics', metrics: expect.objectContaining({ contextWindow: 1_000_000 }) })
+    ])
+  })
+
   it('leaves an unknown context window empty rather than inventing a default', () => {
     const [event] = fromStatusLine({ type: 'result', subtype: 'success', total_cost_usd: 0.1, usage: {} })
     expect(event).toMatchObject({ type: 'metrics', metrics: { contextWindow: null} })

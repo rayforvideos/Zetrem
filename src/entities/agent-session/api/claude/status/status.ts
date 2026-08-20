@@ -86,11 +86,33 @@ function fromAssistantUsage(event: Record<string, unknown>): StatusEvent[] {
   return used > 0 ? [{ type: 'context', used }] : []
 }
 
+// Picks the model entry that carried the conversation, not just the first key in
+// modelUsage — object order does not reflect which model did the most work (e.g. a
+// Haiku subagent call can sit before the main model that should drive the context %).
+function carryingModel(
+  models: Record<string, Record<string, unknown>> | undefined,
+): Record<string, unknown> | undefined {
+  if (!models) return undefined
+  const entries = Object.values(models)
+  if (entries.length === 0) return undefined
+
+  const tokensOf = (m: Record<string, unknown>) =>
+    num(m.inputTokens) + num(m.outputTokens) + num(m.cacheReadInputTokens) + num(m.cacheCreationInputTokens)
+
+  return entries.reduce((heaviest, entry) => {
+    if (tokensOf(entry) > tokensOf(heaviest)) return entry
+    if (tokensOf(entry) === tokensOf(heaviest) && num(entry.contextWindow) > num(heaviest.contextWindow)) {
+      return entry
+    }
+    return heaviest
+  })
+}
+
 function fromResultMetrics(event: Record<string, unknown>): StatusEvent[] {
   const usage = (event.usage as Record<string, unknown> | undefined) ?? {}
   const models = event.modelUsage as Record<string, Record<string, unknown>> | undefined
-  const first = models ? Object.values(models)[0] : undefined
-  const window = first ? num(first.contextWindow, 0) : 0
+  const carrier = carryingModel(models)
+  const window = carrier ? num(carrier.contextWindow, 0) : 0
   return [
     {
       type: 'metrics',

@@ -29,6 +29,17 @@ function joined(existing: string, added: string): string {
   return existing.length === 0 ? added : `${existing}\n\n${added}`
 }
 
+// A turn end can arrive after system turns (metrics, notices) already landed
+// on top of the drafting turn, so this looks past them for the draft to settle.
+function draftHolderIndex(turns: Turn[]): number {
+  for (let index = turns.length - 1; index >= 0; index -= 1) {
+    const turn = turns[index]!
+    if (turn.role === 'system') continue
+    return turn.draft.length === 0 ? -1 : index
+  }
+  return -1
+}
+
 export const conversation = {
   get(): ConversationState {
     return state
@@ -142,10 +153,13 @@ export const conversation = {
     emit({ ...state, turns: [...state.turns.slice(0, -1), merged] })
   },
   settleDraft(): void {
-    const last = state.turns.at(-1)
-    if (!last || last.draft.length === 0) return
-    const merged = { ...last, draft: '', text: joined(last.text, last.draft) }
-    emit({ ...state, turns: [...state.turns.slice(0, -1), merged] })
+    const index = draftHolderIndex(state.turns)
+    if (index === -1) return
+    const turn = state.turns[index]!
+    const merged = { ...turn, draft: '', text: joined(turn.text, turn.draft) }
+    const turns = [...state.turns]
+    turns[index] = merged
+    emit({ ...state, turns })
   },
   setStatus(status: SessionStatus): void {
     if (state.status === status) return

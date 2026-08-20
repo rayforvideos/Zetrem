@@ -97,6 +97,18 @@ describe('conversation: what our screen draws', () => {
     expect(conversation.get().turns).toHaveLength(1)
   })
 
+  it('settles a draft that a system turn landed on top of, so the cursor does not spin forever', () => {
+    conversation.delta('여기까지 쓰다 멈')
+    conversation.system('This turn: 100 out · 1.0s')
+    conversation.settleDraft()
+
+    const turns = conversation.get().turns
+    expect(turns.map((turn) => turn.role)).toEqual(['assistant', 'system'])
+    expect(turns[0]!.text).toBe('여기까지 쓰다 멈')
+    expect(turns[0]!.draft).toBe('')
+    expect(turns.every((turn) => turn.draft.length === 0)).toBe(true)
+  })
+
   it('joins onto settled text the same way say does, so paragraphs match', () => {
     conversation.say('assistant', '먼저 한 말')
     conversation.delta('이어 쓰다 멈')

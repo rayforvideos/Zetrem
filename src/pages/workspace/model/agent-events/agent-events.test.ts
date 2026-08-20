@@ -86,6 +86,17 @@ describe('applyAgentEvent: the order has to be nailed down', () => {
     expect(conversation.get().status).toBe('waiting')
   })
 
+  it('settles the draft even when the turn metrics land on top of it first', () => {
+    const refs = fakeRefs()
+    applyAgentEvent({ type: 'delta', text: '여기까지 쓰다 멈' }, refs)
+    applyAgentEvent({ type: 'metrics', metrics: fakeMetrics(0.1) }, refs)
+    applyAgentEvent({ type: 'turnEnded' }, refs)
+
+    const turns = conversation.get().turns
+    expect(turns.every((turn) => turn.draft.length === 0)).toBe(true)
+    expect(turns.some((turn) => turn.text === '여기까지 쓰다 멈')).toBe(true)
+  })
+
   it('changes nothing at the end of an ordinary turn, where settled text already cleared the draft', () => {
     applyAgentEvent({ type: 'delta', text: '안녕' }, fakeRefs())
     applyAgentEvent({ type: 'headline', text: '안녕하세요' }, fakeRefs())

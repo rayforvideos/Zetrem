@@ -55,6 +55,11 @@
 
   --font-zt-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   --font-zt-mono: ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  /* Scrollbars and form controls the UA draws itself take their colour from
+     here, not from the tokens above. Without it Chromium draws light ones in
+     either scheme — a wide markdown table got a light scrollbar on black. */
+  color-scheme: light;
 }
 
 /* The palette the app shipped with, unchanged. Only the colour tokens live
@@ -91,6 +96,8 @@
     --input: oklch(0.24 0 0);
 
     --ring: oklch(0.62 0 0);
+
+    color-scheme: dark;
   }
 }
 

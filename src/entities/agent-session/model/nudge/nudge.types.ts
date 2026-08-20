@@ -8,4 +8,6 @@ export type NudgeAt = {
   reason: NudgeReason
   tool: string
   asked?: boolean
+  // The settled turn ended in an error, not a clean finish. Only meaningful for reason 'done'.
+  trouble?: boolean
 }

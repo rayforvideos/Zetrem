@@ -8,4 +8,7 @@ export type ConversationState = {
   status: SessionStatus
   permission: PermissionAsk | null
   chores: Chore[]
+  // Set when the turn that just settled ended in an error rather than a clean finish,
+  // so the "done" nudge can say so instead of lying.
+  trouble: boolean
 }

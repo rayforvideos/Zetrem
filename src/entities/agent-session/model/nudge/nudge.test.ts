@@ -85,6 +85,15 @@ describe('the notice speaks whichever language the app speaks', () => {
   it('stays English while the app is English', () => {
     expect(nudgeFor(at())?.title).toBe('Zetrem is done')
   })
+
+  it('says the problem notice in Korean', () => {
+    i18n.activate('ko')
+    expect(nudgeFor(at({ trouble: true }))).toEqual({
+      reason: 'done',
+      title: 'Zetrem에 문제가 생겼습니다',
+      body: '세션이 오류로 멈췄습니다.',
+    })
+  })
 })
 
 describe('a turn that stopped to ask is not a turn that finished', () => {
@@ -102,5 +111,27 @@ describe('a turn that stopped to ask is not a turn that finished', () => {
     expect(nudgeFor({ ...at, reason: 'permission', tool: 'Bash', asked: true })?.reason).toBe(
       'permission',
     )
+  })
+})
+
+describe('a turn that stopped on an error is not a turn that finished cleanly', () => {
+  it('says a problem happened instead of claiming the team is done', () => {
+    expect(nudgeFor(at({ trouble: true }))).toEqual({
+      reason: 'done',
+      title: 'Zetrem hit a problem',
+      body: 'A session stopped with an error.',
+    })
+  })
+
+  it('stays quiet about the error too when you are watching', () => {
+    expect(nudgeFor(at({ trouble: true, watching: true }))).toBeNull()
+  })
+
+  it('says the ordinary done notice when nothing went wrong', () => {
+    expect(nudgeFor(at({ trouble: false }))).toEqual({
+      reason: 'done',
+      title: 'Zetrem is done',
+      body: 'Your team has finished.',
+    })
   })
 })

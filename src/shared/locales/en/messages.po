@@ -229,6 +229,10 @@ msgstr "A running session cannot call them. Restart it, or they join the next on
 msgid "A running session keeps the old brief until it is restarted"
 msgstr "A running session keeps the old brief until it is restarted"
 
+#: src/entities/agent-session/model/nudge/nudge.ts:17
+msgid "A session stopped with an error."
+msgstr "A session stopped with an error."
+
 #: src/widgets/welcome/lib/slides/slides.ts:32
 msgid "A teammate is a brief you write once"
 msgstr "A teammate is a brief you write once"
@@ -509,7 +513,7 @@ msgstr "Could not open that folder"
 msgid "Could not open the file picker"
 msgstr "Could not open the file picker"
 
-#: src/pages/workspace/model/use-agent.ts:84
+#: src/pages/workspace/model/use-agent.ts:86
 msgid "Could not pick that conversation back up. Starting a new one."
 msgstr "Could not pick that conversation back up. Starting a new one."
 
@@ -1165,7 +1169,7 @@ msgstr "Send"
 msgid "Session details"
 msgstr "Session details"
 
-#: src/pages/workspace/model/use-agent.ts:156
+#: src/pages/workspace/model/use-agent.ts:161
 msgid "Session stopped. The next message starts a new one with your team as it is now."
 msgstr "Session stopped. The next message starts a new one with your team as it is now."
 
@@ -1692,7 +1696,7 @@ msgstr "Your organisation does not allow this"
 msgid "Your team"
 msgstr "Your team"
 
-#: src/entities/agent-session/model/nudge/nudge.ts:16
+#: src/entities/agent-session/model/nudge/nudge.ts:19
 msgid "Your team has finished."
 msgstr "Your team has finished."
 
@@ -1713,7 +1717,11 @@ msgstr "Zetrem did not understand that request"
 msgid "Zetrem greets you by this name, and your face marks the work in flight."
 msgstr "Zetrem greets you by this name, and your face marks the work in flight."
 
-#: src/entities/agent-session/model/nudge/nudge.ts:16
+#: src/entities/agent-session/model/nudge/nudge.ts:17
+msgid "Zetrem hit a problem"
+msgstr "Zetrem hit a problem"
+
+#: src/entities/agent-session/model/nudge/nudge.ts:19
 msgid "Zetrem is done"
 msgstr "Zetrem is done"
 

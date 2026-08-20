@@ -10,6 +10,7 @@ export function useNudge(
   wanted: boolean,
   status: SessionStatus,
   permission: PermissionAsk | null,
+  trouble: boolean,
 ): void {
   const wasWorking = useRef(false)
   const askedFor = useRef<string | null>(null)
@@ -25,9 +26,10 @@ export function useNudge(
       reason: 'done',
       tool: '',
       asked: permission !== null,
+      trouble,
     })
     if (nudge !== null) window.desk.nudge(nudge.title, nudge.body)
-  }, [status, wanted, permission])
+  }, [status, wanted, permission, trouble])
 
   useEffect(() => {
     if (permission === null) {

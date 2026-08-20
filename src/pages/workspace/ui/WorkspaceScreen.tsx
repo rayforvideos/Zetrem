@@ -127,7 +127,7 @@ export function WorkspaceScreen() {
     gate !== 'holding',
     conv.status === 'working',
   )
-  useNudge(settings.notify, conv.status, conv.permission)
+  useNudge(settings.notify, conv.status, conv.permission, conv.trouble)
   useFleet(deck, children, nowMs, viewport, sidebar.span + GRID_PAD * 2)
 
   const probedSession = status.probed

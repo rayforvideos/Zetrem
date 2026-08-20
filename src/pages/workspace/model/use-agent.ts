@@ -75,6 +75,8 @@ export function useAgent(
       if (event.id !== hostId.current) return
 
       if (event.kind === 'exit') {
+        // A user-initiated stop also exits with a reason, but that is not trouble.
+        const trouble = !stopping.current && event.reason !== null
         hostId.current = null
         setRunning(false)
         stopping.current = false
@@ -89,6 +91,7 @@ export function useAgent(
         if (event.reason !== null) conversation.system(exitLine(event.reason))
         conversation.setStatus('done')
         conversation.setPermission(null)
+        conversation.setTrouble(trouble)
         asks.current.length = 0
         statusStore.apply({ type: 'activity', activity: 'idle' })
         conversation.clearChores()
@@ -127,6 +130,7 @@ export function useAgent(
     stopping.current = false
     attempt.current = { prompt: text, resumed: resume !== null, spoke: false }
     conversation.setStatus('working')
+    conversation.setTrouble(false)
     void window.desk
       .startAgent(id, text, { ...configRef.current, persona: '', resume }, files)
       .catch((cause: unknown) => {
@@ -136,6 +140,7 @@ export function useAgent(
         attempt.current = null
         conversation.system(`Could not start Claude Code: ${reasonOf(cause)}`)
         conversation.setStatus('done')
+        conversation.setTrouble(true)
       })
   }
 
@@ -170,6 +175,7 @@ export function useAgent(
     conversation.settleDraft()
     conversation.setStatus('done')
     conversation.setPermission(null)
+    conversation.setTrouble(false)
     if (id !== null) window.desk.stopAgent(id)
   }
 

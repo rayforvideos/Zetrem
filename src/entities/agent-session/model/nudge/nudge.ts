@@ -13,5 +13,8 @@ export function nudgeFor(at: NudgeAt): Nudge | null {
       body: at.tool.length > 0 ? t`Waiting to run ${at.tool}` : t`Waiting for your approval`,
     }
   }
+  if (at.trouble === true) {
+    return { reason: 'done', title: t`Zetrem hit a problem`, body: t`A session stopped with an error.` }
+  }
   return { reason: 'done', title: t`Zetrem is done`, body: t`Your team has finished.` }
 }

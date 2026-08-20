@@ -18,8 +18,11 @@ import { errorTail } from './error-tail/error-tail'
 import { tell } from './tell/tell'
 import { killAllProbes } from './session-probe'
 import { launchFor } from './spawn-claude/spawn-claude'
+import { dropSends, holdSend, releaseSends } from './pending-sends/pending-sends'
+import type { PendingSend } from './pending-sends/pending-sends.types'
 
 const agents = new Map<string, ChildProcessWithoutNullStreams | 'starting'>()
+const waiting = new Map<string, PendingSend[]>()
 
 
 type Picture = { mediaType: string | null; data: string | null }
@@ -55,6 +58,7 @@ export function killAllAgents(): void {
     killTreeSync(agent.pid)
   }
   agents.clear()
+  waiting.clear()
 }
 
 export function registerAgentHost(): void {
@@ -89,13 +93,17 @@ export function registerAgentHost(): void {
       // A stop that lands while this was waiting only removes the map entry, so
       // the last word on whether to spawn is here. Nothing below may await:
       // the spawn and the map entry have to happen in one uninterrupted step.
-      if (agents.get(id) !== 'starting') return fail(null)
+      if (agents.get(id) !== 'starting') {
+        dropSends(waiting, id)
+        return fail(null)
+      }
       if (!project) mkdirSync(workspace, { recursive: true })
       child = spawn(launch.command, launch.args, { cwd: workspace, env, windowsHide: true })
       agents.set(id, child)
     } catch (cause: unknown) {
       console.error(`[agent ${id}] could not start`, cause)
       agents.delete(id)
+      dropSends(waiting, id)
       return fail(startTrouble(cause instanceof Error ? cause.message : String(cause)))
     }
     child.stdin.on('error', () => undefined)
@@ -136,13 +144,21 @@ export function registerAgentHost(): void {
     child.on('error', (cause: Error) => reportExit(-1, startTrouble(cause.message)))
 
     tell(child.stdin, userMessage(prompt, files))
+    // Anything typed during the start waited for this stdin, and it has to
+    // follow the opening prompt rather than race ahead of it.
+    for (const send of releaseSends(waiting, id)) {
+      tell(child.stdin, userMessage(send.text, send.files))
+    }
     },
   )
 
   on('agent:send', (_event, id: string, text: string, files: unknown = []) => {
     if (typeof id !== 'string' || typeof text !== 'string') return
+    // An id nobody knows has no host coming, and the renderer starts a fresh
+    // agent on its side, so text held for it would never be read.
     const agent = agents.get(id)
-    if (agent && agent !== 'starting') tell(agent.stdin, userMessage(text, files))
+    if (agent === 'starting') holdSend(waiting, id, { text, files })
+    else if (agent) tell(agent.stdin, userMessage(text, files))
   })
 
   on('agent:permission', (_event, id: string, requestId: string, result: unknown) => {
@@ -155,6 +171,7 @@ export function registerAgentHost(): void {
     if (typeof id !== 'string') return
     const agent = agents.get(id)
     agents.delete(id)
+    dropSends(waiting, id)
     if (agent && agent !== 'starting' && agent.pid !== undefined) killTree(agent.pid)
   })
 

@@ -64,15 +64,21 @@ module.exports = {
   ],
   "dmg": {
     "title": "Zetrem ${version}",
+    "background": "build/dmg-background.tiff",
+    "window": {
+      "width": 660,
+      "height": 400
+    },
+    "iconSize": 128,
     "contents": [
       {
-        "x": 150,
-        "y": 190,
+        "x": 170,
+        "y": 180,
         "type": "file"
       },
       {
-        "x": 390,
-        "y": 190,
+        "x": 490,
+        "y": 180,
         "type": "link",
         "path": "/Applications"
       }

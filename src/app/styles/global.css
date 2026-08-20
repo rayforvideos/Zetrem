@@ -1,40 +1,51 @@
 @import 'tailwindcss';
 @import 'tw-animate-css';
 
-@custom-variant dark (&:is(.dark *));
-
+/* The palette below is the light one, and the dark block further down holds the
+   values the app shipped with. Both hang off the OS scheme, which the main
+   process steers through nativeTheme, so the renderer needs no class of its
+   own — and the `dark:` utilities shadcn brings with it follow the same media
+   query as the tokens, instead of the permanent `.dark` on <html> they used to. */
 :root {
-  --background: oklch(0 0 0);
-  --foreground: oklch(0.95 0 0);
+  /* A faintly warm off-white ground, so the white cards sitting on it read as
+     cards. In light the surfaces are brighter than the ground, the way they are
+     darker than it in dark. Values come from the zetrem.org palette. */
+  --background: oklch(0.985 0.002 90);
+  --foreground: oklch(0.15 0 0);
 
-  --card: oklch(0.17 0 0);
-  --card-foreground: oklch(0.95 0 0);
-  --popover: oklch(0.2 0 0);
-  --popover-foreground: oklch(0.95 0 0);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.15 0 0);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.15 0 0);
 
-  --primary: oklch(1 0 0);
-  --primary-foreground: oklch(0 0 0);
+  --primary: oklch(0 0 0);
+  --primary-foreground: oklch(1 0 0);
 
-  --secondary: oklch(0.2 0 0);
-  --secondary-foreground: oklch(0.95 0 0);
+  --secondary: oklch(0.965 0.003 90);
+  --secondary-foreground: oklch(0.15 0 0);
 
-  --muted: oklch(0.26 0 0);
-  --muted-foreground: oklch(0.62 0 0);
-  --accent: oklch(0.22 0 0);
-  --accent-foreground: oklch(0.97 0 0);
-  --destructive: oklch(0.58 0.2 25);
+  --muted: oklch(0.965 0.003 90);
+  --muted-foreground: oklch(0.5 0 0);
+  --accent: oklch(0.965 0.003 90);
+  --accent-foreground: oklch(0.15 0 0);
+  --destructive: oklch(0.42 0.2 25);
 
-  --added: oklch(0.78 0.16 150);
-  --added-surface: oklch(0.28 0.07 150);
-  --removed: oklch(0.72 0.17 20);
-  --removed-surface: oklch(0.28 0.08 20);
+  /* Diff colours keep their hue from the dark palette and swap lightness, so a
+     removal still reads as the same red. Chroma is held too where sRGB can hold
+     it: at L 0.93 the reddish hue runs out of gamut around C 0.035, so the
+     removed surface is as pink as that lightness allows. */
+  --added: oklch(0.48 0.13 150);
+  --added-surface: oklch(0.93 0.07 150);
+  --removed: oklch(0.48 0.17 20);
+  --removed-surface: oklch(0.93 0.035 20);
 
+  /* Claude's own colour, which belongs to Claude and not to a scheme. */
   --claude: #d97757;
 
-  --border: oklch(0.24 0 0);
-  --input: oklch(0.24 0 0);
+  --border: oklch(0.905 0.003 90);
+  --input: oklch(0.905 0.003 90);
 
-  --ring: oklch(0.62 0 0);
+  --ring: oklch(0.6 0 0);
 
   --radius: 0.625rem;
 
@@ -44,6 +55,43 @@
 
   --font-zt-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   --font-zt-mono: ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+/* The palette the app shipped with, unchanged. Only the colour tokens live
+   here; radius, timings and fonts mean the same thing in either scheme, and
+   --claude is Claude's colour in both. */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: oklch(0 0 0);
+    --foreground: oklch(0.95 0 0);
+
+    --card: oklch(0.17 0 0);
+    --card-foreground: oklch(0.95 0 0);
+    --popover: oklch(0.2 0 0);
+    --popover-foreground: oklch(0.95 0 0);
+
+    --primary: oklch(1 0 0);
+    --primary-foreground: oklch(0 0 0);
+
+    --secondary: oklch(0.2 0 0);
+    --secondary-foreground: oklch(0.95 0 0);
+
+    --muted: oklch(0.26 0 0);
+    --muted-foreground: oklch(0.62 0 0);
+    --accent: oklch(0.22 0 0);
+    --accent-foreground: oklch(0.97 0 0);
+    --destructive: oklch(0.58 0.2 25);
+
+    --added: oklch(0.78 0.16 150);
+    --added-surface: oklch(0.28 0.07 150);
+    --removed: oklch(0.72 0.17 20);
+    --removed-surface: oklch(0.28 0.08 20);
+
+    --border: oklch(0.24 0 0);
+    --input: oklch(0.24 0 0);
+
+    --ring: oklch(0.62 0 0);
+  }
 }
 
 @theme inline {

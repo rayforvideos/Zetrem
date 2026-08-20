@@ -42,7 +42,14 @@ msgstr "{0} 한도{share} {when} 초기화{overage}"
 msgid "{0} of {1} connected"
 msgstr "{1}개 중 {0}개 연결됨"
 
+#. placeholder {0}: back.length
+#: src/widgets/conversation/lib/away/away.ts:53
+msgid "{0} reports"
+msgstr "보고 {0}건"
+
 #. placeholder {0}: away.length
+#. placeholder {0}: out.length
+#: src/widgets/conversation/lib/away/away.ts:33
 #: src/widgets/conversation/lib/working/working.ts:55
 msgid "{0} teammates"
 msgstr "팀원 {0}명"
@@ -51,6 +58,11 @@ msgstr "팀원 {0}명"
 #: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:160
 msgid "{0}. Joins from the next session."
 msgstr "{0}. 다음 세션부터 함께합니다."
+
+#. placeholder {0}: who.name
+#: src/widgets/conversation/lib/away/away.ts:54
+msgid "{0}'s report"
+msgstr "{0}의 보고"
 
 #. placeholder {0}: Math.floor(gap / DAY)
 #: src/widgets/team-sidebar/lib/when/when.ts:13
@@ -66,6 +78,10 @@ msgstr "{0}시간 전"
 #: src/widgets/team-sidebar/lib/when/when.ts:11
 msgid "{0}m ago"
 msgstr "{0}분 전"
+
+#: src/widgets/conversation/lib/working/working.ts:80
+msgid "{back} teammates"
+msgstr "팀원 {back}명"
 
 #: src/pages/workspace/model/agent-events/agent-events.ts:148
 msgid "{base}. Earlier turns live on as a summary."
@@ -232,6 +248,10 @@ msgstr "실행 중인 세션은 다시 시작하기 전까지 이전 지시문�
 #: src/entities/agent-session/model/nudge/nudge.ts:17
 msgid "A session stopped with an error."
 msgstr "세션이 오류로 멈췄습니다."
+
+#: src/widgets/conversation/lib/working/working.ts:80
+msgid "a teammate"
+msgstr "팀원 한 명"
 
 #: src/widgets/welcome/lib/slides/slides.ts:32
 msgid "A teammate is a brief you write once"
@@ -418,6 +438,7 @@ msgid "Claude Code, given a screen"
 msgstr "화면이 생긴 클로드 코드"
 
 #: src/widgets/conversation/ui/Composer/Composer.tsx:88
+#: src/widgets/team-sidebar/ui/ToolPicker/ToolPicker.tsx:71
 msgid "Clear"
 msgstr "지우기"
 

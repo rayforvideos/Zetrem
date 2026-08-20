@@ -30,7 +30,7 @@ export function awayOf(sessions: AgentSession[], spokeAtMs = 0): Away | null {
       count: out.length,
       ...crewLine(first),
       sinceMs: Math.min(...out.map((one) => one.startedAtMs)),
-      many: `${out.length} teammates`,
+      many: t`${out.length} teammates`,
     }
   }
 
@@ -50,7 +50,7 @@ export function awayOf(sessions: AgentSession[], spokeAtMs = 0): Away | null {
     ...who,
     doing: '',
     sinceMs: Math.min(...back.map(backAtMs)),
-    many: `${back.length} reports`,
-    one: `${who.name}'s report`,
+    many: t`${back.length} reports`,
+    one: t`${who.name}'s report`,
   }
 }

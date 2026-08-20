@@ -68,7 +68,7 @@ export function ToolPicker({ known, chosen, onToggle, onClear }: ToolPickerProps
           disabled={chosen.length === 0}
           className="h-7 text-xs text-muted-foreground"
         >
-          Clear
+          {t`Clear`}
         </Button>
       </div>
     </Command>

@@ -14,7 +14,7 @@ export function laneOf(session: AgentSession, nowMs: number): Lane {
     id: session.id,
     name: personaOf(kind).name,
     subagentType: kind,
-    verb: shape === null ? (session.status === 'working' ? said || 'Working' : stateWord(session.status)) : verbOf(shape),
+    verb: shape === null ? (session.status === 'working' ? said || stateWord('working') : stateWord(session.status)) : verbOf(shape),
     target: shape === null ? '' : targetOf(shape),
     shape,
     outMs: Math.max(0, (session.endedAtMs ?? nowMs) - session.startedAtMs),

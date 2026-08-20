@@ -68,6 +68,17 @@ describe('marksOfStatus: every account limit, as a share used', () => {
   it('admits when it was told no reset time, rather than inventing one', () => {
     expect(marksOfStatus(state({ limits: [limit('five_hour')] }))[0]!.hint).toContain('not reported')
   })
+
+  it('says nothing about staleness once a fresh reading is in hand', () => {
+    const [mark] = marksOfStatus(state({ usage: 'read', limits: [limit('five_hour')] }))
+    expect(mark!.hint).not.toContain('earlier reading')
+  })
+
+  it('notes that a limit only came from a kept cache, without touching its percent', () => {
+    const [mark] = marksOfStatus(state({ usage: 'kept', limits: [limit('five_hour', { utilization: 0.42 })] }))
+    expect(mark!.hint).toContain('earlier reading')
+    expect(mark!.percent).toBe(42)
+  })
 })
 
 describe('chatLine: what this chat is using of its window', () => {

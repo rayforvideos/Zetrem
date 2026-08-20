@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it } from 'vitest'
 import { statusStore } from '@/entities/agent-session'
-import { learnSession, learnUsage } from './session-probe'
+import { learnKeptUsage, learnSession, learnUsage } from './session-probe'
 
 const INIT = JSON.stringify({
   type: 'system',
@@ -81,5 +81,30 @@ describe('learnUsage: taking the account limits from what the CLI printed', () =
     })
     expect(statusStore.get().limits).toHaveLength(1)
     expect(statusStore.get().limits[0]?.utilization).toBeCloseTo(0.6, 5)
+  })
+})
+
+describe('learnKeptUsage: taking the account limits kept from an earlier reading', () => {
+  beforeEach(() => {
+    statusStore.reset()
+  })
+
+  it('marks what it holds as kept, not fresh', () => {
+    learnKeptUsage('Current week (all models): 52% used · resets Aug 20 at 6am')
+    expect(statusStore.get().usage).toBe('kept')
+    expect(statusStore.get().limits).toHaveLength(1)
+  })
+
+  it('does nothing when there was no cache to read', () => {
+    learnKeptUsage(null)
+    expect(statusStore.get().usage).toBe('unread')
+    expect(statusStore.get().limits).toEqual([])
+  })
+
+  it('steps aside once a live reading has already arrived, since that one outranks the cache', () => {
+    learnUsage('Current week (all models): 52% used · resets Aug 20 at 6am')
+    learnKeptUsage('Current week (all models): 99% used · resets Aug 20 at 6am')
+    expect(statusStore.get().usage).toBe('read')
+    expect(statusStore.get().limits[0]?.utilization).toBeCloseTo(0.52, 5)
   })
 })

@@ -103,7 +103,7 @@ msgstr "{name} is off. Your next message starts a session without them."
 msgid "{name} is over {max}MB, so it cannot be sent as a picture. Point at it by path instead."
 msgstr "{name} is over {max}MB, so it cannot be sent as a picture. Point at it by path instead."
 
-#: src/widgets/usage-bar/lib/strip/strip.ts:38
+#: src/widgets/usage-bar/lib/strip/strip.ts:40
 msgid "{percent}% used"
 msgstr "{percent}% used"
 
@@ -525,7 +525,7 @@ msgstr "Could not reach {target}"
 msgid "Could not read the plugin shelf"
 msgstr "Could not read the plugin shelf"
 
-#: src/widgets/usage-bar/lib/strip/strip.ts:64
+#: src/widgets/usage-bar/lib/strip/strip.ts:66
 msgid "Could not read usage"
 msgstr "Could not read usage"
 
@@ -698,6 +698,10 @@ msgstr "Follows the language your computer is set to"
 #: src/entities/agent-session/model/choices/choices.ts:18
 msgid "Follows your account setting"
 msgstr "Follows your account setting"
+
+#: src/widgets/usage-bar/lib/strip/strip.ts:37
+msgid "from an earlier reading"
+msgstr "from an earlier reading"
 
 #: src/entities/connector/lib/groups/groups.ts:16
 msgid "From plugins"
@@ -895,7 +899,7 @@ msgstr "New teammate"
 msgid "Next"
 msgstr "Next"
 
-#: src/widgets/usage-bar/lib/strip/strip.ts:65
+#: src/widgets/usage-bar/lib/strip/strip.ts:67
 msgid "No account limits reported"
 msgstr "No account limits reported"
 
@@ -1046,7 +1050,7 @@ msgstr "Reading reports"
 msgid "Reading the catalog…"
 msgstr "Reading the catalog…"
 
-#: src/widgets/usage-bar/lib/strip/strip.ts:63
+#: src/widgets/usage-bar/lib/strip/strip.ts:65
 msgid "Reading usage…"
 msgstr "Reading usage…"
 
@@ -1185,7 +1189,7 @@ msgstr "Set for everyone on your account. They cannot be removed or turned off h
 msgid "Settings"
 msgstr "Settings"
 
-#: src/widgets/usage-bar/lib/strip/strip.ts:38
+#: src/widgets/usage-bar/lib/strip/strip.ts:40
 msgid "share unknown"
 msgstr "share unknown"
 
@@ -1443,11 +1447,11 @@ msgstr "They read fast and they never get bored."
 msgid "Thinking"
 msgstr "Thinking"
 
-#: src/widgets/usage-bar/lib/strip/strip.ts:58
+#: src/widgets/usage-bar/lib/strip/strip.ts:60
 msgid "this chat {percent}%"
 msgstr "this chat {percent}%"
 
-#: src/widgets/usage-bar/lib/strip/strip.ts:55
+#: src/widgets/usage-bar/lib/strip/strip.ts:57
 msgid "this chat {size}"
 msgstr "this chat {size}"
 

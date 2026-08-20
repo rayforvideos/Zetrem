@@ -103,7 +103,7 @@ msgstr "다음 메시지부터 {name} 없이 새 세션이 시작됩니다."
 msgid "{name} is over {max}MB, so it cannot be sent as a picture. Point at it by path instead."
 msgstr "{name}이(가) {max}MB를 넘어 그림으로 보낼 수 없습니다. 대신 경로로 알려 주세요."
 
-#: src/widgets/usage-bar/lib/strip/strip.ts:38
+#: src/widgets/usage-bar/lib/strip/strip.ts:40
 msgid "{percent}% used"
 msgstr "{percent}% 사용"
 
@@ -525,7 +525,7 @@ msgstr "{target}에 연결하지 못했습니다"
 msgid "Could not read the plugin shelf"
 msgstr "플러그인 목록을 읽지 못했습니다"
 
-#: src/widgets/usage-bar/lib/strip/strip.ts:64
+#: src/widgets/usage-bar/lib/strip/strip.ts:66
 msgid "Could not read usage"
 msgstr "사용량을 읽지 못했습니다"
 
@@ -698,6 +698,10 @@ msgstr "컴퓨터에 설정된 언어를 따릅니다"
 #: src/entities/agent-session/model/choices/choices.ts:18
 msgid "Follows your account setting"
 msgstr "계정 설정을 따릅니다"
+
+#: src/widgets/usage-bar/lib/strip/strip.ts:37
+msgid "from an earlier reading"
+msgstr "이전에 읽어둔 값"
 
 #: src/entities/connector/lib/groups/groups.ts:16
 msgid "From plugins"
@@ -895,7 +899,7 @@ msgstr "새 팀원"
 msgid "Next"
 msgstr "다음"
 
-#: src/widgets/usage-bar/lib/strip/strip.ts:65
+#: src/widgets/usage-bar/lib/strip/strip.ts:67
 msgid "No account limits reported"
 msgstr "계정 한도 정보가 없습니다"
 
@@ -1046,7 +1050,7 @@ msgstr "보고 읽는 중"
 msgid "Reading the catalog…"
 msgstr "목록을 읽는 중…"
 
-#: src/widgets/usage-bar/lib/strip/strip.ts:63
+#: src/widgets/usage-bar/lib/strip/strip.ts:65
 msgid "Reading usage…"
 msgstr "사용량 읽는 중…"
 
@@ -1185,7 +1189,7 @@ msgstr "계정 전체에 설정된 것입니다. 여기서는 지우거나 끌 �
 msgid "Settings"
 msgstr "설정"
 
-#: src/widgets/usage-bar/lib/strip/strip.ts:38
+#: src/widgets/usage-bar/lib/strip/strip.ts:40
 msgid "share unknown"
 msgstr "사용량 알 수 없음"
 
@@ -1443,11 +1447,11 @@ msgstr "빨리 읽고, 지루해하는 법이 없습니다."
 msgid "Thinking"
 msgstr "생각하는 중"
 
-#: src/widgets/usage-bar/lib/strip/strip.ts:58
+#: src/widgets/usage-bar/lib/strip/strip.ts:60
 msgid "this chat {percent}%"
 msgstr "이 대화 {percent}%"
 
-#: src/widgets/usage-bar/lib/strip/strip.ts:55
+#: src/widgets/usage-bar/lib/strip/strip.ts:57
 msgid "this chat {size}"
 msgstr "이 대화 {size}"
 

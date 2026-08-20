@@ -33,6 +33,8 @@ function leftLabel(limit: StatusState['limits'][number], nowMs: number): string 
 }
 
 export function marksOfStatus(status: StatusState, nowMs = Date.now()): Mark[] {
+  // limits held from the kept cache without a fresh read since are marked stale, not hidden
+  const stale = status.usage === 'kept' ? ` · ${t`from an earlier reading`}` : ''
   return status.limits.map((limit) => {
     const percent = limit.utilization === null ? null : Math.round(limit.utilization * 100)
     const share = percent === null ? t`share unknown` : t`${percent}% used`
@@ -41,7 +43,7 @@ export function marksOfStatus(status: StatusState, nowMs = Date.now()): Mark[] {
       label: limitTag(limit.kind),
       percent,
       left: leftLabel(limit, nowMs),
-      hint: `${limitKindLabel(limit.kind)} · ${share} · ${resetHint(limit)}`,
+      hint: `${limitKindLabel(limit.kind)} · ${share} · ${resetHint(limit)}${stale}`,
       warn: limit.status !== 'allowed' || limit.overage || (limit.utilization ?? 0) >= WARN,
     }
   })

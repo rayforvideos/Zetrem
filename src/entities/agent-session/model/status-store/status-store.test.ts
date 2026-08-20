@@ -176,6 +176,25 @@ describe('statusStore: the last thing known to be true', () => {
   })
 })
 
+describe('usage: whether the limits on hand are fresh or only kept from before', () => {
+  it('marks the limits as kept once the disk cache has been read', () => {
+    statusStore.usageKept()
+    expect(statusStore.get().usage).toBe('kept')
+  })
+
+  it('clears the kept mark once a fresh read succeeds', () => {
+    statusStore.usageKept()
+    statusStore.usageRead(1_700_000_000_000)
+    expect(statusStore.get().usage).toBe('read')
+  })
+
+  it('leaves the kept mark set when the fresh read fails, since the kept limits are still all there is', () => {
+    statusStore.usageKept()
+    statusStore.usageUnreadable()
+    expect(statusStore.get().usage).toBe('kept')
+  })
+})
+
 describe('restoreChat: reopening a chat brings its totals back', () => {
   it('puts back what the chat had spent', () => {
     statusStore.reset()

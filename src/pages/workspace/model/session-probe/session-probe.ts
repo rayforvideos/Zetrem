@@ -14,6 +14,7 @@ export function learnKeptUsage(report: string | null): void {
   for (const limit of readUsage(report)) {
     statusStore.apply({ type: 'limit', limit })
   }
+  statusStore.usageKept()
 }
 
 export function learnUsage(report: string | null): void {

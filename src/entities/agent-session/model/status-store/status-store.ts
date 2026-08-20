@@ -105,6 +105,9 @@ export const statusStore = {
     if (state.usage !== 'unread') return
     emit({ ...state, usage: 'unreadable' })
   },
+  usageKept(): void {
+    emit({ ...state, usage: 'kept' })
+  },
   learnProbe(session: StatusState['session']): void {
     emit({ ...state, session, probed: true })
   },

@@ -169,8 +169,7 @@ which one a change broke.
 
 Read [CONTRIBUTING.md](CONTRIBUTING.md), then open an issue or a pull request.
 Translations into a new language are the easiest place to start:
-[docs/translating.md](docs/translating.md). Cutting a release is
-[docs/releasing.md](docs/releasing.md), which only the maintainer needs.
+[docs/translating.md](docs/translating.md).
 
 Security issues go through [SECURITY.md](SECURITY.md), privately.
 

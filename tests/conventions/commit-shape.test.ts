@@ -2,8 +2,6 @@ import { execFileSync } from 'node:child_process'
 import { describe, expect, it } from 'vitest'
 
 const TYPE = /^(feat|fix|refactor|test|chore|docs|perf|build|ci)(\([a-z0-9-]+\))?: \S/
-const KOREAN_MARK = '—— 한국어 ——'
-const HANGUL = /[가-힣]/
 const SUBJECT_MAX = 72
 
 // CONTRIBUTING says what a commit looks like, and until now nothing checked it.
@@ -23,7 +21,7 @@ function commits(): { sha: string; subject: string; body: string }[] {
     })
 }
 
-describe('a commit says what kind it is, in both languages', () => {
+describe('a commit says what kind it is', () => {
   const all = commits()
 
   it('has commits to look at', () => {
@@ -40,12 +38,5 @@ describe('a commit says what kind it is, in both languages', () => {
       .filter((one) => one.subject.length > SUBJECT_MAX)
       .map((one) => `${one.sha} (${one.subject.length}자)`)
     expect(long, `제목은 ${SUBJECT_MAX}자 이내`).toEqual([])
-  })
-
-  it('says it in Korean too, under the mark', () => {
-    const missing = all
-      .filter((one) => !one.body.includes(KOREAN_MARK) || !HANGUL.test(one.body.split(KOREAN_MARK)[1] ?? ''))
-      .map((one) => `${one.sha} ${one.subject}`)
-    expect(missing, `본문은 영어 다음에 ${KOREAN_MARK} 을 두고 한국어를 적는다`).toEqual([])
   })
 })

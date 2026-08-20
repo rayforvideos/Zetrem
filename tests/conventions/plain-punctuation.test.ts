@@ -33,8 +33,6 @@ async function ourFiles(): Promise<{ path: string; text: string }[]> {
 
 const DOCS = ['README.md', 'CONTRIBUTING.md']
 
-const SPLITTER = '—— 한국어 ——'
-
 describe('what we say to a person uses ordinary punctuation', () => {
   it('writes no em dash, and ends a sentence or takes a comma instead', async () => {
     const stray: string[] = []
@@ -54,7 +52,6 @@ describe('what we say to a person uses ordinary punctuation', () => {
       const text = await readFile(name, 'utf8')
       for (const line of text.split('\n')) {
         if (!line.includes('—')) continue
-        if (line.includes(SPLITTER)) continue
         stray.push(`${name}: ${line.trim().slice(0, 80)}`)
       }
     }
@@ -63,9 +60,9 @@ describe('what we say to a person uses ordinary punctuation', () => {
 })
 
 describe('the commit convention says which language goes where', () => {
-  it('asks for an English subject and both languages in the body', async () => {
+  it('asks for an English subject and body, with no bilingual block', async () => {
     const text = await readFile('CONTRIBUTING.md', 'utf8')
-    expect(text).toContain('Subject in English, body in English then Korean')
-    expect(text).toContain(SPLITTER)
+    expect(text).toContain('Subject and body, both in English')
+    expect(text).not.toContain('한국어')
   })
 })

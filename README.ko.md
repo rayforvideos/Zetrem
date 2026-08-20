@@ -164,8 +164,7 @@ src/shared    도메인을 모르는 것들
 ## 기여
 
 [CONTRIBUTING.md](CONTRIBUTING.md) 를 읽고 이슈나 PR 을 열면 된다. 새 언어 번역이
-가장 시작하기 쉽다: [docs/translating.md](docs/translating.md). 릴리스를 만드는
-일은 [docs/releasing.md](docs/releasing.md) 에 있다. 메인테이너만 보면 된다.
+가장 시작하기 쉽다: [docs/translating.md](docs/translating.md).
 
 보안 문제는 [SECURITY.md](SECURITY.md) 를 따라 비공개로 알려주면 된다.
 

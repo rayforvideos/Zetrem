@@ -86,17 +86,11 @@ the ruler. Agent faces are the one place colour is allowed.
 
 ## Commits
 
-Subject in English, body in English then Korean, separated by `—— 한국어 ——`.
-Say why, not what. The diff already says what.
+Subject and body, both in English. Say why, not what. The diff already says
+what.
 
 ```
 feat: let the person change accounts
 
 There was a way in and no way out...
-
-—— 한국어 ——
-
-계정을 바꿀 수 있게 한다
-
-들어오는 길만 있고 나가는 길이 없어서...
 ```

@@ -29,8 +29,8 @@ The Claude Code CLI does the work itself, unchanged.</p>
 
 ---
 
-> **Beta.** In daily use by its author and checked on both platforms by CI, but
-> not yet tested widely.
+> **Beta.** In daily use by its author and checked on both platforms at
+> release time, but not yet tested widely.
 
 ---
 
@@ -138,8 +138,9 @@ npm run package:mac     # .app in release/
 npm run package:win     # NSIS installer in release/
 ```
 
-CI runs the full checks on both platforms on every push, including a smoke test
-that launches the app and confirms the window renders.
+CI runs the checks on Linux on every push. The macOS and Windows matrix, which
+includes launch, package, and a smoke test, runs for release tags and on
+demand.
 
 ---
 

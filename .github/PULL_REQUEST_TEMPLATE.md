@@ -10,5 +10,5 @@
 
 - [ ] `npm test` passes, `tests/conventions/` included
 - [ ] `npm run typecheck` and `npm run build` pass
-- [ ] Commit messages follow [CONTRIBUTING.md](../CONTRIBUTING.md#commits) — `feat:` and a Korean section
+- [ ] Commit messages follow [CONTRIBUTING.md](../CONTRIBUTING.md#commits) — English subject and body
 - [ ] If you changed any wording, `npm run i18n:extract` was run and the catalogues are committed

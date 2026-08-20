@@ -1,11 +1,15 @@
 /**
- * Notarising needs Apple's servers, so it only runs when the credentials are in
- * the environment. See docs/releasing.md for the rest.
+ * Notarising needs Apple's servers, so it only runs when credentials are in the
+ * environment: either the three APPLE_ID vars, or APPLE_KEYCHAIN_PROFILE pointing
+ * at a notarytool keychain profile. electron-builder resolves the credentials
+ * itself from those env vars, so `notarize` only needs to be a boolean gate.
+ * See docs/releasing.md for the rest.
  */
 const notarising =
-  Boolean(process.env.APPLE_ID) &&
-  Boolean(process.env.APPLE_APP_SPECIFIC_PASSWORD) &&
-  Boolean(process.env.APPLE_TEAM_ID)
+  (Boolean(process.env.APPLE_ID) &&
+    Boolean(process.env.APPLE_APP_SPECIFIC_PASSWORD) &&
+    Boolean(process.env.APPLE_TEAM_ID)) ||
+  Boolean(process.env.APPLE_KEYCHAIN_PROFILE)
 
 module.exports = {
   "appId": "com.zetrem.app",
@@ -39,7 +43,7 @@ module.exports = {
     "gatekeeperAssess": false,
     "entitlements": "build/entitlements.mac.plist",
     "entitlementsInherit": "build/entitlements.mac.plist",
-    "notarize": notarising ? { "teamId": process.env.APPLE_TEAM_ID } : false
+    "notarize": notarising
   },
   "win": {
     "icon": "resources/icon.png",

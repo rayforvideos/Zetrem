@@ -5,7 +5,9 @@ import { describe, expect, it } from 'vitest'
 const DIR = join(process.cwd(), 'electron')
 
 async function sources(): Promise<{ name: string; text: string }[]> {
-  const names = (await readdir(DIR)).filter((name) => name.endsWith('.ts') && !name.endsWith('.test.ts'))
+  const names = (await readdir(DIR, { recursive: true })).filter(
+    (name) => name.endsWith('.ts') && !name.endsWith('.test.ts'),
+  )
   return Promise.all(
     names.map(async (name) => ({ name, text: await readFile(join(DIR, name), 'utf8') })),
   )

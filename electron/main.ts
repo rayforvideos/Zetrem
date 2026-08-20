@@ -1,7 +1,7 @@
 import { join, relative, resolve } from 'node:path'
 import { BrowserWindow, app, dialog, nativeImage, session, shell } from 'electron'
 import { CHROME_TOP, CONTROL_SYMBOL, GROUND, MIN_WINDOW, TRAFFIC_LIGHT } from '@/shared/config/theme'
-import { killAllAgents, registerAgentHost } from './agent-host'
+import { killAllAgents, registerAgentHost } from './agent-host/agent-host'
 import { registerAttachments } from './attachments'
 import { registerAgentDefs } from './agent-defs'
 import { registerAuth } from './auth'

@@ -1157,7 +1157,7 @@ msgstr "Send"
 msgid "Session details"
 msgstr "Session details"
 
-#: src/pages/workspace/model/use-agent.ts:153
+#: src/pages/workspace/model/use-agent.ts:156
 msgid "Session stopped. The next message starts a new one with your team as it is now."
 msgstr "Session stopped. The next message starts a new one with your team as it is now."
 

@@ -1157,7 +1157,7 @@ msgstr "보내기"
 msgid "Session details"
 msgstr "세션 상세"
 
-#: src/pages/workspace/model/use-agent.ts:153
+#: src/pages/workspace/model/use-agent.ts:156
 msgid "Session stopped. The next message starts a new one with your team as it is now."
 msgstr "세션을 멈췄습니다. 다음 메시지부터 지금 팀 구성으로 새로 시작합니다."
 

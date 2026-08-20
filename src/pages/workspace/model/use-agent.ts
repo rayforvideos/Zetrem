@@ -89,6 +89,8 @@ export function useAgent(
         if (event.reason !== null) conversation.system(exitLine(event.reason))
         conversation.setStatus('done')
         conversation.setPermission(null)
+        asks.current.length = 0
+        statusStore.apply({ type: 'activity', activity: 'idle' })
         conversation.clearChores()
         for (const childId of childIds.current) sessionStore.patch(childId, { status: 'done' })
         childIds.current.clear()
@@ -118,6 +120,7 @@ export function useAgent(
     sessionStore.clear()
     childIds.current.clear()
     sends.current.clear()
+    asks.current.length = 0
     const id = `agent-${Date.now()}`
     hostId.current = id
     setRunning(true)

@@ -67,64 +67,36 @@ Model with unions, not optional flags. `AuthStatus` is
 a signed-out account cannot carry an email. When you add a variant the compiler
 lists every place that has to handle it.
 
+## Code
 
----
+**No comments.** Names and tests carry the intent. The one exception is a
+directive the toolchain reads (`@ts-expect-error`, `eslint-disable`).
 
-# Zetrem 에 기여하기
+**Switch over repeated type checks.** Three or more comparisons against the same
+discriminant become a `switch`, so TypeScript can see which cases are covered
+and a new variant fails to compile instead of falling through silently.
 
-여기 적힌 규칙은 `tests/conventions/` 의 테스트로 검사한다. 어기면 `npm test` 가
-어느 규칙을 어디서 어겼는지 알려준다. 문서에 없는 규칙은 리뷰에서 요구하지 않는다.
+**Do not draw what you do not know.** A value the engine never sent is not a
+zero and not a dash. The row does not exist. A failure is shown with its
+reason, never swallowed into a state that looks like success.
 
-## 폴더
+**Semantic tokens, not hand-carved values.** No `text-[13px]`, no bare
+`opacity-45`, no palette colours. Tailwind's scale and the shadcn tokens hold
+the ruler. Agent faces are the one place colour is allowed.
 
-Feature-Sliced Design 을 따른다. 의존 방향은 한쪽이다. 아래 레이어를 가져다 쓸 수
-있지만 위 레이어는 참조하지 않는다.
+## Commits
 
-```
-src/app        조립 지점, 메인 프로세스와의 IPC 계약
-src/pages      화면과 그 화면에 속한 상태
-src/widgets    페이지가 배치하는 덩어리
-src/entities   도메인 개념과 그것을 그리는 UI
-src/shared     도메인을 모르는 것들
-electron       메인 프로세스
-tests          저장소 전체 규약 가드
-```
-
-`src/shared/ui/` 는 shadcn CLI 전용이다. `npx shadcn@latest add` 가 이 폴더에
-파일을 만든다. 직접 만든 컴포넌트는 여기에 두지 않는다. `@/entities`·`@/widgets`·`@/pages`·
-`@/app` 을 import 하는 컴포넌트는 shared 가 아니라 그 도메인 곁에 있어야 한다.
-직접 만든 것은 `src/shared/graphics/`(마크·아이콘)나 해당 엔티티의 `ui/` 에 둔다.
-
-## 테스트는 모듈과 같은 폴더에 둔다
-
-테스트가 있는 모듈은 같은 이름의 폴더 안에 넣는다. 파일명은 그대로 둔다.
+Subject in English, body in English then Korean, separated by `—— 한국어 ——`.
+Say why, not what. The diff already says what.
 
 ```
-shared/lib/units/units.ts
-shared/lib/units/units.test.ts
-shared/lib/cn.ts               ← 테스트 없으면 폴더도 없다
+feat: let the person change accounts
+
+There was a way in and no way out...
+
+—— 한국어 ——
+
+계정을 바꿀 수 있게 한다
+
+들어오는 길만 있고 나가는 길이 없어서...
 ```
-
-한 모듈에 테스트 파일이 여럿 있어도 된다. 특정 모듈이 아니라 저장소 전체 규약을
-지키는 테스트는 `tests/conventions/` 로 간다.
-
-## 타입은 로직과 파일을 나눈다
-
-모듈의 타입은 같은 폴더의 `<모듈>.types.ts` 에 둔다. 로직 파일은 필요한 것만
-import 하고 다시 export 하지 않는다. 타입을 쓰는 쪽은 엔티티 배럴에서 가져오고,
-배럴은 `.types` 를 참조한다. 타입만 필요한 코드가 구현에 의존하지 않게 하려는
-것이다.
-
-```
-shared/lib/tool-shape/tool-shape.types.ts   ToolShape
-shared/lib/tool-shape/tool-shape.ts         toolShape()
-shared/lib/tool-shape/tool-shape.test.ts
-```
-
-`.types.ts` 에서는 값을 export 하지 않는다. 파일을 지워도 동작이 바뀌지 않아야
-한다.
-
-선택 필드 대신 유니온으로 모델링한다. `AuthStatus` 는
-`signed-in | signed-out | cli-missing` 이지 '있을 수도 있는' 필드 넷이 달린 레코드가
-아니다. 이렇게 하면 로그아웃 상태에 이메일이 들어갈 수 없다. 갈래를 추가하면
-처리해야 할 위치를 컴파일러가 모두 알려준다.

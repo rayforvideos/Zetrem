@@ -45,18 +45,18 @@ describe('readSettings: reading back what was chosen', () => {
 })
 
 describe('the appearance setting', () => {
-  it('follows the machine until someone says otherwise', () => {
-    expect(readSettings({}).theme).toBe('system')
+  it('starts dark until someone says otherwise', () => {
+    expect(readSettings({}).theme).toBe('dark')
   })
 
   it('keeps a scheme that was picked by hand', () => {
-    expect(readSettings({ theme: 'dark' }).theme).toBe('dark')
+    expect(readSettings({ theme: 'system' }).theme).toBe('system')
     expect(readSettings({ theme: 'light' }).theme).toBe('light')
   })
 
-  it('goes back to the machine when the saved word means nothing', () => {
-    expect(readSettings({ theme: 'sepia' }).theme).toBe('system')
-    expect(readSettings({ theme: 3 }).theme).toBe('system')
+  it('goes back to dark when the saved word means nothing', () => {
+    expect(readSettings({ theme: 'sepia' }).theme).toBe('dark')
+    expect(readSettings({ theme: 3 }).theme).toBe('dark')
   })
 })
 

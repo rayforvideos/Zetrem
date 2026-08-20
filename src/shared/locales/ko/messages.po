@@ -99,7 +99,7 @@ msgstr "{sources, plural, other {출처 #곳}}에서 {installed}개 설치됨"
 msgid "{kind} {name} did not load: {why}"
 msgstr "{kind} {name}을(를) 불러오지 못했습니다: {why}"
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:387
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:385
 msgid "{name} can be called now. Your next message starts a session that can reach them."
 msgstr "다음 메시지부터 {name} 포함해서 새 세션이 시작됩니다."
 
@@ -107,7 +107,7 @@ msgstr "다음 메시지부터 {name} 포함해서 새 세션이 시작됩니다
 msgid "{name} can be called this session"
 msgstr "{name}은(는) 이번 세션에서 부를 수 있습니다"
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:388
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:386
 msgid "{name} is off. Your next message starts a session without them."
 msgstr "다음 메시지부터 {name} 없이 새 세션이 시작됩니다."
 
@@ -303,10 +303,6 @@ msgstr "전부 허용"
 msgid "Allow this?"
 msgstr "허용할까요?"
 
-#: src/widgets/setup/lib/themes/themes.ts:6
-msgid "Always dark"
-msgstr "항상 다크로"
-
 #: src/widgets/setup/lib/tongues/tongues.ts:6
 msgid "Always English"
 msgstr "항상 영어로"
@@ -314,10 +310,6 @@ msgstr "항상 영어로"
 #: src/widgets/setup/lib/tongues/tongues.ts:7
 msgid "Always Korean"
 msgstr "항상 한국어로"
-
-#: src/widgets/setup/lib/themes/themes.ts:7
-msgid "Always light"
-msgstr "항상 라이트로"
 
 #: src/shared/lib/datetime/datetime.ts:21
 msgid "any moment"
@@ -327,10 +319,6 @@ msgstr "곧"
 #: src/pages/workspace/model/agent-events/agent-events.ts:94
 msgid "API error {0}"
 msgstr "API 오류 {0}"
-
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:67
-msgid "Appearance"
-msgstr "화면 모드"
 
 #: src/entities/agent-session/model/choices/choices.ts:7
 #: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:44
@@ -389,7 +377,7 @@ msgstr "Claude Desktop에 있던 것을 가져왔습니다."
 msgid "Browse"
 msgstr "둘러보기"
 
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:125
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:118
 #: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:256
 #: src/widgets/team-sidebar/ui/MemberMenu/MemberMenu.tsx:66
 msgid "Cancel"
@@ -403,7 +391,7 @@ msgstr "장바구니 합계와 반올림"
 msgid "Change"
 msgstr "바꾸기"
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:483
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:481
 msgid "Change account, project, and permissions"
 msgstr "계정과 프로젝트, 권한을 바꿉니다"
 
@@ -611,10 +599,6 @@ msgstr "만들기"
 msgid "Create a teammate and they'll show up here."
 msgstr "팀원을 만들면 여기에 나타납니다."
 
-#: src/widgets/setup/lib/themes/themes.ts:6
-msgid "Dark"
-msgstr "다크"
-
 #: src/widgets/welcome/lib/slides/slides.ts:39
 msgid "Decide what may run without asking, watch what is left of your limits along the foot, and stop anything mid-flight."
 msgstr "무엇을 묻지 않고 실행해도 되는지 정하고, 남은 한도를 아래쪽에서 지켜보고, 무엇이든 도중에 멈출 수 있습니다."
@@ -644,7 +628,7 @@ msgid "Don't ask again this session"
 msgstr "이번 세션에서는 다시 묻지 않기"
 
 #: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:20
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:129
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:122
 #: src/widgets/tile-deck/ui/layers/StateChip/StateChip.tsx:11
 msgid "Done"
 msgstr "완료"
@@ -728,10 +712,6 @@ msgstr "컴퓨터에 설정된 언어를 따릅니다"
 msgid "Follows your account setting"
 msgstr "계정 설정을 따릅니다"
 
-#: src/widgets/setup/lib/themes/themes.ts:5
-msgid "Follows your computer's light or dark setting"
-msgstr "컴퓨터에 설정된 화면 모드를 따릅니다"
-
 #: src/widgets/usage-bar/lib/strip/strip.ts:37
 msgid "from an earlier reading"
 msgstr "이전에 읽어둔 값"
@@ -765,8 +745,8 @@ msgstr "넘기는 중"
 msgid "Held up"
 msgstr "멈춰 있음"
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:468
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:469
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:466
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:467
 msgid "Hide team sidebar"
 msgstr "팀 사이드바 접기"
 
@@ -820,7 +800,7 @@ msgstr "이어서 말하세요"
 msgid "Keep the name under {NAME_MAX} characters"
 msgstr "이름은 {NAME_MAX}자 이내로 지어 주세요"
 
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:61
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:60
 msgid "Language"
 msgstr "언어"
 
@@ -840,11 +820,7 @@ msgstr "영문, 숫자, 하이픈, 밑줄만 쓸 수 있습니다"
 msgid "Letters, numbers, hyphens. Sign in after adding if it asks."
 msgstr "영문, 숫자, 하이픈. 추가한 뒤 로그인을 요구하면 로그인하세요."
 
-#: src/widgets/setup/lib/themes/themes.ts:7
-msgid "Light"
-msgstr "라이트"
-
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:104
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:97
 msgid "Manage"
 msgstr "관리"
 
@@ -855,10 +831,6 @@ msgstr "claude.ai에서 관리합니다. 로그인과 로그아웃은 여기서,
 #: src/pages/workspace/model/agent-events/agent-events.ts:156
 msgid "manual"
 msgstr "수동"
-
-#: src/widgets/setup/lib/themes/themes.ts:5
-msgid "Match system"
-msgstr "시스템 설정에 따름"
 
 #. placeholder {0}: wired.connected
 #. placeholder {1}: wired.total
@@ -879,13 +851,13 @@ msgstr "{addressee}에게 보낼 말"
 msgid "Message your team"
 msgstr "팀에게 말하기"
 
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:79
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:72
 #: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:98
 #: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:132
 msgid "Model"
 msgstr "모델"
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:320
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:318
 msgid "Model changed. Your next message starts a session on it."
 msgstr "모델을 바꿨습니다. 다음 메시지부터 새 모델로 시작합니다."
 
@@ -984,8 +956,8 @@ msgstr "아직 쓴 것이 없습니다."
 msgid "Nothing yet"
 msgstr "아직 없음"
 
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:86
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:95
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:79
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:88
 msgid "Notifications"
 msgstr "알림"
 
@@ -1017,11 +989,11 @@ msgstr "서버 주소를 붙여넣으세요"
 msgid "Permission"
 msgstr "권한"
 
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:73
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:66
 msgid "Permissions"
 msgstr "권한"
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:314
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:312
 msgid "Permissions changed. Your next message starts a session that follows them."
 msgstr "권한을 바꿨습니다. 다음 메시지부터 바뀐 권한으로 시작합니다."
 
@@ -1041,7 +1013,7 @@ msgstr "계획하는 중"
 msgid "Plugin"
 msgstr "플러그인"
 
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:100
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:93
 msgid "Plugins"
 msgstr "플러그인"
 
@@ -1214,7 +1186,7 @@ msgstr "세션 상세"
 msgid "Session stopped. The next message starts a new one with your team as it is now."
 msgstr "세션을 멈췄습니다. 다음 메시지부터 지금 팀 구성으로 새로 시작합니다."
 
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:52
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:51
 msgid "Set a few things and your agents get to work!"
 msgstr "몇 가지만 정하면 바로 일을 시작합니다"
 
@@ -1222,7 +1194,7 @@ msgstr "몇 가지만 정하면 바로 일을 시작합니다"
 msgid "Set for everyone on your account. They cannot be removed or turned off here."
 msgstr "계정 전체에 설정된 것입니다. 여기서는 지우거나 끌 수 없습니다."
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:485
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:483
 msgid "Settings"
 msgstr "설정"
 
@@ -1230,8 +1202,8 @@ msgstr "설정"
 msgid "share unknown"
 msgstr "사용량 알 수 없음"
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:468
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:469
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:466
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:467
 msgid "Show team sidebar"
 msgstr "팀 사이드바 펼치기"
 
@@ -1315,7 +1287,7 @@ msgstr "마켓플레이스 · {0}"
 msgid "Standing instructions. Write it the way you would brief a person."
 msgstr "늘 지킬 지침입니다. 사람에게 일을 맡기듯 적으세요."
 
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:129
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:122
 msgid "Start"
 msgstr "시작"
 
@@ -1382,7 +1354,7 @@ msgstr "{addressee}에게 맡길 일"
 msgid "Team board width"
 msgstr "팀 보드 너비"
 
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:88
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:81
 msgid "Tells you when the work is done or something needs your say-so, and only while Zetrem is behind another window."
 msgstr "일이 끝났거나 승인을 기다릴 때 알려줍니다. Zetrem이 다른 창 뒤에 있을 때만 울립니다."
 

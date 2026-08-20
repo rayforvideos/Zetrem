@@ -251,8 +251,6 @@ export function WorkspaceScreen() {
                     onPermissionMode: (permissionMode) => update({ permissionMode }),
                     tongue: settings.tongue,
                     onTongue: (next) => update({ tongue: next }),
-                    theme: settings.theme,
-                    onTheme: (next) => update({ theme: next }),
                     notify: settings.notify,
                     onNotify: (on) => update({ notify: on }),
                     onModel: (model) => update({ model }),

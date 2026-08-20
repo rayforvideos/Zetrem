@@ -99,7 +99,7 @@ msgstr "{installed} installed from {sources, plural, one {# source} other {# sou
 msgid "{kind} {name} did not load: {why}"
 msgstr "{kind} {name} did not load: {why}"
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:387
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:385
 msgid "{name} can be called now. Your next message starts a session that can reach them."
 msgstr "{name} can be called now. Your next message starts a session that can reach them."
 
@@ -107,7 +107,7 @@ msgstr "{name} can be called now. Your next message starts a session that can re
 msgid "{name} can be called this session"
 msgstr "{name} can be called this session"
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:388
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:386
 msgid "{name} is off. Your next message starts a session without them."
 msgstr "{name} is off. Your next message starts a session without them."
 
@@ -303,10 +303,6 @@ msgstr "Allow all"
 msgid "Allow this?"
 msgstr "Allow this?"
 
-#: src/widgets/setup/lib/themes/themes.ts:6
-msgid "Always dark"
-msgstr "Always dark"
-
 #: src/widgets/setup/lib/tongues/tongues.ts:6
 msgid "Always English"
 msgstr "Always English"
@@ -314,10 +310,6 @@ msgstr "Always English"
 #: src/widgets/setup/lib/tongues/tongues.ts:7
 msgid "Always Korean"
 msgstr "Always Korean"
-
-#: src/widgets/setup/lib/themes/themes.ts:7
-msgid "Always light"
-msgstr "Always light"
 
 #: src/shared/lib/datetime/datetime.ts:21
 msgid "any moment"
@@ -327,10 +319,6 @@ msgstr "any moment"
 #: src/pages/workspace/model/agent-events/agent-events.ts:94
 msgid "API error {0}"
 msgstr "API error {0}"
-
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:67
-msgid "Appearance"
-msgstr "Appearance"
 
 #: src/entities/agent-session/model/choices/choices.ts:7
 #: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:44
@@ -389,7 +377,7 @@ msgstr "Brought over what Claude Desktop had."
 msgid "Browse"
 msgstr "Browse"
 
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:125
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:118
 #: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:256
 #: src/widgets/team-sidebar/ui/MemberMenu/MemberMenu.tsx:66
 msgid "Cancel"
@@ -403,7 +391,7 @@ msgstr "Cart totals and rounding"
 msgid "Change"
 msgstr "Change"
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:483
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:481
 msgid "Change account, project, and permissions"
 msgstr "Change account, project, and permissions"
 
@@ -611,10 +599,6 @@ msgstr "Create"
 msgid "Create a teammate and they'll show up here."
 msgstr "Create a teammate and they'll show up here."
 
-#: src/widgets/setup/lib/themes/themes.ts:6
-msgid "Dark"
-msgstr "Dark"
-
 #: src/widgets/welcome/lib/slides/slides.ts:39
 msgid "Decide what may run without asking, watch what is left of your limits along the foot, and stop anything mid-flight."
 msgstr "Decide what may run without asking, watch what is left of your limits along the foot, and stop anything mid-flight."
@@ -644,7 +628,7 @@ msgid "Don't ask again this session"
 msgstr "Don't ask again this session"
 
 #: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:20
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:129
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:122
 #: src/widgets/tile-deck/ui/layers/StateChip/StateChip.tsx:11
 msgid "Done"
 msgstr "Done"
@@ -728,10 +712,6 @@ msgstr "Follows the language your computer is set to"
 msgid "Follows your account setting"
 msgstr "Follows your account setting"
 
-#: src/widgets/setup/lib/themes/themes.ts:5
-msgid "Follows your computer's light or dark setting"
-msgstr "Follows your computer's light or dark setting"
-
 #: src/widgets/usage-bar/lib/strip/strip.ts:37
 msgid "from an earlier reading"
 msgstr "from an earlier reading"
@@ -765,8 +745,8 @@ msgstr "Handing off"
 msgid "Held up"
 msgstr "Held up"
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:468
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:469
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:466
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:467
 msgid "Hide team sidebar"
 msgstr "Hide team sidebar"
 
@@ -820,7 +800,7 @@ msgstr "Keep going"
 msgid "Keep the name under {NAME_MAX} characters"
 msgstr "Keep the name under {NAME_MAX} characters"
 
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:61
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:60
 msgid "Language"
 msgstr "Language"
 
@@ -840,11 +820,7 @@ msgstr "Letters, numbers, hyphens and underscores only"
 msgid "Letters, numbers, hyphens. Sign in after adding if it asks."
 msgstr "Letters, numbers, hyphens. Sign in after adding if it asks."
 
-#: src/widgets/setup/lib/themes/themes.ts:7
-msgid "Light"
-msgstr "Light"
-
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:104
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:97
 msgid "Manage"
 msgstr "Manage"
 
@@ -855,10 +831,6 @@ msgstr "Managed on claude.ai. Sign in or out here, remove them there."
 #: src/pages/workspace/model/agent-events/agent-events.ts:156
 msgid "manual"
 msgstr "manual"
-
-#: src/widgets/setup/lib/themes/themes.ts:5
-msgid "Match system"
-msgstr "Match system"
 
 #. placeholder {0}: wired.connected
 #. placeholder {1}: wired.total
@@ -879,13 +851,13 @@ msgstr "Message for {addressee}"
 msgid "Message your team"
 msgstr "Message your team"
 
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:79
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:72
 #: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:98
 #: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:132
 msgid "Model"
 msgstr "Model"
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:320
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:318
 msgid "Model changed. Your next message starts a session on it."
 msgstr "Model changed. Your next message starts a session on it."
 
@@ -984,8 +956,8 @@ msgstr "Nothing written yet."
 msgid "Nothing yet"
 msgstr "Nothing yet"
 
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:86
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:95
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:79
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:88
 msgid "Notifications"
 msgstr "Notifications"
 
@@ -1017,11 +989,11 @@ msgstr "Paste the server address"
 msgid "Permission"
 msgstr "Permission"
 
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:73
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:66
 msgid "Permissions"
 msgstr "Permissions"
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:314
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:312
 msgid "Permissions changed. Your next message starts a session that follows them."
 msgstr "Permissions changed. Your next message starts a session that follows them."
 
@@ -1041,7 +1013,7 @@ msgstr "Planning"
 msgid "Plugin"
 msgstr "Plugin"
 
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:100
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:93
 msgid "Plugins"
 msgstr "Plugins"
 
@@ -1214,7 +1186,7 @@ msgstr "Session details"
 msgid "Session stopped. The next message starts a new one with your team as it is now."
 msgstr "Session stopped. The next message starts a new one with your team as it is now."
 
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:52
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:51
 msgid "Set a few things and your agents get to work!"
 msgstr "Set a few things and your agents get to work!"
 
@@ -1222,7 +1194,7 @@ msgstr "Set a few things and your agents get to work!"
 msgid "Set for everyone on your account. They cannot be removed or turned off here."
 msgstr "Set for everyone on your account. They cannot be removed or turned off here."
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:485
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:483
 msgid "Settings"
 msgstr "Settings"
 
@@ -1230,8 +1202,8 @@ msgstr "Settings"
 msgid "share unknown"
 msgstr "share unknown"
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:468
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:469
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:466
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:467
 msgid "Show team sidebar"
 msgstr "Show team sidebar"
 
@@ -1315,7 +1287,7 @@ msgstr "Sources · {0}"
 msgid "Standing instructions. Write it the way you would brief a person."
 msgstr "Standing instructions. Write it the way you would brief a person."
 
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:129
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:122
 msgid "Start"
 msgstr "Start"
 
@@ -1382,7 +1354,7 @@ msgstr "Task for {addressee}"
 msgid "Team board width"
 msgstr "Team board width"
 
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:88
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:81
 msgid "Tells you when the work is done or something needs your say-so, and only while Zetrem is behind another window."
 msgstr "Tells you when the work is done or something needs your say-so, and only while Zetrem is behind another window."
 

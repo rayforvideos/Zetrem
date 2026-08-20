@@ -90,6 +90,8 @@ function createWindow(): void {
 
   win.webContents.on('did-start-navigation', (details) => {
     if (!details.isMainFrame) return
+    // In-page navigation (hash change, pushState) is not a real page load, so don't kill agents for it.
+    if (details.isSameDocument) return
     dropChildren()
   })
 

@@ -60,12 +60,13 @@ function readInit(bin: string, args: string[], cwd: string, env: NodeJS.ProcessE
 
     child.stdout.on('data', (chunk: string) => {
       buffer += chunk
-      if (buffer.length > PROBE_BUFFER_MAX) return stop(null)
       const lines = buffer.split('\n')
       buffer = lines.pop() ?? ''
       for (const line of lines) {
         if (isInit(line)) return stop(line)
       }
+      // Only give up once the freshly appended chunk has been scanned for the init line.
+      if (buffer.length > PROBE_BUFFER_MAX) stop(null)
     })
     child.on('exit', () => stop(null))
     child.on('error', () => stop(null))

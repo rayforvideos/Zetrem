@@ -67,39 +67,6 @@ Model with unions, not optional flags. `AuthStatus` is
 a signed-out account cannot carry an email. When you add a variant the compiler
 lists every place that has to handle it.
 
-## Code
-
-**No comments.** Names and tests carry the intent. The one exception is a
-directive the toolchain reads (`@ts-expect-error`, `eslint-disable`).
-
-**Switch over repeated type checks.** Three or more comparisons against the same
-discriminant become a `switch`, so TypeScript can see which cases are covered
-and a new variant fails to compile instead of falling through silently.
-
-**Do not draw what you do not know.** A value the engine never sent is not a
-zero and not a dash. The row does not exist. A failure is shown with its
-reason, never swallowed into a state that looks like success.
-
-**Semantic tokens, not hand-carved values.** No `text-[13px]`, no bare
-`opacity-45`, no palette colours. Tailwind's scale and the shadcn tokens hold
-the ruler. Agent faces are the one place colour is allowed.
-
-## Commits
-
-Subject in English, body in English then Korean, separated by `—— 한국어 ——`.
-Say why, not what. The diff already says what.
-
-```
-feat: let the person change accounts
-
-There was a way in and no way out...
-
-—— 한국어 ——
-
-계정을 바꿀 수 있게 한다
-
-들어오는 길만 있고 나가는 길이 없어서...
-```
 
 ---
 
@@ -161,25 +128,3 @@ shared/lib/tool-shape/tool-shape.test.ts
 `signed-in | signed-out | cli-missing` 이지 '있을 수도 있는' 필드 넷이 달린 레코드가
 아니다. 이렇게 하면 로그아웃 상태에 이메일이 들어갈 수 없다. 갈래를 추가하면
 처리해야 할 위치를 컴파일러가 모두 알려준다.
-
-## 코드
-
-**주석을 쓰지 않는다.** 이름과 테스트로 의도를 드러낸다. 예외는 도구가 읽는 지시
-주석(`@ts-expect-error`, `eslint-disable`)이다.
-
-**같은 값을 반복해 비교하면 switch 를 쓴다.** 같은 판별자를 세 번 이상 비교하는
-경우다. 이렇게 하면 TypeScript 가 처리하지 않은 case 를 찾아내므로, 갈래를 추가할
-때 빠뜨리면 컴파일 단계에서 걸린다.
-
-**모르는 값은 표시하지 않는다.** 엔진이 보내지 않은 값을 0 이나 `-` 로 대신하지
-말고, 그 항목 자체를 그리지 않는다. 실패는 이유와 함께 표시하고, 성공처럼 보이는
-상태로 넘기지 않는다.
-
-**임의값 대신 시맨틱 토큰을 쓴다.** `text-[13px]` 이나 `opacity-45` 같은 직접
-지정, 팔레트 색상은 쓰지 않는다. 크기와 간격은 Tailwind 스케일과 shadcn 토큰으로
-맞춘다. 색을 직접 쓰는 곳은 에이전트 얼굴뿐이다.
-
-## 커밋
-
-제목은 영어로, 본문은 영어를 쓴 다음 `—— 한국어 ——` 아래에 한국어를 쓴다. 무엇을
-했는지보다 왜 그렇게 했는지를 적는다. 무엇을 했는지는 diff 를 보면 된다.

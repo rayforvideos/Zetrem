@@ -7,10 +7,14 @@
    own — and the `dark:` utilities shadcn brings with it follow the same media
    query as the tokens, instead of the permanent `.dark` on <html> they used to. */
 :root {
-  /* A faintly warm off-white ground, so the white cards sitting on it read as
-     cards. In light the surfaces are brighter than the ground, the way they are
-     darker than it in dark. Values come from the zetrem.org palette. */
-  --background: oklch(0.985 0.002 90);
+  /* The ground sits below white so a panel can rise off it without a border,
+     and the interactive fills sit below the ground so a hover reads as pressed
+     into it — the same order dark uses, where the ground is black, panels rise
+     to 0.17 and fills to 0.22. Light cannot spread these over 26% of lightness
+     the way dark does, because it runs out of room at white, but it does not
+     need to: near white a small step in lightness goes a long way, and this
+     ramp puts the card/ground contrast at 1.11:1 against dark's 1.10:1. */
+  --background: oklch(0.965 0 0);
   --foreground: oklch(0.15 0 0);
 
   --card: oklch(1 0 0);
@@ -21,12 +25,12 @@
   --primary: oklch(0 0 0);
   --primary-foreground: oklch(1 0 0);
 
-  --secondary: oklch(0.965 0.003 90);
+  --secondary: oklch(0.93 0 0);
   --secondary-foreground: oklch(0.15 0 0);
 
-  --muted: oklch(0.965 0.003 90);
+  --muted: oklch(0.93 0 0);
   --muted-foreground: oklch(0.5 0 0);
-  --accent: oklch(0.965 0.003 90);
+  --accent: oklch(0.93 0 0);
   --accent-foreground: oklch(0.15 0 0);
   --destructive: oklch(0.42 0.2 25);
 
@@ -42,8 +46,8 @@
   /* Claude's own colour, which belongs to Claude and not to a scheme. */
   --claude: #d97757;
 
-  --border: oklch(0.905 0.003 90);
-  --input: oklch(0.905 0.003 90);
+  --border: oklch(0.885 0 0);
+  --input: oklch(0.885 0 0);
 
   --ring: oklch(0.6 0 0);
 

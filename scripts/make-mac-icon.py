@@ -14,7 +14,7 @@ import sys
 import tempfile
 from pathlib import Path
 
-from PIL import Image, ImageDraw
+from PIL import Image, ImageDraw, ImageStat
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 RESOURCES = REPO_ROOT / "resources"
@@ -25,7 +25,7 @@ OUTPUT_ICNS = RESOURCES / "icon.icns"
 CANVAS_SIZE = 1024
 TILE_SIZE = 824
 CORNER_RADIUS = 185
-WORDMARK_WIDTH_FRACTION = 0.72
+WORDMARK_WIDTH_FRACTION = 0.80
 SUPERSAMPLE = 4
 
 
@@ -60,6 +60,25 @@ def trimmed_wordmark(wordmark_path: Path) -> Image.Image:
     return wm.crop(bbox)
 
 
+def alpha_weighted_centroid_y(image: Image.Image) -> float:
+    """Mean y of the image's alpha channel, weighted by alpha value per row.
+
+    This slanted script wordmark carries more ink in its upper rows (the
+    tall upstroke) than its lower rows, so its trimmed bbox center sits
+    below where the mark visually reads as centered. Centroid-based
+    placement corrects for that instead of eyeballing an offset.
+    """
+    alpha = image.split()[-1]
+    width, height = alpha.size
+    total = 0.0
+    weighted = 0.0
+    for y in range(height):
+        row_sum = ImageStat.Stat(alpha.crop((0, y, width, y + 1))).sum[0]
+        total += row_sum
+        weighted += row_sum * y
+    return weighted / total if total else height / 2
+
+
 def compose_master(tile_fill: tuple) -> Image.Image:
     canvas = Image.new("RGBA", (CANVAS_SIZE, CANVAS_SIZE), (0, 0, 0, 0))
 
@@ -73,8 +92,15 @@ def compose_master(tile_fill: tuple) -> Image.Image:
     target_height = max(1, round(wordmark.height * scale))
     wordmark = wordmark.resize((target_width, target_height), Image.LANCZOS)
 
+    # Horizontal: bbox-centered (the left/right ink imbalance is small,
+    # under 2% of width, so bbox centering already reads centered).
     wm_x = (CANVAS_SIZE - wordmark.width) // 2
-    wm_y = (CANVAS_SIZE - wordmark.height) // 2
+
+    # Vertical: center the alpha-weighted centroid, not the bbox, since
+    # this wordmark's ink mass sits well above its bbox midpoint.
+    centroid_y = alpha_weighted_centroid_y(wordmark)
+    wm_y = round(CANVAS_SIZE / 2 - centroid_y)
+
     canvas.alpha_composite(wordmark, (wm_x, wm_y))
 
     return canvas

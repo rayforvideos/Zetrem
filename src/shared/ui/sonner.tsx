@@ -4,7 +4,7 @@ import type { ToasterProps } from "sonner"
 function Toaster({ ...props }: ToasterProps) {
   return (
     <Sonner
-      theme="dark"
+      theme="system"
       className="toaster group"
       style={
         {

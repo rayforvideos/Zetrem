@@ -1,7 +1,9 @@
+import { useSyncExternalStore } from 'react'
 import { Highlight, themes } from 'prism-react-renderer'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import { cn } from '@/shared/lib/cn'
+import { darkScheme, watchScheme } from '@/shared/lib/scheme/scheme'
 import { unfenced } from '../unfenced/unfenced'
 import { Separator } from '@/shared/ui/separator'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/shared/ui/table'
@@ -70,8 +72,9 @@ export function Markdown({ text, className }: { text: string; className?: string
 }
 
 function CodeBlock({ code, language }: { code: string; language: string }) {
+  const dark = useSyncExternalStore(watchScheme, darkScheme, darkScheme)
   return (
-    <Highlight theme={themes.vsDark} code={code} language={language}>
+    <Highlight theme={dark ? themes.vsDark : themes.vsLight} code={code} language={language}>
       {({ tokens, getLineProps, getTokenProps }) => (
         <pre className="zt-scroll my-3 overflow-x-auto rounded-xl bg-card p-3 font-mono text-sm leading-[1.6]">
           {tokens.map((line, i) => (

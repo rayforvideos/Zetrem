@@ -19,7 +19,14 @@ contextBridge.exposeInMainWorld('desk', {
   authoredAgents: (): Promise<string[]> => ipcRenderer.invoke('agents:authored'),
   nudge: (title: string, body: string): void => ipcRenderer.send('nudge:show', title, body),
   pickFiles: (): Promise<unknown> => ipcRenderer.invoke('files:pick'),
-  pathForFile: (file: File): string => webUtils.getPathForFile(file),
+  // Resolving a dropped or pasted file is the one moment main can tell the path
+  // came from the OS and not from the page, so the read side is told here.
+  // A synthetic File resolves to '', which stays unadmitted.
+  pathForFile: (file: File): string => {
+    const path = webUtils.getPathForFile(file)
+    if (path.length > 0) void ipcRenderer.invoke('files:admit', path)
+    return path
+  },
   readFiles: (paths: string[]): Promise<unknown> => ipcRenderer.invoke('files:read', paths),
   pluginCatalog: (): Promise<unknown> => ipcRenderer.invoke('plugins:catalog'),
   pluginAvailable: (): Promise<unknown> => ipcRenderer.invoke('plugins:available'),

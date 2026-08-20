@@ -14,6 +14,7 @@ import { recallProject } from './project-memory'
 import { handle, on } from './ipc/ipc'
 import { lineReader } from './line-reader/line-reader'
 import { killTree, killTreeSync } from './kill-tree/kill-tree'
+import { errorTail } from './error-tail/error-tail'
 import { tell } from './tell/tell'
 import { killAllProbes } from './session-probe'
 import { launchFor } from './spawn-claude/spawn-claude'
@@ -67,7 +68,9 @@ export function registerAgentHost(): void {
       }
     }
     if (typeof id !== 'string' || typeof prompt !== 'string') return fail(null)
-    if (agents.has(id)) return fail(null)
+    // An id that is already running belongs to a live agent. Reporting an exit
+    // for it would tell the renderer that agent died, so say nothing instead.
+    if (agents.has(id)) return
     if (!/^[A-Za-z0-9-]+$/.test(id)) return fail(null)
 
     agents.set(id, 'starting')
@@ -76,25 +79,25 @@ export function registerAgentHost(): void {
     let workspace: string
     try {
       const project = await recallProject()
-        if (agents.get(id) !== 'starting') return fail(null)
-
       workspace = project ?? join(app.getPath('userData'), 'agent-workspace')
-      if (!project) mkdirSync(workspace, { recursive: true })
-
       const launch = launchFor(
         await claudeBin(),
         agentArgs({ ...config, persona: PERSONA, orchestrator: ORCHESTRATOR_PROMPT }),
       )
-      child = spawn(launch.command, launch.args, {
-        cwd: workspace,
-        env: agentEnv(process.env, await loginPath()),
-      })
+      const env = agentEnv(process.env, await loginPath())
+
+      // A stop that lands while this was waiting only removes the map entry, so
+      // the last word on whether to spawn is here. Nothing below may await:
+      // the spawn and the map entry have to happen in one uninterrupted step.
+      if (agents.get(id) !== 'starting') return fail(null)
+      if (!project) mkdirSync(workspace, { recursive: true })
+      child = spawn(launch.command, launch.args, { cwd: workspace, env, windowsHide: true })
+      agents.set(id, child)
     } catch (cause: unknown) {
       console.error(`[agent ${id}] could not start`, cause)
       agents.delete(id)
       return fail(startTrouble(cause instanceof Error ? cause.message : String(cause)))
     }
-    agents.set(id, child)
     child.stdin.on('error', () => undefined)
     child.stdout.setEncoding('utf8')
     child.stderr.setEncoding('utf8')
@@ -103,7 +106,7 @@ export function registerAgentHost(): void {
     const read = lineReader()
     child.stdout.on('data', (chunk: string) => {
       if (sender.isDestroyed()) {
-        child.kill()
+        if (child.pid !== undefined) killTree(child.pid)
         return
       }
       for (const line of read.take(chunk)) {
@@ -112,20 +115,25 @@ export function registerAgentHost(): void {
     })
     let lastError = ''
     child.stderr.on('data', (chunk: string) => {
-      lastError = chunk.slice(-2000)
+      lastError = errorTail(lastError, chunk)
     })
-    child.on('exit', (code) => {
-      agents.delete(id)
-      if (code !== 0 && lastError) console.error(`[agent ${id}] stderr:`, lastError)
-      const reason = exitReason(code, lastError, '')
+
+    // 'error' and 'close' can both fire for one child, and the id may already
+    // belong to a later agent by the time either does.
+    let reported = false
+    const reportExit = (code: number | null, reason: ExitReason | null): void => {
+      if (reported) return
+      reported = true
+      if (agents.get(id) === child) agents.delete(id)
       if (!sender.isDestroyed()) sender.send('agent:event', { id, kind: 'exit', code, reason })
+    }
+    // 'close' rather than 'exit': stdio has flushed by then, so the last lines
+    // and the stderr that explains the exit are in hand.
+    child.on('close', (code) => {
+      if (code !== 0 && lastError) console.error(`[agent ${id}] stderr:`, lastError)
+      reportExit(code, exitReason(code, lastError, ''))
     })
-    child.on('error', (cause: Error) => {
-      agents.delete(id)
-      if (!sender.isDestroyed()) {
-        sender.send('agent:event', { id, kind: 'exit', code: -1, reason: startTrouble(cause.message) })
-      }
-    })
+    child.on('error', (cause: Error) => reportExit(-1, startTrouble(cause.message)))
 
     tell(child.stdin, userMessage(prompt, files))
     },

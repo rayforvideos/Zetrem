@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 import { startBlocker } from '../../lib/start-blocker/start-blocker'
 import { tongueChoices } from '../../lib/tongues/tongues'
+import { themeChoices } from '../../lib/themes/themes'
 import { MODELS, PERMISSION_MODES } from '@/entities/agent-session'
 import type { ModelChoice, PermissionMode, Settings } from '@/entities/agent-session'
 import { i18n } from '@lingui/core'
@@ -61,6 +62,12 @@ export function SetupPane({
               options={tongueChoices()}
               chosen={defaults.tongue}
               onChoose={(id) => defaults.onTongue(id as Settings['tongue'])}
+            />
+            <ChoiceField
+              label={t`Appearance`}
+              options={themeChoices()}
+              chosen={defaults.theme}
+              onChoose={(id) => defaults.onTheme(id as Settings['theme'])}
             />
             <ChoiceField
               label={t`Permissions`}

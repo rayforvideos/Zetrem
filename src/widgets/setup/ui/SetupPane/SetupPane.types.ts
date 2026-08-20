@@ -24,6 +24,8 @@ export type Defaults = {
   model: ModelChoice
   tongue: 'system' | 'en' | 'ko'
   onTongue(next: 'system' | 'en' | 'ko'): void
+  theme: 'system' | 'dark' | 'light'
+  onTheme(next: 'system' | 'dark' | 'light'): void
   notify: boolean
   onNotify(on: boolean): void
   onPermissionMode(mode: PermissionMode): void

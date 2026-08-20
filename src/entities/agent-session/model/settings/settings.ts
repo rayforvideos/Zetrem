@@ -6,6 +6,8 @@ import type { ModelChoice, PermissionMode } from '../run-config/run-config.types
 
 const TONGUES = ['system', 'en', 'ko']
 
+const THEMES = ['system', 'dark', 'light']
+
 export const DEFAULT_SETTINGS: Settings = {
   permissionMode: 'ask',
   model: 'default',
@@ -17,6 +19,7 @@ export const DEFAULT_SETTINGS: Settings = {
   hintsSeen: [],
   knownTools: [],
   tongue: 'system',
+  theme: 'system',
   notify: true,
   knownAgents: [],
   stockAgents: [],
@@ -59,6 +62,7 @@ export function readSettings(saved: unknown): Settings {
     knownAgents: names(source.knownAgents, DEFAULT_SETTINGS.knownAgents),
     stockAgents: names(source.stockAgents, DEFAULT_SETTINGS.stockAgents),
     tongue: TONGUES.includes(source.tongue as string) ? (source.tongue as Settings['tongue']) : 'system',
+    theme: THEMES.includes(source.theme as string) ? (source.theme as Settings['theme']) : 'system',
     notify: source.notify !== false,
     sidebarOpen: source.sidebarOpen !== false,
     sidebarWidth: sidebarWidth(source.sidebarWidth),

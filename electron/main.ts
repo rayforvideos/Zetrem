@@ -1,14 +1,15 @@
 import { relative, resolve } from 'node:path'
 import { BrowserWindow, app, dialog, session, shell } from 'electron'
-import { CHROME_TOP, CONTROL_SYMBOL, GROUND, MIN_WINDOW, TRAFFIC_LIGHT } from '@/shared/config/theme'
+import { CHROME_TOP, MIN_WINDOW, TRAFFIC_LIGHT } from '@/shared/config/theme'
 import { killAllAgents, registerAgentHost } from './agent-host/agent-host'
+import { chromeNow, followScheme, wearTheme } from './app-theme/app-theme'
 import { registerAttachments } from './attachments/attachments'
 import { registerAgentDefs } from './agent-defs'
 import { registerAuth } from './auth'
 import { registerCliVersion } from './cli-version'
 import { registerNudge } from './nudge'
 import { registerPlugins } from './plugins'
-import { registerSettingsStore } from './settings-store'
+import { loadSettings, registerSettingsStore } from './settings-store'
 import { registerConnectors } from './connectors'
 import { killAllProbes, registerSessionProbe } from './session-probe'
 import { registerTranscriptStore } from './transcript-store'
@@ -38,6 +39,7 @@ function wearTheName(): void {
 }
 
 function createWindow(): void {
+  const skin = chromeNow()
   const win = new BrowserWindow({
     width: 1440,
     height: 900,
@@ -49,12 +51,12 @@ function createWindow(): void {
       ? { trafficLightPosition: { x: TRAFFIC_LIGHT.x, y: TRAFFIC_LIGHT.y } }
       : {
           titleBarOverlay: {
-            color: GROUND,
-            symbolColor: CONTROL_SYMBOL,
+            color: skin.ground,
+            symbolColor: skin.symbol,
             height: CHROME_TOP,
           },
         }),
-    backgroundColor: GROUND,
+    backgroundColor: skin.ground,
     webPreferences: {
       preload: resolve(import.meta.dirname, '../preload/index.cjs'),
       contextIsolation: true,
@@ -63,6 +65,8 @@ function createWindow(): void {
       sandbox: true,
     },
   })
+
+  followScheme(win)
 
   win.once('ready-to-show', () => win.show())
 
@@ -164,12 +168,15 @@ if (!primary) {
 
   app
     .whenReady()
-    .then(() => {
+    .then(async () => {
       session.defaultSession.setPermissionRequestHandler((_contents, _permission, grant) =>
         grant(false),
       )
       session.defaultSession.setPermissionCheckHandler(() => false)
       wearTheName()
+      // The scheme has to be settled before the window exists, or the first paint
+      // is the wrong colour and the page opens under the machine's scheme.
+      wearTheme((await loadSettings()).theme)
       createWindow()
       app.on('activate', () => {
         if (BrowserWindow.getAllWindows().length === 0) createWindow()

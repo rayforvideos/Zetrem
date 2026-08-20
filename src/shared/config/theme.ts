@@ -1,6 +1,6 @@
-export const GROUND = '#000000'
+export const GROUND = { dark: '#000000', light: '#ffffff' } as const
 
-export const CONTROL_SYMBOL = '#ededf0'
+export const CONTROL_SYMBOL = { dark: '#ededf0', light: '#1a1a1a' } as const
 
 export const TRAFFIC_LIGHT = { x: 18, y: 18, size: 14 } as const
 

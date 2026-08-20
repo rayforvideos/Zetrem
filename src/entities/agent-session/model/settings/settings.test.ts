@@ -21,6 +21,7 @@ describe('readSettings: reading back what was chosen', () => {
       knownAgents: ['Explore', 'Ray'],
       stockAgents: ['Explore'],
       tongue: 'ko',
+      theme: 'light',
       notify: false,
       sidebarOpen: false,
       sidebarWidth: 300,
@@ -40,6 +41,22 @@ describe('readSettings: reading back what was chosen', () => {
 
   it('fills the rest with defaults when only part was saved', () => {
     expect(readSettings({ model: 'opus' })).toEqual({ ...DEFAULT_SETTINGS, model: 'opus' })
+  })
+})
+
+describe('the appearance setting', () => {
+  it('follows the machine until someone says otherwise', () => {
+    expect(readSettings({}).theme).toBe('system')
+  })
+
+  it('keeps a scheme that was picked by hand', () => {
+    expect(readSettings({ theme: 'dark' }).theme).toBe('dark')
+    expect(readSettings({ theme: 'light' }).theme).toBe('light')
+  })
+
+  it('goes back to the machine when the saved word means nothing', () => {
+    expect(readSettings({ theme: 'sepia' }).theme).toBe('system')
+    expect(readSettings({ theme: 3 }).theme).toBe('system')
   })
 })
 

@@ -1,0 +1,130 @@
+name: Platforms
+
+on:
+  workflow_dispatch:
+  push:
+    tags: ['v*']
+
+concurrency:
+  group: platforms-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    name: check (${{ matrix.os }}, node ${{ matrix.node }})
+    # The app ships for macOS and Windows, so both run the checks. 20.19 is what
+    # it is developed on and 22.19 is what .nvmrc asks for; both are claimed to
+    # work, so both are tested rather than trusted. Release-time proof that
+    # both platforms still pass.
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-latest, windows-latest]
+        node: ['20.19', '22.19']
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+          cache: npm
+
+      - run: npm ci
+
+      - name: Types
+        run: npm run typecheck
+
+      - name: Tests
+        # Includes tests/conventions, which is where this repo's rules live.
+        run: npm test
+
+      - name: Build
+        run: npm run build
+
+      - name: Translations are in step with the source
+        # Windows runners default to PowerShell, which does not read a backslash
+        # as a line continuation.
+        shell: bash
+        run: |
+          npm run i18n:extract -- --clean
+          git diff --exit-code -- src/shared/locales \
+            || (echo "::error::카탈로그가 원문과 다르다. npm run i18n:extract 를 돌려 커밋해라" && exit 1)
+
+  # What the unit tests cannot answer: whether the way the app launches the CLI
+  # works against the CLI as it is really installed. On Windows npm leaves a
+  # claude.cmd shim on the PATH, which is the case that used to fail outright.
+  launch:
+    name: launch (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-latest, windows-latest]
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20.19'
+          cache: npm
+      - run: npm ci
+      - name: Install the CLI the way a person would
+        run: npm i -g @anthropic-ai/claude-code
+      - name: What ended up on the PATH
+        shell: bash
+        run: |
+          echo "which: $(command -v claude || echo none)"
+          ls "$(npm prefix -g)/bin" 2>/dev/null | grep -i claude || true
+          ls "$(npm prefix -g)" 2>/dev/null | grep -i claude || true
+      - name: Launch it the way the app does
+        run: npm run test:contract -- tests/contract/launch.contract.test.ts
+
+  # Proves the installer for each platform can actually be produced.
+  package:
+    name: package (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-latest, windows-latest]
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20.19'
+          cache: npm
+      - run: npm ci
+      - name: Package
+        # No certificates on a runner, so this builds unsigned. It is the build
+        # that is being tested, not the signature.
+        env:
+          CSC_IDENTITY_AUTO_DISCOVERY: 'false'
+        # --publish never: on a runner electron-builder otherwise tries to publish
+        # a release and stops for want of a token.
+        run: npm run ${{ matrix.os == 'windows-latest' && 'package:win' || 'package:mac' }} -- --publish never
+      - name: What came out
+        shell: bash
+        run: ls -la release/ | head -20
+
+  # The one thing no other check can answer: whether the app opens and its window
+  # draws anything. A platform that only compiles is not a platform that works.
+  smoke:
+    name: smoke (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-latest, windows-latest]
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20.19'
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - name: Open the app and read its window
+        run: npm run smoke

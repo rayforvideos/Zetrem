@@ -55,7 +55,7 @@ export function Approval({
 
       <div className="flex flex-wrap items-center gap-2">
         <Button size="sm" onClick={() => onDecide(true)} className="rounded-full">
-          Allow
+          {t`Allow`}
           <KbdGroup>
             <Kbd className="bg-primary-foreground/15 text-primary-foreground/70">
               {modifierKey()}
@@ -64,7 +64,7 @@ export function Approval({
           </KbdGroup>
         </Button>
         <Button size="sm" variant="secondary" onClick={() => onDecide(false)} className="rounded-full">
-          Deny
+          {t`Deny`}
           <Kbd>Esc</Kbd>
         </Button>
         <Button

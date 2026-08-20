@@ -287,7 +287,12 @@ describe('permissionAlwaysResult: allow from now on', () => {
     expect(result.behavior).toBe('allow')
     expect(result.updatedInput).toEqual({ command: 'mkdir demo' })
     expect(result.updatedPermissions).toEqual([
-      { type: 'addRules', rules: [{ toolName: 'Bash' }], behavior: 'allow', destination: 'session' },
+      {
+        type: 'addRules',
+        rules: [{ toolName: 'Bash', ruleContent: 'mkdir demo' }],
+        behavior: 'allow',
+        destination: 'session',
+      },
     ])
   })
 })

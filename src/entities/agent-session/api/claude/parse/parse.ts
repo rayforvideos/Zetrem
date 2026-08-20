@@ -8,7 +8,7 @@ import {
   childStarted,
   childStateKnown,
 } from '../child'
-import { fromControlCancel, fromControlRequest } from '../permission'
+import { fromControlCancel, fromControlRequest } from '../permission/permission'
 import { plainTrouble } from '../plain/plain'
 import { fromStatusLine } from '../status/status'
 import {
@@ -27,7 +27,7 @@ import {
   fromToolResult,
 } from '../turn/turn'
 
-export { permissionAlwaysResult, permissionResult } from '../permission'
+export { permissionAlwaysResult, permissionResult } from '../permission/permission'
 
 function aside(text: string): ClaudeTurnEvent[] {
   return text.length === 0 ? [] : [{ type: 'notice', text }]

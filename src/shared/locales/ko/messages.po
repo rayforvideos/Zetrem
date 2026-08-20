@@ -274,6 +274,10 @@ msgstr "{name} 추가했습니다. 로그인을 요구하면 로그인하세요.
 msgid "All {0} connected"
 msgstr "{0}개 모두 연결됨"
 
+#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:58
+msgid "Allow"
+msgstr "허용"
+
 #: src/entities/agent-session/model/choices/choices.ts:13
 #: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:44
 msgid "Allow all"
@@ -589,6 +593,10 @@ msgstr "기본값"
 #: src/widgets/team-sidebar/ui/ChatList/ChatList.tsx:98
 msgid "Delete chat"
 msgstr "대화 삭제"
+
+#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:67
+msgid "Deny"
+msgstr "거부"
 
 #: src/widgets/first-hint/ui/FirstHint/FirstHint.tsx:25
 msgid "Dismiss this tip"

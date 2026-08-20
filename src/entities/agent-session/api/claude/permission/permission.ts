@@ -1,6 +1,11 @@
-import type { PermissionAlwaysResult, PermissionEvent, PermissionResult } from './permission.types'
+import type {
+  PermissionAlwaysResult,
+  PermissionEvent,
+  PermissionResult,
+  PermissionRule,
+} from './permission.types'
 
-import { toolLine, toolTarget } from './shared'
+import { toolLine, toolTarget } from '../shared'
 
 export function permissionResult(allow: boolean, input: unknown): PermissionResult {
   return allow
@@ -8,12 +13,25 @@ export function permissionResult(allow: boolean, input: unknown): PermissionResu
     : { behavior: 'deny', message: 'The user denied this tool call' }
 }
 
+// "Don't ask again" must grant only what the dialog showed. For Bash that is the
+// one command in front of the user, not every Bash call for the rest of the session.
+function alwaysRule(toolName: string, input: unknown): PermissionRule {
+  if (toolName === 'Bash' && isObject(input) && typeof input.command === 'string' && input.command) {
+    return { toolName: 'Bash', ruleContent: input.command }
+  }
+  return { toolName }
+}
+
+function isObject(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null
+}
+
 export function permissionAlwaysResult(toolName: string, input: unknown): PermissionAlwaysResult {
   return {
     behavior: 'allow',
     updatedInput: input,
     updatedPermissions: [
-      { type: 'addRules', rules: [{ toolName }], behavior: 'allow', destination: 'session' },
+      { type: 'addRules', rules: [alwaysRule(toolName, input)], behavior: 'allow', destination: 'session' },
     ],
   }
 }

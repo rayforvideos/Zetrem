@@ -274,6 +274,10 @@ msgstr "Added {name}. Sign in if it asks."
 msgid "All {0} connected"
 msgstr "All {0} connected"
 
+#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:58
+msgid "Allow"
+msgstr "Allow"
+
 #: src/entities/agent-session/model/choices/choices.ts:13
 #: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:44
 msgid "Allow all"
@@ -589,6 +593,10 @@ msgstr "Default"
 #: src/widgets/team-sidebar/ui/ChatList/ChatList.tsx:98
 msgid "Delete chat"
 msgstr "Delete chat"
+
+#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:67
+msgid "Deny"
+msgstr "Deny"
 
 #: src/widgets/first-hint/ui/FirstHint/FirstHint.tsx:25
 msgid "Dismiss this tip"

@@ -2,34 +2,6 @@ import type { Rect, Viewport } from './grid.types'
 
 import { LAYOUT } from '@/shared/config/motion/motion'
 
-export function layoutTiles(count: number, viewport: Viewport): Rect[] {
-  if (count <= 0) return []
-
-  const { outerMarginPx: margin, topMarginPx: top, gapPx: gap } = LAYOUT
-  const areaW = viewport.w - margin * 2
-  const areaH = viewport.h - top - margin
-  const maxCols = Math.ceil(Math.sqrt(count))
-  const rows = Math.ceil(count / maxCols)
-  const rowH = (areaH - gap * (rows - 1)) / rows
-
-  const rects: Rect[] = []
-  let placed = 0
-  for (let row = 0; row < rows; row += 1) {
-    const cols = Math.ceil((count - placed) / (rows - row))
-    const colW = (areaW - gap * (cols - 1)) / cols
-    for (let col = 0; col < cols; col += 1) {
-      rects.push({
-        x: margin + col * (colW + gap),
-        y: top + row * (rowH + gap),
-        w: colW,
-        h: rowH,
-      })
-    }
-    placed += cols
-  }
-  return rects
-}
-
 export function soloRect(viewport: Viewport): Rect {
   const inset = LAYOUT.soloInsetRatio
   return {

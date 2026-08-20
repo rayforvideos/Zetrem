@@ -1,6 +1,5 @@
 import { describe, expect, it } from 'vitest'
 import { canSignIn, needingAuth, readConnectors } from './read-connectors'
-import { connectorSummary } from '../summary/summary'
 import type { Connector } from './read-connectors.types'
 
 const REAL = `Checking MCP server health…
@@ -59,24 +58,6 @@ describe('readConnectors: reading what the CLI prints about connectors', () => {
 describe('needingAuth: who is waiting on you', () => {
   it('picks out only the ones that need signing in', () => {
     expect(needingAuth(readConnectors(REAL)).map((one) => one.name)).toEqual(['claude.ai Notion'])
-  })
-})
-
-describe('connectorSummary: one line about the connectors', () => {
-  it('counts what is connected against what there is', () => {
-    expect(connectorSummary(readConnectors(REAL))).toContain('3 of 4 connected')
-  })
-
-  it('says how many are waiting on you, since that is the actionable part', () => {
-    expect(connectorSummary(readConnectors(REAL))).toContain('1 needs signing in')
-  })
-
-  it('leaves the waiting clause out when nobody is waiting', () => {
-    expect(connectorSummary(readConnectors('a: x - ✔ Connected'))).toBe('1 of 1 connected')
-  })
-
-  it('invites a first one when there is nothing at all', () => {
-    expect(connectorSummary([])).toBe('No connectors yet')
   })
 })
 

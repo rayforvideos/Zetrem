@@ -1,8 +1,6 @@
 import { describe, expect, it } from 'vitest'
-import { TRAFFIC_LIGHT } from '@/shared/config/theme'
 import { LAYOUT } from '@/shared/config/motion/motion'
 import {
-  layoutTiles,
   observatoryLayout,
   soloRect,
   roomToFan,
@@ -13,67 +11,6 @@ import {
 } from './grid'
 
 const viewport = { w: 1440, h: 900 }
-const M = LAYOUT.outerMarginPx
-
-describe('layoutTiles', () => {
-  it('returns as many rectangles as asked for', () => {
-    for (const count of [1, 2, 3, 4, 5, 6, 7, 9]) {
-      expect(layoutTiles(count, viewport)).toHaveLength(count)
-    }
-  })
-
-  it('returns nothing for none', () => {
-    expect(layoutTiles(0, viewport)).toEqual([])
-  })
-
-  it('never crosses the outer margin, at any count', () => {
-    for (const count of [1, 2, 3, 4, 5, 6, 7, 8, 9, 12]) {
-      for (const rect of layoutTiles(count, viewport)) {
-        expect(rect.x, `count=${count}`).toBeGreaterThanOrEqual(M - 0.01)
-        expect(rect.y, `count=${count}`).toBeGreaterThanOrEqual(M - 0.01)
-        expect(rect.x + rect.w, `count=${count}`).toBeLessThanOrEqual(viewport.w - M + 0.01)
-        expect(rect.y + rect.h, `count=${count}`).toBeLessThanOrEqual(viewport.h - M + 0.01)
-      }
-    }
-  })
-
-  it('never overlaps two tiles, at any count', () => {
-    for (const count of [1, 2, 3, 4, 5, 6, 7, 8, 9, 12]) {
-      const rects = layoutTiles(count, viewport)
-      for (let i = 0; i < rects.length; i += 1) {
-        for (let j = i + 1; j < rects.length; j += 1) {
-          const a = rects[i]!
-          const b = rects[j]!
-          const overlaps = a.x < b.x + b.w && b.x < a.x + a.w && a.y < b.y + b.h && b.y < a.y + a.h
-          expect(overlaps, `count=${count}: ${i} 와 ${j} 가 겹친다`).toBe(false)
-        }
-      }
-    }
-  })
-
-  it('gives every tile a real size', () => {
-    for (const rect of layoutTiles(12, viewport)) {
-      expect(rect.w).toBeGreaterThan(0)
-      expect(rect.h).toBeGreaterThan(0)
-    }
-  })
-
-  it('lays five out as three then two', () => {
-    const rects = layoutTiles(5, viewport)
-    const topRow = rects.filter((r) => r.y === rects[0]!.y)
-    expect(topRow).toHaveLength(3)
-  })
-
-  it('puts two side by side, because the screen is wider than it is tall', () => {
-    const rects = layoutTiles(2, viewport)
-    expect(rects[0]!.y).toBe(rects[1]!.y)
-    expect(rects[0]!.x).toBeLessThan(rects[1]!.x)
-  })
-
-  it('gives the same layout for the same input', () => {
-    expect(layoutTiles(4, viewport)).toEqual(layoutTiles(4, viewport))
-  })
-})
 
 describe('soloRect', () => {
   it('fills the window when there is only one', () => {
@@ -87,15 +24,6 @@ describe('soloRect', () => {
       expect(rect.x, `w=${size.w}`).toBeCloseTo(size.w - (rect.x + rect.w), 5)
       expect(rect.y, `h=${size.h}`).toBeCloseTo(size.h - (rect.y + rect.h), 5)
     }
-  })
-})
-
-describe('layoutTiles: a grid that includes the terminal', () => {
-  it('splits in two beside the terminal when one session appears', () => {
-    const rects = layoutTiles(2, { w: 1440, h: 900 })
-    expect(rects).toHaveLength(2)
-    expect(rects[0]!.y).toBe(rects[1]!.y)
-    expect(rects[1]!.x).toBeGreaterThan(rects[0]!.x)
   })
 })
 
@@ -193,22 +121,6 @@ describe('roomToFan: whether the tiles can sit beside the conversation at all', 
 
 describe('the deck sits clear of the title bar, not tucked under it', () => {
   const viewport = { w: 1440, h: 870 }
-
-  it('starts every tile below the window controls', () => {
-    const rects = layoutTiles(4, viewport)
-    for (const rect of rects) {
-      expect(rect.y).toBeGreaterThanOrEqual(TRAFFIC_LIGHT.y + TRAFFIC_LIGHT.size)
-    }
-  })
-
-  it('leaves the same air above the first row as it leaves below the last', () => {
-    const rects = layoutTiles(2, viewport)
-    const first = rects[0]!
-    const last = rects.at(-1)!
-    const above = first.y - (TRAFFIC_LIGHT.y + TRAFFIC_LIGHT.size)
-    const below = viewport.h - (last.y + last.h)
-    expect(above).toBe(below)
-  })
 
   it('leaves the conversation the same air, so the two panes line up', () => {
     const { terminal, sessions } = observatoryLayout(1, viewport, 260)

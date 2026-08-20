@@ -22,7 +22,3 @@ export function laneOf(session: AgentSession, nowMs: number): Lane {
     needsYou: session.status === 'waiting',
   }
 }
-
-export function lanesOf(sessions: AgentSession[], nowMs: number): Lane[] {
-  return sessions.map((session) => laneOf(session, nowMs))
-}

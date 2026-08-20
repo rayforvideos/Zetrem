@@ -99,10 +99,6 @@ msgstr "{installed} installed from {sources, plural, one {# source} other {# sou
 msgid "{kind} {name} did not load: {why}"
 msgstr "{kind} {name} did not load: {why}"
 
-#: src/entities/connector/lib/summary/summary.ts:11
-msgid "{live} of {all} connected"
-msgstr "{live} of {all} connected"
-
 #: src/pages/workspace/ui/WorkspaceScreen.tsx:385
 msgid "{name} can be called now. Your next message starts a session that can reach them."
 msgstr "{name} can be called now. Your next message starts a session that can reach them."
@@ -168,10 +164,6 @@ msgstr "{tool} was not allowed"
 #: src/entities/agent-session/api/claude/aside/aside.ts:16
 msgid "{tool} was not allowed: {why}"
 msgstr "{tool} was not allowed: {why}"
-
-#: src/entities/connector/lib/summary/summary.ts:13
-msgid "{waiting, plural, one {# needs signing in} other {# need signing in}}"
-msgstr "{waiting, plural, one {# needs signing in} other {# need signing in}}"
 
 #: src/widgets/tile-deck/lib/headcount/headcount.ts:14
 msgid "{waiting} waiting on you"
@@ -923,10 +915,6 @@ msgstr "Next"
 #: src/widgets/usage-bar/lib/strip/strip.ts:67
 msgid "No account limits reported"
 msgstr "No account limits reported"
-
-#: src/entities/connector/lib/summary/summary.ts:7
-msgid "No connectors yet"
-msgstr "No connectors yet"
 
 #: src/widgets/setup/ui/PluginShelf/PluginShelf.tsx:194
 msgid "No connectors yet. Add one below, or bring over what Claude Desktop already has."

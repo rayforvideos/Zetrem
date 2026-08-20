@@ -9,10 +9,6 @@ export function tongueOf(locales: readonly string[]): Tongue {
   return (found as Tongue | undefined) ?? 'en'
 }
 
-export function localeOf(tongue: Tongue): string {
-  return tongue === 'ko' ? 'ko-KR' : 'en-US'
-}
-
 export function chosenTongue(chosen: 'system' | Tongue, locales: readonly string[]): Tongue {
   return chosen === 'system' ? tongueOf(locales) : chosen
 }

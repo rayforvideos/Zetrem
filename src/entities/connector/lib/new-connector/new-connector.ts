@@ -36,7 +36,3 @@ export function refusalOf(draft: NewConnector, taken: string[]): Refusal | null 
   }
   return null
 }
-
-export function readyToAdd(draft: NewConnector, taken: string[]): boolean {
-  return refusalOf(draft, taken) === null
-}

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { chosenTongue, localeOf, tongueOf, tongueToLoad } from './say'
+import { chosenTongue, tongueOf, tongueToLoad } from './say'
 
 const KOREAN_MACHINE = ['ko-KR', 'en-US']
 
@@ -21,11 +21,6 @@ describe('chosenTongue: the setting wins over the machine', () => {
 
   it('follows the choice against the machine', () => {
     expect(chosenTongue('en', KOREAN_MACHINE)).toBe('en')
-  })
-
-  it('carries the number locale with it', () => {
-    expect(localeOf('ko')).toBe('ko-KR')
-    expect(localeOf('en')).toBe('en-US')
   })
 })
 

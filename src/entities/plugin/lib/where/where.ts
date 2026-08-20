@@ -1,18 +1,5 @@
 import type { PluginScope } from '../catalog/catalog.types'
 
-export function whereLine(scope: PluginScope): string | null {
-  switch (scope) {
-    case 'user':
-      return 'for you'
-    case 'managed':
-      return 'set by your organisation'
-    case 'project':
-      return 'for this project'
-    default:
-      return null
-  }
-}
-
 export function appliesHere(
   scope: PluginScope,
   projectPath: string | null,

@@ -21,10 +21,6 @@ export function greetingsFor(name: string): string[] {
   return lines.map((line) => i18n._(line.id, { you: name }, { message: line.message }))
 }
 
-export function greetingCount(name = ''): number {
-  return greetingsFor(name).length
-}
-
 export function greetingAt(tick: number, name = ''): string {
   const lines = greetingsFor(name)
   const size = lines.length

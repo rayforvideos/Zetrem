@@ -9,17 +9,6 @@ export function originOf(name: string): ConnectorOrigin {
   return 'yours'
 }
 
-export function originLine(name: string): string | null {
-  switch (originOf(name)) {
-    case 'plugin':
-      return 'brought by a plugin'
-    case 'account':
-      return 'from your Claude account'
-    default:
-      return null
-  }
-}
-
 export function removableConnector(name: string): boolean {
   return originOf(name) === 'yours'
 }

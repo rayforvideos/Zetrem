@@ -1,20 +1,17 @@
 import { describe, expect, it } from 'vitest'
-import { originLine, originOf, removableConnector, shortName } from './origin'
+import { originOf, removableConnector, shortName } from './origin'
 
 describe('where a connector came from decides what you can do to it', () => {
   it('knows one a plugin brought along', () => {
     expect(originOf('plugin:nx:nx-mcp')).toBe('plugin')
-    expect(originLine('plugin:nx:nx-mcp')).toBe('brought by a plugin')
   })
 
   it('knows one that lives on your account', () => {
     expect(originOf('claude.ai Figma')).toBe('account')
-    expect(originLine('claude.ai Figma')).toBe('from your Claude account')
   })
 
   it('says nothing extra about one you added yourself', () => {
     expect(originOf('playwright')).toBe('yours')
-    expect(originLine('playwright')).toBeNull()
   })
 
   it('only offers to remove the ones this machine actually configured', () => {

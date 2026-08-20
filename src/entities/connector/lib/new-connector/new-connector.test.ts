@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { readyToAdd, refusalOf, tidyName } from './new-connector'
+import { refusalOf, tidyName } from './new-connector'
 
 const none: string[] = []
 
@@ -78,15 +78,5 @@ describe('refusalOf: why a connector cannot be added yet', () => {
 
   it('keeps a very long name out, rather than passing it on to be truncated elsewhere', () => {
     expect(refusalOf(draft('n'.repeat(65), 'https://a.dev/mcp'), none)?.field).toBe('name')
-  })
-})
-
-describe('readyToAdd: whether the button can be pressed', () => {
-  it('is ready when nothing is refused', () => {
-    expect(readyToAdd(draft('Sentry', 'https://mcp.sentry.dev/mcp'), none)).toBe(true)
-  })
-
-  it('is not ready while anything is', () => {
-    expect(readyToAdd(draft('', 'https://mcp.sentry.dev/mcp'), none)).toBe(false)
   })
 })

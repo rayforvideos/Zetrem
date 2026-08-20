@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { appliesHere, removableHere, switchableHere, whereLine } from './where'
+import { appliesHere, removableHere, switchableHere } from './where'
 
 const HERE = '/Users/sam/workspace/a-project'
 const ELSEWHERE = '/Users/sam/workspace/another-project'
@@ -24,24 +24,6 @@ describe('appliesHere: whether the session in this window actually loads it', ()
   it('keeps a project copy it cannot place, rather than hiding it on a guess', () => {
     expect(appliesHere('project', null, HERE)).toBe(true)
     expect(appliesHere('project', ELSEWHERE, null)).toBe(true)
-  })
-})
-
-describe('whereLine: a plugin says who it belongs to', () => {
-  it('calls a plugin of yours yours', () => {
-    expect(whereLine('user')).toBe('for you')
-  })
-
-  it('calls the project one for this project', () => {
-    expect(whereLine('project')).toBe('for this project')
-  })
-
-  it('names who put an organisation plugin there', () => {
-    expect(whereLine('managed')).toBe('set by your organisation')
-  })
-
-  it('says nothing about a scope it does not know', () => {
-    expect(whereLine('unknown')).toBeNull()
   })
 })
 

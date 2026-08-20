@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import type { AgentSession } from '@/entities/agent-session'
-import { laneOf, lanesOf } from './lane'
+import { laneOf } from './lane'
 
 function session(overrides: Partial<AgentSession> = {}): AgentSession {
   return {
@@ -51,13 +51,5 @@ describe('laneOf: one line for one hire', () => {
   it('counts how long they have been out, and stops counting once they are in', () => {
     expect(laneOf(session(), NOW).outMs).toBe(60_000)
     expect(laneOf(session({ endedAtMs: 31_000 }), NOW).outMs).toBe(30_000)
-  })
-
-  it('keeps the order it was given, so a lane never moves under the pointer', () => {
-    const lanes = lanesOf(
-      [session({ id: 'a' }), session({ id: 'b', status: 'waiting' }), session({ id: 'c' })],
-      NOW,
-    )
-    expect(lanes.map((lane) => lane.id)).toEqual(['a', 'b', 'c'])
   })
 })

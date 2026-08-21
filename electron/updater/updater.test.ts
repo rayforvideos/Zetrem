@@ -32,7 +32,9 @@ vi.mock('electron', () => ({
 }))
 
 vi.mock('electron-updater', () => ({
-  autoUpdater: {
+  // The module under test takes the CJS default and reads autoUpdater off it.
+  default: {
+    autoUpdater: {
     set autoDownload(on: boolean) {
       boundary.flags.autoDownload = on
     },
@@ -51,8 +53,9 @@ vi.mock('electron-updater', () => ({
       if (boundary.checkFails) throw new Error('offline')
       return null
     },
-    quitAndInstall: () => {
-      boundary.installs += 1
+      quitAndInstall: () => {
+        boundary.installs += 1
+      },
     },
   },
 }))

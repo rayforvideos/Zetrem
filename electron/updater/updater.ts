@@ -1,6 +1,11 @@
 import { app, BrowserWindow } from 'electron'
-import { autoUpdater } from 'electron-updater'
+// electron-updater is CommonJS and stays external to the main bundle, so a
+// named import fails at load time in the packaged ESM main. Only the default
+// import survives both.
+import updater from 'electron-updater'
 import { handle } from '../ipc/ipc'
+
+const { autoUpdater } = updater
 
 // Roughly a workday between checks; the launch check covers most sessions.
 const RECHECK_MS = 4 * 60 * 60 * 1000

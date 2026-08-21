@@ -7,6 +7,12 @@ import { Gauge } from '../layers/Gauge/Gauge'
 import { Headline } from '../layers/Headline/Headline'
 import { CallLog } from '../layers/CallLog/CallLog'
 import { Transcript } from '../layers/Transcript/Transcript'
+import {
+  logHeadStyle,
+  logPaneStyle,
+  paneStyle as deckPaneStyle,
+  splitStyle as deckSplitStyle,
+} from '../styles'
 import { t } from '@lingui/core/macro'
 
 type AgentTileProps = {
@@ -103,40 +109,9 @@ function presenceStyle(closing: boolean, delayMs: number): CSSProperties {
   }
 }
 
-const splitStyle: CSSProperties = {
-  display: 'grid',
-  gridTemplateRows: 'minmax(0, 65fr) minmax(0, 35fr)',
-  gap: 14,
-  flex: '1 1 auto',
-  minHeight: 0,
-  marginTop: 4,
-}
+const splitStyle: CSSProperties = { ...deckSplitStyle, marginTop: 4 }
 
-const paneStyle: CSSProperties = {
-  display: 'flex',
-  flexDirection: 'column',
-  minHeight: 0,
-  minWidth: 0,
-  overflow: 'hidden',
-}
-
-const logPaneStyle: CSSProperties = {
-  display: 'flex',
-  flexDirection: 'column',
-  justifyContent: 'flex-end',
-  gap: 8,
-  minHeight: 0,
-  minWidth: 0,
-  overflow: 'hidden',
-}
-
-const logHeadStyle: CSSProperties = {
-  flex: '0 0 auto',
-  fontSize: 11.5,
-  letterSpacing: '0.08em',
-  color: 'var(--color-muted-foreground)',
-}
-
+const paneStyle: CSSProperties = { ...deckPaneStyle, minWidth: 0 }
 
 const doingStyle: CSSProperties = {
   flex: '0 0 auto',

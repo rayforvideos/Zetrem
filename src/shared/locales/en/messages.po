@@ -99,7 +99,7 @@ msgstr "{installed} installed from {sources, plural, one {# source} other {# sou
 msgid "{kind} {name} did not load: {why}"
 msgstr "{kind} {name} did not load: {why}"
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:392
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:360
 msgid "{name} can be called now. Your next message starts a session that can reach them."
 msgstr "{name} can be called now. Your next message starts a session that can reach them."
 
@@ -107,7 +107,7 @@ msgstr "{name} can be called now. Your next message starts a session that can re
 msgid "{name} can be called this session"
 msgstr "{name} can be called this session"
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:393
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:361
 msgid "{name} is off. Your next message starts a session without them."
 msgstr "{name} is off. Your next message starts a session without them."
 
@@ -258,11 +258,11 @@ msgid "Account"
 msgstr "Account"
 
 #: src/widgets/setup/ui/AddConnector/AddConnector.tsx:95
-#: src/widgets/setup/ui/PluginShelf/PluginShelf.tsx:343
+#: src/widgets/setup/ui/PluginShelf/SourcesTab.tsx:61
 msgid "Add"
 msgstr "Add"
 
-#: src/widgets/setup/ui/PluginShelf/PluginShelf.tsx:338
+#: src/widgets/setup/ui/PluginShelf/SourcesTab.tsx:56
 msgid "Add a marketplace"
 msgstr "Add a marketplace"
 
@@ -374,7 +374,7 @@ msgstr "Billing refused the request"
 msgid "Brought over what Claude Desktop had."
 msgstr "Brought over what Claude Desktop had."
 
-#: src/widgets/setup/ui/PluginShelf/PluginShelf.tsx:106
+#: src/widgets/setup/ui/PluginShelf/PluginShelf.tsx:76
 msgid "Browse"
 msgstr "Browse"
 
@@ -392,7 +392,7 @@ msgstr "Cart totals and rounding"
 msgid "Change"
 msgstr "Change"
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:488
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:411
 msgid "Change account, project, and permissions"
 msgstr "Change account, project, and permissions"
 
@@ -452,7 +452,7 @@ msgstr "Close this tile. The run stays in the sidebar."
 msgid "Complex work. Slower and pricier"
 msgstr "Complex work. Slower and pricier"
 
-#: src/widgets/setup/ui/PluginShelf/PluginShelf.tsx:37
+#: src/widgets/setup/ui/PluginShelf/ConnectorsTab.tsx:13
 msgid "Connected"
 msgstr "Connected"
 
@@ -473,7 +473,7 @@ msgid "Connectors"
 msgstr "Connectors"
 
 #. placeholder {0}: connectors.length
-#: src/widgets/setup/ui/PluginShelf/PluginShelf.tsx:108
+#: src/widgets/setup/ui/PluginShelf/PluginShelf.tsx:78
 msgid "Connectors · {0}"
 msgstr "Connectors · {0}"
 
@@ -503,7 +503,7 @@ msgstr "Could not add {name}"
 msgid "Could not bring over Claude Desktop"
 msgstr "Could not bring over Claude Desktop"
 
-#: src/widgets/setup/ui/PluginShelf/PluginShelf.tsx:40
+#: src/widgets/setup/ui/PluginShelf/ConnectorsTab.tsx:16
 msgid "Could not connect"
 msgstr "Could not connect"
 
@@ -519,7 +519,7 @@ msgstr "Could not list your saved chats"
 msgid "Could not open that chat"
 msgstr "Could not open that chat"
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:186
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:154
 msgid "Could not open that folder"
 msgstr "Could not open that folder"
 
@@ -571,7 +571,7 @@ msgstr "Could not read your settings"
 msgid "Could not read your sign-in"
 msgstr "Could not read your sign-in"
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:95
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:92
 msgid "Could not reopen your last project"
 msgstr "Could not reopen your last project"
 
@@ -629,7 +629,7 @@ msgid "Don't ask again this session"
 msgstr "Don't ask again this session"
 
 #: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:20
-#: src/widgets/setup/ui/PluginShelf/PluginShelf.tsx:256
+#: src/widgets/setup/ui/PluginShelf/PluginShelf.tsx:125
 #: src/widgets/setup/ui/SetupPane/SetupPane.tsx:122
 #: src/widgets/tile-deck/ui/layers/StateChip/StateChip.tsx:11
 msgid "Done"
@@ -747,8 +747,8 @@ msgstr "Handing off"
 msgid "Held up"
 msgstr "Held up"
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:473
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:474
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:396
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:397
 msgid "Hide team sidebar"
 msgstr "Hide team sidebar"
 
@@ -764,12 +764,12 @@ msgstr "Import from Claude Desktop"
 msgid "In the background"
 msgstr "In the background"
 
-#: src/widgets/setup/ui/PluginShelf/PluginShelf.tsx:314
+#: src/widgets/setup/ui/PluginShelf/BrowseTab.tsx:58
 msgid "Install"
 msgstr "Install"
 
 #. placeholder {0}: here.length
-#: src/widgets/setup/ui/PluginShelf/PluginShelf.tsx:105
+#: src/widgets/setup/ui/PluginShelf/PluginShelf.tsx:75
 msgid "Installed · {0}"
 msgstr "Installed · {0}"
 
@@ -872,7 +872,7 @@ msgstr "Message your team"
 msgid "Model"
 msgstr "Model"
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:325
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:293
 msgid "Model changed. Your next message starts a session on it."
 msgstr "Model changed. Your next message starts a session on it."
 
@@ -898,7 +898,7 @@ msgstr "Name them, say when they should be called, and write their standing inst
 msgid "Needs auth"
 msgstr "Needs auth"
 
-#: src/widgets/setup/ui/PluginShelf/PluginShelf.tsx:38
+#: src/widgets/setup/ui/PluginShelf/ConnectorsTab.tsx:14
 msgid "Needs signing in"
 msgstr "Needs signing in"
 
@@ -931,7 +931,7 @@ msgstr "Next"
 msgid "No account limits reported"
 msgstr "No account limits reported"
 
-#: src/widgets/setup/ui/PluginShelf/PluginShelf.tsx:194
+#: src/widgets/setup/ui/PluginShelf/ConnectorsTab.tsx:41
 msgid "No connectors yet. Add one below, or bring over what Claude Desktop already has."
 msgstr "No connectors yet. Add one below, or bring over what Claude Desktop already has."
 
@@ -955,19 +955,19 @@ msgstr "Not available this session. Unlock it in Settings."
 msgid "Not known yet"
 msgstr "Not known yet"
 
-#: src/widgets/setup/ui/PluginShelf/PluginShelf.tsx:113
+#: src/widgets/setup/ui/PluginShelf/InstalledTab.tsx:23
 msgid "Nothing installed yet."
 msgstr "Nothing installed yet."
 
-#: src/widgets/setup/ui/PluginShelf/PluginShelf.tsx:302
+#: src/widgets/setup/ui/PluginShelf/BrowseTab.tsx:46
 msgid "Nothing left to add. Every plugin your sources offer is installed."
 msgstr "Nothing left to add. Every plugin your sources offer is installed."
 
-#: src/widgets/setup/ui/PluginShelf/PluginShelf.tsx:299
+#: src/widgets/setup/ui/PluginShelf/BrowseTab.tsx:43
 msgid "Nothing matches “{needle}”."
 msgstr "Nothing matches “{needle}”."
 
-#: src/widgets/tile-deck/ui/CrewBoard/CrewBoard.tsx:120
+#: src/widgets/tile-deck/ui/CrewBoard/CrewBoard.tsx:121
 msgid "Nothing written yet."
 msgstr "Nothing written yet."
 
@@ -1000,7 +1000,7 @@ msgstr "One of you writes, one of you checks. Deal?"
 msgid "Orchestrating"
 msgstr "Orchestrating"
 
-#: src/widgets/setup/ui/PluginShelf/PluginShelf.tsx:337
+#: src/widgets/setup/ui/PluginShelf/SourcesTab.tsx:55
 msgid "owner/repo, a URL, or a folder"
 msgstr "owner/repo, a URL, or a folder"
 
@@ -1017,7 +1017,7 @@ msgstr "Permission"
 msgid "Permissions"
 msgstr "Permissions"
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:319
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:287
 msgid "Permissions changed. Your next message starts a session that follows them."
 msgstr "Permissions changed. Your next message starts a session that follows them."
 
@@ -1041,7 +1041,7 @@ msgstr "Plugin"
 msgid "Plugins"
 msgstr "Plugins"
 
-#: src/widgets/setup/ui/PluginShelf/PluginShelf.tsx:95
+#: src/widgets/setup/ui/PluginShelf/PluginShelf.tsx:65
 msgid "Plugins and connectors your team can reach. Restart the session to load a change."
 msgstr "Plugins and connectors your team can reach. Restart the session to load a change."
 
@@ -1079,7 +1079,7 @@ msgstr "Reading"
 msgid "Reading reports"
 msgstr "Reading reports"
 
-#: src/widgets/setup/ui/PluginShelf/PluginShelf.tsx:297
+#: src/widgets/setup/ui/PluginShelf/BrowseTab.tsx:41
 msgid "Reading the catalog…"
 msgstr "Reading the catalog…"
 
@@ -1099,17 +1099,17 @@ msgstr "Reading which agents Claude Code brings. They will be listed here."
 msgid "Recheck"
 msgstr "Recheck"
 
-#: src/widgets/setup/ui/PluginShelf/PluginShelf.tsx:180
+#: src/widgets/setup/ui/PluginShelf/SourcesTab.tsx:27
 msgid "Refresh"
 msgstr "Refresh"
 
-#: src/widgets/setup/ui/PluginShelf/PluginShelf.tsx:253
+#: src/widgets/setup/ui/PluginShelf/PluginShelf.tsx:122
 msgid "Reload"
 msgstr "Reload"
 
-#: src/widgets/setup/ui/PluginShelf/PluginShelf.tsx:137
-#: src/widgets/setup/ui/PluginShelf/PluginShelf.tsx:182
-#: src/widgets/setup/ui/PluginShelf/PluginShelf.tsx:224
+#: src/widgets/setup/ui/PluginShelf/ConnectorsTab.tsx:73
+#: src/widgets/setup/ui/PluginShelf/InstalledTab.tsx:49
+#: src/widgets/setup/ui/PluginShelf/SourcesTab.tsx:29
 #: src/widgets/team-sidebar/ui/MemberMenu/MemberMenu.tsx:67
 msgid "Remove"
 msgstr "Remove"
@@ -1194,11 +1194,11 @@ msgid "Say what you would change and why, in that order."
 msgstr "Say what you would change and why, in that order."
 
 #. placeholder {0}: pool.length
-#: src/widgets/setup/ui/PluginShelf/PluginShelf.tsx:290
+#: src/widgets/setup/ui/PluginShelf/BrowseTab.tsx:34
 msgid "Search {0} plugins"
 msgstr "Search {0} plugins"
 
-#: src/widgets/setup/ui/PluginShelf/PluginShelf.tsx:291
+#: src/widgets/setup/ui/PluginShelf/BrowseTab.tsx:35
 msgid "Search plugins"
 msgstr "Search plugins"
 
@@ -1234,7 +1234,7 @@ msgstr "Set a few things and your agents get to work!"
 msgid "Set for everyone on your account. They cannot be removed or turned off here."
 msgstr "Set for everyone on your account. They cannot be removed or turned off here."
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:490
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:413
 msgid "Settings"
 msgstr "Settings"
 
@@ -1242,12 +1242,12 @@ msgstr "Settings"
 msgid "share unknown"
 msgstr "share unknown"
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:473
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:474
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:396
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:397
 msgid "Show team sidebar"
 msgstr "Show team sidebar"
 
-#: src/widgets/setup/ui/PluginShelf/PluginShelf.tsx:220
+#: src/widgets/setup/ui/PluginShelf/ConnectorsTab.tsx:69
 msgid "Sign in"
 msgstr "Sign in"
 
@@ -1269,7 +1269,7 @@ msgstr "Sign in with Anthropic"
 
 #: src/widgets/setup/ui/AccountField/AccountField.tsx:49
 #: src/widgets/setup/ui/AccountField/AccountField.tsx:61
-#: src/widgets/setup/ui/PluginShelf/PluginShelf.tsx:216
+#: src/widgets/setup/ui/PluginShelf/ConnectorsTab.tsx:65
 msgid "Sign out"
 msgstr "Sign out"
 
@@ -1318,7 +1318,7 @@ msgid "Something went wrong while it was working"
 msgstr "Something went wrong while it was working"
 
 #. placeholder {0}: marketplaces.length
-#: src/widgets/setup/ui/PluginShelf/PluginShelf.tsx:107
+#: src/widgets/setup/ui/PluginShelf/PluginShelf.tsx:77
 msgid "Sources · {0}"
 msgstr "Sources · {0}"
 
@@ -1565,12 +1565,12 @@ msgstr "Turn on to let the team call {name}"
 msgid "under a minute"
 msgstr "under a minute"
 
-#: src/widgets/setup/ui/PluginShelf/PluginShelf.tsx:41
+#: src/widgets/setup/ui/PluginShelf/ConnectorsTab.tsx:17
 #: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:177
 msgid "Unknown"
 msgstr "Unknown"
 
-#: src/widgets/setup/ui/PluginShelf/PluginShelf.tsx:130
+#: src/widgets/setup/ui/PluginShelf/InstalledTab.tsx:42
 #: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:154
 msgid "Update"
 msgstr "Update"
@@ -1591,7 +1591,7 @@ msgstr "Waiting for approval"
 msgid "Waiting for your approval"
 msgstr "Waiting for your approval"
 
-#: src/widgets/setup/ui/PluginShelf/PluginShelf.tsx:39
+#: src/widgets/setup/ui/PluginShelf/ConnectorsTab.tsx:15
 msgid "Waiting for your approval in the CLI"
 msgstr "Waiting for your approval in the CLI"
 
@@ -1628,13 +1628,13 @@ msgstr "Weekly overage"
 msgid "What should they work on?"
 msgstr "What should they work on?"
 
-#: src/widgets/setup/ui/PluginShelf/PluginShelf.tsx:93
+#: src/widgets/setup/ui/PluginShelf/PluginShelf.tsx:63
 msgid "What the session brings"
 msgstr "What the session brings"
 
 #: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:132
-#: src/widgets/tile-deck/ui/AgentTile/AgentTile.tsx:77
-#: src/widgets/tile-deck/ui/CrewBoard/CrewBoard.tsx:124
+#: src/widgets/tile-deck/ui/AgentTile/AgentTile.tsx:83
+#: src/widgets/tile-deck/ui/CrewBoard/CrewBoard.tsx:125
 #: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:136
 msgid "What they did"
 msgstr "What they did"
@@ -1689,7 +1689,7 @@ msgid "Yesterday"
 msgstr "Yesterday"
 
 #: src/widgets/setup/ui/YouField/YouField.tsx:23
-#: src/widgets/tile-deck/ui/CrewBoard/CrewBoard.tsx:66
+#: src/widgets/tile-deck/ui/CrewBoard/CrewBoard.tsx:67
 msgid "You"
 msgstr "You"
 

@@ -17,6 +17,7 @@ import { focusOf } from '../../lib/focus/focus'
 import { attentionId } from '../../lib/attention/attention'
 import { CallLog } from '../layers/CallLog/CallLog'
 import { Transcript } from '../layers/Transcript/Transcript'
+import { logHeadStyle, logPaneStyle, paneStyle, splitStyle } from '../styles'
 import { CrewCard } from './CrewCard'
 import { t } from '@lingui/core/macro'
 
@@ -285,40 +286,7 @@ const detailHeadStyle: CSSProperties = {
   flex: '0 0 auto',
 }
 
-const splitStyle: CSSProperties = {
-  display: 'grid',
-  gridTemplateRows: 'minmax(0, 65fr) minmax(0, 35fr)',
-  gap: 14,
-  flex: '1 1 auto',
-  minHeight: 0,
-}
-
-const paneStyle: CSSProperties = {
-  display: 'flex',
-  flexDirection: 'column',
-  minHeight: 0,
-  overflow: 'hidden',
-}
-
 const quietStyle: CSSProperties = { margin: 0, fontSize: 12, opacity: 0.45 }
-
-const logPaneStyle: CSSProperties = {
-  display: 'flex',
-  flexDirection: 'column',
-  justifyContent: 'flex-end',
-  gap: 8,
-  minHeight: 0,
-  minWidth: 0,
-  overflow: 'hidden',
-}
-
-const logHeadStyle: CSSProperties = {
-  flex: '0 0 auto',
-  fontSize: 11.5,
-  letterSpacing: '0.08em',
-  color: 'var(--color-muted-foreground)',
-}
-
 
 const detailNoteStyle: CSSProperties = {
   minWidth: 0,

@@ -9,6 +9,7 @@ import {
 } from '@/entities/agent-session'
 import type { AgentSession, ModelChoice, RunConfig, StatusState } from '@/entities/agent-session'
 import { applyAgentEvent } from './agent-events/agent-events'
+import { advancePermission } from './conversation/advance-permission'
 import { conversation } from './conversation/conversation'
 import { sentOf, withPaths } from '@/entities/attachment'
 import type { Attached } from '@/entities/attachment'
@@ -41,7 +42,6 @@ export function useAgent(
   onModelRefused: (model: ModelChoice) => void,
 ): Agent {
   const configRef = useRef(config)
-  configRef.current = config
   const conv = useSyncExternalStore(conversation.subscribe, conversation.get, conversation.get)
   const children = useSyncExternalStore(sessionStore.subscribe, sessionStore.get, sessionStore.get)
   const status = useSyncExternalStore(statusStore.subscribe, statusStore.get, statusStore.get)
@@ -57,7 +57,13 @@ export function useAgent(
   const attempt = useRef<Attempt | null>(null)
   const stopping = useRef(false)
   const refused = useRef(onModelRefused)
-  refused.current = onModelRefused
+
+  // Written after commit, not during render: a render React throws away must
+  // not leave its config behind for launch() to hand the subprocess.
+  useEffect(() => {
+    configRef.current = config
+    refused.current = onModelRefused
+  })
 
   useEffect(() => {
     const timer = setInterval(() => setNowMs(Date.now()), CLOCK_MS)
@@ -184,18 +190,7 @@ export function useAgent(
         ? permissionAlwaysResult(current.toolName, current.input)
         : permissionResult(allow, current.input),
     )
-    const next = asks.current[0]
-    if (next) {
-      conversation.setPermission({
-        requestId: next.requestId,
-        toolName: next.toolName,
-        line: next.line,
-        detail: next.detail,
-      })
-      return
-    }
-    conversation.setPermission(null)
-    conversation.setStatus('working')
+    advancePermission(asks.current)
   }
 
   function stop(): void {

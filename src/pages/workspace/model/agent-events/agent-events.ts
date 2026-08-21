@@ -9,6 +9,7 @@ import type {
 } from '@/entities/agent-session'
 import { formatResetTime } from '@/shared/lib/datetime/datetime'
 import { formatTokens, limitKindLabel } from '@/shared/lib/units/units'
+import { advancePermission } from '../conversation/advance-permission'
 import { conversation } from '../conversation/conversation'
 import { stirred } from './stirred/stirred'
 import { SEND_TOOL, applyCrewEvent, isCrewEvent, remember, wakeResumed } from './crew/crew'
@@ -118,17 +119,7 @@ function drop(requestId: string, refs: AgentEventRefs): void {
   const showing = conversation.get().permission?.requestId === requestId
   refs.asks.splice(at, 1)
   if (!showing) return
-  const next = refs.asks[0]
-  if (next === undefined) {
-    conversation.setPermission(null)
-    return conversation.setStatus('working')
-  }
-  conversation.setPermission({
-    requestId: next.requestId,
-    toolName: next.toolName,
-    line: next.line,
-    detail: next.detail,
-  })
+  advancePermission(refs.asks)
 }
 
 export function limitLine(limit: RateLimit): string {

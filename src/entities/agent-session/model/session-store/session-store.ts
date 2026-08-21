@@ -12,6 +12,10 @@ function emit(next: AgentSession[]): void {
   for (const listener of listeners) listener()
 }
 
+function patchOne(id: string, fields: Partial<AgentSession>): void {
+  emit(sessions.map((s) => (s.id === id ? { ...s, ...fields } : s)))
+}
+
 function waitingStamp(before: AgentSession, patch: Partial<AgentSession>): Partial<AgentSession> {
   if (patch.waitingSinceMs !== undefined) return {}
   if (patch.status === undefined || patch.status === before.status) return {}
@@ -56,14 +60,14 @@ export const sessionStore = {
       ...waitingStamp(before, patch),
       ...endStamp(before, patch),
     }
-    emit(sessions.map((s) => (s.id === id ? { ...s, ...stamped } : s)))
+    patchOne(id, stamped)
   },
   appendTranscript(id: string, entry: TranscriptEntry): void {
     const target = sessions.find((s) => s.id === id)
     if (!target) return
     const transcript = [...target.transcript, entry].slice(-TRANSCRIPT_BUFFER)
     const lastSeenAtMs = Date.now()
-    emit(sessions.map((s) => (s.id === id ? { ...s, transcript, lastSeenAtMs } : s)))
+    patchOne(id, { transcript, lastSeenAtMs })
   },
   beginCall(id: string, call: { id: string; line: string }): void {
     const target = sessions.find((s) => s.id === id)
@@ -77,7 +81,7 @@ export const sessionStore = {
         ...held,
         line: mergedLine(held.line, call.line),
       })
-      emit(sessions.map((s) => (s.id === id ? { ...s, stream: again, lastSeenAtMs: Date.now() } : s)))
+      patchOne(id, { stream: again, lastSeenAtMs: Date.now() })
       return
     }
     const last = target.stream.length - 1
@@ -91,7 +95,7 @@ export const sessionStore = {
         failed: false,
         note: '',
       })
-      emit(sessions.map((s) => (s.id === id ? { ...s, stream: taken, lastSeenAtMs: Date.now() } : s)))
+      patchOne(id, { stream: taken, lastSeenAtMs: Date.now() })
       return
     }
     const opened: Call = {
@@ -103,7 +107,7 @@ export const sessionStore = {
     }
     const stream = [...target.stream, opened].slice(-STREAM_BUFFER)
     const lastSeenAtMs = Date.now()
-    emit(sessions.map((s) => (s.id === id ? { ...s, stream, lastSeenAtMs } : s)))
+    patchOne(id, { stream, lastSeenAtMs })
   },
   endCall(id: string, callId: string, done: { failed: boolean; note: string }): void {
     const target = sessions.find((s) => s.id === id)
@@ -116,7 +120,7 @@ export const sessionStore = {
       endedAtMs: Date.now(),
     })
     const lastSeenAtMs = Date.now()
-    emit(sessions.map((s) => (s.id === id ? { ...s, stream, lastSeenAtMs } : s)))
+    patchOne(id, { stream, lastSeenAtMs })
   },
   clear(): void {
     emit([])

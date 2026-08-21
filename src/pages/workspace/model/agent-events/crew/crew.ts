@@ -50,15 +50,16 @@ export function applyCrewEvent(turn: ClaudeTurnEvent, refs: AgentEventRefs): voi
       const id = whose(turn, refs)
       if (id === null) return
       // A state event is the CLI speaking with authority in both directions:
-      // running revives, failed or killed ends. Completed is neither — the
-      // agent went idle after reporting and the same task can start again, so
-      // the tile stays on the board rather than winking out between asks.
+      // running revives, completed or failed ends and the tile closes itself,
+      // the way a one-shot teammate should. The exception: completed also
+      // fires when an agent merely idles waiting on its own backgrounded
+      // shell — closing there is the mid-job flicker, so it stays working.
       if (turn.state === 'running' || turn.state === 'pending') return wake(id)
       if (turn.state === 'paused') return
       if (turn.error.length > 0) {
         return sessionStore.patch(id, { status: 'done', headline: `Failed: ${turn.error.trim()}` })
       }
-      if (turn.state === 'completed') return sessionStore.patch(id, { status: 'reported' })
+      if (turn.state === 'completed' && ownsRunningBash(id)) return wake(id)
       return sessionStore.patch(id, { status: 'done' })
     }
     case 'childSay':
@@ -82,7 +83,10 @@ export function applyCrewEvent(turn: ClaudeTurnEvent, refs: AgentEventRefs): voi
       // over; keep the words, but never the status — that reopens the tile.
       if (turn.summary) sessionStore.patch(id, { headline: turn.summary.trim(), doing: '' })
       if (closedForGood(id)) return
-      return sessionStore.patch(id, { status: turn.done ? 'reported' : 'working' })
+      // "Done" while the agent's own shell still runs is only a pause for
+      // breath; reported would let the silence rule close a tile mid-job.
+      const parked = turn.done && !ownsRunningBash(id)
+      return sessionStore.patch(id, { status: parked ? 'reported' : 'working' })
     }
     case 'childStarted': {
       const id = whose(turn, refs)
@@ -206,6 +210,29 @@ function note(toolUseId: string, tool: string): void {
 // for their childOpen. Tool-use ids never repeat, so entries only linger for
 // tasks whose open never arrives.
 const pendingTasks = new Map<string, string>()
+
+// Background shells a child agent started for itself, task id → owning
+// session. While one runs, the owner is waiting on it, not finished — and its
+// row belongs on the agent's tile, not in the conversation's chores line.
+const ownedBash = new Map<string, string>()
+
+export function adoptChildBash(taskId: string, toolUseId: string | null): boolean {
+  if (toolUseId === null) return false
+  const owner = sessionStore.get().find((s) => s.stream.some((call) => call.id === toolUseId))
+  if (owner === undefined) return false
+  ownedBash.set(taskId, owner.id)
+  wake(owner.id)
+  return true
+}
+
+export function releaseChildBash(taskId: string): void {
+  ownedBash.delete(taskId)
+}
+
+function ownsRunningBash(id: string): boolean {
+  for (const owner of ownedBash.values()) if (owner === id) return true
+  return false
+}
 
 // Done plus a task id means the CLI itself said this child ended, so a
 // straggling notification must not bring the tile back — that is the

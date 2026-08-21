@@ -13,11 +13,11 @@ msgstr ""
 "Language-Team: \n"
 "Plural-Forms: \n"
 
-#: src/pages/workspace/model/agent-events/agent-events.ts:129
+#: src/pages/workspace/model/agent-events/agent-events.ts:146
 msgid " · on overage"
 msgstr " · 초과분 사용 중"
 
-#: src/pages/workspace/model/agent-events/agent-events.ts:127
+#: src/pages/workspace/model/agent-events/agent-events.ts:144
 msgid " {pct}% used,"
 msgstr " {pct}% 사용,"
 
@@ -32,7 +32,7 @@ msgid "{0} left"
 msgstr "{0} 남음"
 
 #. placeholder {0}: limitKindLabel(limit.kind)
-#: src/pages/workspace/model/agent-events/agent-events.ts:130
+#: src/pages/workspace/model/agent-events/agent-events.ts:147
 msgid "{0} limit{share} resets {when}{overage}"
 msgstr "{0} 한도{share} {when} 초기화{overage}"
 
@@ -83,7 +83,7 @@ msgstr "{0}분 전"
 msgid "{back} teammates"
 msgstr "팀원 {back}명"
 
-#: src/pages/workspace/model/agent-events/agent-events.ts:139
+#: src/pages/workspace/model/agent-events/agent-events.ts:156
 msgid "{base}. Earlier turns live on as a summary."
 msgstr "{base}. 앞선 대화는 요약으로 남습니다."
 
@@ -317,7 +317,7 @@ msgid "any moment"
 msgstr "곧"
 
 #. placeholder {0}: turn.metrics.apiErrorStatus
-#: src/pages/workspace/model/agent-events/agent-events.ts:95
+#: src/pages/workspace/model/agent-events/agent-events.ts:112
 msgid "API error {0}"
 msgstr "API 오류 {0}"
 
@@ -346,7 +346,7 @@ msgstr "첨부"
 msgid "Attach a file"
 msgstr "파일 첨부"
 
-#: src/pages/workspace/model/agent-events/agent-events.ts:146
+#: src/pages/workspace/model/agent-events/agent-events.ts:163
 msgid "auto"
 msgstr "자동"
 
@@ -486,7 +486,7 @@ msgstr "컨텍스트"
 msgid "Context {0}% left, compacting soon"
 msgstr "컨텍스트 {0}% 남음, 곧 압축됩니다"
 
-#: src/pages/workspace/model/agent-events/agent-events.ts:138
+#: src/pages/workspace/model/agent-events/agent-events.ts:155
 msgid "Conversation compacted here"
 msgstr "여기서 대화가 압축됐습니다"
 
@@ -842,7 +842,7 @@ msgstr "관리"
 msgid "Managed on claude.ai. Sign in or out here, remove them there."
 msgstr "claude.ai에서 관리합니다. 로그인과 로그아웃은 여기서, 삭제는 거기서 하세요."
 
-#: src/pages/workspace/model/agent-events/agent-events.ts:147
+#: src/pages/workspace/model/agent-events/agent-events.ts:164
 msgid "manual"
 msgstr "수동"
 
@@ -1025,7 +1025,7 @@ msgstr "권한을 바꿨습니다. 다음 메시지부터 바뀐 권한으로 �
 msgid "Pick a project first"
 msgstr "먼저 프로젝트를 고르세요"
 
-#: src/pages/workspace/model/agent-events/crew/crew.ts:153
+#: src/pages/workspace/model/agent-events/crew/crew.ts:157
 msgid "Picked up where they left off"
 msgstr "하던 자리에서 이어받았습니다"
 
@@ -1525,7 +1525,7 @@ msgstr "클로드 코드 CLI 자체를 로그아웃합니다. 이 컴퓨터에�
 msgid "This signs out the Claude Code CLI itself, so every terminal, editor and app using it on this computer is signed out too. The session running here stops."
 msgstr "클로드 코드 CLI 자체를 로그아웃합니다. 이 컴퓨터에서 CLI를 쓰는 터미널과 편집기와 앱이 모두 함께 로그아웃됩니다. 여기서 돌고 있는 세션도 멈춥니다."
 
-#: src/pages/workspace/model/agent-events/agent-events.ts:154
+#: src/pages/workspace/model/agent-events/agent-events.ts:171
 msgid "This turn: {out} out · {seconds}s"
 msgstr "이번 턴: {out} 출력 · {seconds}초"
 

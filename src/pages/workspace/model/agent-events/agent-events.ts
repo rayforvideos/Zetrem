@@ -12,7 +12,15 @@ import { formatTokens, limitKindLabel } from '@/shared/lib/units/units'
 import { advancePermission } from '../conversation/advance-permission'
 import { conversation } from '../conversation/conversation'
 import { stirred } from './stirred/stirred'
-import { SEND_TOOL, applyCrewEvent, isCrewEvent, remember, wakeResumed } from './crew/crew'
+import {
+  SEND_TOOL,
+  adoptChildBash,
+  applyCrewEvent,
+  isCrewEvent,
+  releaseChildBash,
+  remember,
+  wakeResumed,
+} from './crew/crew'
 import { t } from '@lingui/core/macro'
 
 export function applyAgentEvent(turn: ClaudeTurnEvent, refs: AgentEventRefs): void {
@@ -39,12 +47,21 @@ const OVER = ['completed', 'failed', 'killed']
 
 function chore(turn: ClaudeTurnEvent): boolean {
   if (turn.type === 'childStarted' && turn.taskType === BACKGROUND) {
+    // A shell a child agent backgrounded for itself is that agent still at
+    // work, not a conversation chore; it rides the agent's tile instead.
+    if (adoptChildBash(turn.taskId, turn.toolUseId)) return true
     conversation.startChore(turn.taskId, turn.description)
     return true
   }
-  if (turn.type === 'childNotified') conversation.endChore(turn.taskId)
+  if (turn.type === 'childNotified') {
+    conversation.endChore(turn.taskId)
+    // A notification for an adopted shell is that shell finishing; its owner
+    // stops waiting on it either way.
+    releaseChildBash(turn.taskId)
+  }
   if (turn.type === 'childStateKnown' && OVER.includes(turn.state)) {
     conversation.endChore(turn.taskId)
+    releaseChildBash(turn.taskId)
   }
   return false
 }

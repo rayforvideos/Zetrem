@@ -13,11 +13,11 @@ msgstr ""
 "Language-Team: \n"
 "Plural-Forms: \n"
 
-#: src/pages/workspace/model/agent-events/agent-events.ts:129
+#: src/pages/workspace/model/agent-events/agent-events.ts:146
 msgid " · on overage"
 msgstr " · on overage"
 
-#: src/pages/workspace/model/agent-events/agent-events.ts:127
+#: src/pages/workspace/model/agent-events/agent-events.ts:144
 msgid " {pct}% used,"
 msgstr " {pct}% used,"
 
@@ -32,7 +32,7 @@ msgid "{0} left"
 msgstr "{0} left"
 
 #. placeholder {0}: limitKindLabel(limit.kind)
-#: src/pages/workspace/model/agent-events/agent-events.ts:130
+#: src/pages/workspace/model/agent-events/agent-events.ts:147
 msgid "{0} limit{share} resets {when}{overage}"
 msgstr "{0} limit{share} resets {when}{overage}"
 
@@ -83,7 +83,7 @@ msgstr "{0}m ago"
 msgid "{back} teammates"
 msgstr "{back} teammates"
 
-#: src/pages/workspace/model/agent-events/agent-events.ts:139
+#: src/pages/workspace/model/agent-events/agent-events.ts:156
 msgid "{base}. Earlier turns live on as a summary."
 msgstr "{base}. Earlier turns live on as a summary."
 
@@ -317,7 +317,7 @@ msgid "any moment"
 msgstr "any moment"
 
 #. placeholder {0}: turn.metrics.apiErrorStatus
-#: src/pages/workspace/model/agent-events/agent-events.ts:95
+#: src/pages/workspace/model/agent-events/agent-events.ts:112
 msgid "API error {0}"
 msgstr "API error {0}"
 
@@ -346,7 +346,7 @@ msgstr "Attach"
 msgid "Attach a file"
 msgstr "Attach a file"
 
-#: src/pages/workspace/model/agent-events/agent-events.ts:146
+#: src/pages/workspace/model/agent-events/agent-events.ts:163
 msgid "auto"
 msgstr "auto"
 
@@ -486,7 +486,7 @@ msgstr "Context"
 msgid "Context {0}% left, compacting soon"
 msgstr "Context {0}% left, compacting soon"
 
-#: src/pages/workspace/model/agent-events/agent-events.ts:138
+#: src/pages/workspace/model/agent-events/agent-events.ts:155
 msgid "Conversation compacted here"
 msgstr "Conversation compacted here"
 
@@ -842,7 +842,7 @@ msgstr "Manage"
 msgid "Managed on claude.ai. Sign in or out here, remove them there."
 msgstr "Managed on claude.ai. Sign in or out here, remove them there."
 
-#: src/pages/workspace/model/agent-events/agent-events.ts:147
+#: src/pages/workspace/model/agent-events/agent-events.ts:164
 msgid "manual"
 msgstr "manual"
 
@@ -1025,7 +1025,7 @@ msgstr "Permissions changed. Your next message starts a session that follows the
 msgid "Pick a project first"
 msgstr "Pick a project first"
 
-#: src/pages/workspace/model/agent-events/crew/crew.ts:153
+#: src/pages/workspace/model/agent-events/crew/crew.ts:157
 msgid "Picked up where they left off"
 msgstr "Picked up where they left off"
 
@@ -1525,7 +1525,7 @@ msgstr "This signs out the Claude Code CLI itself, so every terminal, editor and
 msgid "This signs out the Claude Code CLI itself, so every terminal, editor and app using it on this computer is signed out too. The session running here stops."
 msgstr "This signs out the Claude Code CLI itself, so every terminal, editor and app using it on this computer is signed out too. The session running here stops."
 
-#: src/pages/workspace/model/agent-events/agent-events.ts:154
+#: src/pages/workspace/model/agent-events/agent-events.ts:171
 msgid "This turn: {out} out · {seconds}s"
 msgstr "This turn: {out} out · {seconds}s"
 

@@ -82,5 +82,16 @@ module.exports = {
       }
     ]
   },
-  "artifactName": "${productName}-${version}-${arch}.${ext}"
+  "artifactName": "${productName}-${version}-${arch}.${ext}",
+  // electron-updater in the packaged app reads this to know where releases
+  // live; it also makes electron-builder emit the latest*.yml metadata the
+  // updater compares versions against. Publishing itself stays a manual
+  // `--publish always` with a GH_TOKEN at release time.
+  "publish": [
+    {
+      "provider": "github",
+      "owner": "rayforvideos",
+      "repo": "Zetrem"
+    }
+  ]
 }

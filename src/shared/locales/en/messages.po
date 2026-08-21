@@ -99,7 +99,7 @@ msgstr "{installed} installed from {sources, plural, one {# source} other {# sou
 msgid "{kind} {name} did not load: {why}"
 msgstr "{kind} {name} did not load: {why}"
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:385
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:387
 msgid "{name} can be called now. Your next message starts a session that can reach them."
 msgstr "{name} can be called now. Your next message starts a session that can reach them."
 
@@ -107,7 +107,7 @@ msgstr "{name} can be called now. Your next message starts a session that can re
 msgid "{name} can be called this session"
 msgstr "{name} can be called this session"
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:386
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:388
 msgid "{name} is off. Your next message starts a session without them."
 msgstr "{name} is off. Your next message starts a session without them."
 
@@ -391,7 +391,7 @@ msgstr "Cart totals and rounding"
 msgid "Change"
 msgstr "Change"
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:481
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:483
 msgid "Change account, project, and permissions"
 msgstr "Change account, project, and permissions"
 
@@ -518,7 +518,7 @@ msgstr "Could not list your saved chats"
 msgid "Could not open that chat"
 msgstr "Could not open that chat"
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:179
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:181
 msgid "Could not open that folder"
 msgstr "Could not open that folder"
 
@@ -570,7 +570,7 @@ msgstr "Could not read your settings"
 msgid "Could not read your sign-in"
 msgstr "Could not read your sign-in"
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:93
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:95
 msgid "Could not reopen your last project"
 msgstr "Could not reopen your last project"
 
@@ -745,8 +745,8 @@ msgstr "Handing off"
 msgid "Held up"
 msgstr "Held up"
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:466
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:467
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:468
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:469
 msgid "Hide team sidebar"
 msgstr "Hide team sidebar"
 
@@ -779,6 +779,10 @@ msgstr "it could not be loaded"
 msgid "It could not produce the shape the answer had to take"
 msgstr "It could not produce the shape the answer had to take"
 
+#: src/pages/workspace/ui/UpdateCard/UpdateCard.tsx:19
+msgid "It installs when the app restarts."
+msgstr "It installs when the app restarts."
+
 #: src/entities/agent-session/api/claude/failure/failure.ts:5
 msgid "It reached the limit on how many turns one message may take"
 msgstr "It reached the limit on how many turns one message may take"
@@ -803,6 +807,10 @@ msgstr "Keep the name under {NAME_MAX} characters"
 #: src/widgets/setup/ui/SetupPane/SetupPane.tsx:60
 msgid "Language"
 msgstr "Language"
+
+#: src/pages/workspace/ui/UpdateCard/UpdateCard.tsx:23
+msgid "Later"
+msgstr "Later"
 
 #: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:83
 msgid "Later run"
@@ -857,7 +865,7 @@ msgstr "Message your team"
 msgid "Model"
 msgstr "Model"
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:318
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:320
 msgid "Model changed. Your next message starts a session on it."
 msgstr "Model changed. Your next message starts a session on it."
 
@@ -993,7 +1001,7 @@ msgstr "Permission"
 msgid "Permissions"
 msgstr "Permissions"
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:312
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:314
 msgid "Permissions changed. Your next message starts a session that follows them."
 msgstr "Permissions changed. Your next message starts a session that follows them."
 
@@ -1110,6 +1118,10 @@ msgstr "reset time not reported"
 msgid "resets {when}"
 msgstr "resets {when}"
 
+#: src/pages/workspace/ui/UpdateCard/UpdateCard.tsx:22
+msgid "Restart"
+msgstr "Restart"
+
 #: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:127
 msgid "Restart session"
 msgstr "Restart session"
@@ -1194,7 +1206,7 @@ msgstr "Set a few things and your agents get to work!"
 msgid "Set for everyone on your account. They cannot be removed or turned off here."
 msgstr "Set for everyone on your account. They cannot be removed or turned off here."
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:483
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:485
 msgid "Settings"
 msgstr "Settings"
 
@@ -1202,8 +1214,8 @@ msgstr "Settings"
 msgid "share unknown"
 msgstr "share unknown"
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:466
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:467
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:468
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:469
 msgid "Show team sidebar"
 msgstr "Show team sidebar"
 
@@ -1721,6 +1733,10 @@ msgstr "Your team works on the right"
 #: src/entities/plugin/lib/groups/groups.ts:7
 msgid "Yours"
 msgstr "Yours"
+
+#: src/pages/workspace/ui/UpdateCard/UpdateCard.tsx:18
+msgid "Zetrem {version} is ready"
+msgstr "Zetrem {version} is ready"
 
 #: src/entities/connector/lib/refusal-why/refusal-why.ts:26
 msgid "Zetrem did not understand that request"

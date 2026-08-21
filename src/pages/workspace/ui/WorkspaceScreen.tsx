@@ -38,6 +38,7 @@ import { sessionLive, stirring } from '../model/live/live'
 import { useAgent } from '../model/use-agent'
 import { useAgentDefs } from '../model/use-agent-defs'
 import { useAuth } from '../model/use-auth'
+import { useAppUpdate } from '../model/use-app-update/use-app-update'
 import { useCliUpdate } from '../model/use-cli-update'
 import { useFocus } from '../model/use-focus'
 import { usePlugins } from '../model/use-plugins'
@@ -88,6 +89,7 @@ export function WorkspaceScreen() {
   useSay(settings.tongue, !loading)
   const auth = useAuth()
   const cliUpdate = useCliUpdate(status.session?.cliVersion ?? null)
+  useAppUpdate()
   const deck = useDeck()
   const viewport = useViewport()
   const projectKnown = useProjectMemory(reportProject(t`Could not reopen your last project`))

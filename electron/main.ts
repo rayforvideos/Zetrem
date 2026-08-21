@@ -13,6 +13,7 @@ import { loadSettings, registerSettingsStore } from './settings-store'
 import { registerConnectors } from './connectors'
 import { killAllProbes, registerSessionProbe } from './session-probe'
 import { registerTranscriptStore } from './transcript-store'
+import { registerUpdater } from './updater/updater'
 import { recallProject, rememberProject } from './project-memory'
 import { handle } from './ipc/ipc'
 import { loadTroubleLine, troublePage } from './window-trouble/window-trouble'
@@ -164,6 +165,7 @@ if (!primary) {
   registerTranscriptStore()
   registerPlugins()
   registerNudge()
+  registerUpdater()
   handle('app:version', () => app.getVersion())
 
   app

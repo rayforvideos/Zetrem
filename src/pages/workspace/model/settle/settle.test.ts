@@ -34,6 +34,11 @@ describe('settled: who has gone quiet long enough to call finished', () => {
     expect(settled([fresh], { nowMs: 8000, ...busy })).toEqual([])
   })
 
+  it('waits on a reported agent the CLI tracks, because its end arrives as an event', () => {
+    const tracked = session('a', { status: 'reported', taskId: 'task-1', lastSeenAtMs: 1000 })
+    expect(settled([tracked], { nowMs: 1000 + REPORTED_QUIET_MS * 10, ...idle })).toEqual([])
+  })
+
   it('never times out an agent the CLI is reporting on, however long it goes quiet', () => {
     const slow = session('a', { taskId: 'task_a', lastSeenAtMs: 0 })
     expect(settled([slow], { nowMs: 99_999_999, ...idle })).toEqual([])

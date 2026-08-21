@@ -17,11 +17,14 @@ export function settled(children: AgentSession[], at: Quiet): string[] {
   return children
     .filter((session) => session.status !== 'done')
     .filter((session) => {
+      // A child the CLI tracks by task id gets an explicit end-of-life event
+      // (childStateKnown); guessing from silence would close a teammate that
+      // is merely between notifications and make its tile flicker.
+      if (told(session)) return false
       if (session.status === 'reported') {
         return silenceOf(session, at.nowMs) >= REPORTED_QUIET_MS
       }
       if (session.status !== 'working') return false
-      if (told(session)) return false
       return !at.parentWorking && silenceOf(session, at.nowMs) >= LOST_QUIET_MS
     })
     .map((session) => session.id)

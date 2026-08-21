@@ -31,9 +31,9 @@ describe('a real run of the CLI, replayed line for line', () => {
     expect(children[0]!.subagentType).toBe('Explore')
   })
 
-  it('finishes the agent, because the CLI said so and not because it went quiet', () => {
+  it('parks the agent at reported when the CLI completes its task, keeping the tile', () => {
     replay()
-    expect(sessionStore.get()[0]!.status).toBe('done')
+    expect(sessionStore.get()[0]!.status).toBe('reported')
   })
 
   it('never mistakes a backgrounded shell command for a teammate', () => {

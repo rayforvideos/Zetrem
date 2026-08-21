@@ -1025,7 +1025,7 @@ msgstr "권한을 바꿨습니다. 다음 메시지부터 바뀐 권한으로 �
 msgid "Pick a project first"
 msgstr "먼저 프로젝트를 고르세요"
 
-#: src/pages/workspace/model/agent-events/crew/crew.ts:121
+#: src/pages/workspace/model/agent-events/crew/crew.ts:153
 msgid "Picked up where they left off"
 msgstr "하던 자리에서 이어받았습니다"
 

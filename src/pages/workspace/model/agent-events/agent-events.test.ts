@@ -565,6 +565,42 @@ describe('a subagent reports what it is doing while it works', () => {
     expect(child?.endedAtMs).toBeUndefined()
   })
 
+  it('parks a tracked child at reported when its task completes, keeping the tile', () => {
+    const refs = fakeRefs()
+    open(refs, 'toolu_done')
+    applyAgentEvent(
+      { type: 'childStarted', toolUseId: 'toolu_done', taskId: 'task-d', taskType: 'local_agent', description: '' },
+      refs,
+    )
+    applyAgentEvent(
+      { type: 'childStateKnown', toolUseId: 'toolu_done', taskId: 'task-d', state: 'completed', error: '' },
+      refs,
+    )
+    expect(sessionStore.get().find((s) => s.id === 'toolu_done')?.status).toBe('reported')
+  })
+
+  it('lets no straggling notification reopen a child the CLI closed', () => {
+    const refs = fakeRefs()
+    open(refs, 'toolu_late')
+    applyAgentEvent(
+      { type: 'childStarted', toolUseId: 'toolu_late', taskId: 'task-l', taskType: 'local_agent', description: '' },
+      refs,
+    )
+    applyAgentEvent(
+      { type: 'childStateKnown', toolUseId: 'toolu_late', taskId: 'task-l', state: 'killed', error: '' },
+      refs,
+    )
+    applyAgentEvent(
+      { type: 'childProgress', toolUseId: 'toolu_late', taskId: 'task-l', doing: 'more', lastTool: '', tokens: 9 },
+      refs,
+    )
+    applyAgentEvent(
+      { type: 'childNotified', toolUseId: 'toolu_late', taskId: 'task-l', summary: 'idle', done: false },
+      refs,
+    )
+    expect(sessionStore.get().find((s) => s.id === 'toolu_late')?.status).toBe('done')
+  })
+
   it('ignores progress from a task that is not one of ours, such as a subagent own shell', () => {
     const refs = fakeRefs()
     applyAgentEvent(
@@ -744,7 +780,7 @@ describe('addressing a child by the id the CLI actually sends', () => {
     expect(sessionStore.get().find((s) => s.id === 'toolu_z')?.status).toBe('working')
   })
 
-  it('takes a told finish rather than waiting out the silence', () => {
+  it('takes a told finish as reported, since the same task can start again', () => {
     const refs = fakeRefs()
     open(refs, 'toolu_y')
     link(refs, 'toolu_y', 'task_y')
@@ -752,7 +788,7 @@ describe('addressing a child by the id the CLI actually sends', () => {
       { type: 'childStateKnown', toolUseId: null, taskId: 'task_y', state: 'completed', error: '' },
       refs,
     )
-    expect(sessionStore.get().find((s) => s.id === 'toolu_y')?.status).toBe('done')
+    expect(sessionStore.get().find((s) => s.id === 'toolu_y')?.status).toBe('reported')
   })
 
   it('writes down why a task failed, instead of ending it as if all was well', () => {
@@ -809,7 +845,7 @@ describe('addressing a child by the id the CLI actually sends', () => {
       { type: 'childStateKnown', toolUseId: null, taskId: 'task_bg', state: 'completed', error: '' },
       refs,
     )
-    expect(sessionStore.get().find((s) => s.id === 'toolu_bg')?.status).toBe('done')
+    expect(sessionStore.get().find((s) => s.id === 'toolu_bg')?.status).toBe('reported')
   })
 
   it('brings a settled child back when the CLI says it is running again', () => {

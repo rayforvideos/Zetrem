@@ -16,10 +16,18 @@ export function isCrewEvent(turn: ClaudeTurnEvent): boolean {
 
 export function applyCrewEvent(turn: ClaudeTurnEvent, refs: AgentEventRefs): void {
   switch (turn.type) {
-    case 'childOpen':
+    case 'childOpen': {
       refs.childIds.add(turn.toolUseId)
+      // The CLI can register the task before the tool_use block streams in;
+      // the task id it announced early is claimed here, or the tool_result
+      // would later read this child as untracked and close it mid-run.
+      const early = pendingTasks.get(turn.toolUseId)
+      pendingTasks.delete(turn.toolUseId)
       if (sessionStore.find(turn.toolUseId) !== null) {
-        return sessionStore.patch(turn.toolUseId, { status: 'working' })
+        return sessionStore.patch(turn.toolUseId, {
+          status: 'working',
+          ...(early === undefined ? {} : { taskId: early }),
+        })
       }
       return sessionStore.open({
         id: turn.toolUseId,
@@ -35,24 +43,33 @@ export function applyCrewEvent(turn: ClaudeTurnEvent, refs: AgentEventRefs): voi
         contextUsed: 0,
         startedAtMs: Date.now(),
         detached: turn.background,
+        ...(early === undefined ? {} : { taskId: early }),
       })
+    }
     case 'childStateKnown': {
       const id = whose(turn, refs)
       if (id === null) return
+      // A state event is the CLI speaking with authority in both directions:
+      // running revives, failed or killed ends. Completed is neither — the
+      // agent went idle after reporting and the same task can start again, so
+      // the tile stays on the board rather than winking out between asks.
       if (turn.state === 'running' || turn.state === 'pending') return wake(id)
       if (turn.state === 'paused') return
       if (turn.error.length > 0) {
         return sessionStore.patch(id, { status: 'done', headline: `Failed: ${turn.error.trim()}` })
       }
+      if (turn.state === 'completed') return sessionStore.patch(id, { status: 'reported' })
       return sessionStore.patch(id, { status: 'done' })
     }
     case 'childSay':
       if (!refs.childIds.has(turn.toolUseId)) return
-      wake(turn.toolUseId)
+      // The final words often land after the CLI closed the task; keep them,
+      // but a closed tile must not stand back up to show them.
+      if (!closedForGood(turn.toolUseId)) wake(turn.toolUseId)
       sessionStore.patch(turn.toolUseId, { headline: turn.text.trim(), doing: '' })
       return sessionStore.appendTranscript(turn.toolUseId, { role: turn.role, text: turn.text })
     case 'childStream':
-      if (!refs.childIds.has(turn.toolUseId)) return
+      if (!refs.childIds.has(turn.toolUseId) || closedForGood(turn.toolUseId)) return
       wake(turn.toolUseId)
       return sessionStore.beginCall(turn.toolUseId, { id: turn.callId, line: turn.line })
     case 'childCallDone':
@@ -61,17 +78,26 @@ export function applyCrewEvent(turn: ClaudeTurnEvent, refs: AgentEventRefs): voi
     case 'childNotified': {
       const id = whose(turn, refs)
       if (id === null) return
+      // The final summary often lands after the CLI already declared the task
+      // over; keep the words, but never the status — that reopens the tile.
       if (turn.summary) sessionStore.patch(id, { headline: turn.summary.trim(), doing: '' })
+      if (closedForGood(id)) return
       return sessionStore.patch(id, { status: turn.done ? 'reported' : 'working' })
     }
     case 'childStarted': {
       const id = whose(turn, refs)
-      if (id === null) return
+      if (id === null) {
+        if (turn.toolUseId !== null) pendingTasks.set(turn.toolUseId, turn.taskId)
+        return
+      }
+      // The same agent task starts again when it picks up new work; the CLI
+      // saying started outranks whatever the tile settled into meanwhile.
+      wake(id)
       return sessionStore.patch(id, { taskId: turn.taskId })
     }
     case 'childProgress': {
       const id = whose(turn, refs)
-      if (id === null) return
+      if (id === null || closedForGood(id)) return
       wake(id)
       note(id, turn.lastTool)
       return sessionStore.patch(id, {
@@ -80,7 +106,7 @@ export function applyCrewEvent(turn: ClaudeTurnEvent, refs: AgentEventRefs): voi
         lastSeenAtMs: Date.now(),
       })
     }
-    case 'childClosed':
+    case 'childClosed': {
       if (!refs.childIds.has(turn.toolUseId)) return
       if (turn.error) {
         return sessionStore.patch(turn.toolUseId, {
@@ -88,8 +114,14 @@ export function applyCrewEvent(turn: ClaudeTurnEvent, refs: AgentEventRefs): voi
           headline: `Failed: ${turn.error.trim()}`,
         })
       }
-      if (sessionStore.find(turn.toolUseId)?.detached === true) return
+      // The CLI hands the Task tool_result back while the child is still
+      // running and reports its real end through task events. For anything it
+      // tracks by task id (and for explicit background spawns), the
+      // tool_result says nothing about the child's life.
+      const held = sessionStore.find(turn.toolUseId)
+      if (held?.detached === true || (held?.taskId ?? '').length > 0) return
       return sessionStore.patch(turn.toolUseId, { status: 'done' })
+    }
     default:
       return
   }
@@ -168,6 +200,20 @@ function note(toolUseId: string, tool: string): void {
   const id = `${tool}-${stream.length}`
   sessionStore.beginCall(toolUseId, { id, line: tool })
   sessionStore.endCall(toolUseId, id, { failed: false, note: '' })
+}
+
+// Task ids the CLI announced before the tool_use block streamed in, waiting
+// for their childOpen. Tool-use ids never repeat, so entries only linger for
+// tasks whose open never arrives.
+const pendingTasks = new Map<string, string>()
+
+// Done plus a task id means the CLI itself said this child ended, so a
+// straggling notification must not bring the tile back — that is the
+// off-and-on flicker. Without a task id, done may be our own silence guess,
+// and progress proving the child alive is still allowed to undo it.
+function closedForGood(id: string): boolean {
+  const held = sessionStore.find(id)
+  return held?.status === 'done' && (held.taskId ?? '').length > 0
 }
 
 function wake(toolUseId: string): void {

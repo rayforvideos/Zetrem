@@ -27,13 +27,13 @@ module.exports = {
       {
         "target": "dmg",
         "arch": [
-          "arm64"
+          "universal"
         ]
       },
       {
         "target": "zip",
         "arch": [
-          "arm64"
+          "universal"
         ]
       }
     ],

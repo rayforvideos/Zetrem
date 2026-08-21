@@ -1,20 +1,15 @@
 import { useSyncExternalStore } from 'react'
 import { Folder } from 'lucide-react'
-import { pickProject, projectStore } from '@/entities/project'
+import { projectStore } from '@/entities/project'
 import { Button } from '@/shared/ui/button'
 import { Popover, PopoverContent, PopoverTrigger } from '@/shared/ui/popover'
 import { t } from '@lingui/core/macro'
 
-export function ProjectPicker() {
+// Choosing has to run through the owner: a project change must reset the
+// live agent first, and only WorkspaceScreen holds it.
+export function ProjectPicker({ onChoose }: { onChoose(): void }) {
   const project = useSyncExternalStore(projectStore.subscribe, projectStore.get, projectStore.get)
-
-  function choose(): void {
-    pickProject()
-      .then((picked) => {
-        if (picked) projectStore.set(picked)
-      })
-      .catch((cause: unknown) => console.error('could not pick a project', cause))
-  }
+  const choose = onChoose
 
   if (project === null) {
     return (

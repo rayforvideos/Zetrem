@@ -176,7 +176,12 @@ export function WorkspaceScreen() {
   function handlePickProject(): void {
     pickProject()
       .then((picked) => {
-        if (picked) projectStore.set(picked)
+        if (!picked || picked.path === project?.path) return
+        // The running agent is rooted in the old folder; left alive it would
+        // keep streaming turns into the new project's transcript.
+        agent.reset()
+        focus.clearAll()
+        projectStore.set(picked)
       })
       .catch(reportProject(t`Could not open that folder`))
   }
@@ -485,7 +490,7 @@ export function WorkspaceScreen() {
             {t`Settings`}
           </Button>
         )}
-        <ProjectPicker />
+        <ProjectPicker onChoose={handlePickProject} />
       </Titlebar>
     </CrewProvider>
   )

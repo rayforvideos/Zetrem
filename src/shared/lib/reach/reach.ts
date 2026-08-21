@@ -7,5 +7,7 @@ export function reachOf(ms: number): number {
   if (!Number.isFinite(ms) || ms <= 0) return MIN_REACH
   const part = Math.log1p(ms / QUICK_MS) / Math.log1p(SLOW_MS / QUICK_MS)
   const span = MIN_REACH + (MAX_REACH - MIN_REACH) * part
-  return Math.round(Math.min(MAX_REACH, Math.max(MIN_REACH, span)))
+  // Tenth-of-a-percent steps: the bar rides a 1s width transition, and whole
+  // percents flatten the late tail of the log curve into visible stalls.
+  return Math.round(Math.min(MAX_REACH, Math.max(MIN_REACH, span)) * 10) / 10
 }

@@ -16,7 +16,7 @@ export function Away({ away, face, nowMs }: { away: Waiting; face: FaceId; nowMs
     >
       <span
         aria-hidden
-        className="pointer-events-none absolute inset-y-0 left-0 rounded-xl bg-gradient-to-r from-foreground/6 to-transparent"
+        className="pointer-events-none absolute inset-y-0 left-0 rounded-l-xl bg-gradient-to-r from-foreground/6 to-transparent transition-[width] duration-1000 ease-linear"
         style={{ width: `${reachOf(waited)}%` }}
       />
       <span data-face className="relative flex size-6 flex-none items-center">

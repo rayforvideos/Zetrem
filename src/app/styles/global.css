@@ -439,10 +439,10 @@
 
 @keyframes zt-shimmer {
   from {
-    background-position: 220% 0;
+    background-position: 100% 0;
   }
   to {
-    background-position: -20% 0;
+    background-position: 0% 0;
   }
 }
 
@@ -453,7 +453,12 @@
     var(--color-foreground) 50%,
     var(--color-muted-foreground) 65%
   );
-  background-size: 220% 100%;
+  /* An angled gradient can't tile without a seam, so the image never repeats:
+     at 300% width, positions 100%→0% keep it covering the text while the
+     bright band enters from one side and leaves out the other. */
+  background-size: 300% 100%;
+  background-repeat: no-repeat;
+  background-color: var(--color-muted-foreground);
   background-clip: text;
   -webkit-background-clip: text;
   color: transparent;

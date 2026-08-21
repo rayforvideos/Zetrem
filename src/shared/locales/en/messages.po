@@ -99,7 +99,7 @@ msgstr "{installed} installed from {sources, plural, one {# source} other {# sou
 msgid "{kind} {name} did not load: {why}"
 msgstr "{kind} {name} did not load: {why}"
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:387
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:392
 msgid "{name} can be called now. Your next message starts a session that can reach them."
 msgstr "{name} can be called now. Your next message starts a session that can reach them."
 
@@ -107,7 +107,7 @@ msgstr "{name} can be called now. Your next message starts a session that can re
 msgid "{name} can be called this session"
 msgstr "{name} can be called this session"
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:388
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:393
 msgid "{name} is off. Your next message starts a session without them."
 msgstr "{name} is off. Your next message starts a session without them."
 
@@ -391,11 +391,11 @@ msgstr "Cart totals and rounding"
 msgid "Change"
 msgstr "Change"
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:483
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:488
 msgid "Change account, project, and permissions"
 msgstr "Change account, project, and permissions"
 
-#: src/pages/workspace/ui/controls/ProjectPicker.tsx:52
+#: src/pages/workspace/ui/controls/ProjectPicker.tsx:47
 msgid "Change folder…"
 msgstr "Change folder…"
 
@@ -416,7 +416,7 @@ msgstr "Choose a project folder"
 msgid "Choose folder"
 msgstr "Choose folder"
 
-#: src/pages/workspace/ui/controls/ProjectPicker.tsx:22
+#: src/pages/workspace/ui/controls/ProjectPicker.tsx:17
 msgid "Choose project"
 msgstr "Choose project"
 
@@ -518,7 +518,7 @@ msgstr "Could not list your saved chats"
 msgid "Could not open that chat"
 msgstr "Could not open that chat"
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:181
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:186
 msgid "Could not open that folder"
 msgstr "Could not open that folder"
 
@@ -745,8 +745,8 @@ msgstr "Handing off"
 msgid "Held up"
 msgstr "Held up"
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:468
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:469
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:473
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:474
 msgid "Hide team sidebar"
 msgstr "Hide team sidebar"
 
@@ -865,7 +865,7 @@ msgstr "Message your team"
 msgid "Model"
 msgstr "Model"
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:320
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:325
 msgid "Model changed. Your next message starts a session on it."
 msgstr "Model changed. Your next message starts a session on it."
 
@@ -1001,7 +1001,7 @@ msgstr "Permission"
 msgid "Permissions"
 msgstr "Permissions"
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:314
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:319
 msgid "Permissions changed. Your next message starts a session that follows them."
 msgstr "Permissions changed. Your next message starts a session that follows them."
 
@@ -1206,7 +1206,7 @@ msgstr "Set a few things and your agents get to work!"
 msgid "Set for everyone on your account. They cannot be removed or turned off here."
 msgstr "Set for everyone on your account. They cannot be removed or turned off here."
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:485
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:490
 msgid "Settings"
 msgstr "Settings"
 
@@ -1214,8 +1214,8 @@ msgstr "Settings"
 msgid "share unknown"
 msgstr "share unknown"
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:468
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:469
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:473
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:474
 msgid "Show team sidebar"
 msgstr "Show team sidebar"
 

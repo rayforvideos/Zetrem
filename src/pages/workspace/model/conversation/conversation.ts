@@ -2,6 +2,7 @@ import type { Sent } from '@/entities/attachment'
 import type { ConversationState } from './conversation.types'
 
 import type { PermissionAsk, SessionStatus } from '@/entities/agent-session'
+import { freshTurnId } from '@/entities/conversation'
 import type { ToolActivity, ToolResult, Turn } from '@/entities/conversation'
 import { heldOutput, heldTurns } from './hold/hold'
 
@@ -66,6 +67,7 @@ export const conversation = {
       turns: [
         ...state.turns,
         {
+          id: freshTurnId(),
           role,
           text,
           tools: [],
@@ -93,7 +95,7 @@ export const conversation = {
         ...state,
         turns: [
           ...state.turns,
-          { role: 'assistant', text: '', tools: [activity], draft: '', thinking: '', startedAtMs: Date.now() },
+          { id: freshTurnId(), role: 'assistant', text: '', tools: [activity], draft: '', thinking: '', startedAtMs: Date.now() },
         ],
       })
       return
@@ -126,7 +128,7 @@ export const conversation = {
         ...state,
         turns: [
           ...state.turns,
-          { role: 'assistant', text: '', tools: [], draft: '', thinking: text, startedAtMs: Date.now() },
+          { id: freshTurnId(), role: 'assistant', text: '', tools: [], draft: '', thinking: text, startedAtMs: Date.now() },
         ],
       })
       return
@@ -139,7 +141,7 @@ export const conversation = {
       ...state,
       turns: [
         ...state.turns,
-        { role: 'system', text, tools: [], draft: '', thinking: '', startedAtMs: Date.now() },
+        { id: freshTurnId(), role: 'system', text, tools: [], draft: '', thinking: '', startedAtMs: Date.now() },
       ],
     })
   },
@@ -150,7 +152,7 @@ export const conversation = {
         ...state,
         turns: [
           ...state.turns,
-          { role: 'assistant', text: '', tools: [], draft: text, thinking: '', startedAtMs: Date.now() },
+          { id: freshTurnId(), role: 'assistant', text: '', tools: [], draft: text, thinking: '', startedAtMs: Date.now() },
         ],
       })
       return

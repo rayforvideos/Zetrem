@@ -5,6 +5,7 @@ import { stampOf } from './save-stamp'
 
 function turn(over: Partial<Turn> = {}): Turn {
   return {
+    id: 'turn-fixture',
     role: 'assistant',
     text: 'answer',
     tools: [],

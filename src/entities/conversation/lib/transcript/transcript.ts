@@ -1,4 +1,5 @@
 import type { Sent } from '../../../attachment/lib/attachment/attachment.types'
+import { freshTurnId } from '../../model/turn-id'
 import type { ToolActivity, ToolResult, Turn } from '../../model/turn'
 import type { ChatSpend, ChatSummary, Transcript } from './transcript.types'
 
@@ -111,6 +112,7 @@ function readTurn(value: unknown): Turn | null {
   const turn = value as Record<string, unknown>
   if (!isRole(turn.role) || typeof turn.text !== 'string') return null
   const result: Turn = {
+    id: freshTurnId(),
     role: turn.role,
     text: turn.text,
     tools: Array.isArray(turn.tools)

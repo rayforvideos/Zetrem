@@ -133,7 +133,7 @@ export function ConversationPane({
                 if (turn.role === 'system') {
                   return (
                     <div
-                      key={index}
+                      key={turn.id}
                       className="zt-rise self-center font-mono text-xs leading-normal tracking-wide text-muted-foreground [overflow-wrap:anywhere]"
                     >
                       {turn.text}
@@ -142,7 +142,7 @@ export function ConversationPane({
                 }
                 if (turn.role === 'user') {
                   return (
-                    <div key={index} className="zt-rise flex max-w-[80%] flex-col items-end gap-1 self-end">
+                    <div key={turn.id} className="zt-rise flex max-w-[80%] flex-col items-end gap-1 self-end">
                       {turn.to !== undefined && (
                         <span
                           data-said-to
@@ -186,7 +186,7 @@ export function ConversationPane({
                 }
                 return (
                   <article
-                    key={index}
+                    key={turn.id}
                     className={cn('zt-rail zt-rise flex flex-col gap-2.5', live && 'zt-rail--live')}
                   >
                     {turn.thinking.length > 0 && <Thinking text={turn.thinking} />}

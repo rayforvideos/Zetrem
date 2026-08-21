@@ -5,6 +5,7 @@ import { askedAtMs, doingOf, elapsedLabel, tokenLabel } from './working'
 
 function turn(overrides: Partial<Turn> = {}): Turn {
   return {
+    id: 'turn-fixture',
     role: 'assistant',
     text: '',
     tools: [],

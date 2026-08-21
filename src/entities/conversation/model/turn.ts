@@ -17,6 +17,10 @@ export type ToolActivity = {
 }
 
 export type Turn = {
+  /** View identity only: keys the list so trims can't shift state between
+   * turns. Assigned fresh on creation and on every transcript read; the value
+   * that lands in a saved file carries no meaning. */
+  id: string
   role: 'user' | 'assistant' | 'system'
   text: string
   files?: Sent[]
@@ -26,6 +30,7 @@ export type Turn = {
   startedAtMs: number
   to?: string
 }
+
 
 export type Chore = {
   readonly id: string

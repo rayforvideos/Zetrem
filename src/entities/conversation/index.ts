@@ -1,4 +1,5 @@
 export type { Chore, ToolActivity, ToolResult, Turn } from './model/turn'
+export { freshTurnId } from './model/turn-id'
 export {
   UNTITLED,
   chatId,

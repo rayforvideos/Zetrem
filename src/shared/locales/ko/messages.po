@@ -99,7 +99,7 @@ msgstr "{sources, plural, other {출처 #곳}}에서 {installed}개 설치됨"
 msgid "{kind} {name} did not load: {why}"
 msgstr "{kind} {name}을(를) 불러오지 못했습니다: {why}"
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:387
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:392
 msgid "{name} can be called now. Your next message starts a session that can reach them."
 msgstr "다음 메시지부터 {name} 포함해서 새 세션이 시작됩니다."
 
@@ -107,7 +107,7 @@ msgstr "다음 메시지부터 {name} 포함해서 새 세션이 시작됩니다
 msgid "{name} can be called this session"
 msgstr "{name}은(는) 이번 세션에서 부를 수 있습니다"
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:388
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:393
 msgid "{name} is off. Your next message starts a session without them."
 msgstr "다음 메시지부터 {name} 없이 새 세션이 시작됩니다."
 
@@ -391,11 +391,11 @@ msgstr "장바구니 합계와 반올림"
 msgid "Change"
 msgstr "바꾸기"
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:483
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:488
 msgid "Change account, project, and permissions"
 msgstr "계정과 프로젝트, 권한을 바꿉니다"
 
-#: src/pages/workspace/ui/controls/ProjectPicker.tsx:52
+#: src/pages/workspace/ui/controls/ProjectPicker.tsx:47
 msgid "Change folder…"
 msgstr "폴더 바꾸기…"
 
@@ -416,7 +416,7 @@ msgstr "프로젝트 폴더를 고르세요"
 msgid "Choose folder"
 msgstr "폴더 고르기"
 
-#: src/pages/workspace/ui/controls/ProjectPicker.tsx:22
+#: src/pages/workspace/ui/controls/ProjectPicker.tsx:17
 msgid "Choose project"
 msgstr "프로젝트 고르기"
 
@@ -518,7 +518,7 @@ msgstr "저장된 대화 목록을 읽지 못했습니다"
 msgid "Could not open that chat"
 msgstr "그 대화를 열지 못했습니다"
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:181
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:186
 msgid "Could not open that folder"
 msgstr "그 폴더를 열지 못했습니다"
 
@@ -745,8 +745,8 @@ msgstr "넘기는 중"
 msgid "Held up"
 msgstr "멈춰 있음"
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:468
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:469
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:473
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:474
 msgid "Hide team sidebar"
 msgstr "팀 사이드바 접기"
 
@@ -865,7 +865,7 @@ msgstr "팀에게 말하기"
 msgid "Model"
 msgstr "모델"
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:320
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:325
 msgid "Model changed. Your next message starts a session on it."
 msgstr "모델을 바꿨습니다. 다음 메시지부터 새 모델로 시작합니다."
 
@@ -1001,7 +1001,7 @@ msgstr "권한"
 msgid "Permissions"
 msgstr "권한"
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:314
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:319
 msgid "Permissions changed. Your next message starts a session that follows them."
 msgstr "권한을 바꿨습니다. 다음 메시지부터 바뀐 권한으로 시작합니다."
 
@@ -1206,7 +1206,7 @@ msgstr "몇 가지만 정하면 바로 일을 시작합니다"
 msgid "Set for everyone on your account. They cannot be removed or turned off here."
 msgstr "계정 전체에 설정된 것입니다. 여기서는 지우거나 끌 수 없습니다."
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:485
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:490
 msgid "Settings"
 msgstr "설정"
 
@@ -1214,8 +1214,8 @@ msgstr "설정"
 msgid "share unknown"
 msgstr "사용량 알 수 없음"
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:468
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:469
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:473
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:474
 msgid "Show team sidebar"
 msgstr "팀 사이드바 펼치기"
 

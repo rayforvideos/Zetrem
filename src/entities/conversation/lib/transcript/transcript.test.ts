@@ -4,6 +4,7 @@ import { UNTITLED, chatId, isChatId, packTranscript, readTranscript, titleOf } f
 
 function turn(overrides: Partial<Turn> = {}): Turn {
   return {
+    id: 'turn-fixture',
     role: 'assistant',
     text: '했습니다',
     tools: [],
@@ -124,6 +125,7 @@ describe('readTranscript: reading what was saved without trusting it', () => {
 
   it('leaves a legacy-good turn unchanged', () => {
     const good: Turn = {
+      id: 'turn-good',
       role: 'assistant',
       text: '했습니다',
       tools: [
@@ -142,7 +144,7 @@ describe('readTranscript: reading what was saved without trusting it', () => {
       to: 'agent-1',
     }
     const back = readTranscript({ id: summary.id, turns: [good] })
-    expect(back?.turns[0]).toEqual(good)
+    expect(back?.turns[0]).toEqual({ ...good, id: expect.any(String) })
   })
 
   it('drops a junk tool entry but keeps the turn it lives on', () => {
@@ -161,6 +163,7 @@ describe('readTranscript: reading what was saved without trusting it', () => {
       turns: [{ role: 'assistant', text: '됩니다', tools: [] }],
     })
     expect(back?.turns[0]).toEqual({
+      id: expect.any(String),
       role: 'assistant',
       text: '됩니다',
       tools: [],
@@ -197,7 +200,7 @@ describe('readTranscript: reading what was saved without trusting it', () => {
 
 describe('a saved chat carries what it cost, so reopening it says the same thing', () => {
   const turns = [
-    { role: 'user' as const, text: '안녕', tools: [], draft: '', thinking: '', startedAtMs: 0 },
+    { id: 'turn-hello', role: 'user' as const, text: '안녕', tools: [], draft: '', thinking: '', startedAtMs: 0 },
   ]
 
   it('keeps the totals beside the words', () => {

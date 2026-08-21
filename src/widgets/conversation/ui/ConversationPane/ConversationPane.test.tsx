@@ -30,8 +30,11 @@ function tool(overrides: Partial<ToolActivity> = {}): ToolActivity {
   return { line: 'Bash ls', toolUseId: 't1', input: null, result: null, startedAtMs: 0, endedAtMs: 100, ...overrides }
 }
 
+let seq = 0
+
 function turn(overrides: Partial<Turn> = {}): Turn {
   return {
+    id: `turn-${seq++}`,
     role: 'assistant',
     text: '',
     tools: [],

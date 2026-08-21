@@ -20,7 +20,7 @@ import {
 } from '@/shared/graphics/wordmark/wordmark'
 import { AgentReport } from '@/widgets/agent-report'
 import { awayOf, spokeAtMs, Composer, ConversationPane } from '@/widgets/conversation'
-import { PluginShelf, SetupPane } from '@/widgets/setup'
+import { SetupPane } from '@/widgets/setup'
 import { TeamSidebar, team, toggled } from '@/widgets/team-sidebar'
 import { WelcomePane } from '@/widgets/welcome'
 import { TileDeck, useDeck, useFleet } from '@/widgets/tile-deck'
@@ -28,18 +28,14 @@ import { MOTION } from '@/shared/config/motion/motion'
 import { tidyUserName } from '@/entities/user'
 
 import { layerOver } from '@/shared/lib/modal/modal'
-import { UsageBar } from '@/widgets/usage-bar'
-import { StatusDrawer } from '@/widgets/status-bar'
 import { Titlebar } from '@/widgets/titlebar'
-import { remembered } from '../model/remembered/remembered'
-import { learnedStock } from '../model/learned-stock/learned-stock'
 import { screenGate } from '../model/screen-gate/screen-gate'
 import { sessionLive, stirring } from '../model/live/live'
 import { useAgent } from '../model/use-agent'
 import { useAgentDefs } from '../model/use-agent-defs'
 import { useAuth } from '../model/use-auth'
 import { useAppUpdate } from '../model/use-app-update/use-app-update'
-import { useCliUpdate } from '../model/use-cli-update'
+import { useLearnedSettings } from '../model/use-learned-settings'
 import { useFocus } from '../model/use-focus'
 import { usePlugins } from '../model/use-plugins'
 import { useProjectMemory } from '../model/use-project-memory'
@@ -57,7 +53,9 @@ import { useViewport } from '../model/use-viewport'
 import { useOffsetWidth } from '@/shared/lib/offset-width/use-offset-width'
 import { tuckedBy } from '../model/tuck/tuck'
 import { crewOf, lockOf, peopleOf, pluginSummary } from '../model/workspace-config/workspace-config'
+import { PluginShelfOverlay } from './controls/PluginShelfOverlay'
 import { ProjectPicker } from './controls/ProjectPicker'
+import { StatusBarPanel } from './controls/StatusBarPanel'
 import { t } from '@lingui/core/macro'
 
 export function WorkspaceScreen() {
@@ -88,7 +86,6 @@ export function WorkspaceScreen() {
 
   useSay(settings.tongue, !loading)
   const auth = useAuth()
-  const cliUpdate = useCliUpdate(status.session?.cliVersion ?? null)
   useAppUpdate()
   const deck = useDeck()
   const viewport = useViewport()
@@ -111,16 +108,7 @@ export function WorkspaceScreen() {
   })
 
   const [drawerOpen, setDrawerOpen] = useState(false)
-  const [appVersion, setAppVersion] = useState<string | null>(null)
-
-  useEffect(() => {
-    void window.desk
-      .appVersion()
-      .then(setAppVersion)
-      .catch(() => undefined)
-  }, [])
   const shelf = usePlugins(gate === 'setup')
-  const [shelfTab, setShelfTab] = useState('installed')
   const attach = useAttachments()
   const wires = useConnectors(shelf.open || drawerOpen || gate === 'conversation')
   useSessionProbe(
@@ -132,27 +120,7 @@ export function WorkspaceScreen() {
   useNudge(settings.notify, conv.status, conv.permission, conv.trouble)
   useFleet(deck, children, nowMs, viewport, sidebar.span + GRID_PAD * 2)
 
-  const probedSession = status.probed
-  const sessionTools = status.session?.tools
-  const sessionAgents = status.session?.agents
-  useEffect(() => {
-    const learned = remembered(
-      { tools: sessionTools, agents: sessionAgents, probed: probedSession },
-      { tools: settings.knownTools, agents: settings.knownAgents },
-    )
-    const turnedOn =
-      learned?.knownAgents === undefined
-        ? null
-        : learnedStock(
-            learned.knownAgents,
-            settings.knownAgents,
-            settings.stockAgents,
-            defs.map((def) => def.name),
-            authored,
-          )
-    if (learned === null && turnedOn === null) return
-    update({ ...learned, ...(turnedOn === null ? {} : { stockAgents: turnedOn }) })
-  }, [probedSession, sessionTools, sessionAgents, settings.knownTools, settings.knownAgents, update])
+  useLearnedSettings(status, settings, defs, authored, update)
 
   const stock = stockAgents(
     settings.knownAgents,
@@ -405,61 +373,16 @@ export function WorkspaceScreen() {
             }
           />
 
-          {shelf.open && (
-            <PluginShelf
-              connectors={wires.connectors}
-              onAddConnector={wires.add}
-              onImportConnectors={wires.importDesktop}
-              adding={wires.adding}
-              onConnector={wires.act}
-              catalog={shelf.catalog}
-              marketplaces={shelf.marketplaces}
-              loading={shelfTab === 'connectors' ? wires.loading : shelf.loading}
-              browsing={shelf.browsing}
-              onTab={(value) => {
-                setShelfTab(value)
-                if (value === 'browse') shelf.browse()
-              }}
-              onAct={shelf.act}
-              busy={shelf.busy ?? wires.busy}
-              onReload={() => {
-                if (shelfTab === 'connectors') {
-                  wires.reload()
-                  return
-                }
-                if (shelfTab === 'browse') {
-                  shelf.browse(true)
-                  return
-                }
-                shelf.reload()
-              }}
-              project={project?.path ?? null}
-              onClose={shelf.hide}
-            />
-          )}
+          <PluginShelfOverlay shelf={shelf} wires={wires} project={project?.path ?? null} />
         </div>
-        {gate !== 'welcome' && (
-          <UsageBar
-            status={status}
-            connectors={wires.connectors}
-            checked={wires.checked}
-            nowMs={nowMs}
-            open={drawerOpen}
-            onToggle={() => setDrawerOpen((was) => !was)}
-            details={
-              <StatusDrawer
-                appVersion={appVersion}
-                statusState={status}
-                connectors={wires.connectors}
-                checked={wires.checked}
-                checking={wires.loading}
-                onRecheck={wires.reload}
-                onUpdate={cliUpdate.start}
-                updating={cliUpdate.updating}
-              />
-            }
-          />
-        )}
+        <StatusBarPanel
+          shown={gate !== 'welcome'}
+          status={status}
+          wires={wires}
+          nowMs={nowMs}
+          open={drawerOpen}
+          onToggle={() => setDrawerOpen((was) => !was)}
+        />
       </div>
 
       <Titlebar

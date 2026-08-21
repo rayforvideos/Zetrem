@@ -13,11 +13,11 @@ msgstr ""
 "Language-Team: \n"
 "Plural-Forms: \n"
 
-#: src/pages/workspace/model/agent-events/agent-events.ts:138
+#: src/pages/workspace/model/agent-events/agent-events.ts:129
 msgid " · on overage"
 msgstr " · 초과분 사용 중"
 
-#: src/pages/workspace/model/agent-events/agent-events.ts:136
+#: src/pages/workspace/model/agent-events/agent-events.ts:127
 msgid " {pct}% used,"
 msgstr " {pct}% 사용,"
 
@@ -32,7 +32,7 @@ msgid "{0} left"
 msgstr "{0} 남음"
 
 #. placeholder {0}: limitKindLabel(limit.kind)
-#: src/pages/workspace/model/agent-events/agent-events.ts:139
+#: src/pages/workspace/model/agent-events/agent-events.ts:130
 msgid "{0} limit{share} resets {when}{overage}"
 msgstr "{0} 한도{share} {when} 초기화{overage}"
 
@@ -83,7 +83,7 @@ msgstr "{0}분 전"
 msgid "{back} teammates"
 msgstr "팀원 {back}명"
 
-#: src/pages/workspace/model/agent-events/agent-events.ts:148
+#: src/pages/workspace/model/agent-events/agent-events.ts:139
 msgid "{base}. Earlier turns live on as a summary."
 msgstr "{base}. 앞선 대화는 요약으로 남습니다."
 
@@ -258,6 +258,7 @@ msgid "Account"
 msgstr "계정"
 
 #: src/widgets/setup/ui/AddConnector/AddConnector.tsx:95
+#: src/widgets/setup/ui/PluginShelf/PluginShelf.tsx:343
 msgid "Add"
 msgstr "추가"
 
@@ -316,7 +317,7 @@ msgid "any moment"
 msgstr "곧"
 
 #. placeholder {0}: turn.metrics.apiErrorStatus
-#: src/pages/workspace/model/agent-events/agent-events.ts:94
+#: src/pages/workspace/model/agent-events/agent-events.ts:95
 msgid "API error {0}"
 msgstr "API 오류 {0}"
 
@@ -345,7 +346,7 @@ msgstr "첨부"
 msgid "Attach a file"
 msgstr "파일 첨부"
 
-#: src/pages/workspace/model/agent-events/agent-events.ts:155
+#: src/pages/workspace/model/agent-events/agent-events.ts:146
 msgid "auto"
 msgstr "자동"
 
@@ -485,7 +486,7 @@ msgstr "컨텍스트"
 msgid "Context {0}% left, compacting soon"
 msgstr "컨텍스트 {0}% 남음, 곧 압축됩니다"
 
-#: src/pages/workspace/model/agent-events/agent-events.ts:147
+#: src/pages/workspace/model/agent-events/agent-events.ts:138
 msgid "Conversation compacted here"
 msgstr "여기서 대화가 압축됐습니다"
 
@@ -526,7 +527,7 @@ msgstr "그 폴더를 열지 못했습니다"
 msgid "Could not open the file picker"
 msgstr "파일 선택 창을 열지 못했습니다"
 
-#: src/pages/workspace/model/use-agent.ts:85
+#: src/pages/workspace/model/use-agent.ts:91
 msgid "Could not pick that conversation back up. Starting a new one."
 msgstr "그 대화를 이어받지 못했습니다. 새로 시작합니다."
 
@@ -628,6 +629,7 @@ msgid "Don't ask again this session"
 msgstr "이번 세션에서는 다시 묻지 않기"
 
 #: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:20
+#: src/widgets/setup/ui/PluginShelf/PluginShelf.tsx:256
 #: src/widgets/setup/ui/SetupPane/SetupPane.tsx:122
 #: src/widgets/tile-deck/ui/layers/StateChip/StateChip.tsx:11
 msgid "Done"
@@ -762,6 +764,10 @@ msgstr "Claude Desktop에서 가져오기"
 msgid "In the background"
 msgstr "뒤에서 도는 중"
 
+#: src/widgets/setup/ui/PluginShelf/PluginShelf.tsx:314
+msgid "Install"
+msgstr "설치"
+
 #. placeholder {0}: here.length
 #: src/widgets/setup/ui/PluginShelf/PluginShelf.tsx:105
 msgid "Installed · {0}"
@@ -836,7 +842,7 @@ msgstr "관리"
 msgid "Managed on claude.ai. Sign in or out here, remove them there."
 msgstr "claude.ai에서 관리합니다. 로그인과 로그아웃은 여기서, 삭제는 거기서 하세요."
 
-#: src/pages/workspace/model/agent-events/agent-events.ts:156
+#: src/pages/workspace/model/agent-events/agent-events.ts:147
 msgid "manual"
 msgstr "수동"
 
@@ -859,6 +865,7 @@ msgstr "{addressee}에게 보낼 말"
 msgid "Message your team"
 msgstr "팀에게 말하기"
 
+#: src/widgets/conversation/ui/Composer/Composer.tsx:149
 #: src/widgets/setup/ui/SetupPane/SetupPane.tsx:72
 #: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:98
 #: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:132
@@ -956,6 +963,10 @@ msgstr "아직 설치한 것이 없습니다."
 msgid "Nothing left to add. Every plugin your sources offer is installed."
 msgstr "더 추가할 것이 없습니다. 등록한 곳의 플러그인을 모두 설치했습니다."
 
+#: src/widgets/setup/ui/PluginShelf/PluginShelf.tsx:299
+msgid "Nothing matches “{needle}”."
+msgstr "“{needle}”에 맞는 것이 없습니다."
+
 #: src/widgets/tile-deck/ui/CrewBoard/CrewBoard.tsx:120
 msgid "Nothing written yet."
 msgstr "아직 쓴 것이 없습니다."
@@ -989,6 +1000,10 @@ msgstr "한 명은 쓰고 한 명은 검사하고, 어때요?"
 msgid "Orchestrating"
 msgstr "지휘하는 중"
 
+#: src/widgets/setup/ui/PluginShelf/PluginShelf.tsx:337
+msgid "owner/repo, a URL, or a folder"
+msgstr "owner/repo, 주소, 또는 폴더"
+
 #: src/entities/connector/lib/refusal-why/refusal-why.ts:18
 msgid "Paste the server address"
 msgstr "서버 주소를 붙여넣으세요"
@@ -997,6 +1012,7 @@ msgstr "서버 주소를 붙여넣으세요"
 msgid "Permission"
 msgstr "권한"
 
+#: src/widgets/conversation/ui/Composer/Composer.tsx:143
 #: src/widgets/setup/ui/SetupPane/SetupPane.tsx:66
 msgid "Permissions"
 msgstr "권한"
@@ -1083,6 +1099,14 @@ msgstr "클로드 코드가 데려오는 에이전트를 읽는 중입니다. �
 msgid "Recheck"
 msgstr "다시 확인"
 
+#: src/widgets/setup/ui/PluginShelf/PluginShelf.tsx:180
+msgid "Refresh"
+msgstr "새로 고침"
+
+#: src/widgets/setup/ui/PluginShelf/PluginShelf.tsx:253
+msgid "Reload"
+msgstr "다시 읽기"
+
 #: src/widgets/setup/ui/PluginShelf/PluginShelf.tsx:137
 #: src/widgets/setup/ui/PluginShelf/PluginShelf.tsx:182
 #: src/widgets/setup/ui/PluginShelf/PluginShelf.tsx:224
@@ -1093,6 +1117,10 @@ msgstr "삭제"
 #: src/widgets/team-sidebar/ui/MemberMenu/MemberMenu.tsx:60
 msgid "Remove {name}?"
 msgstr "{name}을(를) 내보낼까요?"
+
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:231
+msgid "Remove {path}"
+msgstr "{path} 삭제"
 
 #: src/widgets/team-sidebar/ui/MemberMenu/MemberMenu.tsx:51
 msgid "Remove from team"
@@ -1194,7 +1222,7 @@ msgstr "보내기"
 msgid "Session details"
 msgstr "세션 상세"
 
-#: src/pages/workspace/model/use-agent.ts:155
+#: src/pages/workspace/model/use-agent.ts:161
 msgid "Session stopped. The next message starts a new one with your team as it is now."
 msgstr "세션을 멈췄습니다. 다음 메시지부터 지금 팀 구성으로 새로 시작합니다."
 
@@ -1497,7 +1525,7 @@ msgstr "클로드 코드 CLI 자체를 로그아웃합니다. 이 컴퓨터에�
 msgid "This signs out the Claude Code CLI itself, so every terminal, editor and app using it on this computer is signed out too. The session running here stops."
 msgstr "클로드 코드 CLI 자체를 로그아웃합니다. 이 컴퓨터에서 CLI를 쓰는 터미널과 편집기와 앱이 모두 함께 로그아웃됩니다. 여기서 돌고 있는 세션도 멈춥니다."
 
-#: src/pages/workspace/model/agent-events/agent-events.ts:163
+#: src/pages/workspace/model/agent-events/agent-events.ts:154
 msgid "This turn: {out} out · {seconds}s"
 msgstr "이번 턴: {out} 출력 · {seconds}초"
 
@@ -1508,6 +1536,10 @@ msgstr "생각 · {paragraphs}단락"
 #: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:81
 msgid "Three teammates are on it: the checkout flow, the cart totals and the stock rules. I will fold their reports into one answer."
 msgstr "팀원 셋이 붙었습니다. 결제 흐름, 장바구니 합계, 재고 규칙을 각각 봅니다. 보고를 모아 하나로 정리해 드릴게요."
+
+#: src/widgets/conversation/ui/Composer/Composer.tsx:82
+msgid "To {addressee}"
+msgstr "{addressee}에게"
 
 #: src/widgets/team-sidebar/lib/chat-groups/chat-groups.ts:9
 msgid "Today"
@@ -1538,6 +1570,7 @@ msgstr "1분 이내"
 msgid "Unknown"
 msgstr "알 수 없음"
 
+#: src/widgets/setup/ui/PluginShelf/PluginShelf.tsx:130
 #: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:154
 msgid "Update"
 msgstr "업데이트"
@@ -1656,6 +1689,7 @@ msgid "Yesterday"
 msgstr "어제"
 
 #: src/widgets/setup/ui/YouField/YouField.tsx:23
+#: src/widgets/tile-deck/ui/CrewBoard/CrewBoard.tsx:66
 msgid "You"
 msgstr "당신"
 

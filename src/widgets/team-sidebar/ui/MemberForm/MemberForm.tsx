@@ -228,7 +228,7 @@ export function MemberForm({ initial, knownTools, onSubmit, onCancel }: MemberFo
                           type="button"
                           variant="ghost"
                           size="icon-xs"
-                          aria-label={`Remove ${path}`}
+                          aria-label={t`Remove ${path}`}
                           onClick={() =>
                             setKnowledge((held) => held.filter((entry) => entry !== path))
                           }

@@ -127,7 +127,7 @@ export function PluginShelf({
                 >
                   <Slot width="w-[58px]">
                     <Quietly
-                      label="Update"
+                      label={t`Update`}
                       onClick={() => onAct('update', plugin.id, plugin.scope)}
                     />
                   </Slot>
@@ -177,7 +177,7 @@ export function PluginShelf({
                   note={market.origin ?? market.source}
                   busy={busy === market.name}
                 >
-                  <Quietly label="Refresh" onClick={() => onAct('market-update', market.name)} />
+                  <Quietly label={t`Refresh`} onClick={() => onAct('market-update', market.name)} />
                   <Quietly
                     label={t`Remove`}
                     icon={<Trash2 />}
@@ -250,10 +250,10 @@ export function PluginShelf({
               className="rounded-full text-muted-foreground"
             >
               {loading ? <Spinner /> : <RotateCw />}
-              Reload
+              {t`Reload`}
             </Button>
             <Button size="sm" onClick={onClose} className="rounded-full">
-              Done
+              {t`Done`}
             </Button>
           </span>
         </div>
@@ -296,7 +296,7 @@ function Browse({
 
       {loading && <Quiet>{t`Reading the catalog…`}</Quiet>}
       {!loading && hits.length === 0 && needle.length > 0 && (
-        <Quiet>Nothing matches “{needle}”.</Quiet>
+        <Quiet>{t`Nothing matches “${needle}”.`}</Quiet>
       )}
       {!loading && pool.length === 0 && needle.length === 0 && (
         <Quiet>{t`Nothing left to add. Every plugin your sources offer is installed.`}</Quiet>
@@ -311,7 +311,7 @@ function Browse({
             busy={busy === plugin.id}
             tall
           >
-            <Quietly label="Install" onClick={() => onInstall(plugin.id)} />
+            <Quietly label={t`Install`} onClick={() => onInstall(plugin.id)} />
           </Row>
         ))}
       </div>
@@ -334,13 +334,13 @@ function AddSource({ onAdd }: { onAdd(source: string): void }) {
       <Input
         value={source}
         onChange={(event) => setSource(event.target.value)}
-        placeholder="owner/repo, a URL, or a folder"
+        placeholder={t`owner/repo, a URL, or a folder`}
         aria-label={t`Add a marketplace`}
         className="h-8 rounded-lg text-sm"
       />
       <Button type="submit" size="sm" variant="ghost" className="flex-none rounded-lg">
         <Plus />
-        Add
+        {t`Add`}
       </Button>
     </form>
   )

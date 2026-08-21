@@ -79,7 +79,7 @@ export function Composer({
     >
       {addressee !== null && (
         <div className="flex items-center gap-1.5 self-start rounded-full bg-card py-1 pr-1 pl-3 text-xs">
-          <span>To {addressee}</span>
+          <span>{t`To ${addressee}`}</span>
           <Button
             type="button"
             variant="ghost"
@@ -140,13 +140,13 @@ export function Composer({
             options={PERMISSION_MODES}
             selected={permissionMode}
             onSelect={(id) => onPermissionMode(id as PermissionMode)}
-            label="Permissions"
+            label={t`Permissions`}
           />
           <ChoicePicker
             options={modelsWith(MODELS, refusedModels)}
             selected={model}
             onSelect={(id) => onModel(id as ModelChoice)}
-            label="Model"
+            label={t`Model`}
             note={
               sessionLive
                 ? t`The running session keeps its model. This applies from the next one.`

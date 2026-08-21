@@ -63,7 +63,7 @@ export function CrewBoard({
             <div style={youRowStyle}>
               <span style={youStyle}>
                 <UserFace face={face} size={22} className="max-w-none" />
-                <span style={youNameStyle}>{name.length > 0 ? name : 'You'}</span>
+                <span style={youNameStyle}>{name.length > 0 ? name : t`You`}</span>
                 <span data-leading style={roleStyle}>
                   {role}
                 </span>

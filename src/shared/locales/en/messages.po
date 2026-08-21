@@ -13,11 +13,11 @@ msgstr ""
 "Language-Team: \n"
 "Plural-Forms: \n"
 
-#: src/pages/workspace/model/agent-events/agent-events.ts:138
+#: src/pages/workspace/model/agent-events/agent-events.ts:129
 msgid " · on overage"
 msgstr " · on overage"
 
-#: src/pages/workspace/model/agent-events/agent-events.ts:136
+#: src/pages/workspace/model/agent-events/agent-events.ts:127
 msgid " {pct}% used,"
 msgstr " {pct}% used,"
 
@@ -32,7 +32,7 @@ msgid "{0} left"
 msgstr "{0} left"
 
 #. placeholder {0}: limitKindLabel(limit.kind)
-#: src/pages/workspace/model/agent-events/agent-events.ts:139
+#: src/pages/workspace/model/agent-events/agent-events.ts:130
 msgid "{0} limit{share} resets {when}{overage}"
 msgstr "{0} limit{share} resets {when}{overage}"
 
@@ -83,7 +83,7 @@ msgstr "{0}m ago"
 msgid "{back} teammates"
 msgstr "{back} teammates"
 
-#: src/pages/workspace/model/agent-events/agent-events.ts:148
+#: src/pages/workspace/model/agent-events/agent-events.ts:139
 msgid "{base}. Earlier turns live on as a summary."
 msgstr "{base}. Earlier turns live on as a summary."
 
@@ -258,6 +258,7 @@ msgid "Account"
 msgstr "Account"
 
 #: src/widgets/setup/ui/AddConnector/AddConnector.tsx:95
+#: src/widgets/setup/ui/PluginShelf/PluginShelf.tsx:343
 msgid "Add"
 msgstr "Add"
 
@@ -316,7 +317,7 @@ msgid "any moment"
 msgstr "any moment"
 
 #. placeholder {0}: turn.metrics.apiErrorStatus
-#: src/pages/workspace/model/agent-events/agent-events.ts:94
+#: src/pages/workspace/model/agent-events/agent-events.ts:95
 msgid "API error {0}"
 msgstr "API error {0}"
 
@@ -345,7 +346,7 @@ msgstr "Attach"
 msgid "Attach a file"
 msgstr "Attach a file"
 
-#: src/pages/workspace/model/agent-events/agent-events.ts:155
+#: src/pages/workspace/model/agent-events/agent-events.ts:146
 msgid "auto"
 msgstr "auto"
 
@@ -485,7 +486,7 @@ msgstr "Context"
 msgid "Context {0}% left, compacting soon"
 msgstr "Context {0}% left, compacting soon"
 
-#: src/pages/workspace/model/agent-events/agent-events.ts:147
+#: src/pages/workspace/model/agent-events/agent-events.ts:138
 msgid "Conversation compacted here"
 msgstr "Conversation compacted here"
 
@@ -526,7 +527,7 @@ msgstr "Could not open that folder"
 msgid "Could not open the file picker"
 msgstr "Could not open the file picker"
 
-#: src/pages/workspace/model/use-agent.ts:85
+#: src/pages/workspace/model/use-agent.ts:91
 msgid "Could not pick that conversation back up. Starting a new one."
 msgstr "Could not pick that conversation back up. Starting a new one."
 
@@ -628,6 +629,7 @@ msgid "Don't ask again this session"
 msgstr "Don't ask again this session"
 
 #: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:20
+#: src/widgets/setup/ui/PluginShelf/PluginShelf.tsx:256
 #: src/widgets/setup/ui/SetupPane/SetupPane.tsx:122
 #: src/widgets/tile-deck/ui/layers/StateChip/StateChip.tsx:11
 msgid "Done"
@@ -762,6 +764,10 @@ msgstr "Import from Claude Desktop"
 msgid "In the background"
 msgstr "In the background"
 
+#: src/widgets/setup/ui/PluginShelf/PluginShelf.tsx:314
+msgid "Install"
+msgstr "Install"
+
 #. placeholder {0}: here.length
 #: src/widgets/setup/ui/PluginShelf/PluginShelf.tsx:105
 msgid "Installed · {0}"
@@ -836,7 +842,7 @@ msgstr "Manage"
 msgid "Managed on claude.ai. Sign in or out here, remove them there."
 msgstr "Managed on claude.ai. Sign in or out here, remove them there."
 
-#: src/pages/workspace/model/agent-events/agent-events.ts:156
+#: src/pages/workspace/model/agent-events/agent-events.ts:147
 msgid "manual"
 msgstr "manual"
 
@@ -859,6 +865,7 @@ msgstr "Message for {addressee}"
 msgid "Message your team"
 msgstr "Message your team"
 
+#: src/widgets/conversation/ui/Composer/Composer.tsx:149
 #: src/widgets/setup/ui/SetupPane/SetupPane.tsx:72
 #: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:98
 #: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:132
@@ -956,6 +963,10 @@ msgstr "Nothing installed yet."
 msgid "Nothing left to add. Every plugin your sources offer is installed."
 msgstr "Nothing left to add. Every plugin your sources offer is installed."
 
+#: src/widgets/setup/ui/PluginShelf/PluginShelf.tsx:299
+msgid "Nothing matches “{needle}”."
+msgstr "Nothing matches “{needle}”."
+
 #: src/widgets/tile-deck/ui/CrewBoard/CrewBoard.tsx:120
 msgid "Nothing written yet."
 msgstr "Nothing written yet."
@@ -989,6 +1000,10 @@ msgstr "One of you writes, one of you checks. Deal?"
 msgid "Orchestrating"
 msgstr "Orchestrating"
 
+#: src/widgets/setup/ui/PluginShelf/PluginShelf.tsx:337
+msgid "owner/repo, a URL, or a folder"
+msgstr "owner/repo, a URL, or a folder"
+
 #: src/entities/connector/lib/refusal-why/refusal-why.ts:18
 msgid "Paste the server address"
 msgstr "Paste the server address"
@@ -997,6 +1012,7 @@ msgstr "Paste the server address"
 msgid "Permission"
 msgstr "Permission"
 
+#: src/widgets/conversation/ui/Composer/Composer.tsx:143
 #: src/widgets/setup/ui/SetupPane/SetupPane.tsx:66
 msgid "Permissions"
 msgstr "Permissions"
@@ -1083,6 +1099,14 @@ msgstr "Reading which agents Claude Code brings. They will be listed here."
 msgid "Recheck"
 msgstr "Recheck"
 
+#: src/widgets/setup/ui/PluginShelf/PluginShelf.tsx:180
+msgid "Refresh"
+msgstr "Refresh"
+
+#: src/widgets/setup/ui/PluginShelf/PluginShelf.tsx:253
+msgid "Reload"
+msgstr "Reload"
+
 #: src/widgets/setup/ui/PluginShelf/PluginShelf.tsx:137
 #: src/widgets/setup/ui/PluginShelf/PluginShelf.tsx:182
 #: src/widgets/setup/ui/PluginShelf/PluginShelf.tsx:224
@@ -1093,6 +1117,10 @@ msgstr "Remove"
 #: src/widgets/team-sidebar/ui/MemberMenu/MemberMenu.tsx:60
 msgid "Remove {name}?"
 msgstr "Remove {name}?"
+
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:231
+msgid "Remove {path}"
+msgstr "Remove {path}"
 
 #: src/widgets/team-sidebar/ui/MemberMenu/MemberMenu.tsx:51
 msgid "Remove from team"
@@ -1194,7 +1222,7 @@ msgstr "Send"
 msgid "Session details"
 msgstr "Session details"
 
-#: src/pages/workspace/model/use-agent.ts:155
+#: src/pages/workspace/model/use-agent.ts:161
 msgid "Session stopped. The next message starts a new one with your team as it is now."
 msgstr "Session stopped. The next message starts a new one with your team as it is now."
 
@@ -1497,7 +1525,7 @@ msgstr "This signs out the Claude Code CLI itself, so every terminal, editor and
 msgid "This signs out the Claude Code CLI itself, so every terminal, editor and app using it on this computer is signed out too. The session running here stops."
 msgstr "This signs out the Claude Code CLI itself, so every terminal, editor and app using it on this computer is signed out too. The session running here stops."
 
-#: src/pages/workspace/model/agent-events/agent-events.ts:163
+#: src/pages/workspace/model/agent-events/agent-events.ts:154
 msgid "This turn: {out} out · {seconds}s"
 msgstr "This turn: {out} out · {seconds}s"
 
@@ -1508,6 +1536,10 @@ msgstr "Thought · {paragraphs} paragraphs"
 #: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:81
 msgid "Three teammates are on it: the checkout flow, the cart totals and the stock rules. I will fold their reports into one answer."
 msgstr "Three teammates are on it: the checkout flow, the cart totals and the stock rules. I will fold their reports into one answer."
+
+#: src/widgets/conversation/ui/Composer/Composer.tsx:82
+msgid "To {addressee}"
+msgstr "To {addressee}"
 
 #: src/widgets/team-sidebar/lib/chat-groups/chat-groups.ts:9
 msgid "Today"
@@ -1538,6 +1570,7 @@ msgstr "under a minute"
 msgid "Unknown"
 msgstr "Unknown"
 
+#: src/widgets/setup/ui/PluginShelf/PluginShelf.tsx:130
 #: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:154
 msgid "Update"
 msgstr "Update"
@@ -1656,6 +1689,7 @@ msgid "Yesterday"
 msgstr "Yesterday"
 
 #: src/widgets/setup/ui/YouField/YouField.tsx:23
+#: src/widgets/tile-deck/ui/CrewBoard/CrewBoard.tsx:66
 msgid "You"
 msgstr "You"
 

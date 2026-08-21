@@ -5,9 +5,13 @@ import { agentEnv } from '@/shared/lib/shell-env/shell-env'
 import type { AuthStatus } from '@/entities/auth'
 import { claudeBin, loginPath } from './login-path/login-path'
 import { handle } from './ipc/ipc'
+import { killTree } from './kill-tree/kill-tree'
+import { trackChild, untrackChild } from './run-settled/run-settled'
 import { launchFor } from './spawn-claude/spawn-claude'
 
 const execFileAsync = promisify(execFile)
+
+const LOGIN_TIMEOUT_MS = 5 * 60 * 1000
 
 export async function readAuthStatus(): Promise<AuthStatus> {
   try {
@@ -56,13 +60,28 @@ export function registerAuth(): void {
       })
       child.stdout.setEncoding('utf8')
       child.stderr.setEncoding('utf8')
+      if (child.pid !== undefined) trackChild(child.pid)
+      let settled = false
+      const stop = (): void => {
+        if (settled) return
+        settled = true
+        clearTimeout(timer)
+        if (child.pid !== undefined) untrackChild(child.pid)
+        resolve()
+      }
+      // A login nobody finished would otherwise sit on the browser flow forever.
+      const timer = setTimeout(() => {
+        if (child.pid !== undefined) killTree(child.pid)
+        else child.kill()
+        stop()
+      }, LOGIN_TIMEOUT_MS)
       const relay = (chunk: string): void => {
         if (!sender.isDestroyed()) sender.send('auth:progress', chunk)
       }
       child.stdout.on('data', relay)
       child.stderr.on('data', relay)
-      child.on('exit', () => resolve())
-      child.on('error', () => resolve())
+      child.on('exit', stop)
+      child.on('error', stop)
     })
     return readAuthStatus()
   })

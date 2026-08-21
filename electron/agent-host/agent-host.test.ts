@@ -42,7 +42,6 @@ const boundary = vi.hoisted(() => ({
   killed: [] as number[],
   killedSync: [] as number[],
   beforeQuit: [] as (() => void)[],
-  probesKilled: 0,
   project: null as string | null,
   userData: '',
   nextPid: 4200,
@@ -113,12 +112,6 @@ vi.mock('../kill-tree/kill-tree', () => ({
   killTreeSync: (pid: number) => boundary.killedSync.push(pid),
 }))
 
-vi.mock('../session-probe', () => ({
-  killAllProbes: () => {
-    boundary.probesKilled += 1
-  },
-}))
-
 const config: RunConfig = {
   permissionMode: 'ask',
   model: 'default',
@@ -187,7 +180,6 @@ beforeEach(async () => {
   boundary.killed.length = 0
   boundary.killedSync.length = 0
   boundary.beforeQuit.length = 0
-  boundary.probesKilled = 0
   boundary.project = null
   boundary.nextPid = 4200
   boundary.holdLogin = false
@@ -352,6 +344,19 @@ describe('a window that went away', () => {
     expect(boundary.killed).toEqual([child.pid])
     expect(of(one, 'line')).toEqual([])
   })
+
+  it('kills it once, however much output is still on its way', async () => {
+    const one = renderer()
+    await startAgent(one, 'a1', 'hello')
+    const child = childAt(0)
+
+    one.close()
+    child.stdout.emit('data', 'one\n')
+    child.stdout.emit('data', 'two\n')
+    child.stdout.emit('data', 'three\n')
+
+    expect(boundary.killed).toEqual([child.pid])
+  })
 })
 
 describe('quitting the app', () => {
@@ -360,10 +365,15 @@ describe('quitting the app', () => {
     await startAgent(one, 'a1', 'hello')
     await startAgent(one, 'a2', 'hello')
 
-    boundary.beforeQuit.forEach((hook) => hook())
+    host.killAllAgents()
 
     expect(boundary.killedSync).toEqual([childAt(0).pid, childAt(1).pid])
-    expect(boundary.probesKilled).toBe(1)
+  })
+
+  // main.ts already drops every child at before-quit; a second listener here
+  // would kill the same trees twice.
+  it('leaves the quit listener to main, and registers none of its own', () => {
+    expect(boundary.beforeQuit).toEqual([])
   })
 
   it('forgets them too, so text sent afterwards goes nowhere', async () => {

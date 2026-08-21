@@ -16,7 +16,6 @@ import { lineReader } from '../line-reader/line-reader'
 import { killTree, killTreeSync } from '../kill-tree/kill-tree'
 import { errorTail } from '../error-tail/error-tail'
 import { tell } from '../tell/tell'
-import { killAllProbes } from '../session-probe'
 import { launchFor } from '../spawn-claude/spawn-claude'
 import { dropSends, holdSend, releaseSends } from '../pending-sends/pending-sends'
 import type { PendingSend } from '../pending-sends/pending-sends.types'
@@ -112,9 +111,13 @@ export function registerAgentHost(): void {
     if (!sender.isDestroyed()) sender.send('agent:event', { id, kind: 'workspace', cwd: workspace })
 
     const read = lineReader()
+    // killTree walks the process table, so the kill for a window that went away
+    // happens once rather than on every chunk still in flight.
+    let dropped = false
     child.stdout.on('data', (chunk: string) => {
       if (sender.isDestroyed()) {
-        if (child.pid !== undefined) killTree(child.pid)
+        if (!dropped && child.pid !== undefined) killTree(child.pid)
+        dropped = true
         return
       }
       for (const line of read.take(chunk)) {
@@ -173,10 +176,5 @@ export function registerAgentHost(): void {
     agents.delete(id)
     dropSends(waiting, id)
     if (agent && agent !== 'starting' && agent.pid !== undefined) killTree(agent.pid)
-  })
-
-  app.on('before-quit', () => {
-    killAllAgents()
-    killAllProbes()
   })
 }

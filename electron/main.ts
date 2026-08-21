@@ -11,6 +11,7 @@ import { registerNudge } from './nudge'
 import { registerPlugins } from './plugins'
 import { loadSettings, registerSettingsStore } from './settings-store'
 import { registerConnectors } from './connectors'
+import { killTrackedChildren } from './run-settled/run-settled'
 import { killAllProbes, registerSessionProbe } from './session-probe'
 import { registerTranscriptStore } from './transcript-store'
 import { registerUpdater } from './updater/updater'
@@ -25,6 +26,7 @@ app.setName('Zetrem')
 function dropChildren(): void {
   killAllAgents()
   killAllProbes()
+  killTrackedChildren()
 }
 
 const inspectPort = process.env.ZT_INSPECT ?? (process.env.ELECTRON_RENDERER_URL ? '0' : null)

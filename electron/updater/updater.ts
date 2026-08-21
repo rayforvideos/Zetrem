@@ -6,8 +6,14 @@ import { handle } from '../ipc/ipc'
 const RECHECK_MS = 4 * 60 * 60 * 1000
 
 let readyVersion: string | null = null
+let registered = false
 
 export function registerUpdater(): void {
+  // A second call would stack another download listener and another clock on top
+  // of the first, so the first one is the only one.
+  if (registered) return
+  registered = true
+
   // The renderer may mount (or remount) after update-downloaded fired, so the
   // ready version is also answerable on demand, not only pushed.
   handle('updater:state', () => readyVersion)
@@ -39,6 +45,7 @@ export function registerUpdater(): void {
 
   void app.whenReady().then(() => {
     check()
-    setInterval(check, RECHECK_MS)
+    // The recheck clock is no reason to hold the process open at quit.
+    setInterval(check, RECHECK_MS).unref()
   })
 }

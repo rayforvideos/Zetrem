@@ -1,44 +1,19 @@
-import { spawn } from 'node:child_process'
 import type { PluginRun } from '@/entities/plugin/lib/catalog/catalog.types'
 import { agentEnv } from '@/shared/lib/shell-env/shell-env'
 import { claudeBin, loginPath } from '../login-path/login-path'
-import { killTree } from '../kill-tree/kill-tree'
-import { launchFor } from '../spawn-claude/spawn-claude'
+import { runSettled, trackChild, untrackChild } from '../run-settled/run-settled'
 
-export function runClaude(args: string[], timeoutMs: number, cwd?: string): Promise<PluginRun> {
-  return new Promise((resolve) => {
-    void (async () => {
-      const launch = launchFor(await claudeBin(), args)
-      const child = spawn(launch.command, launch.args, {
-        env: agentEnv(process.env, await loginPath()),
-        windowsHide: true,
-        ...(cwd === undefined ? {} : { cwd }),
-      })
-      child.stdout.setEncoding('utf8')
-      child.stderr.setEncoding('utf8')
-      let out = ''
-      let settled = false
-      const settle = (value: PluginRun): void => {
-        if (settled) return
-        settled = true
-        clearTimeout(timer)
-        resolve(value)
-      }
-      const timer = setTimeout(() => {
-        // SIGTERM on Windows only reaches the cmd.exe wrapper, leaving the
-        // real process running; kill the whole tree instead.
-        if (child.pid !== undefined) killTree(child.pid)
-        else child.kill()
-        settle({ ok: false, out: `${out}\ntimed out` })
-      }, timeoutMs)
-      child.stdout.on('data', (chunk: string) => {
-        out += chunk
-      })
-      child.stderr.on('data', (chunk: string) => {
-        out += chunk
-      })
-      child.on('error', (cause: Error) => settle({ ok: false, out: cause.message }))
-      child.on('exit', (code) => settle({ ok: code === 0, out }))
-    })()
+export async function runClaude(args: string[], timeoutMs: number, cwd?: string): Promise<PluginRun> {
+  return runSettled<PluginRun>({
+    bin: await claudeBin(),
+    args,
+    env: agentEnv(process.env, await loginPath()),
+    ...(cwd === undefined ? {} : { cwd }),
+    mergeStderr: true,
+    spawned: trackChild,
+    settled: untrackChild,
+    timeout: { ms: timeoutMs, then: (text) => ({ ok: false, out: `${text}\ntimed out` }) },
+    exit: (code, text) => ({ ok: code === 0, out: text }),
+    error: (cause) => ({ ok: false, out: cause.message }),
   })
 }

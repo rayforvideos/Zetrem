@@ -1,11 +1,10 @@
-import { spawn } from 'node:child_process'
 import { realpathSync } from 'node:fs'
+import { homedir } from 'node:os'
 import { managerOf } from '@/entities/agent-session/model/cli-update/cli-update'
 import { agentEnv } from '@/shared/lib/shell-env/shell-env'
 import { claudeBin, findCommand, loginPath } from './login-path/login-path'
 import { handle } from './ipc/ipc'
-import { killTree } from './kill-tree/kill-tree'
-import { launchFor } from './spawn-claude/spawn-claude'
+import { runSettled, trackChild, untrackChild } from './run-settled/run-settled'
 
 const REGISTRY = 'https://registry.npmjs.org/@anthropic-ai/claude-code/latest'
 
@@ -18,33 +17,15 @@ const VERSION = /\d+(?:\.\d+)+/
 const PROBE_TIMEOUT_MS = 5000
 
 function probe(command: string, args: string[], path: string): Promise<string | null> {
-  return new Promise((resolve) => {
-    const launch = launchFor(command, args)
-    const child = spawn(launch.command, launch.args, {
-      env: agentEnv(process.env, path),
-      windowsHide: true,
-    })
-    child.stdout.setEncoding('utf8')
-    let out = ''
-    let settled = false
-    const settle = (value: string | null): void => {
-      if (settled) return
-      settled = true
-      clearTimeout(timer)
-      resolve(value)
-    }
-    const timer = setTimeout(() => {
-      // SIGTERM on Windows only reaches the cmd.exe wrapper, leaving the
-      // real process running; kill the whole tree instead.
-      if (child.pid !== undefined) killTree(child.pid)
-      else child.kill()
-      settle(null)
-    }, PROBE_TIMEOUT_MS)
-    child.stdout.on('data', (chunk: string) => {
-      out += chunk
-    })
-    child.on('error', () => settle(null))
-    child.on('exit', () => settle(out))
+  return runSettled<string | null>({
+    bin: command,
+    args,
+    // A packaged app inherits `/` as its directory; ask from somewhere the user owns.
+    cwd: homedir(),
+    env: agentEnv(process.env, path),
+    timeout: { ms: PROBE_TIMEOUT_MS, then: () => null },
+    exit: (_code, text) => text,
+    error: () => null,
   })
 }
 
@@ -86,39 +67,23 @@ export function registerCliVersion(): void {
 
   handle('cli:update', async () => {
     const path = await loginPath()
-    const bin = await claudeBin()
-    return new Promise<{ output: string }>((resolve) => {
-      const run = launchFor(bin, ['update'])
-      const child = spawn(run.command, run.args, {
-        env: agentEnv(process.env, path),
-        windowsHide: true,
-      })
-      child.stdout.setEncoding('utf8')
-      child.stderr.setEncoding('utf8')
-      let output = ''
-      const take = (chunk: string): void => {
-        output += chunk
-      }
-      let settled = false
-      const settle = (text: string): void => {
-        if (settled) return
-        settled = true
-        clearTimeout(timer)
-        resolve({ output: text })
-      }
-      const timer = setTimeout(() => {
-        // SIGTERM on Windows only reaches the cmd.exe wrapper, leaving the
-        // real process running; kill the whole tree instead.
-        if (child.pid !== undefined) killTree(child.pid)
-        else child.kill()
-        settle(
-          `${output.trim().slice(-2000)}\nUpdate did not finish within 3 minutes and was stopped — try running claude update in your terminal`.trim(),
-        )
-      }, UPDATE_TIMEOUT_MS)
-      child.stdout.on('data', take)
-      child.stderr.on('data', take)
-      child.on('error', () => settle('claude command not found'))
-      child.on('exit', () => settle(output.trim().slice(-2000)))
+    return runSettled<{ output: string }>({
+      bin: await claudeBin(),
+      args: ['update'],
+      cwd: homedir(),
+      env: agentEnv(process.env, path),
+      mergeStderr: true,
+      spawned: trackChild,
+      settled: untrackChild,
+      timeout: {
+        ms: UPDATE_TIMEOUT_MS,
+        then: (text) => ({
+          output:
+            `${text.trim().slice(-2000)}\nUpdate did not finish within 3 minutes and was stopped — try running claude update in your terminal`.trim(),
+        }),
+      },
+      exit: (_code, text) => ({ output: text.trim().slice(-2000) }),
+      error: () => ({ output: 'claude command not found' }),
     })
   })
 }

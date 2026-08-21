@@ -10,6 +10,8 @@ const boundary = vi.hoisted(() => ({
   packaged: true,
   flags: {} as Record<string, boolean>,
   listeners: new Map<string, Downloaded>(),
+  bound: [] as string[],
+  handled: [] as string[],
   checks: 0,
   checkFails: false,
   installs: 0,
@@ -40,7 +42,10 @@ vi.mock('electron-updater', () => ({
     set allowPrerelease(on: boolean) {
       boundary.flags.allowPrerelease = on
     },
-    on: (name: string, listener: Downloaded) => boundary.listeners.set(name, listener),
+    on: (name: string, listener: Downloaded) => {
+      boundary.bound.push(name)
+      boundary.listeners.set(name, listener)
+    },
     checkForUpdates: async () => {
       boundary.checks += 1
       if (boundary.checkFails) throw new Error('offline')
@@ -53,7 +58,10 @@ vi.mock('electron-updater', () => ({
 }))
 
 vi.mock('../ipc/ipc', () => ({
-  handle: (channel: string, listener: Channel) => boundary.channels.set(channel, listener),
+  handle: (channel: string, listener: Channel) => {
+    boundary.handled.push(channel)
+    boundary.channels.set(channel, listener)
+  },
 }))
 
 function fakeWindow(): unknown {
@@ -92,6 +100,8 @@ beforeEach(() => {
   boundary.packaged = true
   boundary.flags = {}
   boundary.listeners.clear()
+  boundary.bound.length = 0
+  boundary.handled.length = 0
   boundary.checks = 0
   boundary.checkFails = false
   boundary.installs = 0
@@ -167,6 +177,23 @@ describe('a packaged launch', () => {
 
   it('checks once the app is ready, and again a workday later', async () => {
     await register()
+    expect(boundary.checks).toBe(1)
+
+    await vi.advanceTimersByTimeAsync(4 * 60 * 60 * 1000)
+
+    expect(boundary.checks).toBe(2)
+  })
+
+  it('takes the first registration only, so a second call doubles nothing', async () => {
+    vi.resetModules()
+    const updater = await import('./updater')
+
+    updater.registerUpdater()
+    updater.registerUpdater()
+    await settle()
+
+    expect(boundary.bound).toEqual(['update-downloaded'])
+    expect(boundary.handled).toEqual(['updater:state', 'updater:restart'])
     expect(boundary.checks).toBe(1)
 
     await vi.advanceTimersByTimeAsync(4 * 60 * 60 * 1000)

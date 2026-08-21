@@ -20,7 +20,12 @@ export function useSessionProbe(
   busy = false,
 ): void {
   const held = useRef(config)
-  held.current = config
+
+  // Written after commit, not during render, so a thrown-away render can't
+  // leave its config behind for the probe to send.
+  useEffect(() => {
+    held.current = config
+  })
 
   useEffect(() => {
     if (!wanted) return

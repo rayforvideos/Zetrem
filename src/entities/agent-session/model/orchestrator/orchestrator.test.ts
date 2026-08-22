@@ -7,8 +7,17 @@ import { ORCHESTRATOR_PROMPT, PERSONA } from './orchestrator'
 const person = { name: 'Explore', description: '', prompt: '찾아본다', model: null, tools: [] }
 
 describe('what the orchestrator is told', () => {
-  it('says nothing about which language to answer in, which the CLI decides', () => {
-    expect(ORCHESTRATOR_PROMPT.toLowerCase()).not.toContain('language')
+  it('names no language of its own, so the person picks it by speaking', () => {
+    for (const tongue of ['korean', 'english', '한국어', '영어']) {
+      expect(ORCHESTRATOR_PROMPT.toLowerCase()).not.toContain(tongue)
+    }
+  })
+
+  it('does say to hand off in the language being spoken, which the roster otherwise loses', () => {
+    // Plainly, the CLI writes the handoff in the person's language; behind the
+    // roster it drifts to English, and the teammate answers in English too.
+    // Naming it back is restoring the CLI's own behaviour, not shaping it.
+    expect(ORCHESTRATOR_PROMPT).toContain('the language the person is using')
   })
 
   it('never locks with an empty brief, since nothing told is nothing followed', () => {

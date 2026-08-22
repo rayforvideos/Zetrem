@@ -1,10 +1,12 @@
 import type { CSSProperties } from 'react'
+import { useModel } from '@/entities/agent-session'
 import type { AgentSession } from '@/entities/agent-session'
 import { AgentSprite } from '@/entities/agent-session/ui/AgentSprite/AgentSprite'
 import { ToolIcon } from '@/shared/graphics/tool-icon'
 import { reachOf } from '@/shared/lib/reach/reach'
 import { formatClock } from '@/shared/lib/units/units'
 import { Button } from '@/shared/ui/button'
+import { modelLabel } from '@/shared/lib/model-label/model-label'
 import { laneOf } from '../../lib/lane/lane'
 
 export function CrewCard({
@@ -21,6 +23,7 @@ export function CrewCard({
   onOpen(): void
 }) {
   const lane = laneOf(session, nowMs)
+  const model = modelLabel(useModel(lane.subagentType))
 
   return (
     <Button
@@ -43,6 +46,7 @@ export function CrewCard({
       <span style={headStyle}>
         <AgentSprite subagentType={lane.subagentType} state={session.status} size={24} />
         <span style={nameStyle}>{lane.name}</span>
+        {model !== null && <span data-model style={modelStyle}>{model}</span>}
         <span style={clockStyle}>{formatClock(lane.outMs / 1000)}</span>
       </span>
 
@@ -59,6 +63,14 @@ export function CrewCard({
       </span>
     </Button>
   )
+}
+
+const modelStyle: CSSProperties = {
+  flex: 'none',
+  fontFamily: 'var(--zt-mono)',
+  fontSize: 10,
+  letterSpacing: '0.02em',
+  opacity: 0.5,
 }
 
 const cardStyle: CSSProperties = {

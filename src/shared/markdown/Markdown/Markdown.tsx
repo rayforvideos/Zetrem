@@ -1,4 +1,4 @@
-import { useSyncExternalStore } from 'react'
+import { memo, useSyncExternalStore } from 'react'
 import { Highlight, themes } from 'prism-react-renderer'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
@@ -8,7 +8,16 @@ import { unfenced } from '../unfenced/unfenced'
 import { Separator } from '@/shared/ui/separator'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/shared/ui/table'
 
-export function Markdown({ text, className }: { text: string; className?: string }) {
+// A tile re-renders on every tick of the clock it shows, so parsing the same
+// markdown a second later, for as many tiles as are on the board, is work
+// nobody asked for.
+export const Markdown = memo(function Markdown({
+  text,
+  className,
+}: {
+  text: string
+  className?: string
+}) {
   const said = unfenced(text)
   return (
     <div className={cn('zt-md', className)}>
@@ -69,7 +78,7 @@ export function Markdown({ text, className }: { text: string; className?: string
       </ReactMarkdown>
     </div>
   )
-}
+})
 
 function CodeBlock({ code, language }: { code: string; language: string }) {
   const dark = useSyncExternalStore(watchScheme, darkScheme, darkScheme)

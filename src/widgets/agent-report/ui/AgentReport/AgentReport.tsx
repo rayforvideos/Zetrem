@@ -92,7 +92,7 @@ export function AgentReport({ session, sessions, nowMs, onClose, onPick }: Agent
         </div>
       </div>
 
-      {lead !== null && <p className="text-sm leading-relaxed">{lead}</p>}
+      {lead !== null && <Markdown text={lead} className="text-sm leading-relaxed" />}
 
       <dl className="flex gap-6 font-mono text-xs tabular-nums">
         {[
@@ -115,12 +115,9 @@ export function AgentReport({ session, sessions, nowMs, onClose, onPick }: Agent
           <span className="mb-1 text-xs tracking-[0.08em] text-muted-foreground">{t`What they said`}</span>
           {session.transcript.map((entry, index) =>
             entry.role === 'user' ? (
-              <p
-                key={index}
-                className="border-l border-border pl-3 text-sm leading-relaxed whitespace-pre-wrap text-muted-foreground"
-              >
-                {entry.text}
-              </p>
+              <div key={index} className="border-l border-border pl-3 text-muted-foreground">
+                <Markdown text={entry.text} className="text-sm leading-relaxed" />
+              </div>
             ) : (
               <Markdown key={index} text={entry.text} className="text-sm leading-relaxed" />
             ),

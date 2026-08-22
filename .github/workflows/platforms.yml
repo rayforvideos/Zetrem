@@ -93,6 +93,12 @@ jobs:
     # Writing the release is the whole point on a tag.
     permissions:
       contents: write
+    env:
+      # A tag is a release build; anything else is only proving the build runs.
+      RELEASING: ${{ startsWith(github.ref, 'refs/tags/v') }}
+      # And a release build is only publishable for macOS if a certificate is
+      # here to sign it. Without one the mac half stays a test, as it was.
+      SIGNED: ${{ startsWith(github.ref, 'refs/tags/v') && secrets.CSC_LINK != '' }}
     strategy:
       fail-fast: false
       matrix:
@@ -105,10 +111,17 @@ jobs:
           cache: npm
       - run: npm ci
       - name: Package
-        # No certificates on a runner, so this builds unsigned. It is the build
-        # that is being tested, not the signature.
         env:
-          CSC_IDENTITY_AUTO_DISCOVERY: 'false'
+          # Discovery finds nothing unless the certificate was handed over, and
+          # a check build has no business signing anything.
+          CSC_IDENTITY_AUTO_DISCOVERY: ${{ env.SIGNED }}
+          CSC_LINK: ${{ secrets.CSC_LINK }}
+          CSC_KEY_PASSWORD: ${{ secrets.CSC_KEY_PASSWORD }}
+          # Notarising talks to Apple and takes minutes, so it happens on a
+          # release and not on every push. The config gates on these being set.
+          APPLE_ID: ${{ env.RELEASING == 'true' && secrets.APPLE_ID || '' }}
+          APPLE_APP_SPECIFIC_PASSWORD: ${{ env.RELEASING == 'true' && secrets.APPLE_APP_SPECIFIC_PASSWORD || '' }}
+          APPLE_TEAM_ID: ${{ env.RELEASING == 'true' && secrets.APPLE_TEAM_ID || '' }}
         # --publish never: electron-builder's own uploader raced itself here and
         # left a release holding a 100KB blockmap and no installer. The upload
         # is its own step below, where it either works or fails the job.
@@ -116,7 +129,7 @@ jobs:
 
       # Windows is unsigned wherever it is built, so a runner is as good a place
       # as any, and the download page only offers a release carrying both
-      # installers. The mac one is published from wherever the certificate is.
+      # installers.
       - name: Publish the Windows installer
         if: matrix.os == 'windows-latest' && startsWith(github.ref, 'refs/tags/v')
         shell: bash
@@ -133,6 +146,28 @@ jobs:
             release/Zetrem-*-x64.exe \
             release/Zetrem-*-x64.exe.blockmap \
             release/latest.yml \
+            --clobber
+          gh release view "$tag" --json assets --jq '.assets[].name'
+
+      # Only when a certificate signed it. An unsigned dmg is one Gatekeeper
+      # refuses on anybody else's machine, and it would be worse than none:
+      # the page offers whatever release carries both installers.
+      - name: Publish the macOS installer
+        if: matrix.os == 'macos-latest' && env.SIGNED == 'true'
+        shell: bash
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          tag="${GITHUB_REF_NAME}"
+          xcrun stapler validate release/Zetrem-*-universal.dmg
+          gh release view "$tag" >/dev/null 2>&1 ||
+            gh release create "$tag" --prerelease --title "Zetrem ${tag#v}" --notes ''
+          gh release upload "$tag" \
+            release/Zetrem-*-universal.dmg \
+            release/Zetrem-*-universal.dmg.blockmap \
+            release/Zetrem-*-universal.zip \
+            release/Zetrem-*-universal.zip.blockmap \
+            release/latest-mac.yml \
             --clobber
           gh release view "$tag" --json assets --jq '.assets[].name'
 

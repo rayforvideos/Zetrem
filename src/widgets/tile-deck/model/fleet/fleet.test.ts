@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import type { AgentSession } from '@/entities/agent-session'
-import { arrived, retired } from './fleet'
+import { arrived, orphaned, retired } from './fleet'
 
 function session(id: string, overrides: Partial<AgentSession> = {}): AgentSession {
   return {
@@ -73,3 +73,18 @@ describe('retired: whose tile has been done long enough to close', () => {
     expect(retired([done], up, 9000, 4000)).toEqual([])
   })
 })
+
+describe('a tile whose session is gone from under it', () => {
+  it('is let go on sight, since nothing will ever report it finished', () => {
+    expect(orphaned([session('a')], new Set(['a', 'b']))).toEqual(['b'])
+  })
+
+  it('leaves alone the ones still in the list', () => {
+    expect(orphaned([session('a')], new Set(['a']))).toEqual([])
+  })
+
+  it('lets the whole board go when the store was emptied', () => {
+    expect(orphaned([], new Set(['a', 'b']))).toEqual(['a', 'b'])
+  })
+})
+

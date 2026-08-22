@@ -105,7 +105,7 @@ describe('agentEnv: what an agent inherits', () => {
 describe('the child reads the same Claude Code settings we do', () => {
   it('carries the config dir through, or the agent sees other connectors than the app', () => {
     const env = agentEnv(HOST_ENV)
-    expect(env.CLAUDE_CONFIG_DIR, '설정이 갈리면 화면과 실행이 어긋난다').toBe(
+    expect(env.CLAUDE_CONFIG_DIR, 'a split setting leaves the screen and the run disagreeing').toBe(
       '/Users/sam/.config/claude',
     )
   })

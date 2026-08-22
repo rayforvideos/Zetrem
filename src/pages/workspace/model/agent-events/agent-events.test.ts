@@ -619,7 +619,7 @@ describe('a subagent reports what it is doing while it works', () => {
       { type: 'childStarted', toolUseId: 'toolu_sh', taskId: 'task_sh', taskType: 'local_bash', description: 'sleep' },
       refs,
     )
-    expect(conversation.get().chores, '자식의 셸은 대화의 잡일이 아니다').toEqual([])
+    expect(conversation.get().chores, "a child's shell is not the conversation's chore").toEqual([])
     applyAgentEvent(
       { type: 'childStateKnown', toolUseId: null, taskId: 'task_w', state: 'completed', error: '' },
       refs,

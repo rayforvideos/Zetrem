@@ -112,7 +112,7 @@ describe('an agent from the person own .claude folder is not zetrem business', (
 
   it('bars it even if a stale setting still lists it as switched on', () => {
     const stale = { ...wrote, stockAgents: ['Explore', 'Ray'] }
-    expect(lockOf(stale, [], ['Ray']).blockedAgents, '목록에 없으니 켤 수도 없다').toContain('Ray')
+    expect(lockOf(stale, [], ['Ray']).blockedAgents, 'not on the list, so there is nothing to turn on').toContain('Ray')
   })
 
   it('keeps someone hired in zetrem callable even when a file shares the name', () => {

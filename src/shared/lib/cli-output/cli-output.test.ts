@@ -18,8 +18,8 @@ describe('what the CLI meant for a terminal never reaches the screen', () => {
 
   it('leaves no control characters in the URL it took', () => {
     const url = urlFrom(REAL_LOGIN_OUTPUT) ?? ''
-    expect(url.includes(ESC), 'ESC 가 남았다').toBe(false)
-    expect(url.includes(BEL), 'BEL 이 남았다').toBe(false)
+    expect(url.includes(ESC), 'an ESC was left in').toBe(false)
+    expect(url.includes(BEL), 'a BEL was left in').toBe(false)
     expect(url.match(/https?:\/\//g)).toHaveLength(1)
   })
 

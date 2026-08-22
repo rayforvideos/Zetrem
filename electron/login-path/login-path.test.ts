@@ -24,7 +24,7 @@ describe('finding claude works differently on each machine', () => {
 
   it('gives back an absolute path, because a bare name will not launch on Windows', () => {
     const found = findCommand(windows ? 'cmd' : 'sh', process.env.PATH ?? '')
-    expect(found, '이 기계에 기본 셸은 있어야 한다').not.toBeNull()
+    expect(found, 'this machine has a shell of some kind').not.toBeNull()
     expect(found).toContain(windows ? 'cmd' : 'sh')
     expect(found?.includes('/') || found?.includes('\\')).toBe(true)
   })

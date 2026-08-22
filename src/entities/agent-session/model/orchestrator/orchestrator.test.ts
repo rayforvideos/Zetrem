@@ -61,7 +61,7 @@ describe('the app does not shape the answer itself', () => {
 
   it('never asks for a line narrating what it is about to do', () => {
     for (const phrase of ['open every reply', 'one sentence saying what you are doing']) {
-      expect(said, 'Zetrem 이 답변 앞에 문장을 덧붙이게 하면 CLI 와 답이 달라진다').not.toContain(phrase)
+      expect(said, 'a sentence Zetrem puts in front is an answer the CLI would not have given').not.toContain(phrase)
     }
   })
 

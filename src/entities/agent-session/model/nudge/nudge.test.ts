@@ -57,7 +57,7 @@ describe('the notice speaks for the app, not for the conversation', () => {
 
   it('carries no line of the answer, which can be written in any language', () => {
     const said = nudgeFor(at())
-    expect(said?.body, '대화 내용은 알림이 옮길 것이 아니다').not.toContain('답')
+    expect(said?.body, "what was said is not the notification's to carry").not.toContain('답')
   })
 
   it('says the same thing however long the work ran', () => {

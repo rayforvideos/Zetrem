@@ -229,7 +229,7 @@ describe('approval: the most important moment in this app', () => {
   it('can be answered without leaving the keyboard, and says which keys', () => {
     const html = pane([], ask)
     const keys = [...html.matchAll(/<kbd[^>]*>([^<]*)<\/kbd>/g)].map((match) => match[1])
-    expect(keys, '허용은 수정키+Enter, 거부는 Esc').toEqual(
+    expect(keys, 'allow is modifier and Enter, deny is Esc').toEqual(
       expect.arrayContaining([modifierKey(), 'Enter', 'Esc']),
     )
   })

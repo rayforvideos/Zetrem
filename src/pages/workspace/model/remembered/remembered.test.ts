@@ -60,7 +60,7 @@ describe('a probe knows the agents but not the tools, and is believed only that 
 
   it('takes the agents a probe found, which is the only way the list fills before the first turn', () => {
     const patch = remembered({ tools: ['Read'], agents: ['Explore', 'Plan'], probed: true }, empty)
-    expect(patch, '프로브를 막으면 팀 목록이 영영 빈 채로 남는다').toEqual({
+    expect(patch, 'block the probe and the roster stays empty for good').toEqual({
       knownAgents: ['Explore', 'Plan'],
     })
   })

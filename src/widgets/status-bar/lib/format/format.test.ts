@@ -144,7 +144,7 @@ describe('the strip counts what this session can actually reach', () => {
       { name: 'playwright', status: 'connected' },
     ])
     const keys = cells(stale, [], false).map((cell) => cell.key)
-    expect(keys, '켤 때마다 3초씩 거짓 경고가 뜨면 안 된다').not.toContain('mcp')
+    expect(keys, 'three seconds of false warning on every launch is not on').not.toContain('mcp')
   })
 
   it('still says the things that do not wait on the health check', () => {

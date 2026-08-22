@@ -10,7 +10,7 @@ import { launchFor } from '../../electron/spawn-claude/spawn-claude'
 describe('the installed CLI can actually be launched the way the app launches it', () => {
   it('is found on the PATH', async () => {
     const bin = await claudeBin()
-    expect(bin, 'claude 를 PATH 에서 찾지 못했다').not.toBe('claude')
+    expect(bin, 'claude was not found on the PATH').not.toBe('claude')
   })
 
   it('reports which kind of file it found, for the record', async () => {
@@ -22,7 +22,7 @@ describe('the installed CLI can actually be launched the way the app launches it
   it('answers --version when launched the app way', async () => {
     const launch = launchFor(await claudeBin(), ['--version'])
     const run = spawnSync(launch.command, launch.args, { encoding: 'utf8' })
-    expect(run.error?.message ?? null, 'spawn 자체가 실패했다').toBeNull()
+    expect(run.error?.message ?? null, 'the spawn itself failed').toBeNull()
     expect(run.status).toBe(0)
     expect(run.stdout.trim()).toMatch(/\d+\.\d+\.\d+/)
   })

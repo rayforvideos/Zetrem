@@ -32,7 +32,7 @@ describe('a line too long to hold is dropped whole, never chopped', () => {
   it('does not hand back a piece of the oversized line', () => {
     const read = lineReader(20)
     read.take(`${'x'.repeat(50)}`)
-    expect(read.take('tail-of-the-giant\n'), '잘린 조각은 라인이 아니다').toEqual([])
+    expect(read.take('tail-of-the-giant\n'), 'a cut-off piece is not a line').toEqual([])
   })
 
   it('picks the stream back up at the next line', () => {

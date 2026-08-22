@@ -5,7 +5,7 @@ import { signOutHint, signOutTitle, signOutWarning } from './sign-out-warning'
 describe('signing out is machine wide, and the words have to say so', () => {
   it('warns that it reaches past this app, since it clears the CLI credential', () => {
     const said = signOutWarning(false)
-    expect(said, 'Zetrem 만 로그아웃되는 것처럼 읽히면 안 된다').toContain('this computer')
+    expect(said, 'it must not read as though only Zetrem signs out').toContain('this computer')
     expect(said).toContain('CLI')
   })
 
@@ -39,7 +39,7 @@ describe('the warning speaks whichever language the app is speaking', () => {
   it('says it in Korean once the app is Korean', () => {
     i18n.activate('ko')
     expect(signOutTitle()).toContain('로그아웃')
-    expect(signOutWarning(false), '이 컴퓨터 전체라는 사실이 한국어에서도 남아야 한다').toContain(
+    expect(signOutWarning(false), 'the Korean has to keep saying the whole computer').toContain(
       '이 컴퓨터',
     )
   })

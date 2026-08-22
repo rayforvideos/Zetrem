@@ -28,7 +28,7 @@ describe('tongueToLoad: never asks for a language twice', () => {
   it('asks for nothing while the settings are still being read', () => {
     expect(
       tongueToLoad('en', false, 'ko', KOREAN_MACHINE),
-      '읽기 전 기본값으로 판단하면 켠 언어와 싸운다',
+      'judging by the default before it is read fights the language somebody chose',
     ).toBe(null)
   })
 
@@ -44,13 +44,13 @@ describe('tongueToLoad: never asks for a language twice', () => {
   it('settles after one change rather than swinging back', () => {
     const asked = tongueToLoad('en', true, 'ko', KOREAN_MACHINE)
     expect(asked).toBe('en')
-    expect(tongueToLoad('en', true, asked ?? '', KOREAN_MACHINE), '두 번째는 없어야 한다').toBe(null)
+    expect(tongueToLoad('en', true, asked ?? '', KOREAN_MACHINE), 'there is no second one').toBe(null)
   })
 
   it('does not swing back while a remount is re-reading the settings', () => {
     const active = 'en'
     const duringRemount = tongueToLoad('system', false, active, KOREAN_MACHINE)
-    expect(duringRemount, '기본값 system 은 한국어라 여기서 물면 무한 리마운트가 된다').toBe(null)
+    expect(duringRemount, 'system defaults to Korean here, and biting on that remounts forever').toBe(null)
     expect(tongueToLoad('en', true, active, KOREAN_MACHINE)).toBe(null)
   })
 

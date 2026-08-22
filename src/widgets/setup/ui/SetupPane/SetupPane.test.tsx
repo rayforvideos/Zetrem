@@ -75,7 +75,7 @@ describe('SetupPane: everything to settle before starting, on one screen', () =>
   it('shows everything there is to settle', () => {
     const html = pane()
     for (const label of ['Account', 'Project', 'Permissions', 'Model', 'Plugins']) {
-      expect(html, `${label} 이 없다`).toContain(label)
+      expect(html, `${label} is missing`).toContain(label)
     }
   })
 
@@ -163,10 +163,10 @@ describe('SetupPane: everything to settle before starting, on one screen', () =>
     const groups = [...html.matchAll(/<div[^>]*data-slot="toggle-group"[^>]*class="([^"]*)"/g)].map(
       (match) => match[1] as string,
     )
-    expect(groups, '언어·권한·모델 세 벌이 선다').toHaveLength(3)
+    expect(groups, 'language, permission and model: three of them').toHaveLength(3)
     for (const cls of groups) {
-      expect(cls, '내용만큼만 넓어야 한다').toContain('w-fit')
-      expect(cls, '칸 전체로 늘어나면 알약 안에 빈 꼬리가 남는다').not.toContain('w-full')
+      expect(cls, 'no wider than what it holds').toContain('w-fit')
+      expect(cls, 'stretched to the row, the pill trails off empty').not.toContain('w-full')
     }
   })
 
@@ -180,7 +180,7 @@ describe('being told when the work is done is something you can turn off', () =>
   it('offers the switch and says when it would speak', () => {
     const html = pane()
     expect(html).toContain('Notifications')
-    expect(html, '언제 울리는지 모르면 켤지 말지 정할 수 없다').toContain('behind another window')
+    expect(html, 'not knowing when it rings, you cannot decide to turn it on').toContain('behind another window')
   })
 
   function switchState(html: string): string | undefined {

@@ -17,7 +17,7 @@ describe('queue: two writes to one file never overlap', () => {
       order.push('quick')
     })
     await Promise.all([slow, quick])
-    expect(order, '늦게 온 것이 먼저 끝나면 파일이 섞인다').toEqual(['slow', 'quick'])
+    expect(order, 'the later one finishing first would mix the files').toEqual(['slow', 'quick'])
   })
 
   it('hands each caller its own result', async () => {

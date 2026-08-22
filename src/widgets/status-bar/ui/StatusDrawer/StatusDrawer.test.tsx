@@ -61,7 +61,7 @@ describe('StatusDrawer says where you are and what it costs', () => {
 
   it('drops the numbers nobody acts on', () => {
     const html = draw()
-    expect(html, '토큰 4종 분해').not.toContain('76,424')
+    expect(html, 'four kinds of token, broken out').not.toContain('76,424')
     expect(html, 'turns').not.toContain('Turns')
     expect(html, 'duration').not.toContain('10.5s')
     expect(html, 'session id').not.toContain('f77f771b')
@@ -72,7 +72,7 @@ describe('StatusDrawer says where you are and what it costs', () => {
     const html = draw(fresh)
     expect(html).not.toContain('Context')
     expect(html).not.toContain('Cost')
-    expect(html, '자리는 그대로 있다').toContain('claude-opus-5[1m]')
+    expect(html, 'the place stays where it was').toContain('claude-opus-5[1m]')
   })
 })
 
@@ -95,10 +95,10 @@ describe('permission mode speaks only when it is not the ordinary one', () => {
 describe('the connector list answers which one is broken, not which ones are fine', () => {
   it('raises the one needing sign-in and leaves the healthy one off the list', () => {
     const html = draw()
-    expect(html, '제목이 이미 아는 접두사는 빼고 이름만 보인다').toContain('>Notion<')
+    expect(html, 'the heading knows the prefix already, so only the name shows').toContain('>Notion<')
     expect(html).not.toContain('claude.ai Notion')
     expect(html).toContain('Needs auth')
-    expect(html, '멀쩡한 건 줄을 차지하지 않는다').not.toContain('>playwright<')
+    expect(html, 'what is fine takes up no line').not.toContain('>playwright<')
   })
 
   it('counts the rest in one line rather than listing them', () => {
@@ -119,7 +119,7 @@ describe('the connector list answers which one is broken, not which ones are fin
     const html = draw(full, {
       connectors: [{ name: 'claude.ai Notion', where: 'https://mcp.notion.com/mcp', state: 'connected' }],
     })
-    expect(html, 'Recheck 가 실제로 뭔가를 고칠 수 있어야 한다').not.toContain('Needs auth')
+    expect(html, 'Recheck has to be able to fix something').not.toContain('Needs auth')
     expect(html).toContain('All 2 connected')
   })
 
@@ -130,7 +130,7 @@ describe('the connector list answers which one is broken, not which ones are fin
   it('makes no claim at all until the health check has come back', () => {
     const html = draw(full, { checked: false })
     expect(html).toContain('Checking…')
-    expect(html, '아직 모르는 것을 안다고 말하지 않는다').not.toContain('Needs auth')
+    expect(html, 'it does not claim to know what it does not know yet').not.toContain('Needs auth')
     expect(html).not.toContain('connected')
   })
 

@@ -6,7 +6,7 @@ describe('what counts as something stacked over the page', () => {
     expect(LAYER_SELECTOR).toContain('[role="dialog"]')
     expect(LAYER_SELECTOR).toContain('[role="alertdialog"]')
     expect(LAYER_SELECTOR).toContain('[role="menu"]')
-    expect(LAYER_SELECTOR, 'radix는 팝오버를 이 래퍼에 담는다').toContain(
+    expect(LAYER_SELECTOR, 'radix puts the popover in this wrapper').toContain(
       '[data-radix-popper-content-wrapper]',
     )
   })

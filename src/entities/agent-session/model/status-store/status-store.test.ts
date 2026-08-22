@@ -99,7 +99,7 @@ describe('statusStore: the last thing known to be true', () => {
   it('keeps what the chat already cost when the next message resumes it', () => {
     statusStore.restoreChat({ usd: 0.58 })
     statusStore.reset(true)
-    expect(statusStore.get().cost.usd, '이어 말했다고 값이 싸질 수는 없다').toBe(0.58)
+    expect(statusStore.get().cost.usd, 'going on talking cannot make it cheaper').toBe(0.58)
     statusStore.apply({ type: 'metrics', metrics: metrics(0.23) })
     expect(statusStore.get().cost.usd).toBeCloseTo(0.81, 5)
   })

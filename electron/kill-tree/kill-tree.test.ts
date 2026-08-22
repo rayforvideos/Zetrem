@@ -22,11 +22,11 @@ describe('stopping something stops its grandchildren too', () => {
 
     const rows = parsePsRows(execFileSync('ps', ['-Ao', 'pid=,ppid='], { encoding: 'utf8' }))
     const tree = descendantsOf(rows, parent.pid as number)
-    expect(tree.size, '부모와 손자 둘이 서야 한다').toBeGreaterThanOrEqual(3)
+    expect(tree.size, 'the parent and the grandchild both stand').toBeGreaterThanOrEqual(3)
 
     killTreeSync(parent.pid as number)
     await new Promise((resolve) => setTimeout(resolve, 500))
 
-    expect([...tree].filter(alive), '트리에 살아남은 것').toEqual([])
+    expect([...tree].filter(alive), 'what survived in the tree').toEqual([])
   })
 })

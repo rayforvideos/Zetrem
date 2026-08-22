@@ -18,7 +18,7 @@ describe('stockAgents: what the session lists, minus our own, is what Claude Cod
   })
 
   it('leaves out one the person wrote themselves, which Claude Code did not bring', () => {
-    expect(stockAgents(known, ['Joi'], ['Ray']), 'Ray 는 .claude/agents 에 직접 쓴 것이다').toEqual([
+    expect(stockAgents(known, ['Joi'], ['Ray']), 'Ray was written by hand into .claude/agents').toEqual([
       'Explore',
       'general-purpose',
       'Plan',

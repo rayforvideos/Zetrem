@@ -41,7 +41,7 @@ describe('closeSession: what the exit leaves behind', () => {
 
     closeSession({ reason: null, stopped: true, asks, childIds: new Set() })
 
-    expect(asks, '떠난 세션에 답할 수 있는 사람은 없다').toEqual([])
+    expect(asks, 'nobody can answer a session that has gone').toEqual([])
     expect(conversation.get().permission).toBeNull()
     expect(conversation.get().status).toBe('done')
   })
@@ -56,7 +56,7 @@ describe('closeSession: what the exit leaves behind', () => {
   it('does not call a stop you asked for trouble', () => {
     closeSession({ reason: crashed, stopped: true, asks: [], childIds: new Set() })
 
-    expect(conversation.get().trouble, '내가 세운 것을 사고라 부르지 않는다').toBe(false)
+    expect(conversation.get().trouble, 'a stop you asked for is not trouble').toBe(false)
     expect(conversation.get().turns.at(-1)?.text).toContain('the CLI fell over')
   })
 
@@ -78,7 +78,7 @@ describe('closeSession: what the exit leaves behind', () => {
 
     expect(statusStore.get().activity).toBe('idle')
     expect(sessionStore.find('a')?.status).toBe('done')
-    expect(sessionStore.find('b')?.status, '이 세션이 띄운 아이만 끝낸다').toBe('working')
+    expect(sessionStore.find('b')?.status, 'only the children this session sent out are ended').toBe('working')
     expect(childIds.size).toBe(0)
     expect(conversation.get().chores).toEqual([])
   })
@@ -91,7 +91,7 @@ describe('closeSession: what the exit leaves behind', () => {
     const turns = conversation.get().turns
     expect(turns[0]?.text).toBe('halfway through a thought')
     expect(turns[0]?.draft).toBe('')
-    expect(turns[1]?.role, '하던 말이 먼저 끝나고, 그 뒤에 종료 줄이 온다').toBe('system')
+    expect(turns[1]?.role, 'what was being said settles first, then the exit line').toBe('system')
   })
 })
 
@@ -116,7 +116,7 @@ describe('beginSession: the slate the next run starts on', () => {
     beginSession({ resumed: false, asks: [], sends: new Map(), childIds: new Set() })
 
     expect(conversation.get().status).toBe('working')
-    expect(conversation.get().trouble, '지난 사고가 새 대화까지 따라오지 않는다').toBe(false)
+    expect(conversation.get().trouble, "yesterday's trouble does not follow a new conversation").toBe(false)
   })
 
   it('keeps what the chat already cost when it is being resumed', () => {

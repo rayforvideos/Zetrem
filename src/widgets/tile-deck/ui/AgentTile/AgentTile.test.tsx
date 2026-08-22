@@ -109,7 +109,7 @@ describe('AgentTile', () => {
     expect(owner).toContain('opacity:0.85')
     expect(quiet).toContain('opacity:0.25')
     const mark = owner.slice(owner.indexOf('data-waiting'), owner.indexOf('data-waiting') + 260)
-    expect(mark, '기다림은 빛으로 부르지 움직임으로 부르지 않는다').not.toContain('animation')
+    expect(mark, 'waiting calls with light, not with movement').not.toContain('animation')
   })
 
   it('draws the waiting mark in the current colour, so it survives a lighter board', () => {
@@ -305,7 +305,7 @@ describe('AgentTile', () => {
       <AgentTile session={session()} rect={rect} delayMs={0} nowMs={0} />,
     )
     const box = html.slice(0, html.indexOf('data-presence'))
-    expect(box, '바깥 상자는 자리만 맡는다').toContain('transition')
+    expect(box, 'the outer box only holds the place').toContain('transition')
     expect(box).not.toContain('animation')
   })
 

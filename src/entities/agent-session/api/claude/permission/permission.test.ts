@@ -4,7 +4,7 @@ import { permissionAlwaysResult } from './permission'
 describe('permissionAlwaysResult: granting only what the dialog showed', () => {
   it('narrows a Bash grant to the exact command shown in the dialog', () => {
     const result = permissionAlwaysResult('Bash', { command: 'ls -la' })
-    expect(result.updatedPermissions[0].rules, '한 커맨드만 봤으니 그 커맨드만 허용해야 한다').toEqual([
+    expect(result.updatedPermissions[0].rules, 'one command was seen, so one command is allowed').toEqual([
       { toolName: 'Bash', ruleContent: 'ls -la' },
     ])
   })

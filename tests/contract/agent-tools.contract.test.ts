@@ -9,7 +9,7 @@ describe('what --agents does to the tools a session gets', () => {
       const led = await askInit(ORCHESTRATOR_ONLY)
       const builtin = (init: { tools: string[] }): string[] =>
         init.tools.filter((name) => !name.startsWith('mcp__')).sort()
-      expect(builtin(led), 'tools 를 적지 않으면 전부 물려받아야 한다').toEqual(builtin(bare))
+      expect(builtin(led), 'naming no tools inherits all of them').toEqual(builtin(bare))
     },
     CONTRACT_TIMEOUT_MS,
   )
@@ -23,7 +23,7 @@ describe('what --agents does to the tools a session gets', () => {
         '--agent',
         'zetrem',
       ])
-      expect(narrowed.tools.sort(), 'tools 는 허용 목록이지 추가 목록이 아니다').toEqual([
+      expect(narrowed.tools.sort(), 'tools is a list of what is allowed, not what is added').toEqual([
         'Bash',
         'Read',
       ])
@@ -46,7 +46,7 @@ describe('Task and Agent are one tool under two names', () => {
     'lists the crew tool as Task, whatever the model calls it in conversation',
     async () => {
       const led = await askInit(ORCHESTRATOR_ONLY)
-      expect(led.tools, '이름이 바뀌면 차단 목록도 따라 바뀌어야 한다').toContain('Task')
+      expect(led.tools, 'a renamed teammate takes the barred list with it').toContain('Task')
     },
     CONTRACT_TIMEOUT_MS,
   )
@@ -55,7 +55,7 @@ describe('Task and Agent are one tool under two names', () => {
     'takes the crew tool away when Task is disallowed',
     async () => {
       const gone = await askInit([...ORCHESTRATOR_ONLY, '--disallowedTools', 'Task'])
-      expect(gone.tools, 'Task 를 막으면 서브에이전트를 띄울 길이 사라진다').not.toContain('Task')
+      expect(gone.tools, 'barring Task leaves no way to send a subagent out').not.toContain('Task')
       expect(gone.tools).not.toContain('Agent')
     },
     CONTRACT_TIMEOUT_MS,
@@ -89,7 +89,7 @@ describe('--disallowedTools narrows who may be called', () => {
         'Agent(Explore)',
       ])
       expect(said).not.toMatch(/\bExplore\b/)
-      expect(said, '나머지는 그대로 부를 수 있어야 한다').toMatch(/general-purpose/)
+      expect(said, 'the rest stay callable').toMatch(/general-purpose/)
     },
     CONTRACT_TIMEOUT_MS,
   )

@@ -27,7 +27,7 @@ describe('Korean lives in the dictionary, not scattered through the app', () => 
         .split('\n')
         .some((line) => HANGUL.test(line) && !line.includes('가-힣') && !line.includes("'한국어'"))
     })
-    expect(found, '한국어는 사전에 모아 둔다. 흩어지면 어느 쪽이 진짜인지 알 수 없다').toEqual([])
+    expect(found, 'Korean lives in the catalogs; scattered, nobody knows which line is real').toEqual([])
   })
 
   it('writes the English line, never a key nobody can read', () => {
@@ -36,7 +36,7 @@ describe('Korean lives in the dictionary, not scattered through the app', () => 
         ([, key]) => `${path}: ${key}`,
       ),
     )
-    expect(invented, "t('sidebar.builtins') 같은 키를 만들지 않는다").toEqual([])
+    expect(invented, 'no invented keys like t(\'sidebar.builtins\')').toEqual([])
   })
 })
 
@@ -49,6 +49,6 @@ describe('numbers and dates follow the language being spoken', () => {
         if (locale !== undefined && !ENGLISH_LOCALES.has(locale)) wrong.push(`${path}: ${locale}`)
       }
     }
-    expect(wrong, '로케일은 say 가 정한다').toEqual([])
+    expect(wrong, 'the locale is say\'s to decide').toEqual([])
   })
 })

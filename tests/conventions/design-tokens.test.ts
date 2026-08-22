@@ -37,7 +37,7 @@ describe('shadcn holds the ruler, and we do not cut new notches', () => {
         stray.push(`${file.path}: ${match[0]}`)
       }
     }
-    expect(stray, 'text-xs · text-sm · text-base 를 쓴다').toEqual([])
+    expect(stray, 'use the type scale: text-xs, text-sm, text-base').toEqual([])
   })
 
   it('does not carve brightness by hand, and lets the tokens set colour', async () => {
@@ -50,7 +50,7 @@ describe('shadcn holds the ruler, and we do not cut new notches', () => {
         stray.push(`${file.path}: ${match[1]}`)
       }
     }
-    expect(stray, 'text-muted-foreground 처럼 뜻이 있는 토큰을 쓴다').toEqual([])
+    expect(stray, 'use a token that means something, like text-muted-foreground').toEqual([])
   })
 
   it('brings in no colour of its own, since only the faces have any', async () => {
@@ -61,14 +61,14 @@ describe('shadcn holds the ruler, and we do not cut new notches', () => {
       if (file.path.includes('agent-face')) continue
       for (const match of file.text.matchAll(PALETTE)) stray.push(`${file.path}: ${match[0].trim()}`)
     }
-    expect(stray, '색은 에이전트 얼굴에만 있다').toEqual([])
+    expect(stray, 'colour belongs to the agent faces and nowhere else').toEqual([])
   })
 })
 
 describe('the one colour that is not a face', () => {
   it('gives the Claude mark its own token rather than a hex written in place', async () => {
     const css = await readFile(join('src', 'app', 'styles', 'global.css'), 'utf8')
-    expect(css, 'Claude 의 공식 색은 이름을 가진다').toContain('--claude: #d97757')
+    expect(css, "Claude's own colour is kept under a name").toContain('--claude: #d97757')
     expect(css).toContain('--color-claude: var(--claude)')
   })
 
@@ -77,7 +77,7 @@ describe('the one colour that is not a face', () => {
     for (const file of await ourFiles()) {
       if (file.text.includes('text-claude') || file.text.includes('bg-claude')) worn.push(file.path)
     }
-    expect(worn, '브랜드 색은 그 브랜드를 가리킬 때만 쓴다').toEqual([
+    expect(worn, 'a brand colour is for naming that brand, nothing else').toEqual([
       join('src', 'widgets', 'usage-bar', 'ui', 'UsageBar', 'UsageBar.tsx'),
     ])
   })
@@ -102,7 +102,7 @@ describe('the ring that says where the keyboard is', () => {
         if (match[1] !== '2' && match[1] !== '0') stray.push(`${file.path}: ${match[0]}`)
       }
     }
-    expect(stray, '얇게 만들었으면 어디서나 얇아야 한다').toEqual([])
+    expect(stray, 'a hairline is a hairline everywhere').toEqual([])
   })
 
   it('keeps it solid enough to clear the readable mark, since a thin ring cannot be faint too', async () => {
@@ -112,7 +112,7 @@ describe('the ring that says where the keyboard is', () => {
         if (Number(match[1]) < 70) stray.push(`${file.path}: ${match[0]}`)
       }
     }
-    expect(stray, '50% 는 카드 위에서 2.18:1 이라 기준 미달이었다').toEqual([])
+    expect(stray, '50% came to 2.18:1 on a card, under the floor').toEqual([])
   })
 
   it('does not colour the border as well, which drew a second line around the first', async () => {

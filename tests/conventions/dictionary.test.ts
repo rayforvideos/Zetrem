@@ -18,7 +18,8 @@ function catalog(tongue: string): Line[] {
 }
 
 function slots(said: string): string[] {
-  // ICU 복수형은 언어마다 형태 수가 다르다. 이름 있는 자리만 센다.
+  // ICU plurals carry a different number of forms per language, so only the
+  // named slots are counted.
   return [...said.matchAll(/\{\s*([a-zA-Z0-9_]+)\s*[,}]/g)]
     .map(([, name]) => name ?? '')
     .filter((name) => name.length > 0)
@@ -44,7 +45,7 @@ describe('the catalogs are what the app actually says', () => {
       const strip = (po: string): string => po.replace(/"POT-Creation-Date:[^"]*"\r?\n/, '')
       expect(
         after.map(strip),
-        '문구를 고쳤으면 npm run i18n:extract 로 카탈로그를 맞춰야 한다',
+        'run npm run i18n:extract after changing what the app says',
       ).toEqual(before.map(strip))
     } finally {
       paths.forEach((path, at) => writeFileSync(path, before[at] ?? ''))
@@ -63,14 +64,14 @@ describe('a line that has been translated is translated properly', () => {
 
   it('never leaves the English standing in for the Korean', () => {
     const copied = done.filter((one) => one.id === one.said)
-    expect(copied.map((one) => one.id), '영어를 그대로 둔 줄은 번역하지 않은 것과 같다').toEqual([])
+    expect(copied.map((one) => one.id), 'a line left in English is a line nobody translated').toEqual([])
   })
 
   it('keeps every slot, or the name or number it carries goes missing', () => {
     const lost = done
       .filter((one) => slots(one.id).join() !== slots(one.said).join())
       .map((one) => one.id)
-    expect(lost, '{0} 이나 {you} 를 잃으면 값이 사라진 문장이 나온다').toEqual([])
+    expect(lost, 'losing {0} or {you} leaves a sentence with a hole in it').toEqual([])
   })
 })
 
@@ -85,6 +86,6 @@ describe('adding a language is dropping in a file', () => {
 
   it('leaves an untranslated line showing English rather than breaking', () => {
     const waiting = KO.filter((one) => one.said.length === 0).length
-    expect(Number.isInteger(waiting), `아직 ${waiting}줄 남았다`).toBe(true)
+    expect(Number.isInteger(waiting), `${waiting} lines still waiting`).toBe(true)
   })
 })

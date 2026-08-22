@@ -43,7 +43,7 @@ describe('what we say to a person uses ordinary punctuation', () => {
         stray.push(`${file.path}: ${line.trim().slice(0, 80)}`)
       }
     }
-    expect(stray, '마침표나 쉼표로 끊는다').toEqual([])
+    expect(stray, 'end the sentence, or take a comma').toEqual([])
   })
 
   it('holds the documents to the same rule, since a person reads those too', async () => {
@@ -55,7 +55,7 @@ describe('what we say to a person uses ordinary punctuation', () => {
         stray.push(`${name}: ${line.trim().slice(0, 80)}`)
       }
     }
-    expect(stray, '문서에서도 마침표나 쉼표로 끊는다').toEqual([])
+    expect(stray, 'the docs end a sentence too, or take a comma').toEqual([])
   })
 })
 

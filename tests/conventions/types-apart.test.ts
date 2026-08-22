@@ -33,7 +33,7 @@ describe('types do not live in the same file as logic', () => {
         stray.push(join(entry.dir, entry.name))
       }
     }
-    expect(stray, '타입은 <모듈>.types.ts 로 옮긴다').toEqual([])
+    expect(stray, 'a type belongs in <module>.types.ts').toEqual([])
   })
 
   it('exports no value from a types file, so deleting it changes nothing that runs', async () => {
@@ -43,7 +43,7 @@ describe('types do not live in the same file as logic', () => {
       const text = await readFile(join(entry.dir, entry.name), 'utf8')
       if (DECLARES_LOGIC.test(text)) stray.push(join(entry.dir, entry.name))
     }
-    expect(stray, '값이 필요하면 로직 파일로 간다').toEqual([])
+    expect(stray, 'anything with a value belongs in the logic file').toEqual([])
   })
 
   it('names a types file after its module', async () => {
@@ -60,7 +60,7 @@ describe('types do not live in the same file as logic', () => {
       )
       if (!owner) stray.push(join(entry.dir, entry.name))
     }
-    expect(stray, '<모듈>.ts 옆의 <모듈>.types.ts 여야 한다').toEqual([])
+    expect(stray, '<module>.types.ts sits beside <module>.ts').toEqual([])
   })
 })
 

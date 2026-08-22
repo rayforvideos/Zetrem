@@ -28,7 +28,7 @@ describe('the CLI is launched the one way that works on both platforms', () => {
         raw.push(`${path}:${at + 1} ${line.trim().slice(0, 70)}`)
       })
     }
-    expect(raw, 'launchFor 를 거치지 않으면 Windows 에서 .cmd 를 띄울 수 없다').toEqual([])
+    expect(raw, 'without launchFor, Windows cannot spawn a .cmd').toEqual([])
   })
 
   it('is a guard that fires on a spawn written the old way', () => {

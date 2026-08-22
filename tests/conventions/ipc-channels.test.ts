@@ -36,7 +36,7 @@ describe('the IPC bridge: a channel on one side only does nothing when pressed',
     ])
 
     const orphans = asked.filter((channel) => !served.includes(channel))
-    expect(orphans, '메인이 받지 않는 채널').toEqual([])
+    expect(orphans, 'a channel the main process never answers').toEqual([])
   })
 
   it('lets the renderer reach every channel main answers, since a bridge nobody crosses is dead code', async () => {
@@ -52,6 +52,6 @@ describe('the IPC bridge: a channel on one side only does nothing when pressed',
       ...channels(file.text, '(?<![.\\\\w])on'),
     ])
     const unreachable = served.filter((channel) => !asked.includes(channel))
-    expect(unreachable, '렌더러가 부르지 않는 채널').toEqual([])
+    expect(unreachable, 'a channel the renderer never calls').toEqual([])
   })
 })

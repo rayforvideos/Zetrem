@@ -27,7 +27,7 @@ describe('the focus mark belongs to the keyboard', () => {
     const guilty = (await styledFiles())
       .filter((file) => SHOWS_A_MARK.test(file.text))
       .map((file) => file.path)
-    expect(guilty, 'focus: 대신 focus-visible: 을 쓴다, 마우스로 눌러도 뜨기 때문이다').toEqual([])
+    expect(guilty, 'use focus-visible:, since focus: also fires on a mouse press').toEqual([])
   })
 
   it('does draw it on focus-visible, so tabbing is never invisible', async () => {
@@ -38,7 +38,7 @@ describe('the focus mark belongs to the keyboard', () => {
   it('does not turn the ring off for the quiet buttons, whose icons have no text to underline', async () => {
     const button = await readFile(join('src', 'shared', 'ui', 'button.tsx'), 'utf8')
     const quiet = button.slice(button.indexOf('quiet:'), button.indexOf('quiet:') + 260)
-    expect(quiet, '아이콘만 있는 조용한 버튼은 링이 없으면 탭했을 때 아무것도 안 보인다').not.toContain(
+    expect(quiet, 'a quiet icon button with no ring shows nothing when tabbed to').not.toContain(
       'focus-visible:ring-0',
     )
   })

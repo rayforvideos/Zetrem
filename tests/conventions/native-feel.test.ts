@@ -10,7 +10,7 @@ describe('it behaves like a native app', () => {
   it('puts a pointer cursor on anything pressable, which Tailwind v4 does not do for us', async () => {
     const text = await css()
     const rule = text.slice(text.indexOf('button,'), text.indexOf('cursor: pointer'))
-    expect(rule, '버튼과 메뉴·스위치·탭이 한 규칙에 묶여야 한다').toContain("[role='switch']")
+    expect(rule, 'buttons, menus, switches and tabs answer to one rule').toContain("[role='switch']")
     expect(text).toContain('cursor: pointer')
   })
 

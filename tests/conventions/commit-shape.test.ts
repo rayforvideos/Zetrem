@@ -43,13 +43,13 @@ describe('a commit says what kind it is', () => {
 
   it('names its type, so the log can be read at a glance', () => {
     const wrong = all.filter((one) => !TYPE.test(one.subject)).map((one) => `${one.sha} ${one.subject}`)
-    expect(wrong, 'feat: 처럼 종류를 붙인다. CONTRIBUTING.md 의 Commits 를 보라').toEqual([])
+    expect(wrong, 'name the kind, as in feat:. See Commits in CONTRIBUTING.md').toEqual([])
   })
 
   it('keeps the subject short enough to read in a list', () => {
     const long = all
       .filter((one) => one.subject.length > SUBJECT_MAX)
-      .map((one) => `${one.sha} (${one.subject.length}자)`)
-    expect(long, `제목은 ${SUBJECT_MAX}자 이내`).toEqual([])
+      .map((one) => `${one.sha} (${one.subject.length} chars)`)
+    expect(long, `keep the subject within ${SUBJECT_MAX} characters`).toEqual([])
   })
 })

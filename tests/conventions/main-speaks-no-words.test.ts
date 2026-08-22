@@ -51,7 +51,7 @@ describe('the main process says nothing a person reads', () => {
     const found = macroReach(sources(join(ROOT, 'electron')))
     expect(
       found,
-      '메인 프로세스는 매크로를 컴파일하지 못한다. 배럴 대신 모듈을 직접 가져와라',
+      'the main process cannot compile the macro. Import the module itself, not the barrel',
     ).toEqual([])
   })
 

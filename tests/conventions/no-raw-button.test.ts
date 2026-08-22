@@ -24,7 +24,7 @@ describe('there is one button', () => {
     const stray = (await ourFiles())
       .filter((file) => /<button[\s>]/.test(file.text))
       .map((file) => file.path)
-    expect(stray, 'shared/ui/button 의 Button 을 쓴다').toEqual([])
+    expect(stray, 'use the Button from shared/ui/button').toEqual([])
   })
 
   it('keeps no second button system built out of CSS', async () => {

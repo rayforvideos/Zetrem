@@ -61,7 +61,7 @@ describe('words are read when they are said, not when the file loads', () => {
     }
     expect(
       caught,
-      '모듈 최상위 t`…` 는 켤 때 터진다. msg`…` 로 두고 i18n._() 로 읽어라',
+      'a t`…` at module top level runs before the catalogs do. Hold it as msg`…` and read it with i18n._()',
     ).toEqual([])
   })
 

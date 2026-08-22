@@ -37,7 +37,7 @@ describe('a test lives in its own module folder', () => {
       )
       if (!owns) stray.push(join(entry.dir, entry.name))
     }
-    expect(stray, 'example/example.ts 옆에 example/example.test.ts 꼴이어야 한다').toEqual([])
+    expect(stray, 'a module keeps its test beside it: example/example.test.ts').toEqual([])
   })
 
   it('leaves no tested module sitting flat outside its folder', async () => {
@@ -80,7 +80,7 @@ describe('layers lean one way only', () => {
         }
       }
     }
-    expect(stray, 'shared 는 entities 를, widgets 는 pages 를 모른다').toEqual([])
+    expect(stray, 'shared knows no entities, widgets know no pages').toEqual([])
   })
 
   it('keeps shared/ui for shadcn, with no component that knows the domain', async () => {
@@ -92,6 +92,6 @@ describe('layers lean one way only', () => {
       const text = await readFile(join('src', 'shared', 'ui', name), 'utf8')
       if (/from '@\/(entities|widgets|pages|app)/.test(text)) stray.push(name)
     }
-    expect(stray, '도메인을 아는 것은 그 도메인 곁으로 간다').toEqual([])
+    expect(stray, 'what knows a domain lives beside that domain').toEqual([])
   })
 })

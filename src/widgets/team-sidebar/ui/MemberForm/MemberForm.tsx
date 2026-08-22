@@ -1,9 +1,11 @@
 import { useState } from 'react'
 import { ChevronDown, FileText, Paperclip, X } from 'lucide-react'
+import { addReading, readingPath } from '@/entities/agent-def'
 import type { AgentDefDraft } from '@/entities/agent-def'
 import { MODELS } from '@/entities/agent-session'
 import type { CharacterId } from '@/entities/agent-session'
 import { AgentSprite } from '@/entities/agent-session/ui/AgentSprite/AgentSprite'
+import { cn } from '@/shared/lib/cn'
 import { Button } from '@/shared/ui/button'
 import {
   Dialog,
@@ -56,14 +58,27 @@ export function MemberForm({ initial, knownTools, onSubmit, onCancel }: MemberFo
         ? t`Write what they do, and how`
         : null
 
+  const [over, setOver] = useState(false)
+  const [refused, setRefused] = useState<string | null>(null)
+
   function attach(): void {
     void window.desk
       .pickKnowledge()
-      .then((picks) => {
-        if (picks.length === 0) return
-        setKnowledge((held) => [...held, ...picks.filter((path) => !held.includes(path))])
-      })
+      .then((picks) => setKnowledge((held) => addReading(held, picks)))
       .catch(() => undefined)
+  }
+
+  // Dropping the file is how a person hands over a document everywhere else,
+  // and the picker cannot reach a folder the Finder hides anyway. A drop that
+  // adds nothing says so: silence reads as a broken drop target.
+  function take(files: File[]): void {
+    const paths = files.map((file) => window.desk.pathForFile(file))
+    setKnowledge((held) => {
+      const next = addReading(held, paths)
+      const turned = paths.filter((path) => !next.includes(path))
+      setRefused(turned.length === 0 ? null : readingPath(turned[0]!).name)
+      return next
+    })
   }
 
   return (
@@ -93,7 +108,7 @@ export function MemberForm({ initial, knownTools, onSubmit, onCancel }: MemberFo
                 {initial === null ? t`New teammate` : t`Edit ${initial.name}`}
               </DialogTitle>
               <DialogDescription>
-                {t`What you write here is the whole of what they know when they start.`}
+                {t`This is everything they know when they start.`}
               </DialogDescription>
             </span>
           </DialogHeader>
@@ -109,7 +124,7 @@ export function MemberForm({ initial, knownTools, onSubmit, onCancel }: MemberFo
                   value={name}
                   onChange={(event) => setName(event.target.value)}
                   onBlur={(event) => setSettledName(event.target.value)}
-                  placeholder="Siena"
+                  placeholder={t`A name to call them by`}
                   aria-invalid={missing !== null && name.trim().length === 0}
                   autoFocus
                 />
@@ -120,7 +135,7 @@ export function MemberForm({ initial, knownTools, onSubmit, onCancel }: MemberFo
                   id="member-description"
                   value={description}
                   onChange={(event) => setDescription(event.target.value)}
-                  placeholder={t`Reviews the front end`}
+                  placeholder={t`The kind of work they should get`}
                 />
                 <Note>{t`The orchestrator reads this to pick who gets the job.`}</Note>
               </Row>
@@ -177,29 +192,51 @@ export function MemberForm({ initial, knownTools, onSubmit, onCancel }: MemberFo
                   </PopoverContent>
                 </Popover>
               </Row>
+
             </aside>
 
-            <div className="flex min-h-0 min-w-0 flex-1 flex-col gap-4 px-6 py-5">
-              <div className="flex min-h-0 flex-1 flex-col gap-2">
-                <Label htmlFor="member-prompt">{t`Their brief`}</Label>
+            <div
+              className="flex min-h-0 min-w-0 flex-1 flex-col gap-4 px-6 py-5"
+              onDragOver={(event) => {
+                if (!event.dataTransfer.types.includes('Files')) return
+                event.preventDefault()
+                setOver(true)
+                setRefused(null)
+              }}
+              onDragLeave={(event) => {
+                if (event.currentTarget.contains(event.relatedTarget as Node | null)) return
+                setOver(false)
+              }}
+              onDrop={(event) => {
+                if (!event.dataTransfer.types.includes('Files')) return
+                event.preventDefault()
+                setOver(false)
+                take([...event.dataTransfer.files])
+              }}
+            >
+              <div className="flex min-h-0 flex-[3] flex-col gap-2">
+                <Label htmlFor="member-prompt">{t`Their instructions`}</Label>
                 <Textarea
                   id="member-prompt"
                   value={prompt}
                   onChange={(event) => setPrompt(event.target.value)}
-                  placeholder={
-                    t`You take the front end. Read the markup before you judge the styles.` +
-                    '\n\n' +
-                    t`Say what you would change and why, in that order.`
-                  }
+                  placeholder={t`What they do, how to go about it, and what to hand back.`}
                   aria-invalid={missing !== null && prompt.trim().length === 0}
                   className="zt-scroll min-h-0 flex-1 resize-none font-mono text-sm leading-relaxed"
                 />
-                <Note>{t`Standing instructions. Write it the way you would brief a person.`}</Note>
+                <Note>{t`This always applies. Write it the way you would explain the job to a person.`}</Note>
               </div>
 
-              <div className="flex flex-none flex-col gap-2">
+              <div className="flex min-h-0 flex-1 flex-col gap-2">
                 <div className="flex items-center justify-between gap-2">
-                  <Label>{t`Reading`}</Label>
+                  <Label>
+                    {t`Reading list`}
+                    {knowledge.length > 0 && (
+                      <span className="ml-2 font-mono text-xs text-muted-foreground">
+                        {knowledge.length}
+                      </span>
+                    )}
+                  </Label>
                   <Button
                     type="button"
                     variant="ghost"
@@ -212,40 +249,75 @@ export function MemberForm({ initial, knownTools, onSubmit, onCancel }: MemberFo
                   </Button>
                 </div>
                 {knowledge.length === 0 ? (
-                  <Note>
-                    {t`Documents they are told to read first. Long ones cost nothing until they open them.`}
-                  </Note>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    data-dropzone
+                    data-over={over || undefined}
+                    onClick={attach}
+                    className={cn(
+                      'h-auto min-h-0 flex-1 rounded-xl border border-dashed border-border text-xs font-normal text-muted-foreground transition-colors hover:bg-card',
+                      over && 'border-foreground/40 bg-card',
+                    )}
+                  >
+                    {t`Drop a document here, or click to pick one.`}
+                  </Button>
                 ) : (
-                  <div className="zt-scroll flex max-h-28 flex-col gap-1 overflow-y-auto pr-2.5">
-                    {knowledge.map((path) => (
-                      <div
-                        key={path}
-                        className="flex items-center gap-2 rounded-lg bg-card px-2.5 py-1.5 text-xs"
-                      >
-                        <FileText className="size-3.5 flex-none text-muted-foreground" />
-                        <span className="min-w-0 flex-1 truncate font-mono">{path}</span>
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="icon-xs"
-                          aria-label={t`Remove ${path}`}
-                          onClick={() =>
-                            setKnowledge((held) => held.filter((entry) => entry !== path))
-                          }
-                          className="rounded-md text-muted-foreground"
+                  <div
+                    data-over={over || undefined}
+                    className={cn(
+                      'zt-scroll flex min-h-0 flex-1 flex-col gap-1 overflow-y-auto rounded-xl border border-dashed border-transparent p-1 pr-2.5 transition-colors',
+                      over && 'border-border bg-card/40',
+                    )}
+                  >
+                    {knowledge.map((path) => {
+                      const read = readingPath(path)
+                      return (
+                        <div
+                          key={path}
+                          title={path}
+                          className="flex items-center gap-2 rounded-lg bg-card px-2.5 py-1.5"
                         >
-                          <X />
-                        </Button>
-                      </div>
-                    ))}
+                          <FileText className="size-3.5 flex-none text-muted-foreground" />
+                          <span className="min-w-0 flex-1 truncate text-xs">
+                            {read.name}
+                            {read.where.length > 0 && (
+                              <span className="ml-2 font-mono text-xs text-muted-foreground">
+                                {read.where}
+                              </span>
+                            )}
+                          </span>
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="icon-xs"
+                            aria-label={t`Remove ${read.name}`}
+                            onClick={() =>
+                              setKnowledge((held) => held.filter((entry) => entry !== path))
+                            }
+                            className="rounded-md text-muted-foreground"
+                          >
+                            <X />
+                          </Button>
+                        </div>
+                      )
+                    })}
                   </div>
                 )}
+                <Note>
+                  {refused === null
+                    ? t`Documents they read first. Long ones cost nothing until they open them.`
+                    : t`${refused} is not something they can read. Notes and data files only.`}
+                </Note>
               </div>
             </div>
           </div>
 
           <DialogFooter className="flex-none border-t border-border px-6 py-4 sm:justify-between">
-            <span className="text-xs text-muted-foreground">
+            <span
+              role={missing === null ? undefined : 'alert'}
+              className={cn('text-xs', missing === null ? 'text-muted-foreground' : 'text-destructive')}
+            >
               {missing ??
                 (initial === null
                   ? t`A running session cannot call them. Restart it, or they join the next one.`

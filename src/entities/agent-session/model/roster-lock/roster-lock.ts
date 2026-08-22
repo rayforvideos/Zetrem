@@ -2,9 +2,11 @@ import type { Person, RosterLock } from './roster-lock.types'
 
 export const ORCHESTRATOR = 'zetrem'
 
+// Tools that belong to a Claude Code that runs itself, not to a session a
+// person is watching. SendMessage is not among them: a teammate handing work
+// to another teammate is the point, and the board draws that exchange.
 const ELSEWHERE = [
   'Workflow',
-  'SendMessage',
   'ListAgents',
   'CronCreate',
   'CronDelete',

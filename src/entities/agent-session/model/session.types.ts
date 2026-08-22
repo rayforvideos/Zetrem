@@ -43,4 +43,6 @@ export type Call = {
 export type TranscriptEntry = {
   role: 'user' | 'assistant'
   text: string
+  // Set when the words came from another teammate rather than the orchestrator.
+  from?: string
 }

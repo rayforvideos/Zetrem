@@ -12,6 +12,17 @@ export type ChildTurnEvent =
   | { type: 'childSay'; toolUseId: string; role: 'user' | 'assistant'; text: string }
   | { type: 'childStream'; toolUseId: string; callId: string; line: string }
   | {
+      // One teammate speaking to another. The CLI carries the exchange in the
+      // sender's tool call and nowhere else: the agent on the other end is
+      // woken without ever being handed the words, so this is the only place
+      // the message itself can be read.
+      type: 'childSent'
+      toolUseId: string
+      callId: string
+      to: string
+      message: string
+    }
+  | {
       type: 'childCallDone'
       toolUseId: string
       callId: string

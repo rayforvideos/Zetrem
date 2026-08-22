@@ -1,5 +1,5 @@
 import { absorbs, resumedAgent, sessionStore } from '@/entities/agent-session'
-import type { ClaudeTurnEvent, TranscriptEntry } from '@/entities/agent-session'
+import type { AgentSession, ClaudeTurnEvent, TranscriptEntry } from '@/entities/agent-session'
 import { shapeOfLine } from '@/shared/lib/tool-line/tool-line'
 import { resultNote } from '@/shared/lib/tool-shape/tool-shape'
 import { clip } from '@/shared/lib/clip/clip'
@@ -73,6 +73,21 @@ export function applyCrewEvent(turn: ClaudeTurnEvent, refs: AgentEventRefs): voi
       if (!refs.childIds.has(turn.toolUseId) || closedForGood(turn.toolUseId)) return
       wake(turn.toolUseId)
       return sessionStore.beginCall(turn.toolUseId, { id: turn.callId, line: turn.line })
+    case 'childSent': {
+      if (!refs.childIds.has(turn.toolUseId)) return
+      // SendMessage addresses an agent by its id, which is its task id, so the
+      // tile on the other end is found the same way a task event finds one.
+      const heard = sessionStore.findByTask(turn.to)
+      if (heard === null || heard.id === turn.toolUseId) return
+      const said = turn.message.trim()
+      const teller = sessionStore.find(turn.toolUseId)?.label ?? ''
+      // Only the sender's own call carries the words: the agent being woken is
+      // handed nothing, so the message is written onto its tile from here.
+      if (said.length > 0) {
+        sessionStore.appendTranscript(heard.id, { role: 'user', text: said, from: teller })
+      }
+      return
+    }
     case 'childCallDone':
       if (!refs.childIds.has(turn.toolUseId)) return
       return closeCall(turn.toolUseId, turn.callId, turn.failed, turn.text)
@@ -131,8 +146,28 @@ export function applyCrewEvent(turn: ClaudeTurnEvent, refs: AgentEventRefs): voi
   }
 }
 
+// The orchestrator speaking to a teammate. The words are only in the call, so
+// they are written onto that teammate's tile here, the same as a message from
+// another teammate — the difference is only where the line starts.
 export function remember(toolUseId: string, input: unknown, refs: AgentEventRefs): void {
-  refs.sends.set(toolUseId, addressee(input))
+  const held = input as Record<string, unknown> | null
+  const message = typeof held?.message === 'string' ? held.message : ''
+  const to = addressee(input)
+  refs.sends.set(toolUseId, { to, message })
+  const heard = seatOf(to)
+  if (heard === null) return
+  const said = message.trim()
+  if (said.length > 0) {
+    sessionStore.appendTranscript(heard.id, { role: 'user', text: said, from: t`the orchestrator` })
+  }
+}
+
+// An agent is addressed by the id the CLI gave it, which is also its task id.
+// A tile already stands for it; opening a second one on the raw id is the
+// duplicate that used to appear on the board named after the id itself.
+function seatOf(to: string): AgentSession | null {
+  if (to.length === 0) return null
+  return sessionStore.findByTask(to) ?? sessionStore.find(to)
 }
 
 export function wakeResumed(toolUseId: string, stdout: string, refs: AgentEventRefs): void {
@@ -141,12 +176,14 @@ export function wakeResumed(toolUseId: string, stdout: string, refs: AgentEventR
   refs.sends.delete(toolUseId)
   const agent = resumedAgent(stdout)
   if (agent === null) return
-  refs.childIds.add(agent.id)
-  if (sessionStore.find(agent.id) !== null) {
-    sessionStore.patch(agent.id, { status: 'working' })
+  const held = seatOf(agent.id) ?? seatOf(called.to)
+  if (held !== null) {
+    refs.childIds.add(held.id)
+    sessionStore.patch(held.id, { status: 'working' })
     return
   }
-  const name = called.length > 0 ? called : agent.name
+  refs.childIds.add(agent.id)
+  const name = called.to.length > 0 ? called.to : agent.name
   sessionStore.open({
     id: agent.id,
     runnerId: 'subagent',
@@ -204,6 +241,14 @@ function note(toolUseId: string, tool: string): void {
   const id = `${tool}-${stream.length}`
   sessionStore.beginCall(toolUseId, { id, line: tool })
   sessionStore.endCall(toolUseId, id, { failed: false, note: '' })
+}
+
+// A new session is a new set of teammates, so everything held between events
+// is stale. The bash map especially: an owner whose shell is never released
+// swallows every completed that follows, and its tile never closes.
+export function forgetCrew(): void {
+  ownedBash.clear()
+  pendingTasks.clear()
 }
 
 // Task ids the CLI announced before the tool_use block streamed in, waiting

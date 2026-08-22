@@ -103,9 +103,14 @@ describe('the orchestrator is given no way to work off screen', () => {
 
   it('takes away the ones that hand work to something the app cannot show', () => {
     const gone = barred(agentsArgs([person()], lock, boss))
-    for (const name of ['Workflow', 'SendMessage', 'ListAgents', 'RemoteTrigger']) {
+    for (const name of ['Workflow', 'ListAgents', 'RemoteTrigger']) {
       expect(gone, name).toContain(name)
     }
+  })
+
+  it('leaves SendMessage alone, since the board draws teammate to teammate', () => {
+    const gone = barred(agentsArgs([person()], lock, boss))
+    expect(gone).not.toContain('SendMessage')
   })
 
   it('never bars Task, which is the crew tool under its other name', () => {

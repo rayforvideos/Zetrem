@@ -85,13 +85,18 @@ module.exports = {
   "artifactName": "${productName}-${version}-${arch}.${ext}",
   // electron-updater in the packaged app reads this to know where releases
   // live; it also makes electron-builder emit the latest*.yml metadata the
-  // updater compares versions against. Publishing itself stays a manual
-  // `--publish always` with a GH_TOKEN at release time.
+  // updater compares versions against. On a tag the Windows installer is
+  // published by CI; the mac one is published from wherever the signing
+  // certificate is, with `--publish always` and a GH_TOKEN.
   "publish": [
     {
       "provider": "github",
       "owner": "rayforvideos",
-      "repo": "Zetrem"
+      "repo": "Zetrem",
+      // A draft is invisible to anyone not signed in, and the download page
+      // reads the public list, so a draft release is a release nobody gets.
+      // Every release so far has gone out as a prerelease; this says so.
+      "releaseType": "prerelease"
     }
   ]
 }

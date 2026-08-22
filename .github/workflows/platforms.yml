@@ -90,6 +90,9 @@ jobs:
   package:
     name: package (${{ matrix.os }})
     runs-on: ${{ matrix.os }}
+    # Writing the release is the whole point on a tag.
+    permissions:
+      contents: write
     strategy:
       fail-fast: false
       matrix:
@@ -104,11 +107,18 @@ jobs:
       - name: Package
         # No certificates on a runner, so this builds unsigned. It is the build
         # that is being tested, not the signature.
+        #
+        # On a tag the Windows build is the release build: it is unsigned either
+        # way, so there is nothing a runner can do worse than a laptop, and the
+        # download page only offers a release that carries both installers. The
+        # mac one stays a test here, because signing and notarising happen where
+        # the certificate is.
         env:
           CSC_IDENTITY_AUTO_DISCOVERY: 'false'
-        # --publish never: on a runner electron-builder otherwise tries to publish
-        # a release and stops for want of a token.
-        run: npm run ${{ matrix.os == 'windows-latest' && 'package:win' || 'package:mac' }} -- --publish never
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: >-
+          npm run ${{ matrix.os == 'windows-latest' && 'package:win' || 'package:mac' }} --
+          --publish ${{ matrix.os == 'windows-latest' && startsWith(github.ref, 'refs/tags/v') && 'always' || 'never' }}
       - name: What came out
         shell: bash
         run: ls -la release/ | head -20

@@ -71,7 +71,7 @@ export function AddConnector({
             <Input
               value={name}
               onChange={(event) => setName(event.target.value)}
-              placeholder="sentry"
+              placeholder={t`A short name for it`}
               aria-label={t`Connector name`}
               aria-invalid={showing?.field === 'name'}
               className="h-8 w-40 flex-none rounded-lg text-sm"
@@ -80,7 +80,7 @@ export function AddConnector({
             <Input
               value={url}
               onChange={(event) => setUrl(event.target.value)}
-              placeholder="https://mcp.sentry.dev/mcp"
+              placeholder="https://example.com/mcp"
               aria-label={t`Connector address`}
               aria-invalid={showing?.field === 'url'}
               className="h-8 rounded-lg text-sm"

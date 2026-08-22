@@ -70,6 +70,6 @@ export function useAgentDefs() {
 function reasonOf(cause: unknown): string {
   const text = cause instanceof Error ? cause.message : String(cause)
   return text.includes(t`No handler registered`)
-    ? t`Restart Zetrem. This build does not know that yet.`
+    ? t`Restart Zetrem. This version does not know about it yet.`
     : text
 }

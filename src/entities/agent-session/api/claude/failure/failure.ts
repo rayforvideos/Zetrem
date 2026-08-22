@@ -4,7 +4,7 @@ import type { MessageDescriptor } from '@lingui/core'
 const REASON: Record<string, MessageDescriptor> = {
   error_max_turns: msg`It reached the limit on how many turns one message may take`,
   error_max_budget_usd: msg`It reached the spending limit set for this run`,
-  error_max_structured_output_retries: msg`It could not produce the shape the answer had to take`,
+  error_max_structured_output_retries: msg`It could not put the answer in the format that was asked for`,
   error_during_execution: msg`Something went wrong while it was working`,
   error: msg`Something went wrong`,
 }

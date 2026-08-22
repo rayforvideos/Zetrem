@@ -1,6 +1,7 @@
-import { relative, resolve } from 'node:path'
+import { resolve } from 'node:path'
 import { BrowserWindow, app, dialog, session, shell } from 'electron'
 import { CHROME_TOP, MIN_WINDOW, TRAFFIC_LIGHT } from '@/shared/config/theme'
+import { READABLE, shortPath } from '@/entities/agent-def'
 import { killAllAgents, registerAgentHost } from './agent-host/agent-host'
 import { chromeNow, followScheme, wearTheme } from './app-theme/app-theme'
 import { registerAttachments } from './attachments/attachments'
@@ -138,10 +139,10 @@ handle('agents:pickKnowledge', async (): Promise<string[]> => {
   const result = await dialog.showOpenDialog({
     properties: ['openFile', 'multiSelections'],
     defaultPath: project ?? undefined,
-    filters: [{ name: 'Notes', extensions: ['md', 'mdx', 'txt', 'json', 'yaml', 'yml'] }],
+    filters: [{ name: 'Notes', extensions: [...READABLE] }],
   })
   if (result.canceled) return []
-  return result.filePaths.map((path) => (project ? relative(project, path) : path))
+  return result.filePaths.map((path) => shortPath(path, project))
 })
 
 const primary = app.requestSingleInstanceLock()

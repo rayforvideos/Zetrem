@@ -16,6 +16,7 @@ function readUsage(): void {
 export function useSessionProbe(
   config: Omit<RunConfig, 'persona'>,
   wanted: boolean,
+  project: string | null,
   awake = false,
   busy = false,
 ): void {
@@ -33,12 +34,21 @@ export function useSessionProbe(
       .keptUsage()
       .then(learnKeptUsage)
       .catch(() => undefined)
+    readUsage()
+  }, [wanted])
+
+  // The probe runs claude in the project, so which project it is changes the
+  // answer: a first launch asks before one is picked, and the roster it learns
+  // then knows nothing of the project's own agents. Asking again when the
+  // project lands is what keeps the board honest — and what saves a first
+  // launch whose probe came back with nothing.
+  useEffect(() => {
+    if (!wanted) return
     void window.desk
       .probeSession(held.current)
       .then(learnSession)
       .catch(() => undefined)
-    readUsage()
-  }, [wanted])
+  }, [wanted, project])
 
   useEffect(() => {
     if (!awake) return undefined

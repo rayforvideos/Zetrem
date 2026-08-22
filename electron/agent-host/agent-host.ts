@@ -1,7 +1,6 @@
 import { spawn } from 'node:child_process'
 import type { ChildProcessWithoutNullStreams } from 'node:child_process'
 import { mkdirSync } from 'node:fs'
-import { join } from 'node:path'
 import { app } from 'electron'
 import { agentEnv } from '@/shared/lib/shell-env/shell-env'
 import { agentArgs } from '@/entities/agent-session/model/run-config/run-config'
@@ -17,6 +16,7 @@ import { killTree, killTreeSync } from '../kill-tree/kill-tree'
 import { errorTail } from '../error-tail/error-tail'
 import { tell } from '../tell/tell'
 import { launchFor } from '../spawn-claude/spawn-claude'
+import { scratchWorkspace } from '../workspace-dir/workspace-dir'
 import { dropSends, holdSend, releaseSends } from '../pending-sends/pending-sends'
 import type { PendingSend } from '../pending-sends/pending-sends.types'
 
@@ -82,7 +82,7 @@ export function registerAgentHost(): void {
     let workspace: string
     try {
       const project = await recallProject()
-      workspace = project ?? join(app.getPath('userData'), 'agent-workspace')
+      workspace = project ?? scratchWorkspace(app.getPath('userData'))
       const launch = launchFor(
         await claudeBin(),
         agentArgs({ ...config, persona: PERSONA, orchestrator: ORCHESTRATOR_PROMPT }),

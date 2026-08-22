@@ -145,6 +145,40 @@ handle('agents:pickKnowledge', async (): Promise<string[]> => {
   return result.filePaths.map((path) => shortPath(path, project))
 })
 
+// The window holds text somebody else's agent wrote, including markdown that
+// can name any URL it likes. Nothing here loads from the network on purpose:
+// the page and everything it needs ship inside the app, and it talks to the
+// main process over IPC. Saying so out loud means a remote script or a tracking
+// pixel that finds its way into the page does not get to run or phone home.
+//
+// Styles are the one exception: Tailwind writes a style element, and inline
+// style attributes are all over the components.
+const POLICY = [
+  "default-src 'self'",
+  "script-src 'self'",
+  "style-src 'self' 'unsafe-inline'",
+  "img-src 'self' data: blob:",
+  "font-src 'self' data:",
+  "media-src 'self' blob:",
+  "connect-src 'self'",
+  "object-src 'none'",
+  "frame-src 'none'",
+  "base-uri 'none'",
+  "form-action 'none'",
+].join('; ')
+
+// Only where the page is the built one. The dev server needs its own websocket
+// and an eval to hot-reload, and locking that down would be locking down a page
+// nobody ships.
+function guardThePage(): void {
+  if (process.env.ELECTRON_RENDERER_URL) return
+  session.defaultSession.webRequest.onHeadersReceived((details, done) => {
+    done({
+      responseHeaders: { ...details.responseHeaders, 'Content-Security-Policy': [POLICY] },
+    })
+  })
+}
+
 const primary = app.requestSingleInstanceLock()
 if (!primary) {
   app.quit()
@@ -178,6 +212,7 @@ if (!primary) {
         grant(false),
       )
       session.defaultSession.setPermissionCheckHandler(() => false)
+      guardThePage()
       wearTheName()
       // The scheme has to be settled before the window exists, or the first paint
       // is the wrong colour and the page opens under the machine's scheme.

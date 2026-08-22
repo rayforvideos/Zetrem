@@ -107,18 +107,32 @@ jobs:
       - name: Package
         # No certificates on a runner, so this builds unsigned. It is the build
         # that is being tested, not the signature.
-        #
-        # On a tag the Windows build is the release build: it is unsigned either
-        # way, so there is nothing a runner can do worse than a laptop, and the
-        # download page only offers a release that carries both installers. The
-        # mac one stays a test here, because signing and notarising happen where
-        # the certificate is.
         env:
           CSC_IDENTITY_AUTO_DISCOVERY: 'false'
+        # --publish never: electron-builder's own uploader raced itself here and
+        # left a release holding a 100KB blockmap and no installer. The upload
+        # is its own step below, where it either works or fails the job.
+        run: npm run ${{ matrix.os == 'windows-latest' && 'package:win' || 'package:mac' }} -- --publish never
+
+      # Windows is unsigned wherever it is built, so a runner is as good a place
+      # as any, and the download page only offers a release carrying both
+      # installers. The mac one is published from wherever the certificate is.
+      - name: Publish the Windows installer
+        if: matrix.os == 'windows-latest' && startsWith(github.ref, 'refs/tags/v')
+        shell: bash
+        env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: >-
-          npm run ${{ matrix.os == 'windows-latest' && 'package:win' || 'package:mac' }} --
-          --publish ${{ matrix.os == 'windows-latest' && startsWith(github.ref, 'refs/tags/v') && 'always' || 'never' }}
+        run: |
+          tag="${GITHUB_REF_NAME}"
+          gh release view "$tag" >/dev/null 2>&1 ||
+            gh release create "$tag" --prerelease --title "${tag#v}" --generate-notes
+          gh release upload "$tag" \
+            release/Zetrem-*-x64.exe \
+            release/Zetrem-*-x64.exe.blockmap \
+            release/latest.yml \
+            --clobber
+          gh release view "$tag" --json assets --jq '.assets[].name'
+
       - name: What came out
         shell: bash
         run: ls -la release/ | head -20

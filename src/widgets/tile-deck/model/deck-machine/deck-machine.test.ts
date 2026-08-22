@@ -162,3 +162,18 @@ describe('deckReducer: openOne, one subagent tile at a time', () => {
     expect(deckReducer(solo, { type: 'openOne', id: 'x' })).toBe(solo)
   })
 })
+
+describe('a teammate that finishes while the board is still fanning out', () => {
+  it('is taken off rather than left standing when the fan settles', () => {
+    let state = deckReducer(INITIAL_DECK, { type: 'launch', ids: ['a', 'b'] })
+    state = deckReducer(state, { type: 'closeOne', id: 'a' })
+    state = deckReducer(state, { type: 'fanSettled' })
+    expect(state).toEqual({ kind: 'fanned', ids: ['b'], closing: [] })
+  })
+
+  it('ignores a close for somebody who was never on the board', () => {
+    const fanning = deckReducer(INITIAL_DECK, { type: 'launch', ids: ['a'] })
+    expect(deckReducer(fanning, { type: 'closeOne', id: 'zz' })).toBe(fanning)
+  })
+})
+

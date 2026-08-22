@@ -10,12 +10,18 @@ export function deckReducer(state: DeckState, event: DeckEvent): DeckState {
       }
       return state
 
-    case 'fanning':
+    case 'fanning': {
       if (event.type === 'fanSettled') return { kind: 'fanned', ids: state.ids, closing: [] }
       if (event.type === 'openOne' && !state.ids.includes(event.id)) {
         return { kind: 'fanning', ids: [...state.ids, event.id] }
       }
+      // A teammate can finish inside the fan, and dropping that close leaves a
+      // tile on the board for a session nobody is running any more.
+      if (event.type === 'closeOne' && state.ids.includes(event.id)) {
+        return { kind: 'fanning', ids: without(state.ids, event.id) }
+      }
       return state
+    }
 
     case 'fanned': {
       if (event.type === 'openOne') {

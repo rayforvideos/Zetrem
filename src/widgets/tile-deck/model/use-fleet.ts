@@ -5,7 +5,7 @@ import { closingIds, visibleIds } from './deck-machine/deck-machine'
 import type { DeckState } from './deck-machine/deck-machine.types'
 import { roomToFan } from '../lib/grid/grid'
 import type { Viewport } from '../lib/grid/grid.types'
-import { arrived, retired } from './fleet/fleet'
+import { arrived, orphaned, retired } from './fleet/fleet'
 
 type Deck = {
   state: DeckState
@@ -35,6 +35,7 @@ export function useFleet(
 
   useEffect(() => {
     const onScreen = new Set(visibleIds(state))
+    for (const id of orphaned(children, onScreen)) closeOne(id)
     for (const id of retired(children, onScreen, nowMs, TILE_MIN_DWELL_MS)) closeOne(id)
   }, [children, state, nowMs])
 }

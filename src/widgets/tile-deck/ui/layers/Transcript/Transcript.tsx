@@ -3,6 +3,7 @@ import type { CSSProperties } from 'react'
 import type { TranscriptEntry } from '@/entities/agent-session'
 import { Markdown } from '@/shared/markdown/Markdown/Markdown'
 import { atEnd } from '@/shared/lib/scroll-state/scroll-state'
+import { t } from '@lingui/core/macro'
 
 type TranscriptProps = { entries: TranscriptEntry[] }
 
@@ -39,7 +40,12 @@ export function Transcript({ entries }: TranscriptProps) {
           data-said={entry.role}
           style={entry.role === 'user' ? userStyle : saidStyle}
         >
-          {entry.role === 'user' ? entry.text : <Markdown text={entry.text} />}
+          {entry.from === undefined ? null : (
+            <div data-from style={fromStyle}>
+              {t`from ${entry.from}`}
+            </div>
+          )}
+          <Markdown text={entry.text} />
         </div>
       ))}
     </div>
@@ -67,6 +73,14 @@ const rootStyle: CSSProperties = {
 const saidStyle: CSSProperties = {
   whiteSpace: 'normal',
   minWidth: 0,
+}
+
+const fromStyle: CSSProperties = {
+  fontSize: 11,
+  letterSpacing: '0.04em',
+  textTransform: 'uppercase',
+  opacity: 0.7,
+  marginBottom: 4,
 }
 
 const userStyle: CSSProperties = {

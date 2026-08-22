@@ -124,8 +124,11 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           tag="${GITHUB_REF_NAME}"
+          # Titled the way every release before it was: the product and the
+          # version. The notes are somebody's to write, so an empty release
+          # waits for them rather than getting a generated changelog.
           gh release view "$tag" >/dev/null 2>&1 ||
-            gh release create "$tag" --prerelease --title "${tag#v}" --generate-notes
+            gh release create "$tag" --prerelease --title "Zetrem ${tag#v}" --notes ''
           gh release upload "$tag" \
             release/Zetrem-*-x64.exe \
             release/Zetrem-*-x64.exe.blockmap \

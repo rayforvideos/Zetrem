@@ -66,10 +66,19 @@ describe('Crew: models', () => {
     expect(html).toContain('claude-opus-5')
   })
 
-  it('invents no model for someone not on the roster', () => {
+  it('says the session model for someone not on the roster, which is what they run on', () => {
     const html = renderToStaticMarkup(
       <CrewProvider crew={crew({}, 'claude-opus-5')}>
-        <Model type="Whoever" />
+        <Model type="Explore" />
+      </CrewProvider>,
+    )
+    expect(html).toContain('claude-opus-5')
+  })
+
+  it('says nothing when even the session model is not known yet', () => {
+    const html = renderToStaticMarkup(
+      <CrewProvider crew={crew({}, null)}>
+        <Model type="Explore" />
       </CrewProvider>,
     )
     expect(html).toContain('unknown')

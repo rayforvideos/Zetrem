@@ -14,9 +14,10 @@ export function useFace(subagentType: string): string | null {
   return useContext(CrewContext).members[subagentType]?.character ?? null
 }
 
+// A teammate we hired may name its own model; everyone else, the stock agents
+// included, runs on whatever the session runs on. Answering null for those was
+// read as "no model" and left the card blank about the one thing it was asked.
 export function useModel(subagentType: string): string | null {
   const crew = useContext(CrewContext)
-  const entry = crew.members[subagentType]
-  if (entry === undefined) return null
-  return entry.model ?? crew.fallbackModel
+  return crew.members[subagentType]?.model ?? crew.fallbackModel
 }

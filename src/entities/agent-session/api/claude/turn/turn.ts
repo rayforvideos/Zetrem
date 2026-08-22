@@ -3,7 +3,7 @@ import { modelRefusedIn } from '../../../model/refused/refused'
 import type { TurnEvent } from './turn.types'
 
 import { retryLine, stoppedLine } from '../failure/failure'
-import { resultText, toolLine } from '../shared'
+import { resultText, toolLine } from '../shared/shared'
 
 export function fromAssistant(event: Record<string, unknown>): TurnEvent[] {
   const message = event.message as Record<string, unknown> | undefined

@@ -5,7 +5,7 @@ import type {
   PermissionRule,
 } from './permission.types'
 
-import { toolLine, toolTarget } from '../shared'
+import { toolLine, toolTarget } from '../shared/shared'
 
 export function permissionResult(allow: boolean, input: unknown): PermissionResult {
   return allow

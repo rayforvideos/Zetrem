@@ -114,6 +114,7 @@ export function WorkspaceScreen() {
   useSessionProbe(
     runConfig,
     gate !== 'holding' && status.session === null,
+    project?.path ?? null,
     gate !== 'holding',
     conv.status === 'working',
   )

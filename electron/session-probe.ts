@@ -9,6 +9,7 @@ import { claudeBin, loginPath } from './login-path/login-path'
 import { recallProject } from './project-memory'
 import { saveFile } from './save-file/save-file'
 import { readKept, stillWorthShowing } from './usage-cache/usage-cache'
+import { workspaceDir } from './workspace-dir/workspace-dir'
 import { handle } from './ipc/ipc'
 import { killTreeSync } from './kill-tree/kill-tree'
 import { runSettled } from './run-settled/run-settled'
@@ -81,8 +82,7 @@ export function registerSessionProbe(): void {
   handle('session:probe', async (_event, config: RunConfig): Promise<string | null> => {
     if (inFlight !== null) return inFlight
     inFlight = (async () => {
-      const project = await recallProject()
-      const workspace = project ?? join(app.getPath('userData'), 'agent-workspace')
+      const workspace = await workspaceDir(await recallProject(), app.getPath('userData'))
       const args = probeArgs({ ...config, persona: PERSONA, orchestrator: ORCHESTRATOR_PROMPT })
       const env = agentEnv(process.env, await loginPath())
       return readInit(await claudeBin(), args, workspace, env)
@@ -100,8 +100,7 @@ export function registerSessionProbe(): void {
   handle('session:usage', async (): Promise<string | null> => {
     if (reporting !== null) return reporting
     reporting = (async () => {
-      const project = await recallProject()
-      const workspace = project ?? join(app.getPath('userData'), 'agent-workspace')
+      const workspace = await workspaceDir(await recallProject(), app.getPath('userData'))
       const env = agentEnv(process.env, await loginPath())
       return readReport(await claudeBin(), workspace, env)
     })().catch(() => null)

@@ -78,7 +78,7 @@ export function MockScreen({ focus, scale }: { focus: SlideFocus; scale: number 
                 {t`Find why checkout drops the last item`}
               </span>
               <span className="text-sm leading-relaxed text-muted-foreground">
-                {t`Three teammates are on it: the checkout flow, the cart totals and the stock rules. I will fold their reports into one answer.`}
+                {t`Three teammates are on it: the checkout flow, the cart totals and the stock rules. I'll put their reports together into one answer.`}
               </span>
             </div>
 
@@ -169,13 +169,13 @@ function MockForm() {
       <div className="flex w-[300px] flex-none flex-col gap-5 border-r border-border p-5">
         <span className="flex flex-col gap-1.5">
           <span className="text-xs text-muted-foreground">{t`Name`}</span>
-          <span className="rounded-xl border border-border px-3 py-2 text-sm">Siena</span>
+          <span className="rounded-xl border border-border px-3 py-2 text-sm">{t`Reviewer`}</span>
         </span>
 
         <span className="flex flex-col gap-1.5">
           <span className="text-xs text-muted-foreground">{t`When to call them`}</span>
           <span className="rounded-xl border border-border px-3 py-2 text-sm">
-            {t`Reviews the front end`}
+            {t`Reviews a change before it ships`}
           </span>
           <span className="text-xs text-muted-foreground">
             {t`The orchestrator reads this to pick who gets the job.`}
@@ -193,13 +193,13 @@ function MockForm() {
       </div>
 
       <div className="flex min-w-0 flex-1 flex-col gap-2 p-5">
-        <span className="text-xs text-muted-foreground">{t`Their brief`}</span>
+        <span className="text-xs text-muted-foreground">{t`Their instructions`}</span>
         <span className="flex min-h-0 flex-1 flex-col gap-3 rounded-xl border border-border p-4 font-mono text-sm leading-relaxed text-muted-foreground">
-          <span>{t`You take the front end. Read the markup before you judge the styles.`}</span>
+          <span>{t`Read the change before you judge it, and check what it touches.`}</span>
           <span>{t`Say what you would change and why, in that order.`}</span>
         </span>
         <span className="text-xs text-muted-foreground">
-          {t`Standing instructions. Write it the way you would brief a person.`}
+          {t`This always applies. Write it the way you would explain the job to a person.`}
         </span>
         <span className="mt-1 flex justify-end">
           <span className="rounded-full px-4 py-2 text-sm" style={hireStyle}>

@@ -80,7 +80,7 @@ export function TeamList({
       {hint && (
         <FirstHint
           title={t`Add your first teammate`}
-          body={t`Write their brief once and the orchestrator can call them from any project.`}
+          body={t`Write their instructions once and the orchestrator can call them in any project.`}
           onClose={onHintSeen}
         />
       )}

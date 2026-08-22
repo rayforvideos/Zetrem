@@ -3,7 +3,7 @@
  * environment: either the three APPLE_ID vars, or APPLE_KEYCHAIN_PROFILE pointing
  * at a notarytool keychain profile. electron-builder resolves the credentials
  * itself from those env vars, so `notarize` only needs to be a boolean gate.
- * See docs/releasing.md for the rest.
+ * Without them the build still produces a dmg, unsigned and unnotarised.
  */
 const notarising =
   (Boolean(process.env.APPLE_ID) &&

@@ -5,38 +5,38 @@ export const SLIDES: Slide[] = [
   {
     key: 'what',
     focus: 'all',
-    title: msg`Claude Code, given a screen`,
-    body: msg`The CLI does the work. Zetrem shows it while it happens: what was asked, who is on it, and what they have run so far.`,
+    title: msg`Claude Code, with a screen`,
+    body: msg`The CLI does the work. Zetrem shows it as it happens: what you asked for, who is on it, and what they have run.`,
   },
   {
     key: 'talk',
     focus: 'talk',
     title: msg`You talk on the left`,
-    body: msg`Ask for the whole job, not the next step. The orchestrator plans it, hands pieces out, and answers you when the pieces come back.`,
+    body: msg`Ask for the whole job, not the next step. The orchestrator splits it up, hands out the pieces, and replies when they come back.`,
   },
   {
     key: 'crew',
     focus: 'crew',
     title: msg`Your team works on the right`,
-    body: msg`Everyone you send out gets a card with their name, their task and their clock. Press one to read what they were asked and what they wrote back.`,
+    body: msg`Everyone you send out gets a card: their name, their task, and how long they have been at it. Open one to see what they were asked and what they sent back.`,
   },
   {
     key: 'calls',
     focus: 'calls',
     title: msg`Every command is on screen`,
-    body: msg`Each file read, each command run, each edit made, as it happens. Nothing is summarised after the fact.`,
+    body: msg`Files read, commands run, edits made. Each one shows up as it happens, not as a summary afterwards.`,
   },
   {
     key: 'hire',
     focus: 'hire',
-    title: msg`A teammate is a brief you write once`,
-    body: msg`Name them, say when they should be called, and write their standing instructions. The orchestrator reads that middle line to decide who gets the job.`,
+    title: msg`Teammates are reusable`,
+    body: msg`Give them a name, say when to call them, and write their instructions. The orchestrator goes by the "when to call them" line to pick who gets the job.`,
   },
   {
     key: 'keys',
     focus: 'keys',
-    title: msg`You keep the keys`,
-    body: msg`Decide what may run without asking, watch what is left of your limits along the foot, and stop anything mid-flight.`,
+    title: msg`You decide what runs`,
+    body: msg`Choose what can run without asking, check your remaining limits along the bottom, and stop anything while it is running.`,
   },
 ]
 

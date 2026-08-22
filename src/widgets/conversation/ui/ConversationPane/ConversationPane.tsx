@@ -103,7 +103,7 @@ export function ConversationPane({
             <div className="mt-7 w-full max-w-md">
               <FirstHint
                 title={t`Ask for the whole job`}
-                body={t`Say what you want done, not the next step. The orchestrator splits it up and hands the pieces out.`}
+                body={t`Say what you want done, not the next step. The orchestrator splits it up and hands out the pieces.`}
                 onClose={onHintSeen}
               />
             </div>

@@ -3,6 +3,7 @@ import type { ToolActivity } from '@/entities/conversation'
 import { cn } from '@/shared/lib/cn'
 import { Button } from '@/shared/ui/button'
 import { TOOL_OUTPUT_LINES, moreLine } from '../../lib/limits'
+import { spawnResult, withoutPlumbing } from '../../lib/plumbing/plumbing'
 import { ToolDetail } from '../ToolDetail/ToolDetail'
 import { ToolLine } from '../ToolLine'
 
@@ -13,7 +14,8 @@ export function tickOpen(override: boolean | null): boolean {
 export function Tick({ tool, live }: { tool: ToolActivity; live: boolean }) {
   const [override, setOverride] = useState<boolean | null>(null)
   const open = tickOpen(override)
-  const output = [tool.result?.stdout, tool.result?.stderr].filter(Boolean).join('\n')
+  const said = [tool.result?.stdout, tool.result?.stderr].filter(Boolean).join('\n')
+  const output = spawnResult(tool.line) ? withoutPlumbing(said) : said
   const lines = output.split('\n')
   const shown = lines.slice(0, TOOL_OUTPUT_LINES).join('\n')
   const rest = lines.length - TOOL_OUTPUT_LINES

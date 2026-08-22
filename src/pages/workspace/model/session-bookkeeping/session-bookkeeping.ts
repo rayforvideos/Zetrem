@@ -1,5 +1,6 @@
 import { exitLine, sessionStore, statusStore } from '@/entities/agent-session'
 import { conversation } from '../conversation/conversation'
+import { forgetCrew } from '../agent-events/crew/crew'
 import type { SessionBegin, SessionClose } from './session-bookkeeping.types'
 
 // The order here is the order the screen sees: a drafted turn settles before the
@@ -16,11 +17,13 @@ export function closeSession({ reason, stopped, asks, childIds }: SessionClose):
   conversation.clearChores()
   for (const childId of childIds) sessionStore.patch(childId, { status: 'done' })
   childIds.clear()
+  forgetCrew()
 }
 
 export function beginSession({ resumed, asks, sends, childIds }: SessionBegin): void {
   statusStore.reset(resumed)
   sessionStore.clear()
+  forgetCrew()
   childIds.clear()
   sends.clear()
   asks.length = 0

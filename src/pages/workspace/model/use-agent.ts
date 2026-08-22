@@ -9,6 +9,7 @@ import {
 } from '@/entities/agent-session'
 import type { AgentSession, ModelChoice, RunConfig, StatusState } from '@/entities/agent-session'
 import { applyAgentEvent } from './agent-events/agent-events'
+import type { Sent } from './agent-events/agent-events.types'
 import { advancePermission } from './conversation/advance-permission'
 import { conversation } from './conversation/conversation'
 import { sentOf, withPaths } from '@/entities/attachment'
@@ -53,7 +54,7 @@ export function useAgent(
     { requestId: string; toolName: string; line: string; detail: string; input: unknown }[]
   >([])
   const childIds = useRef(new Set<string>())
-  const sends = useRef(new Map<string, string>())
+  const sends = useRef(new Map<string, Sent>())
   const attempt = useRef<Attempt | null>(null)
   const stopping = useRef(false)
   const refused = useRef(onModelRefused)

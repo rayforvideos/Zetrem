@@ -1,6 +1,6 @@
 import type { ChildTurnEvent } from './child.types'
 
-import { resultText, toolLine } from './shared'
+import { resultText, toolLine } from './shared/shared'
 
 export function childSays(
   event: Record<string, unknown>,
@@ -15,12 +15,15 @@ export function childSays(
       out.push({ type: 'childSay', toolUseId, role, text: block.text })
     }
     if (block.type === 'tool_use' && typeof block.name === 'string') {
+      const callId = typeof block.id === 'string' ? block.id : toolLine(block.name, block.input)
       out.push({
         type: 'childStream',
         toolUseId,
-        callId: typeof block.id === 'string' ? block.id : toolLine(block.name, block.input),
+        callId,
         line: toolLine(block.name, block.input),
       })
+      const sent = crewTalk(block)
+      if (sent !== null) out.push({ type: 'childSent', toolUseId, callId, ...sent })
     }
     if (block.type === 'tool_result' && typeof block.tool_use_id === 'string') {
       out.push({
@@ -33,6 +36,16 @@ export function childSays(
     }
   }
   return out
+}
+
+// SendMessage addresses an agent by the id the CLI gave it, which is the same
+// string as its task id. That is what makes the other side findable.
+function crewTalk(block: Record<string, unknown>): { to: string; message: string } | null {
+  if (block.name !== 'SendMessage') return null
+  const input = block.input as Record<string, unknown> | undefined
+  const to = typeof input?.to === 'string' ? input.to.trim() : ''
+  const message = typeof input?.message === 'string' ? input.message : ''
+  return to.length === 0 ? null : { to, message }
 }
 
 export function childCloses(event: Record<string, unknown>): ChildTurnEvent[] {

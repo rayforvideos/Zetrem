@@ -98,7 +98,7 @@ describe('closeSession: what the exit leaves behind', () => {
 describe('beginSession: the slate the next run starts on', () => {
   it('clears everything the last run left in the refs', () => {
     const asks = [ask('req-1')]
-    const sends = new Map([['tool-1', 'agent-a']])
+    const sends = new Map([['tool-1', { to: 'agent-a', message: '이어서 부탁해' }]])
     const childIds = new Set(['a'])
     sessionStore.open(child('a'))
 

@@ -4,6 +4,7 @@ import type { RateLimit, ResultMetrics } from '@/entities/agent-session'
 import type { AgentEventRefs } from './agent-events.types'
 import { applyAgentEvent, compactedLine, limitLine, turnLine } from './agent-events'
 import { conversation } from '../conversation/conversation'
+import { forgetCrew, remember, wakeResumed } from './crew/crew'
 
 function fakeMetrics(costUsd: number, overrides: Partial<ResultMetrics> = {}): ResultMetrics {
   return {
@@ -19,10 +20,11 @@ function fakeMetrics(costUsd: number, overrides: Partial<ResultMetrics> = {}): R
 }
 
 function fakeRefs(): AgentEventRefs {
-  return { asks: [], childIds: new Set<string>(), sends: new Map<string, string>(), onModelRefused: () => {} }
+  return { asks: [], childIds: new Set<string>(), sends: new Map<string, { to: string; message: string }>(), onModelRefused: () => {} }
 }
 
 beforeEach(() => {
+  forgetCrew()
   conversation.reset()
   statusStore.reset()
   sessionStore.clear()
@@ -653,7 +655,7 @@ describe('a message names the teammate it is sent to', () => {
       { type: 'stream', line: 'SendMessage Karina', toolUseId: 'toolu_s', input: { to: 'Karina', message: 'go on' } },
       refs,
     )
-    expect(refs.sends.get('toolu_s')).toBe('Karina')
+    expect(refs.sends.get('toolu_s')?.to).toBe('Karina')
   })
 
   it('drops the disambiguating reference, since that is not the name on screen', () => {
@@ -662,7 +664,7 @@ describe('a message names the teammate it is sent to', () => {
       { type: 'stream', line: 'SendMessage', toolUseId: 'toolu_t', input: { to: 'Karina [3fa9c1]' } },
       refs,
     )
-    expect(refs.sends.get('toolu_t')).toBe('Karina')
+    expect(refs.sends.get('toolu_t')?.to).toBe('Karina')
   })
 
   it('still reads the older field names, so nothing that worked stops working', () => {
@@ -671,7 +673,7 @@ describe('a message names the teammate it is sent to', () => {
       { type: 'stream', line: 'SendMessage', toolUseId: 'toolu_u', input: { agent: 'Hardy' } },
       refs,
     )
-    expect(refs.sends.get('toolu_u')).toBe('Hardy')
+    expect(refs.sends.get('toolu_u')?.to).toBe('Hardy')
   })
 
   it('names a resumed teammate by who was addressed, not by a raw id', () => {
@@ -1031,5 +1033,50 @@ describe('a progress ping that carries no count', () => {
       refs,
     )
     expect(sessionStore.get().find((s) => s.id === 'toolu_tok')?.tokens).toBe(4200)
+  })
+})
+
+
+describe('the orchestrator speaking to a teammate', () => {
+  function hired(refs: AgentEventRefs): void {
+    applyAgentEvent(
+      { type: 'childOpen', toolUseId: 'toolu_x', label: 'Nova', subagentType: 'general-purpose', prompt: 'x', background: false },
+      refs,
+    )
+    applyAgentEvent(
+      { type: 'childStarted', toolUseId: 'toolu_x', taskId: 'agent-x', taskType: '', description: 'Nova' },
+      refs,
+    )
+  }
+
+  it('writes what was said onto that teammate, not only into the conversation', () => {
+    const refs = fakeRefs()
+    hired(refs)
+    remember('call_send', { to: 'agent-x', message: '합계는 네가 맡아줘' }, refs)
+
+    const heard = sessionStore.get().find((s) => s.id === 'toolu_x')!
+    expect(heard.transcript.at(-1)?.text).toBe('합계는 네가 맡아줘')
+    expect(heard.transcript.at(-1)?.from).not.toBe('')
+  })
+
+  it('wakes the tile that teammate already has, rather than opening one named after the id', () => {
+    const refs = fakeRefs()
+    hired(refs)
+    applyAgentEvent({ type: 'childStateKnown', toolUseId: 'toolu_x', taskId: 'agent-x', state: 'completed', error: '' }, refs)
+    remember('call_send', { to: 'agent-x', message: '한 번 더' }, refs)
+
+    wakeResumed('call_send', JSON.stringify({ success: true, resumedAgentId: 'agent-x' }), refs)
+
+    const board = sessionStore.get()
+    expect(board).toHaveLength(1)
+    expect(board[0]?.id).toBe('toolu_x')
+    expect(board[0]?.status).toBe('working')
+  })
+
+  it('still opens a tile for an agent the board has never seen', () => {
+    const refs = fakeRefs()
+    remember('call_send', { to: 'a99', message: 'hello' }, refs)
+    wakeResumed('call_send', JSON.stringify({ success: true, resumedAgentId: 'a99' }), refs)
+    expect(sessionStore.get().map((s) => s.id)).toEqual(['a99'])
   })
 })

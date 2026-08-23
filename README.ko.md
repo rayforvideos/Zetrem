@@ -68,8 +68,9 @@ Zetrem 은 이 정보를 화면에 나눠서 보여준다.
 
 ## 실행하기
 
-`PATH` 에 로그인된 [Claude Code](https://claude.com/claude-code) CLI 와
-Node 20.19 이상이 필요하다.
+Node 20.19 이상이 필요하다. [Claude Code](https://claude.com/claude-code) CLI 는
+설치된 자리를 찾아 쓰고, 없으면 설정 화면에서 바로 설치할 수 있다. 로그인도
+같은 화면에서 한다.
 
 ```bash
 npm install

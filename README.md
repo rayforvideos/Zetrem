@@ -69,8 +69,9 @@ would get in a terminal.
 
 ## Running it
 
-You need the [Claude Code](https://claude.com/claude-code) CLI on your `PATH` and
-signed in, and Node 20.19 or newer.
+You need Node 20.19 or newer. The [Claude Code](https://claude.com/claude-code)
+CLI is found wherever its installers put it, and if it is missing the setup
+screen offers to install it; signing in happens there too.
 
 ```bash
 npm install

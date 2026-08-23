@@ -12,11 +12,17 @@ const THEIRS = /^Merge [0-9a-f]{40} into [0-9a-f]{40}$/
 // occasion, "Merge <sha> into <sha>": 92 characters, no type, nobody's to fix.
 // The clone is shallow, so it arrives with no parents and --no-merges cannot
 // tell it is a merge at all; it is named by its subject instead.
-function commits(): { sha: string; subject: string; body: string }[] {
-  const out = execFileSync('git', ['log', '--no-merges', '--format=%H%x00%s%x00%b%x1e'], {
-    encoding: 'utf8',
-    maxBuffer: 32 * 1024 * 1024,
-  })
+function commits(): { sha: string; subject: string; body: string }[] | null {
+  let out: string
+  try {
+    out = execFileSync('git', ['log', '--no-merges', '--format=%H%x00%s%x00%b%x1e'], {
+      encoding: 'utf8',
+      maxBuffer: 32 * 1024 * 1024,
+    })
+  } catch {
+    // A source archive downloaded without git has no history to judge.
+    return null
+  }
   return out
     .split('\x1e')
     .map((one) => one.trim())
@@ -28,8 +34,10 @@ function commits(): { sha: string; subject: string; body: string }[] {
     .filter((one) => !THEIRS.test(one.subject))
 }
 
-describe('a commit says what kind it is', () => {
-  const all = commits()
+const history = commits()
+
+describe.skipIf(history === null)('a commit says what kind it is', () => {
+  const all = history ?? []
 
   it('has commits to look at', () => {
     expect(all.length).toBeGreaterThan(0)

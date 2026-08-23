@@ -30,6 +30,12 @@ describe('managerOf', () => {
     expect(managerOf('/Users/sam/project/node_modules/.bin/claude')).toBe('npm')
     expect(managerOf('/usr/local/bin/claude')).toBeNull()
   })
+
+  it('reads a Windows path, where the separators lean the other way', () => {
+    expect(
+      managerOf('C:\\Users\\sam\\AppData\\Roaming\\npm\\node_modules\\@anthropic-ai\\claude-code\\cli.js'),
+    ).toBe('npm')
+  })
 })
 
 describe('updateCommand: who is allowed to do the updating', () => {

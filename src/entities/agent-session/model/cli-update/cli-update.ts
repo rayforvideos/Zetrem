@@ -19,8 +19,10 @@ export function isOutdated(current: string | null, latest: string | null): boole
 }
 
 export function managerOf(binaryPath: string): string | null {
-  if (binaryPath.includes('/Caskroom/')) return 'Homebrew'
-  if (binaryPath.includes('/node_modules/')) return 'npm'
+  // A Windows npm install arrives with backslashes.
+  const path = binaryPath.replaceAll('\\', '/')
+  if (path.includes('/Caskroom/')) return 'Homebrew'
+  if (path.includes('/node_modules/')) return 'npm'
   return null
 }
 

@@ -59,9 +59,11 @@ describe('an install the PATH never heard of', () => {
   })
 
   it('knows the folders the installers use', () => {
+    // join, not a literal: the folders are built with the separator of the
+    // machine running the test, and this test runs on Windows too.
     const dirs = knownInstallDirs('darwin', '/Users/someone')
-    expect(dirs).toContain('/Users/someone/.claude/local')
-    expect(dirs).toContain('/Users/someone/.local/bin')
+    expect(dirs).toContain(join('/Users/someone', '.claude', 'local'))
+    expect(dirs).toContain(join('/Users/someone', '.local', 'bin'))
   })
 
   it('appends the folder that really holds claude when PATH misses it', () => {

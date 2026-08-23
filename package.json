@@ -4,7 +4,7 @@
   "description": "A desktop app for running a team of Claude Code agents",
   "author": "Sangjun Park",
   "license": "MIT",
-  "version": "1.0.0-beta.4",
+  "version": "1.0.0-beta.5",
   "private": true,
   "type": "module",
   "main": "out/main/index.js",

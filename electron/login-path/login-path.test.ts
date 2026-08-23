@@ -1,8 +1,16 @@
-import { mkdtempSync, rmSync, writeFileSync } from 'node:fs'
+import { chmodSync, mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { delimiter, join } from 'node:path'
-import { describe, expect, it } from 'vitest'
-import { canFind, commandNames, findCommand } from './login-path'
+import { afterEach, describe, expect, it } from 'vitest'
+import {
+  canFind,
+  commandNames,
+  findCommand,
+  knownInstallDirs,
+  loginPath,
+  resetLoginPath,
+  withKnownDirs,
+} from './login-path'
 
 const windows = process.platform === 'win32'
 
@@ -27,6 +35,81 @@ describe('finding claude works differently on each machine', () => {
     expect(found, 'this machine has a shell of some kind').not.toBeNull()
     expect(found).toContain(windows ? 'cmd' : 'sh')
     expect(found?.includes('/') || found?.includes('\\')).toBe(true)
+  })
+})
+
+describe('an install the PATH never heard of', () => {
+  // claude migrate-installer leaves the binary in ~/.claude/local and reaches
+  // it through a shell alias, so no PATH entry ever points at it. Zetrem has
+  // to look where the installers actually put it.
+  const temps: string[] = []
+  const fakeInstall = (): { home: string; bin: string } => {
+    const home = mkdtempSync(join(tmpdir(), 'zetrem-home-'))
+    temps.push(home)
+    const dir = join(home, '.claude', 'local')
+    mkdirSync(dir, { recursive: true })
+    const bin = join(dir, 'claude')
+    writeFileSync(bin, '#!/bin/sh\n')
+    chmodSync(bin, 0o755)
+    return { home, bin: dir }
+  }
+
+  afterEach(() => {
+    while (temps.length > 0) rmSync(temps.pop() as string, { recursive: true, force: true })
+  })
+
+  it('knows the folders the installers use', () => {
+    const dirs = knownInstallDirs('darwin', '/Users/someone')
+    expect(dirs).toContain('/Users/someone/.claude/local')
+    expect(dirs).toContain('/Users/someone/.local/bin')
+  })
+
+  it('appends the folder that really holds claude when PATH misses it', () => {
+    if (windows) return
+    const { bin } = fakeInstall()
+    const path = withKnownDirs('/nowhere-a', [bin, '/nowhere-b'])
+    expect(path).toBe(['/nowhere-a', bin].join(delimiter))
+    expect(findCommand('claude', path)).toBe(join(bin, 'claude'))
+  })
+
+  it('leaves PATH alone when claude is already on it', () => {
+    if (windows) return
+    const { bin } = fakeInstall()
+    expect(withKnownDirs(bin, ['/somewhere-else'])).toBe(bin)
+  })
+
+  it('leaves PATH alone when no known folder holds claude either', () => {
+    expect(withKnownDirs('/nowhere-a', ['/nowhere-b'])).toBe('/nowhere-a')
+  })
+
+  it('reads PATH again after a reset, for the binary an install just wrote', async () => {
+    if (windows) return
+    const kept = { HOME: process.env.HOME, SHELL: process.env.SHELL, PATH: process.env.PATH }
+    const home = mkdtempSync(join(tmpdir(), 'zetrem-home-'))
+    temps.push(home)
+    try {
+      process.env.HOME = home
+      process.env.SHELL = '/bin/false'
+      process.env.PATH = '/nowhere-a'
+      resetLoginPath()
+      // The machine running this test may hold a real claude in /opt/homebrew
+      // or /usr/local, so only the folder inside the throwaway home is judged.
+      const dir = join(home, '.local', 'bin')
+      expect(await loginPath()).not.toContain(dir)
+      // The installer writes the binary while the app is running. The cached
+      // answer would say "missing" forever; a reset reads the world again.
+      mkdirSync(dir, { recursive: true })
+      writeFileSync(join(dir, 'claude'), '#!/bin/sh\n')
+      chmodSync(join(dir, 'claude'), 0o755)
+      expect(await loginPath()).not.toContain(dir)
+      resetLoginPath()
+      expect((await loginPath()).split(delimiter)).toContain(dir)
+    } finally {
+      process.env.HOME = kept.HOME
+      process.env.SHELL = kept.SHELL
+      process.env.PATH = kept.PATH
+      resetLoginPath()
+    }
   })
 })
 

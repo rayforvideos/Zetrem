@@ -7,6 +7,7 @@ const boundary = vi.hoisted(() => ({
   ready: [] as ((version: string) => void)[],
   unsubscribed: 0,
   toasts: [] as { duration: unknown }[],
+  dismissed: [] as unknown[],
 }))
 
 vi.mock('sonner', () => ({
@@ -15,7 +16,9 @@ vi.mock('sonner', () => ({
       boundary.toasts.push({ duration: options.duration })
       return boundary.toasts.length
     },
-    dismiss: () => undefined,
+    dismiss: (id: unknown) => {
+      boundary.dismissed.push(id)
+    },
   },
 }))
 
@@ -68,6 +71,7 @@ beforeEach(() => {
   boundary.ready = []
   boundary.unsubscribed = 0
   boundary.toasts = []
+  boundary.dismissed = []
   vi.stubGlobal('window', {
     desk: {
       updaterState: async () => boundary.state,
@@ -126,6 +130,27 @@ describe('an update that finishes downloading while the app is open', () => {
     arrives('1.0.0-beta.2')
 
     expect(boundary.toasts).toHaveLength(1)
+  })
+
+  it('takes the older card down when a newer version lands on top of it', async () => {
+    // A session that outlives two releases: beta.3 downloads, then the recheck
+    // brings beta.4. Restarting installs only the newest, so one card is true.
+    await mount()
+
+    arrives('1.0.0-beta.3')
+    arrives('1.0.0-beta.4')
+
+    expect(boundary.toasts).toHaveLength(2)
+    expect(boundary.dismissed).toEqual([1])
+  })
+
+  it('takes down a card that was waiting at mount, all the same', async () => {
+    boundary.state = '1.0.0-beta.3'
+    await mount()
+
+    arrives('1.0.0-beta.4')
+
+    expect(boundary.dismissed).toEqual([1])
   })
 })
 

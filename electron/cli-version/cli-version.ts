@@ -1,10 +1,11 @@
 import { realpathSync } from 'node:fs'
 import { homedir } from 'node:os'
+import { net } from 'electron'
 import { managerOf } from '@/entities/agent-session/model/cli-update/cli-update'
 import { agentEnv } from '@/shared/lib/shell-env/shell-env'
-import { claudeBin, findCommand, loginPath } from './login-path/login-path'
-import { handle } from './ipc/ipc'
-import { runSettled, trackChild, untrackChild } from './run-settled/run-settled'
+import { claudeBin, findCommand, loginPath } from '../login-path/login-path'
+import { handle } from '../ipc/ipc'
+import { runSettled, trackChild, untrackChild } from '../run-settled/run-settled'
 
 const REGISTRY = 'https://registry.npmjs.org/@anthropic-ai/claude-code/latest'
 
@@ -29,9 +30,12 @@ function probe(command: string, args: string[], path: string): Promise<string | 
   })
 }
 
-async function latestVersion(): Promise<string | null> {
+export async function latestVersion(): Promise<string | null> {
   try {
-    const response = await fetch(REGISTRY, { signal: AbortSignal.timeout(FETCH_TIMEOUT_MS) })
+    // Node's own fetch ignores HTTP_PROXY, so behind a corporate proxy it
+    // would fail forever and read as "up to date". Chromium's stack honours
+    // the system proxy.
+    const response = await net.fetch(REGISTRY, { signal: AbortSignal.timeout(FETCH_TIMEOUT_MS) })
     if (!response.ok) return null
     const body = (await response.json()) as { version?: unknown }
     return typeof body.version === 'string' ? body.version : null

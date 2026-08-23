@@ -99,7 +99,7 @@ msgstr "{installed} installed from {sources, plural, one {# source} other {# sou
 msgid "{kind} {name} did not load: {why}"
 msgstr "{kind} {name} did not load: {why}"
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:361
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:363
 msgid "{name} can be called now. Your next message starts a session that can reach them."
 msgstr "{name} can be called now. Your next message starts a session that can reach them."
 
@@ -107,7 +107,7 @@ msgstr "{name} can be called now. Your next message starts a session that can re
 msgid "{name} can be called this session"
 msgstr "{name} can be called this session"
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:362
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:364
 msgid "{name} is off. Your next message starts a session without them."
 msgstr "{name} is off. Your next message starts a session without them."
 
@@ -400,7 +400,7 @@ msgstr "Cart totals and rounding"
 msgid "Change"
 msgstr "Change"
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:412
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:414
 msgid "Change account, project, and permissions"
 msgstr "Change account, project, and permissions"
 
@@ -523,6 +523,10 @@ msgstr "Could not connect"
 msgid "Could not forget that chat"
 msgstr "Could not forget that chat"
 
+#: src/pages/workspace/model/use-auth.ts:90
+msgid "Could not install Claude Code"
+msgstr "Could not install Claude Code"
+
 #: src/pages/workspace/model/use-transcript.ts:45
 msgid "Could not list your saved chats"
 msgstr "Could not list your saved chats"
@@ -579,7 +583,7 @@ msgstr "Could not read your marketplaces"
 msgid "Could not read your settings"
 msgstr "Could not read your settings"
 
-#: src/pages/workspace/model/use-auth.ts:33
+#: src/pages/workspace/model/use-auth.ts:36
 msgid "Could not read your sign-in"
 msgstr "Could not read your sign-in"
 
@@ -768,12 +772,12 @@ msgstr "Handing off"
 msgid "Held up"
 msgstr "Held up"
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:397
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:398
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:399
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:400
 msgid "Hide team sidebar"
 msgstr "Hide team sidebar"
 
-#: src/widgets/setup/ui/AccountField/AccountField.tsx:83
+#: src/widgets/setup/ui/AccountField/AccountField.tsx:101
 msgid "If the browser did not open, <0>open this link</0>."
 msgstr "If the browser did not open, <0>open this link</0>."
 
@@ -789,6 +793,10 @@ msgstr "In the background"
 msgid "Install"
 msgstr "Install"
 
+#: src/widgets/setup/ui/AccountField/AccountField.tsx:35
+msgid "Install Claude Code"
+msgstr "Install Claude Code"
+
 #. placeholder {0}: here.length
 #: src/widgets/setup/ui/PluginShelf/PluginShelf.tsx:75
 msgid "Installed · {0}"
@@ -797,6 +805,10 @@ msgstr "Installed · {0}"
 #: src/entities/plugin/lib/groups/groups.ts:11
 msgid "Installed for this folder. Anyone who opens it gets them."
 msgstr "Installed for this folder. Anyone who opens it gets them."
+
+#: src/widgets/setup/ui/AccountField/AccountField.tsx:35
+msgid "Installing Claude Code…"
+msgstr "Installing Claude Code…"
 
 #: src/entities/agent-session/api/claude/turn/turn.ts:100
 msgid "it could not be loaded"
@@ -893,7 +905,7 @@ msgstr "Message your team"
 msgid "Model"
 msgstr "Model"
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:294
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:296
 msgid "Model changed. Your next message starts a session on it."
 msgstr "Model changed. Your next message starts a session on it."
 
@@ -1034,7 +1046,7 @@ msgstr "Permission"
 msgid "Permissions"
 msgstr "Permissions"
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:288
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:290
 msgid "Permissions changed. Your next message starts a session that follows them."
 msgstr "Permissions changed. Your next message starts a session that follows them."
 
@@ -1261,7 +1273,7 @@ msgstr "Set a few things and your agents get to work!"
 msgid "Set for everyone on your account. They cannot be removed or turned off here."
 msgstr "Set for everyone on your account. They cannot be removed or turned off here."
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:414
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:416
 msgid "Settings"
 msgstr "Settings"
 
@@ -1269,8 +1281,8 @@ msgstr "Settings"
 msgid "share unknown"
 msgstr "share unknown"
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:397
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:398
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:399
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:400
 msgid "Show team sidebar"
 msgstr "Show team sidebar"
 
@@ -1290,12 +1302,12 @@ msgstr "Sign in to your Anthropic account"
 msgid "Sign in was refused"
 msgstr "Sign in was refused"
 
-#: src/widgets/setup/ui/AccountField/AccountField.tsx:79
+#: src/widgets/setup/ui/AccountField/AccountField.tsx:97
 msgid "Sign in with Anthropic"
 msgstr "Sign in with Anthropic"
 
-#: src/widgets/setup/ui/AccountField/AccountField.tsx:49
-#: src/widgets/setup/ui/AccountField/AccountField.tsx:61
+#: src/widgets/setup/ui/AccountField/AccountField.tsx:67
+#: src/widgets/setup/ui/AccountField/AccountField.tsx:79
 #: src/widgets/setup/ui/PluginShelf/ConnectorsTab.tsx:65
 msgid "Sign out"
 msgstr "Sign out"
@@ -1312,7 +1324,7 @@ msgstr "Signed in to"
 msgid "Signed out of"
 msgstr "Signed out of"
 
-#: src/widgets/setup/ui/AccountField/AccountField.tsx:79
+#: src/widgets/setup/ui/AccountField/AccountField.tsx:97
 msgid "Signing in through your browser…"
 msgstr "Signing in through your browser…"
 
@@ -1320,7 +1332,7 @@ msgstr "Signing in through your browser…"
 msgid "Signing out stops the running session, and every other Claude Code on this computer."
 msgstr "Signing out stops the running session, and every other Claude Code on this computer."
 
-#: src/widgets/setup/ui/AccountField/AccountField.tsx:49
+#: src/widgets/setup/ui/AccountField/AccountField.tsx:67
 msgid "Signing out…"
 msgstr "Signing out…"
 
@@ -1361,11 +1373,11 @@ msgstr "Start a conversation from scratch"
 msgid "Starting"
 msgstr "Starting"
 
-#: src/widgets/setup/ui/AccountField/AccountField.tsx:60
+#: src/widgets/setup/ui/AccountField/AccountField.tsx:78
 msgid "Stay signed in"
 msgstr "Stay signed in"
 
-#: src/pages/workspace/model/use-auth.ts:67
+#: src/pages/workspace/model/use-auth.ts:70
 msgid "Still signed in. Sign out did not take effect."
 msgstr "Still signed in. Sign out did not take effect."
 
@@ -1439,6 +1451,10 @@ msgstr "That model"
 #: src/entities/agent-session/api/claude/failure/failure.ts:87
 msgid "That model was not found"
 msgstr "That model was not found"
+
+#: src/widgets/setup/ui/AccountField/AccountField.tsx:38
+msgid "The <0>claude</0> command was not found. Zetrem can install it for you."
+msgstr "The <0>claude</0> command was not found. Zetrem can install it for you."
 
 #: src/entities/connector/lib/refusal-why/refusal-why.ts:22
 msgid "The address has to be http or https"

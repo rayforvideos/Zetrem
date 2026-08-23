@@ -13,6 +13,8 @@ type Auth = {
   login(): void
   loggingOut: boolean
   logout(): void
+  installing: boolean
+  install(): void
   authError: string | null
 }
 
@@ -24,6 +26,7 @@ export function useAuth(): Auth {
   const [loggingIn, setLoggingIn] = useState(false)
   const [loginNote, setLoginNote] = useState('')
   const [loggingOut, setLoggingOut] = useState(false)
+  const [installing, setInstalling] = useState(false)
   const [authError, setAuthError] = useState<string | null>(null)
 
   useEffect(() => {
@@ -71,5 +74,36 @@ export function useAuth(): Auth {
       .finally(() => setLoggingOut(false))
   }
 
-  return { auth, authKnown, loggingIn, loginNote, login, loggingOut, logout, authError }
+  function install(): void {
+    setInstalling(true)
+    setAuthError(null)
+    window.desk
+      .installCli()
+      .then(({ status, output }) => {
+        setAuth(status)
+        if (status.state === 'cli-missing') {
+          const said = output
+            .split('\n')
+            .map((line) => line.trim())
+            .filter((line) => line.length > 0)
+            .at(-1)
+          setAuthError(troubleLine(t`Could not install Claude Code`, new Error(said ?? '')))
+        }
+      })
+      .catch((cause: unknown) => setAuthError(reasonOf(cause)))
+      .finally(() => setInstalling(false))
+  }
+
+  return {
+    auth,
+    authKnown,
+    loggingIn,
+    loginNote,
+    login,
+    loggingOut,
+    logout,
+    installing,
+    install,
+    authError,
+  }
 }

@@ -57,6 +57,7 @@ export type DeskBridge = {
     managedBy: string | null
   }>
   runCliUpdate(): Promise<{ output: string }>
+  installCli(): Promise<{ status: AuthStatus; output: string }>
   updaterState(): Promise<string | null>
   updaterRestart(): Promise<void>
   onUpdaterReady(listener: (version: string) => void): () => void

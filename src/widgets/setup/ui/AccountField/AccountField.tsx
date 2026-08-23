@@ -24,10 +24,28 @@ export function AccountField({ account }: { account: Account }) {
     <Field>
       <FieldLabel className="text-muted-foreground">{t`Account`}</FieldLabel>
       {auth?.state === 'cli-missing' ? (
-        <FieldDescription className="text-foreground">
-          <code className="font-mono">claude</code> command not found. Install it, then reopen
-          Zetrem.
-        </FieldDescription>
+        <div className="flex flex-wrap items-center gap-3">
+          <Button
+            size="sm"
+            onClick={account.onInstall}
+            disabled={account.installing}
+            className="rounded-full"
+          >
+            {account.installing && <Spinner data-icon="inline-start" />}
+            {account.installing ? t`Installing Claude Code…` : t`Install Claude Code`}
+          </Button>
+          <FieldDescription className="w-full">
+            <Trans>
+              The <code className="font-mono">claude</code> command was not found. Zetrem can
+              install it for you.
+            </Trans>
+          </FieldDescription>
+          {account.error !== null && (
+            <FieldDescription className="w-full text-destructive">
+              {account.error}
+            </FieldDescription>
+          )}
+        </div>
       ) : auth?.state === 'signed-in' ? (
         <>
           <div className="flex flex-wrap items-center gap-3 rounded-xl bg-card px-3.5 py-2.5 text-sm">

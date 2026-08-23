@@ -68,6 +68,7 @@ contextBridge.exposeInMainWorld('desk', {
   sessionUsage: (): Promise<unknown> => ipcRenderer.invoke('session:usage'),
   latestCliVersion: (): Promise<unknown> => ipcRenderer.invoke('cli:latest'),
   runCliUpdate: (): Promise<unknown> => ipcRenderer.invoke('cli:update'),
+  installCli: (): Promise<unknown> => ipcRenderer.invoke('cli:install'),
   updaterState: (): Promise<unknown> => ipcRenderer.invoke('updater:state'),
   updaterRestart: (): Promise<void> => ipcRenderer.invoke('updater:restart'),
   onUpdaterReady: (listener: (version: string) => void): (() => void) => {

@@ -10,8 +10,10 @@ export type Account = {
   signingIn: boolean
   signingOut: boolean
   sessionLive: boolean
+  installing: boolean
   onSignIn(): void
   onSignOut(): void
+  onInstall(): void
 }
 
 export type Project = {

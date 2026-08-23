@@ -7,6 +7,7 @@ import { chromeNow, followScheme, wearTheme } from './app-theme/app-theme'
 import { registerAttachments } from './attachments/attachments'
 import { registerAgentDefs } from './agent-defs'
 import { registerAuth } from './auth'
+import { registerCliInstall } from './cli-install/cli-install'
 import { registerCliVersion } from './cli-version'
 import { registerNudge } from './nudge'
 import { registerPlugins } from './plugins'
@@ -196,6 +197,7 @@ if (!primary) {
   registerAuth()
   registerAgentDefs()
   registerCliVersion()
+  registerCliInstall()
   registerSettingsStore()
   registerConnectors()
   registerSessionProbe()

@@ -1,4 +1,6 @@
 import { renderToStaticMarkup } from 'react-dom/server'
+import { i18n } from '@lingui/core'
+import { I18nProvider } from '@lingui/react'
 import { describe, expect, it } from 'vitest'
 import type { ModelChoice, PermissionMode } from '@/entities/agent-session'
 import type { AuthStatus } from '@/entities/auth'
@@ -17,6 +19,7 @@ type Flat = {
   authError: string | null
   loginNote: string
   notice: Failure | null
+  installing: boolean
 }
 
 function pane(over: Partial<Flat> = {}): string {
@@ -32,42 +35,47 @@ function pane(over: Partial<Flat> = {}): string {
     authError: null,
     loginNote: '',
     notice: null,
+    installing: false,
     ...over,
   }
   return renderToStaticMarkup(
-    <SetupPane
-      account={{
-        auth: flat.auth,
-        error: flat.authError,
-        note: flat.loginNote,
-        signingIn: false,
-        signingOut: false,
-        sessionLive: flat.sessionLive,
-        onSignIn: () => {},
-        onSignOut: () => {},
-      }}
-      you={{ name: 'Ray', face: 'onigiri', onName: () => {}, onFace: () => {} }}
-      project={{ chosen: flat.project, onChoose: () => {} }}
-      defaults={{
-        permissionMode: flat.permissionMode,
-        model: flat.model,
-        tongue: 'system' as const,
-        onTongue: () => {},
-        notify: flat.notify,
-        onNotify: () => {},
-        onPermissionMode: () => {},
-        onModel: () => {},
-      }}
-      plugins={{ summary: 'none', onOpen: () => {} }}
-      actions={{
-        reopened: flat.reopened,
-        signedIn: flat.auth?.state === 'signed-in',
-        hasProject: flat.project != null,
-        onStart: () => {},
-        onCancel: () => {},
-      }}
-      notice={flat.notice}
-    />,
+    <I18nProvider i18n={i18n}>
+      <SetupPane
+        account={{
+          auth: flat.auth,
+          error: flat.authError,
+          note: flat.loginNote,
+          signingIn: false,
+          signingOut: false,
+          sessionLive: flat.sessionLive,
+          installing: flat.installing,
+          onSignIn: () => {},
+          onSignOut: () => {},
+          onInstall: () => {},
+        }}
+        you={{ name: 'Ray', face: 'onigiri', onName: () => {}, onFace: () => {} }}
+        project={{ chosen: flat.project, onChoose: () => {} }}
+        defaults={{
+          permissionMode: flat.permissionMode,
+          model: flat.model,
+          tongue: 'system' as const,
+          onTongue: () => {},
+          notify: flat.notify,
+          onNotify: () => {},
+          onPermissionMode: () => {},
+          onModel: () => {},
+        }}
+        plugins={{ summary: 'none', onOpen: () => {} }}
+        actions={{
+          reopened: flat.reopened,
+          signedIn: flat.auth?.state === 'signed-in',
+          hasProject: flat.project != null,
+          onStart: () => {},
+          onCancel: () => {},
+        }}
+        notice={flat.notice}
+      />
+    </I18nProvider>,
   )
 }
 
@@ -155,7 +163,23 @@ describe('SetupPane: everything to settle before starting, on one screen', () =>
 
   it('says the CLI is missing instead of offering sign-in', () => {
     const html = pane({ auth: { state: 'cli-missing' } })
-    expect(html).toContain('command not found')
+    expect(html).toContain('command was not found')
+  })
+
+  it('offers to install the missing CLI, since a fresh machine has no other way in', () => {
+    const html = pane({ auth: { state: 'cli-missing' } })
+    expect(html).toContain('Install Claude Code')
+    expect(html).not.toContain('Sign in with Anthropic')
+  })
+
+  it('shows the install running, so a five-minute download does not look dead', () => {
+    const html = pane({ auth: { state: 'cli-missing' }, installing: true })
+    expect(html).toContain('Installing Claude Code')
+  })
+
+  it('leaves a failed install on screen', () => {
+    const html = pane({ auth: { state: 'cli-missing' }, authError: 'curl: (6) could not resolve' })
+    expect(html).toContain('curl: (6) could not resolve')
   })
 
   it('sizes the choice pills to their content, and not to the field around them', () => {

@@ -4,7 +4,7 @@ import { withScope } from '@/entities/plugin/lib/scope/scope'
 import type { Catalog, Marketplace, PluginRun } from '@/entities/plugin/lib/catalog/catalog.types'
 import { runClaude } from './run-claude/run-claude'
 import { handle } from './ipc/ipc'
-import { recallProject } from './project-memory'
+import { recallProject } from './project-memory/project-memory'
 
 const READ_TIMEOUT_MS = 20_000
 

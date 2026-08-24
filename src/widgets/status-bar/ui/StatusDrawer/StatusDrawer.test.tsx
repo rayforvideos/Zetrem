@@ -115,12 +115,13 @@ describe('the connector list answers which one is broken, not which ones are fin
     expect(html).not.toContain('Needs auth')
   })
 
-  it('clears a connector the health check found alive, however the startup snapshot saw it', () => {
+  it('keeps a needs-auth verdict on screen, however alive the health check found the server', () => {
+    // The check probes the transport; the session knows it could not sign in.
     const html = draw(full, {
       connectors: [{ name: 'claude.ai Notion', where: 'https://mcp.notion.com/mcp', state: 'connected' }],
     })
-    expect(html, 'Recheck has to be able to fix something').not.toContain('Needs auth')
-    expect(html).toContain('All 2 connected')
+    expect(html).toContain('Needs auth')
+    expect(html).toContain('1 of 2 connected')
   })
 
   it('offers a way to ask again, since signing in happens outside the app', () => {

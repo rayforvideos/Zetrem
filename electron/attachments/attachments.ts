@@ -3,7 +3,7 @@ import { basename } from 'node:path'
 import { dialog } from 'electron'
 import { IMAGE_MAX_BYTES, imageTypeOf, kindOf } from '@/entities/attachment/lib/attachment/attachment'
 import type { Attached } from '@/entities/attachment/lib/attachment/attachment.types'
-import { recallProject } from '../project-memory'
+import { recallProject } from '../project-memory/project-memory'
 import { handle } from '../ipc/ipc'
 
 // files:read serves only paths that came out of the dialog or out of a real file

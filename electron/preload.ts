@@ -4,6 +4,8 @@ import type { IpcRendererEvent } from 'electron'
 contextBridge.exposeInMainWorld('desk', {
   pickProjectDir: (): Promise<unknown> => ipcRenderer.invoke('project:pick'),
   restoreProjectDir: (): Promise<unknown> => ipcRenderer.invoke('project:restore'),
+  recentProjectDirs: (): Promise<unknown> => ipcRenderer.invoke('project:recent'),
+  chooseProjectDir: (path: string): Promise<unknown> => ipcRenderer.invoke('project:choose', path),
   startAgent: (id: string, prompt: string, config: unknown, files?: unknown): Promise<void> =>
     ipcRenderer.invoke('agent:start', id, prompt, config, files),
   authStatus: (): Promise<unknown> => ipcRenderer.invoke('auth:status'),

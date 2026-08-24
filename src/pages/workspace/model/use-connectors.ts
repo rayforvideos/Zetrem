@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import type { Connector, ConnectorVerb, NewConnector } from '@/entities/connector'
-import { tidyName } from '@/entities/connector'
+import { shortName, tidyName } from '@/entities/connector'
 import { outcomeLine, useAsk } from '@/shared/lib/ask/ask'
 import { saidOrWhy } from '@/entities/connector'
 import { t } from '@lingui/core/macro'
@@ -19,10 +19,15 @@ type Connectors = {
 }
 
 // Read at call time, never at import: the locale is not up yet when this module loads.
-function said(verb: ConnectorVerb): string {
-  if (verb === 'login') return t`Signed in to`
-  if (verb === 'logout') return t`Signed out of`
-  return t`Removed`
+function said(verb: ConnectorVerb, target: string): string {
+  // The rows already drop the "claude.ai " mouthful; the toast follows suit.
+  const name = shortName(target)
+  // claude mcp login opens the browser and exits before anyone has signed
+  // in, so a finished command is not a finished sign-in — and either way the
+  // tools only load into the next session.
+  if (verb === 'login') return t`Finish signing in to ${name} in the browser. The next session picks it up.`
+  if (verb === 'logout') return `${t`Signed out of`} ${name}`
+  return `${t`Removed`} ${name}`
 }
 
 const ADDING = 'adding'
@@ -52,12 +57,12 @@ export function useConnectors(wanted: boolean): Connectors {
   }, [wanted])
 
   function act(verb: ConnectorVerb, target: string): void {
-    void ask(target, t`Could not reach ${target}`, () =>
+    void ask(target, t`Could not reach ${shortName(target)}`, () =>
       window.desk.connectorAct(verb, target),
     ).then((result) => {
       if (result === null) return
       reload()
-      say(saidOrWhy(outcomeLine(result, `${said(verb)} ${target}`)))
+      say(saidOrWhy(outcomeLine(result, said(verb, target))))
     })
   }
 

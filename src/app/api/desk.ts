@@ -14,6 +14,8 @@ export type AgentHostEvent =
 export type DeskBridge = {
   pickProjectDir(): Promise<string | null>
   restoreProjectDir(): Promise<string | null>
+  recentProjectDirs(): Promise<string[]>
+  chooseProjectDir(path: string): Promise<string | null>
   startAgent(id: string, prompt: string, config: RunConfig, files?: Attached[]): Promise<void>
   appVersion(): Promise<string>
   readSettings(): Promise<Settings>

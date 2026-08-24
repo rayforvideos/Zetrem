@@ -99,7 +99,7 @@ msgstr "{installed} installed from {sources, plural, one {# source} other {# sou
 msgid "{kind} {name} did not load: {why}"
 msgstr "{kind} {name} did not load: {why}"
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:363
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:376
 msgid "{name} can be called now. Your next message starts a session that can reach them."
 msgstr "{name} can be called now. Your next message starts a session that can reach them."
 
@@ -107,7 +107,7 @@ msgstr "{name} can be called now. Your next message starts a session that can re
 msgid "{name} can be called this session"
 msgstr "{name} can be called this session"
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:364
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:377
 msgid "{name} is off. Your next message starts a session without them."
 msgstr "{name} is off. Your next message starts a session without them."
 
@@ -290,7 +290,7 @@ msgstr "Add teammate"
 msgid "Add your first teammate"
 msgstr "Add your first teammate"
 
-#: src/pages/workspace/model/use-connectors.ts:71
+#: src/pages/workspace/model/use-connectors.ts:76
 msgid "Added {name}. Sign in if it asks."
 msgstr "Added {name}. Sign in if it asks."
 
@@ -378,7 +378,7 @@ msgstr "Big job? Split it. They like company."
 msgid "Billing refused the request"
 msgstr "Billing refused the request"
 
-#: src/pages/workspace/model/use-connectors.ts:82
+#: src/pages/workspace/model/use-connectors.ts:87
 msgid "Brought over what Claude Desktop had."
 msgstr "Brought over what Claude Desktop had."
 
@@ -400,11 +400,11 @@ msgstr "Cart totals and rounding"
 msgid "Change"
 msgstr "Change"
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:414
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:434
 msgid "Change account, project, and permissions"
 msgstr "Change account, project, and permissions"
 
-#: src/pages/workspace/ui/controls/ProjectPicker.tsx:47
+#: src/pages/workspace/ui/controls/ProjectPicker/ProjectPicker.tsx:58
 msgid "Change folder…"
 msgstr "Change folder…"
 
@@ -425,7 +425,7 @@ msgstr "Choose a project folder"
 msgid "Choose folder"
 msgstr "Choose folder"
 
-#: src/pages/workspace/ui/controls/ProjectPicker.tsx:17
+#: src/pages/workspace/ui/controls/ProjectPicker/ProjectPicker.tsx:80
 msgid "Choose project"
 msgstr "Choose project"
 
@@ -448,7 +448,7 @@ msgid "Clear"
 msgstr "Clear"
 
 #. placeholder {0}: update.current
-#: src/widgets/status-bar/lib/format/format.ts:65
+#: src/widgets/status-bar/lib/format/format.ts:70
 msgid "CLI {0} → {latest} available"
 msgstr "CLI {0} → {latest} available"
 
@@ -494,7 +494,7 @@ msgid "Context"
 msgstr "Context"
 
 #. placeholder {0}: 100 - percent
-#: src/widgets/status-bar/lib/format/format.ts:44
+#: src/widgets/status-bar/lib/format/format.ts:49
 msgid "Context {0}% left, compacting soon"
 msgstr "Context {0}% left, compacting soon"
 
@@ -507,11 +507,11 @@ msgstr "Conversation compacted here"
 msgid "Could not {0} {target}"
 msgstr "Could not {0} {target}"
 
-#: src/pages/workspace/model/use-connectors.ts:66
+#: src/pages/workspace/model/use-connectors.ts:71
 msgid "Could not add {name}"
 msgstr "Could not add {name}"
 
-#: src/pages/workspace/model/use-connectors.ts:77
+#: src/pages/workspace/model/use-connectors.ts:82
 msgid "Could not bring over Claude Desktop"
 msgstr "Could not bring over Claude Desktop"
 
@@ -535,7 +535,8 @@ msgstr "Could not list your saved chats"
 msgid "Could not open that chat"
 msgstr "Could not open that chat"
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:155
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:159
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:163
 msgid "Could not open that folder"
 msgstr "Could not open that folder"
 
@@ -547,9 +548,10 @@ msgstr "Could not open the file picker"
 msgid "Could not pick that conversation back up. Starting a new one."
 msgstr "Could not pick that conversation back up. Starting a new one."
 
-#: src/pages/workspace/model/use-connectors.ts:55
-msgid "Could not reach {target}"
-msgstr "Could not reach {target}"
+#. placeholder {0}: shortName(target)
+#: src/pages/workspace/model/use-connectors.ts:60
+msgid "Could not reach {0}"
+msgstr "Could not reach {0}"
 
 #: src/pages/workspace/model/use-plugins.ts:42
 msgid "Could not read the plugin shelf"
@@ -571,7 +573,7 @@ msgstr "Could not read what you attached"
 msgid "Could not read what you pasted"
 msgstr "Could not read what you pasted"
 
-#: src/pages/workspace/model/use-connectors.ts:40
+#: src/pages/workspace/model/use-connectors.ts:45
 msgid "Could not read your connectors"
 msgstr "Could not read your connectors"
 
@@ -587,7 +589,7 @@ msgstr "Could not read your settings"
 msgid "Could not read your sign-in"
 msgstr "Could not read your sign-in"
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:92
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:96
 msgid "Could not reopen your last project"
 msgstr "Could not reopen your last project"
 
@@ -718,6 +720,10 @@ msgstr "Files read, commands run, edits made. Each one shows up as it happens, n
 msgid "Find why checkout drops the last item"
 msgstr "Find why checkout drops the last item"
 
+#: src/pages/workspace/model/use-connectors.ts:28
+msgid "Finish signing in to {name} in the browser. The next session picks it up."
+msgstr "Finish signing in to {name} in the browser. The next session picks it up."
+
 #: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:97
 msgid "Folder"
 msgstr "Folder"
@@ -772,8 +778,8 @@ msgstr "Handing off"
 msgid "Held up"
 msgstr "Held up"
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:399
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:400
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:419
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:420
 msgid "Hide team sidebar"
 msgstr "Hide team sidebar"
 
@@ -882,7 +888,7 @@ msgstr "manual"
 #. placeholder {0}: wired.connected
 #. placeholder {1}: wired.total
 #. placeholder {2}: wired.needsAuth
-#: src/widgets/status-bar/lib/format/format.ts:53
+#: src/widgets/status-bar/lib/format/format.ts:58
 msgid "MCP {0}/{1} · {2} need auth"
 msgstr "MCP {0}/{1} · {2} need auth"
 
@@ -905,7 +911,7 @@ msgstr "Message your team"
 msgid "Model"
 msgstr "Model"
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:296
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:309
 msgid "Model changed. Your next message starts a session on it."
 msgstr "Model changed. Your next message starts a session on it."
 
@@ -1046,7 +1052,7 @@ msgstr "Permission"
 msgid "Permissions"
 msgstr "Permissions"
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:290
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:303
 msgid "Permissions changed. Your next message starts a session that follows them."
 msgstr "Permissions changed. Your next message starts a session that follows them."
 
@@ -1131,6 +1137,11 @@ msgstr "Reading what this session offers. The list fills in a moment."
 msgid "Reading which agents Claude Code brings. They will be listed here."
 msgstr "Reading which agents Claude Code brings. They will be listed here."
 
+#: src/pages/workspace/ui/controls/ProjectPicker/ProjectPicker.tsx:41
+#: src/widgets/setup/ui/ProjectField/ProjectField.tsx:27
+msgid "Recent"
+msgstr "Recent"
+
 #: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:122
 msgid "Recheck"
 msgstr "Recheck"
@@ -1163,7 +1174,7 @@ msgstr "Remove {name}?"
 msgid "Remove from team"
 msgstr "Remove from team"
 
-#: src/pages/workspace/model/use-connectors.ts:25
+#: src/pages/workspace/model/use-connectors.ts:30
 msgid "Removed"
 msgstr "Removed"
 
@@ -1273,7 +1284,7 @@ msgstr "Set a few things and your agents get to work!"
 msgid "Set for everyone on your account. They cannot be removed or turned off here."
 msgstr "Set for everyone on your account. They cannot be removed or turned off here."
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:416
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:436
 msgid "Settings"
 msgstr "Settings"
 
@@ -1281,8 +1292,8 @@ msgstr "Settings"
 msgid "share unknown"
 msgstr "share unknown"
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:399
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:400
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:419
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:420
 msgid "Show team sidebar"
 msgstr "Show team sidebar"
 
@@ -1316,11 +1327,7 @@ msgstr "Sign out"
 msgid "Sign out of Claude Code everywhere?"
 msgstr "Sign out of Claude Code everywhere?"
 
-#: src/pages/workspace/model/use-connectors.ts:23
-msgid "Signed in to"
-msgstr "Signed in to"
-
-#: src/pages/workspace/model/use-connectors.ts:24
+#: src/pages/workspace/model/use-connectors.ts:29
 msgid "Signed out of"
 msgstr "Signed out of"
 

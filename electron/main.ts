@@ -17,7 +17,7 @@ import { killTrackedChildren } from './run-settled/run-settled'
 import { killAllProbes, registerSessionProbe } from './session-probe'
 import { registerTranscriptStore } from './transcript-store'
 import { registerUpdater } from './updater/updater'
-import { recallProject, rememberProject } from './project-memory'
+import { recallProject, recentProjects, rememberProject } from './project-memory/project-memory'
 import { handle } from './ipc/ipc'
 import { loadTroubleLine, troublePage } from './window-trouble/window-trouble'
 
@@ -134,6 +134,17 @@ handle('project:pick', async () => {
 })
 
 handle('project:restore', () => recallProject())
+
+handle('project:recent', () => recentProjects())
+
+handle('project:choose', async (_event, path: string) => {
+  // Only a folder this app itself remembered may become the project again;
+  // the renderer does not get to point main at an arbitrary path.
+  const known = await recentProjects()
+  if (!known.includes(path)) return null
+  await rememberProject(path)
+  return path
+})
 
 handle('agents:pickKnowledge', async (): Promise<string[]> => {
   const project = await recallProject()

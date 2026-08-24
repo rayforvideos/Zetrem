@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { cells, contextPercent } from './format'
+import { cells, contextPercent, reachable } from './format'
 import type { StatusState } from '@/entities/agent-session'
 
 function state(overrides: Partial<StatusState> = {}): StatusState {
@@ -16,6 +16,30 @@ function state(overrides: Partial<StatusState> = {}): StatusState {
     usageAtMs: overrides.usageAtMs ?? null
   }
 }
+
+describe('what counts as reachable', () => {
+  it('believes the session over the health check about who needs signing in', () => {
+    // The health check probes the transport, so a server handing out nothing
+    // but an authenticate tool still reads as connected there. The session
+    // sat through init and knows better.
+    const withSession = state({
+      session: {
+        id: 's1',
+        cwd: '/w',
+        model: 'claude-opus-5',
+        permissionMode: 'default',
+        cliVersion: '2.1.231',
+        mcp: [{ name: 'claude.ai Gmail', status: 'needs-auth' }],
+        tools: [],
+        agents: [],
+      },
+    })
+    const merged = reachable(withSession, [
+      { name: 'claude.ai Gmail', where: 'https://gmailmcp.googleapis.com/mcp/v1', state: 'connected' },
+    ])
+    expect(merged.get('claude.ai Gmail')).toBe('needs-auth')
+  })
+})
 
 describe('the cells in the status bar', () => {
   it('shows no cell while nothing is known, rather than making an empty one', () => {
@@ -108,17 +132,21 @@ function withMcp(mcp: { name: string; status: string }[]): StatusState {
 }
 
 describe('the strip counts what this session can actually reach', () => {
-  it('believes the health check over the startup snapshot, which is taken before anything has connected', () => {
-    const stale = withMcp([
+  it('believes the session about who needs signing in, however alive the check found them', () => {
+    // The check probes the transport, and a server that answers while handing
+    // out nothing but an authenticate tool still reads as connected there.
+    // The session sat through init: needs-auth there means this session
+    // really cannot use the tools, until it is signed in and restarted.
+    const honest = withMcp([
       { name: 'claude.ai Notion', status: 'needs-auth' },
       { name: 'playwright', status: 'connected' }
     ])
-    const [mcp] = cells(stale, [
+    const [mcp] = cells(honest, [
       { name: 'claude.ai Notion', where: 'https://mcp.notion.com/mcp', state: 'connected' },
       { name: 'playwright', where: 'npx @playwright/mcp@latest', state: 'connected' }
     ]).filter((cell) => cell.key === 'mcp')
-    expect(mcp?.text).toBe('MCP 2/2')
-    expect(mcp?.warn).toBe(false)
+    expect(mcp?.text).toBe('MCP 1/2 · 1 need auth')
+    expect(mcp?.warn).toBe(true)
   })
 
   it('still reports trouble the health check itself found', () => {
@@ -178,7 +206,10 @@ describe('the strip reports the freshest reading it has', () => {
       }
     })
 
-  it('clears every remote connector once the check says they came up, since init sees none of them ready', () => {
+  it('clears a pending connector once the check says it came up, but not one that could not sign in', () => {
+    // Init writes pending for a remote server it has not finished reaching,
+    // and that snapshot goes stale the moment the check reaches it. Its
+    // needs-auth is different: that is a verdict, not a snapshot.
     const cell = cells(
       session([
         { name: 'Gmail', status: 'needs-auth' },
@@ -191,8 +222,8 @@ describe('the strip reports the freshest reading it has', () => {
         { name: 'playwright', where: 'z', state: 'connected' }
       ],
     ).find((one) => one.key === 'mcp')
-    expect(cell?.text).toBe('MCP 3/3')
-    expect(cell?.warn).toBe(false)
+    expect(cell?.text).toBe('MCP 2/3 · 1 need auth')
+    expect(cell?.warn).toBe(true)
   })
 
   it('falls back to the config while no session has started', () => {

@@ -4,7 +4,7 @@ import type { AgentDefDraft } from '@/entities/agent-def'
 import { homedir } from 'node:os'
 import { listAgentDefs, removeAgentDef, replaceAgentDef, writeAgentDef } from './agent-store/agent-store'
 import { authoredAgents } from './authored-agents/authored-agents'
-import { recallProject } from './project-memory'
+import { recallProject } from './project-memory/project-memory'
 import { handle } from './ipc/ipc'
 
 export function agentDir(): string {

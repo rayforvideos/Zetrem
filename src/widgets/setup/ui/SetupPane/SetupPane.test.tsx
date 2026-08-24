@@ -20,6 +20,7 @@ type Flat = {
   loginNote: string
   notice: Failure | null
   installing: boolean
+  recent: { path: string; name: string }[]
 }
 
 function pane(over: Partial<Flat> = {}): string {
@@ -36,6 +37,7 @@ function pane(over: Partial<Flat> = {}): string {
     loginNote: '',
     notice: null,
     installing: false,
+    recent: [],
     ...over,
   }
   return renderToStaticMarkup(
@@ -54,7 +56,12 @@ function pane(over: Partial<Flat> = {}): string {
           onInstall: () => {},
         }}
         you={{ name: 'Ray', face: 'onigiri', onName: () => {}, onFace: () => {} }}
-        project={{ chosen: flat.project, onChoose: () => {} }}
+        project={{
+          chosen: flat.project,
+          recent: flat.recent,
+          onChoose: () => {},
+          onPickRecent: () => {},
+        }}
         defaults={{
           permissionMode: flat.permissionMode,
           model: flat.model,
@@ -180,6 +187,20 @@ describe('SetupPane: everything to settle before starting, on one screen', () =>
   it('leaves a failed install on screen', () => {
     const html = pane({ auth: { state: 'cli-missing' }, authError: 'curl: (6) could not resolve' })
     expect(html).toContain('curl: (6) could not resolve')
+  })
+
+  it('offers the folders someone worked in lately', () => {
+    const html = pane({
+      project: { name: 'zetrem', path: '/tmp/zetrem' },
+      recent: [{ path: '/tmp/alpha', name: 'alpha' }],
+    })
+    expect(html).toContain('alpha')
+    expect(html).toContain('/tmp/alpha')
+  })
+
+  it('keeps the field quiet when there is nowhere to go back to', () => {
+    const html = pane({ project: { name: 'zetrem', path: '/tmp/zetrem' } })
+    expect(html).not.toContain('data-recent')
   })
 
   it('sizes the choice pills to their content, and not to the field around them', () => {

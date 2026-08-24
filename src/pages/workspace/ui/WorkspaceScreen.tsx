@@ -8,7 +8,9 @@ import {
   withRefused,
   withoutRefused,
 } from '@/entities/agent-session'
-import { pickProject, projectStore } from '@/entities/project'
+import { withSessionAuth } from '@/entities/connector'
+import { chooseProject, pickProject, projectStore } from '@/entities/project'
+import type { Project } from '@/entities/project'
 import { GRID_PAD } from '@/shared/config/theme'
 import { PanelLeft } from 'lucide-react'
 import { Button } from '@/shared/ui/button'
@@ -39,6 +41,7 @@ import { useLearnedSettings } from '../model/use-learned-settings'
 import { useFocus } from '../model/use-focus'
 import { usePlugins } from '../model/use-plugins'
 import { useProjectMemory } from '../model/use-project-memory'
+import { useRecentProjects } from '../model/use-recent-projects'
 import { useSessionProbe } from '../model/use-session-probe'
 import { useAuthoredAgents } from '../model/use-authored-agents'
 import { useNudge } from '../model/use-nudge'
@@ -54,7 +57,7 @@ import { useOffsetWidth } from '@/shared/lib/offset-width/use-offset-width'
 import { tuckedBy } from '../model/tuck/tuck'
 import { crewOf, lockOf, peopleOf, pluginSummary } from '../model/workspace-config/workspace-config'
 import { PluginShelfOverlay } from './controls/PluginShelfOverlay'
-import { ProjectPicker } from './controls/ProjectPicker'
+import { ProjectPicker } from './controls/ProjectPicker/ProjectPicker'
 import { StatusBarPanel } from './controls/StatusBarPanel'
 import { t } from '@lingui/core/macro'
 
@@ -63,6 +66,7 @@ export function WorkspaceScreen() {
   const project = useSyncExternalStore(projectStore.subscribe, projectStore.get, projectStore.get)
   const { defs, drafts, hire, edit, release, note: teamNote } = useAgentDefs()
   const { failure: projectFailure, report: reportProject } = useFailure()
+  const recentProjects = useRecentProjects(project)
 
   const authored = useAuthoredAgents(project?.path ?? null)
   const chat = useTranscript(project?.path ?? null)
@@ -142,17 +146,21 @@ export function WorkspaceScreen() {
     return () => window.removeEventListener('keydown', onKey)
   }, [drawerOpen])
 
+  function adoptProject(picked: Project | null): void {
+    if (!picked || picked.path === project?.path) return
+    // The running agent is rooted in the old folder; left alive it would
+    // keep streaming turns into the new project's transcript.
+    agent.reset()
+    focus.clearAll()
+    projectStore.set(picked)
+  }
+
   function handlePickProject(): void {
-    pickProject()
-      .then((picked) => {
-        if (!picked || picked.path === project?.path) return
-        // The running agent is rooted in the old folder; left alive it would
-        // keep streaming turns into the new project's transcript.
-        agent.reset()
-        focus.clearAll()
-        projectStore.set(picked)
-      })
-      .catch(reportProject(t`Could not open that folder`))
+    pickProject().then(adoptProject).catch(reportProject(t`Could not open that folder`))
+  }
+
+  function handlePickRecent(path: string): void {
+    chooseProject(path).then(adoptProject).catch(reportProject(t`Could not open that folder`))
   }
 
   function reload(patch: Partial<typeof settings>, said: string): void {
@@ -222,7 +230,12 @@ export function WorkspaceScreen() {
                     onName: (next) => update({ userName: next }),
                     onFace: (next) => update({ userFace: next }),
                   }}
-                  project={{ chosen: project, onChoose: handlePickProject }}
+                  project={{
+                    chosen: project,
+                    recent: recentProjects,
+                    onChoose: handlePickProject,
+                    onPickRecent: handlePickRecent,
+                  }}
                   defaults={{
                     permissionMode: settings.permissionMode,
                     model: settings.model,
@@ -376,7 +389,14 @@ export function WorkspaceScreen() {
             }
           />
 
-          <PluginShelfOverlay shelf={shelf} wires={wires} project={project?.path ?? null} />
+          <PluginShelfOverlay
+            shelf={shelf}
+            wires={{
+              ...wires,
+              connectors: withSessionAuth(wires.connectors, status.session?.mcp ?? []),
+            }}
+            project={project?.path ?? null}
+          />
         </div>
         <StatusBarPanel
           shown={gate !== 'welcome'}
@@ -416,7 +436,11 @@ export function WorkspaceScreen() {
             {t`Settings`}
           </Button>
         )}
-        <ProjectPicker onChoose={handlePickProject} />
+        <ProjectPicker
+          recent={recentProjects}
+          onPick={handlePickRecent}
+          onChoose={handlePickProject}
+        />
       </Titlebar>
     </CrewProvider>
   )

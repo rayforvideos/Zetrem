@@ -133,7 +133,12 @@ export function WorkspaceScreen() {
     authored,
   )
   const openAgent = children.find((session) => session.id === focus.openAgentId) ?? null
-  const sessionAgentNames = status.session?.agents ?? []
+  // The probe keeps reporting a session after our child has been stopped, so
+  // status.session outlives the thing it describes. For everything the sidebar
+  // decides — who can be called, who is held back, whether a restart is worth
+  // offering — a session only exists while a child of ours is alive.
+  const held = agent.running ? status.session : null
+  const sessionAgentNames = held?.agents ?? []
   const teamMembers = team(
     defs,
     sessionAgentNames,
@@ -352,7 +357,7 @@ export function WorkspaceScreen() {
                   onDecide={agent.decide}
                   composer={
                     <>
-                      {pendingRestart !== null && live && (
+                      {pendingRestart !== null && agent.running && (
                         <RestartNote
                           said={pendingRestart}
                           onRestart={() => {
@@ -434,14 +439,14 @@ export function WorkspaceScreen() {
                           onRemove: chat.remove,
                           onRename: chat.rename,
                           onFile: chat.file,
+                          onFileMany: chat.fileMany,
                         }}
                         team={{
                           members: teamMembers,
                           drafts,
                           knownTools: settings.knownTools,
-                          sessionKnown: status.session !== null,
+                          sessionUp: held !== null,
                           read: focus.read,
-                          sessionLive: live,
                           canWrite: true,
                           hint: hintDue('hire-first', settings.hintsSeen, defs.length === 0),
                           onHintSeen: () =>

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import type { ChatSummary } from '@/entities/conversation'
-import { dropOnChat } from './chat-drop'
+import { canLand, dropOnChat } from './chat-drop'
 
 let stamp = 9_000
 function chat(folder = '', id?: string): ChatSummary {
@@ -41,5 +41,27 @@ describe('dropOnChat: what carrying one chat onto another should mean', () => {
   it('asks for a name when a filed chat lands on a loose one', () => {
     // The loose chat has no place to offer, so the two of them make one.
     expect(dropOnChat(chat('리깅'), chat())).toEqual({ kind: 'name' })
+  })
+})
+
+describe('canLand: whether the ring should promise anything', () => {
+  it('promises nothing over the chat being carried', () => {
+    const one = chat()
+    expect(canLand(one, one)).toBe(false)
+  })
+
+  it('promises nothing over a chat already in the same folder', () => {
+    expect(canLand(chat('출고'), chat('출고'))).toBe(false)
+  })
+
+  it('promises a landing where something would actually happen', () => {
+    expect(canLand(chat(), chat())).toBe(true)
+    expect(canLand(chat(), chat('출고'))).toBe(true)
+  })
+
+  it('promises nothing when the carried chat is not known', () => {
+    // A file dragged in from the desktop is not a chat, and neither is a stale
+    // id from a list that has moved on.
+    expect(canLand(undefined, chat())).toBe(false)
   })
 })

@@ -14,3 +14,11 @@ export function dropOnChat(dragged: ChatSummary, target: ChatSummary): Drop {
   if (there === dragged.folder.trim()) return { kind: 'none' }
   return { kind: 'file', folder: there }
 }
+
+// Whether the ring should promise anything. A drop is only worth drawing when
+// something would come of it, and what is being carried cannot be read out of
+// the drag itself while it is in flight — the list holds onto it instead.
+export function canLand(dragged: ChatSummary | undefined, target: ChatSummary): boolean {
+  if (dragged === undefined) return false
+  return dropOnChat(dragged, target).kind !== 'none'
+}

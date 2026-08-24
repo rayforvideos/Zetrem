@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import type { ChatListProps } from './ChatList.types'
-import { ChevronDown, ChevronRight, Folder, MoreHorizontal, Search, SquarePen } from 'lucide-react'
+import { ChevronDown, ChevronRight, Folder, FolderOpen, MoreHorizontal, Search, SquarePen } from 'lucide-react'
 import type { ChatSummary } from '@/entities/conversation'
 import { cn } from '@/shared/lib/cn'
 import {
@@ -25,9 +25,9 @@ import {
   DropdownMenuTrigger,
 } from '@/shared/ui/dropdown-menu'
 import { groupChats } from '../../lib/chat-groups/chat-groups'
-import { fileChats } from '../../lib/chat-filing/chat-filing'
+import { fileChats, renamedFolder } from '../../lib/chat-filing/chat-filing'
 import { ROOMY, matchChats } from '../../lib/chat-search/chat-search'
-import { dropOnChat } from '../../lib/chat-drop/chat-drop'
+import { canLand, dropOnChat } from '../../lib/chat-drop/chat-drop'
 
 // Its own type, so a file dragged in from the desktop is never mistaken for a
 // chat being carried.
@@ -38,7 +38,7 @@ import { t } from '@lingui/core/macro'
 import { named } from '../../lib/named/named'
 
 
-export function ChatList({ chats, openId, nowMs, onOpen, onStart, onRemove, onRename, onFile }: ChatListProps) {
+export function ChatList({ chats, openId, nowMs, onOpen, onStart, onRemove, onRename, onFile, onFileMany }: ChatListProps) {
   const [query, setQuery] = useState('')
   // The folders are the way people actually re-find their own things, so they
   // stay whole and in their places. Looking is the way out when that stops
@@ -51,8 +51,23 @@ export function ChatList({ chats, openId, nowMs, onOpen, onStart, onRemove, onRe
   // Two chats carried together need somewhere to go, so the pair waits here
   // while the name is typed.
   const [pairing, setPairing] = useState<[string, string] | null>(null)
+  // A drag cannot be read while it is in flight, so the chat being carried is
+  // held here. Without it a ring can only promise that something is being
+  // dragged, not that dropping it would do anything.
+  const [carried, setCarried] = useState<ChatSummary | null>(null)
+
+  // The pair is named where it landed, so the answer appears under the cursor
+  // rather than at the top of the list. Leaving the field alone keeps the pair
+  // waiting instead of throwing the drag away.
+  function paired(name: string | null): void {
+    const pair = pairing
+    if (name === null || pair === null) return
+    setPairing(null)
+    for (const id of pair) onFile(id, name)
+  }
 
   function carry(draggedId: string, target: ChatSummary): void {
+    setCarried(null)
     const dragged = chats.find((one) => one.id === draggedId)
     if (dragged === undefined) return
     const what = dropOnChat(dragged, target)
@@ -87,29 +102,9 @@ export function ChatList({ chats, openId, nowMs, onOpen, onStart, onRemove, onRe
             }}
             aria-label={t`Find a chat`}
             placeholder={t`Find a chat`}
-            className="h-8 w-full min-w-0 rounded-lg bg-card pr-2 pl-7 text-sm outline-none placeholder:text-muted-foreground"
+            className="h-8 w-full min-w-0 rounded-lg bg-card pr-2 pl-7 text-sm outline-none focus-visible:ring-1 focus-visible:ring-ring placeholder:text-muted-foreground"
           />
         </div>
-      )}
-
-      {pairing !== null && (
-        <input
-          autoFocus
-          aria-label={t`Folder name`}
-          placeholder={t`Folder name`}
-          onBlur={() => setPairing(null)}
-          onKeyDown={(event) => {
-            if (event.key === 'Escape') setPairing(null)
-            if (event.key !== 'Enter') return
-            event.preventDefault()
-            const wanted = event.currentTarget.value.trim()
-            const pair = pairing
-            setPairing(null)
-            if (wanted.length === 0) return
-            for (const id of pair) onFile(id, wanted)
-          }}
-          className="mb-1 h-8 w-full min-w-0 rounded-lg bg-card px-2 text-left text-sm outline-none"
-        />
       )}
 
       {folders.map((folder) => (
@@ -123,7 +118,18 @@ export function ChatList({ chats, openId, nowMs, onOpen, onStart, onRemove, onRe
           onRemove={onRemove}
           onRename={onRename}
           onFile={onFile}
+          pairing={pairing}
+          onPaired={paired}
+          onRenameFolder={(from, to) => onFileMany(renamedFolder(chats, from, to), to)}
+          onEmptyFolder={(name) =>
+            onFileMany(
+              chats.filter((one) => one.folder.trim().toLocaleLowerCase() === name.toLocaleLowerCase()).map((one) => one.id),
+              '',
+            )
+          }
           onCarry={carry}
+          carried={carried}
+          onPickUp={setCarried}
           looking={looking}
         />
       ))}
@@ -145,6 +151,10 @@ export function ChatList({ chats, openId, nowMs, onOpen, onStart, onRemove, onRe
               onRename={onRename}
               onFile={onFile}
               onCarry={carry}
+              carried={carried}
+              onPickUp={setCarried}
+              pairing={pairing}
+              onPaired={paired}
             />
           ))}
         </div>
@@ -167,6 +177,10 @@ function Row({
   onRename,
   onFile,
   onCarry,
+  carried,
+  onPickUp,
+  pairing,
+  onPaired,
 }: {
   chat: ChatSummary
   open: boolean
@@ -177,6 +191,10 @@ function Row({
   onRename(id: string, wanted: string): void
   onFile(id: string, folder: string): void
   onCarry(draggedId: string, target: ChatSummary): void
+  carried: ChatSummary | null
+  onPickUp(chat: ChatSummary | null): void
+  pairing: [string, string] | null
+  onPaired(name: string | null): void
 }) {
   const [editing, setEditing] = useState(false)
   const [naming, setNaming] = useState(false)
@@ -188,6 +206,24 @@ function Row({
     const wanted = value.trim()
     if (wanted.length === 0 || wanted === chat.title) return
     onRename(chat.id, wanted)
+  }
+
+  if (pairing !== null && pairing[1] === chat.id) {
+    return (
+      <input
+        autoFocus
+        aria-label={t`Name the folder for these two chats`}
+        placeholder={t`Folder for both`}
+        onKeyDown={(event) => {
+          if (event.key === 'Escape') onPaired(null)
+          if (event.key !== 'Enter') return
+          event.preventDefault()
+          const wanted = event.currentTarget.value.trim()
+          if (wanted.length > 0) onPaired(wanted)
+        }}
+        className="h-8 w-full min-w-0 rounded-lg bg-card px-2 text-left text-sm outline-none focus-visible:ring-1 focus-visible:ring-ring"
+      />
+    )
   }
 
   if (naming) {
@@ -207,7 +243,7 @@ function Row({
           setNaming(false)
           if (wanted.length > 0) onFile(chat.id, wanted)
         }}
-        className="h-8 w-full min-w-0 rounded-lg bg-card px-2 text-left text-sm outline-none"
+        className="h-8 w-full min-w-0 rounded-lg bg-card px-2 text-left text-sm outline-none focus-visible:ring-1 focus-visible:ring-ring"
       />
     )
   }
@@ -229,23 +265,34 @@ function Row({
           }
           if (event.key === 'Escape') setEditing(false)
         }}
-        className="h-8 w-full min-w-0 rounded-lg bg-card px-2 text-left text-sm outline-none"
+        className="h-8 w-full min-w-0 rounded-lg bg-card px-2 text-left text-sm outline-none focus-visible:ring-1 focus-visible:ring-ring"
       />
     )
   }
 
   return (
     <div
-      className={cn('group/chat relative rounded-lg', under && 'ring-1 ring-foreground/40')}
+      className={cn('group/chat relative rounded-lg', under && 'ring-1 ring-ring bg-card/60')}
       onDragOver={(event) => {
-        if (!event.dataTransfer.types.includes(CARRIED)) return
+        // Only ring where dropping would actually do something. A ring over the
+        // chat being carried, or over its own folder-mate, is a promise the
+        // drop cannot keep.
+        if (!canLand(carried ?? undefined, chat)) return
         event.preventDefault()
+        event.stopPropagation()
         setUnder(true)
       }}
-      onDragLeave={() => setUnder(false)}
+      onDragLeave={(event) => {
+        // Fires on every child boundary too, so only a leave that really left.
+        if (event.currentTarget.contains(event.relatedTarget as Node | null)) return
+        setUnder(false)
+      }}
       onDrop={(event) => {
         if (!event.dataTransfer.types.includes(CARRIED)) return
         event.preventDefault()
+        // A row inside a folder sits inside the folder's own drop target; the
+        // row is the more specific answer, so the folder never hears this.
+        event.stopPropagation()
         setUnder(false)
         onCarry(event.dataTransfer.getData(CARRIED), chat)
       }}
@@ -258,7 +305,9 @@ function Row({
         onDragStart={(event) => {
           event.dataTransfer.setData(CARRIED, chat.id)
           event.dataTransfer.effectAllowed = 'move'
+          onPickUp(chat)
         }}
+        onDragEnd={() => onPickUp(null)}
         onClick={() => onOpen(chat.id)}
         onDoubleClick={() => setEditing(true)}
         aria-current={open ? 'true' : undefined}
@@ -353,7 +402,13 @@ function FolderSection({
   onRemove,
   onRename,
   onFile,
+  onRenameFolder,
+  onEmptyFolder,
   onCarry,
+  carried,
+  onPickUp,
+  pairing,
+  onPaired,
 }: {
   folder: { name: string; chats: ChatSummary[] }
   openId: string | null
@@ -364,24 +419,58 @@ function FolderSection({
   onRemove(id: string): void
   onRename(id: string, wanted: string): void
   onFile(id: string, folder: string): void
+  onRenameFolder(from: string, to: string): void
+  onEmptyFolder(name: string): void
   onCarry(draggedId: string, target: ChatSummary): void
+  carried: ChatSummary | null
+  onPickUp(chat: ChatSummary | null): void
+  pairing: [string, string] | null
+  onPaired(name: string | null): void
 }) {
   const [under, setUnder] = useState(false)
+  const [editing, setEditing] = useState(false)
+  const [shut, setShut] = useState(false)
   const holdsOpen = folder.chats.some((chat) => chat.id === openId)
-  const [pressed, setPressed] = useState(holdsOpen)
-  // A shut folder cannot show a match, so looking opens every folder it kept.
-  const open = looking || pressed
+  // The chat you are in is never hidden: a folder holding it stays open, and
+  // pressing it shut only lasts while it holds nothing of yours. A shut folder
+  // cannot show a search match either, so looking opens them all.
+  const open = looking || holdsOpen || !shut
   const roomy = folder.chats.length > ROOMY
+
+  if (editing) {
+    return (
+      <input
+        defaultValue={folder.name}
+        autoFocus
+        aria-label={t`Rename folder`}
+        onFocus={(event) => event.target.select()}
+        onBlur={() => setEditing(false)}
+        onKeyDown={(event) => {
+          if (event.key === 'Escape') setEditing(false)
+          if (event.key !== 'Enter') return
+          event.preventDefault()
+          const wanted = event.currentTarget.value
+          setEditing(false)
+          onRenameFolder(folder.name, wanted)
+        }}
+        className="mt-3 h-8 w-full min-w-0 rounded-lg bg-card px-2 text-left text-sm outline-none focus-visible:ring-1 focus-visible:ring-ring"
+      />
+    )
+  }
 
   return (
     <div
-      className={cn('mt-3 flex flex-col gap-0.5 rounded-lg', under && 'ring-1 ring-foreground/40')}
+      className={cn('group/folder mt-3 flex flex-col gap-0.5 rounded-lg', under && 'ring-1 ring-ring bg-card/60')}
       onDragOver={(event) => {
-        if (!event.dataTransfer.types.includes(CARRIED)) return
+        // Nothing to promise if the carried chat already lives here.
+        if (carried === null || carried.folder.trim() === folder.name) return
         event.preventDefault()
         setUnder(true)
       }}
-      onDragLeave={() => setUnder(false)}
+      onDragLeave={(event) => {
+        if (event.currentTarget.contains(event.relatedTarget as Node | null)) return
+        setUnder(false)
+      }}
       onDrop={(event) => {
         if (!event.dataTransfer.types.includes(CARRIED)) return
         event.preventDefault()
@@ -392,7 +481,7 @@ function FolderSection({
       <Button
         variant="ghost"
         size="bare"
-        onClick={() => setPressed(!open)}
+        onClick={() => setShut(open)}
         aria-expanded={open}
         data-folder={folder.name}
         className="h-8 w-full min-w-0 justify-start gap-1.5 rounded-lg px-2 text-left text-sm text-muted-foreground"
@@ -402,12 +491,42 @@ function FolderSection({
         ) : (
           <ChevronRight className="size-3.5 flex-none" />
         )}
-        <Folder className="size-3.5 flex-none" />
+        {open ? (
+          <FolderOpen className="size-3.5 flex-none" />
+        ) : (
+          <Folder className="size-3.5 flex-none" />
+        )}
         <span className="truncate">{folder.name}</span>
-        <span className="ml-auto flex-none pl-2 font-mono text-xs tabular-nums text-muted-foreground/70">
+        <span className="ml-auto flex-none pl-2 font-mono text-xs tabular-nums text-muted-foreground/70 transition-opacity group-hover/folder:opacity-0">
           {folder.chats.length}
         </span>
       </Button>
+      <div
+        className={cn(
+          'absolute inset-y-0 right-0 flex items-center rounded-r-lg pr-1 pl-4',
+          'bg-linear-to-l from-card from-60% to-transparent',
+          'opacity-0 group-hover/folder:opacity-100 group-focus-within/folder:opacity-100',
+        )}
+      >
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button
+              variant="ghost"
+              size="icon-xs"
+              aria-label={t`More for ${folder.name}`}
+              className="rounded-md text-muted-foreground"
+            >
+              <MoreHorizontal />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-48">
+            <DropdownMenuItem onSelect={() => setEditing(true)}>{t`Rename`}</DropdownMenuItem>
+            <DropdownMenuItem onSelect={() => onEmptyFolder(folder.name)}>
+              {t`Take everything out`}
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
       {open && (
         <div className="zt-rise ml-3 flex flex-col gap-0.5 border-l border-border pl-1.5">
           {roomy
@@ -428,6 +547,10 @@ function FolderSection({
                       onRename={onRename}
                       onFile={onFile}
                       onCarry={onCarry}
+                      carried={carried}
+                      onPickUp={onPickUp}
+                      pairing={pairing}
+                      onPaired={onPaired}
                     />
                   ))}
                 </div>
@@ -444,6 +567,10 @@ function FolderSection({
                   onRename={onRename}
                   onFile={onFile}
                   onCarry={onCarry}
+                  carried={carried}
+                  onPickUp={onPickUp}
+                  pairing={pairing}
+                  onPaired={onPaired}
                 />
               ))}
         </div>

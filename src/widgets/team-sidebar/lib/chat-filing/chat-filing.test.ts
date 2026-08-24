@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import type { ChatSummary } from '@/entities/conversation'
-import { fileChats } from './chat-filing'
+import { fileChats, renamedFolder } from './chat-filing'
 
 let stamp = 9_000
 function chat(folder: string, title = 'c'): ChatSummary {
@@ -43,5 +43,50 @@ describe('fileChats: the folders a project has, and what is still loose', () => 
 
   it('treats a folder of blanks as no folder', () => {
     expect(fileChats([chat('   ')]).folders).toEqual([])
+  })
+})
+
+describe('one place per name, in the order a person would count them', () => {
+  it('counts the way people do, so sprint 2 comes before sprint 10', () => {
+    const filing = fileChats([chat('sprint 10'), chat('sprint 2')])
+    expect(filing.folders.map((one) => one.name)).toEqual(['sprint 2', 'sprint 10'])
+  })
+
+  it('treats one name typed two ways as one place', () => {
+    // Typing "ops" when "Ops" already exists means that folder, not a second
+    // one standing beside it wearing the same word.
+    const filing = fileChats([chat('Ops'), chat('ops')])
+    expect(filing.folders).toHaveLength(1)
+    expect(filing.folders[0]?.chats).toHaveLength(2)
+  })
+
+  it('keeps the spelling the folder was first given', () => {
+    const filing = fileChats([chat('Ops'), chat('ops')])
+    expect(filing.folders[0]?.name).toBe('Ops')
+  })
+})
+
+describe('renamedFolder: fixing a name somebody typed', () => {
+  it('names every chat that wore the old name', () => {
+    const a = chat('출고')
+    const b = chat('출고')
+    const other = chat('리깅')
+    expect(renamedFolder([a, b, other], '출고', '출고 자동화')).toEqual([a.id, b.id])
+  })
+
+  it('leaves everything alone when the name did not change', () => {
+    expect(renamedFolder([chat('출고')], '출고', '출고')).toEqual([])
+    expect(renamedFolder([chat('출고')], '출고', '  출고  ')).toEqual([])
+  })
+
+  it('refuses a blank name rather than unfiling everything by accident', () => {
+    // Emptying the name is how a chat gets unfiled, so a blank rename would
+    // quietly disband the folder. Taking everything out is its own verb.
+    expect(renamedFolder([chat('출고')], '출고', '   ')).toEqual([])
+  })
+
+  it('matches the old name without case, the way the folders are grouped', () => {
+    const one = chat('Ops')
+    expect(renamedFolder([one], 'ops', 'Operations')).toEqual([one.id])
   })
 })

@@ -3,8 +3,6 @@ import { Plus, RotateCcw } from 'lucide-react'
 import { AgentSprite } from '@/entities/agent-session/ui/AgentSprite/AgentSprite'
 import { cn } from '@/shared/lib/cn'
 import { Button } from '@/shared/ui/button'
-import { Kbd } from '@/shared/ui/kbd'
-import { modifierKey } from '@/shared/lib/platform/platform'
 import { Empty, EmptyDescription, EmptyHeader, EmptyTitle } from '@/shared/ui/empty'
 import { noteLine } from '../../lib/team-note/team-note'
 import { FirstHint } from '@/widgets/first-hint'
@@ -27,9 +25,8 @@ export function TeamList({
   members,
   drafts,
   knownTools,
-  sessionKnown,
+  sessionUp,
   read,
-  sessionLive,
   canWrite,
   hint,
   note,
@@ -43,7 +40,9 @@ export function TeamList({
   onHintSeen,
 }: TeamListProps) {
   const [editing, setEditing] = useState<'new' | string | null>(null)
-  const said = note === null ? null : noteLine(note, sessionLive)
+  // Idle is the cheapest moment to restart, so that is the last moment to hide
+  // the offer — and a session already stopped has nothing to offer at all.
+  const said = note === null ? null : noteLine(note, sessionUp)
   const target = typeof editing === 'string' ? (drafts.get(editing) ?? null) : null
 
   return (
@@ -88,14 +87,13 @@ export function TeamList({
       )}
 
       <div className="flex flex-col gap-0.5">
-        {members.map((member, index) => (
+        {members.map((member) => (
           <MemberRow
             read={read}
             key={member.type}
             member={member}
-            index={index}
             avatar={avatar}
-            sessionKnown={sessionKnown}
+            sessionUp={sessionUp}
             onPick={onPick}
             onAddress={onAddress}
             onEdit={() => setEditing(member.type)}
@@ -138,9 +136,8 @@ export function TeamList({
 
 type MemberRowProps = {
   member: TeamMember
-  index: number
   avatar: number
-  sessionKnown: boolean
+  sessionUp: boolean
   read: string[]
   onPick(sessionId: string): void
   onAddress(subagentType: string): void
@@ -150,9 +147,8 @@ type MemberRowProps = {
 
 function MemberRow({
   member,
-  index,
   avatar,
-  sessionKnown,
+  sessionUp,
   read,
   onPick,
   onAddress,
@@ -160,7 +156,7 @@ function MemberRow({
   onRelease,
 }: MemberRowProps) {
   const row = rowStateOf(member, read)
-  const mute = sessionKnown && !member.callable
+  const mute = sessionUp && !member.callable
   const why = !member.loaded
     ? t`${i18n._(ORIGIN[member.origin])}. Joins from the next session.`
     : t`Not available this session. Unlock it in Settings.`
@@ -194,15 +190,6 @@ function MemberRow({
             {row.now ?? member.description ?? ''}
           </span>
         </span>
-        {index < 9 && member.callable && (
-          <Kbd
-            aria-hidden
-            className="ml-auto flex-none text-muted-foreground transition-opacity group-hover/member:opacity-0"
-          >
-            {modifierKey()}
-            {index + 1}
-          </Kbd>
-        )}
       </Button>
       <MemberMenu name={member.name} onEdit={onEdit} onRelease={onRelease} />
     </div>

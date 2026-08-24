@@ -138,8 +138,8 @@ export function ProjectSwitcher({ projects }: { projects: ProjectsProps }) {
 
       <AlertDialog open={asking} onOpenChange={setAsking}>
         <AlertDialogContent>
-          <AlertDialogTitle>{t`Remove ${current.name}?`}</AlertDialogTitle>
           <AlertDialogHeader>
+            <AlertDialogTitle>{t`Remove ${current.name}?`}</AlertDialogTitle>
             <AlertDialogDescription>
               {t`The project leaves this list. The folder and everything in it stay on disk.`}
             </AlertDialogDescription>

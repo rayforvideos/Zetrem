@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest'
+import { DEFAULT_CHARACTER } from '@/entities/agent-session'
 import type { AgentDefDraft } from '@/entities/agent-def'
 import { characterFor, draftFrom, initialCharacter, toolSummary } from './member-draft'
 
@@ -42,9 +43,11 @@ describe('editing does not lose what the form never asked about', () => {
     expect(initialCharacter({ ...existing, character: 'dragon' })).toBeNull()
   })
 
-  it('lets the name decide when no face was chosen', () => {
-    expect(characterFor('star', 'anything')).toBe('star')
-    expect(characterFor(null, 'Explore')).toBe(characterFor(null, 'Explore'))
+  it('keeps the default face until somebody picks one', () => {
+    // The face used to be read off the name, so editing the name changed their
+    // appearance. It stays put now.
+    expect(characterFor('star')).toBe('star')
+    expect(characterFor(null)).toBe(DEFAULT_CHARACTER)
   })
 })
 

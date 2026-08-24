@@ -19,6 +19,7 @@ type Chats = {
   remove(id: string): void
   rename(id: string, wanted: string): void
   file(id: string, folder: string): void
+  fileMany(ids: string[], folder: string): void
 }
 
 function freshId(): string {
@@ -232,6 +233,25 @@ export function useTranscript(project: string | null): Chats {
       })
   }
 
+  // Renaming a folder, or emptying it, is the same write on every chat that
+  // wore its name. One pass, then one refresh, rather than a refresh each.
+  function fileMany(ids: string[], folder: string): void {
+    if (project === null || ids.length === 0) return
+    const wanted = folder.trim()
+    if (openId !== null && ids.includes(openId)) filed.current = wanted
+    void Promise.all(
+      ids.map(async (id) => {
+        const saved = await window.desk.readTranscript(project, id)
+        if (saved === null) return
+        await window.desk.writeTranscript(project, { ...saved, folder: wanted })
+      }),
+    )
+      .then(() => refresh())
+      .catch((cause: unknown) => {
+        conversation.system(troubleLine(t`Could not file that chat`, cause))
+      })
+  }
+
   return {
     chats,
     openId,
@@ -242,5 +262,6 @@ export function useTranscript(project: string | null): Chats {
     remove,
     rename,
     file,
+    fileMany,
   }
 }

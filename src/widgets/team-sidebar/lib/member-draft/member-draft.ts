@@ -1,6 +1,6 @@
 import { t } from '@lingui/core/macro'
 import type { AgentDefDraft } from '@/entities/agent-def'
-import { characterOf, isCharacterId } from '@/entities/agent-session'
+import { DEFAULT_CHARACTER, isCharacterId } from '@/entities/agent-session'
 import type { CharacterId } from '@/entities/agent-session'
 import type { MemberFields } from './member-draft.types'
 
@@ -20,8 +20,11 @@ export function draftFrom(fields: MemberFields, initial: AgentDefDraft | null): 
   }
 }
 
-export function characterFor(picked: CharacterId | null, name: string): CharacterId {
-  return picked ?? characterOf(name)
+// The face stays where it is until somebody picks one. Deriving it from the
+// name meant editing the name changed their appearance, which is not a change
+// anybody asked for.
+export function characterFor(picked: CharacterId | null): CharacterId {
+  return picked ?? DEFAULT_CHARACTER
 }
 
 export function toggled(held: string[], name: string, on: boolean): string[] {

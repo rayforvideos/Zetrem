@@ -15,14 +15,14 @@ function bar(props: Partial<Parameters<typeof TeamSidebar>[0]> = {}): string {
         onRemove: () => {},
         onRename: () => {},
         onFile: () => {},
+        onFileMany: () => {},
       }}
       team={{
         members: [],
         drafts: new Map(),
         knownTools: [],
-        sessionKnown: false,
+        sessionUp: false,
     read: [],
-        sessionLive: false,
         canWrite: true,
         note: null,
         onHire: () => {},
@@ -77,7 +77,7 @@ function teamOf() {
     members: [],
     drafts: new Map(),
     knownTools: [],
-    sessionKnown: false,
+    sessionUp: false,
         read: [],
     sessionLive: false,
     canWrite: true,
@@ -140,6 +140,7 @@ describe('chats gathered into folders, without hiding the rest', () => {
         onRemove: () => {},
         onRename: () => {},
         onFile: () => {},
+        onFileMany: () => {},
       },
     })
     expect(html).toContain('data-folder="출고"')
@@ -157,6 +158,7 @@ describe('chats gathered into folders, without hiding the rest', () => {
         onRemove: () => {},
         onRename: () => {},
         onFile: () => {},
+        onFileMany: () => {},
       },
     })
     expect(html).toContain('loose')
@@ -172,6 +174,7 @@ describe('chats gathered into folders, without hiding the rest', () => {
         onRemove: () => {},
         onRename: () => {},
         onFile: () => {},
+        onFileMany: () => {},
       },
     })
     expect(html).toContain('aria-expanded="true"')
@@ -187,6 +190,7 @@ describe('chats gathered into folders, without hiding the rest', () => {
         onRemove: () => {},
         onRename: () => {},
         onFile: () => {},
+        onFileMany: () => {},
       },
     })
     expect(html).not.toContain('data-folder')
@@ -211,6 +215,7 @@ describe('a way out when the folders stop helping', () => {
         onRemove: () => {},
         onRename: () => {},
         onFile: () => {},
+        onFileMany: () => {},
       },
     })
   const many = (folder = '') =>
@@ -258,6 +263,7 @@ describe('carrying a chat onto another to make a place for both', () => {
         onRemove: () => {},
         onRename: () => {},
         onFile: () => {},
+        onFileMany: () => {},
       },
     })
 
@@ -269,5 +275,58 @@ describe('carrying a chat onto another to make a place for both', () => {
     // Dragging is the shortcut. Anything it can do has to be reachable by a
     // plain click as well, for the hands that cannot hold a drag.
     expect(withChats([chat('one')])).toContain('More for one')
+  })
+})
+
+describe('the offer to restart a session that is still up', () => {
+  const created = { kind: 'created' as const, name: '시에나' }
+
+  it('keeps offering the restart after the turn has finished', () => {
+    // The child is still up and still holds the roster it started with, so it
+    // still cannot call the new teammate. Idle is the cheapest moment to
+    // restart — hiding the button there is backwards.
+    const html = bar({
+      team: {
+        members: [],
+        drafts: new Map(),
+        knownTools: [],
+        sessionUp: true,
+        read: [],
+        canWrite: true,
+        note: created,
+        onHire: () => {},
+        onEdit: () => {},
+        onRelease: () => {},
+        onPick: () => {},
+        onAddress: () => {},
+        onRestart: () => {},
+        hint: false,
+        onHintSeen: () => {},
+      },
+    })
+    expect(html).toContain('Restart session')
+  })
+
+  it('offers nothing when there is no session behind the note', () => {
+    const html = bar({
+      team: {
+        members: [],
+        drafts: new Map(),
+        knownTools: [],
+        sessionUp: false,
+        read: [],
+        canWrite: true,
+        note: created,
+        onHire: () => {},
+        onEdit: () => {},
+        onRelease: () => {},
+        onPick: () => {},
+        onAddress: () => {},
+        onRestart: () => {},
+        hint: false,
+        onHintSeen: () => {},
+      },
+    })
+    expect(html).not.toContain('Restart session')
   })
 })

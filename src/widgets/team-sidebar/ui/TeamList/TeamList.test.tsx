@@ -26,9 +26,8 @@ function list(props: Partial<Parameters<typeof TeamList>[0]> = {}): string {
       members={[member()]}
       drafts={new Map()}
       knownTools={[]}
-      sessionKnown={false}
+      sessionUp={false}
       read={[]}
-      sessionLive={false}
       canWrite
       note={null}
       avatar={24}
@@ -56,13 +55,24 @@ describe('TeamList: pressing something always does something', () => {
     expect(list({ note: { kind: 'created', name: 'Nova' } })).toContain('Nova is ready')
   })
 
-  it('offers the restart button while a session runs, instead of only mentioning it', () => {
-    expect(list({ note: { kind: 'created', name: 'Nova' }, sessionLive: true })).toContain(
+  it('offers the restart button while a session is up, instead of only mentioning it', () => {
+    // Up, not busy. A session between turns still holds the roster it started
+    // with, and that is the easiest moment to hand it a new one.
+    expect(list({ note: { kind: 'created', name: 'Nova' }, sessionUp: true })).toContain(
       'Restart session',
     )
-    expect(list({ note: { kind: 'created', name: 'Nova' }, sessionLive: false })).not.toContain(
+    expect(list({ note: { kind: 'created', name: 'Nova' }, sessionUp: false })).not.toContain(
       'Restart session',
     )
+  })
+
+  it('offers nothing once the session has been stopped, however much is still known of it', () => {
+    // Knowing a session id is not the same as having a child alive. The probe
+    // keeps reporting one after a restart has already killed ours, and asking
+    // to restart what is already gone is how the note came back from the dead.
+    expect(
+      list({ note: { kind: 'created', name: 'Nova' }, sessionUp: false }),
+    ).not.toContain('Restart session')
   })
 
   it('locks hiring without a project and says why', () => {
@@ -74,11 +84,11 @@ describe('TeamList: pressing something always does something', () => {
 
   it('dims nobody before a session exists, since unknown is not no', () => {
     expect(row(list())).toContain('text-foreground')
-    expect(row(list({ sessionKnown: true }))).toContain('text-muted-foreground')
+    expect(row(list({ sessionUp: true }))).toContain('text-muted-foreground')
   })
 
   it('keeps someone the session knows at full strength', () => {
-    const html = list({ sessionKnown: true, members: [member({ loaded: true, callable: true })] })
+    const html = list({ members: [member({ loaded: true, callable: true })] })
     expect(row(html)).toContain('text-foreground')
   })
 
@@ -95,18 +105,18 @@ describe('a name on the roster is something you can press', () => {
   })
 
   it('addresses the next task to someone who is idle', () => {
-    const button = row(list({ sessionKnown: true, members: [member({ loaded: true, callable: true })] }))
+    const button = row(list({ members: [member({ loaded: true, callable: true })] }))
     expect(button).toContain('Give them a task')
   })
 
   it('cannot press someone this session does not know, since calling would not reach them', () => {
-    const button = row(list({ sessionKnown: true, members: [member({ loaded: false })] }))
+    const button = row(list({ sessionUp: true, members: [member({ loaded: false })] }))
     expect(button).toContain('disabled=""')
     expect(button).toContain('next session')
   })
 
   it('leaves someone uncallable unpressable, with the reason attached', () => {
-    const button = row(list({ sessionKnown: true, members: [member({ loaded: true, callable: false })] }))
+    const button = row(list({ sessionUp: true, members: [member({ loaded: true, callable: false })] }))
     expect(button).toContain('disabled=""')
     expect(button).toContain('Not available this session')
   })
@@ -208,5 +218,27 @@ describe('the first teammate is offered, once', () => {
 
   it('offers a way to put it away', () => {
     expect(list({ members: [], hint: true })).toContain('Dismiss this tip')
+  })
+})
+
+describe('nothing is held back when no session is holding it back', () => {
+  it('greys nobody out once the session is gone', () => {
+    // A teammate is only unreachable because a running session started without
+    // them. With no session running there is nothing to be locked out of, and
+    // greying them out while the tooltip says "joins the next session" says two
+    // opposite things at once.
+    const html = list({
+      sessionUp: false,
+      members: [member({ loaded: false, callable: false })],
+    })
+    expect(html).not.toContain('disabled=""')
+  })
+
+  it('greys out a teammate the running session cannot call', () => {
+    const html = list({
+      sessionUp: true,
+      members: [member({ loaded: false, callable: false })],
+    })
+    expect(html).toContain('disabled=""')
   })
 })

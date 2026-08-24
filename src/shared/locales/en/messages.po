@@ -107,11 +107,11 @@ msgstr "{kind} {name} did not load: {why}"
 msgid "{name} can be called this session"
 msgstr "{name} can be called this session"
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:250
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:265
 msgid "{name} is off. The running session keeps them until it ends."
 msgstr "{name} is off. The running session keeps them until it ends."
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:249
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:264
 msgid "{name} is on. The running session cannot call them yet."
 msgstr "{name} is on. The running session cannot call them yet."
 
@@ -198,29 +198,29 @@ msgstr "{who} declined this and there is nothing to fall back to. {said}"
 msgid "{who} is not available on your account. Pick another in Settings."
 msgstr "{who} is not available on your account. Pick another in Settings."
 
-#: src/widgets/team-sidebar/lib/team-note/team-note.ts:9
+#: src/widgets/team-sidebar/lib/team-note/team-note.ts:15
+msgid "{who} is ready."
+msgstr "{who} is ready."
+
+#: src/widgets/team-sidebar/lib/team-note/team-note.ts:14
 msgid "{who} is ready. The running session cannot call them yet."
 msgstr "{who} is ready. The running session cannot call them yet."
 
-#: src/widgets/team-sidebar/lib/team-note/team-note.ts:10
-msgid "{who} is ready. They join the next session."
-msgstr "{who} is ready. They join the next session."
-
-#: src/widgets/team-sidebar/lib/team-note/team-note.ts:18
+#: src/widgets/team-sidebar/lib/team-note/team-note.ts:23
 msgid "{who} left the team."
 msgstr "{who} left the team."
 
-#: src/widgets/team-sidebar/lib/team-note/team-note.ts:17
+#: src/widgets/team-sidebar/lib/team-note/team-note.ts:22
 msgid "{who} left the team. The running session keeps them until it ends."
 msgstr "{who} left the team. The running session keeps them until it ends."
 
-#: src/widgets/team-sidebar/lib/team-note/team-note.ts:13
+#: src/widgets/team-sidebar/lib/team-note/team-note.ts:19
+msgid "{who} updated."
+msgstr "{who} updated."
+
+#: src/widgets/team-sidebar/lib/team-note/team-note.ts:18
 msgid "{who} updated. The running session holds the old brief."
 msgstr "{who} updated. The running session holds the old brief."
-
-#: src/widgets/team-sidebar/lib/team-note/team-note.ts:14
-msgid "{who} updated. This applies from the next session."
-msgstr "{who} updated. This applies from the next session."
 
 #: src/widgets/tile-deck/lib/headcount/headcount.ts:13
 msgid "{working} working"
@@ -415,7 +415,7 @@ msgstr "Cart totals and rounding"
 msgid "Change"
 msgstr "Change"
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:520
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:536
 msgid "Change account, project, and permissions"
 msgstr "Change account, project, and permissions"
 
@@ -551,8 +551,8 @@ msgstr "Could not list your saved chats"
 msgid "Could not open that chat"
 msgstr "Could not open that chat"
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:203
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:207
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:218
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:222
 msgid "Could not open that folder"
 msgstr "Could not open that folder"
 
@@ -605,7 +605,7 @@ msgstr "Could not read your settings"
 msgid "Could not read your sign-in"
 msgstr "Could not read your sign-in"
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:223
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:238
 msgid "Could not remove that project"
 msgstr "Could not remove that project"
 
@@ -613,7 +613,7 @@ msgstr "Could not remove that project"
 msgid "Could not rename that chat"
 msgstr "Could not rename that chat"
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:95
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:97
 msgid "Could not reopen your last project"
 msgstr "Could not reopen your last project"
 
@@ -830,8 +830,8 @@ msgstr "Handing off"
 msgid "Held up"
 msgstr "Held up"
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:505
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:506
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:521
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:522
 msgid "Hide team sidebar"
 msgstr "Hide team sidebar"
 
@@ -967,7 +967,7 @@ msgstr "Message your team"
 msgid "Model"
 msgstr "Model"
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:399
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:414
 msgid "Model changed. The running session keeps its model."
 msgstr "Model changed. The running session keeps its model."
 
@@ -975,7 +975,7 @@ msgstr "Model changed. The running session keeps its model."
 #. placeholder {0}: folder.name
 #. placeholder {0}: named(chat.title)
 #: src/widgets/team-sidebar/ui/ChatList/ChatList.tsx:334
-#: src/widgets/team-sidebar/ui/ChatList/ChatList.tsx:516
+#: src/widgets/team-sidebar/ui/ChatList/ChatList.tsx:521
 #: src/widgets/team-sidebar/ui/ProjectSwitcher/ProjectSwitcher.tsx:91
 msgid "More for {0}"
 msgstr "More for {0}"
@@ -1042,7 +1042,7 @@ msgstr "No chat by that name"
 msgid "No connectors yet. Add one below, or bring over what Claude Desktop already has."
 msgstr "No connectors yet. Add one below, or bring over what Claude Desktop already has."
 
-#: src/pages/workspace/model/use-agent-defs.ts:72
+#: src/pages/workspace/model/use-agent-defs.ts:81
 msgid "No handler registered"
 msgstr "No handler registered"
 
@@ -1128,7 +1128,7 @@ msgstr "Permission"
 msgid "Permissions"
 msgstr "Permissions"
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:393
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:408
 msgid "Permissions changed. The running session follows the old ones."
 msgstr "Permissions changed. The running session follows the old ones."
 
@@ -1265,7 +1265,7 @@ msgid "Removed"
 msgstr "Removed"
 
 #: src/widgets/team-sidebar/ui/ChatList/ChatList.tsx:341
-#: src/widgets/team-sidebar/ui/ChatList/ChatList.tsx:523
+#: src/widgets/team-sidebar/ui/ChatList/ChatList.tsx:528
 msgid "Rename"
 msgstr "Rename"
 
@@ -1302,7 +1302,7 @@ msgstr "Restart"
 msgid "Restart session"
 msgstr "Restart session"
 
-#: src/pages/workspace/model/use-agent-defs.ts:73
+#: src/pages/workspace/model/use-agent-defs.ts:82
 msgid "Restart Zetrem. This version does not know about it yet."
 msgstr "Restart Zetrem. This version does not know about it yet."
 
@@ -1393,7 +1393,7 @@ msgstr "Set a few things and your agents get to work!"
 msgid "Set for everyone on your account. They cannot be removed or turned off here."
 msgstr "Set for everyone on your account. They cannot be removed or turned off here."
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:522
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:538
 msgid "Settings"
 msgstr "Settings"
 
@@ -1409,8 +1409,8 @@ msgstr "share unknown"
 msgid "Shift+Enter starts a new line. Off, sending takes the modifier key with Enter."
 msgstr "Shift+Enter starts a new line. Off, sending takes the modifier key with Enter."
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:505
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:506
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:521
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:522
 msgid "Show team sidebar"
 msgstr "Show team sidebar"
 
@@ -1549,7 +1549,7 @@ msgstr "Stopped: something went wrong"
 msgid "System"
 msgstr "System"
 
-#: src/widgets/team-sidebar/ui/ChatList/ChatList.tsx:525
+#: src/widgets/team-sidebar/ui/ChatList/ChatList.tsx:530
 msgid "Take everything out"
 msgstr "Take everything out"
 

@@ -3,14 +3,17 @@ import { remembered } from './remembered'
 
 const held = { tools: ['Read'], agents: ['Explore'] }
 
-describe('remembered: writing down what the session told us, in one go', () => {
-  it('returns both at once, because saving them apart lets one overwrite the other', () => {
+describe('remembered: writing down what a run told us, in one go', () => {
+  it('takes the tools from a session and leaves its agent list alone', () => {
+    // A session is handed our teammates, so its agent list is a mixture. Only
+    // the probe is asked empty-handed, and only the probe is believed about
+    // agents.
     const patch = remembered({ tools: ['Read', 'Bash'], agents: ['Explore', 'Plan'], probed: false }, held)
-    expect(patch).toEqual({ knownTools: ['Read', 'Bash'], knownAgents: ['Explore', 'Plan'] })
+    expect(patch).toEqual({ knownTools: ['Read', 'Bash'] })
   })
 
   it('returns only the half that changed', () => {
-    expect(remembered({ tools: ['Read'], agents: ['Explore', 'Plan'], probed: false }, held)).toEqual({
+    expect(remembered({ tools: ['Read'], agents: ['Explore', 'Plan'], probed: true }, held)).toEqual({
       knownAgents: ['Explore', 'Plan'],
     })
   })
@@ -28,7 +31,7 @@ describe('remembered: writing down what the session told us, in one go', () => {
   })
 
   it('counts a different order as new', () => {
-    expect(remembered({ tools: ['Read'], agents: ['Plan', 'Explore'], probed: false }, held)).toEqual({
+    expect(remembered({ tools: ['Read'], agents: ['Plan', 'Explore'], probed: true }, held)).toEqual({
       knownAgents: ['Plan', 'Explore'],
     })
   })
@@ -49,8 +52,8 @@ describe('the tool list only ever grows, since a session sees whatever had conne
     expect(patch).toEqual({ knownTools: ['Read', 'Bash'] })
   })
 
-  it('replaces the agent list even when it shrank, since agents are all there from the start', () => {
-    const patch = remembered({ tools: undefined, agents: ['Explore'], probed: false }, { tools: [], agents: ['Explore', 'Plan'] })
+  it('replaces the agent list even when it shrank, since a probe sees all of theirs at once', () => {
+    const patch = remembered({ tools: undefined, agents: ['Explore'], probed: true }, { tools: [], agents: ['Explore', 'Plan'] })
     expect(patch).toEqual({ knownAgents: ['Explore'] })
   })
 })
@@ -79,5 +82,34 @@ describe('a probe knows the agents but not the tools, and is believed only that 
   it('takes the tools once a real session reports them', () => {
     const patch = remembered({ tools: ['Read'], agents: undefined, probed: false }, empty)
     expect(patch).toEqual({ knownTools: ['Read'] })
+  })
+})
+
+describe('the remembered agents come from a probe that handed nothing over', () => {
+  it('learns the agents a probe reports, which are Claude Code\'s own by construction', () => {
+    const learned = remembered(
+      { tools: [], agents: ['claude', 'Explore'], probed: true },
+      { tools: [], agents: [] },
+    )
+    expect(learned?.knownAgents).toEqual(['claude', 'Explore'])
+  })
+
+  it('learns nothing about agents from a live session', () => {
+    // A session is handed our teammates, so its list is a mixture and cannot
+    // say which are Claude Code's. Every bug here came from trying to work
+    // that out afterwards; the probe is asked empty-handed instead.
+    const learned = remembered(
+      { tools: [], agents: ['claude', 'Explore', '시에나'], probed: false },
+      { tools: [], agents: ['claude'] },
+    )
+    expect(learned?.knownAgents).toBeUndefined()
+  })
+
+  it('still learns tools from a live session, which a probe cannot see', () => {
+    const learned = remembered(
+      { tools: ['Bash'], agents: [], probed: false },
+      { tools: [], agents: [] },
+    )
+    expect(learned?.knownTools).toEqual(['Bash'])
   })
 })

@@ -7,6 +7,7 @@ import { handle } from './ipc/ipc'
 import { queue } from './queue/queue'
 import { saveFile } from './save-file/save-file'
 import { staleChats } from './stale-chats/stale-chats'
+import { withinCap } from './chat-cap/chat-cap'
 import { transcriptKey } from './transcript-key/transcript-key'
 
 export const CHAT_CAP = 60
@@ -100,7 +101,7 @@ async function prune(project: string): Promise<void> {
 export function registerTranscriptStore(): void {
   handle('transcript:list', async (_event, project: unknown): Promise<ChatSummary[]> => {
     if (typeof project !== 'string' || project.length === 0) return []
-    return (await chats(project)).slice(0, CHAT_CAP).map(summaryOf)
+    return withinCap(await chats(project), CHAT_CAP).map(summaryOf)
   })
 
   handle(

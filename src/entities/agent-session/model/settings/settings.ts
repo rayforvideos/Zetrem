@@ -27,7 +27,8 @@ export const DEFAULT_SETTINGS: Settings = {
   theme: 'dark',
   notify: true,
   knownAgents: [],
-  stockAgents: [],
+  stockOff: [],
+  wasStockOn: null,
   sidebarOpen: true,
   sidebarWidth: SIDEBAR.width,
 }
@@ -65,7 +66,18 @@ export function readSettings(saved: unknown): Settings {
     hintsSeen: names(source.hintsSeen, DEFAULT_SETTINGS.hintsSeen),
     knownTools: names(source.knownTools, DEFAULT_SETTINGS.knownTools),
     knownAgents: names(source.knownAgents, DEFAULT_SETTINGS.knownAgents),
-    stockAgents: names(source.stockAgents, DEFAULT_SETTINGS.stockAgents),
+    // A file written before the switches were inverted holds the ones that
+    // were ON. Anything of theirs it does not name was off, and only the
+    // screen knows the full set — so the migration happens there, once.
+    stockOff: names(source.stockOff, DEFAULT_SETTINGS.stockOff),
+    // Read back from the marker as well as from the legacy key: every write
+    // re-reads the settings first, so a save landing before the screen inverts
+    // the switches would otherwise write the old list away for good.
+    wasStockOn: Array.isArray(source.wasStockOn)
+      ? names(source.wasStockOn, [])
+      : Array.isArray(source.stockAgents)
+        ? names(source.stockAgents, [])
+        : null,
     tongue: TONGUES.includes(source.tongue as string) ? (source.tongue as Settings['tongue']) : 'system',
     theme: THEMES.includes(source.theme as string)
       ? (source.theme as Settings['theme'])

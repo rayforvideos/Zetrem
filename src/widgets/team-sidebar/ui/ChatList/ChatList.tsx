@@ -460,10 +460,14 @@ function FolderSection({
 
   return (
     <div
-      className={cn('group/folder mt-3 flex flex-col gap-0.5 rounded-lg', under && 'ring-1 ring-ring bg-card/60')}
+      className={cn(
+        'group/folder relative mt-3 flex flex-col gap-0.5 rounded-lg',
+        under && 'ring-1 ring-ring bg-card/60',
+      )}
       onDragOver={(event) => {
         // Nothing to promise if the carried chat already lives here.
-        if (carried === null || carried.folder.trim() === folder.name) return
+        if (carried === null) return
+        if (carried.folder.trim().toLocaleLowerCase() === folder.name.toLocaleLowerCase()) return
         event.preventDefault()
         setUnder(true)
       }}
@@ -503,9 +507,10 @@ function FolderSection({
       </Button>
       <div
         className={cn(
-          'absolute inset-y-0 right-0 flex items-center rounded-r-lg pr-1 pl-4',
+          'pointer-events-none absolute top-0 right-0 flex h-8 items-center rounded-r-lg pr-1 pl-4',
           'bg-linear-to-l from-card from-60% to-transparent',
-          'opacity-0 group-hover/folder:opacity-100 group-focus-within/folder:opacity-100',
+          'opacity-0 group-hover/folder:pointer-events-auto group-hover/folder:opacity-100',
+          'group-focus-within/folder:pointer-events-auto group-focus-within/folder:opacity-100',
         )}
       >
         <DropdownMenu>

@@ -1,9 +1,11 @@
 import { useEffect, useRef, useState, useSyncExternalStore } from 'react'
 import {
   CrewProvider,
+  allowedStock,
   hintDue,
   hintSeen,
   roster,
+  offStock,
   stockAgents,
   withRefused,
   withoutRefused,
@@ -23,7 +25,7 @@ import {
 import { AgentReport } from '@/widgets/agent-report'
 import { awayOf, spokeAtMs, Composer, ConversationPane, RestartNote } from '@/widgets/conversation'
 import { SetupPane } from '@/widgets/setup'
-import { TeamSidebar, addressKey, team, toggled } from '@/widgets/team-sidebar'
+import { TeamSidebar, addressKey, team } from '@/widgets/team-sidebar'
 import { WelcomePane } from '@/widgets/welcome'
 import { TileDeck, useDeck, useFleet } from '@/widgets/tile-deck'
 import { MOTION } from '@/shared/config/motion/motion'
@@ -63,7 +65,7 @@ import { t } from '@lingui/core/macro'
 export function WorkspaceScreen() {
   const { settings, loading, failure: settingsFailure, update } = useSettings()
   const project = useSyncExternalStore(projectStore.subscribe, projectStore.get, projectStore.get)
-  const { defs, drafts, hire, edit, release, note: teamNote } = useAgentDefs()
+  const { defs, drafts, hire, edit, release, note: teamNote, settleNote } = useAgentDefs()
   const { failure: projectFailure, report: reportProject } = useFailure()
   const { all: allProjects, refresh: refreshProjects } = useProjects(project)
 
@@ -125,7 +127,7 @@ export function WorkspaceScreen() {
   useNudge(settings.notify, conv.status, conv.permission, conv.trouble)
   useFleet(deck, children, nowMs, viewport, sidebar.span + GRID_PAD * 2)
 
-  useLearnedSettings(status, settings, defs, authored, update)
+  useLearnedSettings(status, settings, update)
 
   const stock = stockAgents(
     settings.knownAgents,
@@ -144,6 +146,18 @@ export function WorkspaceScreen() {
     sessionAgentNames,
     roster(sessionAgentNames, children, conv.status !== 'done'),
   )
+  // A file written before the switches were inverted lists the ones that were
+  // on. Only here is the full set of theirs known, so this is where that list
+  // becomes the off switches it always meant.
+  useEffect(() => {
+    if (settings.wasStockOn === null || stock.length === 0) return
+    const wasOn = new Set(settings.wasStockOn.map((one) => one.toLocaleLowerCase()))
+    update({
+      stockOff: stock.filter((name) => !wasOn.has(name.toLocaleLowerCase())),
+      wasStockOn: null,
+    })
+  }, [settings.wasStockOn, stock, update])
+
   const live = sessionLive(status, conv.status)
   const atWork = stirring(conv.status, children)
   const sessionId = status.session?.id ?? null
@@ -151,7 +165,8 @@ export function WorkspaceScreen() {
   // the change is either in force or about to be, and the ask is stale.
   useEffect(() => {
     setPendingRestart(null)
-  }, [sessionId])
+    settleNote()
+  }, [sessionId, settleNote])
   useEffect(() => {
     if (!drawerOpen) return
     const onKey = (event: KeyboardEvent): void => {
@@ -241,10 +256,10 @@ export function WorkspaceScreen() {
 
   const agentToggles = {
     stock,
-    on: settings.stockAgents,
+    on: allowedStock(stock, settings.stockOff),
     onChange: (name: string, on: boolean) =>
       reload(
-        { stockAgents: toggled(settings.stockAgents, name, on) },
+        { stockOff: offStock(settings.stockOff, name, on) },
         on
           ? t`${name} is on. The running session cannot call them yet.`
           : t`${name} is off. The running session keeps them until it ends.`,
@@ -459,6 +474,7 @@ export function WorkspaceScreen() {
                           onAddress: focus.address,
                           onRestart: () => {
                             focus.clearAll()
+                            settleNote()
                             agent.restart()
                           },
                         }}

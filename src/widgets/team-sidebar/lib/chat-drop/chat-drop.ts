@@ -11,7 +11,11 @@ export function dropOnChat(dragged: ChatSummary, target: ChatSummary): Drop {
   if (dragged.id === target.id) return { kind: 'none' }
   const there = target.folder.trim()
   if (there.length === 0) return { kind: 'name' }
-  if (there === dragged.folder.trim()) return { kind: 'none' }
+  // Matched the way the folders are grouped, so "ops" and "Ops" are one place
+  // and dropping between them is not a move.
+  if (there.toLocaleLowerCase() === dragged.folder.trim().toLocaleLowerCase()) {
+    return { kind: 'none' }
+  }
   return { kind: 'file', folder: there }
 }
 

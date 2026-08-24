@@ -30,7 +30,7 @@ export { ORCHESTRATOR, agentsArgs, peopleSpec } from './model/roster-lock/roster
 export type { Person, RosterLock } from './model/roster-lock/roster-lock.types'
 export { nudgeFor } from './model/nudge/nudge'
 export type { Nudge, NudgeAt, NudgeReason } from './model/nudge/nudge.types'
-export { allowedStock, stockAgents } from './model/stock/stock'
+export { allowedStock, offStock, stockAgents } from './model/stock/stock'
 export { roster } from './model/roster/roster'
 export type { RosterMember, RosterState } from './model/roster/roster.types'
 export type { Persona } from './model/persona/persona.types'

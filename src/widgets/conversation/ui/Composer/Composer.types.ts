@@ -9,6 +9,7 @@ export type ComposerProps = {
   permissionMode: PermissionMode
   model: ModelChoice
   refusedModels: ModelChoice[]
+  enterSends: boolean
   files: Attached[]
   onSend(text: string): void
   onPick(): void

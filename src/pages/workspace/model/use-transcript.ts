@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, useSyncExternalStore } from 'react'
 import { statusStore } from '@/entities/agent-session'
-import { chatId, packTranscript } from '@/entities/conversation'
+import { chatId, packTranscript, renamed } from '@/entities/conversation'
 import type { ChatSpend } from '@/entities/conversation'
 import type { ChatSummary } from '@/entities/conversation'
 import { conversation } from './conversation/conversation'
@@ -17,6 +17,7 @@ type Chats = {
   open(id: string): void
   start(): void
   remove(id: string): void
+  rename(id: string, wanted: string): void
 }
 
 function freshId(): string {
@@ -32,6 +33,9 @@ export function useTranscript(project: string | null): Chats {
   const [ready, setReady] = useState(false)
   const lastSaved = useRef('')
   const opened = useRef<ChatSpend | null>(null)
+  // The open chat's saved title, carried through every re-save so a name
+  // somebody gave does not fall back to the first message.
+  const titled = useRef<string | null>(null)
   const toldSaveTrouble = useRef(false)
   const loadedFor = useRef<string | null>(null)
 
@@ -73,6 +77,7 @@ export function useTranscript(project: string | null): Chats {
         const saved = await window.desk.readTranscript(project, latest.id).catch(() => null)
         if (!alive) return
         setOpenId(latest.id)
+        titled.current = saved !== null && saved.title.length > 0 ? saved.title : null
         setResumeId(saved?.sessionId ?? null)
         opened.current = saved?.spend ?? null
         if (saved?.spend != null) statusStore.restoreChat(saved.spend)
@@ -107,6 +112,7 @@ export function useTranscript(project: string | null): Chats {
         id: openId,
         sessionId: threadToSave({ liveSessionId, probed, resumeId }),
         savedAtMs: Date.now(),
+        title: titled.current ?? undefined,
       },
       live
         ? {
@@ -143,6 +149,7 @@ export function useTranscript(project: string | null): Chats {
     if (project === null || id === openId) return
     lastSaved.current = ''
     opened.current = null
+    titled.current = null
     statusStore.reset()
     conversation.reset()
     setOpenId(id)
@@ -152,6 +159,7 @@ export function useTranscript(project: string | null): Chats {
       .then((saved) => {
         if (saved === null) return
         setResumeId(saved.sessionId)
+        titled.current = saved.title.length > 0 ? saved.title : null
         opened.current = saved.spend ?? null
         if (saved.spend != null) statusStore.restoreChat(saved.spend)
         conversation.restore(saved.turns)
@@ -164,6 +172,7 @@ export function useTranscript(project: string | null): Chats {
   function start(): void {
     lastSaved.current = ''
     opened.current = null
+    titled.current = null
     statusStore.reset()
     conversation.reset()
     setOpenId(freshId())
@@ -181,6 +190,23 @@ export function useTranscript(project: string | null): Chats {
     if (id === openId) start()
   }
 
+  function rename(id: string, wanted: string): void {
+    if (project === null) return
+    const next = renamed(wanted)
+    if (next === null) return
+    if (id === openId) titled.current = next
+    void window.desk
+      .readTranscript(project, id)
+      .then((saved) => {
+        if (saved === null) return
+        return window.desk.writeTranscript(project, { ...saved, title: next })
+      })
+      .then(() => refresh())
+      .catch((cause: unknown) => {
+        conversation.system(troubleLine(t`Could not rename that chat`, cause))
+      })
+  }
+
   return {
     chats,
     openId,
@@ -189,5 +215,6 @@ export function useTranscript(project: string | null): Chats {
     open,
     start,
     remove,
+    rename,
   }
 }

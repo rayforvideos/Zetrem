@@ -14,6 +14,7 @@ export type Settings = {
   knownAgents: string[]
   stockAgents: string[]
   tongue: 'system' | 'en' | 'ko'
+  enterSends: boolean
   theme: 'system' | 'dark' | 'light'
   notify: boolean
   sidebarOpen: boolean

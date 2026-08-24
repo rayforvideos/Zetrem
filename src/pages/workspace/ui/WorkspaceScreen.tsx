@@ -244,6 +244,8 @@ export function WorkspaceScreen() {
                     onTongue: (next) => update({ tongue: next }),
                     notify: settings.notify,
                     onNotify: (on) => update({ notify: on }),
+                    enterSends: settings.enterSends,
+                    onEnterSends: (on) => update({ enterSends: on }),
                     onModel: (model) => update({ model }),
                   }}
                   plugins={{
@@ -290,6 +292,7 @@ export function WorkspaceScreen() {
                       permissionMode={settings.permissionMode}
                       model={settings.model}
                       refusedModels={settings.refusedModels}
+                      enterSends={settings.enterSends}
                       onSend={(text) => {
                         agent.send(text, focus.addressee, attach.files)
                         attach.clear()
@@ -339,6 +342,7 @@ export function WorkspaceScreen() {
                           onOpen: (id) => swap(() => chat.open(id)),
                           onStart: () => swap(chat.start),
                           onRemove: chat.remove,
+                          onRename: chat.rename,
                         }}
                         team={{
                           members: team(

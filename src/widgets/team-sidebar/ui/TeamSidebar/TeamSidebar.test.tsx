@@ -12,6 +12,7 @@ function bar(props: Partial<Parameters<typeof TeamSidebar>[0]> = {}): string {
         onOpen: () => {},
         onStart: () => {},
         onRemove: () => {},
+    onRename: () => {},
       }}
       team={{
         members: [],

@@ -69,6 +69,7 @@ function working(turns: Turn[]): string {
         permissionMode="ask"
         model="default"
         refusedModels={[]}
+          enterSends={true}
         files={[]}
         onPick={() => {}}
         onTake={() => {}}
@@ -107,6 +108,7 @@ function pane(turns: Turn[], permission: PermissionAsk | null = null): string {
         permissionMode="ask"
         model="default"
         refusedModels={[]}
+          enterSends={true}
         files={[]}
         onPick={() => {}}
         onTake={() => {}}

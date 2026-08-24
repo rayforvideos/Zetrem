@@ -6,6 +6,7 @@ export {
   isChatId,
   packTranscript,
   readTranscript,
+  renamed,
   summaryOf,
   titleOf,
 } from './lib/transcript/transcript'

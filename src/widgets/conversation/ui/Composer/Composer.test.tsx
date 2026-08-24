@@ -12,6 +12,7 @@ function box(props: Partial<Parameters<typeof Composer>[0]> = {}): string {
       permissionMode="ask"
       model="default"
       refusedModels={[]}
+      enterSends
       files={[]}
       onPick={() => {}}
       onTake={() => {}}
@@ -106,5 +107,19 @@ describe('what you attached, before you send it', () => {
     const out = box({ files: [{ ...shot, path: '/w/a.md', name: 'a.md', kind: 'file', mediaType: null, data: null }] })
     expect(out).toContain('a.md')
     expect(out).not.toContain('data:')
+  })
+})
+
+describe('the send hint matches the key that actually sends', () => {
+  it('shows a bare Enter while Enter sends', () => {
+    const html = box()
+    expect(html).toContain('>Enter<')
+    expect(html).not.toContain('>⌘<')
+    expect(html).not.toContain('>Ctrl<')
+  })
+
+  it('shows the modifier when sending takes it', () => {
+    const html = box({ enterSends: false })
+    expect(/>⌘<|>Ctrl</.test(html)).toBe(true)
   })
 })

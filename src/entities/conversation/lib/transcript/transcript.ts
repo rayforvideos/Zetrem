@@ -28,14 +28,24 @@ export function titleOf(turns: Turn[]): string {
   return line.length <= TITLE_CAP ? line : `${line.slice(0, TITLE_CAP)}…`
 }
 
+// One line, trimmed, capped like an automatic title; nothing is no name.
+export function renamed(title: string): string | null {
+  const line = title.replace(/\s+/g, ' ').trim()
+  if (line.length === 0) return null
+  return line.length <= TITLE_CAP ? line : `${line.slice(0, TITLE_CAP)}…`
+}
+
 export function packTranscript(
   turns: Turn[],
-  summary: Omit<ChatSummary, 'title'>,
+  summary: Omit<ChatSummary, 'title'> & { title?: string },
   spend: ChatSpend | null = null,
 ): Transcript {
+  const given = summary.title === undefined ? null : renamed(summary.title)
   return {
     ...summary,
-    title: titleOf(turns),
+    // A name somebody gave outlives every re-save; only a nameless chat
+    // keeps taking its title from the first message.
+    title: given ?? titleOf(turns),
     spend,
     turns: turns.slice(-TURN_CAP).map(packTurn),
   }

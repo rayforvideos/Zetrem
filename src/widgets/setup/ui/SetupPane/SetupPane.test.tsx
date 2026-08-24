@@ -69,6 +69,8 @@ function pane(over: Partial<Flat> = {}): string {
           onTongue: () => {},
           notify: flat.notify,
           onNotify: () => {},
+          enterSends: true,
+          onEnterSends: () => {},
           onPermissionMode: () => {},
           onModel: () => {},
         }}

@@ -30,6 +30,8 @@ export type Defaults = {
   onTongue(next: 'system' | 'en' | 'ko'): void
   notify: boolean
   onNotify(on: boolean): void
+  enterSends: boolean
+  onEnterSends(on: boolean): void
   onPermissionMode(mode: PermissionMode): void
   onModel(model: ModelChoice): void
 }

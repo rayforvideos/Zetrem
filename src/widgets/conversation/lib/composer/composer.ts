@@ -24,3 +24,11 @@ export function endedComposing(composer: Composer): boolean {
 export function sent(composer: Composer): void {
   composer.wanted = false
 }
+
+type Press = { key: string; shift: boolean; alt: boolean; mod: boolean }
+
+export function sendKey(press: Press, enterSends: boolean): boolean {
+  if (press.key !== 'Enter') return false
+  if (press.mod) return true
+  return enterSends && !press.shift && !press.alt
+}

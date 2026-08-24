@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { beganComposing, endedComposing, maySendNow, newComposer, sent } from './composer'
+import { beganComposing, endedComposing, maySendNow, newComposer, sendKey, sent } from './composer'
 
 describe('the composer never sends a half finished syllable', () => {
   it('sends at once when nothing is being composed', () => {
@@ -48,5 +48,37 @@ describe('the composer never sends a half finished syllable', () => {
     endedComposing(keying)
     expect(maySendNow(keying)).toBe(true)
     expect(maySendNow(keying)).toBe(true)
+  })
+})
+
+describe('which keys send', () => {
+  const press = (over: Partial<{ key: string; shift: boolean; alt: boolean; mod: boolean }> = {}) => ({
+    key: 'Enter',
+    shift: false,
+    alt: false,
+    mod: false,
+    ...over,
+  })
+
+  it('sends on a plain Enter, the way every chat this person uses does', () => {
+    expect(sendKey(press(), true)).toBe(true)
+  })
+
+  it('makes a new line on Shift+Enter and Alt+Enter', () => {
+    expect(sendKey(press({ shift: true }), true)).toBe(false)
+    expect(sendKey(press({ alt: true }), true)).toBe(false)
+  })
+
+  it('keeps the modifier send working, for the hands that learned it', () => {
+    expect(sendKey(press({ mod: true }), true)).toBe(true)
+    expect(sendKey(press({ mod: true }), false)).toBe(true)
+  })
+
+  it('sends only with the modifier when Enter-sends is off', () => {
+    expect(sendKey(press(), false)).toBe(false)
+  })
+
+  it('sends on no other key', () => {
+    expect(sendKey(press({ key: 'a', mod: true }), true)).toBe(false)
   })
 })

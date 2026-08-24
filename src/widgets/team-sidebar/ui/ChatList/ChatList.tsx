@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import type { ChatListProps } from './ChatList.types'
 import { MoreHorizontal, SquarePen } from 'lucide-react'
 import type { ChatSummary } from '@/entities/conversation'
@@ -11,7 +12,7 @@ import { t } from '@lingui/core/macro'
 import { named } from '../../lib/named/named'
 
 
-export function ChatList({ chats, openId, nowMs, onOpen, onStart, onRemove }: ChatListProps) {
+export function ChatList({ chats, openId, nowMs, onOpen, onStart, onRemove, onRename }: ChatListProps) {
   return (
     <div className="flex flex-col">
       <Button
@@ -38,6 +39,7 @@ export function ChatList({ chats, openId, nowMs, onOpen, onStart, onRemove }: Ch
               nowMs={nowMs}
               onOpen={onOpen}
               onRemove={onRemove}
+              onRename={onRename}
             />
           ))}
         </div>
@@ -52,13 +54,46 @@ function Row({
   nowMs,
   onOpen,
   onRemove,
+  onRename,
 }: {
   chat: ChatSummary
   open: boolean
   nowMs: number
   onOpen(id: string): void
   onRemove(id: string): void
+  onRename(id: string, wanted: string): void
 }) {
+  const [editing, setEditing] = useState(false)
+
+  function commit(value: string): void {
+    setEditing(false)
+    const wanted = value.trim()
+    if (wanted.length === 0 || wanted === chat.title) return
+    onRename(chat.id, wanted)
+  }
+
+  if (editing) {
+    return (
+      <input
+        defaultValue={named(chat.title)}
+        autoFocus
+        aria-label={t`Rename chat`}
+        onFocus={(event) => event.target.select()}
+        onBlur={(event) => commit(event.target.value)}
+        onKeyDown={(event) => {
+          // The chat behind this row may be live; a stray Enter must not
+          // reach anything but this field.
+          if (event.key === 'Enter') {
+            event.preventDefault()
+            commit(event.currentTarget.value)
+          }
+          if (event.key === 'Escape') setEditing(false)
+        }}
+        className="h-8 w-full min-w-0 rounded-lg bg-card px-2 text-left text-sm outline-none"
+      />
+    )
+  }
+
   return (
     <div className="group/chat relative">
       <Button
@@ -66,6 +101,7 @@ function Row({
         variant="ghost"
         size="bare"
         onClick={() => onOpen(chat.id)}
+        onDoubleClick={() => setEditing(true)}
         aria-current={open ? 'true' : undefined}
         className={cn(
           'h-8 w-full min-w-0 justify-start rounded-lg px-2 text-left text-sm',
@@ -94,6 +130,7 @@ function Row({
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-44">
+            <DropdownMenuItem onSelect={() => setEditing(true)}>{t`Rename`}</DropdownMenuItem>
             <DropdownMenuItem variant="destructive" onSelect={() => onRemove(chat.id)}>
               {t`Delete chat`}
             </DropdownMenuItem>

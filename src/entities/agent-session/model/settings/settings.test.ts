@@ -23,6 +23,7 @@ describe('readSettings: reading back what was chosen', () => {
       tongue: 'ko',
       theme: 'light',
       notify: false,
+      enterSends: false,
       sidebarOpen: false,
       sidebarWidth: 300,
       refusedModels: ['fable'],

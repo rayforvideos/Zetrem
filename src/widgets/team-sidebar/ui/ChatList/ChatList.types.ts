@@ -7,4 +7,5 @@ export type ChatListProps = {
   onOpen(id: string): void
   onStart(): void
   onRemove(id: string): void
+  onRename(id: string, wanted: string): void
 }

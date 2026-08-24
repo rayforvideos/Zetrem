@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import type { Turn } from '../../model/turn'
-import { UNTITLED, chatId, isChatId, packTranscript, readTranscript, titleOf } from './transcript'
+import { UNTITLED, chatId, isChatId, packTranscript, readTranscript, renamed, titleOf } from './transcript'
 
 function turn(overrides: Partial<Turn> = {}): Turn {
   return {
@@ -53,6 +53,24 @@ describe('titleOf: what the list will call it', () => {
 describe('packTranscript: deciding what is worth keeping', () => {
   it('comes back with a title on it', () => {
     expect(packTranscript([turn({ role: 'user', text: '안녕' })], summary).title).toBe('안녕')
+  })
+
+  it('keeps the name somebody gave it, over the first message', () => {
+    const packed = packTranscript([turn({ role: 'user', text: '안녕' })], {
+      ...summary,
+      title: '툴 인벤토리 정리',
+    })
+    expect(packed.title).toBe('툴 인벤토리 정리')
+  })
+
+  it('falls back to the first message when the given name is empty', () => {
+    expect(packTranscript([turn({ role: 'user', text: '안녕' })], { ...summary, title: '' }).title).toBe('안녕')
+  })
+
+  it('tidies a name for the list: one line, trimmed, capped', () => {
+    expect(renamed('  툴 정리\n라벨  ')).toBe('툴 정리 라벨')
+    expect(renamed('   ')).toBeNull()
+    expect(renamed('가'.repeat(80))?.length).toBe(61)
   })
 
   it('drops half-typed text, so reopening does not leave a blinking cursor', () => {

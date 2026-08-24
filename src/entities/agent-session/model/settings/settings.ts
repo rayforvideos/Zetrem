@@ -19,6 +19,9 @@ export const DEFAULT_SETTINGS: Settings = {
   hintsSeen: [],
   knownTools: [],
   tongue: 'system',
+  // Enter sends, as in every chat the person came from; the setting keeps
+  // the modifier-only send for the hands that want it.
+  enterSends: true,
   // Dark is the shipped default because the agent sprites are drawn for dark
   // ground; the light palette and wiring stay in place for when light returns.
   theme: 'dark',
@@ -68,6 +71,7 @@ export function readSettings(saved: unknown): Settings {
       ? (source.theme as Settings['theme'])
       : DEFAULT_SETTINGS.theme,
     notify: source.notify !== false,
+    enterSends: source.enterSends !== false,
     sidebarOpen: source.sidebarOpen !== false,
     sidebarWidth: sidebarWidth(source.sidebarWidth),
   }

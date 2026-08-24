@@ -76,6 +76,20 @@ export function SetupPane({
             />
             <Field orientation="horizontal" className="rounded-2xl bg-card p-4">
               <FieldContent>
+                <FieldLabel htmlFor="enter-sends">{t`Send with Enter`}</FieldLabel>
+                <FieldDescription>
+                  {t`Shift+Enter starts a new line. Off, sending takes the modifier key with Enter.`}
+                </FieldDescription>
+              </FieldContent>
+              <Switch
+                id="enter-sends"
+                checked={defaults.enterSends}
+                onCheckedChange={defaults.onEnterSends}
+                aria-label={t`Send with Enter`}
+              />
+            </Field>
+            <Field orientation="horizontal" className="rounded-2xl bg-card p-4">
+              <FieldContent>
                 <FieldLabel htmlFor="notify">{t`Notifications`}</FieldLabel>
                 <FieldDescription>
                   {t`Tells you when the work is done or something needs your say-so, and only while Zetrem is behind another window.`}

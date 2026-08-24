@@ -123,14 +123,41 @@ function pane(turns: Turn[], permission: PermissionAsk | null = null): string {
   )
 }
 
-describe('tickOpen: nothing is folded away', () => {
-  it('is open until touched, so nobody has to click to see what was done', () => {
-    expect(tickOpen(null)).toBe(true)
+describe('tickOpen: a run that went fine folds away', () => {
+  it('starts shut, since most output only proves the tool ran', () => {
+    expect(tickOpen(null, false)).toBe(false)
   })
 
-  it('stays shut once a person shut it, since a default does not overrule a hand', () => {
-    expect(tickOpen(false)).toBe(false)
-    expect(tickOpen(true)).toBe(true)
+  it('starts open when the run failed, which is the part worth reading', () => {
+    expect(tickOpen(null, true)).toBe(true)
+  })
+
+  it('a hand overrules the default, both ways', () => {
+    expect(tickOpen(true, false)).toBe(true)
+    expect(tickOpen(false, true)).toBe(false)
+  })
+})
+
+describe('a quiet run keeps its log to itself', () => {
+  it('shows a line count instead of the log, until somebody asks', () => {
+    const stdout = ['하나', '둘', '셋'].join('\n')
+    const html = pane([
+      turn({
+        tools: [tool({ result: { stdout, stderr: '', isError: false, interrupted: false } })]
+      })
+    ])
+    expect(html).toContain('3 lines')
+    expect(html).not.toContain('하나')
+  })
+
+  it('lays a failed run open on arrival', () => {
+    const stdout = ['하나', '둘'].join('\n')
+    const html = pane([
+      turn({
+        tools: [tool({ result: { stdout, stderr: '', isError: true, interrupted: false } })]
+      })
+    ])
+    expect(html).toContain('하나')
   })
 })
 

@@ -3,6 +3,8 @@ import { Plus, RotateCcw } from 'lucide-react'
 import { AgentSprite } from '@/entities/agent-session/ui/AgentSprite/AgentSprite'
 import { cn } from '@/shared/lib/cn'
 import { Button } from '@/shared/ui/button'
+import { Kbd } from '@/shared/ui/kbd'
+import { modifierKey } from '@/shared/lib/platform/platform'
 import { Empty, EmptyDescription, EmptyHeader, EmptyTitle } from '@/shared/ui/empty'
 import { noteLine } from '../../lib/team-note/team-note'
 import { FirstHint } from '@/widgets/first-hint'
@@ -86,11 +88,12 @@ export function TeamList({
       )}
 
       <div className="flex flex-col gap-0.5">
-        {members.map((member) => (
+        {members.map((member, index) => (
           <MemberRow
             read={read}
             key={member.type}
             member={member}
+            index={index}
             avatar={avatar}
             sessionKnown={sessionKnown}
             onPick={onPick}
@@ -135,6 +138,7 @@ export function TeamList({
 
 type MemberRowProps = {
   member: TeamMember
+  index: number
   avatar: number
   sessionKnown: boolean
   read: string[]
@@ -146,6 +150,7 @@ type MemberRowProps = {
 
 function MemberRow({
   member,
+  index,
   avatar,
   sessionKnown,
   read,
@@ -189,6 +194,15 @@ function MemberRow({
             {row.now ?? member.description ?? ''}
           </span>
         </span>
+        {index < 9 && member.callable && (
+          <Kbd
+            aria-hidden
+            className="ml-auto flex-none text-muted-foreground transition-opacity group-hover/member:opacity-0"
+          >
+            {modifierKey()}
+            {index + 1}
+          </Kbd>
+        )}
       </Button>
       <MemberMenu name={member.name} onEdit={onEdit} onRelease={onRelease} />
     </div>

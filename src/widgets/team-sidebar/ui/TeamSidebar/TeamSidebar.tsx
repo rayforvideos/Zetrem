@@ -1,10 +1,15 @@
+import { useState } from 'react'
+import { ChevronRight } from 'lucide-react'
 import { SIDEBAR } from '@/shared/config/theme'
+import { cn } from '@/shared/lib/cn'
 import { useScrollState } from '@/shared/lib/scroll-state/use-scroll-state'
+import { Button } from '@/shared/ui/button'
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/shared/ui/collapsible'
+import { StockList } from '@/widgets/setup'
+import type { StockListProps } from '@/widgets/setup'
 import { ChatList } from '../ChatList/ChatList'
 import type { ChatListProps } from '../ChatList/ChatList.types'
 import { SidebarGrip } from '../SidebarGrip/SidebarGrip'
-import { StockList } from '../StockList/StockList'
-import type { StockListProps } from '../StockList/StockList.types'
 import { TeamList } from '../TeamList/TeamList'
 import type { TeamListProps } from '../TeamList/TeamList.types'
 import { t } from '@lingui/core/macro'
@@ -14,7 +19,7 @@ const AVATAR = 24
 type TeamSidebarProps = {
   chats: Omit<ChatListProps, 'nowMs'>
   team: Omit<TeamListProps, 'avatar'>
-  stock: Omit<StockListProps, 'avatar'>
+  agents: Omit<StockListProps, 'avatar'>
   nowMs: number
   width: number
   onResize(width: number): void
@@ -24,7 +29,7 @@ type TeamSidebarProps = {
 export function TeamSidebar({
   chats,
   team,
-  stock,
+  agents,
   nowMs,
   width,
   onResize,
@@ -49,10 +54,43 @@ export function TeamSidebar({
         <TeamList {...team} avatar={AVATAR} />
 
         <Heading>{t`Claude Code`}</Heading>
-        <StockList {...stock} avatar={AVATAR} />
+        <BuiltinAgents agents={agents} />
       </div>
 
     </aside>
+  )
+}
+
+// On or off is decided once and rarely touched, so the rows sit shut behind
+// their tally and unfold where they stand, instead of taking a line each.
+function BuiltinAgents({ agents }: { agents: Omit<StockListProps, 'avatar'> }) {
+  const [open, setOpen] = useState(false)
+  const using = agents.stock.filter((name) => agents.on.includes(name)).length
+
+  if (agents.stock.length === 0) {
+    return (
+      <p data-stock-empty className="px-2 text-xs leading-snug text-muted-foreground">
+        {t`Reading which agents Claude Code brings. They will be listed here.`}
+      </p>
+    )
+  }
+
+  return (
+    <Collapsible open={open} onOpenChange={setOpen} className="flex flex-col gap-0.5">
+      <CollapsibleTrigger asChild>
+        <Button
+          variant="ghost"
+          size="bare"
+          className="h-8 w-full min-w-0 justify-start gap-1.5 rounded-lg px-2 text-left text-sm text-muted-foreground"
+        >
+          <span className="truncate">{t`${using} of ${agents.stock.length} agents on`}</span>
+          <ChevronRight className={cn('size-3.5 flex-none transition-transform', open && 'rotate-90')} />
+        </Button>
+      </CollapsibleTrigger>
+      <CollapsibleContent>
+        <StockList {...agents} avatar={24} />
+      </CollapsibleContent>
+    </Collapsible>
   )
 }
 

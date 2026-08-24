@@ -75,6 +75,7 @@ function pane(over: Partial<Flat> = {}): string {
           onModel: () => {},
         }}
         plugins={{ summary: 'none', onOpen: () => {} }}
+        agents={{ stock: ['Explore', 'Plan'], on: ['Explore'], onChange: () => {} }}
         actions={{
           reopened: flat.reopened,
           signedIn: flat.auth?.state === 'signed-in',
@@ -87,6 +88,33 @@ function pane(over: Partial<Flat> = {}): string {
     </I18nProvider>,
   )
 }
+
+describe('the settings split into tabs on the left', () => {
+  it('offers the four sections by name', () => {
+    const html = pane()
+    for (const label of ['Start', 'General', 'Session', 'Extensions']) {
+      expect(html, `${label} is missing from the rail`).toContain(`>${label}<`)
+    }
+  })
+
+  it('opens on Start, where signing in and picking a folder live', () => {
+    const html = pane()
+    const rail = html.slice(html.indexOf('aria-label="Settings sections"'))
+    expect(rail.slice(0, rail.indexOf('>Start<'))).toContain('aria-current="true"')
+  })
+
+  it('keeps the other sections mounted but hidden, so a typed name survives a tab switch', () => {
+    const html = pane()
+    expect(html.match(/<section[^>]* hidden=""/g)).toHaveLength(3)
+    expect(html).toContain('Notifications')
+  })
+
+  it('anchors the frame to the top, so a tab switch moves nothing above the fold', () => {
+    const html = pane()
+    expect(html, 'vertical centring would jump with each tab height').not.toContain('mt-auto')
+    expect(html, 'the content column holds its floor').toContain('min-h-[420px]')
+  })
+})
 
 describe('SetupPane: everything to settle before starting, on one screen', () => {
   it('shows everything there is to settle', () => {
@@ -160,9 +188,10 @@ describe('SetupPane: everything to settle before starting, on one screen', () =>
 
   it('offers Cancel on a reopen, where there is a state to go back to', () => {
     const html = pane({ reopened: true, canStart: true })
-    expect(html).toContain('>Cancel<')
-    expect(html).toContain('>Done<')
-    expect(html).not.toContain('>Start<')
+    const acts = html.slice(html.indexOf('data-actions'))
+    expect(acts).toContain('>Cancel<')
+    expect(acts).toContain('>Done<')
+    expect(acts, 'the Start tab stays, the Start button becomes Done').not.toContain('>Start<')
   })
 
   it('puts the main action last, where a desktop expects it', () => {
@@ -189,6 +218,13 @@ describe('SetupPane: everything to settle before starting, on one screen', () =>
   it('leaves a failed install on screen', () => {
     const html = pane({ auth: { state: 'cli-missing' }, authError: 'curl: (6) could not resolve' })
     expect(html).toContain('curl: (6) could not resolve')
+  })
+
+  it('holds the built-in agent toggles, which moved here from the sidebar', () => {
+    const html = pane()
+    expect(html).toContain('Agents')
+    expect(html).toContain('Explore')
+    expect(html).toContain('Plan')
   })
 
   it('offers the folders someone worked in lately', () => {

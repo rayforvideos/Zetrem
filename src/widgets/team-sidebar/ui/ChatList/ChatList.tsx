@@ -3,6 +3,16 @@ import type { ChatListProps } from './ChatList.types'
 import { MoreHorizontal, SquarePen } from 'lucide-react'
 import type { ChatSummary } from '@/entities/conversation'
 import { cn } from '@/shared/lib/cn'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/shared/ui/alert-dialog'
 import { Button } from '@/shared/ui/button'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/shared/ui/dropdown-menu'
 import { groupChats } from '../../lib/chat-groups/chat-groups'
@@ -64,6 +74,7 @@ function Row({
   onRename(id: string, wanted: string): void
 }) {
   const [editing, setEditing] = useState(false)
+  const [asking, setAsking] = useState(false)
 
   function commit(value: string): void {
     setEditing(false)
@@ -131,12 +142,31 @@ function Row({
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-44">
             <DropdownMenuItem onSelect={() => setEditing(true)}>{t`Rename`}</DropdownMenuItem>
-            <DropdownMenuItem variant="destructive" onSelect={() => onRemove(chat.id)}>
+            <DropdownMenuItem variant="destructive" onSelect={() => setAsking(true)}>
               {t`Delete chat`}
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
+
+      {/* Removing a teammate asks first; forgetting a whole conversation is
+          no smaller a loss, so it asks the same way. */}
+      <AlertDialog open={asking} onOpenChange={setAsking}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>{t`Delete “${named(chat.title)}”?`}</AlertDialogTitle>
+            <AlertDialogDescription>
+              {t`The saved conversation is deleted. This cannot be undone.`}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>{t`Cancel`}</AlertDialogCancel>
+            <AlertDialogAction onClick={() => onRemove(chat.id)}>
+              {t`Delete chat`}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   )
 }

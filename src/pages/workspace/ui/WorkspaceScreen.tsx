@@ -1,4 +1,4 @@
-import { useEffect, useState, useSyncExternalStore } from 'react'
+import { useEffect, useRef, useState, useSyncExternalStore } from 'react'
 import {
   CrewProvider,
   hintDue,
@@ -21,9 +21,9 @@ import {
   Wordmark,
 } from '@/shared/graphics/wordmark/wordmark'
 import { AgentReport } from '@/widgets/agent-report'
-import { awayOf, spokeAtMs, Composer, ConversationPane } from '@/widgets/conversation'
+import { awayOf, spokeAtMs, Composer, ConversationPane, RestartNote } from '@/widgets/conversation'
 import { SetupPane } from '@/widgets/setup'
-import { TeamSidebar, team, toggled } from '@/widgets/team-sidebar'
+import { TeamSidebar, addressKey, team, toggled } from '@/widgets/team-sidebar'
 import { WelcomePane } from '@/widgets/welcome'
 import { TileDeck, useDeck, useFleet } from '@/widgets/tile-deck'
 import { MOTION } from '@/shared/config/motion/motion'
@@ -112,6 +112,7 @@ export function WorkspaceScreen() {
   })
 
   const [drawerOpen, setDrawerOpen] = useState(false)
+  const [pendingRestart, setPendingRestart] = useState<string | null>(null)
   const shelf = usePlugins(gate === 'setup')
   const attach = useAttachments()
   const wires = useConnectors(shelf.open || drawerOpen || gate === 'conversation')
@@ -134,8 +135,19 @@ export function WorkspaceScreen() {
   )
   const openAgent = children.find((session) => session.id === focus.openAgentId) ?? null
   const sessionAgentNames = status.session?.agents ?? []
+  const teamMembers = team(
+    defs,
+    sessionAgentNames,
+    roster(sessionAgentNames, children, conv.status !== 'done'),
+  )
   const live = sessionLive(status, conv.status)
   const atWork = stirring(conv.status, children)
+  const sessionId = status.session?.id ?? null
+  // The note asks for a restart; once a different session is up (or none is),
+  // the change is either in force or about to be, and the ask is stale.
+  useEffect(() => {
+    setPendingRestart(null)
+  }, [sessionId])
   useEffect(() => {
     if (!drawerOpen) return
     const onKey = (event: KeyboardEvent): void => {
@@ -145,6 +157,33 @@ export function WorkspaceScreen() {
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
   }, [drawerOpen])
+
+  // The modifier and a digit hand the next message to that teammate, in
+  // sidebar order, the way tabs answer to their number everywhere else.
+  const addressable = useRef(teamMembers)
+  useEffect(() => {
+    addressable.current = teamMembers
+  })
+  useEffect(() => {
+    if (gate !== 'conversation') return undefined
+    const onKey = (event: KeyboardEvent): void => {
+      if (layerOver(document)) return
+      const got = addressKey(
+        { key: event.key, mod: event.metaKey || event.ctrlKey },
+        addressable.current.length,
+      )
+      if (got === null) return
+      event.preventDefault()
+      if (got === 'clear') {
+        focus.address(null)
+        return
+      }
+      const member = addressable.current[got]
+      if (member !== undefined && member.callable) focus.address(member.type)
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [gate])
 
   function adoptProject(picked: Project | null): void {
     if (!picked || picked.path === project?.path) return
@@ -163,17 +202,32 @@ export function WorkspaceScreen() {
     chooseProject(path).then(adoptProject).catch(reportProject(t`Could not open that folder`))
   }
 
+  // A settings change used to stop a running session on the spot; a teammate
+  // change always waited for the restart button. This is the teammate way:
+  // the change lands in settings, the session runs on, and a note carries
+  // the restart for whoever wants it now.
   function reload(patch: Partial<typeof settings>, said: string): void {
     update(patch)
     if (status.session === null) return
-    focus.clearAll()
-    agent.restart(said)
+    setPendingRestart(said)
   }
 
   function swap(go: () => void): void {
     agent.reset()
     focus.clearAll()
     go()
+  }
+
+  const agentToggles = {
+    stock,
+    on: settings.stockAgents,
+    onChange: (name: string, on: boolean) =>
+      reload(
+        { stockAgents: toggled(settings.stockAgents, name, on) },
+        on
+          ? t`${name} is on. The running session cannot call them yet.`
+          : t`${name} is off. The running session keeps them until it ends.`,
+      ),
   }
 
   return (
@@ -255,6 +309,7 @@ export function WorkspaceScreen() {
                     ),
                     onOpen: shelf.show,
                   }}
+                  agents={agentToggles}
                   actions={{
                     reopened: settings.setupDone,
                     signedIn: auth.auth?.state === 'signed-in',
@@ -280,6 +335,17 @@ export function WorkspaceScreen() {
                   }
                   onDecide={agent.decide}
                   composer={
+                    <>
+                      {pendingRestart !== null && live && (
+                        <RestartNote
+                          said={pendingRestart}
+                          onRestart={() => {
+                            setPendingRestart(null)
+                            focus.clearAll()
+                            agent.restart()
+                          }}
+                        />
+                      )}
                     <Composer
                       files={attach.files}
                       onPick={attach.pick}
@@ -303,16 +369,17 @@ export function WorkspaceScreen() {
                       onPermissionMode={(permissionMode) =>
                         reload(
                           { permissionMode },
-                          t`Permissions changed. Your next message starts a session that follows them.`,
+                          t`Permissions changed. The running session follows the old ones.`,
                         )
                       }
                       onModel={(model) =>
                         reload(
                           { model },
-                          t`Model changed. Your next message starts a session on it.`,
+                          t`Model changed. The running session keeps its model.`,
                         )
                       }
                     />
+                    </>
                   }
                   report={
                     openAgent === null ? null : (
@@ -345,11 +412,7 @@ export function WorkspaceScreen() {
                           onRename: chat.rename,
                         }}
                         team={{
-                          members: team(
-                            defs,
-                            sessionAgentNames,
-                            roster(sessionAgentNames, children, conv.status !== 'done'),
-                          ),
+                          members: teamMembers,
                           drafts,
                           knownTools: settings.knownTools,
                           sessionKnown: status.session !== null,
@@ -370,17 +433,7 @@ export function WorkspaceScreen() {
                             agent.restart()
                           },
                         }}
-                        stock={{
-                          stock,
-                          on: settings.stockAgents,
-                          onChange: (name, on) =>
-                            reload(
-                              { stockAgents: toggled(settings.stockAgents, name, on) },
-                              on
-                                ? t`${name} can be called now. Your next message starts a session that can reach them.`
-                                : t`${name} is off. Your next message starts a session without them.`,
-                            ),
-                        }}
+                        agents={agentToggles}
                         nowMs={nowMs}
                         width={sidebar.width}
                         onResize={sidebar.resize}

@@ -32,7 +32,7 @@ function bar(props: Partial<Parameters<typeof TeamSidebar>[0]> = {}): string {
         hint: false,
         onHintSeen: () => {},
       }}
-      stock={{ stock: [], on: [], onChange: () => {} }}
+      agents={{ stock: [], on: [], onChange: () => {} }}
       nowMs={0}
       width={SIDEBAR.width}
       onResize={() => {}}
@@ -84,17 +84,16 @@ function teamOf() {
   }
 }
 
-describe('the sidebar holds our own people and what Claude Code brings, and nothing else', () => {
-  it('has a place for the team and a place for the builtins', () => {
-    const html = bar({ stock: { stock: ['Explore'], on: [], onChange: () => {} } })
+describe('the builtins fold to one line that can open where it stands', () => {
+  it('sums the builtins up, shut, with the rows behind a press', () => {
+    const html = bar({
+      agents: { stock: ['Explore', 'Plan'], on: ['Explore'], onChange: () => {} },
+    })
     expect(html).toContain('Your team')
     expect(html).toContain('Claude Code')
-    expect(html).toContain('Explore')
-  })
-
-  it('names no other source, since agents from elsewhere do not belong here', () => {
-    const html = bar({ stock: { stock: ['Explore'], on: [], onChange: () => {} } })
-    expect(html).not.toContain('.claude/agents')
+    expect(html).toContain('1 of 2 agents on')
+    expect(html, 'shut until pressed').not.toContain('Explore')
+    expect(html).toContain('data-state="closed"')
   })
 
   it('says it is still reading while Claude Code has named nobody', () => {

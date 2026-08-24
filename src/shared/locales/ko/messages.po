@@ -55,7 +55,7 @@ msgid "{0} teammates"
 msgstr "팀원 {0}명"
 
 #. placeholder {0}: i18n._(ORIGIN[member.origin])
-#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:160
+#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:165
 msgid "{0}. Joins from the next session."
 msgstr "{0}. 다음 세션부터 함께합니다."
 
@@ -91,6 +91,10 @@ msgstr "{base}. 앞선 대화는 요약으로 남습니다."
 msgid "{from} declined this, so {to} took it"
 msgstr "{from}이(가) 거절해서 {to}이(가) 대신 처리했습니다"
 
+#: src/widgets/conversation/lib/limits.ts:10
+msgid "{held, plural, one {# line} other {# lines}}"
+msgstr "{held, plural, other {#줄}}"
+
 #: src/pages/workspace/model/workspace-config/workspace-config.ts:39
 msgid "{installed} installed from {sources, plural, one {# source} other {# sources}}"
 msgstr "{sources, plural, other {출처 #곳}}에서 {installed}개 설치됨"
@@ -99,17 +103,17 @@ msgstr "{sources, plural, other {출처 #곳}}에서 {installed}개 설치됨"
 msgid "{kind} {name} did not load: {why}"
 msgstr "{kind} {name}을(를) 불러오지 못했습니다: {why}"
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:380
-msgid "{name} can be called now. Your next message starts a session that can reach them."
-msgstr "다음 메시지부터 {name} 포함해서 새 세션이 시작됩니다."
-
-#: src/widgets/team-sidebar/ui/StockList/StockList.tsx:32
+#: src/widgets/setup/ui/StockList/StockList.tsx:32
 msgid "{name} can be called this session"
 msgstr "{name}은(는) 이번 세션에서 부를 수 있습니다"
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:381
-msgid "{name} is off. Your next message starts a session without them."
-msgstr "다음 메시지부터 {name} 없이 새 세션이 시작됩니다."
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:229
+msgid "{name} is off. The running session keeps them until it ends."
+msgstr "{name}을(를) 껐습니다. 실행 중인 세션은 끝날 때까지 그대로 데리고 있습니다."
+
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:228
+msgid "{name} is on. The running session cannot call them yet."
+msgstr "{name}을(를) 켰습니다. 실행 중인 세션은 아직 부를 수 없습니다."
 
 #: src/entities/attachment/lib/heavy-line/heavy-line.ts:7
 msgid "{name} is over {max}MB, so it cannot be sent as a picture. Point at it by path instead."
@@ -168,6 +172,11 @@ msgstr "{tool} 사용이 허용되지 않았습니다"
 #: src/entities/agent-session/api/claude/aside/aside.ts:16
 msgid "{tool} was not allowed: {why}"
 msgstr "{tool} 사용이 허용되지 않았습니다: {why}"
+
+#. placeholder {0}: agents.stock.length
+#: src/widgets/team-sidebar/ui/TeamSidebar/TeamSidebar.tsx:86
+msgid "{using} of {0} agents on"
+msgstr "에이전트 {0}개 중 {using}개 사용 중"
 
 #: src/widgets/tile-deck/lib/headcount/headcount.ts:14
 msgid "{waiting} waiting on you"
@@ -282,17 +291,21 @@ msgstr "마켓플레이스를 추가하면 스킬과 에이전트를 가져올 �
 msgid "Add one by address"
 msgstr "주소로 추가하기"
 
-#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:77
+#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:79
 msgid "Add teammate"
 msgstr "팀원 추가"
 
-#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:82
+#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:84
 msgid "Add your first teammate"
 msgstr "첫 팀원을 만들어 보세요"
 
 #: src/pages/workspace/model/use-connectors.ts:76
 msgid "Added {name}. Sign in if it asks."
 msgstr "{name} 추가했습니다. 로그인이 필요하면 로그인하세요."
+
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:162
+msgid "Agents"
+msgstr "에이전트"
 
 #. placeholder {0}: n(reached)
 #: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:135
@@ -386,7 +399,8 @@ msgstr "Claude Desktop에 있던 것을 가져왔습니다."
 msgid "Browse"
 msgstr "둘러보기"
 
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:132
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:199
+#: src/widgets/team-sidebar/ui/ChatList/ChatList.tsx:163
 #: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:328
 #: src/widgets/team-sidebar/ui/MemberMenu/MemberMenu.tsx:66
 msgid "Cancel"
@@ -400,7 +414,7 @@ msgstr "장바구니 합계와 반올림"
 msgid "Change"
 msgstr "바꾸기"
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:438
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:491
 msgid "Change account, project, and permissions"
 msgstr "계정과 프로젝트, 권한을 바꿉니다"
 
@@ -433,8 +447,8 @@ msgstr "프로젝트 고르기"
 msgid "Choose what can run without asking, check your remaining limits along the bottom, and stop anything while it is running."
 msgstr "묻지 않고 실행해도 되는 범위를 정하고, 남은 사용량은 아래쪽에서 확인하고, 실행 중인 작업은 언제든 멈출 수 있습니다."
 
-#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:21
-#: src/widgets/team-sidebar/ui/TeamSidebar/TeamSidebar.tsx:51
+#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:23
+#: src/widgets/team-sidebar/ui/TeamSidebar/TeamSidebar.tsx:56
 msgid "Claude Code"
 msgstr "클로드 코드"
 
@@ -452,7 +466,7 @@ msgstr "지우기"
 msgid "CLI {0} → {latest} available"
 msgstr "CLI {0} → {latest} 사용 가능"
 
-#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:89
+#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:91
 msgid "Close report"
 msgstr "보고서 닫기"
 
@@ -535,8 +549,8 @@ msgstr "저장된 대화 목록을 읽지 못했습니다"
 msgid "Could not open that chat"
 msgstr "그 대화를 열지 못했습니다"
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:159
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:163
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:198
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:202
 msgid "Could not open that folder"
 msgstr "그 폴더를 열지 못했습니다"
 
@@ -618,7 +632,7 @@ msgstr "업데이트를 시작하지 못했습니다"
 msgid "Create"
 msgstr "만들기"
 
-#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:109
+#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:112
 msgid "Create a teammate and they'll show up here."
 msgstr "팀원을 만들면 여기에 나타납니다."
 
@@ -626,7 +640,13 @@ msgstr "팀원을 만들면 여기에 나타납니다."
 msgid "Default"
 msgstr "기본값"
 
-#: src/widgets/team-sidebar/ui/ChatList/ChatList.tsx:135
+#. placeholder {0}: named(chat.title)
+#: src/widgets/team-sidebar/ui/ChatList/ChatList.tsx:157
+msgid "Delete “{0}”?"
+msgstr "“{0}” 대화를 삭제할까요?"
+
+#: src/widgets/team-sidebar/ui/ChatList/ChatList.tsx:146
+#: src/widgets/team-sidebar/ui/ChatList/ChatList.tsx:165
 msgid "Delete chat"
 msgstr "대화 삭제"
 
@@ -648,7 +668,7 @@ msgstr "이번 세션에서는 다시 묻지 않기"
 
 #: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:20
 #: src/widgets/setup/ui/PluginShelf/PluginShelf.tsx:125
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:136
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:203
 #: src/widgets/tile-deck/ui/layers/StateChip/StateChip.tsx:11
 msgid "Done"
 msgstr "완료"
@@ -698,6 +718,10 @@ msgstr "내보낸 팀원마다 카드가 하나씩 생깁니다. 이름, 맡은 
 #: src/widgets/team-sidebar/ui/ToolPicker/ToolPicker.tsx:61
 msgid "Everything the session has"
 msgstr "이 세션이 가진 전부"
+
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:29
+msgid "Extensions"
+msgstr "확장"
 
 #: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:143
 #: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:186
@@ -753,6 +777,10 @@ msgstr "이전에 읽어둔 값"
 msgid "From plugins"
 msgstr "플러그인에서"
 
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:27
+msgid "General"
+msgstr "일반"
+
 #: src/widgets/welcome/ui/WelcomePane/WelcomePane.tsx:132
 msgid "Get started"
 msgstr "시작하기"
@@ -769,7 +797,7 @@ msgstr "이름을 지어주세요"
 msgid "Give them a name, say when to call them, and write their instructions. The orchestrator goes by the \"when to call them\" line to pick who gets the job."
 msgstr "이름을 정하고, 언제 부를지 적고, 지침을 씁니다. 오케스트레이터는 '언제 부를지' 줄을 보고 누구에게 맡길지 정합니다."
 
-#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:176
+#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:181
 msgid "Give them a task"
 msgstr "일을 맡기기"
 
@@ -782,8 +810,8 @@ msgstr "넘기는 중"
 msgid "Held up"
 msgstr "멈춰 있음"
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:423
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:424
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:476
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:477
 msgid "Hide team sidebar"
 msgstr "팀 사이드바 접기"
 
@@ -853,7 +881,7 @@ msgstr "이어서 말하세요"
 msgid "Keep the name under {NAME_MAX} characters"
 msgstr "이름은 {NAME_MAX}자 이내로 지어 주세요"
 
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:60
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:107
 msgid "Language"
 msgstr "언어"
 
@@ -861,7 +889,7 @@ msgstr "언어"
 msgid "Later"
 msgstr "나중에"
 
-#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:83
+#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:84
 msgid "Later run"
 msgstr "다음 실행"
 
@@ -877,7 +905,7 @@ msgstr "영문, 숫자, 하이픈, 밑줄만 쓸 수 있습니다"
 msgid "Letters, numbers, hyphens. Sign in after adding if it asks."
 msgstr "영문, 숫자, 하이픈. 추가한 뒤 로그인을 요구하면 로그인하세요."
 
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:111
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:175
 msgid "Manage"
 msgstr "관리"
 
@@ -909,18 +937,18 @@ msgid "Message your team"
 msgstr "팀에게 말하기"
 
 #: src/widgets/conversation/ui/Composer/Composer.tsx:156
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:72
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:151
 #: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:98
 #: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:147
 msgid "Model"
 msgstr "모델"
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:312
-msgid "Model changed. Your next message starts a session on it."
-msgstr "모델을 바꿨습니다. 다음 메시지부터 새 모델로 시작합니다."
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:378
+msgid "Model changed. The running session keeps its model."
+msgstr "모델을 바꿨습니다. 실행 중인 세션은 기존 모델을 유지합니다."
 
 #. placeholder {0}: named(chat.title)
-#: src/widgets/team-sidebar/ui/ChatList/ChatList.tsx:126
+#: src/widgets/team-sidebar/ui/ChatList/ChatList.tsx:137
 msgid "More for {0}"
 msgstr "{0} 더 보기"
 
@@ -954,7 +982,7 @@ msgid "Never mind"
 msgstr "그만두기"
 
 #: src/widgets/team-sidebar/lib/named/named.ts:5
-#: src/widgets/team-sidebar/ui/ChatList/ChatList.tsx:26
+#: src/widgets/team-sidebar/ui/ChatList/ChatList.tsx:36
 msgid "New chat"
 msgstr "새 대화"
 
@@ -978,7 +1006,7 @@ msgstr "아직 커넥터가 없습니다. 아래에서 추가하거나 Claude De
 msgid "No handler registered"
 msgstr "처리할 곳이 없습니다"
 
-#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:107
+#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:110
 msgid "No one here yet"
 msgstr "아직 아무도 없습니다"
 
@@ -986,7 +1014,7 @@ msgstr "아직 아무도 없습니다"
 msgid "No tool by that name."
 msgstr "그런 이름의 도구가 없습니다."
 
-#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:161
+#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:166
 msgid "Not available this session. Unlock it in Settings."
 msgstr "이번 세션에서는 쓸 수 없습니다. 설정에서 켜세요."
 
@@ -1010,12 +1038,12 @@ msgstr "“{needle}”에 맞는 것이 없습니다."
 msgid "Nothing written yet."
 msgstr "아직 쓴 것이 없습니다."
 
-#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:131
+#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:133
 msgid "Nothing yet"
 msgstr "아직 없음"
 
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:93
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:102
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:128
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:137
 msgid "Notifications"
 msgstr "알림"
 
@@ -1052,15 +1080,15 @@ msgid "Permission"
 msgstr "권한"
 
 #: src/widgets/conversation/ui/Composer/Composer.tsx:150
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:66
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:145
 msgid "Permissions"
 msgstr "권한"
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:306
-msgid "Permissions changed. Your next message starts a session that follows them."
-msgstr "권한을 바꿨습니다. 다음 메시지부터 바뀐 권한으로 시작합니다."
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:372
+msgid "Permissions changed. The running session follows the old ones."
+msgstr "권한을 바꿨습니다. 실행 중인 세션은 기존 권한을 따릅니다."
 
-#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:69
+#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:71
 msgid "Pick a project first"
 msgstr "먼저 프로젝트를 고르세요"
 
@@ -1076,7 +1104,7 @@ msgstr "계획하는 중"
 msgid "Plugin"
 msgstr "플러그인"
 
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:107
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:171
 msgid "Plugins"
 msgstr "플러그인"
 
@@ -1137,7 +1165,8 @@ msgstr "사용량 읽는 중…"
 msgid "Reading what this session offers. The list fills in a moment."
 msgstr "이 세션에서 쓸 수 있는 것을 읽는 중입니다. 곧 목록이 채워집니다."
 
-#: src/widgets/team-sidebar/ui/StockList/StockList.tsx:13
+#: src/widgets/setup/ui/StockList/StockList.tsx:13
+#: src/widgets/team-sidebar/ui/TeamSidebar/TeamSidebar.tsx:73
 msgid "Reading which agents Claude Code brings. They will be listed here."
 msgstr "클로드 코드가 기본으로 주는 에이전트를 읽는 중입니다. 곧 여기에 표시됩니다."
 
@@ -1182,11 +1211,11 @@ msgstr "팀에서 내보내기"
 msgid "Removed"
 msgstr "삭제했습니다"
 
-#: src/widgets/team-sidebar/ui/ChatList/ChatList.tsx:133
+#: src/widgets/team-sidebar/ui/ChatList/ChatList.tsx:144
 msgid "Rename"
 msgstr "이름 바꾸기"
 
-#: src/widgets/team-sidebar/ui/ChatList/ChatList.tsx:80
+#: src/widgets/team-sidebar/ui/ChatList/ChatList.tsx:91
 msgid "Rename chat"
 msgstr "대화 이름 바꾸기"
 
@@ -1210,7 +1239,8 @@ msgstr "{when} 초기화"
 msgid "Restart"
 msgstr "다시 시작"
 
-#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:127
+#: src/widgets/conversation/ui/RestartNote/RestartNote.tsx:19
+#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:130
 msgid "Restart session"
 msgstr "세션 다시 시작"
 
@@ -1272,7 +1302,7 @@ msgstr "도구 검색"
 msgid "Searching"
 msgstr "찾는 중"
 
-#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:176
+#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:181
 msgid "See what they did"
 msgstr "무엇을 했는지 보기"
 
@@ -1280,10 +1310,14 @@ msgstr "무엇을 했는지 보기"
 msgid "Send"
 msgstr "보내기"
 
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:79
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:88
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:114
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:123
 msgid "Send with Enter"
 msgstr "Enter로 전송"
+
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:28
+msgid "Session"
+msgstr "세션"
 
 #: src/widgets/usage-bar/ui/UsageBar/UsageBar.tsx:98
 msgid "Session details"
@@ -1293,7 +1327,7 @@ msgstr "세션 상세"
 msgid "Session stopped. The next message starts a new one with your team as it is now."
 msgstr "세션을 멈췄습니다. 다음 메시지부터 지금 팀 구성으로 새로 시작합니다."
 
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:51
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:66
 msgid "Set a few things and your agents get to work!"
 msgstr "몇 가지만 정하면 바로 일을 시작합니다"
 
@@ -1301,20 +1335,24 @@ msgstr "몇 가지만 정하면 바로 일을 시작합니다"
 msgid "Set for everyone on your account. They cannot be removed or turned off here."
 msgstr "계정 전체에 설정된 것입니다. 여기서는 지우거나 끌 수 없습니다."
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:440
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:493
 msgid "Settings"
 msgstr "설정"
+
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:71
+msgid "Settings sections"
+msgstr "설정 구역"
 
 #: src/widgets/usage-bar/lib/strip/strip.ts:40
 msgid "share unknown"
 msgstr "사용량 알 수 없음"
 
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:81
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:116
 msgid "Shift+Enter starts a new line. Off, sending takes the modifier key with Enter."
 msgstr "Shift+Enter로 줄을 바꿉니다. 끄면 보조키+Enter로 보냅니다."
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:423
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:424
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:476
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:477
 msgid "Show team sidebar"
 msgstr "팀 사이드바 펼치기"
 
@@ -1389,11 +1427,12 @@ msgstr "일하던 중에 무언가 잘못됐습니다"
 msgid "Sources · {0}"
 msgstr "마켓플레이스 · {0}"
 
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:136
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:26
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:203
 msgid "Start"
 msgstr "시작"
 
-#: src/widgets/team-sidebar/ui/ChatList/ChatList.tsx:23
+#: src/widgets/team-sidebar/ui/ChatList/ChatList.tsx:33
 msgid "Start a conversation from scratch"
 msgstr "새 대화를 시작합니다"
 
@@ -1417,7 +1456,11 @@ msgstr "재고 규칙"
 msgid "Stop"
 msgstr "멈추기"
 
-#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:124
+#: src/widgets/conversation/ui/RestartNote/RestartNote.tsx:16
+msgid "Stop the running session so the next message starts one that follows the change"
+msgstr "실행 중인 세션을 멈추고, 다음 메시지부터 바뀐 설정으로 시작합니다"
+
+#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:127
 msgid "Stop the running session so the next message starts one that knows them"
 msgstr "지금 세션을 멈추면 다음 메시지부터 이 팀원을 부를 수 있습니다"
 
@@ -1460,7 +1503,7 @@ msgstr "팀 보드 너비"
 msgid "Teammates are reusable"
 msgstr "팀원은 한 번 만들면 계속 씁니다"
 
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:95
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:130
 msgid "Tells you when the work is done or something needs your say-so, and only while Zetrem is behind another window."
 msgstr "일이 끝났거나 승인이 필요할 때 알려줍니다. Zetrem이 다른 창에 가려져 있을 때만 알립니다."
 
@@ -1487,6 +1530,10 @@ msgstr "<0>claude</0> 명령을 찾지 못했습니다. Zetrem이 대신 설치�
 #: src/entities/connector/lib/refusal-why/refusal-why.ts:22
 msgid "The address has to be http or https"
 msgstr "주소는 http나 https여야 합니다"
+
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:164
+msgid "The agents Claude Code brings. Each can be switched off."
+msgstr "Claude Code가 기본으로 제공하는 에이전트입니다. 하나씩 끌 수 있습니다."
 
 #: src/entities/agent-session/api/claude/failure/failure.ts:89
 msgid "The answer hit the output limit"
@@ -1540,6 +1587,10 @@ msgstr "요청이 거부됐습니다"
 #: src/widgets/conversation/ui/Composer/Composer.tsx:159
 msgid "The running session keeps its model. This applies from the next one."
 msgstr "실행 중인 세션은 쓰던 모델을 그대로 씁니다. 다음 세션부터 바뀝니다."
+
+#: src/widgets/team-sidebar/ui/ChatList/ChatList.tsx:159
+msgid "The saved conversation is deleted. This cannot be undone."
+msgstr "저장된 대화가 삭제됩니다. 되돌릴 수 없습니다."
 
 #: src/entities/agent-session/api/claude/failure/failure.ts:79
 msgid "The server had a problem"
@@ -1596,7 +1647,7 @@ msgid "This is everything they know when they start."
 msgstr "여기 적은 내용이 이 팀원이 시작할 때 아는 전부입니다."
 
 #: src/entities/plugin/lib/groups/groups.ts:10
-#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:19
+#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:21
 msgid "This project"
 msgstr "이 프로젝트"
 
@@ -1644,7 +1695,7 @@ msgstr "도구"
 msgid "Tools"
 msgstr "도구"
 
-#: src/widgets/team-sidebar/ui/StockList/StockList.tsx:33
+#: src/widgets/setup/ui/StockList/StockList.tsx:33
 msgid "Turn on to let the team call {name}"
 msgstr "켜면 팀이 {name}을(를) 부를 수 있습니다"
 
@@ -1719,7 +1770,7 @@ msgstr "무슨 일을 맡길까요?"
 msgid "What the session brings"
 msgstr "이 세션이 가진 것"
 
-#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:129
+#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:131
 #: src/widgets/tile-deck/ui/AgentTile/AgentTile.tsx:83
 #: src/widgets/tile-deck/ui/CrewBoard/CrewBoard.tsx:125
 #: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:136
@@ -1730,7 +1781,7 @@ msgstr "무엇을 했는지"
 msgid "What they do, how to go about it, and what to hand back."
 msgstr "무슨 일을 어떤 방식으로 하고, 무엇을 돌려줄지 적으세요."
 
-#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:115
+#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:117
 msgid "What they said"
 msgstr "무엇이라 했는지"
 
@@ -1754,7 +1805,7 @@ msgstr "일하는 중"
 msgid "Wrapped up"
 msgstr "마무리됨"
 
-#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:83
+#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:85
 msgid "Write their instructions once and the orchestrator can call them in any project."
 msgstr "지침을 한 번 써두면 어느 프로젝트에서든 부를 수 있습니다."
 
@@ -1796,7 +1847,7 @@ msgstr "직접 멈췄습니다"
 msgid "You talk on the left"
 msgstr "왼쪽에서 대화합니다"
 
-#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:20
+#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:22
 msgid "Your account"
 msgstr "내 계정"
 
@@ -1833,7 +1884,7 @@ msgstr "조직"
 msgid "Your organisation does not allow this"
 msgstr "조직 정책이 이것을 허용하지 않습니다"
 
-#: src/widgets/team-sidebar/ui/TeamSidebar/TeamSidebar.tsx:48
+#: src/widgets/team-sidebar/ui/TeamSidebar/TeamSidebar.tsx:53
 msgid "Your team"
 msgstr "내 팀"
 

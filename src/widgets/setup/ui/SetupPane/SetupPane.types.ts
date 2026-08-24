@@ -41,6 +41,12 @@ export type Plugins = {
   onOpen(): void
 }
 
+export type Agents = {
+  stock: string[]
+  on: string[]
+  onChange(name: string, on: boolean): void
+}
+
 export type Actions = {
   reopened: boolean
   signedIn: boolean
@@ -56,12 +62,15 @@ export type You = {
   onFace(next: FaceId): void
 }
 
+export type SetupTab = 'start' | 'general' | 'session' | 'extensions'
+
 export type SetupPaneProps = {
   account: Account
   you: You
   project: Project
   defaults: Defaults
   plugins: Plugins
+  agents: Agents
   actions: Actions
   notice: Failure | null
 }

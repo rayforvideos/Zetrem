@@ -105,7 +105,7 @@ export function WelcomePane({ onDone }: { onDone(): void }) {
                 onClick={() => setAt(index)}
                 aria-label={i18n._(one.title)}
                 aria-current={index === at}
-                className="size-4 rounded-full"
+                className="zt-hit size-4 rounded-full"
               >
                 <span
                   className={cn(

@@ -1,22 +1,33 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { startBlocker } from '../../lib/start-blocker/start-blocker'
 import { tongueChoices } from '../../lib/tongues/tongues'
 import { MODELS, PERMISSION_MODES } from '@/entities/agent-session'
 import type { ModelChoice, PermissionMode, Settings } from '@/entities/agent-session'
 import { i18n } from '@lingui/core'
 import { t } from '@lingui/core/macro'
+import type { MessageDescriptor } from '@lingui/core'
+import { msg } from '@lingui/core/macro'
+import { cn } from '@/shared/lib/cn'
 import { Alert, AlertDescription, AlertTitle } from '@/shared/ui/alert'
 import { Button } from '@/shared/ui/button'
 import { Switch } from '@/shared/ui/switch'
 import { Field, FieldContent, FieldDescription, FieldGroup, FieldLabel } from '@/shared/ui/field'
 import { WORDMARK_SIZE, Wordmark } from '@/shared/graphics/wordmark/wordmark'
 import { AccountField } from '../AccountField/AccountField'
+import { StockList } from '../StockList/StockList'
 import { YouField } from '../YouField/YouField'
 import { ChoiceField } from '../ChoiceField/ChoiceField'
 import { ProjectField } from '../ProjectField/ProjectField'
-import type { SetupPaneProps } from './SetupPane.types'
+import type { SetupPaneProps, SetupTab } from './SetupPane.types'
 
 export type { SetupPaneProps } from './SetupPane.types'
+
+const TABS: { id: SetupTab; label: MessageDescriptor }[] = [
+  { id: 'start', label: msg`Start` },
+  { id: 'general', label: msg`General` },
+  { id: 'session', label: msg`Session` },
+  { id: 'extensions', label: msg`Extensions` },
+]
 
 export function SetupPane({
   account,
@@ -24,10 +35,12 @@ export function SetupPane({
   project,
   defaults,
   plugins,
+  agents,
   actions,
   notice,
 }: SetupPaneProps) {
   const { reopened, onCancel } = actions
+  const [tab, setTab] = useState<SetupTab>('start')
   const blocker = startBlocker(actions.signedIn, actions.hasProject)
   const canStart = blocker === null
 
@@ -44,7 +57,9 @@ export function SetupPane({
   return (
     <div className="relative z-[3] flex h-full min-h-0 flex-col">
       <div className="zt-scroll min-h-0 flex-1 overflow-y-auto pr-2.5">
-        <div className="zt-enter mx-auto flex min-h-full w-full max-w-[560px] flex-col gap-8 pt-8 pb-20 [&>*:first-child]:mt-auto [&>*:last-child]:mb-auto">
+        {/* Anchored to the top: the tabs differ in height, and a vertically
+            centred column would jump the header and the rail on every switch. */}
+        <div className="zt-enter mx-auto flex w-full max-w-[680px] flex-col gap-8 pt-14 pb-20">
           <div className="flex flex-col gap-3">
             <Wordmark width={WORDMARK_SIZE.setup} />
             <p className="max-w-[380px] text-sm leading-relaxed break-keep text-muted-foreground">
@@ -52,66 +67,118 @@ export function SetupPane({
             </p>
           </div>
 
-          <FieldGroup className="gap-5">
-            <AccountField account={account} />
-            <YouField name={you.name} face={you.face} onName={you.onName} onFace={you.onFace} />
-            <ProjectField project={project} />
-            <ChoiceField
-              label={t`Language`}
-              options={tongueChoices()}
-              chosen={defaults.tongue}
-              onChoose={(id) => defaults.onTongue(id as Settings['tongue'])}
-            />
-            <ChoiceField
-              label={t`Permissions`}
-              options={PERMISSION_MODES}
-              chosen={defaults.permissionMode}
-              onChoose={(id) => defaults.onPermissionMode(id as PermissionMode)}
-            />
-            <ChoiceField
-              label={t`Model`}
-              options={MODELS}
-              chosen={defaults.model}
-              onChoose={(id) => defaults.onModel(id as ModelChoice)}
-            />
-            <Field orientation="horizontal" className="rounded-2xl bg-card p-4">
-              <FieldContent>
-                <FieldLabel htmlFor="enter-sends">{t`Send with Enter`}</FieldLabel>
-                <FieldDescription>
-                  {t`Shift+Enter starts a new line. Off, sending takes the modifier key with Enter.`}
-                </FieldDescription>
-              </FieldContent>
-              <Switch
-                id="enter-sends"
-                checked={defaults.enterSends}
-                onCheckedChange={defaults.onEnterSends}
-                aria-label={t`Send with Enter`}
-              />
-            </Field>
-            <Field orientation="horizontal" className="rounded-2xl bg-card p-4">
-              <FieldContent>
-                <FieldLabel htmlFor="notify">{t`Notifications`}</FieldLabel>
-                <FieldDescription>
-                  {t`Tells you when the work is done or something needs your say-so, and only while Zetrem is behind another window.`}
-                </FieldDescription>
-              </FieldContent>
-              <Switch
-                id="notify"
-                checked={defaults.notify}
-                onCheckedChange={defaults.onNotify}
-                aria-label={t`Notifications`}
-              />
-            </Field>
-            <Field orientation="horizontal" className="rounded-2xl bg-card p-4">
-              <FieldContent>
-                <FieldLabel>{t`Plugins`}</FieldLabel>
-                <FieldDescription>{plugins.summary}</FieldDescription>
-              </FieldContent>
-              <Button variant="ghost" onClick={plugins.onOpen} className="rounded-full">
-                {t`Manage`}
-              </Button>
-            </Field>
-          </FieldGroup>
+          <div className="flex min-w-0 gap-6">
+            <nav aria-label={t`Settings sections`} className="flex w-28 flex-none flex-col gap-1">
+              {TABS.map((one) => (
+                <Button
+                  key={one.id}
+                  variant="ghost"
+                  size="bare"
+                  onClick={() => setTab(one.id)}
+                  aria-current={tab === one.id ? 'true' : undefined}
+                  className={cn(
+                    'h-8 justify-start rounded-lg px-2.5 text-left text-sm',
+                    tab === one.id ? 'bg-card text-foreground' : 'text-muted-foreground',
+                  )}
+                >
+                  {i18n._(one.label)}
+                </Button>
+              ))}
+            </nav>
+
+            <div className="min-h-[420px] min-w-0 flex-1">
+              {/* Every tab stays mounted, hidden rather than gone, so a name
+                  someone is typing survives a wander through the tabs. */}
+              <section hidden={tab !== 'start'} className="zt-rise">
+                <FieldGroup className="gap-5">
+                  <AccountField account={account} />
+                  <ProjectField project={project} />
+                </FieldGroup>
+              </section>
+              <section hidden={tab !== 'general'} className="zt-rise">
+                <FieldGroup className="gap-5">
+                  <YouField
+                    name={you.name}
+                    face={you.face}
+                    onName={you.onName}
+                    onFace={you.onFace}
+                  />
+                  <ChoiceField
+                    label={t`Language`}
+                    options={tongueChoices()}
+                    chosen={defaults.tongue}
+                    onChoose={(id) => defaults.onTongue(id as Settings['tongue'])}
+                  />
+                  <Field orientation="horizontal" className="rounded-2xl bg-card p-4">
+                    <FieldContent>
+                      <FieldLabel htmlFor="enter-sends">{t`Send with Enter`}</FieldLabel>
+                      <FieldDescription>
+                        {t`Shift+Enter starts a new line. Off, sending takes the modifier key with Enter.`}
+                      </FieldDescription>
+                    </FieldContent>
+                    <Switch
+                      id="enter-sends"
+                      checked={defaults.enterSends}
+                      onCheckedChange={defaults.onEnterSends}
+                      aria-label={t`Send with Enter`}
+                    />
+                  </Field>
+                  <Field orientation="horizontal" className="rounded-2xl bg-card p-4">
+                    <FieldContent>
+                      <FieldLabel htmlFor="notify">{t`Notifications`}</FieldLabel>
+                      <FieldDescription>
+                        {t`Tells you when the work is done or something needs your say-so, and only while Zetrem is behind another window.`}
+                      </FieldDescription>
+                    </FieldContent>
+                    <Switch
+                      id="notify"
+                      checked={defaults.notify}
+                      onCheckedChange={defaults.onNotify}
+                      aria-label={t`Notifications`}
+                    />
+                  </Field>
+                </FieldGroup>
+              </section>
+              <section hidden={tab !== 'session'} className="zt-rise">
+                <FieldGroup className="gap-5">
+                  <ChoiceField
+                    label={t`Permissions`}
+                    options={PERMISSION_MODES}
+                    chosen={defaults.permissionMode}
+                    onChoose={(id) => defaults.onPermissionMode(id as PermissionMode)}
+                  />
+                  <ChoiceField
+                    label={t`Model`}
+                    options={MODELS}
+                    chosen={defaults.model}
+                    onChoose={(id) => defaults.onModel(id as ModelChoice)}
+                  />
+                </FieldGroup>
+              </section>
+              <section hidden={tab !== 'extensions'} className="zt-rise">
+                <FieldGroup className="gap-5">
+                  <Field className="rounded-2xl bg-card p-4">
+                    <FieldContent>
+                      <FieldLabel>{t`Agents`}</FieldLabel>
+                      <FieldDescription>
+                        {t`The agents Claude Code brings. Each can be switched off.`}
+                      </FieldDescription>
+                    </FieldContent>
+                    <StockList {...agents} avatar={24} />
+                  </Field>
+                  <Field orientation="horizontal" className="rounded-2xl bg-card p-4">
+                    <FieldContent>
+                      <FieldLabel>{t`Plugins`}</FieldLabel>
+                      <FieldDescription>{plugins.summary}</FieldDescription>
+                    </FieldContent>
+                    <Button variant="ghost" onClick={plugins.onOpen} className="rounded-full">
+                      {t`Manage`}
+                    </Button>
+                  </Field>
+                </FieldGroup>
+              </section>
+            </div>
+          </div>
 
           {notice !== null && (
             <Alert variant="destructive" data-notice>
@@ -123,7 +190,7 @@ export function SetupPane({
       </div>
 
       <div data-actions className="zt-veil-up flex-none bg-background">
-        <div className="mx-auto flex w-full max-w-[560px] flex-wrap items-center justify-end gap-3 py-4">
+        <div className="mx-auto flex w-full max-w-[680px] flex-wrap items-center justify-end gap-3 py-4">
           {blocker !== null && (
             <span className="mr-auto text-sm text-muted-foreground">{i18n._(blocker)}</span>
           )}

@@ -9,7 +9,7 @@ import {
   withoutRefused,
 } from '@/entities/agent-session'
 import { withSessionAuth } from '@/entities/connector'
-import { chooseProject, pickProject, projectStore } from '@/entities/project'
+import { forgetProject, openProject, pickProject, projectStore } from '@/entities/project'
 import type { Project } from '@/entities/project'
 import { GRID_PAD } from '@/shared/config/theme'
 import { PanelLeft } from 'lucide-react'
@@ -41,7 +41,7 @@ import { useLearnedSettings } from '../model/use-learned-settings'
 import { useFocus } from '../model/use-focus'
 import { usePlugins } from '../model/use-plugins'
 import { useProjectMemory } from '../model/use-project-memory'
-import { useRecentProjects } from '../model/use-recent-projects'
+import { useProjects } from '../model/use-projects'
 import { useSessionProbe } from '../model/use-session-probe'
 import { useAuthoredAgents } from '../model/use-authored-agents'
 import { useNudge } from '../model/use-nudge'
@@ -57,7 +57,6 @@ import { useOffsetWidth } from '@/shared/lib/offset-width/use-offset-width'
 import { tuckedBy } from '../model/tuck/tuck'
 import { crewOf, lockOf, peopleOf, pluginSummary } from '../model/workspace-config/workspace-config'
 import { PluginShelfOverlay } from './controls/PluginShelfOverlay'
-import { ProjectPicker } from './controls/ProjectPicker/ProjectPicker'
 import { StatusBarPanel } from './controls/StatusBarPanel'
 import { t } from '@lingui/core/macro'
 
@@ -66,10 +65,10 @@ export function WorkspaceScreen() {
   const project = useSyncExternalStore(projectStore.subscribe, projectStore.get, projectStore.get)
   const { defs, drafts, hire, edit, release, note: teamNote } = useAgentDefs()
   const { failure: projectFailure, report: reportProject } = useFailure()
-  const recentProjects = useRecentProjects(project)
+  const { all: allProjects, refresh: refreshProjects } = useProjects(project)
 
   const authored = useAuthoredAgents(project?.path ?? null)
-  const chat = useTranscript(project?.path ?? null)
+  const chat = useTranscript(project?.id ?? null)
   const runConfig = {
     permissionMode: settings.permissionMode,
     model: settings.model,
@@ -186,7 +185,8 @@ export function WorkspaceScreen() {
   }, [gate])
 
   function adoptProject(picked: Project | null): void {
-    if (!picked || picked.path === project?.path) return
+    // Two projects may share one folder, so identity is the id, not the path.
+    if (!picked || picked.id === project?.id) return
     // The running agent is rooted in the old folder; left alive it would
     // keep streaming turns into the new project's transcript.
     agent.reset()
@@ -198,8 +198,24 @@ export function WorkspaceScreen() {
     pickProject().then(adoptProject).catch(reportProject(t`Could not open that folder`))
   }
 
-  function handlePickRecent(path: string): void {
-    chooseProject(path).then(adoptProject).catch(reportProject(t`Could not open that folder`))
+  function handleOpenProject(id: string): void {
+    openProject(id).then(adoptProject).catch(reportProject(t`Could not open that folder`))
+  }
+
+  function handleForgetProject(id: string): void {
+    forgetProject(id)
+      .then(async () => {
+        if (project !== null && project.id === id) {
+          // The next freshest project takes over; with none left, setup asks.
+          const next = allProjects.filter((one) => one.id !== id)[0]
+          const opened = next === undefined ? null : await openProject(next.id)
+          agent.reset()
+          focus.clearAll()
+          projectStore.set(opened)
+        }
+        refreshProjects()
+      })
+      .catch(reportProject(t`Could not remove that project`))
   }
 
   // A settings change used to stop a running session on the spot; a teammate
@@ -286,9 +302,9 @@ export function WorkspaceScreen() {
                   }}
                   project={{
                     chosen: project,
-                    recent: recentProjects,
+                    recent: allProjects.filter((one) => one.id !== project?.id),
                     onChoose: handlePickProject,
-                    onPickRecent: handlePickRecent,
+                    onPickRecent: handleOpenProject,
                   }}
                   defaults={{
                     permissionMode: settings.permissionMode,
@@ -403,6 +419,13 @@ export function WorkspaceScreen() {
                       className="flex flex-none"
                     >
                       <TeamSidebar
+                        projects={{
+                          current: project,
+                          all: allProjects,
+                          onOpen: handleOpenProject,
+                          onPickFolder: handlePickProject,
+                          onForget: handleForgetProject,
+                        }}
                         chats={{
                           chats: chat.chats,
                           openId: chat.openId,
@@ -410,6 +433,7 @@ export function WorkspaceScreen() {
                           onStart: () => swap(chat.start),
                           onRemove: chat.remove,
                           onRename: chat.rename,
+                          onFile: chat.file,
                         }}
                         team={{
                           members: teamMembers,
@@ -493,11 +517,7 @@ export function WorkspaceScreen() {
             {t`Settings`}
           </Button>
         )}
-        <ProjectPicker
-          recent={recentProjects}
-          onPick={handlePickRecent}
-          onChoose={handlePickProject}
-        />
+
       </Titlebar>
     </CrewProvider>
   )

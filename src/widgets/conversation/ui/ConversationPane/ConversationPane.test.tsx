@@ -6,6 +6,8 @@ import { modifierKey } from '@/shared/lib/platform/platform'
 import { TOOL_OUTPUT_LINES } from '../../lib/limits'
 import { ConversationPane } from './ConversationPane'
 import { Composer } from '../Composer/Composer'
+import { Away } from './Away'
+import { Working } from './Working'
 import { tickOpen } from './Tick'
 
 const STATUS: StatusState = {
@@ -274,3 +276,33 @@ describe('approval: the most important moment in this app', () => {
   })
 })
 
+const WAITING = {
+  verb: '기다리는 중',
+  count: 3,
+  name: '',
+  subagentType: '',
+  doing: '',
+  sinceMs: 0,
+  many: '팀원 3명',
+}
+
+describe('the row that says the team is still out', () => {
+  it('shimmers its verb the way the working row does', () => {
+    // Waiting on teammates is drawn by Away rather than Working, and the moving
+    // gradient on the verb is what says the wait is live rather than stuck.
+    const html = renderToStaticMarkup(<Away away={WAITING} face="onigiri" nowMs={36_000} />)
+    expect(html).toContain('zt-shimmer')
+  })
+
+  it('wears the same verb treatment as the row it stands in for', () => {
+    const shimmerOf = (html: string): string | undefined =>
+      html.match(/class="([^"]*zt-shimmer[^"]*)"/)?.[1]
+    const mine = shimmerOf(renderToStaticMarkup(<Away away={WAITING} face="onigiri" nowMs={36_000} />))
+    const theirs = shimmerOf(
+      renderToStaticMarkup(
+        <Working turns={[]} face="onigiri" nowMs={36_000} startedAtMs={0} tokensOut={0} />,
+      ),
+    )
+    expect(mine).toBe(theirs)
+  })
+})

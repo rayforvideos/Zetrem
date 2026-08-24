@@ -2,6 +2,7 @@ import { renderToStaticMarkup } from 'react-dom/server'
 import { describe, expect, it } from 'vitest'
 import { TeamSidebar } from './TeamSidebar'
 import { SIDEBAR } from '@/shared/config/theme'
+import { ROOMY } from '../../lib/chat-search/chat-search'
 
 function bar(props: Partial<Parameters<typeof TeamSidebar>[0]> = {}): string {
   return renderToStaticMarkup(
@@ -12,7 +13,8 @@ function bar(props: Partial<Parameters<typeof TeamSidebar>[0]> = {}): string {
         onOpen: () => {},
         onStart: () => {},
         onRemove: () => {},
-    onRename: () => {},
+        onRename: () => {},
+        onFile: () => {},
       }}
       team={{
         members: [],
@@ -33,6 +35,13 @@ function bar(props: Partial<Parameters<typeof TeamSidebar>[0]> = {}): string {
         onHintSeen: () => {},
       }}
       agents={{ stock: [], on: [], onChange: () => {} }}
+      projects={{
+        current: { id: 'p1', path: '/tmp/zetrem', name: 'zetrem' },
+        all: [{ id: 'p1', path: '/tmp/zetrem', name: 'zetrem' }],
+        onOpen: () => {},
+        onPickFolder: () => {},
+        onForget: () => {},
+      }}
       nowMs={0}
       width={SIDEBAR.width}
       onResize={() => {}}
@@ -98,5 +107,167 @@ describe('the builtins fold to one line that can open where it stands', () => {
 
   it('says it is still reading while Claude Code has named nobody', () => {
     expect(bar()).toContain('Reading which agents Claude Code brings')
+  })
+})
+
+describe('the sidebar has no filing layer of its own', () => {
+  it('puts the chats straight under the project, with no divider between', () => {
+    // A category used to sit here, a second project record wearing the same
+    // folder. The chats belong to the project directly now.
+    const html = bar()
+    expect(html).not.toContain('New category')
+    expect(html).not.toContain('Category name')
+    expect(html).not.toContain('aria-current="true"')
+  })
+})
+
+describe('chats gathered into folders, without hiding the rest', () => {
+  const chat = (id: string, folder: string) => ({
+    id: `chat-${id}-a`,
+    title: id,
+    sessionId: null,
+    savedAtMs: 1,
+    folder,
+  })
+
+  it('stands a folder up for the chats filed under it, with how many', () => {
+    const html = bar({
+      chats: {
+        chats: [chat('one', '출고'), chat('two', '출고')],
+        openId: null,
+        onOpen: () => {},
+        onStart: () => {},
+        onRemove: () => {},
+        onRename: () => {},
+        onFile: () => {},
+      },
+    })
+    expect(html).toContain('data-folder="출고"')
+    expect(html).toContain('>2<')
+  })
+
+  it('keeps a loose chat on the page when another one is filed away', () => {
+    // Filing one chat must never look like losing the others.
+    const html = bar({
+      chats: {
+        chats: [chat('filed', '출고'), chat('loose', '')],
+        openId: null,
+        onOpen: () => {},
+        onStart: () => {},
+        onRemove: () => {},
+        onRename: () => {},
+        onFile: () => {},
+      },
+    })
+    expect(html).toContain('loose')
+  })
+
+  it('opens the folder that holds the chat you are in', () => {
+    const html = bar({
+      chats: {
+        chats: [chat('open', '출고')],
+        openId: 'chat-open-a',
+        onOpen: () => {},
+        onStart: () => {},
+        onRemove: () => {},
+        onRename: () => {},
+        onFile: () => {},
+      },
+    })
+    expect(html).toContain('aria-expanded="true"')
+  })
+
+  it('shows no folder at all until something is filed', () => {
+    const html = bar({
+      chats: {
+        chats: [chat('a', ''), chat('b', '')],
+        openId: null,
+        onOpen: () => {},
+        onStart: () => {},
+        onRemove: () => {},
+        onRename: () => {},
+        onFile: () => {},
+      },
+    })
+    expect(html).not.toContain('data-folder')
+  })
+})
+
+describe('a way out when the folders stop helping', () => {
+  const chat = (id: string, folder = '', title = id) => ({
+    id: `chat-${id}-a`,
+    title,
+    sessionId: null,
+    savedAtMs: 1,
+    folder,
+  })
+  const withChats = (chats: ReturnType<typeof chat>[], openId: string | null = null) =>
+    bar({
+      chats: {
+        chats,
+        openId,
+        onOpen: () => {},
+        onStart: () => {},
+        onRemove: () => {},
+        onRename: () => {},
+        onFile: () => {},
+      },
+    })
+  const many = (folder = '') =>
+    Array.from({ length: ROOMY + 1 }, (_, at) => chat(`c${at}`, folder))
+
+  it('stays out of the way while the list is short enough to read', () => {
+    // Looking is the last resort, not the way in. A field over three chats is
+    // just something else to read past.
+    expect(withChats([chat('one'), chat('two')])).not.toContain('Find a chat')
+  })
+
+  it('offers a field once there is more than a folder-full to look through', () => {
+    expect(withChats(many())).toContain('Find a chat')
+  })
+
+  it('brings the days back inside a folder once walking it stops paying', () => {
+    // Folder navigation holds up while a folder is small. Past a dozen the
+    // days have to come back, or the folder is just a wall.
+    const chats = many('출고')
+    const html = withChats(chats, chats[0]!.id)
+    expect(html.indexOf('Today')).toBeGreaterThan(html.indexOf('data-folder="출고"'))
+  })
+
+  it('leaves a small folder plain, with no day headings to read past', () => {
+    const chats = Array.from({ length: 3 }, (_, at) => chat(`c${at}`, '출고'))
+    expect(withChats(chats, chats[0]!.id)).not.toContain('Today')
+  })
+})
+
+describe('carrying a chat onto another to make a place for both', () => {
+  const chat = (id: string, folder = '') => ({
+    id: `chat-${id}-a`,
+    title: id,
+    sessionId: null,
+    savedAtMs: 1,
+    folder,
+  })
+  const withChats = (chats: ReturnType<typeof chat>[]) =>
+    bar({
+      chats: {
+        chats,
+        openId: null,
+        onOpen: () => {},
+        onStart: () => {},
+        onRemove: () => {},
+        onRename: () => {},
+        onFile: () => {},
+      },
+    })
+
+  it('lets a chat be picked up', () => {
+    expect(withChats([chat('one'), chat('two')])).toContain('draggable="true"')
+  })
+
+  it('keeps the menu as the way that needs no dragging', () => {
+    // Dragging is the shortcut. Anything it can do has to be reachable by a
+    // plain click as well, for the hands that cannot hold a drag.
+    expect(withChats([chat('one')])).toContain('More for one')
   })
 })

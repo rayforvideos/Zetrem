@@ -18,6 +18,7 @@ type Chats = {
   start(): void
   remove(id: string): void
   rename(id: string, wanted: string): void
+  file(id: string, folder: string): void
 }
 
 function freshId(): string {
@@ -36,6 +37,9 @@ export function useTranscript(project: string | null): Chats {
   // The open chat's saved title, carried through every re-save so a name
   // somebody gave does not fall back to the first message.
   const titled = useRef<string | null>(null)
+  // The autosave rewrites the whole chat, so where it was filed has to be held
+  // here too, or every save would quietly unfile it.
+  const filed = useRef('')
   const toldSaveTrouble = useRef(false)
   const loadedFor = useRef<string | null>(null)
 
@@ -78,6 +82,7 @@ export function useTranscript(project: string | null): Chats {
         if (!alive) return
         setOpenId(latest.id)
         titled.current = saved !== null && saved.title.length > 0 ? saved.title : null
+        filed.current = saved?.folder ?? ''
         setResumeId(saved?.sessionId ?? null)
         opened.current = saved?.spend ?? null
         if (saved?.spend != null) statusStore.restoreChat(saved.spend)
@@ -113,6 +118,7 @@ export function useTranscript(project: string | null): Chats {
         sessionId: threadToSave({ liveSessionId, probed, resumeId }),
         savedAtMs: Date.now(),
         title: titled.current ?? undefined,
+        folder: filed.current,
       },
       live
         ? {
@@ -150,6 +156,7 @@ export function useTranscript(project: string | null): Chats {
     lastSaved.current = ''
     opened.current = null
     titled.current = null
+    filed.current = ''
     statusStore.reset()
     conversation.reset()
     setOpenId(id)
@@ -160,6 +167,7 @@ export function useTranscript(project: string | null): Chats {
         if (saved === null) return
         setResumeId(saved.sessionId)
         titled.current = saved.title.length > 0 ? saved.title : null
+        filed.current = saved.folder
         opened.current = saved.spend ?? null
         if (saved.spend != null) statusStore.restoreChat(saved.spend)
         conversation.restore(saved.turns)
@@ -173,6 +181,7 @@ export function useTranscript(project: string | null): Chats {
     lastSaved.current = ''
     opened.current = null
     titled.current = null
+    filed.current = ''
     statusStore.reset()
     conversation.reset()
     setOpenId(freshId())
@@ -207,6 +216,22 @@ export function useTranscript(project: string | null): Chats {
       })
   }
 
+  function file(id: string, folder: string): void {
+    if (project === null) return
+    const wanted = folder.trim()
+    if (id === openId) filed.current = wanted
+    void window.desk
+      .readTranscript(project, id)
+      .then((saved) => {
+        if (saved === null) return
+        return window.desk.writeTranscript(project, { ...saved, folder: wanted })
+      })
+      .then(() => refresh())
+      .catch((cause: unknown) => {
+        conversation.system(troubleLine(t`Could not file that chat`, cause))
+      })
+  }
+
   return {
     chats,
     openId,
@@ -216,5 +241,6 @@ export function useTranscript(project: string | null): Chats {
     start,
     remove,
     rename,
+    file,
   }
 }

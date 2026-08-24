@@ -13,7 +13,7 @@ describe('projectStore', () => {
   it('reads back what was set and tells subscribers', () => {
     const listener = vi.fn()
     const unsubscribe = projectStore.subscribe(listener)
-    projectStore.set({ path: '/repo/zetrem', name: 'zetrem' })
+    projectStore.set({ id: '/repo/zetrem', path: '/repo/zetrem', name: 'zetrem' })
     expect(projectStore.get()?.name).toBe('zetrem')
     expect(listener).toHaveBeenCalledTimes(1)
     unsubscribe()

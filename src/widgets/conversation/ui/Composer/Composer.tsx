@@ -7,7 +7,7 @@ import { modifierKey } from '@/shared/lib/platform/platform'
 import { Button } from '@/shared/ui/button'
 import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupTextarea } from '@/shared/ui/input-group'
 import { Kbd, KbdGroup } from '@/shared/ui/kbd'
-import { beganComposing, endedComposing, maySendNow, newComposer, sendKey, sent } from '../../lib/composer/composer'
+import { beganComposing, endedComposing, maySendNow, newComposer, sendKey, sent, takeOwed } from '../../lib/composer/composer'
 import { ChoicePicker } from '../ConversationPane/ChoicePicker'
 import { AttachedRow } from './AttachedRow'
 import type { ComposerProps } from './Composer.types'
@@ -110,7 +110,12 @@ export function Composer({
           onChange={(event) => setDraft(event.target.value)}
           onCompositionStart={() => beganComposing(keying.current)}
           onCompositionEnd={() => {
-            if (endedComposing(keying.current)) window.setTimeout(submit, 0)
+            if (!endedComposing(keying.current)) return
+            // The key may come back on its own and send first; this only runs
+            // if it did not.
+            window.setTimeout(() => {
+              if (takeOwed(keying.current)) submit()
+            }, 0)
           }}
           onKeyDown={handleKey}
           onPaste={(event) => {

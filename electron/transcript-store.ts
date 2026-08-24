@@ -1,4 +1,3 @@
-import { createHash } from 'node:crypto'
 import { mkdir, readFile, readdir, rename, rm, stat } from 'node:fs/promises'
 import { join } from 'node:path'
 import { app } from 'electron'
@@ -8,14 +7,14 @@ import { handle } from './ipc/ipc'
 import { queue } from './queue/queue'
 import { saveFile } from './save-file/save-file'
 import { staleChats } from './stale-chats/stale-chats'
+import { transcriptKey } from './transcript-key/transcript-key'
 
-const CHAT_CAP = 60
+export const CHAT_CAP = 60
 
 const queued = queue()
 
 function folder(project: string): string {
-  const key = createHash('sha256').update(project).digest('hex').slice(0, 32)
-  return join(app.getPath('userData'), 'transcripts', key)
+  return join(app.getPath('userData'), 'transcripts', transcriptKey(project))
 }
 
 function chatPath(project: string, id: string): string {
@@ -64,6 +63,15 @@ async function chats(project: string): Promise<Transcript[]> {
   return found.sort((a, b) => b.savedAtMs - a.savedAtMs)
 }
 
+async function isFiled(path: string): Promise<boolean> {
+  try {
+    const saved = JSON.parse(await readFile(path, 'utf8')) as { folder?: unknown }
+    return typeof saved.folder === 'string' && saved.folder.trim().length > 0
+  } catch {
+    return false
+  }
+}
+
 async function prune(project: string): Promise<void> {
   let names: string[]
   try {
@@ -72,6 +80,8 @@ async function prune(project: string): Promise<void> {
     return
   }
   if (names.length <= CHAT_CAP) return
+  // Reading every file is only worth it once the folder is full, and it is the
+  // only way to know which chats were filed — those are kept whatever their age.
   const dated = await Promise.all(
     names.map(async (name) => {
       const path = join(folder(project), name)
@@ -79,7 +89,7 @@ async function prune(project: string): Promise<void> {
         (info) => info.mtimeMs,
         () => 0,
       )
-      return { path, at }
+      return { path, at, filed: await isFiled(path) }
     }),
   )
   for (const path of staleChats(dated, CHAT_CAP)) {

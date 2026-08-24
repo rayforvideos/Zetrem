@@ -11,11 +11,16 @@ export type AgentHostEvent =
   | { id: string; kind: 'workspace'; cwd: string }
   | { id: string; kind: 'exit'; code: number | null; reason: ExitReason | null }
 
+export type ProjectRecord = { id: string; name: string; path: string }
+
 export type DeskBridge = {
   pickProjectDir(): Promise<string | null>
-  restoreProjectDir(): Promise<string | null>
-  recentProjectDirs(): Promise<string[]>
-  chooseProjectDir(path: string): Promise<string | null>
+  restoreProject(): Promise<ProjectRecord | null>
+  listProjects(): Promise<ProjectRecord[]>
+  createProject(path: string): Promise<ProjectRecord | null>
+  openProject(id: string): Promise<ProjectRecord | null>
+  forgetProject(id: string): Promise<void>
+  repathProject(id: string, path: string): Promise<ProjectRecord | null>
   startAgent(id: string, prompt: string, config: RunConfig, files?: Attached[]): Promise<void>
   appVersion(): Promise<string>
   readSettings(): Promise<Settings>

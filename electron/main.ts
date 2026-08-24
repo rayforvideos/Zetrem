@@ -17,7 +17,9 @@ import { killTrackedChildren } from './run-settled/run-settled'
 import { killAllProbes, registerSessionProbe } from './session-probe'
 import { registerTranscriptStore } from './transcript-store'
 import { registerUpdater } from './updater/updater'
-import { recallProject, recentProjects, rememberProject } from './project-memory/project-memory'
+import { recallProject } from './project-memory/project-memory'
+import { createProject, forgetProject, listProjects, openProject, repathProject, restoreProject } from './projects/projects'
+import { collapseCategories } from './projects/collapse/collapse'
 import { handle } from './ipc/ipc'
 import { loadTroubleLine, troublePage } from './window-trouble/window-trouble'
 
@@ -127,24 +129,22 @@ function createWindow(): void {
 
 handle('project:pick', async () => {
   const result = await dialog.showOpenDialog({ properties: ['openDirectory'] })
-  const path = result.canceled ? undefined : result.filePaths[0]
-  if (!path) return null
-  await rememberProject(path)
-  return path
+  return result.canceled ? null : (result.filePaths[0] ?? null)
 })
 
-handle('project:restore', () => recallProject())
+handle('project:restore', () => restoreProject())
 
-handle('project:recent', () => recentProjects())
+handle('project:list', () => listProjects())
 
-handle('project:choose', async (_event, path: string) => {
-  // Only a folder this app itself remembered may become the project again;
-  // the renderer does not get to point main at an arbitrary path.
-  const known = await recentProjects()
-  if (!known.includes(path)) return null
-  await rememberProject(path)
-  return path
-})
+handle('project:create', (_event, path: string) => createProject(path))
+
+// Only ids this store handed out act; the renderer never points main at an
+// arbitrary path.
+handle('project:open', (_event, id: string) => openProject(id))
+
+handle('project:forget', (_event, id: string) => forgetProject(id))
+
+handle('project:repath', (_event, id: string, path: string) => repathProject(id, path))
 
 handle('agents:pickKnowledge', async (): Promise<string[]> => {
   const project = await recallProject()
@@ -227,6 +227,10 @@ if (!primary) {
       session.defaultSession.setPermissionCheckHandler(() => false)
       guardThePage()
       wearTheName()
+      // Categories were a second project wearing the same folder. Fold any that
+      // are still on disk back into one project per folder before the window
+      // asks for the list.
+      await collapseCategories(app.getPath('userData'))
       // The scheme has to be settled before the window exists, or the first paint
       // is the wrong colour and the page opens under the machine's scheme.
       wearTheme((await loadSettings()).theme)

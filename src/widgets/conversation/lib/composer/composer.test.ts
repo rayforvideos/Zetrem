@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { beganComposing, endedComposing, maySendNow, newComposer, sendKey, sent } from './composer'
+import { beganComposing, endedComposing, maySendNow, newComposer, sendKey, sent, takeOwed } from './composer'
 
 describe('the composer never sends a half finished syllable', () => {
   it('sends at once when nothing is being composed', () => {
@@ -30,8 +30,31 @@ describe('the composer never sends a half finished syllable', () => {
     beganComposing(keying)
     maySendNow(keying)
     expect(endedComposing(keying)).toBe(true)
+    expect(takeOwed(keying)).toBe(true)
     beganComposing(keying)
     expect(endedComposing(keying)).toBe(false)
+  })
+
+  it('drops the owed send when the key came back and sent it first', () => {
+    // A Korean IME delivers one Enter twice: once to finish the syllable, then
+    // again as the key itself. The first is owed a send, the composition ends
+    // and schedules it, and the second press sends straight away — so by the
+    // time the scheduled one runs there is nothing left to send. Sending it
+    // anyway is what put the message in twice.
+    const keying = newComposer()
+    beganComposing(keying)
+    maySendNow(keying)
+    expect(endedComposing(keying)).toBe(true)
+    sent(keying)
+    expect(takeOwed(keying)).toBe(false)
+  })
+
+  it('still sends for an IME that never hands the key back', () => {
+    const keying = newComposer()
+    beganComposing(keying)
+    maySendNow(keying)
+    expect(endedComposing(keying)).toBe(true)
+    expect(takeOwed(keying)).toBe(true)
   })
 
   it('forgets what it owed once the send went through another way', () => {

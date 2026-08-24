@@ -27,11 +27,11 @@ export function ProjectField({ project }: { project: Project }) {
           <span className="text-xs text-muted-foreground">{t`Recent`}</span>
           {project.recent.map((one) => (
             <Button
-              key={one.path}
+              key={one.id}
               size="sm"
               variant="ghost"
               title={one.path}
-              onClick={() => project.onPickRecent(one.path)}
+              onClick={() => project.onPickRecent(one.id)}
               className="rounded-full font-mono text-xs text-muted-foreground"
             >
               {one.name}

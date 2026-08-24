@@ -20,7 +20,7 @@ type Flat = {
   loginNote: string
   notice: Failure | null
   installing: boolean
-  recent: { path: string; name: string }[]
+  recent: { id: string; path: string; name: string }[]
 }
 
 function pane(over: Partial<Flat> = {}): string {
@@ -230,7 +230,7 @@ describe('SetupPane: everything to settle before starting, on one screen', () =>
   it('offers the folders someone worked in lately', () => {
     const html = pane({
       project: { name: 'zetrem', path: '/tmp/zetrem' },
-      recent: [{ path: '/tmp/alpha', name: 'alpha' }],
+      recent: [{ id: 'p-alpha', path: '/tmp/alpha', name: 'alpha' }],
     })
     expect(html).toContain('alpha')
     expect(html).toContain('/tmp/alpha')

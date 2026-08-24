@@ -8,4 +8,6 @@ export type ChatListProps = {
   onStart(): void
   onRemove(id: string): void
   onRename(id: string, wanted: string): void
+  // '' files it back out into the loose list.
+  onFile(id: string, folder: string): void
 }

@@ -10,6 +10,8 @@ import type { StockListProps } from '@/widgets/setup'
 import { ChatList } from '../ChatList/ChatList'
 import type { ChatListProps } from '../ChatList/ChatList.types'
 import { SidebarGrip } from '../SidebarGrip/SidebarGrip'
+import { ProjectSwitcher } from '../ProjectSwitcher/ProjectSwitcher'
+import type { ProjectsProps } from '../ProjectSwitcher/ProjectSwitcher.types'
 import { TeamList } from '../TeamList/TeamList'
 import type { TeamListProps } from '../TeamList/TeamList.types'
 import { t } from '@lingui/core/macro'
@@ -17,6 +19,7 @@ import { t } from '@lingui/core/macro'
 const AVATAR = 24
 
 type TeamSidebarProps = {
+  projects: ProjectsProps
   chats: Omit<ChatListProps, 'nowMs'>
   team: Omit<TeamListProps, 'avatar'>
   agents: Omit<StockListProps, 'avatar'>
@@ -27,6 +30,7 @@ type TeamSidebarProps = {
 }
 
 export function TeamSidebar({
+  projects,
   chats,
   team,
   agents,
@@ -48,6 +52,8 @@ export function TeamSidebar({
         ref={column}
         className="zt-scroll zt-fade-out -mx-1 -mt-1 flex min-h-0 flex-1 flex-col gap-3 overflow-x-hidden overflow-y-auto px-1 pt-1 pr-5"
       >
+        <ProjectSwitcher projects={projects} />
+
         <ChatList {...chats} nowMs={nowMs} />
 
         <Heading>{t`Your team`}</Heading>

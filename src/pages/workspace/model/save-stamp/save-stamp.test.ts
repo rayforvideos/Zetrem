@@ -22,6 +22,7 @@ function transcript(over: Partial<Transcript> = {}): Transcript {
     title: '',
     sessionId: 'session-1',
     savedAtMs: 0,
+    folder: '',
     spend: null,
     turns: [turn()],
     ...over,

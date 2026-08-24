@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import type { Turn } from '../../model/turn'
-import { UNTITLED, chatId, isChatId, packTranscript, readTranscript, renamed, titleOf } from './transcript'
+import { UNTITLED, chatId, isChatId, packTranscript, readTranscript, renamed, summaryOf, titleOf } from './transcript'
 
 function turn(overrides: Partial<Turn> = {}): Turn {
   return {
@@ -255,5 +255,33 @@ describe('a saved chat carries what it cost, so reopening it says the same thing
       spend: { usd: 'lots', turns: 3 },
     }
     expect(readTranscript(bad)?.spend).toBeNull()
+  })
+})
+
+describe('a chat remembers which folder it was filed under', () => {
+  const saved = (over: Record<string, unknown> = {}) => ({
+    id: 'chat-mt7b569x-az3pn6',
+    turns: [{ id: 't1', role: 'user', text: '하이', tools: [], draft: '', thinking: '', startedAtMs: 1 }],
+    ...over,
+  })
+
+  it('reads a chat filed before folders existed as unfiled', () => {
+    // Every chat already on disk has no folder at all. It has to come back as
+    // one that simply was never filed, not as a broken file.
+    expect(readTranscript(saved())?.folder).toBe('')
+  })
+
+  it('carries the folder back out the way it went in', () => {
+    expect(readTranscript(saved({ folder: '출고 자동화' }))?.folder).toBe('출고 자동화')
+  })
+
+  it('refuses a folder that is not a name', () => {
+    expect(readTranscript(saved({ folder: 42 }))?.folder).toBe('')
+    expect(readTranscript(saved({ folder: '   ' }))?.folder).toBe('')
+  })
+
+  it('tells the list which folder a chat belongs to', () => {
+    const one = readTranscript(saved({ folder: '출고 자동화' }))
+    expect(summaryOf(one!).folder).toBe('출고 자동화')
   })
 })

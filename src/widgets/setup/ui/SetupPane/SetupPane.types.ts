@@ -18,9 +18,9 @@ export type Account = {
 
 export type Project = {
   chosen: { name: string; path: string } | null
-  recent: { name: string; path: string }[]
+  recent: { id: string; name: string; path: string }[]
   onChoose(): void
-  onPickRecent(path: string): void
+  onPickRecent(id: string): void
 }
 
 export type Defaults = {

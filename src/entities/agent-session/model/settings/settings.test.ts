@@ -19,17 +19,35 @@ describe('readSettings: reading back what was chosen', () => {
       hintsSeen: ['hire-first'],
       knownTools: ['Read', 'Bash'],
       knownAgents: ['Explore', 'Ray'],
-      stockAgents: ['Explore'],
+      stockOff: ['Explore'],
       tongue: 'ko',
       theme: 'light',
       notify: false,
+      enterSends: false,
       sidebarOpen: false,
       sidebarWidth: 300,
       refusedModels: ['fable'],
       userName: 'Ray',
       userFace: 'ghost',
     }
-    expect(readSettings(saved)).toEqual(saved)
+    // A file already written in the new shape has nothing left to migrate.
+    expect(readSettings(saved)).toEqual({ ...saved, wasStockOn: null })
+  })
+
+  it('carries an old file’s switched-on list forward for the screen to invert', () => {
+    // Before the switches were inverted the file listed what was ON. Only the
+    // screen knows the whole set of their agents, so it does the inverting; this
+    // just hands the old list over once.
+    expect(readSettings({ stockAgents: ['Explore'] }).wasStockOn).toEqual(['Explore'])
+    expect(readSettings({ stockOff: ['Plan'] }).wasStockOn).toBeNull()
+  })
+
+  it('keeps the old list through a save that happens before the inverting', () => {
+    // Every write re-reads the settings first. Reading the marker back only
+    // from the legacy key meant any save landing before the screen inverted the
+    // switches wrote the marker away — and after a restart everything that had
+    // been switched off came back on.
+    expect(readSettings({ wasStockOn: ['Explore'] }).wasStockOn).toEqual(['Explore'])
   })
 
   it('falls back to a default for a value it does not know, so a spoiled file cannot open the app in a strange mode', () => {
@@ -101,7 +119,7 @@ describe('the width of the board', () => {
 describe('the built-in agent settings', () => {
   it('knows none and has none on until a session says otherwise', () => {
     expect(readSettings({}).knownAgents).toEqual([])
-    expect(readSettings({}).stockAgents).toEqual([])
+    expect(readSettings({}).stockOff).toEqual([])
   })
 
   it('filters out anything that is not a name', () => {
@@ -109,7 +127,7 @@ describe('the built-in agent settings', () => {
   })
 
   it('treats a non-list as none', () => {
-    expect(readSettings({ stockAgents: 'Explore' }).stockAgents).toEqual([])
+    expect(readSettings({ stockOff: 'Explore' }).stockOff).toEqual([])
   })
 })
 

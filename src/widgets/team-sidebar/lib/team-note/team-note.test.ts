@@ -41,3 +41,37 @@ describe('noteLine: the words and the button never disagree', () => {
     for (const note of notes) expect(note.text, note.text).not.toContain('—')
   })
 })
+
+describe('the restart stays offered while the session is still up', () => {
+  it('still asks once the turn has finished, because the session is what holds the old roster', () => {
+    // Idle is the easiest moment to restart, not the moment to hide the offer:
+    // the child is still up and still cannot call the new teammate. Tying this
+    // to "a turn is in flight" took the button away exactly when it was free
+    // to press.
+    const said = noteLine({ kind: 'created', name: '시에나' }, true)
+    expect(said.restart).toBe(true)
+  })
+
+  it('offers nothing when there is no session to restart', () => {
+    expect(noteLine({ kind: 'created', name: '시에나' }, false).restart).toBe(false)
+  })
+})
+
+describe('the note says what is true, not what sounds cautious', () => {
+  it('says a new teammate is simply ready when nothing is running', () => {
+    // "They join the next session" reads as a wait. With no session up there is
+    // no wait: whatever you send next already knows them. Saying otherwise
+    // while the row sits there pressable says two opposite things at once.
+    const said = noteLine({ kind: 'created', name: '테스트' }, false)
+    expect(said.text).not.toContain('next session')
+    expect(said.restart).toBe(false)
+  })
+
+  it('says an edit is in effect when nothing is running', () => {
+    expect(noteLine({ kind: 'updated', name: '테스트' }, false).text).not.toContain('next session')
+  })
+
+  it('still says what a running session cannot do', () => {
+    expect(noteLine({ kind: 'created', name: '테스트' }, true).restart).toBe(true)
+  })
+})

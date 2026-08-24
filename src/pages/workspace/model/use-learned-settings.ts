@@ -1,7 +1,5 @@
 import { useEffect } from 'react'
 import type { Settings, StatusState } from '@/entities/agent-session'
-import type { AgentDef } from '@/entities/agent-def'
-import { learnedStock } from './learned-stock/learned-stock'
 import { remembered } from './remembered/remembered'
 
 // When a probe or session teaches us which tools and agents exist, fold that
@@ -9,8 +7,6 @@ import { remembered } from './remembered/remembered'
 export function useLearnedSettings(
   status: StatusState,
   settings: Settings,
-  defs: AgentDef[],
-  authored: string[],
   update: (patch: Partial<Settings>) => void,
 ): void {
   const probedSession = status.probed
@@ -24,17 +20,7 @@ export function useLearnedSettings(
       { tools: sessionTools, agents: sessionAgents, probed: probedSession },
       { tools: settings.knownTools, agents: settings.knownAgents },
     )
-    const turnedOn =
-      learned?.knownAgents === undefined
-        ? null
-        : learnedStock(
-            learned.knownAgents,
-            settings.knownAgents,
-            settings.stockAgents,
-            defs.map((def) => def.name),
-            authored,
-          )
-    if (learned === null && turnedOn === null) return
-    update({ ...learned, ...(turnedOn === null ? {} : { stockAgents: turnedOn }) })
+    if (learned === null) return
+    update(learned)
   }, [probedSession, sessionTools, sessionAgents, settings.knownTools, settings.knownAgents, update])
 }

@@ -22,6 +22,23 @@ export function ProjectField({ project }: { project: Project }) {
           {project.chosen ? t`Change` : t`Choose folder`}
         </Button>
       </div>
+      {project.recent.length > 0 && (
+        <div data-recent className="flex flex-wrap items-center gap-2">
+          <span className="text-xs text-muted-foreground">{t`Recent`}</span>
+          {project.recent.map((one) => (
+            <Button
+              key={one.id}
+              size="sm"
+              variant="ghost"
+              title={one.path}
+              onClick={() => project.onPickRecent(one.id)}
+              className="rounded-full font-mono text-xs text-muted-foreground"
+            >
+              {one.name}
+            </Button>
+          ))}
+        </div>
+      )}
     </Field>
   )
 }

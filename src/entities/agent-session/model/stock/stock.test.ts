@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { ORCHESTRATOR } from '../roster-lock/roster-lock'
-import { allowedStock, stockAgents } from './stock'
+import { allowedStock, offStock, stockAgents } from './stock'
 
 const known = [
   'Explore',
@@ -54,22 +54,52 @@ describe('stockAgents: what the session lists, minus our own, is what Claude Cod
   })
 })
 
-describe('allowedStock: only what is switched on can be called', () => {
+describe('allowedStock: everything of theirs except what was switched off', () => {
   const stock = ['Explore', 'Plan', 'general-purpose']
 
-  it('keeps only what is on', () => {
-    expect(allowedStock(stock, ['Explore'])).toEqual(['Explore'])
+  it('drops the ones switched off', () => {
+    expect(allowedStock(stock, ['Explore'])).toEqual(['Plan', 'general-purpose'])
   })
 
-  it('allows nothing when nothing is on', () => {
-    expect(allowedStock(stock, [])).toEqual([])
+  it('allows all of theirs when nothing was switched off', () => {
+    expect(allowedStock(stock, [])).toEqual(stock)
   })
 
-  it('does not revive a name that is gone, even if the setting still lists it', () => {
-    expect(allowedStock(stock, ['Explore', '사라진에이전트'])).toEqual(['Explore'])
+  it('ignores an off switch for a name that is no longer theirs', () => {
+    expect(allowedStock(stock, ['Explore', '사라진에이전트'])).toEqual(['Plan', 'general-purpose'])
   })
 
-  it('follows the list order and not the order things were switched on', () => {
-    expect(allowedStock(stock, ['general-purpose', 'Explore'])).toEqual(['Explore', 'general-purpose'])
+  it('follows the list order and not the order things were switched off', () => {
+    expect(allowedStock(stock, ['general-purpose'])).toEqual(['Explore', 'Plan'])
+  })
+})
+
+
+describe('which of their agents are on: everything except what you turned off', () => {
+  const stock = ['claude', 'Explore', 'Plan']
+
+  it('has them all on before anybody touches a switch', () => {
+    // Nothing writes to say they are on. Being one of theirs is enough, so a
+    // name that turns up later needs no write to be honest — and no write can
+    // flip it on behind your back either.
+    expect(allowedStock(stock, [])).toEqual(stock)
+  })
+
+  it('leaves out the ones turned off', () => {
+    expect(allowedStock(stock, ['Explore'])).toEqual(['claude', 'Plan'])
+  })
+
+  it('ignores an off switch for something that is not theirs any more', () => {
+    expect(allowedStock(stock, ['gone'])).toEqual(stock)
+  })
+
+  it('turns one off and on again without inventing anything', () => {
+    const off = offStock([], 'Explore', false)
+    expect(off).toEqual(['Explore'])
+    expect(offStock(off, 'Explore', true)).toEqual([])
+  })
+
+  it('does not list the same name off twice', () => {
+    expect(offStock(['Explore'], 'Explore', false)).toEqual(['Explore'])
   })
 })

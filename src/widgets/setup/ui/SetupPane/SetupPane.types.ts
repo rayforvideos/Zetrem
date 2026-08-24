@@ -18,7 +18,9 @@ export type Account = {
 
 export type Project = {
   chosen: { name: string; path: string } | null
+  recent: { id: string; name: string; path: string }[]
   onChoose(): void
+  onPickRecent(id: string): void
 }
 
 export type Defaults = {
@@ -28,6 +30,8 @@ export type Defaults = {
   onTongue(next: 'system' | 'en' | 'ko'): void
   notify: boolean
   onNotify(on: boolean): void
+  enterSends: boolean
+  onEnterSends(on: boolean): void
   onPermissionMode(mode: PermissionMode): void
   onModel(model: ModelChoice): void
 }
@@ -35,6 +39,12 @@ export type Defaults = {
 export type Plugins = {
   summary: string
   onOpen(): void
+}
+
+export type Agents = {
+  stock: string[]
+  on: string[]
+  onChange(name: string, on: boolean): void
 }
 
 export type Actions = {
@@ -52,12 +62,15 @@ export type You = {
   onFace(next: FaceId): void
 }
 
+export type SetupTab = 'start' | 'general' | 'session' | 'extensions'
+
 export type SetupPaneProps = {
   account: Account
   you: You
   project: Project
   defaults: Defaults
   plugins: Plugins
+  agents: Agents
   actions: Actions
   notice: Failure | null
 }

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import type { AgentDef, AgentDefDraft } from '@/entities/agent-def'
 import type { TeamNote } from '@/widgets/team-sidebar'
 import { t } from '@lingui/core/macro'
@@ -64,7 +64,16 @@ export function useAgentDefs() {
     ]),
   )
 
-  return { defs, drafts, hire, edit, release, note }
+  // The note is about a change a running session has not taken up yet, so it
+  // stops being true the moment that session is replaced. Nothing else clears
+  // it, which is how it used to come back — button and all — as soon as a
+  // session appeared again.
+  // Stable on purpose: the screen clears the note from an effect keyed on the
+  // session, and a fresh function every render would make that effect run every
+  // render — wiping the note before anybody could read it.
+  const settleNote = useCallback(() => setNote(null), [])
+
+  return { defs, drafts, hire, edit, release, note, settleNote }
 }
 
 function reasonOf(cause: unknown): string {

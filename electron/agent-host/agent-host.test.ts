@@ -105,7 +105,7 @@ vi.mock('../login-path/login-path', () => ({
   },
 }))
 
-vi.mock('../project-memory', () => ({ recallProject: async () => boundary.project }))
+vi.mock('../project-memory/project-memory', () => ({ recallProject: async () => boundary.project }))
 
 vi.mock('../kill-tree/kill-tree', () => ({
   killTree: (pid: number) => boundary.killed.push(pid),

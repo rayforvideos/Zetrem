@@ -9,7 +9,7 @@ import { ORCHESTRATOR_PROMPT, PERSONA } from '@/entities/agent-session/model/orc
 import { claudeBin, loginPath } from '../login-path/login-path'
 import { exitReason, startTrouble } from '../exit-reason/exit-reason'
 import type { ExitReason } from '../exit-reason/exit-reason.types'
-import { recallProject } from '../project-memory'
+import { recallProject } from '../project-memory/project-memory'
 import { handle, on } from '../ipc/ipc'
 import { lineReader } from '../line-reader/line-reader'
 import { killTree, killTreeSync } from '../kill-tree/kill-tree'

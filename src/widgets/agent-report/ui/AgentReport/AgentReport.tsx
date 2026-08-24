@@ -69,6 +69,7 @@ export function AgentReport({ session, sessions, nowMs, onClose, onPick }: Agent
                 disabled={earlier === null}
                 onClick={() => earlier !== null && onPick(earlier)}
                 aria-label={t`Earlier run`}
+                className="zt-hit"
               >
                 <ChevronLeft className="size-3.5" />
               </Button>
@@ -81,6 +82,7 @@ export function AgentReport({ session, sessions, nowMs, onClose, onPick }: Agent
                 disabled={later === null}
                 onClick={() => later !== null && onPick(later)}
                 aria-label={t`Later run`}
+                className="zt-hit"
               >
                 <ChevronRight className="size-3.5" />
               </Button>

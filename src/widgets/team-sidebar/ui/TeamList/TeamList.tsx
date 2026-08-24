@@ -25,9 +25,8 @@ export function TeamList({
   members,
   drafts,
   knownTools,
-  sessionKnown,
+  sessionUp,
   read,
-  sessionLive,
   canWrite,
   hint,
   note,
@@ -41,7 +40,9 @@ export function TeamList({
   onHintSeen,
 }: TeamListProps) {
   const [editing, setEditing] = useState<'new' | string | null>(null)
-  const said = note === null ? null : noteLine(note, sessionLive)
+  // Idle is the cheapest moment to restart, so that is the last moment to hide
+  // the offer — and a session already stopped has nothing to offer at all.
+  const said = note === null ? null : noteLine(note, sessionUp)
   const target = typeof editing === 'string' ? (drafts.get(editing) ?? null) : null
 
   return (
@@ -92,7 +93,7 @@ export function TeamList({
             key={member.type}
             member={member}
             avatar={avatar}
-            sessionKnown={sessionKnown}
+            sessionUp={sessionUp}
             onPick={onPick}
             onAddress={onAddress}
             onEdit={() => setEditing(member.type)}
@@ -136,7 +137,7 @@ export function TeamList({
 type MemberRowProps = {
   member: TeamMember
   avatar: number
-  sessionKnown: boolean
+  sessionUp: boolean
   read: string[]
   onPick(sessionId: string): void
   onAddress(subagentType: string): void
@@ -147,7 +148,7 @@ type MemberRowProps = {
 function MemberRow({
   member,
   avatar,
-  sessionKnown,
+  sessionUp,
   read,
   onPick,
   onAddress,
@@ -155,7 +156,7 @@ function MemberRow({
   onRelease,
 }: MemberRowProps) {
   const row = rowStateOf(member, read)
-  const mute = sessionKnown && !member.callable
+  const mute = sessionUp && !member.callable
   const why = !member.loaded
     ? t`${i18n._(ORIGIN[member.origin])}. Joins from the next session.`
     : t`Not available this session. Unlock it in Settings.`

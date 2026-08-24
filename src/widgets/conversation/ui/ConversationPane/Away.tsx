@@ -22,7 +22,7 @@ export function Away({ away, face, nowMs }: { away: Waiting; face: FaceId; nowMs
       <span data-face className="relative flex size-6 flex-none items-center">
         <UserFace face={face} size={24} className="max-w-none" />
       </span>
-      <span className="relative flex-none text-sm text-muted-foreground">{away.verb}</span>
+      <span className="zt-shimmer relative flex-none text-sm">{away.verb}</span>
       <span className="relative flex min-w-0 flex-1 items-center gap-2 font-mono text-xs text-muted-foreground">
         {many ? (
           <span className="truncate">{away.many}</span>

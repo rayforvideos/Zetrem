@@ -4,7 +4,7 @@ import type { Connector, ConnectorVerb } from '@/entities/connector/lib/read-con
 import type { NewConnector } from '@/entities/connector/lib/new-connector/new-connector.types'
 import type { PluginRun } from '@/entities/plugin/lib/catalog/catalog.types'
 import { runClaude } from './run-claude/run-claude'
-import { recallProject } from './project-memory'
+import { recallProject } from './project-memory/project-memory'
 import { handle } from './ipc/ipc'
 
 const READ_TIMEOUT_MS = 30_000

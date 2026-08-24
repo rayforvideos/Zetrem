@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, useSyncExternalStore } from 'react'
 import { statusStore } from '@/entities/agent-session'
-import { chatId, packTranscript } from '@/entities/conversation'
+import { chatId, packTranscript, renamed } from '@/entities/conversation'
 import type { ChatSpend } from '@/entities/conversation'
 import type { ChatSummary } from '@/entities/conversation'
 import { conversation } from './conversation/conversation'
@@ -17,6 +17,9 @@ type Chats = {
   open(id: string): void
   start(): void
   remove(id: string): void
+  rename(id: string, wanted: string): void
+  file(id: string, folder: string): void
+  fileMany(ids: string[], folder: string): void
 }
 
 function freshId(): string {
@@ -32,6 +35,12 @@ export function useTranscript(project: string | null): Chats {
   const [ready, setReady] = useState(false)
   const lastSaved = useRef('')
   const opened = useRef<ChatSpend | null>(null)
+  // The open chat's saved title, carried through every re-save so a name
+  // somebody gave does not fall back to the first message.
+  const titled = useRef<string | null>(null)
+  // The autosave rewrites the whole chat, so where it was filed has to be held
+  // here too, or every save would quietly unfile it.
+  const filed = useRef('')
   const toldSaveTrouble = useRef(false)
   const loadedFor = useRef<string | null>(null)
 
@@ -73,6 +82,8 @@ export function useTranscript(project: string | null): Chats {
         const saved = await window.desk.readTranscript(project, latest.id).catch(() => null)
         if (!alive) return
         setOpenId(latest.id)
+        titled.current = saved !== null && saved.title.length > 0 ? saved.title : null
+        filed.current = saved?.folder ?? ''
         setResumeId(saved?.sessionId ?? null)
         opened.current = saved?.spend ?? null
         if (saved?.spend != null) statusStore.restoreChat(saved.spend)
@@ -107,6 +118,8 @@ export function useTranscript(project: string | null): Chats {
         id: openId,
         sessionId: threadToSave({ liveSessionId, probed, resumeId }),
         savedAtMs: Date.now(),
+        title: titled.current ?? undefined,
+        folder: filed.current,
       },
       live
         ? {
@@ -143,6 +156,8 @@ export function useTranscript(project: string | null): Chats {
     if (project === null || id === openId) return
     lastSaved.current = ''
     opened.current = null
+    titled.current = null
+    filed.current = ''
     statusStore.reset()
     conversation.reset()
     setOpenId(id)
@@ -152,6 +167,8 @@ export function useTranscript(project: string | null): Chats {
       .then((saved) => {
         if (saved === null) return
         setResumeId(saved.sessionId)
+        titled.current = saved.title.length > 0 ? saved.title : null
+        filed.current = saved.folder
         opened.current = saved.spend ?? null
         if (saved.spend != null) statusStore.restoreChat(saved.spend)
         conversation.restore(saved.turns)
@@ -164,6 +181,8 @@ export function useTranscript(project: string | null): Chats {
   function start(): void {
     lastSaved.current = ''
     opened.current = null
+    titled.current = null
+    filed.current = ''
     statusStore.reset()
     conversation.reset()
     setOpenId(freshId())
@@ -181,6 +200,58 @@ export function useTranscript(project: string | null): Chats {
     if (id === openId) start()
   }
 
+  function rename(id: string, wanted: string): void {
+    if (project === null) return
+    const next = renamed(wanted)
+    if (next === null) return
+    if (id === openId) titled.current = next
+    void window.desk
+      .readTranscript(project, id)
+      .then((saved) => {
+        if (saved === null) return
+        return window.desk.writeTranscript(project, { ...saved, title: next })
+      })
+      .then(() => refresh())
+      .catch((cause: unknown) => {
+        conversation.system(troubleLine(t`Could not rename that chat`, cause))
+      })
+  }
+
+  function file(id: string, folder: string): void {
+    if (project === null) return
+    const wanted = folder.trim()
+    if (id === openId) filed.current = wanted
+    void window.desk
+      .readTranscript(project, id)
+      .then((saved) => {
+        if (saved === null) return
+        return window.desk.writeTranscript(project, { ...saved, folder: wanted })
+      })
+      .then(() => refresh())
+      .catch((cause: unknown) => {
+        conversation.system(troubleLine(t`Could not file that chat`, cause))
+      })
+  }
+
+  // Renaming a folder, or emptying it, is the same write on every chat that
+  // wore its name. One pass, then one refresh, rather than a refresh each.
+  function fileMany(ids: string[], folder: string): void {
+    if (project === null || ids.length === 0) return
+    const wanted = folder.trim()
+    if (openId !== null && ids.includes(openId)) filed.current = wanted
+    void Promise.all(
+      ids.map(async (id) => {
+        const saved = await window.desk.readTranscript(project, id)
+        if (saved === null) return
+        await window.desk.writeTranscript(project, { ...saved, folder: wanted })
+      }),
+    )
+      .then(() => refresh())
+      .catch((cause: unknown) => {
+        conversation.system(troubleLine(t`Could not file that chat`, cause))
+      })
+  }
+
   return {
     chats,
     openId,
@@ -189,5 +260,8 @@ export function useTranscript(project: string | null): Chats {
     open,
     start,
     remove,
+    rename,
+    file,
+    fileMany,
   }
 }

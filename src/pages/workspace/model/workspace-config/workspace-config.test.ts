@@ -52,17 +52,19 @@ describe('lockOf: who the orchestrator may call', () => {
     expect(lockOf(DEFAULT_SETTINGS, [def('Ray')]).blockedAgents).toEqual([])
   })
 
-  it('bars the built-in agents that were left switched off, and only those', () => {
+  it('bars the built-in agents that were switched off, and only those', () => {
     const lock = lockOf(
-      { ...settings, knownAgents: ['Explore', 'Plan', 'Ray'], stockAgents: ['Explore'] },
+      { ...settings, knownAgents: ['Explore', 'Plan', 'Ray'], stockOff: ['Explore'] },
       [def('Ray')],
     )
-    expect(lock.blockedAgents).toEqual(['Plan'])
+    expect(lock.blockedAgents).toEqual(['Explore'])
   })
 
-  it('bars every built-in agent when none were switched on', () => {
+  it('bars none of theirs while none were switched off', () => {
+    // Being one of theirs is enough to be callable now, so an untouched
+    // install blocks nothing.
     const lock = lockOf({ ...settings, knownAgents: ['Explore'] }, [def('Ray')])
-    expect(lock.blockedAgents).toEqual(['Explore'])
+    expect(lock.blockedAgents).toEqual([])
   })
 
   it('never bars someone we hired, whose whole point is being callable', () => {
@@ -100,19 +102,19 @@ describe('pluginSummary: one line about plugins', () => {
 })
 
 describe('an agent from the person own .claude folder is not zetrem business', () => {
-  const wrote = { ...DEFAULT_SETTINGS, knownAgents: ['Explore', 'Ray'], stockAgents: ['Explore'] }
+  const wrote = { ...DEFAULT_SETTINGS, knownAgents: ['Explore', 'Ray'], stockOff: ['Explore'] }
 
   it('bars it, since zetrem carries our own people and the builtins and nothing else', () => {
     expect(lockOf(wrote, [], ['Ray']).blockedAgents).toContain('Ray')
   })
 
-  it('leaves the builtin that is switched on alone', () => {
-    expect(lockOf(wrote, [], ['Ray']).blockedAgents).not.toContain('Explore')
+  it('bars the builtin that was switched off', () => {
+    expect(lockOf(wrote, [], ['Ray']).blockedAgents).toContain('Explore')
   })
 
-  it('bars it even if a stale setting still lists it as switched on', () => {
-    const stale = { ...wrote, stockAgents: ['Explore', 'Ray'] }
-    expect(lockOf(stale, [], ['Ray']).blockedAgents, 'not on the list, so there is nothing to turn on').toContain('Ray')
+  it('bars it even if a stale setting still names it as switched off', () => {
+    const stale = { ...wrote, stockOff: ['Explore', 'Ray'] }
+    expect(lockOf(stale, [], ['Ray']).blockedAgents, 'authored elsewhere, so not ours to offer').toContain('Ray')
   })
 
   it('keeps someone hired in zetrem callable even when a file shares the name', () => {

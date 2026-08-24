@@ -5,6 +5,9 @@ export type ChatSummary = {
   title: string
   sessionId: string | null
   savedAtMs: number
+  // Where the person filed it. Empty means they never did, which is where
+  // every chat saved before folders existed starts.
+  folder: string
 }
 
 export type ChatSpend = {

@@ -35,7 +35,7 @@ type Agent = {
   decide(allow: boolean, always?: boolean): void
   stop(): void
   reset(): void
-  restart(said?: string): void
+  restart(): void
 }
 
 export function useAgent(
@@ -156,10 +156,10 @@ export function useAgent(
     launch(dressed, configRef.current.resume ?? null, files)
   }
 
-  function restart(said?: string): void {
+  function restart(): void {
     reset()
     conversation.system(
-      said ?? t`Session stopped. The next message starts a new one with your team as it is now.`,
+      t`Session stopped. The next message starts a new one with your team as it is now.`,
     )
   }
 

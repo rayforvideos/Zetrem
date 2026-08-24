@@ -28,14 +28,26 @@ export function titleOf(turns: Turn[]): string {
   return line.length <= TITLE_CAP ? line : `${line.slice(0, TITLE_CAP)}…`
 }
 
+// One line, trimmed, capped like an automatic title; nothing is no name.
+export function renamed(title: string): string | null {
+  const line = title.replace(/\s+/g, ' ').trim()
+  if (line.length === 0) return null
+  return line.length <= TITLE_CAP ? line : `${line.slice(0, TITLE_CAP)}…`
+}
+
 export function packTranscript(
   turns: Turn[],
-  summary: Omit<ChatSummary, 'title'>,
+  summary: Omit<ChatSummary, 'title' | 'folder'> & { title?: string; folder?: string },
   spend: ChatSpend | null = null,
 ): Transcript {
+  const given = summary.title === undefined ? null : renamed(summary.title)
   return {
     ...summary,
-    title: titleOf(turns),
+    // A name somebody gave outlives every re-save; only a nameless chat
+    // keeps taking its title from the first message.
+    title: given ?? titleOf(turns),
+    // A chat nobody filed is unfiled; saving one never invents a folder.
+    folder: summary.folder ?? '',
     spend,
     turns: turns.slice(-TURN_CAP).map(packTurn),
   }
@@ -69,6 +81,7 @@ export function readTranscript(saved: unknown): Transcript | null {
     sessionId: typeof source.sessionId === 'string' ? source.sessionId : null,
     savedAtMs: typeof source.savedAtMs === 'number' ? source.savedAtMs : 0,
     spend: readSpend(source.spend),
+    folder: typeof source.folder === 'string' ? source.folder.trim() : '',
     turns: turns.slice(-TURN_CAP),
   }
 }
@@ -97,8 +110,8 @@ export function readSpend(saved: unknown): ChatSpend | null {
 }
 
 export function summaryOf(transcript: Transcript): ChatSummary {
-  const { id, title, sessionId, savedAtMs } = transcript
-  return { id, title, sessionId, savedAtMs }
+  const { id, title, sessionId, savedAtMs, folder } = transcript
+  return { id, title, sessionId, savedAtMs, folder }
 }
 
 function isRole(value: unknown): value is Turn['role'] {

@@ -44,8 +44,12 @@ export function useSessionProbe(
   // launch whose probe came back with nothing.
   useEffect(() => {
     if (!wanted) return
+    // Empty-handed on purpose. Which agents Claude Code has of its own is the
+    // one thing a session cannot tell us — it is handed our teammates and
+    // reports one flat list with theirs. Asking with no teammates at all makes
+    // the answer theirs by construction, and leaves nothing to work out.
     void window.desk
-      .probeSession(held.current)
+      .probeSession({ ...held.current, people: [], lock: null })
       .then(learnSession)
       .catch(() => undefined)
   }, [wanted, project])

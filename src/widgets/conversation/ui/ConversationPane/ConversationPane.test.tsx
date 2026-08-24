@@ -6,6 +6,8 @@ import { modifierKey } from '@/shared/lib/platform/platform'
 import { TOOL_OUTPUT_LINES } from '../../lib/limits'
 import { ConversationPane } from './ConversationPane'
 import { Composer } from '../Composer/Composer'
+import { Away } from './Away'
+import { Working } from './Working'
 import { tickOpen } from './Tick'
 
 const STATUS: StatusState = {
@@ -69,6 +71,7 @@ function working(turns: Turn[]): string {
         permissionMode="ask"
         model="default"
         refusedModels={[]}
+          enterSends={true}
         files={[]}
         onPick={() => {}}
         onTake={() => {}}
@@ -107,6 +110,7 @@ function pane(turns: Turn[], permission: PermissionAsk | null = null): string {
         permissionMode="ask"
         model="default"
         refusedModels={[]}
+          enterSends={true}
         files={[]}
         onPick={() => {}}
         onTake={() => {}}
@@ -121,14 +125,41 @@ function pane(turns: Turn[], permission: PermissionAsk | null = null): string {
   )
 }
 
-describe('tickOpen: nothing is folded away', () => {
-  it('is open until touched, so nobody has to click to see what was done', () => {
-    expect(tickOpen(null)).toBe(true)
+describe('tickOpen: a run that went fine folds away', () => {
+  it('starts shut, since most output only proves the tool ran', () => {
+    expect(tickOpen(null, false)).toBe(false)
   })
 
-  it('stays shut once a person shut it, since a default does not overrule a hand', () => {
-    expect(tickOpen(false)).toBe(false)
-    expect(tickOpen(true)).toBe(true)
+  it('starts open when the run failed, which is the part worth reading', () => {
+    expect(tickOpen(null, true)).toBe(true)
+  })
+
+  it('a hand overrules the default, both ways', () => {
+    expect(tickOpen(true, false)).toBe(true)
+    expect(tickOpen(false, true)).toBe(false)
+  })
+})
+
+describe('a quiet run keeps its log to itself', () => {
+  it('shows a line count instead of the log, until somebody asks', () => {
+    const stdout = ['하나', '둘', '셋'].join('\n')
+    const html = pane([
+      turn({
+        tools: [tool({ result: { stdout, stderr: '', isError: false, interrupted: false } })]
+      })
+    ])
+    expect(html).toContain('3 lines')
+    expect(html).not.toContain('하나')
+  })
+
+  it('lays a failed run open on arrival', () => {
+    const stdout = ['하나', '둘'].join('\n')
+    const html = pane([
+      turn({
+        tools: [tool({ result: { stdout, stderr: '', isError: true, interrupted: false } })]
+      })
+    ])
+    expect(html).toContain('하나')
   })
 })
 
@@ -245,3 +276,33 @@ describe('approval: the most important moment in this app', () => {
   })
 })
 
+const WAITING = {
+  verb: '기다리는 중',
+  count: 3,
+  name: '',
+  subagentType: '',
+  doing: '',
+  sinceMs: 0,
+  many: '팀원 3명',
+}
+
+describe('the row that says the team is still out', () => {
+  it('shimmers its verb the way the working row does', () => {
+    // Waiting on teammates is drawn by Away rather than Working, and the moving
+    // gradient on the verb is what says the wait is live rather than stuck.
+    const html = renderToStaticMarkup(<Away away={WAITING} face="onigiri" nowMs={36_000} />)
+    expect(html).toContain('zt-shimmer')
+  })
+
+  it('wears the same verb treatment as the row it stands in for', () => {
+    const shimmerOf = (html: string): string | undefined =>
+      html.match(/class="([^"]*zt-shimmer[^"]*)"/)?.[1]
+    const mine = shimmerOf(renderToStaticMarkup(<Away away={WAITING} face="onigiri" nowMs={36_000} />))
+    const theirs = shimmerOf(
+      renderToStaticMarkup(
+        <Working turns={[]} face="onigiri" nowMs={36_000} startedAtMs={0} tokensOut={0} />,
+      ),
+    )
+    expect(mine).toBe(theirs)
+  })
+})

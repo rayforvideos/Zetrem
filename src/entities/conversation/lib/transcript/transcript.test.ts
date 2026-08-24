@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import type { Turn } from '../../model/turn'
-import { UNTITLED, chatId, isChatId, packTranscript, readTranscript, titleOf } from './transcript'
+import { UNTITLED, chatId, isChatId, packTranscript, readTranscript, renamed, summaryOf, titleOf } from './transcript'
 
 function turn(overrides: Partial<Turn> = {}): Turn {
   return {
@@ -53,6 +53,24 @@ describe('titleOf: what the list will call it', () => {
 describe('packTranscript: deciding what is worth keeping', () => {
   it('comes back with a title on it', () => {
     expect(packTranscript([turn({ role: 'user', text: '안녕' })], summary).title).toBe('안녕')
+  })
+
+  it('keeps the name somebody gave it, over the first message', () => {
+    const packed = packTranscript([turn({ role: 'user', text: '안녕' })], {
+      ...summary,
+      title: '툴 인벤토리 정리',
+    })
+    expect(packed.title).toBe('툴 인벤토리 정리')
+  })
+
+  it('falls back to the first message when the given name is empty', () => {
+    expect(packTranscript([turn({ role: 'user', text: '안녕' })], { ...summary, title: '' }).title).toBe('안녕')
+  })
+
+  it('tidies a name for the list: one line, trimmed, capped', () => {
+    expect(renamed('  툴 정리\n라벨  ')).toBe('툴 정리 라벨')
+    expect(renamed('   ')).toBeNull()
+    expect(renamed('가'.repeat(80))?.length).toBe(61)
   })
 
   it('drops half-typed text, so reopening does not leave a blinking cursor', () => {
@@ -237,5 +255,33 @@ describe('a saved chat carries what it cost, so reopening it says the same thing
       spend: { usd: 'lots', turns: 3 },
     }
     expect(readTranscript(bad)?.spend).toBeNull()
+  })
+})
+
+describe('a chat remembers which folder it was filed under', () => {
+  const saved = (over: Record<string, unknown> = {}) => ({
+    id: 'chat-mt7b569x-az3pn6',
+    turns: [{ id: 't1', role: 'user', text: '하이', tools: [], draft: '', thinking: '', startedAtMs: 1 }],
+    ...over,
+  })
+
+  it('reads a chat filed before folders existed as unfiled', () => {
+    // Every chat already on disk has no folder at all. It has to come back as
+    // one that simply was never filed, not as a broken file.
+    expect(readTranscript(saved())?.folder).toBe('')
+  })
+
+  it('carries the folder back out the way it went in', () => {
+    expect(readTranscript(saved({ folder: '출고 자동화' }))?.folder).toBe('출고 자동화')
+  })
+
+  it('refuses a folder that is not a name', () => {
+    expect(readTranscript(saved({ folder: 42 }))?.folder).toBe('')
+    expect(readTranscript(saved({ folder: '   ' }))?.folder).toBe('')
+  })
+
+  it('tells the list which folder a chat belongs to', () => {
+    const one = readTranscript(saved({ folder: '출고 자동화' }))
+    expect(summaryOf(one!).folder).toBe('출고 자동화')
   })
 })

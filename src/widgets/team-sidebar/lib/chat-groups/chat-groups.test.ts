@@ -6,7 +6,7 @@ const now = new Date('2026-08-14T21:00:00').getTime()
 const DAY = 86_400_000
 
 function chat(savedAtMs: number, id = `chat-${savedAtMs.toString(36)}-a`): ChatSummary {
-  return { id, title: id, sessionId: null, savedAtMs }
+  return { id, title: id, sessionId: null, savedAtMs, folder: '' }
 }
 
 function labels(chats: ChatSummary[]): string[] {

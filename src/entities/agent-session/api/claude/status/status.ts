@@ -1,12 +1,6 @@
 import type { SessionIdentity, StatusEvent } from './status.types'
 
-function str(value: unknown, fallback = ''): string {
-  return typeof value === 'string' ? value : fallback
-}
-
-function num(value: unknown, fallback = 0): number {
-  return typeof value === 'number' && Number.isFinite(value) ? value : fallback
-}
+import { num, str } from '../shared/shared'
 
 function errorStatus(raw: unknown): string | null {
   if (typeof raw === 'number' && Number.isFinite(raw)) return String(raw)

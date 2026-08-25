@@ -1,6 +1,6 @@
 import type { CSSProperties } from 'react'
 import type { Call } from '@/entities/agent-session'
-import { AgentSprite } from '@/entities/agent-session/ui/AgentSprite/AgentSprite'
+import { AgentSprite } from '@/entities/agent-session'
 import { targetOf, verbOf } from '@/shared/lib/tool-verb/tool-verb'
 import { reachOf } from '@/shared/lib/reach/reach'
 import { formatClock } from '@/shared/lib/units/units'
@@ -32,13 +32,11 @@ export function NowStage({ call, live, nowMs }: NowStageProps) {
   const shape = shapeOfCall(call.line)
   const scene = sceneOf(shape)
   const target = shape.kind === 'plain' ? call.line : targetOf(shape)
+  const elapsedMs = live && nowMs !== undefined ? nowMs - call.startedAtMs : null
 
   return (
     <div data-now-stage={scene} data-live={live || undefined} style={rootStyle}>
-      <span
-        aria-hidden
-        style={{ ...trackStyle, width: `${reachOf(live && nowMs !== undefined ? nowMs - call.startedAtMs : 0)}%` }}
-      />
+      <span aria-hidden style={{ ...trackStyle, width: `${reachOf(elapsedMs ?? 0)}%` }} />
       <span style={{ ...frameStyle, opacity: live ? 1 : 0.4 }}>
         <Picture scene={scene} shape={shape} live={live} />
       </span>
@@ -46,9 +44,9 @@ export function NowStage({ call, live, nowMs }: NowStageProps) {
         <span style={verbStyle}>{verbOf(shape)}</span>
         <span style={targetStyle}>{target}</span>
       </span>
-      {live && nowMs !== undefined && (
+      {elapsedMs !== null && (
         <span data-elapsed style={elapsedStyle}>
-          {formatClock((nowMs - call.startedAtMs) / 1000)}
+          {formatClock(elapsedMs / 1000)}
         </span>
       )}
     </div>

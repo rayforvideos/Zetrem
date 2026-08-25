@@ -1,6 +1,5 @@
-import { FACES, tidyUserName } from '@/entities/user'
+import { FACE_ART, FACES, tidyUserName } from '@/entities/user'
 import type { FaceId } from '@/entities/user'
-import { FACE_ART } from '@/entities/user/ui/UserFace/faces'
 import { cn } from '@/shared/lib/cn'
 import { Field, FieldDescription, FieldLabel } from '@/shared/ui/field'
 import { Input } from '@/shared/ui/input'
@@ -52,7 +51,7 @@ export function YouField({
                 width={26}
                 height={26}
                 draggable={false}
-                className={cn('size-[26px] object-contain', one === face ? '' : 'opacity-70')}
+                className={cn('size-[26px] object-contain', one !== face && 'opacity-70')}
               />
             </label>
           ))}

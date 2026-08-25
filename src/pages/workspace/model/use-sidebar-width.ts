@@ -37,10 +37,6 @@ export function useSidebarWidth(
     update({ sidebarOpen: !forced })
   }
 
-  function resize(next: number): void {
-    setDragging(next)
-  }
-
   function commit(next: number): void {
     setDragging(null)
     update({ sidebarWidth: next })
@@ -52,7 +48,7 @@ export function useSidebarWidth(
     open,
     tight: !fits,
     toggle,
-    resize,
+    resize: setDragging,
     commit,
   }
 }

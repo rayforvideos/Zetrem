@@ -54,12 +54,10 @@ export function observatoryLayout(
   }
 
   const { terminal, side } = split(viewport, sidebarW)
-  const sideX = side.x
-  const sideW = side.w
 
   const columns = sessionCount > SIDE_ROWS_MAX ? 2 : 1
   const rows = Math.ceil(sessionCount / columns)
-  const colW = (sideW - gap * (columns - 1)) / columns
+  const colW = (side.w - gap * (columns - 1)) / columns
   const rowH = (areaH - gap * (rows - 1)) / rows
 
   const sessions: Rect[] = []
@@ -67,7 +65,7 @@ export function observatoryLayout(
     const column = index % columns
     const row = Math.floor(index / columns)
     sessions.push({
-      x: sideX + column * (colW + gap),
+      x: side.x + column * (colW + gap),
       y: top + row * (rowH + gap),
       w: colW,
       h: rowH,

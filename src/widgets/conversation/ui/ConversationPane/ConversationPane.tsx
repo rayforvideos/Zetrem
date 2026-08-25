@@ -1,18 +1,17 @@
-import { useCallback, useEffect, useRef } from 'react'
+import { useEffect, useRef } from 'react'
 import { FileText, Image } from 'lucide-react'
 import type { ReactNode } from 'react'
 import type { PermissionAsk, SessionStatus, StatusState } from '@/entities/agent-session'
 import type { Chore } from '@/entities/conversation'
 import type { FaceId } from '@/entities/user'
-import { personaOf } from '@/entities/agent-session'
-import { AgentSprite } from '@/entities/agent-session/ui/AgentSprite/AgentSprite'
+import { AgentSprite, personaOf } from '@/entities/agent-session'
 import type { Turn } from '@/entities/conversation'
 import { cn } from '@/shared/lib/cn'
 import { atEnd } from '@/shared/lib/scroll-state/scroll-state'
 import { useScrollState } from '@/shared/lib/scroll-state/use-scroll-state'
 import { shouldFollow } from '../../lib/follow/follow'
 import { askedAtMs } from '../../lib/working/working'
-import { Wordmark } from '@/shared/graphics/wordmark/wordmark'
+import { Wordmark } from '@/shared/graphics/Wordmark/Wordmark'
 import { Markdown } from '@/shared/markdown/Markdown/Markdown'
 import { Approval } from './Approval'
 import { FirstHint } from '@/widgets/first-hint'
@@ -69,14 +68,14 @@ export function ConversationPane({
   const busy = status === 'working'
   const lastIndex = turns.length - 1
 
-  const watch = useCallback(() => {
+  function watch(): void {
     const el = scrollRef.current
     if (el === null) return
     const wentUp = el.scrollTop < lastTop.current - UP_SLACK_PX
     lastTop.current = el.scrollTop
     if (wentUp) following.current = false
     else if (atEnd(el.scrollTop, el.scrollHeight, el.clientHeight)) following.current = true
-  }, [scrollRef])
+  }
 
   useEffect(() => {
     const el = scrollRef.current

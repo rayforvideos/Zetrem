@@ -1,6 +1,6 @@
 import type { CSSProperties } from 'react'
-import type { Mark } from '../work-trace/work-trace.types'
-import { barsOf } from '../work-trace/work-trace'
+import type { Mark } from './work-trace/work-trace.types'
+import { barsOf } from './work-trace/work-trace'
 
 const TOP = 12
 const GUTTER = 4

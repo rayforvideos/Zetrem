@@ -2,11 +2,12 @@ import type { Tongue } from './say.types'
 
 const KNOWN: Tongue[] = ['en', 'ko']
 
+function isTongue(value: string | undefined): value is Tongue {
+  return value !== undefined && KNOWN.includes(value as Tongue)
+}
+
 export function tongueOf(locales: readonly string[]): Tongue {
-  const found = locales
-    .map((one) => one.toLowerCase().split('-')[0])
-    .find((one) => KNOWN.includes(one as Tongue))
-  return (found as Tongue | undefined) ?? 'en'
+  return locales.map((one) => one.toLowerCase().split('-')[0]).find(isTongue) ?? 'en'
 }
 
 export function chosenTongue(chosen: 'system' | Tongue, locales: readonly string[]): Tongue {

@@ -24,10 +24,16 @@ export function StatusBarPanel({
   const [appVersion, setAppVersion] = useState<string | null>(null)
 
   useEffect(() => {
+    let alive = true
     void window.desk
       .appVersion()
-      .then(setAppVersion)
+      .then((version) => {
+        if (alive) setAppVersion(version)
+      })
       .catch(() => undefined)
+    return () => {
+      alive = false
+    }
   }, [])
 
   if (!shown) return null

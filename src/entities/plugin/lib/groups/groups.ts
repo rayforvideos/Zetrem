@@ -1,3 +1,4 @@
+import { grouped } from '@/shared/lib/grouped/grouped'
 import type { InstalledPlugin } from '../catalog/catalog.types'
 import type { PluginGroup, PluginGroupKey } from './groups.types'
 import { msg } from '@lingui/core/macro'
@@ -24,15 +25,17 @@ function keyOf(plugin: InstalledPlugin): PluginGroupKey {
 }
 
 export function groupsOf(plugins: InstalledPlugin[]): PluginGroup[] {
-  const groups = ORDER.map(({ key, title, note }) => ({
-    key,
-    title,
-    note,
-    plugins: plugins.filter((plugin) => keyOf(plugin) === key),
-  })).filter((group) => group.plugins.length > 0)
-
-  return groups.map((group) => ({
-    ...group,
-    titled: groups.length > 1 || group.key !== 'yours',
+  const said = new Map(ORDER.map((one) => [one.key, one]))
+  return grouped(
+    ORDER.map((one) => one.key),
+    plugins,
+    keyOf,
+    'yours',
+  ).map((group) => ({
+    key: group.key,
+    title: said.get(group.key)!.title,
+    note: said.get(group.key)!.note,
+    titled: group.titled,
+    plugins: group.members,
   }))
 }

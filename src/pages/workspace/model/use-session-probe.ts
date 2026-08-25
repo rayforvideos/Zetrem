@@ -56,11 +56,10 @@ export function useSessionProbe(
 
   useEffect(() => {
     if (!awake) return undefined
-    const ask = (after: 'turn' | 'tick') => () => {
-      if (!dueForUsage(statusStore.get().usageAtMs, Date.now(), after)) return
+    const tick = (): void => {
+      if (!dueForUsage(statusStore.get().usageAtMs, Date.now(), 'tick')) return
       readUsage()
     }
-    const tick = ask('tick')
     const timer = setInterval(tick, TICK_MS)
     window.addEventListener('focus', tick)
     return () => {

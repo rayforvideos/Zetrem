@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { metrics } from './metrics'
-import type { AgentSession } from '../session.types'
+import type { AgentSession } from '../session/session.types'
 
 const session: AgentSession = {
   id: 'a',

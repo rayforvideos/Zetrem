@@ -2,8 +2,7 @@ import type { ResumedAgent } from './resumed.types'
 
 export function resumedAgent(result: string): ResumedAgent | null {
   const parsed = parse(result)
-  if (parsed === null) return null
-  if (parsed.success !== true) return null
+  if (parsed?.success !== true) return null
   const id = parsed.resumedAgentId
   if (typeof id !== 'string' || id.length === 0) return null
   return { id, name: nameOf(parsed) ?? id }

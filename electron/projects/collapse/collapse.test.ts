@@ -10,8 +10,8 @@ vi.mock('electron', () => ({
 }))
 
 const { collapseCategories } = await import('./collapse')
-const { transcriptKey } = await import('../../transcript-key/transcript-key')
-const { CHAT_CAP } = await import('../../transcript-store')
+const { transcriptKey } = await import('../../store/transcript-key/transcript-key')
+const { CHAT_CAP } = await import('../../store/chat-cap/chat-cap')
 
 let home = ''
 let userData = ''

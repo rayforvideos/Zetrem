@@ -1,7 +1,7 @@
 import { renderToStaticMarkup } from 'react-dom/server'
 import { describe, expect, it } from 'vitest'
 import type { ToolActivity } from '@/entities/conversation'
-import { TOOL_OUTPUT_LINES } from '../../lib/limits'
+import { TOOL_OUTPUT_LINES } from '../../lib/limits/limits'
 import { ToolDetail } from './ToolDetail'
 
 function tool(overrides: Partial<ToolActivity>): ToolActivity {

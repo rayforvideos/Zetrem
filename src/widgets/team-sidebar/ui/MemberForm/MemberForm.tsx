@@ -59,25 +59,33 @@ export function MemberForm({ initial, knownTools, onSubmit, onCancel }: MemberFo
 
   const [over, setOver] = useState(false)
   const [refused, setRefused] = useState<string | null>(null)
+  // The picker not opening at all is a different thing to say than a file it
+  // turned down, and the same line under the list says it.
+  const [trouble, setTrouble] = useState<string | null>(null)
 
   function attach(): void {
     void window.desk
       .pickKnowledge()
-      .then((picks) => setKnowledge((held) => addReading(held, picks)))
-      .catch(() => undefined)
+      .then((picks) => {
+        setKnowledge((held) => addReading(held, picks))
+        setTrouble(null)
+      })
+      .catch(() => setTrouble(t`Could not open the file picker`))
   }
 
   // Dropping the file is how a person hands over a document everywhere else,
   // and the picker cannot reach a folder the Finder hides anyway. A drop that
   // adds nothing says so: silence reads as a broken drop target.
   function take(files: File[]): void {
-    const paths = files.map((file) => window.desk.pathForFile(file))
-    setKnowledge((held) => {
-      const next = addReading(held, paths)
-      const turned = paths.filter((path) => !next.includes(path))
-      setRefused(turned.length === 0 ? null : readingPath(turned[0]!).name)
-      return next
-    })
+    void Promise.all(files.map((file) => window.desk.pathForFile(file)))
+      .then((paths) => {
+        const next = addReading(knowledge, paths)
+        const turned = paths.filter((path) => !next.includes(path))
+        setKnowledge(next)
+        setRefused(turned.length === 0 ? null : readingPath(turned[0]!).name)
+      })
+      // pathForFile crosses to main and back, so it can fail like any invoke.
+      .catch(() => setTrouble(t`Could not read what you attached`))
   }
 
   return (
@@ -200,6 +208,7 @@ export function MemberForm({ initial, knownTools, onSubmit, onCancel }: MemberFo
                 event.preventDefault()
                 setOver(true)
                 setRefused(null)
+                setTrouble(null)
               }}
               onDragLeave={(event) => {
                 if (event.currentTarget.contains(event.relatedTarget as Node | null)) return
@@ -269,7 +278,7 @@ export function MemberForm({ initial, knownTools, onSubmit, onCancel }: MemberFo
                     )}
                   >
                     {knowledge.map((path) => {
-                      const read = readingPath(path)
+                      const entry = readingPath(path)
                       return (
                         <div
                           key={path}
@@ -278,10 +287,10 @@ export function MemberForm({ initial, knownTools, onSubmit, onCancel }: MemberFo
                         >
                           <FileText className="size-3.5 flex-none text-muted-foreground" />
                           <span className="min-w-0 flex-1 truncate text-xs">
-                            {read.name}
-                            {read.where.length > 0 && (
+                            {entry.name}
+                            {entry.where.length > 0 && (
                               <span className="ml-2 font-mono text-xs text-muted-foreground">
-                                {read.where}
+                                {entry.where}
                               </span>
                             )}
                           </span>
@@ -289,9 +298,9 @@ export function MemberForm({ initial, knownTools, onSubmit, onCancel }: MemberFo
                             type="button"
                             variant="ghost"
                             size="icon-xs"
-                            aria-label={t`Remove ${read.name}`}
+                            aria-label={t`Remove ${entry.name}`}
                             onClick={() =>
-                              setKnowledge((held) => held.filter((entry) => entry !== path))
+                              setKnowledge((held) => held.filter((one) => one !== path))
                             }
                             className="rounded-md text-muted-foreground"
                           >
@@ -303,9 +312,10 @@ export function MemberForm({ initial, knownTools, onSubmit, onCancel }: MemberFo
                   </div>
                 )}
                 <Note>
-                  {refused === null
-                    ? t`Documents they read first. Long ones cost nothing until they open them.`
-                    : t`${refused} is not something they can read. Notes and data files only.`}
+                  {trouble ??
+                    (refused === null
+                      ? t`Documents they read first. Long ones cost nothing until they open them.`
+                      : t`${refused} is not something they can read. Notes and data files only.`)}
                 </Note>
               </div>
             </div>

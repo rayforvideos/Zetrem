@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { STREAM_BUFFER, TRANSCRIPT_BUFFER } from '../session'
-import type { AgentSession } from '../session.types'
+import { STREAM_BUFFER, TRANSCRIPT_BUFFER } from '../session/session'
+import type { AgentSession } from '../session/session.types'
 import { sessionStore } from './session-store'
 
 function session(id: string): AgentSession {

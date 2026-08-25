@@ -1,7 +1,7 @@
 import { spawnSync } from 'node:child_process'
 import { describe, expect, it } from 'vitest'
-import { claudeBin, findCommand, loginPath } from '../../electron/login-path/login-path'
-import { launchFor } from '../../electron/spawn-claude/spawn-claude'
+import { claudeBin, findCommand, loginPath } from '../../electron/cli/login-path/login-path'
+import { launchFor } from '../../electron/spawn/spawn-claude/spawn-claude'
 
 // This is the one thing unit tests cannot tell us: whether the way we launch the
 // CLI works against the CLI as it is actually installed. On Windows npm puts a

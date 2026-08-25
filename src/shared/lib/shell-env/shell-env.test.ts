@@ -134,6 +134,7 @@ describe('a Windows agent gets the environment Windows needs', () => {
     PATHEXT: '.COM;.EXE;.BAT;.CMD',
     TEMP: 'C:\\Users\\sam\\AppData\\Local\\Temp',
     USERNAME: 'sam',
+    Path: 'C:\\Windows\\system32;C:\\Program Files\\nodejs',
     OneDriveConsumer: 'C:\\Users\\sam\\OneDrive',
   }
 
@@ -149,6 +150,10 @@ describe('a Windows agent gets the environment Windows needs', () => {
 
   it('reads a name whatever case the shell gave it', () => {
     expect(agentEnv(WINDOWS).windir).toBe('C:\\Windows')
+  })
+
+  it('keeps Path, which Windows writes half-cased and without which nothing is found', () => {
+    expect(agentEnv(WINDOWS).Path).toBe('C:\\Windows\\system32;C:\\Program Files\\nodejs')
   })
 
   it('still drops what it was never asked to carry', () => {

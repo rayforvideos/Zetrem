@@ -88,9 +88,9 @@ export function useAgent(
         stopping.current = false
         const failed = attempt.current
         attempt.current = null
-        if (shouldRelaunch(failed, event.code)) {
+        if (failed !== null && shouldRelaunch(failed, event.code)) {
           conversation.system(t`Could not pick that conversation back up. Starting a new one.`)
-          launch(failed!.prompt, null)
+          launch(failed.prompt, null)
           return
         }
         closeSession({

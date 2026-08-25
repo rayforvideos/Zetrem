@@ -1,6 +1,7 @@
 import type { CSSProperties } from 'react'
-import { AgentSprite } from '@/entities/agent-session/ui/AgentSprite/AgentSprite'
-import { ToolIcon } from '@/shared/graphics/tool-icon'
+import { AgentSprite } from '@/entities/agent-session'
+import type { CharacterId } from '@/entities/agent-session'
+import { ToolIcon } from '@/shared/graphics/ToolIcon/ToolIcon'
 import { targetOf, verbOf } from '@/shared/lib/tool-verb/tool-verb'
 import type { ToolShape } from '@/shared/lib/tool-shape/tool-shape.types'
 import { MOCK_HEIGHT, MOCK_WIDTH } from '../../lib/fit/fit'
@@ -9,28 +10,24 @@ import { t } from '@lingui/core/macro'
 
 const YOU = 'Sam'
 
-const WIDTH = MOCK_WIDTH
-
-const HEIGHT = MOCK_HEIGHT
-
 // Read at call time, never at import: the locale is not up yet when this module loads.
-function crew() {
+function crew(): { name: string; face: CharacterId; task: string; clock: string; state: 'working' | 'reported' }[] {
   return [
     {
       name: 'Nova',
       face: 'jelly',
       task: t`Why the last item drops`,
       clock: '1:12',
-      state: 'working' as const,
+      state: 'working',
     },
     {
       name: 'Wren',
       face: 'flower',
       task: t`Cart totals and rounding`,
       clock: '0:48',
-      state: 'working' as const,
+      state: 'working',
     },
-    { name: 'Pace', face: 'bunny', task: t`Stock rules`, clock: '2:04', state: 'reported' as const },
+    { name: 'Pace', face: 'bunny', task: t`Stock rules`, clock: '2:04', state: 'reported' },
   ]
 }
 
@@ -41,12 +38,17 @@ const CALLS: { shape: ToolShape; note: string }[] = [
 ]
 
 function modes(): string[] {
-  return [t`Ask first`, 'Auto-edit', t`Allow all`]
+  return [t`Ask first`, t`Auto-edit`, t`Allow all`]
 }
 
 export function MockScreen({ focus, scale }: { focus: SlideFocus; scale: number }) {
-  const box = { width: WIDTH * scale, height: HEIGHT * scale }
-  const stage = { ...stageStyle, width: WIDTH, height: HEIGHT, transform: `scale(${scale})` }
+  const box = { width: MOCK_WIDTH * scale, height: MOCK_HEIGHT * scale }
+  const stage = {
+    ...stageStyle,
+    width: MOCK_WIDTH,
+    height: MOCK_HEIGHT,
+    transform: `scale(${scale})`,
+  }
 
   if (focus === 'hire') {
     return (
@@ -58,10 +60,8 @@ export function MockScreen({ focus, scale }: { focus: SlideFocus; scale: number 
     )
   }
 
-  const lit = (part: SlideFocus): boolean => {
-    if (focus === 'all' || focus === part) return true
-    return part === 'calls' && focus === 'crew'
-  }
+  const lit = (part: SlideFocus): boolean =>
+    focus === 'all' || focus === part || (part === 'calls' && focus === 'crew')
 
   const dim = (part: SlideFocus): CSSProperties => ({
     opacity: lit(part) ? 1 : 0.22,
@@ -106,7 +106,7 @@ export function MockScreen({ focus, scale }: { focus: SlideFocus; scale: number 
             <span className="flex items-center justify-center gap-2 text-sm">
               <AgentSprite subagentType={YOU} chosen="star" state="working" size={20} />
               {YOU}
-              <span className="text-xs text-muted-foreground">· 2 working</span>
+              <span className="text-xs text-muted-foreground">{t`· 2 working`}</span>
             </span>
 
             <div className="grid grid-cols-3 gap-2">
@@ -155,7 +155,7 @@ export function MockScreen({ focus, scale }: { focus: SlideFocus; scale: number 
           <span className="relative h-1 w-14 overflow-hidden rounded-full bg-muted">
             <span style={fillStyle} />
           </span>
-          38% · 4h 12m left
+          {t`38% · 4h 12m left`}
           <span className="ml-auto">MCP 3/3</span>
         </div>
       </div>
@@ -203,7 +203,7 @@ function MockForm() {
         </span>
         <span className="mt-1 flex justify-end">
           <span className="rounded-full px-4 py-2 text-sm" style={hireStyle}>
-            Hire
+            {t`Hire`}
           </span>
         </span>
       </div>
@@ -211,7 +211,7 @@ function MockForm() {
   )
 }
 
-const FACES = ['star', 'jelly', 'flower', 'ghost', 'bunny']
+const FACES: CharacterId[] = ['star', 'jelly', 'flower', 'ghost', 'bunny']
 
 const hireStyle: CSSProperties = {
   background: 'var(--color-primary)',

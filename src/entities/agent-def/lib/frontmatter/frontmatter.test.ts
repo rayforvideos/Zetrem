@@ -103,6 +103,20 @@ describe('toAgentFile: writing a new person to disk', () => {
     })
     expect(parseAgentDef(text, 'user', 'a')?.description).toBe('코드: 본다')
   })
+
+  it('reads back a description that carries a quote of its own', () => {
+    const description = '"코드": 본다'
+    const text = toAgentFile({
+      name: 'a',
+      description,
+      model: null,
+      character: null,
+      tools: [],
+      knowledge: [],
+      prompt: '본문',
+    })
+    expect(parseAgentDef(text, 'user', 'a')?.description).toBe(description)
+  })
 })
 
 describe('fileNameOf', () => {

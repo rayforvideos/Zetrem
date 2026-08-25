@@ -17,6 +17,10 @@ const TARGET_KEY: Record<string, string> = {
   WebSearch: 'query',
 }
 
+export function toolNameOf(line: string): string {
+  return line.split(' ')[0] ?? ''
+}
+
 export function shapeOfLine(line: string): ToolShape {
   const cut = line.indexOf(' ')
   const name = cut === -1 ? line : line.slice(0, cut)

@@ -1,4 +1,4 @@
-import type { Metric } from '../metric'
+import type { Metric } from './metric'
 
 export const contextMetric: Metric = {
   id: 'context',

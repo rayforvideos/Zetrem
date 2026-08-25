@@ -77,6 +77,11 @@ describe('resultNote: one fact taken out of a result', () => {
     expect(note).toBe('3 lines')
   })
 
+  it('does not count the newline a file ends with as a line of its own', () => {
+    const note = resultNote({ kind: 'file', verb: 'read', dir: '', name: 'a.ts' }, '1\n2\n3\n')
+    expect(note).toBe('3 lines')
+  })
+
   it('counts the hits of a search', () => {
     const note = resultNote({ kind: 'search', pattern: 'x', scope: '' }, 'a.ts:1\nb.ts:2')
     expect(note).toBe('2 hits')

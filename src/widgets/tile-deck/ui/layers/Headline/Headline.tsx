@@ -1,7 +1,6 @@
 import type { CSSProperties } from 'react'
-import { personaOf, useModel } from '@/entities/agent-session'
+import { AgentSprite, personaOf, useModel } from '@/entities/agent-session'
 import type { AgentSession } from '@/entities/agent-session'
-import { AgentSprite } from '@/entities/agent-session/ui/AgentSprite/AgentSprite'
 import { modelLabel } from '@/shared/lib/model-label/model-label'
 import { X } from 'lucide-react'
 import { Button } from '@/shared/ui/button'
@@ -38,7 +37,7 @@ export function Headline({ session, withText = true, onDismiss }: HeadlineProps)
             size="bare"
             data-dismiss
             onClick={onDismiss}
-            aria-label={`Close ${persona ? persona.name : session.label}`}
+            aria-label={t`Close ${persona ? persona.name : session.label}`}
             title={t`Close this tile. The run stays in the sidebar.`}
             className="zt-hit"
             style={dismissStyle}

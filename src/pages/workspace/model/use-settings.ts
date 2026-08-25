@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { DEFAULT_SETTINGS, readSettings } from '@/entities/agent-session'
 import type { Settings } from '@/entities/agent-session'
 import { useFailure } from '@/shared/lib/failure/failure'
@@ -21,10 +21,10 @@ export function useSettings(): SettingsSource {
   const read = useRef(false)
   const waiting = useRef<Partial<Settings>>({})
 
-  function hold(next: Settings): void {
+  const hold = useCallback((next: Settings): void => {
     held.current = next
     setSettings(next)
-  }
+  }, [])
 
   useEffect(() => {
     const save = report(t`Could not save your settings`)
@@ -42,15 +42,21 @@ export function useSettings(): SettingsSource {
         report(t`Could not read your settings`)(cause)
       })
       .finally(() => setLoading(false))
-  }, [report])
+  }, [report, hold])
 
-  function update(patch: Partial<Settings>): void {
-    clear()
-    const step = onUpdate(held.current, patch, read.current, waiting.current)
-    waiting.current = step.waiting
-    hold(step.next)
-    if (step.save) void window.desk.writeSettings(step.next).catch(report(t`Could not save your settings`))
-  }
+  // Stable on purpose: the screen hands this to effects that would otherwise
+  // re-run on every render.
+  const update = useCallback(
+    (patch: Partial<Settings>): void => {
+      clear()
+      const step = onUpdate(held.current, patch, read.current, waiting.current)
+      waiting.current = step.waiting
+      hold(step.next)
+      if (step.save)
+        void window.desk.writeSettings(step.next).catch(report(t`Could not save your settings`))
+    },
+    [clear, report, hold],
+  )
 
   return { settings, loading, failure, update }
 }

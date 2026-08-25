@@ -1,10 +1,11 @@
 import { randomUUID } from 'node:crypto'
 import { existsSync, statSync } from 'node:fs'
-import { readFile } from 'node:fs/promises'
+import { readFile, rename } from 'node:fs/promises'
 import { basename, join } from 'node:path'
-import { app } from 'electron'
-import { recallProject, recentProjects, rememberProject } from '../project-memory/project-memory'
-import { saveFile } from '../save-file/save-file'
+import { app, dialog } from 'electron'
+import { recallProject, recentProjects, rememberProject } from '../store/project-memory/project-memory'
+import { saveFile } from '../store/save-file/save-file'
+import { handle } from '../ipc/ipc'
 import type { StoredProject } from './projects.types'
 
 type Memory = { current: string | null; projects: StoredProject[] }
@@ -56,13 +57,18 @@ async function readMemory(nowMs: number): Promise<Memory> {
         ? parsed.current
         : null
     return { current, projects }
-  } catch {
+  } catch (cause: unknown) {
+    const kept = `${memoryPath()}.broken`
+    await rename(memoryPath(), kept).catch(() => undefined)
+    console.error(`projects were unreadable, kept a copy at ${kept}`, cause)
     return seeded(nowMs)
   }
 }
 
 async function writeMemory(memory: Memory): Promise<void> {
-  await saveFile(memoryPath(), JSON.stringify(memory)).catch(() => undefined)
+  await saveFile(memoryPath(), JSON.stringify(memory)).catch((cause: unknown) =>
+    console.error('could not save projects', cause),
+  )
 }
 
 function freshestFirst(projects: StoredProject[]): StoredProject[] {
@@ -98,12 +104,11 @@ export async function createProject(
   const memory = await readMemory(nowMs)
   // One folder is one project, so landing on a folder that already wears one
   // reopens it instead of minting a twin.
-  const name = basename(path)
   const worn = freshestFirst(memory.projects).find((one) => one.path === path)
   if (worn !== undefined) return openProject(worn.id, nowMs)
   const made: StoredProject = {
     id: randomUUID(),
-    name,
+    name: basename(path),
     path,
     createdAtMs: nowMs,
     lastOpenedAtMs: nowMs,
@@ -159,4 +164,25 @@ export async function forgetProject(id: string, nowMs: number = Date.now()): Pro
     current: memory.current === id ? null : memory.current,
     projects: memory.projects.filter((one) => one.id !== id),
   })
+}
+
+export function registerProjects(): void {
+  handle('project:pick', async () => {
+    const result = await dialog.showOpenDialog({ properties: ['openDirectory'] })
+    return result.canceled ? null : (result.filePaths[0] ?? null)
+  })
+
+  handle('project:restore', () => restoreProject())
+
+  handle('project:list', () => listProjects())
+
+  handle('project:create', (_event, path: string) => createProject(path))
+
+  // Only ids this store handed out act; the renderer never points main at an
+  // arbitrary path.
+  handle('project:open', (_event, id: string) => openProject(id))
+
+  handle('project:forget', (_event, id: string) => forgetProject(id))
+
+  handle('project:repath', (_event, id: string, path: string) => repathProject(id, path))
 }

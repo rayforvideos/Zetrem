@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import type { ChatSummary } from '@/entities/conversation'
-import { canLand, dropOnChat } from './chat-drop'
+import { canLand, canLandOnFolder, dropOnChat } from './chat-drop'
 
 let stamp = 9_000
 function chat(folder = '', id?: string): ChatSummary {
@@ -63,5 +63,24 @@ describe('canLand: whether the ring should promise anything', () => {
     // A file dragged in from the desktop is not a chat, and neither is a stale
     // id from a list that has moved on.
     expect(canLand(undefined, chat())).toBe(false)
+  })
+})
+
+describe('canLandOnFolder: whether a folder itself should promise anything', () => {
+  it('promises nothing when the carried chat already lives there', () => {
+    expect(canLandOnFolder(chat('출고'), '출고')).toBe(false)
+  })
+
+  it('matches the folder name without case', () => {
+    expect(canLandOnFolder(chat('Ops'), 'ops')).toBe(false)
+  })
+
+  it('promises a landing when the chat lives elsewhere', () => {
+    expect(canLandOnFolder(chat('리깅'), '출고')).toBe(true)
+    expect(canLandOnFolder(chat(), '출고')).toBe(true)
+  })
+
+  it('promises nothing when nothing is being carried', () => {
+    expect(canLandOnFolder(null, '출고')).toBe(false)
   })
 })

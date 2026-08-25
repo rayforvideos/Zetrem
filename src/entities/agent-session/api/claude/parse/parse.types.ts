@@ -1,4 +1,4 @@
-import type { ChildTurnEvent } from '../child.types'
+import type { ChildTurnEvent } from '../child/child.types'
 import type { PermissionEvent } from '../permission/permission.types'
 import type { StatusEvent } from '../status/status.types'
 import type { TurnEvent } from '../turn/turn.types'

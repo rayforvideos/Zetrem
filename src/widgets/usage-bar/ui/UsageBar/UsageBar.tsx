@@ -89,7 +89,7 @@ export function UsageBar({ status, connectors, checked, nowMs, open, details, on
         )}
       </span>
 
-      <Popover open={open} onOpenChange={onToggle}>
+      <Popover open={open} onOpenChange={(next) => next !== open && onToggle()}>
         <PopoverTrigger asChild>
           <Button
             variant="quiet"

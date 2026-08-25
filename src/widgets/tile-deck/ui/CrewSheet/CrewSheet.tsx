@@ -2,7 +2,7 @@ import type { CSSProperties } from 'react'
 import { useEffect } from 'react'
 import { ChevronDown, ChevronUp } from 'lucide-react'
 import type { AgentSession } from '@/entities/agent-session'
-import { AgentSprite } from '@/entities/agent-session/ui/AgentSprite/AgentSprite'
+import { AgentSprite } from '@/entities/agent-session'
 import type { FaceId } from '@/entities/user'
 import { Button } from '@/shared/ui/button'
 import { attentionId } from '../../lib/attention/attention'
@@ -40,6 +40,7 @@ export function CrewSheet({
 }: CrewSheetProps) {
   const eye = attentionId(sessions)
   const first = sessions.find((session) => session.id === eye) ?? sessions[0]
+  const lane = first === undefined ? null : laneOf(first, nowMs)
 
   useEffect(() => {
     if (!open) return undefined
@@ -81,9 +82,9 @@ export function CrewSheet({
           />
         )}
         <span style={countStyle}>{headcount(sessions)}</span>
-        {first !== undefined && !open && (
+        {lane !== null && !open && (
           <span data-doing style={doingStyle}>
-            {laneOf(first, nowMs).verb} {laneOf(first, nowMs).target}
+            {lane.verb} {lane.target}
           </span>
         )}
         <span style={chevronStyle}>

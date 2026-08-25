@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import type { Turn } from '../../model/turn'
+import type { Turn } from '../../model/turn/turn'
 import { UNTITLED, chatId, isChatId, packTranscript, readTranscript, renamed, summaryOf, titleOf } from './transcript'
 
 function turn(overrides: Partial<Turn> = {}): Turn {
@@ -163,6 +163,24 @@ describe('readTranscript: reading what was saved without trusting it', () => {
     }
     const back = readTranscript({ id: summary.id, turns: [good] })
     expect(back?.turns[0]).toEqual({ ...good, id: expect.any(String) })
+  })
+
+  it('keeps only the attached files that are shaped like one', () => {
+    const good = { name: 'shot.png', path: '/tmp/shot.png', kind: 'image' }
+    const back = readTranscript({
+      id: summary.id,
+      turns: [
+        turn({
+          files: [
+            good,
+            { name: 'no-kind.txt', path: '/tmp/no-kind.txt' },
+            { name: 1, path: '/tmp/x', kind: 'file' },
+            { name: 'odd', path: '/tmp/odd', kind: 'folder' },
+          ],
+        } as never),
+      ],
+    })
+    expect(back?.turns[0]!.files).toEqual([good])
   })
 
   it('drops a junk tool entry but keeps the turn it lives on', () => {

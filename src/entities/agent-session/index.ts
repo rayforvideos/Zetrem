@@ -1,7 +1,7 @@
 export { absorbs } from './lib/call-line/call-line'
 export { metrics } from './model/metrics/metrics'
-export type { Metric } from './model/metric'
-export { STREAM_BUFFER, TRANSCRIPT_BUFFER } from './model/session'
+export type { Metric } from './model/metrics/metric'
+export { STREAM_BUFFER, TRANSCRIPT_BUFFER } from './model/session/session'
 export { parseClaudeLine, permissionAlwaysResult, permissionResult } from './api/claude/parse/parse'
 export type { ClaudeTurnEvent } from './api/claude/parse/parse.types'
 export { resumedAgent } from './api/claude/resumed/resumed'
@@ -21,7 +21,7 @@ export type {
   RunnerId,
   SessionStatus,
   TranscriptEntry,
-} from './model/session.types'
+} from './model/session/session.types'
 export { sessionStore } from './model/session-store/session-store'
 export { personaOf } from './model/persona/persona'
 export { addressed } from './model/dispatch/dispatch'
@@ -51,5 +51,6 @@ export type { Crew, CrewEntry } from './model/crew/crew.types'
 export { modelRefusedIn, withRefused, withoutRefused } from './model/refused/refused'
 export { hintDue, hintSeen } from './model/hints/hints'
 export type { HintId } from './model/hints/hints.types'
+export { AgentSprite, spriteSrc } from './ui/AgentSprite/AgentSprite'
 export { exitLine } from './lib/exit-line/exit-line'
 export type { ExitReason } from './lib/exit-line/exit-line.types'

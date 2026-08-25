@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import type { AuthStatus } from '@/entities/auth'
-import { urlFrom } from '@/shared/lib/cli-output/cli-output'
+import { urlFrom } from '@/pages/workspace/model/cli-output/cli-output'
 import { reasonOf } from '@/shared/lib/failure/failure'
 import { troubleLine } from '@/shared/lib/ask/ask'
 import { t } from '@lingui/core/macro'
@@ -30,11 +30,21 @@ export function useAuth(): Auth {
   const [authError, setAuthError] = useState<string | null>(null)
 
   useEffect(() => {
+    let alive = true
     window.desk
       .authStatus()
-      .then(setAuth)
-      .catch((cause: unknown) => setAuthError(troubleLine(t`Could not read your sign-in`, cause)))
-      .finally(() => setAuthKnown(true))
+      .then((status) => {
+        if (alive) setAuth(status)
+      })
+      .catch((cause: unknown) => {
+        if (alive) setAuthError(troubleLine(t`Could not read your sign-in`, cause))
+      })
+      .finally(() => {
+        if (alive) setAuthKnown(true)
+      })
+    return () => {
+      alive = false
+    }
   }, [])
 
   useEffect(() => {

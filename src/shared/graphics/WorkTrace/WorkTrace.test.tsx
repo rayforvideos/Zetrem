@@ -1,6 +1,6 @@
 import { renderToStaticMarkup } from 'react-dom/server'
 import { describe, expect, it } from 'vitest'
-import type { Mark } from '../work-trace/work-trace.types'
+import type { Mark } from './work-trace/work-trace.types'
 import { WorkTrace } from './WorkTrace'
 
 function mark(line: string, overrides: Partial<Mark> = {}): Mark {

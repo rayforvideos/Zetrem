@@ -37,6 +37,24 @@ export class Boundary extends Component<{ children: ReactNode }, State> {
       >
         <p style={{ fontSize: 15, marginBottom: 16 }}>{t`Something broke. Here is what happened.`}</p>
         <pre style={{ whiteSpace: 'pre-wrap', margin: 0 }}>{error.message}</pre>
+        {/* A crashed render leaves nothing to click but this. Styled by hand,
+            like the rest of the screen: whatever broke may be the stylesheet. */}
+        <button
+          type="button"
+          onClick={() => location.reload()}
+          style={{
+            marginTop: 20,
+            padding: '6px 14px',
+            borderRadius: 999,
+            border: '1px solid currentColor',
+            background: 'transparent',
+            color: 'inherit',
+            font: 'inherit',
+            cursor: 'pointer',
+          }}
+        >
+          {t`Reload the app`}
+        </button>
         <pre style={{ whiteSpace: 'pre-wrap', opacity: 0.45, marginTop: 16 }}>
           {error.stack ?? ''}
           {stack}

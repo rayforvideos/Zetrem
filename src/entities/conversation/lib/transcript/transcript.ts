@@ -1,6 +1,8 @@
-import type { Sent } from '../../../attachment/lib/attachment/attachment.types'
-import { freshTurnId } from '../../model/turn-id'
-import type { ToolActivity, ToolResult, Turn } from '../../model/turn'
+// The exact module, not the attachment barrel: the barrel carries heavy-line,
+// which uses the Lingui macro, and the main process bundles this file.
+import type { Sent } from '@/entities/attachment/lib/attachment/attachment.types'
+import { freshTurnId } from '../../model/turn-id/turn-id'
+import type { ToolActivity, ToolResult, Turn } from '../../model/turn/turn'
 import type { ChatSpend, ChatSummary, Transcript } from './transcript.types'
 
 const TURN_CAP = 200
@@ -90,7 +92,7 @@ function num(value: unknown): number | null {
   return typeof value === 'number' && Number.isFinite(value) && value >= 0 ? value : null
 }
 
-export function readSpend(saved: unknown): ChatSpend | null {
+function readSpend(saved: unknown): ChatSpend | null {
   if (typeof saved !== 'object' || saved === null) return null
   const source = saved as Record<string, unknown>
   const usd = num(source.usd)
@@ -137,9 +139,19 @@ function readTurn(value: unknown): Turn | null {
   }
   if (typeof turn.to === 'string') result.to = turn.to
   if (Array.isArray(turn.files)) {
-    result.files = turn.files.filter((file): file is Sent => typeof file === 'object' && file !== null)
+    result.files = turn.files.filter(isSent)
   }
   return result
+}
+
+function isSent(value: unknown): value is Sent {
+  if (typeof value !== 'object' || value === null) return false
+  const file = value as Record<string, unknown>
+  return (
+    typeof file.name === 'string' &&
+    typeof file.path === 'string' &&
+    (file.kind === 'image' || file.kind === 'file')
+  )
 }
 
 function readTool(value: unknown): ToolActivity | null {

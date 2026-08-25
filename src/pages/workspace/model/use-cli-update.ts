@@ -1,5 +1,5 @@
 import { t } from '@lingui/core/macro'
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { conversation } from './conversation/conversation'
 import { statusStore } from '@/entities/agent-session'
 
@@ -7,16 +7,21 @@ export function useCliUpdate(cliVersion: string | null): { updating: boolean; st
   const [updating, setUpdating] = useState(false)
   const asked = useRef(false)
   const fallback = useRef<string | null>(null)
-  fallback.current = cliVersion
 
-  async function query(): Promise<void> {
+  // Written after commit, not during render: a render React throws away must
+  // not leave its version behind for query() to report.
+  useEffect(() => {
+    fallback.current = cliVersion
+  })
+
+  const query = useCallback(async (): Promise<void> => {
     try {
       const { installed, latest, managedBy } = await window.desk.latestCliVersion()
       statusStore.setUpdate({ current: installed ?? fallback.current, latest, managedBy })
     } catch {
       statusStore.setUpdate({ current: fallback.current, latest: null, managedBy: null })
     }
-  }
+  }, [])
 
   useEffect(() => {
     if (!cliVersion || asked.current) return

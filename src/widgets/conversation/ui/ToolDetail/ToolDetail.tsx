@@ -1,11 +1,12 @@
 import type { ToolActivity } from '@/entities/conversation'
 import { cn } from '@/shared/lib/cn'
+import { toolNameOf } from '@/shared/lib/tool-line/tool-line'
 import type { DiffLine } from '../../lib/diff/diff.types'
 import { lineDiff } from '../../lib/diff/diff'
-import { TOOL_OUTPUT_LINES, moreLine } from '../../lib/limits'
+import { TOOL_OUTPUT_LINES, moreLine } from '../../lib/limits/limits'
 
 export function ToolDetail({ tool }: { tool: ToolActivity }) {
-  const name = toolName(tool)
+  const name = toolNameOf(tool.line)
   const input = toolInput(tool)
 
   if (name === 'Edit') {
@@ -72,10 +73,6 @@ export function ToolDetail({ tool }: { tool: ToolActivity }) {
   return null
 }
 
-function toolName(tool: ToolActivity): string {
-  return tool.line.split(' ')[0] ?? ''
-}
-
 function toolInput(tool: ToolActivity): Record<string, unknown> {
   return (typeof tool.input === 'object' && tool.input !== null ? tool.input : {}) as Record<
     string,
@@ -83,7 +80,7 @@ function toolInput(tool: ToolActivity): Record<string, unknown> {
   >
 }
 
-function Diff({ lines }: { lines: ReturnType<typeof lineDiff> }) {
+function Diff({ lines }: { lines: DiffLine[] }) {
   if (lines.length === 0) return null
   const shown = lines.slice(0, TOOL_OUTPUT_LINES)
   const rest = lines.length - shown.length

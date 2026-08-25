@@ -22,6 +22,12 @@ describe('plainTrouble', () => {
     expect(plainTrouble('[31mfatal: no such file[0m')).toBe('fatal: no such file')
   })
 
+  it('leaves ordinary bracketed text alone, which is not colouring', () => {
+    expect(plainTrouble('npm ERR! [error] cannot find module')).toBe(
+      'npm ERR! [error] cannot find module',
+    )
+  })
+
   it('cuts a run-on line short', () => {
     const said = plainTrouble(`error ${'x'.repeat(400)}`)
     expect(said).toHaveLength(303)

@@ -26,3 +26,10 @@ export function canLand(dragged: ChatSummary | undefined, target: ChatSummary): 
   if (dragged === undefined) return false
   return dropOnChat(dragged, target).kind !== 'none'
 }
+
+// The same promise, but for dropping onto a folder itself rather than a row
+// inside one: nothing to land when the carried chat already lives there.
+export function canLandOnFolder(dragged: ChatSummary | null, folderName: string): boolean {
+  if (dragged === null) return false
+  return dragged.folder.trim().toLocaleLowerCase() !== folderName.trim().toLocaleLowerCase()
+}

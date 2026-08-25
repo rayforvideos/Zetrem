@@ -28,7 +28,7 @@ describe('what the orchestrator is told', () => {
   })
 
   it('is the brief the main process actually passes, so there are not two copies', async () => {
-    const host = await readFile('electron/agent-host/agent-host.ts', 'utf8')
+    const host = await readFile('electron/host/agent-host/agent-host.ts', 'utf8')
     expect(host).toContain('ORCHESTRATOR_PROMPT')
     expect(host).not.toContain('agent-style')
   })

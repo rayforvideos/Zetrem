@@ -1,6 +1,6 @@
-import { STREAM_BUFFER, TRANSCRIPT_BUFFER } from '../session'
+import { STREAM_BUFFER, TRANSCRIPT_BUFFER } from '../session/session'
 import { absorbs, mergedLine } from '../../lib/call-line/call-line'
-import type { AgentSession, Call, TranscriptEntry } from '../session.types'
+import type { AgentSession, Call, TranscriptEntry } from '../session/session.types'
 
 type Listener = () => void
 

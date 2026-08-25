@@ -1,5 +1,5 @@
 import type { ModelChoice } from '../../../model/run-config/run-config.types'
-import type { ChildTurnEvent } from '../child.types'
+import type { ChildTurnEvent } from '../child/child.types'
 
 export type TurnEvent =
   | { type: 'headline'; text: string }

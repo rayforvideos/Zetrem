@@ -79,7 +79,7 @@ async function keep(report: string): Promise<void> {
 }
 
 export function registerSessionProbe(): void {
-  handle('session:probe', async (_event, config: RunConfig): Promise<string | null> => {
+  handle('session:probe', async (_event, config: Omit<RunConfig, 'persona'>): Promise<string | null> => {
     if (inFlight !== null) return inFlight
     inFlight = (async () => {
       const workspace = await workspaceDir(await recallProject(), app.getPath('userData'))

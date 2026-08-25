@@ -8,9 +8,9 @@ import type { RunConfig } from '@/entities/agent-session/model/run-config/run-co
 import { ORCHESTRATOR_PROMPT, PERSONA } from '@/entities/agent-session/model/orchestrator/orchestrator'
 import { claudeBin, loginPath } from '../../cli/login-path/login-path'
 import { exitReason, startTrouble } from '../../spawn/exit-reason/exit-reason'
-import type { ExitReason } from '../../spawn/exit-reason/exit-reason.types'
+import type { ExitReason } from '@/entities/agent-session/lib/exit-line/exit-line.types'
 import { recallProject } from '../../store/project-memory/project-memory'
-import { handle, on } from '../../ipc/ipc'
+import { handle, on, push } from '../../ipc/ipc'
 import { lineReader } from '../../spawn/line-reader/line-reader'
 import { killTree, killTreeSync } from '../../spawn/kill-tree/kill-tree'
 import { errorTail } from '../../spawn/error-tail/error-tail'
@@ -66,9 +66,7 @@ export function registerAgentHost(): void {
     async (event, id: string, prompt: string, config: RunConfig, files: unknown = []) => {
     const sender = event.sender
     const fail = (reason: ExitReason | null): void => {
-      if (typeof id === 'string' && !sender.isDestroyed()) {
-        sender.send('agent:event', { id, kind: 'exit', code: -1, reason })
-      }
+      if (typeof id === 'string') push(sender, 'agent:event', { id, kind: 'exit', code: -1, reason })
     }
     if (typeof id !== 'string' || typeof prompt !== 'string') return fail(null)
     // An id that is already running belongs to a live agent. Reporting an exit
@@ -108,7 +106,7 @@ export function registerAgentHost(): void {
     child.stdin.on('error', () => undefined)
     child.stdout.setEncoding('utf8')
     child.stderr.setEncoding('utf8')
-    if (!sender.isDestroyed()) sender.send('agent:event', { id, kind: 'workspace', cwd: workspace })
+    push(sender, 'agent:event', { id, kind: 'workspace', cwd: workspace })
 
     const read = lineReader()
     // killTree walks the process table, so the kill for a window that went away
@@ -121,7 +119,7 @@ export function registerAgentHost(): void {
         return
       }
       for (const line of read.take(chunk)) {
-        sender.send('agent:event', { id, kind: 'line', line })
+        push(sender, 'agent:event', { id, kind: 'line', line })
       }
     })
     let lastError = ''
@@ -136,7 +134,7 @@ export function registerAgentHost(): void {
       if (reported) return
       reported = true
       if (agents.get(id) === child) agents.delete(id)
-      if (!sender.isDestroyed()) sender.send('agent:event', { id, kind: 'exit', code, reason })
+      push(sender, 'agent:event', { id, kind: 'exit', code, reason })
     }
     // 'close' rather than 'exit': stdio has flushed by then, so the last lines
     // and the stderr that explains the exit are in hand.

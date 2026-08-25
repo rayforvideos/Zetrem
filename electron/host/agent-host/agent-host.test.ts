@@ -61,6 +61,9 @@ vi.mock('electron', () => ({
 vi.mock('../../ipc/ipc', () => ({
   handle: (channel: string, listener: Channel) => boundary.channels.set(channel, listener),
   on: (channel: string, listener: Channel) => boundary.channels.set(channel, listener),
+  push: (target: { isDestroyed(): boolean; send(channel: string, payload: unknown): void }, channel: string, payload: unknown) => {
+    if (!target.isDestroyed()) target.send(channel, payload)
+  },
 }))
 
 vi.mock('node:child_process', async () => {

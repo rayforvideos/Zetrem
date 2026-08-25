@@ -4,7 +4,7 @@ import type { WebContents } from 'electron'
 import { agentEnv } from '@/shared/lib/shell-env/shell-env'
 import type { AuthStatus } from '@/entities/auth'
 import { claudeBin, loginPath } from '../login-path/login-path'
-import { handle } from '../../ipc/ipc'
+import { handle, push } from '../../ipc/ipc'
 import { killTree } from '../../spawn/kill-tree/kill-tree'
 import { trackChild, untrackChild } from '../../spawn/run-settled/run-settled'
 import { launchFor } from '../../spawn/spawn-claude/spawn-claude'
@@ -79,9 +79,7 @@ export function registerAuth(): void {
         else child.kill()
         stop()
       }, LOGIN_TIMEOUT_MS)
-      const relay = (chunk: string): void => {
-        if (!sender.isDestroyed()) sender.send('auth:progress', chunk)
-      }
+      const relay = (chunk: string): void => push(sender, 'auth:progress', chunk)
       child.stdout.on('data', relay)
       child.stderr.on('data', relay)
       // 'close' rather than 'exit', like run-settled: by then stdio has

@@ -65,11 +65,15 @@ vi.mock('../../ipc/ipc', () => ({
     boundary.handled.push(channel)
     boundary.channels.set(channel, listener)
   },
+  push: (target: { isDestroyed(): boolean; send(channel: string, payload: unknown): void }, channel: string, payload: unknown) => {
+    if (!target.isDestroyed()) target.send(channel, payload)
+  },
 }))
 
 function fakeWindow(): unknown {
   return {
     webContents: {
+      isDestroyed: () => false,
       send: (channel: string, version: unknown) => boundary.sent.push({ channel, version }),
     },
   }

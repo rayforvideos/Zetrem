@@ -1,73 +1,78 @@
-import type { AgentDef, AgentDefDraft } from '@/entities/agent-def'
-import type { RunConfig, Settings } from '@/entities/agent-session'
-import type { ChatSummary, Transcript } from '@/entities/conversation'
-import type { Connector, ConnectorVerb, NewConnector } from '@/entities/connector'
-import type { Catalog, Marketplace, PluginRun, PluginScope, PluginVerb } from '@/entities/plugin'
-import type { AuthStatus } from '@/entities/auth'
-import type { Attached } from '@/entities/attachment'
-import type { ExitReason } from '@/entities/agent-session/lib/exit-line/exit-line.types'
-export type AgentHostEvent =
-  | { id: string; kind: 'line'; line: string }
-  | { id: string; kind: 'workspace'; cwd: string }
-  | { id: string; kind: 'exit'; code: number | null; reason: ExitReason | null }
+// The face the renderer sees: window.desk. Every method is a channel from
+// desk.types.ts under a name that reads well at the call site. Declaring
+// a method as Invoke<'x'> ties it to that channel, so the preload cannot wire
+// a name to the wrong channel and the compiler carries each side's changes to
+// the other.
+import type { Invoke, Listen, Send } from './desk.types'
 
-export type ProjectRecord = { id: string; name: string; path: string }
+export type { AgentHostEvent, CliVersions } from './desk.types'
 
 export type DeskBridge = {
-  pickProjectDir(): Promise<string | null>
-  restoreProject(): Promise<ProjectRecord | null>
-  listProjects(): Promise<ProjectRecord[]>
-  createProject(path: string): Promise<ProjectRecord | null>
-  openProject(id: string): Promise<ProjectRecord | null>
-  forgetProject(id: string): Promise<void>
-  repathProject(id: string, path: string): Promise<ProjectRecord | null>
-  startAgent(id: string, prompt: string, config: RunConfig, files?: Attached[]): Promise<void>
-  appVersion(): Promise<string>
-  readSettings(): Promise<Settings>
-  writeSettings(next: Settings): Promise<Settings>
-  pickKnowledge(): Promise<string[]>
-  authoredAgents(): Promise<string[]>
-  nudge(title: string, body: string): void
-  pickFiles(): Promise<string[]>
+  appVersion: Invoke<'app:version'>
+
+  pickProjectDir: Invoke<'project:pick'>
+  restoreProject: Invoke<'project:restore'>
+  listProjects: Invoke<'project:list'>
+  createProject: Invoke<'project:create'>
+  openProject: Invoke<'project:open'>
+  forgetProject: Invoke<'project:forget'>
+  repathProject: Invoke<'project:repath'>
+
+  startAgent: Invoke<'agent:start'>
+  sendToAgent: Send<'agent:send'>
+  stopAgent: Send<'agent:stop'>
+  respondPermission: Send<'agent:permission'>
+  onAgentEvent: Listen<'agent:event'>
+
+  probeSession: Invoke<'session:probe'>
+  sessionUsage: Invoke<'session:usage'>
+  keptUsage: Invoke<'usage:kept'>
+
+  authStatus: Invoke<'auth:status'>
+  login: Invoke<'auth:login'>
+  logout: Invoke<'auth:logout'>
+  onAuthProgress: Listen<'auth:progress'>
+
+  listAgentDefs: Invoke<'agents:list'>
+  writeAgentDef: Invoke<'agents:write'>
+  removeAgentDef: Invoke<'agents:remove'>
+  replaceAgentDef: Invoke<'agents:replace'>
+  pickKnowledge: Invoke<'agents:pickKnowledge'>
+  authoredAgents: Invoke<'agents:authored'>
+
+  readSettings: Invoke<'settings:read'>
+  writeSettings: Invoke<'settings:write'>
+
+  pickFiles: Invoke<'files:pick'>
+  readFiles: Invoke<'files:read'>
+  // The one method with a body of its own: it turns a dropped or pasted File
+  // into an OS path and admits that path for reading. See preload.ts.
   pathForFile(file: File): Promise<string>
-  readFiles(paths: string[]): Promise<Attached[]>
-  pluginCatalog(): Promise<Catalog>
-  pluginAvailable(): Promise<Catalog>
-  marketplaces(): Promise<Marketplace[]>
-  pluginAct(verb: PluginVerb, target: string, scope?: PluginScope): Promise<PluginRun>
-  listChats(project: string): Promise<ChatSummary[]>
-  readTranscript(project: string, id: string): Promise<Transcript | null>
-  writeTranscript(project: string, saved: Transcript): Promise<void>
-  forgetTranscript(project: string, id: string): Promise<void>
-  authStatus(): Promise<AuthStatus>
-  listAgentDefs(): Promise<AgentDef[]>
-  writeAgentDef(draft: AgentDefDraft): Promise<string>
-  removeAgentDef(name: string): Promise<void>
-  replaceAgentDef(draft: AgentDefDraft, previousName: string): Promise<string>
-  login(): Promise<AuthStatus>
-  logout(): Promise<AuthStatus>
-  onAuthProgress(listener: (line: string) => void): () => void
-  sendToAgent(id: string, text: string, files?: Attached[]): void
-  stopAgent(id: string): void
-  respondPermission(id: string, requestId: string, result: unknown): void
-  onAgentEvent(listener: (event: AgentHostEvent) => void): () => void
-  probeSession(config: Omit<RunConfig, 'persona'>): Promise<string | null>
-  listConnectors(): Promise<Connector[]>
-  connectorAct(verb: ConnectorVerb, target: string): Promise<PluginRun>
-  addConnector(draft: NewConnector, taken: string[]): Promise<PluginRun>
-  importConnectors(): Promise<PluginRun>
-  sessionUsage(): Promise<string | null>
-  keptUsage(): Promise<string | null>
-  latestCliVersion(): Promise<{
-    installed: string | null
-    latest: string | null
-    managedBy: string | null
-  }>
-  runCliUpdate(): Promise<{ output: string }>
-  installCli(): Promise<{ status: AuthStatus; output: string }>
-  updaterState(): Promise<string | null>
-  updaterRestart(): Promise<void>
-  onUpdaterReady(listener: (version: string) => void): () => void
+
+  pluginCatalog: Invoke<'plugins:catalog'>
+  pluginAvailable: Invoke<'plugins:available'>
+  marketplaces: Invoke<'plugins:marketplaces'>
+  pluginAct: Invoke<'plugins:act'>
+
+  listConnectors: Invoke<'connectors:list'>
+  connectorAct: Invoke<'connectors:act'>
+  addConnector: Invoke<'connectors:add'>
+  importConnectors: Invoke<'connectors:import'>
+
+  listChats: Invoke<'transcript:list'>
+  readTranscript: Invoke<'transcript:read'>
+  writeTranscript: Invoke<'transcript:write'>
+  forgetTranscript: Invoke<'transcript:forget'>
+
+  nudge: Send<'nudge:show'>
+
+  latestCliVersion: Invoke<'cli:latest'>
+  runCliUpdate: Invoke<'cli:update'>
+  installCli: Invoke<'cli:install'>
+
+  updaterState: Invoke<'updater:state'>
+  updaterRestart: Invoke<'updater:restart'>
+  onUpdaterReady: Listen<'updater:ready'>
 }
 
 declare global {

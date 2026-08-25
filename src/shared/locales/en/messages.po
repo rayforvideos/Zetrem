@@ -164,32 +164,32 @@ msgstr "{reported} reported back"
 msgid "{rest, plural, one {# more line} other {# more lines}}"
 msgstr "{rest, plural, one {# more line} other {# more lines}}"
 
-#: src/pages/workspace/model/use-plugins.ts:111
+#: src/pages/workspace/model/use-plugins.ts:118
 msgid "{target} added"
 msgstr "{target} added"
 
-#: src/pages/workspace/model/use-plugins.ts:101
+#: src/pages/workspace/model/use-plugins.ts:108
 msgid "{target} installed. Restart the session to load it."
 msgstr "{target} installed. Restart the session to load it."
 
-#: src/pages/workspace/model/use-plugins.ts:107
+#: src/pages/workspace/model/use-plugins.ts:114
 msgid "{target} off. The running session keeps it until it ends."
 msgstr "{target} off. The running session keeps it until it ends."
 
-#: src/pages/workspace/model/use-plugins.ts:105
+#: src/pages/workspace/model/use-plugins.ts:112
 msgid "{target} on. Restart the session to load it."
 msgstr "{target} on. Restart the session to load it."
 
-#: src/pages/workspace/model/use-plugins.ts:115
+#: src/pages/workspace/model/use-plugins.ts:122
 msgid "{target} refreshed"
 msgstr "{target} refreshed"
 
-#: src/pages/workspace/model/use-plugins.ts:103
-#: src/pages/workspace/model/use-plugins.ts:113
+#: src/pages/workspace/model/use-plugins.ts:110
+#: src/pages/workspace/model/use-plugins.ts:120
 msgid "{target} removed"
 msgstr "{target} removed"
 
-#: src/pages/workspace/model/use-plugins.ts:109
+#: src/pages/workspace/model/use-plugins.ts:116
 msgid "{target} updated. Restart the session to load it."
 msgstr "{target} updated. Restart the session to load it."
 
@@ -557,7 +557,7 @@ msgid "Conversation compacted here"
 msgstr "Conversation compacted here"
 
 #. placeholder {0}: said(verb)
-#: src/pages/workspace/model/use-plugins.ts:66
+#: src/pages/workspace/model/use-plugins.ts:73
 msgid "Could not {0} {target}"
 msgstr "Could not {0} {target}"
 
@@ -613,7 +613,7 @@ msgstr "Could not pick that conversation back up. Starting a new one."
 msgid "Could not reach {0}"
 msgstr "Could not reach {0}"
 
-#: src/pages/workspace/model/use-plugins.ts:42
+#: src/pages/workspace/model/use-plugins.ts:49
 msgid "Could not read the plugin shelf"
 msgstr "Could not read the plugin shelf"
 
@@ -621,7 +621,7 @@ msgstr "Could not read the plugin shelf"
 msgid "Could not read usage"
 msgstr "Could not read usage"
 
-#: src/pages/workspace/model/use-plugins.ts:56
+#: src/pages/workspace/model/use-plugins.ts:63
 msgid "Could not read what is available"
 msgstr "Could not read what is available"
 
@@ -639,7 +639,7 @@ msgstr "Could not read what you pasted"
 msgid "Could not read your connectors"
 msgstr "Could not read your connectors"
 
-#: src/pages/workspace/model/use-plugins.ts:43
+#: src/pages/workspace/model/use-plugins.ts:50
 msgid "Could not read your marketplaces"
 msgstr "Could not read your marketplaces"
 
@@ -934,6 +934,10 @@ msgstr "it could not be loaded"
 msgid "It could not put the answer in the format that was asked for"
 msgstr "It could not put the answer in the format that was asked for"
 
+#: src/shared/lib/ask/ask.ts:28
+msgid "It could not start"
+msgstr "It could not start"
+
 #: src/pages/workspace/ui/UpdateCard/UpdateCard.tsx:19
 msgid "It installs when the app restarts."
 msgstr "It installs when the app restarts."
@@ -945,6 +949,10 @@ msgstr "It reached the limit on how many turns one message may take"
 #: src/entities/agent-session/api/claude/failure/failure.ts:6
 msgid "It reached the spending limit set for this run"
 msgstr "It reached the spending limit set for this run"
+
+#: src/shared/lib/ask/ask.ts:22
+msgid "It took too long and was stopped"
+msgstr "It took too long and was stopped"
 
 #: src/widgets/team-sidebar/lib/when/when.ts:12
 msgid "just now"
@@ -1673,6 +1681,14 @@ msgstr "That model"
 msgid "That model was not found"
 msgstr "That model was not found"
 
+#: src/pages/workspace/model/use-plugins.ts:33
+msgid "That name cannot be used"
+msgstr "That name cannot be used"
+
+#: src/shared/lib/ask/ask.ts:30
+msgid "That was not allowed"
+msgstr "That was not allowed"
+
 #: src/widgets/setup/ui/AccountField/AccountField.tsx:38
 msgid "The <0>claude</0> command was not found. Zetrem can install it for you."
 msgstr "The <0>claude</0> command was not found. Zetrem can install it for you."
@@ -2059,7 +2075,12 @@ msgstr "Yours"
 msgid "Zetrem {version} is ready"
 msgstr "Zetrem {version} is ready"
 
+#: src/shared/lib/ask/ask.ts:26
+msgid "Zetrem cannot do that"
+msgstr "Zetrem cannot do that"
+
 #: src/entities/connector/lib/refusal-why/refusal-why.ts:26
+#: src/shared/lib/ask/ask.ts:24
 msgid "Zetrem did not understand that request"
 msgstr "Zetrem did not understand that request"
 

@@ -164,32 +164,32 @@ msgstr "{reported}명 보고 완료"
 msgid "{rest, plural, one {# more line} other {# more lines}}"
 msgstr "{rest, plural, other {#줄 더}}"
 
-#: src/pages/workspace/model/use-plugins.ts:111
+#: src/pages/workspace/model/use-plugins.ts:118
 msgid "{target} added"
 msgstr "{target} 추가했습니다"
 
-#: src/pages/workspace/model/use-plugins.ts:101
+#: src/pages/workspace/model/use-plugins.ts:108
 msgid "{target} installed. Restart the session to load it."
 msgstr "{target} 설치했습니다. 세션을 다시 시작해야 불러옵니다."
 
-#: src/pages/workspace/model/use-plugins.ts:107
+#: src/pages/workspace/model/use-plugins.ts:114
 msgid "{target} off. The running session keeps it until it ends."
 msgstr "{target} 껐습니다. 실행 중인 세션은 끝날 때까지 그대로 씁니다."
 
-#: src/pages/workspace/model/use-plugins.ts:105
+#: src/pages/workspace/model/use-plugins.ts:112
 msgid "{target} on. Restart the session to load it."
 msgstr "{target} 켰습니다. 세션을 다시 시작해야 불러옵니다."
 
-#: src/pages/workspace/model/use-plugins.ts:115
+#: src/pages/workspace/model/use-plugins.ts:122
 msgid "{target} refreshed"
 msgstr "{target} 새로 고쳤습니다"
 
-#: src/pages/workspace/model/use-plugins.ts:103
-#: src/pages/workspace/model/use-plugins.ts:113
+#: src/pages/workspace/model/use-plugins.ts:110
+#: src/pages/workspace/model/use-plugins.ts:120
 msgid "{target} removed"
 msgstr "{target} 삭제했습니다"
 
-#: src/pages/workspace/model/use-plugins.ts:109
+#: src/pages/workspace/model/use-plugins.ts:116
 msgid "{target} updated. Restart the session to load it."
 msgstr "{target} 업데이트했습니다. 세션을 다시 시작해야 불러옵니다."
 
@@ -557,7 +557,7 @@ msgid "Conversation compacted here"
 msgstr "여기서 대화가 압축됐습니다"
 
 #. placeholder {0}: said(verb)
-#: src/pages/workspace/model/use-plugins.ts:66
+#: src/pages/workspace/model/use-plugins.ts:73
 msgid "Could not {0} {target}"
 msgstr "{target}을(를) {0}하지 못했습니다"
 
@@ -613,7 +613,7 @@ msgstr "그 대화를 이어받지 못했습니다. 새로 시작합니다."
 msgid "Could not reach {0}"
 msgstr "{0}에 연결하지 못했습니다"
 
-#: src/pages/workspace/model/use-plugins.ts:42
+#: src/pages/workspace/model/use-plugins.ts:49
 msgid "Could not read the plugin shelf"
 msgstr "플러그인 목록을 읽지 못했습니다"
 
@@ -621,7 +621,7 @@ msgstr "플러그인 목록을 읽지 못했습니다"
 msgid "Could not read usage"
 msgstr "사용량을 읽지 못했습니다"
 
-#: src/pages/workspace/model/use-plugins.ts:56
+#: src/pages/workspace/model/use-plugins.ts:63
 msgid "Could not read what is available"
 msgstr "설치할 수 있는 것을 읽지 못했습니다"
 
@@ -639,7 +639,7 @@ msgstr "붙여넣은 것을 읽지 못했습니다"
 msgid "Could not read your connectors"
 msgstr "커넥터를 읽지 못했습니다"
 
-#: src/pages/workspace/model/use-plugins.ts:43
+#: src/pages/workspace/model/use-plugins.ts:50
 msgid "Could not read your marketplaces"
 msgstr "마켓플레이스를 읽지 못했습니다"
 
@@ -934,6 +934,10 @@ msgstr "불러올 수 없었습니다"
 msgid "It could not put the answer in the format that was asked for"
 msgstr "답을 요청한 형식으로 만들지 못했습니다"
 
+#: src/shared/lib/ask/ask.ts:28
+msgid "It could not start"
+msgstr "시작하지 못했습니다"
+
 #: src/pages/workspace/ui/UpdateCard/UpdateCard.tsx:19
 msgid "It installs when the app restarts."
 msgstr "앱을 다시 시작하면 설치됩니다."
@@ -945,6 +949,10 @@ msgstr "한 메시지에 쓸 수 있는 턴을 다 썼습니다"
 #: src/entities/agent-session/api/claude/failure/failure.ts:6
 msgid "It reached the spending limit set for this run"
 msgstr "이번 실행에 정해둔 지출 한도에 도달했습니다"
+
+#: src/shared/lib/ask/ask.ts:22
+msgid "It took too long and was stopped"
+msgstr "너무 오래 걸려 중단했습니다"
 
 #: src/widgets/team-sidebar/lib/when/when.ts:12
 msgid "just now"
@@ -1673,6 +1681,14 @@ msgstr "그 모델"
 msgid "That model was not found"
 msgstr "그 모델을 찾지 못했습니다"
 
+#: src/pages/workspace/model/use-plugins.ts:33
+msgid "That name cannot be used"
+msgstr "그 이름은 쓸 수 없습니다"
+
+#: src/shared/lib/ask/ask.ts:30
+msgid "That was not allowed"
+msgstr "허용되지 않았습니다"
+
 #: src/widgets/setup/ui/AccountField/AccountField.tsx:38
 msgid "The <0>claude</0> command was not found. Zetrem can install it for you."
 msgstr "<0>claude</0> 명령을 찾지 못했습니다. Zetrem이 대신 설치해 드립니다."
@@ -2059,7 +2075,12 @@ msgstr "내 것"
 msgid "Zetrem {version} is ready"
 msgstr "Zetrem {version} 준비 완료"
 
+#: src/shared/lib/ask/ask.ts:26
+msgid "Zetrem cannot do that"
+msgstr "Zetrem이 할 수 없는 작업입니다"
+
 #: src/entities/connector/lib/refusal-why/refusal-why.ts:26
+#: src/shared/lib/ask/ask.ts:24
 msgid "Zetrem did not understand that request"
 msgstr "Zetrem이 그 요청을 이해하지 못했습니다"
 

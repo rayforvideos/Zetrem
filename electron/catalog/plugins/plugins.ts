@@ -56,7 +56,7 @@ export function registerPlugins(): void {
     'plugins:act',
     async (_event, verb: unknown, target: unknown, scope: unknown): Promise<Outcome<string>> => {
     const name = safeTarget(target)
-    if (name === null) return lost('refused', 'name')
+    if (name === null) return lost('refused', 'plugin-name')
     switch (verb) {
       case 'uninstall':
       case 'enable':

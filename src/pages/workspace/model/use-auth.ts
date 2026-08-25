@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import type { AuthStatus } from '@/entities/auth'
 import { urlFrom } from '@/pages/workspace/model/cli-output/cli-output'
 import { reasonOf } from '@/shared/lib/failure/failure'
-import { troubleLine } from '@/shared/lib/ask/ask'
+import { lastLine, troubleLine } from '@/shared/lib/ask/ask'
 import { t } from '@lingui/core/macro'
 
 type Auth = {
@@ -74,9 +74,13 @@ export function useAuth(): Auth {
     setAuthError(null)
     window.desk
       .logout()
-      .then((next) => {
-        setAuth(next)
-        if (next.state === 'signed-in') {
+      .then((result) => {
+        if (!result.ok) {
+          setAuthError(lastLine(result.why.said, t`Sign out did not take effect.`))
+          return
+        }
+        setAuth(result.value)
+        if (result.value.state === 'signed-in') {
           setAuthError(t`Still signed in. Sign out did not take effect.`)
         }
       })

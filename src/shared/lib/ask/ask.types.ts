@@ -1,8 +1,3 @@
-export type Ran = {
-  readonly ok: boolean
-  readonly out: string
-}
-
 export type Asking = {
   readonly busy: string | null
   readonly note: string | null

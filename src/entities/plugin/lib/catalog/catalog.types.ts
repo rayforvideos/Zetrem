@@ -10,8 +10,6 @@ export type PluginVerb =
   | 'market-remove'
   | 'market-update'
 
-export type PluginRun = { ok: boolean; out: string }
-
 export type InstalledPlugin = {
   id: string
   name: string

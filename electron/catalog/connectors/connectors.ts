@@ -2,7 +2,8 @@ import { readConnectors } from '@/entities/connector/lib/read-connectors/read-co
 import { refusalOf, tidyName } from '@/entities/connector/lib/new-connector/new-connector'
 import type { Connector, ConnectorVerb } from '@/entities/connector/lib/read-connectors/read-connectors.types'
 import type { NewConnector } from '@/entities/connector/lib/new-connector/new-connector.types'
-import type { PluginRun } from '@/entities/plugin/lib/catalog/catalog.types'
+import { lost, textOf } from '@/shared/lib/outcome/outcome'
+import type { Outcome } from '@/shared/lib/outcome/outcome.types'
 import { runClaude } from '../../spawn/run-claude/run-claude'
 import { hereOrUndefined } from '../../store/project-memory/project-memory'
 import { handle } from '../../ipc/ipc'
@@ -21,16 +22,16 @@ function named(value: unknown): string | null {
 export function registerConnectors(): void {
   handle('connectors:list', async (): Promise<Connector[]> => {
     const result = await runClaude(['mcp', 'list'], READ_TIMEOUT_MS, await hereOrUndefined())
-    return readConnectors(result.out)
+    return readConnectors(textOf(result))
   })
 
   handle(
     'connectors:act',
-    async (_event, verb: unknown, target: unknown): Promise<PluginRun> => {
+    async (_event, verb: unknown, target: unknown): Promise<Outcome<string>> => {
       const name = named(target)
       const word = VERBS.find((one) => one === verb)
       if (name === null || word === undefined) {
-        return { ok: false, out: 'garbled' }
+        return lost('garbled')
       }
       return runClaude(['mcp', word, name], ACT_TIMEOUT_MS, await hereOrUndefined())
     },
@@ -38,14 +39,14 @@ export function registerConnectors(): void {
 
   handle(
     'connectors:add',
-    async (_event, draft: unknown, taken: unknown): Promise<PluginRun> => {
+    async (_event, draft: unknown, taken: unknown): Promise<Outcome<string>> => {
       const wanted = draft as NewConnector
       if (typeof wanted?.name !== 'string' || typeof wanted?.url !== 'string') {
-        return { ok: false, out: 'garbled' }
+        return lost('garbled')
       }
       const held = Array.isArray(taken) ? taken.filter((one): one is string => typeof one === 'string') : []
       const refused = refusalOf(wanted, held)
-      if (refused !== null) return { ok: false, out: refused.code }
+      if (refused !== null) return lost('refused', refused.code)
       return runClaude(
         ['mcp', 'add', '--transport', 'http', tidyName(wanted.name), wanted.url.trim()],
         ACT_TIMEOUT_MS,
@@ -54,7 +55,7 @@ export function registerConnectors(): void {
     },
   )
 
-  handle('connectors:import', async (): Promise<PluginRun> => {
+  handle('connectors:import', async (): Promise<Outcome<string>> => {
     return runClaude(['mcp', 'add-from-claude-desktop'], ACT_TIMEOUT_MS, await hereOrUndefined())
   })
 }

@@ -3,6 +3,8 @@ import { promisify } from 'node:util'
 import type { WebContents } from 'electron'
 import { agentEnv } from '@/shared/lib/shell-env/shell-env'
 import type { AuthStatus } from '@/entities/auth'
+import { lost, won } from '@/shared/lib/outcome/outcome'
+import type { Outcome } from '@/shared/lib/outcome/outcome.types'
 import { claudeBin, loginPath } from '../login-path/login-path'
 import { handle, push } from '../../ipc/ipc'
 import { killTree } from '../../spawn/kill-tree/kill-tree'
@@ -37,7 +39,7 @@ export async function readAuthStatus(): Promise<AuthStatus> {
 export function registerAuth(): void {
   handle('auth:status', () => readAuthStatus())
 
-  handle('auth:logout', async (): Promise<AuthStatus> => {
+  handle('auth:logout', async (): Promise<Outcome<AuthStatus>> => {
     const env = agentEnv(process.env, await loginPath())
     let failure: string | null = null
     try {
@@ -47,8 +49,8 @@ export function registerAuth(): void {
       failure = (error.stderr || error.message || 'claude auth logout failed').trim()
     }
     const status = await readAuthStatus()
-    if (status.state === 'signed-in' && failure !== null) throw new Error(failure)
-    return status
+    if (status.state === 'signed-in' && failure !== null) return lost('cli', failure)
+    return won(status)
   })
 
   handle('auth:login', async (event): Promise<AuthStatus> => {

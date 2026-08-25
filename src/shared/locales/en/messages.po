@@ -582,7 +582,7 @@ msgstr "Could not file that chat"
 msgid "Could not forget that chat"
 msgstr "Could not forget that chat"
 
-#: src/pages/workspace/model/use-auth.ts:100
+#: src/pages/workspace/model/use-auth.ts:104
 msgid "Could not install Claude Code"
 msgstr "Could not install Claude Code"
 
@@ -1519,6 +1519,10 @@ msgstr "Sign in with Anthropic"
 msgid "Sign out"
 msgstr "Sign out"
 
+#: src/pages/workspace/model/use-auth.ts:79
+msgid "Sign out did not take effect."
+msgstr "Sign out did not take effect."
+
 #: src/widgets/setup/lib/sign-out-warning/sign-out-warning.ts:4
 msgid "Sign out of Claude Code everywhere?"
 msgstr "Sign out of Claude Code everywhere?"
@@ -1581,7 +1585,7 @@ msgstr "Starting"
 msgid "Stay signed in"
 msgstr "Stay signed in"
 
-#: src/pages/workspace/model/use-auth.ts:80
+#: src/pages/workspace/model/use-auth.ts:84
 msgid "Still signed in. Sign out did not take effect."
 msgstr "Still signed in. Sign out did not take effect."
 
@@ -1653,7 +1657,7 @@ msgstr "Teammates are reusable"
 msgid "Tells you when the work is done or something needs your say-so, and only while Zetrem is behind another window."
 msgstr "Tells you when the work is done or something needs your say-so, and only while Zetrem is behind another window."
 
-#: src/shared/lib/ask/ask.ts:7
+#: src/shared/lib/ask/ask.ts:8
 msgid "That did not work"
 msgstr "That did not work"
 

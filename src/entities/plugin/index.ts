@@ -10,7 +10,6 @@ export type {
   Catalog,
   InstalledPlugin,
   Marketplace,
-  PluginRun,
   PluginScope,
   PluginVerb,
 } from './lib/catalog/catalog.types'

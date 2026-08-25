@@ -17,11 +17,11 @@ describe('lastLine', () => {
 
 describe('outcomeLine', () => {
   it('says the done line when it worked', () => {
-    expect(outcomeLine({ ok: true, out: 'noise' }, 'Added nx')).toBe('Added nx')
+    expect(outcomeLine({ ok: true, value: 'noise' }, 'Added nx')).toBe('Added nx')
   })
 
   it('quotes the complaint when it did not', () => {
-    expect(outcomeLine({ ok: false, out: 'boom\nno such plugin' }, 'Added nx')).toBe(
+    expect(outcomeLine({ ok: false, why: { code: 'cli', said: 'boom\nno such plugin' } }, 'Added nx')).toBe(
       'no such plugin',
     )
   })

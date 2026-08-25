@@ -14,6 +14,7 @@ import type {
 import type { RunConfig } from '@/entities/agent-session/model/run-config/run-config.types'
 import type { Settings } from '@/entities/agent-session/model/settings/settings.types'
 import type { Project } from '@/entities/project/model/project'
+import type { Outcome } from '@/shared/lib/outcome/outcome.types'
 import type { ExitReason } from '@/entities/agent-session/lib/exit-line/exit-line.types'
 import type { Attached } from '@/entities/attachment/lib/attachment/attachment.types'
 import type { AuthStatus } from '@/entities/auth/model/auth'
@@ -23,7 +24,6 @@ import type { ChatSummary, Transcript } from '@/entities/conversation/lib/transc
 import type {
   Catalog,
   Marketplace,
-  PluginRun,
   PluginScope,
   PluginVerb,
 } from '@/entities/plugin/lib/catalog/catalog.types'
@@ -59,7 +59,7 @@ export type Invokes = {
 
   'auth:status': () => AuthStatus
   'auth:login': () => AuthStatus
-  'auth:logout': () => AuthStatus
+  'auth:logout': () => Outcome<AuthStatus>
 
   'agents:list': () => AgentDef[]
   'agents:write': (draft: AgentDefDraft) => string
@@ -78,12 +78,12 @@ export type Invokes = {
   'plugins:catalog': () => Catalog
   'plugins:available': () => Catalog
   'plugins:marketplaces': () => Marketplace[]
-  'plugins:act': (verb: PluginVerb, target: string, scope?: PluginScope) => PluginRun
+  'plugins:act': (verb: PluginVerb, target: string, scope?: PluginScope) => Outcome<string>
 
   'connectors:list': () => Connector[]
-  'connectors:act': (verb: ConnectorVerb, target: string) => PluginRun
-  'connectors:add': (draft: NewConnector, taken: string[]) => PluginRun
-  'connectors:import': () => PluginRun
+  'connectors:act': (verb: ConnectorVerb, target: string) => Outcome<string>
+  'connectors:add': (draft: NewConnector, taken: string[]) => Outcome<string>
+  'connectors:import': () => Outcome<string>
 
   'transcript:list': (project: string) => ChatSummary[]
   'transcript:read': (project: string, id: string) => Transcript | null

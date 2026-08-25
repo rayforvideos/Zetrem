@@ -3,6 +3,7 @@ import type { ToolActivity, Turn } from '@/entities/conversation'
 import { toolShape } from '@/shared/lib/tool-shape/tool-shape'
 import type { ToolShape } from '@/shared/lib/tool-shape/tool-shape.types'
 import { targetOf, verbOf } from '@/shared/lib/tool-verb/tool-verb'
+import { toolNameOf } from '@/shared/lib/tool-line/tool-line'
 import type { Doing } from './working.types'
 import { t } from '@lingui/core/macro'
 
@@ -13,7 +14,7 @@ function starting(): Doing {
 }
 
 function shapeOf(tool: ToolActivity): ToolShape {
-  return toolShape(tool.line.split(' ')[0] ?? '', tool.input)
+  return toolShape(toolNameOf(tool.line), tool.input)
 }
 
 function whoOf(shape: ToolShape): string {
@@ -87,11 +88,8 @@ export function doingOf(turns: Turn[], nowMs = 0): Doing {
 }
 
 export function askedAtMs(turns: Turn[], fallbackMs: number): number {
-  for (let at = turns.length - 1; at >= 0; at -= 1) {
-    const turn = turns[at]
-    if (turn !== undefined && turn.role === 'user') return turn.startedAtMs
-  }
-  return turns.at(-1)?.startedAtMs ?? fallbackMs
+  const asked = turns.findLast((turn) => turn.role === 'user')
+  return asked?.startedAtMs ?? turns.at(-1)?.startedAtMs ?? fallbackMs
 }
 
 export function elapsedLabel(ms: number): string {

@@ -2,7 +2,7 @@ import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react
 import { i18n } from '@lingui/core'
 import { t } from '@lingui/core/macro'
 import { ArrowLeft, ArrowRight } from 'lucide-react'
-import { WORDMARK_SIZE, Wordmark } from '@/shared/graphics/wordmark/wordmark'
+import { WORDMARK_SIZE, Wordmark } from '@/shared/graphics/Wordmark/Wordmark'
 import { cn } from '@/shared/lib/cn'
 import { Button } from '@/shared/ui/button'
 import { fitScale } from '../../lib/fit/fit'

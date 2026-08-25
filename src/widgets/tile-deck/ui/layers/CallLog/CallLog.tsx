@@ -1,12 +1,13 @@
 import { useCallback, useEffect, useRef } from 'react'
 import type { CSSProperties } from 'react'
 import type { Call } from '@/entities/agent-session'
-import { ToolIcon } from '@/shared/graphics/tool-icon'
+import { ToolIcon } from '@/shared/graphics/ToolIcon/ToolIcon'
 import { atEnd } from '@/shared/lib/scroll-state/scroll-state'
 import { targetOf, verbOf } from '@/shared/lib/tool-verb/tool-verb'
 import { shapeOfCall } from '../../../lib/now/now'
 import { fillOf } from '../../../lib/fill/fill'
 import { ICON_W, NowStage } from '../NowStage/NowStage'
+import { t } from '@lingui/core/macro'
 
 type CallLogProps = { calls: Call[]; live: boolean; nowMs: number }
 
@@ -73,7 +74,7 @@ function Row({ call, lit }: { call: Call; lit: boolean }) {
       <span style={verbStyle}>{verbOf(shape)}</span>
       <span style={targetStyle}>{target}</span>
       {call.failed ? (
-        <span style={failedStyle}>failed</span>
+        <span style={failedStyle}>{t`failed`}</span>
       ) : (
         call.note.length > 0 && <span style={noteStyle}>{call.note}</span>
       )}

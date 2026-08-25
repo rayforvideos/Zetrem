@@ -2,7 +2,7 @@ import { absorbs, resumedAgent, sessionStore } from '@/entities/agent-session'
 import type { AgentSession, ClaudeTurnEvent, TranscriptEntry } from '@/entities/agent-session'
 import { shapeOfLine } from '@/shared/lib/tool-line/tool-line'
 import { resultNote } from '@/shared/lib/tool-shape/tool-shape'
-import { clip } from '@/shared/lib/clip/clip'
+import { clip } from '@/pages/workspace/model/agent-events/clip/clip'
 import type { AgentEventRefs } from '../agent-events.types'
 import { t } from '@lingui/core/macro'
 

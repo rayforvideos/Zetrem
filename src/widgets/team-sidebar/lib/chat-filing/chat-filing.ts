@@ -32,6 +32,13 @@ export function fileChats(chats: ChatSummary[]): Filing {
   return { folders, loose }
 }
 
+// The chats currently wearing a folder's name, matched the same case-blind way
+// fileChats groups them.
+export function chatsInFolder(chats: ChatSummary[], name: string): ChatSummary[] {
+  const key = name.trim().toLocaleLowerCase()
+  return chats.filter((chat) => chat.folder.trim().toLocaleLowerCase() === key)
+}
+
 // Which chats need writing to fix a folder's name. A folder is only the name
 // its chats wear, so renaming one means renaming each of them — and a blank
 // name is refused, because emptying it is how a chat gets unfiled and a rename

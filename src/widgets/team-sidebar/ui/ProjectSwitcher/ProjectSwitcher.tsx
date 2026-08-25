@@ -32,8 +32,8 @@ export function baseName(path: string): string {
 }
 
 // One folder is one project, so this row is the whole of the filing: it names
-// the project you are in, carries rename and remove for it, and opens onto the
-// other projects, a new one, and the folder picker.
+// the project you are in, carries remove for it, and opens onto the other
+// projects, a new one, and the folder picker.
 export function ProjectSwitcher({ projects }: { projects: ProjectsProps }) {
   const [open, setOpen] = useState(false)
   const [asking, setAsking] = useState(false)

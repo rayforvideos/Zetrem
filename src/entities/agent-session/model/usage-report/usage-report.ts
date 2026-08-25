@@ -26,11 +26,12 @@ export function readUsage(report: string, nowMs = Date.now()): RateLimit[] {
     const kind = kindOf(match[1]!, match[2] ?? null)
     if (held.has(kind)) continue
     held.add(kind)
+    const resets = resetsOf(match[4])
     found.push({
       kind,
       utilization,
-      resetsAtMs: resetsAtOf(resetsOf(match[4]), nowMs),
-      resetsText: resetsOf(match[4]),
+      resetsAtMs: resetsAtOf(resets, nowMs),
+      resetsText: resets,
       overage: false,
       status: utilization >= HEAVY ? 'allowed_warning' : 'allowed',
     })

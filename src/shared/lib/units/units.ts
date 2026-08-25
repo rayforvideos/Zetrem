@@ -13,10 +13,11 @@ export function limitKindLabel(kind: string): string {
       return t`Weekly`
     case 'seven_day_overage':
       return t`Weekly overage`
-    default:
+    default: {
       if (!kind.startsWith('seven_day_')) return kind
       const rest = titled(kind.slice('seven_day_'.length))
       return t`Weekly ${rest}`
+    }
   }
 }
 

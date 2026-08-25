@@ -1,4 +1,4 @@
-import type { Turn } from '../../model/turn'
+import type { Turn } from '../../model/turn/turn'
 
 export type ChatSummary = {
   id: string

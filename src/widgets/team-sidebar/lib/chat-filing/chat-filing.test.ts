@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import type { ChatSummary } from '@/entities/conversation'
-import { fileChats, renamedFolder } from './chat-filing'
+import { chatsInFolder, fileChats, renamedFolder } from './chat-filing'
 
 let stamp = 9_000
 function chat(folder: string, title = 'c'): ChatSummary {
@@ -63,6 +63,24 @@ describe('one place per name, in the order a person would count them', () => {
   it('keeps the spelling the folder was first given', () => {
     const filing = fileChats([chat('Ops'), chat('ops')])
     expect(filing.folders[0]?.name).toBe('Ops')
+  })
+})
+
+describe('chatsInFolder: the chats currently wearing a name', () => {
+  it('finds every chat filed under the name, without case', () => {
+    const a = chat('출고')
+    const b = chat('출고')
+    const other = chat('리깅')
+    expect(chatsInFolder([a, b, other], '출고')).toEqual([a, b])
+  })
+
+  it('matches the folder name without case', () => {
+    const one = chat('Ops')
+    expect(chatsInFolder([one], 'ops')).toEqual([one])
+  })
+
+  it('is empty when nothing wears that name', () => {
+    expect(chatsInFolder([chat('출고')], '리깅')).toEqual([])
   })
 })
 

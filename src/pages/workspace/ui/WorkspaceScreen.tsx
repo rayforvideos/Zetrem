@@ -21,7 +21,7 @@ import {
   WORDMARK_SIGNATURE_OPACITY,
   WORDMARK_SIZE,
   Wordmark,
-} from '@/shared/graphics/wordmark/wordmark'
+} from '@/shared/graphics/Wordmark/Wordmark'
 import { AgentReport } from '@/widgets/agent-report'
 import { awayOf, spokeAtMs, Composer, ConversationPane, RestartNote } from '@/widgets/conversation'
 import { SetupPane } from '@/widgets/setup'
@@ -55,7 +55,7 @@ import { useSettingsPanel } from '../model/use-settings-panel'
 import { useSidebarWidth } from '../model/use-sidebar-width'
 import { useTranscript } from '../model/use-transcript'
 import { useViewport } from '../model/use-viewport'
-import { useOffsetWidth } from '@/shared/lib/offset-width/use-offset-width'
+import { useOffsetWidth } from '@/pages/workspace/model/offset-width/use-offset-width'
 import { tuckedBy } from '../model/tuck/tuck'
 import { crewOf, lockOf, peopleOf, pluginSummary } from '../model/workspace-config/workspace-config'
 import { PluginShelfOverlay } from './controls/PluginShelfOverlay'
@@ -87,7 +87,7 @@ export function WorkspaceScreen() {
     if (!settings.refusedModels.includes(settings.model)) return
     if (status.cost.turns === 0) return
     update({ refusedModels: withoutRefused(settings.refusedModels, settings.model) })
-  }, [status.cost.turns, settings.model, settings.refusedModels])
+  }, [status.cost.turns, settings.model, settings.refusedModels, update])
 
   useSay(settings.tongue, !loading)
   const auth = useAuth()
@@ -100,13 +100,18 @@ export function WorkspaceScreen() {
   const [attachSidebar, sidebarBoxW] = useOffsetWidth<HTMLDivElement>()
   const focus = useFocus()
 
+  const signedIn = auth.auth?.state === 'signed-in'
+  const hasProject = project?.path != null
+  const yourName = tidyUserName(settings.userName)
+  const deckSidebarW = sidebar.span + GRID_PAD * 2
+
   const gate = screenGate({
     settingsLoaded: !loading,
     authKnown: auth.authKnown,
     projectKnown,
     chatKnown: chat.ready,
-    loggedIn: auth.auth?.state === 'signed-in',
-    hasProject: project?.path != null,
+    loggedIn: signedIn,
+    hasProject,
     setupDone: settings.setupDone,
     onboarded: settings.onboarded,
     settingsOpen: panel.open,
@@ -125,7 +130,7 @@ export function WorkspaceScreen() {
     conv.status === 'working',
   )
   useNudge(settings.notify, conv.status, conv.permission, conv.trouble)
-  useFleet(deck, children, nowMs, viewport, sidebar.span + GRID_PAD * 2)
+  useFleet(deck, children, nowMs, viewport, deckSidebarW)
 
   useLearnedSettings(status, settings, update)
 
@@ -160,6 +165,7 @@ export function WorkspaceScreen() {
 
   const live = sessionLive(status, conv.status)
   const atWork = stirring(conv.status, children)
+  const sidebarLabel = sidebar.open ? t`Hide team sidebar` : t`Show team sidebar`
   const sessionId = status.session?.id ?? null
   // The note asks for a restart; once a different session is up (or none is),
   // the change is either in force or about to be, and the ask is stale.
@@ -280,11 +286,11 @@ export function WorkspaceScreen() {
             state={deck.state}
             sessions={children}
             face={settings.userFace}
-            name={tidyUserName(settings.userName)}
+            name={yourName}
             viewport={viewport}
             onDismiss={deck.closeOne}
             nowMs={nowMs}
-            sidebarW={sidebar.span + GRID_PAD * 2}
+            sidebarW={deckSidebarW}
             roster={sidebar.open}
             terminal={
               gate === 'welcome' ? (
@@ -348,8 +354,8 @@ export function WorkspaceScreen() {
                   agents={agentToggles}
                   actions={{
                     reopened: settings.setupDone,
-                    signedIn: auth.auth?.state === 'signed-in',
-                    hasProject: project?.path != null,
+                    signedIn,
+                    hasProject,
                     onStart: panel.start,
                     onCancel: panel.cancel,
                   }}
@@ -361,7 +367,7 @@ export function WorkspaceScreen() {
                   status={conv.status}
                   statusState={status}
                   permission={conv.permission}
-                  you={{ name: tidyUserName(settings.userName), face: settings.userFace }}
+                  you={{ name: yourName, face: settings.userFace }}
                   away={agent.running ? awayOf(children, spokeAtMs(conv.turns)) : null}
                   chores={conv.chores}
                   nowMs={nowMs}
@@ -382,39 +388,36 @@ export function WorkspaceScreen() {
                           }}
                         />
                       )}
-                    <Composer
-                      files={attach.files}
-                      onPick={attach.pick}
-                      onTake={attach.take}
-                      onDropFile={attach.drop}
-                      empty={conv.turns.length === 0}
-                      busy={conv.status === 'working'}
-                      sessionLive={live}
-                      addressee={focus.addressee}
-                      permissionMode={settings.permissionMode}
-                      model={settings.model}
-                      refusedModels={settings.refusedModels}
-                      enterSends={settings.enterSends}
-                      onSend={(text) => {
-                        agent.send(text, focus.addressee, attach.files)
-                        attach.clear()
-                        focus.address(null)
-                      }}
-                      onStop={agent.stop}
-                      onClearAddressee={() => focus.address(null)}
-                      onPermissionMode={(permissionMode) =>
-                        reload(
-                          { permissionMode },
-                          t`Permissions changed. The running session follows the old ones.`,
-                        )
-                      }
-                      onModel={(model) =>
-                        reload(
-                          { model },
-                          t`Model changed. The running session keeps its model.`,
-                        )
-                      }
-                    />
+                      <Composer
+                        files={attach.files}
+                        onPick={attach.pick}
+                        onTake={attach.take}
+                        onDropFile={attach.drop}
+                        empty={conv.turns.length === 0}
+                        busy={conv.status === 'working'}
+                        sessionLive={live}
+                        addressee={focus.addressee}
+                        permissionMode={settings.permissionMode}
+                        model={settings.model}
+                        refusedModels={settings.refusedModels}
+                        enterSends={settings.enterSends}
+                        onSend={(text) => {
+                          agent.send(text, focus.addressee, attach.files)
+                          attach.clear()
+                          focus.address(null)
+                        }}
+                        onStop={agent.stop}
+                        onClearAddressee={() => focus.address(null)}
+                        onPermissionMode={(permissionMode) =>
+                          reload(
+                            { permissionMode },
+                            t`Permissions changed. The running session follows the old ones.`,
+                          )
+                        }
+                        onModel={(model) =>
+                          reload({ model }, t`Model changed. The running session keeps its model.`)
+                        }
+                      />
                     </>
                   }
                   report={
@@ -518,8 +521,8 @@ export function WorkspaceScreen() {
               size="bare"
               onClick={sidebar.toggle}
               aria-pressed={sidebar.open}
-              aria-label={sidebar.open ? t`Hide team sidebar` : t`Show team sidebar`}
-              title={sidebar.open ? t`Hide team sidebar` : t`Show team sidebar`}
+              aria-label={sidebarLabel}
+              title={sidebarLabel}
               className="zt-hit"
             >
               <PanelLeft className="size-3.5" />

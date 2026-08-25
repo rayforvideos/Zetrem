@@ -5,11 +5,7 @@ import type { Away } from './away.types'
 import { t } from '@lingui/core/macro'
 
 export function spokeAtMs(turns: Turn[]): number {
-  for (let at = turns.length - 1; at >= 0; at -= 1) {
-    const turn = turns[at]
-    if (turn !== undefined && turn.role === 'assistant') return turn.startedAtMs
-  }
-  return 0
+  return turns.findLast((turn) => turn.role === 'assistant')?.startedAtMs ?? 0
 }
 
 function backAtMs(session: AgentSession): number {

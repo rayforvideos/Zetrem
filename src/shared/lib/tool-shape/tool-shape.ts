@@ -68,11 +68,14 @@ export function toolShape(name: string, input: unknown): ToolShape {
 export function resultNote(shape: ToolShape, stdout: string | null): string | null {
   if (stdout === null) return null
   if (shape.kind === 'file' && shape.verb === 'read') {
-    const lines = stdout.length === 0 ? 0 : stdout.split('\n').length
+    // A file that ends in a newline has no empty last line to count.
+    const body = stdout.replace(/\n$/, '')
+    const lines = body.length === 0 ? 0 : body.split('\n').length
     return lines > 0 ? `${lines} lines` : null
   }
   if (shape.kind === 'search') {
-    const hits = stdout.trim().length === 0 ? 0 : stdout.trim().split('\n').length
+    const body = stdout.trim()
+    const hits = body.length === 0 ? 0 : body.split('\n').length
     return hits === 0 ? 'none' : `${hits} hits`
   }
   if (shape.kind === 'command') {

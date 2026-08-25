@@ -32,12 +32,13 @@ export function readMarketplaces(raw: unknown): Marketplace[] {
 function installed(entry: Record<string, unknown>): InstalledPlugin {
   const id = text(entry.id)
   const version = text(entry.version)
+  const projectPath = text(entry.projectPath)
   return {
     id,
     ...splitId(id),
     version: version.length > 0 && version !== 'unknown' ? version : null,
     scope: SCOPES.find((scope) => scope === entry.scope) ?? 'unknown',
-    projectPath: text(entry.projectPath).length > 0 ? text(entry.projectPath) : null,
+    projectPath: projectPath.length > 0 ? projectPath : null,
     enabled: entry.enabled !== false,
   }
 }

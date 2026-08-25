@@ -3,7 +3,17 @@ import type { AgentDef, AgentDefDraft } from '@/entities/agent-def'
 import type { TeamNote } from '@/widgets/team-sidebar'
 import { t } from '@lingui/core/macro'
 
-export function useAgentDefs() {
+type TeamSource = {
+  defs: AgentDef[]
+  drafts: Map<string, AgentDefDraft>
+  hire(draft: AgentDefDraft): void
+  edit(draft: AgentDefDraft, previousName: string): void
+  release(name: string): void
+  note: TeamNote | null
+  settleNote(): void
+}
+
+export function useAgentDefs(): TeamSource {
   const [defs, setDefs] = useState<AgentDef[]>([])
   const [note, setNote] = useState<TeamNote | null>(null)
 
@@ -16,37 +26,31 @@ export function useAgentDefs() {
 
   useEffect(reload, [])
 
-  function hire(draft: AgentDefDraft): void {
+  // Every roster change is the same errand: clear the note, do the write, then
+  // reload and say what happened — or say why it did not.
+  function errand(work: () => Promise<unknown>, done: TeamNote): void {
     setNote(null)
-    window.desk
-      .writeAgentDef(draft)
+    work()
       .then(() => {
         reload()
-        setNote({ kind: 'created', name: draft.name })
+        setNote(done)
       })
       .catch((cause: unknown) => setNote({ kind: 'trouble', text: reasonOf(cause) }))
+  }
+
+  function hire(draft: AgentDefDraft): void {
+    errand(() => window.desk.writeAgentDef(draft), { kind: 'created', name: draft.name })
   }
 
   function release(name: string): void {
-    setNote(null)
-    window.desk
-      .removeAgentDef(name)
-      .then(() => {
-        reload()
-        setNote({ kind: 'released', name })
-      })
-      .catch((cause: unknown) => setNote({ kind: 'trouble', text: reasonOf(cause) }))
+    errand(() => window.desk.removeAgentDef(name), { kind: 'released', name })
   }
 
   function edit(draft: AgentDefDraft, previousName: string): void {
-    setNote(null)
-    window.desk
-      .replaceAgentDef(draft, previousName)
-      .then(() => {
-        reload()
-        setNote({ kind: 'updated', name: draft.name })
-      })
-      .catch((cause: unknown) => setNote({ kind: 'trouble', text: reasonOf(cause) }))
+    errand(() => window.desk.replaceAgentDef(draft, previousName), {
+      kind: 'updated',
+      name: draft.name,
+    })
   }
 
   const drafts = new Map<string, AgentDefDraft>(

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import type { Transcript } from '@/entities/conversation'
-import type { Turn } from '@/entities/conversation/model/turn'
+import type { Turn } from '@/entities/conversation/model/turn/turn'
 import { stampOf } from './save-stamp'
 
 function turn(over: Partial<Turn> = {}): Turn {

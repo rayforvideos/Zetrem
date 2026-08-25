@@ -12,7 +12,7 @@ import { Alert, AlertDescription, AlertTitle } from '@/shared/ui/alert'
 import { Button } from '@/shared/ui/button'
 import { Switch } from '@/shared/ui/switch'
 import { Field, FieldContent, FieldDescription, FieldGroup, FieldLabel } from '@/shared/ui/field'
-import { WORDMARK_SIZE, Wordmark } from '@/shared/graphics/wordmark/wordmark'
+import { WORDMARK_SIZE, Wordmark } from '@/shared/graphics/Wordmark/Wordmark'
 import { AccountField } from '../AccountField/AccountField'
 import { StockList } from '../StockList/StockList'
 import { YouField } from '../YouField/YouField'
@@ -194,13 +194,13 @@ export function SetupPane({
           {blocker !== null && (
             <span className="mr-auto text-sm text-muted-foreground">{i18n._(blocker)}</span>
           )}
-          {actions.reopened && (
-            <Button variant="ghost" onClick={actions.onCancel} className="rounded-full">
+          {reopened && (
+            <Button variant="ghost" onClick={onCancel} className="rounded-full">
               {t`Cancel`}
             </Button>
           )}
           <Button onClick={actions.onStart} disabled={!canStart} className="rounded-full">
-            {actions.reopened ? t`Done` : t`Start`}
+            {reopened ? t`Done` : t`Start`}
           </Button>
         </div>
       </div>

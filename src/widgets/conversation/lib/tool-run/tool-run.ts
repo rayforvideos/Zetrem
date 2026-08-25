@@ -1,6 +1,7 @@
 import type { ToolActivity } from '@/entities/conversation'
-import type { Mark } from '@/shared/graphics/work-trace/work-trace.types'
+import type { Mark } from '@/shared/graphics/WorkTrace/work-trace/work-trace.types'
 import { tally } from '@/shared/lib/tool-line/tool-line'
+import { plural } from '@lingui/core/macro'
 
 export const RUN_TAIL = 4
 
@@ -28,16 +29,13 @@ export function marksOfTools(tools: ToolActivity[], nowMs: number): Mark[] {
 export function summarise(tools: ToolActivity[]): string {
   const counted = tally(tools.map((tool) => tool.line))
   const parts = [
-    phrase(counted.read, 'file read', 'files read'),
-    phrase(counted.wrote, 'file changed', 'files changed'),
-    phrase(counted.ran, 'command run', 'commands run'),
-    phrase(counted.searched, 'search', 'searches'),
+    counted.read > 0 ? plural(counted.read, { one: '# file read', other: '# files read' }) : null,
+    counted.wrote > 0
+      ? plural(counted.wrote, { one: '# file changed', other: '# files changed' })
+      : null,
+    counted.ran > 0 ? plural(counted.ran, { one: '# command run', other: '# commands run' }) : null,
+    counted.searched > 0 ? plural(counted.searched, { one: '# search', other: '# searches' }) : null,
   ].filter((part) => part !== null)
-  if (parts.length === 0) return `${tools.length} steps`
+  if (parts.length === 0) return plural(tools.length, { one: '# step', other: '# steps' })
   return parts.join(' · ')
-}
-
-function phrase(count: number, one: string, many: string): string | null {
-  if (count === 0) return null
-  return `${count} ${count === 1 ? one : many}`
 }

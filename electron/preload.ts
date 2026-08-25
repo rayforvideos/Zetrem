@@ -27,10 +27,11 @@ contextBridge.exposeInMainWorld('desk', {
   pickFiles: (): Promise<unknown> => ipcRenderer.invoke('files:pick'),
   // Resolving a dropped or pasted file is the one moment main can tell the path
   // came from the OS and not from the page, so the read side is told here.
-  // A synthetic File resolves to '', which stays unadmitted.
-  pathForFile: (file: File): string => {
+  // A synthetic File resolves to '', which stays unadmitted. The admit is
+  // awaited, or a read that follows straight after could beat it there.
+  pathForFile: async (file: File): Promise<string> => {
     const path = webUtils.getPathForFile(file)
-    if (path.length > 0) void ipcRenderer.invoke('files:admit', path)
+    if (path.length > 0) await ipcRenderer.invoke('files:admit', path)
     return path
   },
   readFiles: (paths: string[]): Promise<unknown> => ipcRenderer.invoke('files:read', paths),

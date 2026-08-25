@@ -1,5 +1,15 @@
 import { describe, expect, it } from 'vitest'
-import { shapeOfLine, tally } from './tool-line'
+import { shapeOfLine, tally, toolNameOf } from './tool-line'
+
+describe('toolNameOf: the word before the first space', () => {
+  it('reads the tool name off a line with a target', () => {
+    expect(toolNameOf('Read src/a.ts')).toBe('Read')
+  })
+
+  it('is the whole line when there is no target', () => {
+    expect(toolNameOf('Read')).toBe('Read')
+  })
+})
 
 describe('shapeOfLine: turning a line a child left back into a tool shape', () => {
   it('splits a file line into a folder and a name', () => {

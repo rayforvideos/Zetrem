@@ -1,8 +1,8 @@
 import { mkdir, readFile, readdir, rename, rm, stat } from 'node:fs/promises'
 import { basename, join } from 'node:path'
-import { saveFile } from '../../save-file/save-file'
-import { transcriptKey } from '../../transcript-key/transcript-key'
-import { CHAT_CAP } from '../../transcript-store'
+import { saveFile } from '../../store/save-file/save-file'
+import { transcriptKey } from '../../store/transcript-key/transcript-key'
+import { CHAT_CAP } from '../../store/chat-cap/chat-cap'
 import type { StoredProject } from '../projects.types'
 
 type Memory = { current: string | null; projects: StoredProject[] }
@@ -41,12 +41,11 @@ async function freshness(path: string): Promise<number> {
 function survivorOf(path: string, rows: StoredProject[]): StoredProject {
   const worn = rows.find((one) => one.id === path)
   if (worn !== undefined) return worn
-  const oldest = [...rows].sort((a, b) => a.createdAtMs - b.createdAtMs)[0]
   return {
     id: path,
     name: basename(path),
     path,
-    createdAtMs: oldest?.createdAtMs ?? 0,
+    createdAtMs: Math.min(...rows.map((one) => one.createdAtMs)),
     lastOpenedAtMs: Math.max(...rows.map((one) => one.lastOpenedAtMs)),
   }
 }

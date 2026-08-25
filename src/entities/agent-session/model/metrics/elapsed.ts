@@ -1,4 +1,4 @@
-import type { Metric } from '../metric'
+import type { Metric } from './metric'
 
 import { formatClock } from '@/shared/lib/units/units'
 

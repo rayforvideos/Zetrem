@@ -1,4 +1,4 @@
-import { baseName } from '@/shared/lib/base-name/base-name'
+import { baseName } from '@/entities/attachment/lib/base-name/base-name'
 import type { AttachKind, Attached, Sent } from './attachment.types'
 
 export const IMAGE_MAX_BYTES = 10 * 1024 * 1024
@@ -16,9 +16,10 @@ export function nameOf(path: string): string {
 }
 
 export function imageTypeOf(path: string): string | null {
-  const dot = nameOf(path).lastIndexOf('.')
+  const name = nameOf(path)
+  const dot = name.lastIndexOf('.')
   if (dot < 0) return null
-  return IMAGE_TYPES[nameOf(path).slice(dot + 1).toLowerCase()] ?? null
+  return IMAGE_TYPES[name.slice(dot + 1).toLowerCase()] ?? null
 }
 
 export function kindOf(path: string): AttachKind {

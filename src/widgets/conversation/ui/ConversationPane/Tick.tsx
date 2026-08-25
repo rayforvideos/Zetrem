@@ -2,10 +2,10 @@ import { useState } from 'react'
 import type { ToolActivity } from '@/entities/conversation'
 import { cn } from '@/shared/lib/cn'
 import { Button } from '@/shared/ui/button'
-import { TOOL_OUTPUT_LINES, heldLine, moreLine } from '../../lib/limits'
+import { TOOL_OUTPUT_LINES, heldLine, moreLine } from '../../lib/limits/limits'
 import { spawnResult, withoutPlumbing } from '../../lib/plumbing/plumbing'
 import { ToolDetail } from '../ToolDetail/ToolDetail'
-import { ToolLine } from '../ToolLine'
+import { ToolLine } from '../ToolLine/ToolLine'
 
 // Most output only proves the tool ran, so a quiet run folds away; a failed
 // one lays itself open, that being the part worth reading.

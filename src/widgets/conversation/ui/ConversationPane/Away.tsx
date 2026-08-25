@@ -1,4 +1,4 @@
-import { AgentSprite } from '@/entities/agent-session/ui/AgentSprite/AgentSprite'
+import { AgentSprite } from '@/entities/agent-session'
 import { UserFace } from '@/entities/user'
 import type { FaceId } from '@/entities/user'
 import { reachOf } from '@/shared/lib/reach/reach'

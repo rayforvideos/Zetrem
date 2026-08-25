@@ -1,10 +1,9 @@
 import type { AgentSession, SessionStatus } from '@/entities/agent-session'
 import { useScrollState } from '@/shared/lib/scroll-state/use-scroll-state'
 import { shapeOfLine, tally } from '@/shared/lib/tool-line/tool-line'
-import { personaOf } from '@/entities/agent-session'
-import { AgentSprite } from '@/entities/agent-session/ui/AgentSprite/AgentSprite'
+import { AgentSprite, personaOf } from '@/entities/agent-session'
 import { Button } from '@/shared/ui/button'
-import { ToolIcon } from '@/shared/graphics/tool-icon'
+import { ToolIcon } from '@/shared/graphics/ToolIcon/ToolIcon'
 import { Markdown } from '@/shared/markdown/Markdown/Markdown'
 import { leadOf } from '../../lib/lead/lead'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
@@ -73,9 +72,7 @@ export function AgentReport({ session, sessions, nowMs, onClose, onPick }: Agent
               >
                 <ChevronLeft className="size-3.5" />
               </Button>
-              <span className="tabular-nums">
-                run {at + 1} of {runs.length}
-              </span>
+              <span className="tabular-nums">{t`run ${at + 1} of ${runs.length}`}</span>
               <Button
                 variant="quiet"
                 size="bare"
@@ -89,7 +86,7 @@ export function AgentReport({ session, sessions, nowMs, onClose, onPick }: Agent
             </span>
           )}
           <Button variant="quiet" size="bare" onClick={onClose} aria-label={t`Close report`}>
-            Close
+            {t`Close`}
           </Button>
         </div>
       </div>
@@ -98,16 +95,16 @@ export function AgentReport({ session, sessions, nowMs, onClose, onPick }: Agent
 
       <dl className="flex gap-6 font-mono text-xs tabular-nums">
         {[
-          ['Read', counted.read],
-          ['Edited', counted.wrote],
-          ['Ran', counted.ran],
-          ['Searched', counted.searched],
+          { word: t`Read`, count: counted.read },
+          { word: t`Edited`, count: counted.wrote },
+          { word: t`Ran`, count: counted.ran },
+          { word: t`Searched`, count: counted.searched },
         ]
-          .filter(([, count]) => (count as number) > 0)
-          .map(([word, count]) => (
-            <span key={word as string} className="flex items-baseline gap-1.5">
-              <dt className="text-muted-foreground">{word}</dt>
-              <dd>{count}</dd>
+          .filter((one) => one.count > 0)
+          .map((one) => (
+            <span key={one.word} className="flex items-baseline gap-1.5">
+              <dt className="text-muted-foreground">{one.word}</dt>
+              <dd>{one.count}</dd>
             </span>
           ))}
       </dl>
@@ -139,7 +136,7 @@ export function AgentReport({ session, sessions, nowMs, onClose, onPick }: Agent
               <ToolIcon shape={shape} />
               <span className="truncate">{call.line}</span>
               {call.failed ? (
-                <span className="ml-auto flex-none text-removed">failed</span>
+                <span className="ml-auto flex-none text-removed">{t`failed`}</span>
               ) : (
                 call.note.length > 0 && <span className="ml-auto flex-none truncate">{call.note}</span>
               )}

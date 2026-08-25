@@ -1,3 +1,4 @@
+import { grouped } from '@/shared/lib/grouped/grouped'
 import type { Connector } from '../read-connectors/read-connectors.types'
 import { originOf } from '../origin/origin'
 import type { ConnectorGroup, ConnectorOrigin } from './groups.types'
@@ -19,15 +20,17 @@ const ORDER: { key: ConnectorOrigin; title: MessageDescriptor; note: MessageDesc
 ]
 
 export function connectorGroupsOf(connectors: Connector[]): ConnectorGroup[] {
-  const groups = ORDER.map(({ key, title, note }) => ({
-    key,
-    title,
-    note,
-    connectors: connectors.filter((connector) => originOf(connector.name) === key),
-  })).filter((group) => group.connectors.length > 0)
-
-  return groups.map((group) => ({
-    ...group,
-    titled: groups.length > 1 || group.key !== 'yours',
+  const said = new Map(ORDER.map((one) => [one.key, one]))
+  return grouped(
+    ORDER.map((one) => one.key),
+    connectors,
+    (connector) => originOf(connector.name),
+    'yours',
+  ).map((group) => ({
+    key: group.key,
+    title: said.get(group.key)!.title,
+    note: said.get(group.key)!.note,
+    titled: group.titled,
+    connectors: group.members,
   }))
 }

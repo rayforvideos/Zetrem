@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useCallback, useState } from 'react'
 import type { Failure } from './failure.types'
 
 const REMOTE_PREFIX = /^Error invoking remote method '[^']*':\s*/
@@ -15,13 +15,16 @@ export function useFailure(): {
 } {
   const [failure, setFailure] = useState<Failure | null>(null)
 
-  function clear(): void {
-    setFailure(null)
-  }
+  // Stable on purpose: these end up in effect dependency lists, and a fresh
+  // pair every render would make those effects run every render.
+  const clear = useCallback((): void => setFailure(null), [])
 
-  function report(what: string) {
-    return (cause: unknown): void => setFailure({ what, why: reasonOf(cause) })
-  }
+  const report = useCallback(
+    (what: string) =>
+      (cause: unknown): void =>
+        setFailure({ what, why: reasonOf(cause) }),
+    [],
+  )
 
   return { failure, clear, report }
 }

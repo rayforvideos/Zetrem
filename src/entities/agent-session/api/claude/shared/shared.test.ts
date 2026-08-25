@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { toolLine, withoutCd } from './shared'
+import { resultText, toolLine, withoutCd } from './shared'
 
 describe('a tool line spends its width on what happened', () => {
   it('drops the walk to the project that precedes the real command', () => {
@@ -25,5 +25,11 @@ describe('a tool line spends its width on what happened', () => {
     expect(toolLine('Bash', { command: 'cd /Users/me/work/app; git log --oneline -3' })).toBe(
       'Bash git log --oneline -3',
     )
+  })
+})
+
+describe('resultText', () => {
+  it('skips a null block rather than throwing on it', () => {
+    expect(resultText([null, { type: 'text', text: 'said' }])).toBe('said')
   })
 })

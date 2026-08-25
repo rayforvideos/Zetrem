@@ -1,8 +1,7 @@
 import { useEffect, useRef, useState, useSyncExternalStore } from 'react'
 import { statusStore } from '@/entities/agent-session'
 import { chatId, packTranscript, renamed } from '@/entities/conversation'
-import type { ChatSpend } from '@/entities/conversation'
-import type { ChatSummary } from '@/entities/conversation'
+import type { ChatSpend, ChatSummary, Transcript } from '@/entities/conversation'
 import { conversation } from './conversation/conversation'
 import { troubleLine } from '@/shared/lib/ask/ask'
 import { maySave, threadToSave } from './may-save/may-save'
@@ -43,10 +42,17 @@ export function useTranscript(project: string | null): Chats {
   const filed = useRef('')
   const toldSaveTrouble = useRef(false)
   const loadedFor = useRef<string | null>(null)
+  // Two quick switches leave two reads in flight, and the slower one lands
+  // last. Only the newest read may speak, or it would restore turns from a
+  // chat nobody is looking at and the autosave would write them back.
+  const openTicket = useRef(0)
 
   const turns = conv.turns
-  const liveSessionId = status.session?.id ?? null
-  const probed = status.probed
+  const thread = threadToSave({
+    liveSessionId: status.session?.id ?? null,
+    probed: status.probed,
+    resumeId,
+  })
 
   async function refresh(): Promise<ChatSummary[]> {
     if (project === null) return []
@@ -66,6 +72,7 @@ export function useTranscript(project: string | null): Chats {
     }
     let alive = true
     setReady(false)
+    openTicket.current += 1
     loadedFor.current = null
     lastSaved.current = ''
     conversation.reset()
@@ -116,7 +123,7 @@ export function useTranscript(project: string | null): Chats {
       turns,
       {
         id: openId,
-        sessionId: threadToSave({ liveSessionId, probed, resumeId }),
+        sessionId: thread,
         savedAtMs: Date.now(),
         title: titled.current ?? undefined,
         folder: filed.current,
@@ -150,22 +157,29 @@ export function useTranscript(project: string | null): Chats {
         toldSaveTrouble.current = true
         conversation.system(troubleLine(t`This chat is not being saved`, cause))
       })
-  }, [ready, project, openId, turns, conv.status, liveSessionId, probed, resumeId])
+  }, [ready, project, openId, turns, conv.status, thread])
 
-  function open(id: string): void {
-    if (project === null || id === openId) return
+  // Leaving one chat for another drops everything held about the old one, or
+  // the next autosave would write its title, folder and spend onto the new one.
+  function letGo(): number {
     lastSaved.current = ''
     opened.current = null
     titled.current = null
     filed.current = ''
     statusStore.reset()
     conversation.reset()
+    return ++openTicket.current
+  }
+
+  function open(id: string): void {
+    if (project === null || id === openId) return
+    const ticket = letGo()
     setOpenId(id)
     setResumeId(null)
     void window.desk
       .readTranscript(project, id)
       .then((saved) => {
-        if (saved === null) return
+        if (saved === null || openTicket.current !== ticket) return
         setResumeId(saved.sessionId)
         titled.current = saved.title.length > 0 ? saved.title : null
         filed.current = saved.folder
@@ -174,17 +188,13 @@ export function useTranscript(project: string | null): Chats {
         conversation.restore(saved.turns)
       })
       .catch((cause: unknown) => {
+        if (openTicket.current !== ticket) return
         conversation.system(troubleLine(t`Could not open that chat`, cause))
       })
   }
 
   function start(): void {
-    lastSaved.current = ''
-    opened.current = null
-    titled.current = null
-    filed.current = ''
-    statusStore.reset()
-    conversation.reset()
+    letGo()
     setOpenId(freshId())
     setResumeId(null)
   }
@@ -200,37 +210,35 @@ export function useTranscript(project: string | null): Chats {
     if (id === openId) start()
   }
 
+  // Renaming and filing are the same errand on a chat that may not be the open
+  // one: read it back, change the one field, write it, then relist.
+  function amend(id: string, patch: Partial<Transcript>, trouble: string): void {
+    if (project === null) return
+    void window.desk
+      .readTranscript(project, id)
+      .then((saved) => {
+        if (saved === null) return
+        return window.desk.writeTranscript(project, { ...saved, ...patch })
+      })
+      .then(() => refresh())
+      .catch((cause: unknown) => {
+        conversation.system(troubleLine(trouble, cause))
+      })
+  }
+
   function rename(id: string, wanted: string): void {
     if (project === null) return
     const next = renamed(wanted)
     if (next === null) return
     if (id === openId) titled.current = next
-    void window.desk
-      .readTranscript(project, id)
-      .then((saved) => {
-        if (saved === null) return
-        return window.desk.writeTranscript(project, { ...saved, title: next })
-      })
-      .then(() => refresh())
-      .catch((cause: unknown) => {
-        conversation.system(troubleLine(t`Could not rename that chat`, cause))
-      })
+    amend(id, { title: next }, t`Could not rename that chat`)
   }
 
   function file(id: string, folder: string): void {
     if (project === null) return
     const wanted = folder.trim()
     if (id === openId) filed.current = wanted
-    void window.desk
-      .readTranscript(project, id)
-      .then((saved) => {
-        if (saved === null) return
-        return window.desk.writeTranscript(project, { ...saved, folder: wanted })
-      })
-      .then(() => refresh())
-      .catch((cause: unknown) => {
-        conversation.system(troubleLine(t`Could not file that chat`, cause))
-      })
+    amend(id, { folder: wanted }, t`Could not file that chat`)
   }
 
   // Renaming a folder, or emptying it, is the same write on every chat that
@@ -255,7 +263,7 @@ export function useTranscript(project: string | null): Chats {
   return {
     chats,
     openId,
-    resumeId: threadToSave({ liveSessionId, probed, resumeId }),
+    resumeId: thread,
     ready,
     open,
     start,

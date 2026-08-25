@@ -1,27 +1,25 @@
 import { resolve } from 'node:path'
 import { BrowserWindow, app, dialog, session, shell } from 'electron'
 import { CHROME_TOP, MIN_WINDOW, TRAFFIC_LIGHT } from '@/shared/config/theme'
-import { READABLE, shortPath } from '@/entities/agent-def'
-import { killAllAgents, registerAgentHost } from './agent-host/agent-host'
-import { chromeNow, followScheme, wearTheme } from './app-theme/app-theme'
-import { registerAttachments } from './attachments/attachments'
-import { registerAgentDefs } from './agent-defs'
-import { registerAuth } from './auth'
-import { registerCliInstall } from './cli-install/cli-install'
-import { registerCliVersion } from './cli-version/cli-version'
-import { registerNudge } from './nudge'
-import { registerPlugins } from './plugins'
-import { loadSettings, registerSettingsStore } from './settings-store'
-import { registerConnectors } from './connectors'
-import { killTrackedChildren } from './run-settled/run-settled'
-import { killAllProbes, registerSessionProbe } from './session-probe'
-import { registerTranscriptStore } from './transcript-store'
-import { registerUpdater } from './updater/updater'
-import { recallProject } from './project-memory/project-memory'
-import { createProject, forgetProject, listProjects, openProject, repathProject, restoreProject } from './projects/projects'
+import { killAllAgents, registerAgentHost } from './host/agent-host/agent-host'
+import { chromeNow, followScheme, wearTheme } from './shell/app-theme/app-theme'
+import { registerAttachments } from './shell/attachments/attachments'
+import { registerAgentDefs } from './agents/agent-defs/agent-defs'
+import { registerAuth } from './cli/auth/auth'
+import { registerCliInstall } from './cli/cli-install/cli-install'
+import { registerCliVersion } from './cli/cli-version/cli-version'
+import { registerNudge } from './host/nudge/nudge'
+import { registerPlugins } from './catalog/plugins/plugins'
+import { loadSettings, registerSettingsStore } from './store/settings-store/settings-store'
+import { registerConnectors } from './catalog/connectors/connectors'
+import { killTrackedChildren } from './spawn/run-settled/run-settled'
+import { killAllProbes, registerSessionProbe } from './host/session-probe/session-probe'
+import { registerTranscriptStore } from './store/transcript-store/transcript-store'
+import { registerUpdater } from './shell/updater/updater'
+import { registerProjects } from './projects/projects'
 import { collapseCategories } from './projects/collapse/collapse'
 import { handle } from './ipc/ipc'
-import { loadTroubleLine, troublePage } from './window-trouble/window-trouble'
+import { loadTroubleLine, troublePage } from './shell/window-trouble/window-trouble'
 
 const isMac = process.platform === 'darwin'
 
@@ -33,7 +31,11 @@ function dropChildren(): void {
   killTrackedChildren()
 }
 
-const inspectPort = process.env.ZT_INSPECT ?? (process.env.ELECTRON_RENDERER_URL ? '0' : null)
+// A packaged build has no developer attached to read the port, so it never
+// opens one no matter what the environment asks for.
+const inspectPort = app.isPackaged
+  ? null
+  : (process.env.ZT_INSPECT ?? (process.env.ELECTRON_RENDERER_URL ? '0' : null))
 if (inspectPort !== null) app.commandLine.appendSwitch('remote-debugging-port', inspectPort)
 
 function wearTheName(): void {
@@ -43,6 +45,10 @@ function wearTheName(): void {
     version: '',
     copyright: 'Runs on Claude Code',
   })
+}
+
+function openIfExternal(url: string): void {
+  if (url.startsWith('https://')) void shell.openExternal(url)
 }
 
 function createWindow(): void {
@@ -90,6 +96,10 @@ function createWindow(): void {
     if (!details.isMainFrame) return
     // In-page navigation (hash change, pushState) is not a real page load, so don't kill agents for it.
     if (details.isSameDocument) return
+    // A clicked link lands here before will-navigate cancels it. The page is
+    // staying, so its agents keep running. Only a load that really replaces
+    // the page drops them: a reload, or the app's own data: trouble page.
+    if (details.url !== win.webContents.getURL() && !details.url.startsWith('data:')) return
     dropChildren()
   })
 
@@ -101,11 +111,16 @@ function createWindow(): void {
   })
 
   win.webContents.on('will-navigate', (event, url) => {
-    if (url !== win.webContents.getURL()) event.preventDefault()
+    if (url === win.webContents.getURL()) return
+    event.preventDefault()
+    // A plain https link inside the page cannot navigate the window, but it is
+    // still where the person meant to go, so it opens the same way a
+    // target=_blank link would.
+    openIfExternal(url)
   })
 
   win.webContents.setWindowOpenHandler(({ url }) => {
-    if (url.startsWith('https://')) void shell.openExternal(url)
+    openIfExternal(url)
     return { action: 'deny' }
   })
 
@@ -126,36 +141,6 @@ function createWindow(): void {
     : win.loadFile(resolve(import.meta.dirname, '../renderer/index.html'))
   void loading.catch(() => undefined)
 }
-
-handle('project:pick', async () => {
-  const result = await dialog.showOpenDialog({ properties: ['openDirectory'] })
-  return result.canceled ? null : (result.filePaths[0] ?? null)
-})
-
-handle('project:restore', () => restoreProject())
-
-handle('project:list', () => listProjects())
-
-handle('project:create', (_event, path: string) => createProject(path))
-
-// Only ids this store handed out act; the renderer never points main at an
-// arbitrary path.
-handle('project:open', (_event, id: string) => openProject(id))
-
-handle('project:forget', (_event, id: string) => forgetProject(id))
-
-handle('project:repath', (_event, id: string, path: string) => repathProject(id, path))
-
-handle('agents:pickKnowledge', async (): Promise<string[]> => {
-  const project = await recallProject()
-  const result = await dialog.showOpenDialog({
-    properties: ['openFile', 'multiSelections'],
-    defaultPath: project ?? undefined,
-    filters: [{ name: 'Notes', extensions: [...READABLE] }],
-  })
-  if (result.canceled) return []
-  return result.filePaths.map((path) => shortPath(path, project))
-})
 
 // The window holds text somebody else's agent wrote, including markdown that
 // can name any URL it likes. Nothing here loads from the network on purpose:
@@ -214,6 +199,7 @@ if (!primary) {
   registerSessionProbe()
   registerTranscriptStore()
   registerPlugins()
+  registerProjects()
   registerNudge()
   registerUpdater()
   handle('app:version', () => app.getVersion())

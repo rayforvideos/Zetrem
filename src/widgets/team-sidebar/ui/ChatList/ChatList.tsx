@@ -25,18 +25,35 @@ import {
   DropdownMenuTrigger,
 } from '@/shared/ui/dropdown-menu'
 import { groupChats } from '../../lib/chat-groups/chat-groups'
-import { fileChats, renamedFolder } from '../../lib/chat-filing/chat-filing'
+import { chatsInFolder, fileChats, renamedFolder } from '../../lib/chat-filing/chat-filing'
 import { ROOMY, matchChats } from '../../lib/chat-search/chat-search'
-import { canLand, dropOnChat } from '../../lib/chat-drop/chat-drop'
-
-// Its own type, so a file dragged in from the desktop is never mistaken for a
-// chat being carried.
-const CARRIED = 'application/x-zetrem-chat'
+import { canLand, canLandOnFolder, dropOnChat } from '../../lib/chat-drop/chat-drop'
 import { whenLabel } from '../../lib/when/when'
 import { i18n } from '@lingui/core'
 import { t } from '@lingui/core/macro'
 import { named } from '../../lib/named/named'
 
+// Its own type, so a file dragged in from the desktop is never mistaken for a
+// chat being carried.
+const CARRIED = 'application/x-zetrem-chat'
+
+// Everything a row needs and nothing it decides for itself. Rows are drawn from
+// three places — loose, inside a folder, and inside a folder's day bands — and
+// they all hand over the same set.
+type RowKit = {
+  openId: string | null
+  nowMs: number
+  names: string[]
+  onOpen(id: string): void
+  onRemove(id: string): void
+  onRename(id: string, wanted: string): void
+  onFile(id: string, folder: string): void
+  onCarry(draggedId: string, target: ChatSummary): void
+  carried: ChatSummary | null
+  onPickUp(chat: ChatSummary | null): void
+  pairing: [string, string] | null
+  onPaired(name: string | null): void
+}
 
 export function ChatList({ chats, openId, nowMs, onOpen, onStart, onRemove, onRename, onFile, onFileMany }: ChatListProps) {
   const [query, setQuery] = useState('')
@@ -78,6 +95,22 @@ export function ChatList({ chats, openId, nowMs, onOpen, onStart, onRemove, onRe
     }
     setPairing([dragged.id, target.id])
   }
+
+  const kit: RowKit = {
+    openId,
+    nowMs,
+    names,
+    onOpen,
+    onRemove,
+    onRename,
+    onFile,
+    onCarry: carry,
+    carried,
+    onPickUp: setCarried,
+    pairing,
+    onPaired: paired,
+  }
+
   return (
     <div className="flex flex-col">
       <Button
@@ -111,54 +144,19 @@ export function ChatList({ chats, openId, nowMs, onOpen, onStart, onRemove, onRe
         <FolderSection
           key={folder.name}
           folder={folder}
-          openId={openId}
-          nowMs={nowMs}
-          names={names}
-          onOpen={onOpen}
-          onRemove={onRemove}
-          onRename={onRename}
-          onFile={onFile}
-          pairing={pairing}
-          onPaired={paired}
+          kit={kit}
           onRenameFolder={(from, to) => onFileMany(renamedFolder(chats, from, to), to)}
           onEmptyFolder={(name) =>
             onFileMany(
-              chats.filter((one) => one.folder.trim().toLocaleLowerCase() === name.toLocaleLowerCase()).map((one) => one.id),
+              chatsInFolder(chats, name).map((one) => one.id),
               '',
             )
           }
-          onCarry={carry}
-          carried={carried}
-          onPickUp={setCarried}
           looking={looking}
         />
       ))}
 
-      {groupChats(loose, nowMs).map((group) => (
-        <div key={group.label.message} className="flex flex-col">
-          <div className="mt-3 mb-0.5 px-2 text-xs tracking-wide text-muted-foreground">
-            {i18n._(group.label)}
-          </div>
-          {group.chats.map((chat) => (
-            <Row
-              key={chat.id}
-              chat={chat}
-              open={chat.id === openId}
-              nowMs={nowMs}
-              names={names}
-              onOpen={onOpen}
-              onRemove={onRemove}
-              onRename={onRename}
-              onFile={onFile}
-              onCarry={carry}
-              carried={carried}
-              onPickUp={setCarried}
-              pairing={pairing}
-              onPaired={paired}
-            />
-          ))}
-        </div>
-      ))}
+      <Grouped chats={loose} kit={kit} headClass="mt-3" />
 
       {nothing && (
         <div className="mt-3 px-2 text-xs text-muted-foreground">{t`No chat by that name`}</div>
@@ -167,35 +165,28 @@ export function ChatList({ chats, openId, nowMs, onOpen, onStart, onRemove, onRe
   )
 }
 
-function Row({
-  chat,
-  open,
-  nowMs,
-  names,
-  onOpen,
-  onRemove,
-  onRename,
-  onFile,
-  onCarry,
-  carried,
-  onPickUp,
-  pairing,
-  onPaired,
-}: {
-  chat: ChatSummary
-  open: boolean
-  nowMs: number
-  names: string[]
-  onOpen(id: string): void
-  onRemove(id: string): void
-  onRename(id: string, wanted: string): void
-  onFile(id: string, folder: string): void
-  onCarry(draggedId: string, target: ChatSummary): void
-  carried: ChatSummary | null
-  onPickUp(chat: ChatSummary | null): void
-  pairing: [string, string] | null
-  onPaired(name: string | null): void
-}) {
+// A run of chats under their day bands. The same run appears loose at the top
+// of the list and inside a roomy folder, a margin apart.
+function Grouped({ chats, kit, headClass }: { chats: ChatSummary[]; kit: RowKit; headClass: string }) {
+  return (
+    <>
+      {groupChats(chats, kit.nowMs).map((group) => (
+        <div key={group.label.message} className="flex flex-col">
+          <div className={cn(headClass, 'mb-0.5 px-2 text-xs tracking-wide text-muted-foreground')}>
+            {i18n._(group.label)}
+          </div>
+          {group.chats.map((chat) => (
+            <Row key={chat.id} chat={chat} kit={kit} />
+          ))}
+        </div>
+      ))}
+    </>
+  )
+}
+
+function Row({ chat, kit }: { chat: ChatSummary; kit: RowKit }) {
+  const { names, nowMs, onOpen, onRemove, onRename, onFile, onCarry, carried, onPickUp, pairing, onPaired } = kit
+  const open = chat.id === kit.openId
   const [editing, setEditing] = useState(false)
   const [naming, setNaming] = useState(false)
   const [asking, setAsking] = useState(false)
@@ -394,43 +385,22 @@ function Row({
 // never takes the rest away.
 function FolderSection({
   folder,
-  openId,
-  nowMs,
-  names,
   looking,
-  onOpen,
-  onRemove,
-  onRename,
-  onFile,
+  kit,
   onRenameFolder,
   onEmptyFolder,
-  onCarry,
-  carried,
-  onPickUp,
-  pairing,
-  onPaired,
 }: {
   folder: { name: string; chats: ChatSummary[] }
-  openId: string | null
-  nowMs: number
-  names: string[]
   looking: boolean
-  onOpen(id: string): void
-  onRemove(id: string): void
-  onRename(id: string, wanted: string): void
-  onFile(id: string, folder: string): void
+  kit: RowKit
   onRenameFolder(from: string, to: string): void
   onEmptyFolder(name: string): void
-  onCarry(draggedId: string, target: ChatSummary): void
-  carried: ChatSummary | null
-  onPickUp(chat: ChatSummary | null): void
-  pairing: [string, string] | null
-  onPaired(name: string | null): void
 }) {
+  const { carried, onFile } = kit
   const [under, setUnder] = useState(false)
   const [editing, setEditing] = useState(false)
   const [shut, setShut] = useState(false)
-  const holdsOpen = folder.chats.some((chat) => chat.id === openId)
+  const holdsOpen = folder.chats.some((chat) => chat.id === kit.openId)
   // The chat you are in is never hidden: a folder holding it stays open, and
   // pressing it shut only lasts while it holds nothing of yours. A shut folder
   // cannot show a search match either, so looking opens them all.
@@ -465,9 +435,7 @@ function FolderSection({
         under && 'ring-1 ring-ring bg-card/60',
       )}
       onDragOver={(event) => {
-        // Nothing to promise if the carried chat already lives here.
-        if (carried === null) return
-        if (carried.folder.trim().toLocaleLowerCase() === folder.name.toLocaleLowerCase()) return
+        if (!canLandOnFolder(carried, folder.name)) return
         event.preventDefault()
         setUnder(true)
       }}
@@ -534,50 +502,11 @@ function FolderSection({
       </div>
       {open && (
         <div className="zt-rise ml-3 flex flex-col gap-0.5 border-l border-border pl-1.5">
-          {roomy
-            ? groupChats(folder.chats, nowMs).map((group) => (
-                <div key={group.label.message} className="flex flex-col">
-                  <div className="mt-2 mb-0.5 px-2 text-xs tracking-wide text-muted-foreground">
-                    {i18n._(group.label)}
-                  </div>
-                  {group.chats.map((chat) => (
-                    <Row
-                      key={chat.id}
-                      chat={chat}
-                      open={chat.id === openId}
-                      nowMs={nowMs}
-                      names={names}
-                      onOpen={onOpen}
-                      onRemove={onRemove}
-                      onRename={onRename}
-                      onFile={onFile}
-                      onCarry={onCarry}
-                      carried={carried}
-                      onPickUp={onPickUp}
-                      pairing={pairing}
-                      onPaired={onPaired}
-                    />
-                  ))}
-                </div>
-              ))
-            : folder.chats.map((chat) => (
-                <Row
-                  key={chat.id}
-                  chat={chat}
-                  open={chat.id === openId}
-                  nowMs={nowMs}
-                  names={names}
-                  onOpen={onOpen}
-                  onRemove={onRemove}
-                  onRename={onRename}
-                  onFile={onFile}
-                  onCarry={onCarry}
-                  carried={carried}
-                  onPickUp={onPickUp}
-                  pairing={pairing}
-                  onPaired={onPaired}
-                />
-              ))}
+          {roomy ? (
+            <Grouped chats={folder.chats} kit={kit} headClass="mt-2" />
+          ) : (
+            folder.chats.map((chat) => <Row key={chat.id} chat={chat} kit={kit} />)
+          )}
         </div>
       )}
     </div>

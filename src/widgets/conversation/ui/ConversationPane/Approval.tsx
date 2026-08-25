@@ -3,10 +3,10 @@ import type { PermissionAsk } from '@/entities/agent-session'
 import { toolShape } from '@/shared/lib/tool-shape/tool-shape'
 import { modifierKey } from '@/shared/lib/platform/platform'
 import { layerOver } from '@/shared/lib/modal/modal'
-import { armed } from '@/shared/lib/arming/arming'
+import { armed } from '@/widgets/conversation/lib/arming/arming'
 import { Button } from '@/shared/ui/button'
 import { Kbd, KbdGroup } from '@/shared/ui/kbd'
-import { ToolIcon } from '@/shared/graphics/tool-icon'
+import { ToolIcon } from '@/shared/graphics/ToolIcon/ToolIcon'
 import { t } from '@lingui/core/macro'
 
 export function Approval({

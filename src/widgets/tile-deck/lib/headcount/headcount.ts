@@ -1,4 +1,4 @@
-import { plural, t } from '@lingui/core/macro'
+import { t } from '@lingui/core/macro'
 import type { AgentSession } from '@/entities/agent-session'
 
 function tally(sessions: AgentSession[], status: AgentSession['status']): number {
@@ -14,7 +14,7 @@ export function headcount(sessions: AgentSession[]): string {
   if (waiting > 0) parts.push(t`${waiting} waiting on you`)
   if (reported > 0) parts.push(t`${reported} reported back`)
   const out = sessions.length
-  if (parts.length === 0) return t`Your crew · ${plural(out, { one: '# out', other: '# out' })}`
+  if (parts.length === 0) return t`Your crew · ${out} out`
   const what = parts.join(' · ')
   return t`Your crew · ${what}`
 }

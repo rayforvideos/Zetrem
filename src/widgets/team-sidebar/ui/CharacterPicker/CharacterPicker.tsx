@@ -1,6 +1,5 @@
-import { CHARACTERS } from '@/entities/agent-session'
+import { CHARACTERS, spriteSrc } from '@/entities/agent-session'
 import type { CharacterId } from '@/entities/agent-session'
-import { spriteSrc } from '@/entities/agent-session/ui/AgentSprite/AgentSprite'
 import { cn } from '@/shared/lib/cn'
 import { RadioGroup, RadioGroupItem } from '@/shared/ui/radio-group'
 import { t } from '@lingui/core/macro'
@@ -36,7 +35,7 @@ export function CharacterPicker({
             width={28}
             height={28}
             draggable={false}
-            className={cn('size-7 object-contain', character === value ? '' : 'opacity-70')}
+            className={cn('size-7 object-contain', character !== value && 'opacity-70')}
           />
         </label>
       ))}

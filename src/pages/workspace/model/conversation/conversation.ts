@@ -36,6 +36,27 @@ function joined(existing: string, added: string): string {
   return existing.length === 0 ? added : `${existing}\n\n${added}`
 }
 
+function fresh(role: Turn['role'], over: Partial<Turn> = {}): Turn {
+  return {
+    id: freshTurnId(),
+    role,
+    text: '',
+    tools: [],
+    draft: '',
+    thinking: '',
+    startedAtMs: Date.now(),
+    ...over,
+  }
+}
+
+function added(turn: Turn): void {
+  emit({ ...state, turns: [...state.turns, turn] })
+}
+
+function replacedLast(turn: Turn): void {
+  emit({ ...state, turns: [...state.turns.slice(0, -1), turn] })
+}
+
 // A turn end can arrive after system turns (metrics, notices) already landed
 // on top of the drafting turn, so this looks past them for the draft to settle.
 function draftHolderIndex(turns: Turn[]): number {
@@ -58,27 +79,16 @@ export const conversation = {
   say(role: Turn['role'], text: string, to?: string, files?: Sent[]): void {
     const target = to === undefined && (files ?? []).length === 0 ? appendable(role) : null
     if (target) {
-      const merged = { ...target, draft: '', text: joined(target.text, text) }
-      emit({ ...state, turns: [...state.turns.slice(0, -1), merged] })
+      replacedLast({ ...target, draft: '', text: joined(target.text, text) })
       return
     }
-    emit({
-      ...state,
-      turns: [
-        ...state.turns,
-        {
-          id: freshTurnId(),
-          role,
-          text,
-          tools: [],
-          draft: '',
-          thinking: '',
-          startedAtMs: Date.now(),
-          ...(to === undefined ? {} : { to }),
-          ...((files ?? []).length === 0 ? {} : { files }),
-        },
-      ],
-    })
+    added(
+      fresh(role, {
+        text,
+        ...(to === undefined ? {} : { to }),
+        ...((files ?? []).length === 0 ? {} : { files }),
+      }),
+    )
   },
   tool(line: string, toolUseId: string | null, input?: unknown): void {
     const last = state.turns.at(-1)
@@ -91,17 +101,10 @@ export const conversation = {
       endedAtMs: null,
     }
     if (!last || last.role !== 'assistant') {
-      emit({
-        ...state,
-        turns: [
-          ...state.turns,
-          { id: freshTurnId(), role: 'assistant', text: '', tools: [activity], draft: '', thinking: '', startedAtMs: Date.now() },
-        ],
-      })
+      added(fresh('assistant', { tools: [activity] }))
       return
     }
-    const merged = { ...last, tools: [...last.tools, activity] }
-    emit({ ...state, turns: [...state.turns.slice(0, -1), merged] })
+    replacedLast({ ...last, tools: [...last.tools, activity] })
   },
   toolResult(toolUseId: string, result: ToolResult): void {
     const index = state.turns.findIndex((turn) =>
@@ -124,41 +127,21 @@ export const conversation = {
   think(text: string): void {
     const last = state.turns.at(-1)
     if (!last || last.role !== 'assistant' || last.tools.length > 0) {
-      emit({
-        ...state,
-        turns: [
-          ...state.turns,
-          { id: freshTurnId(), role: 'assistant', text: '', tools: [], draft: '', thinking: text, startedAtMs: Date.now() },
-        ],
-      })
+      added(fresh('assistant', { thinking: text }))
       return
     }
-    const merged = { ...last, thinking: last.thinking ? `${last.thinking}\n\n${text}` : text }
-    emit({ ...state, turns: [...state.turns.slice(0, -1), merged] })
+    replacedLast({ ...last, thinking: last.thinking ? `${last.thinking}\n\n${text}` : text })
   },
   system(text: string): void {
-    emit({
-      ...state,
-      turns: [
-        ...state.turns,
-        { id: freshTurnId(), role: 'system', text, tools: [], draft: '', thinking: '', startedAtMs: Date.now() },
-      ],
-    })
+    added(fresh('system', { text }))
   },
   delta(text: string): void {
     const last = state.turns.at(-1)
     if (!last || last.role !== 'assistant' || last.tools.length > 0) {
-      emit({
-        ...state,
-        turns: [
-          ...state.turns,
-          { id: freshTurnId(), role: 'assistant', text: '', tools: [], draft: text, thinking: '', startedAtMs: Date.now() },
-        ],
-      })
+      added(fresh('assistant', { draft: text }))
       return
     }
-    const merged = { ...last, draft: last.draft + text }
-    emit({ ...state, turns: [...state.turns.slice(0, -1), merged] })
+    replacedLast({ ...last, draft: last.draft + text })
   },
   settleDraft(): void {
     const index = draftHolderIndex(state.turns)
@@ -194,9 +177,9 @@ export const conversation = {
     emit({ ...state, chores: [] })
   },
   restore(turns: Turn[]): void {
-    emit({ turns, status: 'done', permission: null, chores: [], trouble: false })
+    emit({ ...EMPTY, turns })
   },
   reset(): void {
-    emit({ turns: [], status: 'done', permission: null, chores: [], trouble: false })
+    emit({ ...EMPTY })
   },
 }

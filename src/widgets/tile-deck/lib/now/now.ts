@@ -4,11 +4,7 @@ import { shapeOfLine } from '@/shared/lib/tool-line/tool-line'
 import type { Scene } from './now.types'
 
 export function currentCall(calls: Call[]): Call | null {
-  for (let at = calls.length - 1; at >= 0; at -= 1) {
-    const call = calls[at]!
-    if (call.endedAtMs === null) return call
-  }
-  return calls.at(-1) ?? null
+  return calls.findLast((call) => call.endedAtMs === null) ?? calls.at(-1) ?? null
 }
 
 const BY_NAME: Record<string, ToolShape> = {

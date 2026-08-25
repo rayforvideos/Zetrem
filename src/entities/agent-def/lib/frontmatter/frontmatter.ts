@@ -17,6 +17,7 @@ export function parseAgentDef(
   const name = fields.get('name')
   if (typeof name !== 'string' || name.length === 0) return null
 
+  const description = fields.get('description')
   const model = fields.get('model')
   const character = fields.get('character')
   const tools = fields.get('tools') ?? fields.get('allowed-tools')
@@ -24,7 +25,7 @@ export function parseAgentDef(
 
   return {
     name,
-    description: typeof fields.get('description') === 'string' ? (fields.get('description') as string) : '',
+    description: typeof description === 'string' ? description : '',
     model: typeof model === 'string' && model.length > 0 ? model : null,
     character: typeof character === 'string' && character.length > 0 ? character : null,
     tools: Array.isArray(tools) ? tools : typeof tools === 'string' ? splitList(tools) : [],
@@ -128,7 +129,11 @@ function unquote(value: string): string {
   const quoted =
     (trimmed.startsWith('"') && trimmed.endsWith('"')) ||
     (trimmed.startsWith("'") && trimmed.endsWith("'"))
-  return quoted ? trimmed.slice(1, -1) : trimmed
+  if (!quoted) return trimmed
+  const body = trimmed.slice(1, -1)
+  // quote() escapes the quote it wrapped with, so a description carrying one
+  // comes back whole rather than a backslash short.
+  return trimmed.startsWith('"') ? body.replace(/\\"/g, '"') : body
 }
 
 function quote(value: string): string {

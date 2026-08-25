@@ -944,3 +944,43 @@ describe('the tool that summons a teammate, whatever the CLI calls it', () => {
     expect(parseClaudeLine(summon('AgentOutput')).some((e) => e.type === 'childOpen')).toBe(false)
   })
 })
+
+describe('a content array with a hole in it', () => {
+  it('reads the blocks around a null instead of throwing the line away', () => {
+    const events = parseClaudeLine(
+      line({
+        type: 'assistant',
+        message: { content: [null, { type: 'text', text: 'still here' }] },
+      }),
+    )
+    expect(events).toContainEqual({ type: 'headline', text: 'still here' })
+  })
+
+  it('does the same for what a teammate says', () => {
+    const events = parseClaudeLine(
+      line({
+        type: 'assistant',
+        parent_tool_use_id: 'toolu_p1',
+        message: { content: [null, { type: 'text', text: 'still here' }] },
+      }),
+    )
+    expect(events).toContainEqual({
+      type: 'childSay',
+      toolUseId: 'toolu_p1',
+      role: 'assistant',
+      text: 'still here',
+    })
+  })
+
+  it('does the same for a tool result', () => {
+    const events = parseClaudeLine(
+      line({
+        type: 'user',
+        message: {
+          content: [null, { type: 'tool_result', tool_use_id: 'toolu_r1', content: 'done' }],
+        },
+      }),
+    )
+    expect(events.some((event) => event.type === 'toolResult')).toBe(true)
+  })
+})

@@ -21,6 +21,14 @@ function readAsBase64(blob: Blob): Promise<string> {
   })
 }
 
+// Resolving a dropped file also tells main the path came from the OS, so every
+// one of them has to be admitted before anything asks to read it.
+function admitted(dropped: File[]): Promise<{ file: File; path: string }[]> {
+  return Promise.all(
+    dropped.map(async (file) => ({ file, path: await window.desk.pathForFile(file) })),
+  )
+}
+
 export function useAttachments(): Attachments {
   const [files, setFiles] = useState<Attached[]>([])
 
@@ -56,32 +64,35 @@ export function useAttachments(): Attachments {
   }
 
   function take(dropped: File[]): void {
-    const paths: string[] = []
-    const pasted: Promise<Attached>[] = []
-    for (const one of dropped) {
-      const path = window.desk.pathForFile(one)
-      if (path.length > 0) {
-        paths.push(path)
-        continue
-      }
-      const name = one.name.length > 0 ? one.name : `pasted-${Date.now()}.png`
-      pasted.push(
-        readAsBase64(one).then((data) => ({
-          path: `clipboard:${name}`,
-          name: nameOf(name),
-          kind: kindOf(name),
-          bytes: one.size,
-          mediaType: one.type.length > 0 ? one.type : null,
-          data,
-        })),
-      )
-    }
-    fromPaths(paths)
-    if (pasted.length > 0) {
-      void Promise.all(pasted)
-        .then(keep)
-        .catch(() => toast.error(t`Could not read what you pasted`))
-    }
+    void admitted(dropped)
+      .then((seen) => {
+        const paths: string[] = []
+        const pasted: Promise<Attached>[] = []
+        for (const { file, path } of seen) {
+          if (path.length > 0) {
+            paths.push(path)
+            continue
+          }
+          const name = file.name.length > 0 ? file.name : `pasted-${Date.now()}.png`
+          pasted.push(
+            readAsBase64(file).then((data) => ({
+              path: `clipboard:${name}`,
+              name: nameOf(name),
+              kind: kindOf(name),
+              bytes: file.size,
+              mediaType: file.type.length > 0 ? file.type : null,
+              data,
+            })),
+          )
+        }
+        fromPaths(paths)
+        if (pasted.length > 0) {
+          void Promise.all(pasted)
+            .then(keep)
+            .catch(() => toast.error(t`Could not read what you pasted`))
+        }
+      })
+      .catch(() => toast.error(t`Could not read what you attached`))
   }
 
   function drop(path: string): void {

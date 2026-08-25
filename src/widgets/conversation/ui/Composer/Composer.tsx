@@ -8,7 +8,7 @@ import { Button } from '@/shared/ui/button'
 import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupTextarea } from '@/shared/ui/input-group'
 import { Kbd, KbdGroup } from '@/shared/ui/kbd'
 import { beganComposing, endedComposing, maySendNow, newComposer, sendKey, sent, takeOwed } from '../../lib/composer/composer'
-import { ChoicePicker } from '../ConversationPane/ChoicePicker'
+import { ChoicePicker } from '../ChoicePicker/ChoicePicker'
 import { AttachedRow } from './AttachedRow'
 import type { ComposerProps } from './Composer.types'
 import { t } from '@lingui/core/macro'
@@ -75,7 +75,11 @@ export function Composer({
         event.preventDefault()
         setOver(true)
       }}
-      onDragLeave={() => setOver(false)}
+      onDragLeave={(event) => {
+        // Fires on every child boundary too, so only a leave that really left.
+        if (event.currentTarget.contains(event.relatedTarget as Node | null)) return
+        setOver(false)
+      }}
       onDrop={(event) => {
         if (!event.dataTransfer.types.includes('Files')) return
         event.preventDefault()

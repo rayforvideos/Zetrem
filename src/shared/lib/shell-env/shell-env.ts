@@ -59,9 +59,10 @@ export function agentEnv(
     if (value === undefined) continue
     const lower = key.toLowerCase()
     // Windows names arrive in whatever case the shell felt like, so compare folded.
+    const upper = key.toUpperCase()
     const keep =
-      KEEP_EXACT.has(key) ||
-      KEEP_WINDOWS.includes(key.toUpperCase()) ||
+      KEEP_EXACT.has(upper) ||
+      KEEP_WINDOWS.includes(upper) ||
       KEEP_PREFIX.some((prefix) => key.startsWith(prefix)) ||
       KEEP_PREFIX_CI.some((prefix) => lower.startsWith(prefix))
     if (keep) env[key] = value

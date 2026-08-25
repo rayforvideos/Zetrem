@@ -2,6 +2,7 @@ node_modules/
 out/
 dist/
 release/
+electron.vite.config.*.mjs
 .DS_Store
 .idea/
 .playwright-mcp/
@@ -9,3 +10,4 @@ release/
 # compiled message catalogs, built from the .po files
 src/shared/locales/*/messages.js
 .superpowers/
+docs/superpowers/

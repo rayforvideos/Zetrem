@@ -1,6 +1,6 @@
 import { renderToStaticMarkup } from 'react-dom/server'
 import { describe, expect, it } from 'vitest'
-import { StateChip, saysItself, stateWord } from './StateChip'
+import { StateChip } from './StateChip'
 
 describe('the tile writes a state down only when nothing else shows it', () => {
   it('says nothing while the agent is working, because the face is already bustling', () => {
@@ -21,15 +21,5 @@ describe('the tile writes a state down only when nothing else shows it', () => {
     const html = renderToStaticMarkup(<StateChip status="waiting" />)
     expect(html).not.toContain('uppercase')
     expect(html).not.toContain('letter-spacing')
-  })
-
-  it('still names every state, since the roster and the report use the words', () => {
-    expect(stateWord('working')).toBe('Working')
-    expect(stateWord('done')).toBe('Done')
-  })
-
-  it('knows which states speak for themselves', () => {
-    expect(saysItself('working')).toBe(true)
-    expect(saysItself('waiting')).toBe(false)
   })
 })

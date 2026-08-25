@@ -11,7 +11,7 @@ vi.mock('electron', () => ({
 
 const { createProject, forgetProject, listProjects, openProject, repathProject, restoreProject } =
   await import('./projects')
-const { recallProject } = await import('../project-memory/project-memory')
+const { recallProject } = await import('../store/project-memory/project-memory')
 
 let home = ''
 

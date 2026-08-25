@@ -6,6 +6,7 @@ import { shortName } from '@/entities/connector'
 import type { Connector } from '@/entities/connector'
 import { useScrollState } from '@/shared/lib/scroll-state/use-scroll-state'
 import { reachable } from '../../lib/format/format'
+import { i18n } from '@lingui/core'
 import { t } from '@lingui/core/macro'
 
 type StatusDrawerProps = {
@@ -49,7 +50,7 @@ function Row({ label, children }: { label: string; children: ReactNode }) {
 }
 
 function n(value: number): string {
-  return value.toLocaleString('en-US')
+  return value.toLocaleString(i18n.locale)
 }
 
 function known(value: string): string | null {
@@ -173,9 +174,7 @@ function stateLabel(status: string): string {
       return t`Waiting for approval`
     case 'failed':
       return t`Failed`
-    case 'unknown':
-      return t`Unknown`
     default:
-      return status
+      return t`Unknown`
   }
 }

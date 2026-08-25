@@ -37,7 +37,7 @@ const rootStyle: CSSProperties = {
   flex: '0 0 auto',
   marginTop: 12,
   paddingTop: 12,
-  borderTop: '1px solid var(--border)',
+  borderTop: '1px solid var(--color-border)',
   display: 'flex',
   alignItems: 'baseline',
   justifyContent: 'space-between',

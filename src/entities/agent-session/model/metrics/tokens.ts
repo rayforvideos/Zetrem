@@ -1,5 +1,5 @@
 import { formatTokens } from '@/shared/lib/units/units'
-import type { Metric } from '../metric'
+import type { Metric } from './metric'
 
 export const tokensMetric: Metric = {
   id: 'tokens',

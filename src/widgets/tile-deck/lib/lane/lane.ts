@@ -1,9 +1,16 @@
 import type { AgentSession } from '@/entities/agent-session'
 import { personaOf } from '@/entities/agent-session'
 import { targetOf, verbOf } from '@/shared/lib/tool-verb/tool-verb'
+import type { ToolShape } from '@/shared/lib/tool-shape/tool-shape.types'
 import { currentCall, shapeOfCall } from '../now/now'
-import { stateWord } from '../../ui/layers/StateChip/StateChip'
+import { stateWord } from '../state-word/state-word'
 import type { Lane } from './lane.types'
+
+function verbFor(session: AgentSession, shape: ToolShape | null, said: string): string {
+  if (shape !== null) return verbOf(shape)
+  if (session.status === 'working') return said || stateWord('working')
+  return stateWord(session.status)
+}
 
 export function laneOf(session: AgentSession, nowMs: number): Lane {
   const kind = session.subagentType || session.label
@@ -14,7 +21,7 @@ export function laneOf(session: AgentSession, nowMs: number): Lane {
     id: session.id,
     name: personaOf(kind).name,
     subagentType: kind,
-    verb: shape === null ? (session.status === 'working' ? said || stateWord('working') : stateWord(session.status)) : verbOf(shape),
+    verb: verbFor(session, shape, said),
     target: shape === null ? '' : targetOf(shape),
     shape,
     outMs: Math.max(0, (session.endedAtMs ?? nowMs) - session.startedAtMs),

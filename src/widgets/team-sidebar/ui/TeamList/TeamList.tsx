@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Plus, RotateCcw } from 'lucide-react'
-import { AgentSprite } from '@/entities/agent-session/ui/AgentSprite/AgentSprite'
+import { AgentSprite } from '@/entities/agent-session'
 import { cn } from '@/shared/lib/cn'
 import { Button } from '@/shared/ui/button'
 import { Empty, EmptyDescription, EmptyHeader, EmptyTitle } from '@/shared/ui/empty'

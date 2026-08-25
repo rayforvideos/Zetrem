@@ -1,7 +1,8 @@
 import type { Settings } from './settings.types'
 
 import { SIDEBAR } from '@/shared/config/theme'
-import { isFaceId, tidyUserName } from '@/entities/user'
+// Not the barrel: the main process reads settings, and the barrel pulls UserFace's PNG art.
+import { isFaceId, tidyUserName } from '@/entities/user/lib/face/face'
 import type { ModelChoice, PermissionMode } from '../run-config/run-config.types'
 
 const TONGUES: Settings['tongue'][] = ['system', 'en', 'ko']

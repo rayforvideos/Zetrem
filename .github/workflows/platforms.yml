@@ -125,7 +125,13 @@ jobs:
         # --publish never: electron-builder's own uploader raced itself here and
         # left a release holding a 100KB blockmap and no installer. The upload
         # is its own step below, where it either works or fails the job.
-        run: npm run ${{ matrix.os == 'windows-latest' && 'package:win' || 'package:mac' }} -- --publish never
+        #
+        # An empty CSC_LINK is not "no certificate" to electron-builder — it is
+        # a path, and "not a file". Unsigned builds must not carry the variable.
+        shell: bash
+        run: |
+          [ "$SIGNED" = "true" ] || unset CSC_LINK CSC_KEY_PASSWORD
+          npm run ${{ matrix.os == 'windows-latest' && 'package:win' || 'package:mac' }} -- --publish never
 
       # Windows is unsigned wherever it is built, so a runner is as good a place
       # as any, and the download page only offers a release carrying both

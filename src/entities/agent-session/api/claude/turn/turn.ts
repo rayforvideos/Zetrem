@@ -32,7 +32,7 @@ export function fromAssistant(event: Record<string, unknown>): TurnEvent[] {
           toolUseId: block.id,
           label: childLabel(block),
           subagentType: typeof input?.subagent_type === 'string' ? input.subagent_type : '',
-          prompt: typeof input?.prompt === 'string' ? input.prompt : '',
+          prompt: str(input?.prompt),
           background: input?.run_in_background === true,
         })
       }
@@ -129,7 +129,7 @@ export function fromToolResult(event: Record<string, unknown>): TurnEvent[] {
       type: 'toolResult',
       toolUseId: block.tool_use_id,
       stdout: typeof detail?.stdout === 'string' ? detail.stdout : resultText(block.content),
-      stderr: typeof detail?.stderr === 'string' ? detail.stderr : '',
+      stderr: str(detail?.stderr),
       isError: block.is_error === true,
       interrupted: detail?.interrupted === true,
     })

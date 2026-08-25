@@ -1,6 +1,6 @@
 import type { ChildTurnEvent } from './child.types'
 
-import { blocksIn, resultText, toolLine } from '../shared/shared'
+import { blocksIn, resultText, str, toolLine } from '../shared/shared'
 
 export function childSays(
   event: Record<string, unknown>,
@@ -43,8 +43,8 @@ export function childSays(
 function crewTalk(block: Record<string, unknown>): { to: string; message: string } | null {
   if (block.name !== 'SendMessage') return null
   const input = block.input as Record<string, unknown> | undefined
-  const to = typeof input?.to === 'string' ? input.to.trim() : ''
-  const message = typeof input?.message === 'string' ? input.message : ''
+  const to = str(input?.to).trim()
+  const message = str(input?.message)
   return to.length === 0 ? null : { to, message }
 }
 
@@ -64,75 +64,59 @@ export function childCloses(event: Record<string, unknown>): ChildTurnEvent[] {
   return out
 }
 
-function taskId(event: Record<string, unknown>): string | null {
-  return typeof event.task_id === 'string' && event.task_id.length > 0 ? event.task_id : null
-}
+// Every task event names its task, and may name the tool_use that spawned it.
+// One that names no task belongs to nobody and is dropped before the body runs.
+type Task = { toolUseId: string | null; taskId: string }
 
-function toolUseId(event: Record<string, unknown>): string | null {
-  return typeof event.tool_use_id === 'string' && event.tool_use_id.length > 0
-    ? event.tool_use_id
-    : null
+function taskEvent(
+  event: Record<string, unknown>,
+  body: (task: Task, event: Record<string, unknown>) => ChildTurnEvent | null,
+): ChildTurnEvent[] {
+  const taskId = str(event.task_id)
+  if (taskId.length === 0) return []
+  const toolUseId = str(event.tool_use_id)
+  const made = body({ toolUseId: toolUseId.length > 0 ? toolUseId : null, taskId }, event)
+  return made === null ? [] : [made]
 }
 
 export function childNotified(event: Record<string, unknown>): ChildTurnEvent[] {
-  const task = taskId(event)
-  if (task === null) return []
-  return [
-    {
-      type: 'childNotified',
-      toolUseId: toolUseId(event),
-      taskId: task,
-      summary: typeof event.summary === 'string' ? event.summary : '',
-      done: event.status === undefined || event.status === 'completed',
-    },
-  ]
+  return taskEvent(event, (task) => ({
+    type: 'childNotified',
+    ...task,
+    summary: str(event.summary),
+    done: event.status === undefined || event.status === 'completed',
+  }))
 }
 
 export function childStarted(event: Record<string, unknown>): ChildTurnEvent[] {
-  const task = taskId(event)
-  if (task === null) return []
-  return [
-    {
-      type: 'childStarted',
-      toolUseId: toolUseId(event),
-      taskId: task,
-      taskType: typeof event.task_type === 'string' ? event.task_type : '',
-      description: typeof event.description === 'string' ? event.description.trim() : '',
-    },
-  ]
+  return taskEvent(event, (task) => ({
+    type: 'childStarted',
+    ...task,
+    taskType: str(event.task_type),
+    description: str(event.description).trim(),
+  }))
 }
 
 export function childProgress(event: Record<string, unknown>): ChildTurnEvent[] {
-  const task = taskId(event)
-  if (task === null) return []
-  const usage = event.usage as Record<string, unknown> | undefined
-  return [
-    {
+  return taskEvent(event, (task) => {
+    const usage = event.usage as Record<string, unknown> | undefined
+    return {
       type: 'childProgress',
-      toolUseId: toolUseId(event),
-      taskId: task,
-      doing: typeof event.description === 'string' ? event.description : '',
-      lastTool: typeof event.last_tool_name === 'string' ? event.last_tool_name : '',
+      ...task,
+      doing: str(event.description),
+      lastTool: str(event.last_tool_name),
       tokens: typeof usage?.total_tokens === 'number' ? usage.total_tokens : null,
-    },
-  ]
+    }
+  })
 }
 
 const TASK_STATES = ['pending', 'running', 'completed', 'failed', 'killed', 'paused'] as const
 
 export function childStateKnown(event: Record<string, unknown>): ChildTurnEvent[] {
-  const task = taskId(event)
-  if (task === null) return []
-  const patch = (event.patch ?? {}) as Record<string, unknown>
-  const state = TASK_STATES.find((known) => known === patch.status)
-  if (state === undefined) return []
-  return [
-    {
-      type: 'childStateKnown',
-      toolUseId: toolUseId(event),
-      taskId: task,
-      state,
-      error: typeof patch.error === 'string' ? patch.error : '',
-    },
-  ]
+  return taskEvent(event, (task) => {
+    const patch = (event.patch ?? {}) as Record<string, unknown>
+    const state = TASK_STATES.find((known) => known === patch.status)
+    if (state === undefined) return null
+    return { type: 'childStateKnown', ...task, state, error: str(patch.error) }
+  })
 }

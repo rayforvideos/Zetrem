@@ -1,6 +1,8 @@
-import type { ChildTurnEvent } from './child.types'
+import type { ChildTurnEvent, Task } from './child.types'
 
 import { blocksIn, resultText, str, toolLine } from '../shared/shared'
+
+const TASK_STATES = ['pending', 'running', 'completed', 'failed', 'killed', 'paused'] as const
 
 export function childSays(
   event: Record<string, unknown>,
@@ -66,8 +68,6 @@ export function childCloses(event: Record<string, unknown>): ChildTurnEvent[] {
 
 // Every task event names its task, and may name the tool_use that spawned it.
 // One that names no task belongs to nobody and is dropped before the body runs.
-type Task = { toolUseId: string | null; taskId: string }
-
 function taskEvent(
   event: Record<string, unknown>,
   body: (task: Task, event: Record<string, unknown>) => ChildTurnEvent | null,
@@ -109,8 +109,6 @@ export function childProgress(event: Record<string, unknown>): ChildTurnEvent[] 
     }
   })
 }
-
-const TASK_STATES = ['pending', 'running', 'completed', 'failed', 'killed', 'paused'] as const
 
 export function childStateKnown(event: Record<string, unknown>): ChildTurnEvent[] {
   return taskEvent(event, (task) => {

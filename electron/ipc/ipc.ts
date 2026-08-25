@@ -8,11 +8,7 @@ import type {
   SendChannel,
   Sends,
 } from '@/entities/desk/desk.types'
-
-type Sender = {
-  readonly hasWindow: boolean
-  readonly isMainFrame: boolean
-}
+import type { Handler, Listener, Sender } from './ipc.types'
 
 export function trusted(sender: Sender): boolean {
   return sender.hasWindow && sender.isMainFrame
@@ -24,17 +20,6 @@ function senderOf(event: IpcMainInvokeEvent | IpcMainEvent): Sender {
     isMainFrame: event.senderFrame === event.sender.mainFrame,
   }
 }
-
-// The handler is typed by its channel: the arguments are what the renderer
-// sends and the return is what it awaits, both from desk.types.ts. The
-// values still arrive over a wire the renderer controls, so a handler that
-// cares about shape keeps validating what it gets.
-type Handler<C extends InvokeChannel> = (
-  event: IpcMainInvokeEvent,
-  ...args: Parameters<Invokes[C]>
-) => ReturnType<Invokes[C]> | Promise<ReturnType<Invokes[C]>>
-
-type Listener<C extends SendChannel> = (event: IpcMainEvent, ...args: Parameters<Sends[C]>) => void
 
 export function handle<C extends InvokeChannel>(channel: C, listener: Handler<C>): void {
   ipcMain.handle(channel, (event, ...args) => {

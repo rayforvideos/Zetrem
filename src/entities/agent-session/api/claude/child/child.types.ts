@@ -59,3 +59,6 @@ export type ChildTurnEvent =
       state: TaskState
       error: string
     }
+
+// What every task event names: its task, and the tool_use that spawned it if known.
+export type Task = { toolUseId: string | null; taskId: string }

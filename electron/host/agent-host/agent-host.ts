@@ -63,7 +63,9 @@ export function killAllAgents(): void {
 export function registerAgentHost(): void {
   handle(
     'agent:start',
-    async (event, id: string, prompt: string, config: RunConfig, files: unknown = []) => {
+    // Typed by the contract, read as unknown: the values come off the wire
+    // from the renderer, so the checks below are the real gate.
+    async (event, id: unknown, prompt: unknown, config: RunConfig, files: unknown = []) => {
     const sender = event.sender
     const fail = (reason: ExitReason | null): void => {
       if (typeof id === 'string') push(sender, 'agent:event', { id, kind: 'exit', code: -1, reason })
@@ -153,7 +155,7 @@ export function registerAgentHost(): void {
     },
   )
 
-  on('agent:send', (_event, id: string, text: string, files: unknown = []) => {
+  on('agent:send', (_event, id: unknown, text: unknown, files: unknown = []) => {
     if (typeof id !== 'string' || typeof text !== 'string') return
     // An id nobody knows has no host coming, and the renderer starts a fresh
     // agent on its side, so text held for it would never be read.
@@ -162,13 +164,13 @@ export function registerAgentHost(): void {
     else if (agent) tell(agent.stdin, userMessage(text, files))
   })
 
-  on('agent:permission', (_event, id: string, requestId: string, result: unknown) => {
+  on('agent:permission', (_event, id: unknown, requestId: unknown, result: unknown) => {
     if (typeof id !== 'string' || typeof requestId !== 'string') return
     const agent = agents.get(id)
     if (agent && agent !== 'starting') tell(agent.stdin, permissionResponse(requestId, result))
   })
 
-  on('agent:stop', (_event, id: string) => {
+  on('agent:stop', (_event, id: unknown) => {
     if (typeof id !== 'string') return
     const agent = agents.get(id)
     agents.delete(id)

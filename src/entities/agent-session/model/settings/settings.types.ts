@@ -1,6 +1,9 @@
 import type { FaceId } from '@/entities/user'
 import type { ModelChoice, PermissionMode } from '../run-config/run-config.types'
 
+// On disk: settings.json under userData, read by readSettings(). A change here
+// is a change to a file people already have; readSettings() must still read the
+// old shape and fill what is missing.
 export type Settings = {
   permissionMode: PermissionMode
   model: ModelChoice

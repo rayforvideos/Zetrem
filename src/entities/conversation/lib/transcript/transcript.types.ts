@@ -22,4 +22,6 @@ export type ChatSpend = {
   contextWindow: number | null
 }
 
+// On disk: transcripts/<project>/<id>.json under userData, read by
+// readTranscript(). A change here is a change to files people already have.
 export type Transcript = ChatSummary & { turns: Turn[]; spend: ChatSpend | null }

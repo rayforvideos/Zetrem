@@ -1,4 +1,4 @@
-import type { ExitReason } from './exit-reason.types'
+import type { ExitReason } from '@/entities/agent-session/lib/exit-line/exit-line.types'
 
 const MISSING = /\bENOENT\b|not found|no such file/i
 

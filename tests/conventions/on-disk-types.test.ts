@@ -1,5 +1,5 @@
 import { readFile, readdir } from 'node:fs/promises'
-import { join } from 'node:path'
+import { join, sep } from 'node:path'
 import { describe, expect, it } from 'vitest'
 
 const ROOT = process.cwd()
@@ -30,11 +30,16 @@ const WRITERS: Record<string, string> = {
   'electron/agents/agent-store/agent-store.ts': '',
 }
 
+// readdir hands back names with the platform's separator, and the two lists
+// above are written with slashes. These paths are compared, never walked, so
+// they are read as slashes everywhere rather than as Windows writes them.
+const slashed = (path: string): string => path.split(sep).join('/')
+
 async function sources(dir: string): Promise<string[]> {
   const names = await readdir(join(ROOT, dir), { recursive: true })
   return names
     .filter((name) => /\.tsx?$/.test(name) && !name.includes('.test.'))
-    .map((name) => join(dir, name))
+    .map((name) => `${dir}/${slashed(name)}`)
 }
 
 describe('what is written to disk is marked and listed', () => {
@@ -51,7 +56,7 @@ describe('what is written to disk is marked and listed', () => {
     const writers: string[] = []
     for (const file of await sources('electron')) {
       const text = await readFile(join(ROOT, file), 'utf8')
-      if (file.endsWith(join('save-file', 'save-file.ts'))) continue
+      if (file.endsWith('save-file/save-file.ts')) continue
       if (/(?<![.\w])saveFile\(/.test(text)) writers.push(file)
     }
     expect(writers.sort(), 'a module writing under userData is listed in WRITERS').toEqual(

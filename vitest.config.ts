@@ -30,5 +30,15 @@ export default defineConfig({
       'tests/**/*.test.tsx',
     ],
     exclude: ['**/node_modules/**', 'tests/contract/**'],
+    coverage: {
+      provider: 'v8',
+      // Everything the app ships, counted whether a test reached it or not, so
+      // a module nobody tests reads as nothing covered rather than not there.
+      include: ['src/**/*.{ts,tsx}', 'electron/**/*.ts'],
+      // shadcn's, and a types file has nothing to run.
+      exclude: ['src/shared/ui/**', '**/*.types.ts', '**/*.test.{ts,tsx}'],
+      reporter: ['text-summary', 'json-summary'],
+      reportsDirectory: 'coverage',
+    },
   },
 })

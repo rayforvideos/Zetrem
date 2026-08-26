@@ -42,6 +42,17 @@
           "options": { "inputComponents": ["RadioGroupItem", "Switch"] }
         }
       },
+      "correctness": {
+        // Twenty findings, and nine of them ask for a dependency to be removed
+        // that is there on purpose: useAuthoredAgents reads no project inside
+        // the effect and keys on it so the list is read again when somebody
+        // switches, and taking it out is the bug, not the fix. The other
+        // eleven ask for a helper declared in the same body, which the React
+        // compiler memoises; this rule does not know the compiler is on, and
+        // it marks its own fix unsafe. Whoever turns it back on should be able
+        // to open the app and watch what re-runs.
+        "useExhaustiveDependencies": "off"
+      },
       "style": {
         // noUncheckedIndexedAccess is on, so the compiler hands back T | undefined
         // for every index and every one of these ! is an answer to it. Banning

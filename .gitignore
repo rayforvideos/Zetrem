@@ -11,3 +11,6 @@ electron.vite.config.*.mjs
 src/shared/locales/*/messages.js
 .superpowers/
 docs/superpowers/
+
+# coverage, written by npm run coverage
+coverage/

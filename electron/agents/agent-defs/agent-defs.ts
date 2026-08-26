@@ -13,7 +13,7 @@ import { authoredAgents } from '../authored-agents/authored-agents'
 import { recallProject } from '../../store/project-memory/project-memory'
 import { handle } from '../../ipc/ipc'
 
-export function agentDir(): string {
+function agentDir(): string {
   return join(app.getPath('userData'), 'agents')
 }
 

@@ -2,7 +2,7 @@ import type { CSSProperties } from 'react'
 
 export const positionStyle: CSSProperties = { position: 'absolute', top: 0, left: 0 }
 
-export const CARD_MIN = 196
+const CARD_MIN = 196
 
 export const frameStyle: CSSProperties = {
   display: 'flex',

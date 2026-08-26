@@ -1,4 +1,4 @@
-import type { RateLimit } from '@/entities/claude-cli'
+import type { RateLimit } from '@/entities/claude-cli/@x/agent-session'
 
 const ORDER = ['five_hour', 'seven_day', 'seven_day_opus', 'seven_day_sonnet']
 

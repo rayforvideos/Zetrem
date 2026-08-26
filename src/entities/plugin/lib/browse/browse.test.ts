@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import type { AvailablePlugin } from '../catalog/catalog.types'
+import type { AvailablePlugin } from '../../api/catalog/catalog.types'
 import { browsable } from './browse'
 
 function plugin(name: string, installCount: number | null, description = ''): AvailablePlugin {

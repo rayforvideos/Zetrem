@@ -1,4 +1,4 @@
-import type { PluginScope } from '../catalog/catalog.types'
+import type { PluginScope } from '../../api/catalog/catalog.types'
 
 export function appliesHere(
   scope: PluginScope,

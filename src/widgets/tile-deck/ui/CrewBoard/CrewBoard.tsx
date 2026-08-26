@@ -1,6 +1,6 @@
 import type { AgentSession } from '@/entities/agent-session'
 import { AgentSprite } from '@/entities/teammate'
-import { Surface } from '@/entities/surface'
+import { Surface } from '@/shared/parts/Surface/Surface'
 import { UserFace } from '@/entities/user'
 import type { FaceId } from '@/entities/user'
 import { laneOf } from '../../lib/lane/lane'

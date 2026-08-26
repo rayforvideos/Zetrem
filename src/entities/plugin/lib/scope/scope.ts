@@ -1,4 +1,4 @@
-import type { PluginScope, PluginVerb } from '../catalog/catalog.types'
+import type { PluginScope, PluginVerb } from '../../api/catalog/catalog.types'
 
 const INSTALLED: PluginScope[] = ['user', 'project', 'managed']
 

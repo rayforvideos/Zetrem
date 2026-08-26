@@ -167,7 +167,7 @@ export function compactedLine(
   return cause ? `${base} (${cause}): ${shrink}` : `${base}: ${shrink}`
 }
 
-export function triggerLabel(trigger: string | null): string | null {
+function triggerLabel(trigger: string | null): string | null {
   if (trigger === 'auto') return t`auto`
   if (trigger === 'manual') return t`manual`
   return null

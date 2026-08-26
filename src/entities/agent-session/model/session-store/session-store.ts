@@ -1,5 +1,5 @@
 import { STREAM_BUFFER, TRANSCRIPT_BUFFER } from '../session/session'
-import { absorbs, mergedLine } from '@/entities/claude-cli'
+import { absorbs, mergedLine } from '@/entities/claude-cli/@x/agent-session'
 import type { AgentSession, Call, TranscriptEntry } from '../session/session.types'
 
 type Listener = () => void

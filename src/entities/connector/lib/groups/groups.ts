@@ -1,5 +1,5 @@
 import { grouped } from '@/shared/lib/grouped/grouped'
-import type { Connector } from '../read-connectors/read-connectors.types'
+import type { Connector } from '../../api/read-connectors/read-connectors.types'
 import { originOf } from '../origin/origin'
 import type { ConnectorGroup, ConnectorOrigin } from './groups.types'
 import { msg } from '@lingui/core/macro'

@@ -1,4 +1,4 @@
-import type { RateLimit, SessionIdentity } from '@/entities/claude-cli'
+import type { RateLimit, SessionIdentity } from '@/entities/claude-cli/@x/agent-session'
 
 export type UpdateInfo = {
   current: string | null

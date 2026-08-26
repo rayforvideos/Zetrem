@@ -12,7 +12,7 @@ type ChoiceFieldProps = {
   onChoose(id: string): void
 }
 
-export function hintOf(options: readonly Option[], chosen: string): string {
+function hintOf(options: readonly Option[], chosen: string): string {
   const found = options.find((option) => option.id === chosen)?.hint
   return found === undefined ? '' : read(found)
 }

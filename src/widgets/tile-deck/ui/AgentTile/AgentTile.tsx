@@ -1,6 +1,6 @@
 import type { CSSProperties } from 'react'
 import type { AgentSession } from '@/entities/agent-session'
-import { Surface } from '@/entities/surface'
+import { Surface } from '@/shared/parts/Surface/Surface'
 import { MOTION } from '@/shared/config/motion/motion'
 import type { Rect } from '../../lib/grid/grid.types'
 import { Gauge } from '../layers/Gauge/Gauge'

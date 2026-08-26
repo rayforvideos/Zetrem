@@ -1,4 +1,4 @@
-import type { Persona } from '../persona/persona.types'
+import type { Persona } from '../../lib/persona/persona.types'
 
 export type RosterState = 'idle' | 'working' | 'waiting' | 'done'
 

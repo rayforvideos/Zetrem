@@ -1,4 +1,4 @@
-import { ORCHESTRATOR } from '../roster-lock/roster-lock'
+import { ORCHESTRATOR } from '@/entities/claude-cli/@x/teammate'
 
 export function stockAgents(
   knownAgents: string[],

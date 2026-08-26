@@ -1,4 +1,4 @@
-import type { AvailablePlugin } from '../catalog/catalog.types'
+import type { AvailablePlugin } from '../../api/catalog/catalog.types'
 
 export function browsable(
   available: AvailablePlugin[],

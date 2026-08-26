@@ -1,4 +1,4 @@
-import type { Sent } from '@/entities/attachment/lib/attachment/attachment.types'
+import type { Sent } from '@/entities/attachment/@x/conversation'
 
 export type ToolResult = {
   stdout: string

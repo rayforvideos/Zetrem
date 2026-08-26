@@ -1,0 +1,22 @@
+{
+  "$schema": "https://unpkg.com/knip@6/schema.json",
+  "entry": [
+    "electron/main.ts",
+    "electron/preload.ts",
+    "src/app/main.tsx",
+    "scripts/*.mjs",
+    "*.config.ts",
+    "electron-builder.config.cjs",
+    "**/*.test.{ts,tsx}"
+  ],
+  "project": ["src/**/*.{ts,tsx}", "electron/**/*.ts", "scripts/**/*.mjs"],
+  "ignore": ["src/shared/ui/**"],
+  "ignoreDependencies": [
+    "tailwindcss",
+    "shadcn",
+    "babel-plugin-react-compiler",
+    "@lingui/babel-plugin-lingui-macro",
+    "babel-plugin-macros",
+    "tw-animate-css"
+  ]
+}

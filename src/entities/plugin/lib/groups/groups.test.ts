@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import type { InstalledPlugin, PluginScope } from '../catalog/catalog.types'
+import type { InstalledPlugin, PluginScope } from '../../api/catalog/catalog.types'
 import { groupsOf } from './groups'
 
 function plugin(name: string, scope: PluginScope): InstalledPlugin {

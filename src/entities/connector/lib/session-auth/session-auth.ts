@@ -1,4 +1,4 @@
-import type { Connector } from '../read-connectors/read-connectors.types'
+import type { Connector } from '../../api/read-connectors/read-connectors.types'
 
 type SessionServer = { name: string; status: string }
 

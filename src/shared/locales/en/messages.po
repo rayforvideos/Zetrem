@@ -56,7 +56,7 @@ msgid "{0} chosen"
 msgstr "{0} chosen"
 
 #. placeholder {0}: untilLabel(left)
-#: src/widgets/usage-bar/lib/strip/strip.ts:26
+#: src/widgets/status-bar/lib/strip/strip.ts:26
 msgid "{0} left"
 msgstr "{0} left"
 
@@ -116,7 +116,7 @@ msgstr "{back} teammates"
 msgid "{base}. Earlier turns live on as a summary."
 msgstr "{base}. Earlier turns live on as a summary."
 
-#: src/entities/claude-cli/lib/aside/aside.ts:23
+#: src/entities/claude-cli/api/aside/aside.ts:23
 msgid "{from} declined this, so {to} took it"
 msgstr "{from} declined this, so {to} took it"
 
@@ -124,15 +124,15 @@ msgstr "{from} declined this, so {to} took it"
 msgid "{held, plural, one {# line} other {# lines}}"
 msgstr "{held, plural, one {# line} other {# lines}}"
 
-#: src/pages/workspace/model/team/workspace-config/workspace-config.ts:40
+#: src/pages/workspace/model/team/workspace-config/workspace-config.ts:42
 msgid "{installed} installed from {sources, plural, one {# source} other {# sources}}"
 msgstr "{installed} installed from {sources, plural, one {# source} other {# sources}}"
 
-#: src/entities/claude-cli/lib/turn/turn.ts:107
+#: src/entities/claude-cli/api/turn/turn.ts:107
 msgid "{kind} {name} did not load: {why}"
 msgstr "{kind} {name} did not load: {why}"
 
-#: src/widgets/setup/ui/StockList/StockList.tsx:30
+#: src/entities/teammate/ui/StockList/StockList.tsx:30
 msgid "{name} can be called this session"
 msgstr "{name} can be called this session"
 
@@ -148,7 +148,7 @@ msgstr "{name} is on. The running session cannot call them yet."
 msgid "{name} is over {max}MB, so it cannot be sent as a picture. Point at it by path instead."
 msgstr "{name} is over {max}MB, so it cannot be sent as a picture. Point at it by path instead."
 
-#: src/widgets/usage-bar/lib/strip/strip.ts:40
+#: src/widgets/status-bar/lib/strip/strip.ts:40
 msgid "{percent}% used"
 msgstr "{percent}% used"
 
@@ -193,12 +193,12 @@ msgstr "{target} removed"
 msgid "{target} updated. Restart the session to load it."
 msgstr "{target} updated. Restart the session to load it."
 
-#: src/entities/claude-cli/lib/aside/aside.ts:16
-#: src/entities/claude-cli/lib/turn/turn.ts:72
+#: src/entities/claude-cli/api/aside/aside.ts:16
+#: src/entities/claude-cli/api/turn/turn.ts:72
 msgid "{tool} was not allowed"
 msgstr "{tool} was not allowed"
 
-#: src/entities/claude-cli/lib/aside/aside.ts:16
+#: src/entities/claude-cli/api/aside/aside.ts:16
 msgid "{tool} was not allowed: {why}"
 msgstr "{tool} was not allowed: {why}"
 
@@ -215,11 +215,11 @@ msgstr "{waiting} waiting on you"
 msgid "{what}. Trying again in {seconds}, attempt {which}"
 msgstr "{what}. Trying again in {seconds}, attempt {which}"
 
-#: src/entities/claude-cli/lib/aside/aside.ts:34
+#: src/entities/claude-cli/api/aside/aside.ts:34
 msgid "{who} declined this and there is nothing to fall back to"
 msgstr "{who} declined this and there is nothing to fall back to"
 
-#: src/entities/claude-cli/lib/aside/aside.ts:33
+#: src/entities/claude-cli/api/aside/aside.ts:33
 msgid "{who} declined this and there is nothing to fall back to. {said}"
 msgstr "{who} declined this and there is nothing to fall back to. {said}"
 
@@ -299,7 +299,7 @@ msgstr "A short name for it"
 msgid "a teammate"
 msgstr "a teammate"
 
-#: src/entities/claude-cli/lib/aside/aside.ts:14
+#: src/entities/claude-cli/api/aside/aside.ts:14
 msgid "A tool"
 msgstr "A tool"
 
@@ -316,7 +316,7 @@ msgstr "Add"
 msgid "Add a marketplace"
 msgstr "Add a marketplace"
 
-#: src/pages/workspace/model/team/workspace-config/workspace-config.ts:39
+#: src/pages/workspace/model/team/workspace-config/workspace-config.ts:41
 msgid "Add a marketplace to bring in skills and agents"
 msgstr "Add a marketplace to bring in skills and agents"
 
@@ -349,7 +349,7 @@ msgstr "All {0} connected"
 msgid "Allow"
 msgstr "Allow"
 
-#: src/entities/settings/model/choices/choices.ts:20
+#: src/entities/settings/config/choices/choices.ts:17
 #: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:47
 msgid "Allow all"
 msgstr "Allow all"
@@ -375,7 +375,7 @@ msgstr "any moment"
 msgid "API error {0}"
 msgstr "API error {0}"
 
-#: src/entities/settings/model/choices/choices.ts:14
+#: src/entities/settings/config/choices/choices.ts:11
 #: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:47
 msgid "Ask first"
 msgstr "Ask first"
@@ -388,7 +388,7 @@ msgstr "Ask for the whole job"
 msgid "Ask for the whole job, not the next step. The orchestrator splits it up, hands out the pieces, and replies when they come back."
 msgstr "Ask for the whole job, not the next step. The orchestrator splits it up, hands out the pieces, and replies when they come back."
 
-#: src/entities/settings/model/choices/choices.ts:14
+#: src/entities/settings/config/choices/choices.ts:11
 msgid "Asks before editing files or running commands"
 msgstr "Asks before editing files or running commands"
 
@@ -404,7 +404,7 @@ msgstr "Attach a file"
 msgid "auto"
 msgstr "auto"
 
-#: src/entities/settings/model/choices/choices.ts:17
+#: src/entities/settings/config/choices/choices.ts:14
 #: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:47
 msgid "Auto-edit"
 msgstr "Auto-edit"
@@ -413,7 +413,7 @@ msgstr "Auto-edit"
 msgid "Back"
 msgstr "Back"
 
-#: src/entities/settings/model/choices/choices.ts:32
+#: src/entities/settings/config/choices/choices.ts:29
 msgid "Balanced for most tasks"
 msgstr "Balanced for most tasks"
 
@@ -514,7 +514,7 @@ msgstr "Close report"
 msgid "Close this tile. The run stays in the sidebar."
 msgstr "Close this tile. The run stays in the sidebar."
 
-#: src/entities/settings/model/choices/choices.ts:31
+#: src/entities/settings/config/choices/choices.ts:28
 msgid "Complex work. Slower and pricier"
 msgstr "Complex work. Slower and pricier"
 
@@ -617,7 +617,7 @@ msgstr "Could not reach {0}"
 msgid "Could not read the plugin shelf"
 msgstr "Could not read the plugin shelf"
 
-#: src/widgets/usage-bar/lib/strip/strip.ts:66
+#: src/widgets/status-bar/lib/strip/strip.ts:66
 msgid "Could not read usage"
 msgstr "Could not read usage"
 
@@ -688,7 +688,7 @@ msgstr "Create"
 msgid "Create a teammate and they'll show up here."
 msgstr "Create a teammate and they'll show up here."
 
-#: src/entities/settings/model/choices/choices.ts:25
+#: src/entities/settings/config/choices/choices.ts:22
 msgid "Default"
 msgstr "Default"
 
@@ -706,7 +706,7 @@ msgstr "Delete chat"
 msgid "Deny"
 msgstr "Deny"
 
-#: src/widgets/first-hint/ui/FirstHint/FirstHint.tsx:29
+#: src/shared/parts/FirstHint/FirstHint.tsx:29
 msgid "Dismiss this tip"
 msgstr "Dismiss this tip"
 
@@ -758,7 +758,7 @@ msgstr "Edited"
 msgid "Editing"
 msgstr "Editing"
 
-#: src/entities/settings/model/choices/choices.ts:18
+#: src/entities/settings/config/choices/choices.ts:15
 msgid "Edits files freely, asks before running commands"
 msgstr "Edits files freely, asks before running commands"
 
@@ -793,7 +793,7 @@ msgstr "failed"
 msgid "Failed"
 msgstr "Failed"
 
-#: src/entities/settings/model/choices/choices.ts:33
+#: src/entities/settings/config/choices/choices.ts:30
 msgid "Fast and cheap. Good for quick questions"
 msgstr "Fast and cheap. Good for quick questions"
 
@@ -835,7 +835,7 @@ msgstr "Folder name"
 msgid "Follows the language your computer is set to"
 msgstr "Follows the language your computer is set to"
 
-#: src/entities/settings/model/choices/choices.ts:25
+#: src/entities/settings/config/choices/choices.ts:22
 msgid "Follows your account setting"
 msgstr "Follows your account setting"
 
@@ -844,7 +844,7 @@ msgstr "Follows your account setting"
 msgid "from {0}"
 msgstr "from {0}"
 
-#: src/widgets/usage-bar/lib/strip/strip.ts:37
+#: src/widgets/status-bar/lib/strip/strip.ts:37
 msgid "from an earlier reading"
 msgstr "from an earlier reading"
 
@@ -926,7 +926,7 @@ msgstr "Installed for this folder. Anyone who opens it gets them."
 msgid "Installing Claude Code…"
 msgstr "Installing Claude Code…"
 
-#: src/entities/claude-cli/lib/turn/turn.ts:106
+#: src/entities/claude-cli/api/turn/turn.ts:106
 msgid "it could not be loaded"
 msgstr "it could not be loaded"
 
@@ -1014,7 +1014,7 @@ msgstr "manual"
 msgid "MCP {0}/{1} · {2} need auth"
 msgstr "MCP {0}/{1} · {2} need auth"
 
-#: src/entities/claude-cli/lib/turn/turn.ts:96
+#: src/entities/claude-cli/api/turn/turn.ts:96
 msgid "MCP server"
 msgstr "MCP server"
 
@@ -1071,7 +1071,7 @@ msgstr "Needs signing in"
 msgid "Needs you"
 msgstr "Needs you"
 
-#: src/entities/settings/model/choices/choices.ts:20
+#: src/entities/settings/config/choices/choices.ts:17
 msgid "Never asks. Anything can run"
 msgstr "Never asks. Anything can run"
 
@@ -1096,7 +1096,7 @@ msgstr "New teammate"
 msgid "Next"
 msgstr "Next"
 
-#: src/widgets/usage-bar/lib/strip/strip.ts:67
+#: src/widgets/status-bar/lib/strip/strip.ts:67
 msgid "No account limits reported"
 msgstr "No account limits reported"
 
@@ -1157,7 +1157,7 @@ msgstr "Notifications"
 msgid "Older"
 msgstr "Older"
 
-#: src/widgets/usage-bar/lib/strip/strip.ts:10
+#: src/widgets/status-bar/lib/strip/strip.ts:10
 msgid "on overage"
 msgstr "on overage"
 
@@ -1202,7 +1202,7 @@ msgstr "Permissions changed. The running session follows the old ones."
 msgid "Pick a project first"
 msgstr "Pick a project first"
 
-#: src/pages/workspace/model/session/agent-events/crew/crew.ts:220
+#: src/pages/workspace/model/session/agent-events/crew/crew.ts:219
 msgid "Picked up where they left off"
 msgstr "Picked up where they left off"
 
@@ -1210,7 +1210,7 @@ msgstr "Picked up where they left off"
 msgid "Planning"
 msgstr "Planning"
 
-#: src/entities/claude-cli/lib/turn/turn.ts:97
+#: src/entities/claude-cli/api/turn/turn.ts:97
 msgid "Plugin"
 msgstr "Plugin"
 
@@ -1275,7 +1275,7 @@ msgstr "Reading reports"
 msgid "Reading the catalog…"
 msgstr "Reading the catalog…"
 
-#: src/widgets/usage-bar/lib/strip/strip.ts:65
+#: src/widgets/status-bar/lib/strip/strip.ts:65
 msgid "Reading usage…"
 msgstr "Reading usage…"
 
@@ -1283,7 +1283,7 @@ msgstr "Reading usage…"
 msgid "Reading what this session offers. The list fills in a moment."
 msgstr "Reading what this session offers. The list fills in a moment."
 
-#: src/widgets/setup/ui/StockList/StockList.tsx:11
+#: src/entities/teammate/ui/StockList/StockList.tsx:11
 #: src/widgets/team-sidebar/ui/TeamSidebar/TeamSidebar.tsx:78
 msgid "Reading which agents Claude Code brings. They will be listed here."
 msgstr "Reading which agents Claude Code brings. They will be listed here."
@@ -1361,13 +1361,13 @@ msgstr "Rename folder"
 msgid "Reported back"
 msgstr "Reported back"
 
-#: src/widgets/usage-bar/lib/strip/strip.ts:19
+#: src/widgets/status-bar/lib/strip/strip.ts:19
 msgid "reset time not reported"
 msgstr "reset time not reported"
 
-#: src/widgets/usage-bar/lib/strip/strip.ts:13
-#: src/widgets/usage-bar/lib/strip/strip.ts:17
-#: src/widgets/usage-bar/lib/strip/strip.ts:30
+#: src/widgets/status-bar/lib/strip/strip.ts:13
+#: src/widgets/status-bar/lib/strip/strip.ts:17
+#: src/widgets/status-bar/lib/strip/strip.ts:30
 msgid "resets {when}"
 msgstr "resets {when}"
 
@@ -1465,7 +1465,7 @@ msgstr "Send with Enter"
 msgid "Session"
 msgstr "Session"
 
-#: src/widgets/usage-bar/ui/UsageBar/UsageBar.tsx:106
+#: src/widgets/status-bar/ui/UsageBar/UsageBar.tsx:106
 msgid "Session details"
 msgstr "Session details"
 
@@ -1489,7 +1489,7 @@ msgstr "Settings"
 msgid "Settings sections"
 msgstr "Settings sections"
 
-#: src/widgets/usage-bar/lib/strip/strip.ts:40
+#: src/widgets/status-bar/lib/strip/strip.ts:40
 msgid "share unknown"
 msgstr "share unknown"
 
@@ -1713,7 +1713,7 @@ msgstr "The claude command was not found. Install the Claude Code CLI, then try 
 msgid "The CLI does the work. Zetrem shows it as it happens: what you asked for, who is on it, and what they have run."
 msgstr "The CLI does the work. Zetrem shows it as it happens: what you asked for, who is on it, and what they have run."
 
-#: src/entities/settings/model/choices/choices.ts:29
+#: src/entities/settings/config/choices/choices.ts:26
 msgid "The hardest problems. Slowest and priciest of these"
 msgstr "The hardest problems. Slowest and priciest of these"
 
@@ -1721,11 +1721,11 @@ msgstr "The hardest problems. Slowest and priciest of these"
 msgid "The kind of work they should get"
 msgstr "The kind of work they should get"
 
-#: src/entities/claude-cli/lib/aside/aside.ts:31
+#: src/entities/claude-cli/api/aside/aside.ts:31
 msgid "The model"
 msgstr "The model"
 
-#: src/entities/claude-cli/lib/aside/aside.ts:25
+#: src/entities/claude-cli/api/aside/aside.ts:25
 msgid "The model declined this"
 msgstr "The model declined this"
 
@@ -1733,7 +1733,7 @@ msgstr "The model declined this"
 msgid "The model is overloaded"
 msgstr "The model is overloaded"
 
-#: src/pages/workspace/model/session/agent-events/crew/crew.ts:187
+#: src/pages/workspace/model/session/agent-events/crew/crew.ts:186
 msgid "the orchestrator"
 msgstr "the orchestrator"
 
@@ -1766,11 +1766,11 @@ msgstr "The saved conversation is deleted. This cannot be undone."
 msgid "The server had a problem"
 msgstr "The server had a problem"
 
-#: src/entities/claude-cli/lib/aside/aside.ts:39
+#: src/entities/claude-cli/api/aside/aside.ts:39
 msgid "The session is closing"
 msgstr "The session is closing"
 
-#: src/entities/claude-cli/lib/aside/aside.ts:39
+#: src/entities/claude-cli/api/aside/aside.ts:39
 msgid "The session is closing: {why}"
 msgstr "The session is closing: {why}"
 
@@ -1800,11 +1800,11 @@ msgstr "Thinking"
 msgid "This always applies. Write it the way you would explain the job to a person."
 msgstr "This always applies. Write it the way you would explain the job to a person."
 
-#: src/widgets/usage-bar/lib/strip/strip.ts:60
+#: src/widgets/status-bar/lib/strip/strip.ts:60
 msgid "this chat {percent}%"
 msgstr "this chat {percent}%"
 
-#: src/widgets/usage-bar/lib/strip/strip.ts:57
+#: src/widgets/status-bar/lib/strip/strip.ts:57
 msgid "this chat {size}"
 msgstr "this chat {size}"
 
@@ -1857,7 +1857,7 @@ msgstr "Today"
 msgid "Todo list"
 msgstr "Todo list"
 
-#: src/entities/claude-cli/lib/turn/turn.ts:71
+#: src/entities/claude-cli/api/turn/turn.ts:71
 msgid "tool"
 msgstr "tool"
 
@@ -1865,7 +1865,7 @@ msgstr "tool"
 msgid "Tools"
 msgstr "Tools"
 
-#: src/widgets/setup/ui/StockList/StockList.tsx:31
+#: src/entities/teammate/ui/StockList/StockList.tsx:31
 msgid "Turn on to let the team call {name}"
 msgstr "Turn on to let the team call {name}"
 
@@ -2021,7 +2021,7 @@ msgstr "You talk on the left"
 msgid "Your account"
 msgstr "Your account"
 
-#: src/entities/settings/model/choices/choices.ts:45
+#: src/entities/settings/config/choices/choices.ts:42
 msgid "Your account turned this one down. Try it again if your plan changed."
 msgstr "Your account turned this one down. Try it again if your plan changed."
 

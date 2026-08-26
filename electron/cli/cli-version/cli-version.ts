@@ -1,7 +1,7 @@
 import { realpathSync } from 'node:fs'
 import { homedir } from 'node:os'
 import { net } from 'electron'
-import { managerOf } from '@/entities/agent-session/model/cli-update/cli-update'
+import { managerOf } from '@/entities/agent-session/lib/cli-update/cli-update'
 import { agentEnv } from '../../spawn/shell-env/shell-env'
 import { claudeBin, findCommand, loginPath } from '../login-path/login-path'
 import { handle } from '../../ipc/ipc'

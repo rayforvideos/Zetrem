@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { roster } from './roster'
-import type { AgentSession } from '@/entities/agent-session'
+import type { AgentSession } from '@/entities/agent-session/@x/teammate'
 
 function session(overrides: Partial<AgentSession> = {}): AgentSession {
   return {

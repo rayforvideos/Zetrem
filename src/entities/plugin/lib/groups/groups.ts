@@ -1,5 +1,5 @@
 import { grouped } from '@/shared/lib/grouped/grouped'
-import type { InstalledPlugin } from '../catalog/catalog.types'
+import type { InstalledPlugin } from '../../api/catalog/catalog.types'
 import type { PluginGroup, PluginGroupKey } from './groups.types'
 import { msg } from '@lingui/core/macro'
 import type { MessageDescriptor } from '@lingui/core'

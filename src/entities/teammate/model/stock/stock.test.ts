@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { ORCHESTRATOR } from '../roster-lock/roster-lock'
+import { ORCHESTRATOR } from '@/entities/claude-cli/@x/teammate'
 import { allowedStock, offStock, stockAgents } from './stock'
 
 const known = [

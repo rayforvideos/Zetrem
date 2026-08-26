@@ -1,7 +1,7 @@
 import { readFile } from 'node:fs/promises'
 import { describe, expect, it } from 'vitest'
-import { agentArgs } from '@/entities/claude-cli'
-import { ORCHESTRATOR, agentsArgs } from '../roster-lock/roster-lock'
+import { agentArgs } from '@/entities/claude-cli/@x/teammate'
+import { ORCHESTRATOR, agentsArgs } from '@/entities/claude-cli/@x/teammate'
 import { ORCHESTRATOR_PROMPT, PERSONA } from './orchestrator'
 
 const person = { name: 'Explore', description: '', prompt: '찾아본다', model: null, tools: [] }

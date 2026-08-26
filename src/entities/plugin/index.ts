@@ -1,4 +1,4 @@
-export { readCatalog, readMarketplaces, splitId } from './lib/catalog/catalog'
+export { readCatalog, readMarketplaces, splitId } from './api/catalog/catalog'
 export { safeTarget } from './lib/target/target'
 export { withScope } from './lib/scope/scope'
 export { appliesHere, removableHere, switchableHere } from './lib/where/where'
@@ -12,4 +12,4 @@ export type {
   Marketplace,
   PluginScope,
   PluginVerb,
-} from './lib/catalog/catalog.types'
+} from './api/catalog/catalog.types'

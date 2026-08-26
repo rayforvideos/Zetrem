@@ -2,11 +2,8 @@ import type { Settings } from './settings.types'
 
 import { SIDEBAR } from '@/shared/config/theme'
 // Not the barrel: the main process reads settings, and the barrel pulls UserFace's PNG art.
-import { isFaceId, tidyUserName } from '@/entities/user/lib/face/face'
-import type {
-  ModelChoice,
-  PermissionMode,
-} from '@/entities/claude-cli/lib/run-config/run-config.types'
+import { isFaceId, tidyUserName } from '@/entities/user/@x/settings'
+import type { ModelChoice, PermissionMode } from '@/entities/claude-cli/@x/settings'
 
 const TONGUES: Settings['tongue'][] = ['system', 'en', 'ko']
 

@@ -5,11 +5,11 @@ import {
   isChatId,
   readTranscript,
   summaryOf,
-} from '@/entities/conversation/lib/transcript/transcript'
+} from '@/entities/conversation/model/transcript/transcript'
 import type {
   ChatSummary,
   Transcript,
-} from '@/entities/conversation/lib/transcript/transcript.types'
+} from '@/entities/conversation/model/transcript/transcript.types'
 import { handle } from '../../ipc/ipc'
 import { queue } from '../queue/queue'
 import { saveFile } from '../save-file/save-file'

@@ -39,7 +39,7 @@ import bunny_busy from '@/entities/teammate/ui/AgentSprite/sprites/busy/bunny_bu
 import rock_busy from '@/entities/teammate/ui/AgentSprite/sprites/busy/rock_busy.png'
 import cloud_busy from '@/entities/teammate/ui/AgentSprite/sprites/busy/cloud_busy.png'
 
-import type { CharacterId, Mood } from '../../model/character/character.types'
+import type { CharacterId, Mood } from '../../lib/character/character.types'
 
 export const SPRITES: Record<CharacterId, Record<Mood, string>> = {
   jelly: { default: jelly_default, sleepy: jelly_sleepy, relax: jelly_relax, busy: jelly_busy },

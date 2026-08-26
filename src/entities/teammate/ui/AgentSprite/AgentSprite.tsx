@@ -1,7 +1,7 @@
 import { cn } from '@/shared/lib/cn'
 import { useFace } from '../../model/crew/crew'
-import { characterOf, moodOf } from '../../model/character/character'
-import type { CharacterId, MemberState, Mood } from '../../model/character/character.types'
+import { characterOf, moodOf } from '../../lib/character/character'
+import type { CharacterId, MemberState, Mood } from '../../lib/character/character.types'
 import { SPRITES } from './sprites'
 
 const DETAIL_FROM = 40

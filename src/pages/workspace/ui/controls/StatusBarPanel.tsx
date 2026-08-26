@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import type { StatusState } from '@/entities/agent-session'
 import { StatusDrawer } from '@/widgets/status-bar'
-import { UsageBar } from '@/widgets/usage-bar'
+import { UsageBar } from '@/widgets/status-bar'
 import { useCliUpdate } from '../../model/session/useCliUpdate'
 import type { useConnectors } from '../../model/extensions/useConnectors'
 

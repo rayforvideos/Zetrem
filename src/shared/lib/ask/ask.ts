@@ -16,7 +16,7 @@ export function lastLine(out: string, fallback = t`That did not work`): string {
 // The kind of failure decides the words; the evidence fills them in. A refusal
 // carries a code its own domain knows how to say, so it passes through for the
 // caller to translate (see saidOrWhy in entities/connector).
-export function whyLine(why: Why): string {
+function whyLine(why: Why): string {
   switch (why.code) {
     case 'timeout':
       return t`It took too long and was stopped`

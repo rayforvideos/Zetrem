@@ -11,7 +11,7 @@ const MARK = '// On disk:'
 // disk means adding a line to this list.
 const ON_DISK = [
   'src/entities/settings/model/settings/settings.types.ts',
-  'src/entities/conversation/lib/transcript/transcript.types.ts',
+  'src/entities/conversation/model/transcript/transcript.types.ts',
   'electron/projects/projects.types.ts',
   'electron/store/usage-cache/usage-cache.types.ts',
   'electron/store/project-memory/project-memory.ts',

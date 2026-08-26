@@ -1,4 +1,4 @@
-import type { RateLimit } from '@/entities/claude-cli'
+import type { RateLimit } from '@/entities/claude-cli/@x/agent-session'
 
 const LINE =
   /^Current (session|week)(?: \(([^)]+)\))?:\s*(\d+)%\s*used(?:\s*·\s*resets\s+(.+?))?\s*$/

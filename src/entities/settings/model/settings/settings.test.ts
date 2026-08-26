@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { SIDEBAR } from '@/shared/config/theme'
-import { MODELS, PERMISSION_MODES } from '../choices/choices'
+import { MODELS, PERMISSION_MODES } from '../../config/choices/choices'
 import { DEFAULT_SETTINGS, readSettings } from './settings'
 
 describe('readSettings: reading back what was chosen', () => {

@@ -10,8 +10,8 @@
 import type {
   AgentDef,
   AgentDefDraft,
-} from '@/entities/agent-def/lib/frontmatter/frontmatter.types'
-import type { RunConfig } from '@/entities/claude-cli/lib/run-config/run-config.types'
+} from '@/entities/agent-def/api/frontmatter/frontmatter.types'
+import type { RunConfig } from '@/entities/claude-cli/api/run-config/run-config.types'
 import type { Settings } from '@/entities/settings/model/settings/settings.types'
 import type { Project } from '@/entities/project/model/project'
 import type { Outcome } from '@/shared/lib/outcome/outcome.types'
@@ -21,18 +21,18 @@ import type { AuthStatus } from '@/entities/auth/model/auth'
 import type {
   Connector,
   ConnectorVerb,
-} from '@/entities/connector/lib/read-connectors/read-connectors.types'
+} from '@/entities/connector/api/read-connectors/read-connectors.types'
 import type { NewConnector } from '@/entities/connector/lib/new-connector/new-connector.types'
 import type {
   ChatSummary,
   Transcript,
-} from '@/entities/conversation/lib/transcript/transcript.types'
+} from '@/entities/conversation/model/transcript/transcript.types'
 import type {
   Catalog,
   Marketplace,
   PluginScope,
   PluginVerb,
-} from '@/entities/plugin/lib/catalog/catalog.types'
+} from '@/entities/plugin/api/catalog/catalog.types'
 
 export type AgentHostEvent =
   | { id: string; kind: 'line'; line: string }

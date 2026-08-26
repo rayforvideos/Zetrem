@@ -3,7 +3,7 @@ import type { Mark } from '@/entities/tool'
 import { tally } from '@/entities/tool'
 import { plural } from '@lingui/core/macro'
 
-export const RUN_TAIL = 4
+const RUN_TAIL = 4
 
 export function splitRun(
   tools: ToolActivity[],

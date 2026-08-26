@@ -1,9 +1,9 @@
-import { readConnectors } from '@/entities/connector/lib/read-connectors/read-connectors'
+import { readConnectors } from '@/entities/connector/api/read-connectors/read-connectors'
 import { refusalOf, tidyName } from '@/entities/connector/lib/new-connector/new-connector'
 import type {
   Connector,
   ConnectorVerb,
-} from '@/entities/connector/lib/read-connectors/read-connectors.types'
+} from '@/entities/connector/api/read-connectors/read-connectors.types'
 import type { NewConnector } from '@/entities/connector/lib/new-connector/new-connector.types'
 import { lost, textOf } from '@/shared/lib/outcome/outcome'
 import type { Outcome } from '@/shared/lib/outcome/outcome.types'

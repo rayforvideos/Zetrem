@@ -1,8 +1,5 @@
-import type { FaceId } from '@/entities/user'
-import type {
-  ModelChoice,
-  PermissionMode,
-} from '@/entities/claude-cli/lib/run-config/run-config.types'
+import type { FaceId } from '@/entities/user/@x/settings'
+import type { ModelChoice, PermissionMode } from '@/entities/claude-cli/@x/settings'
 
 // On disk: settings.json under userData, read by readSettings(). A change here
 // is a change to a file people already have; readSettings() must still read the

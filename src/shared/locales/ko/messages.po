@@ -56,7 +56,7 @@ msgid "{0} chosen"
 msgstr "{0}개 선택됨"
 
 #. placeholder {0}: untilLabel(left)
-#: src/widgets/usage-bar/lib/strip/strip.ts:26
+#: src/widgets/status-bar/lib/strip/strip.ts:26
 msgid "{0} left"
 msgstr "{0} 남음"
 
@@ -116,7 +116,7 @@ msgstr "팀원 {back}명"
 msgid "{base}. Earlier turns live on as a summary."
 msgstr "{base}. 앞선 대화는 요약으로 남습니다."
 
-#: src/entities/claude-cli/lib/aside/aside.ts:23
+#: src/entities/claude-cli/api/aside/aside.ts:23
 msgid "{from} declined this, so {to} took it"
 msgstr "{from}이(가) 거절해서 {to}이(가) 대신 처리했습니다"
 
@@ -124,15 +124,15 @@ msgstr "{from}이(가) 거절해서 {to}이(가) 대신 처리했습니다"
 msgid "{held, plural, one {# line} other {# lines}}"
 msgstr "{held, plural, other {#줄}}"
 
-#: src/pages/workspace/model/team/workspace-config/workspace-config.ts:40
+#: src/pages/workspace/model/team/workspace-config/workspace-config.ts:42
 msgid "{installed} installed from {sources, plural, one {# source} other {# sources}}"
 msgstr "{sources, plural, other {출처 #곳}}에서 {installed}개 설치됨"
 
-#: src/entities/claude-cli/lib/turn/turn.ts:107
+#: src/entities/claude-cli/api/turn/turn.ts:107
 msgid "{kind} {name} did not load: {why}"
 msgstr "{kind} {name}을(를) 불러오지 못했습니다: {why}"
 
-#: src/widgets/setup/ui/StockList/StockList.tsx:30
+#: src/entities/teammate/ui/StockList/StockList.tsx:30
 msgid "{name} can be called this session"
 msgstr "{name}은(는) 이번 세션에서 부를 수 있습니다"
 
@@ -148,7 +148,7 @@ msgstr "{name}을(를) 켰습니다. 실행 중인 세션은 아직 부를 수 �
 msgid "{name} is over {max}MB, so it cannot be sent as a picture. Point at it by path instead."
 msgstr "{name}이(가) {max}MB를 넘어서 이미지로 보낼 수 없습니다. 대신 파일 경로로 알려 주세요."
 
-#: src/widgets/usage-bar/lib/strip/strip.ts:40
+#: src/widgets/status-bar/lib/strip/strip.ts:40
 msgid "{percent}% used"
 msgstr "{percent}% 사용"
 
@@ -193,12 +193,12 @@ msgstr "{target} 삭제했습니다"
 msgid "{target} updated. Restart the session to load it."
 msgstr "{target} 업데이트했습니다. 세션을 다시 시작해야 불러옵니다."
 
-#: src/entities/claude-cli/lib/aside/aside.ts:16
-#: src/entities/claude-cli/lib/turn/turn.ts:72
+#: src/entities/claude-cli/api/aside/aside.ts:16
+#: src/entities/claude-cli/api/turn/turn.ts:72
 msgid "{tool} was not allowed"
 msgstr "{tool} 사용이 허용되지 않았습니다"
 
-#: src/entities/claude-cli/lib/aside/aside.ts:16
+#: src/entities/claude-cli/api/aside/aside.ts:16
 msgid "{tool} was not allowed: {why}"
 msgstr "{tool} 사용이 허용되지 않았습니다: {why}"
 
@@ -215,11 +215,11 @@ msgstr "{waiting}명 대기 중"
 msgid "{what}. Trying again in {seconds}, attempt {which}"
 msgstr "{what}. {seconds} 뒤 다시 시도합니다. {which}번째"
 
-#: src/entities/claude-cli/lib/aside/aside.ts:34
+#: src/entities/claude-cli/api/aside/aside.ts:34
 msgid "{who} declined this and there is nothing to fall back to"
 msgstr "{who}이(가) 거절했고 대신할 모델이 없습니다"
 
-#: src/entities/claude-cli/lib/aside/aside.ts:33
+#: src/entities/claude-cli/api/aside/aside.ts:33
 msgid "{who} declined this and there is nothing to fall back to. {said}"
 msgstr "{who}이(가) 거절했고 대신할 모델이 없습니다. {said}"
 
@@ -299,7 +299,7 @@ msgstr "짧은 이름"
 msgid "a teammate"
 msgstr "팀원 한 명"
 
-#: src/entities/claude-cli/lib/aside/aside.ts:14
+#: src/entities/claude-cli/api/aside/aside.ts:14
 msgid "A tool"
 msgstr "어떤 도구"
 
@@ -316,7 +316,7 @@ msgstr "추가"
 msgid "Add a marketplace"
 msgstr "마켓플레이스 추가"
 
-#: src/pages/workspace/model/team/workspace-config/workspace-config.ts:39
+#: src/pages/workspace/model/team/workspace-config/workspace-config.ts:41
 msgid "Add a marketplace to bring in skills and agents"
 msgstr "마켓플레이스를 추가하면 스킬과 에이전트를 가져올 수 있습니다"
 
@@ -349,7 +349,7 @@ msgstr "{0}개 모두 연결됨"
 msgid "Allow"
 msgstr "허용"
 
-#: src/entities/settings/model/choices/choices.ts:20
+#: src/entities/settings/config/choices/choices.ts:17
 #: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:47
 msgid "Allow all"
 msgstr "전부 허용"
@@ -375,7 +375,7 @@ msgstr "곧"
 msgid "API error {0}"
 msgstr "API 오류 {0}"
 
-#: src/entities/settings/model/choices/choices.ts:14
+#: src/entities/settings/config/choices/choices.ts:11
 #: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:47
 msgid "Ask first"
 msgstr "먼저 묻기"
@@ -388,7 +388,7 @@ msgstr "일 전체를 맡기세요"
 msgid "Ask for the whole job, not the next step. The orchestrator splits it up, hands out the pieces, and replies when they come back."
 msgstr "다음 단계 말고 일 전체를 맡기세요. 오케스트레이터가 알아서 쪼개서 나눠 주고, 결과가 오면 정리해서 답합니다."
 
-#: src/entities/settings/model/choices/choices.ts:14
+#: src/entities/settings/config/choices/choices.ts:11
 msgid "Asks before editing files or running commands"
 msgstr "파일을 고치거나 명령을 실행하기 전에 묻습니다"
 
@@ -404,7 +404,7 @@ msgstr "파일 첨부"
 msgid "auto"
 msgstr "자동"
 
-#: src/entities/settings/model/choices/choices.ts:17
+#: src/entities/settings/config/choices/choices.ts:14
 #: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:47
 msgid "Auto-edit"
 msgstr "자동 편집"
@@ -413,7 +413,7 @@ msgstr "자동 편집"
 msgid "Back"
 msgstr "이전"
 
-#: src/entities/settings/model/choices/choices.ts:32
+#: src/entities/settings/config/choices/choices.ts:29
 msgid "Balanced for most tasks"
 msgstr "대부분의 일에 무난합니다"
 
@@ -514,7 +514,7 @@ msgstr "보고서 닫기"
 msgid "Close this tile. The run stays in the sidebar."
 msgstr "이 타일을 닫습니다. 기록은 사이드바에 남습니다."
 
-#: src/entities/settings/model/choices/choices.ts:31
+#: src/entities/settings/config/choices/choices.ts:28
 msgid "Complex work. Slower and pricier"
 msgstr "복잡한 일에. 느리고 비쌉니다"
 
@@ -617,7 +617,7 @@ msgstr "{0}에 연결하지 못했습니다"
 msgid "Could not read the plugin shelf"
 msgstr "플러그인 목록을 읽지 못했습니다"
 
-#: src/widgets/usage-bar/lib/strip/strip.ts:66
+#: src/widgets/status-bar/lib/strip/strip.ts:66
 msgid "Could not read usage"
 msgstr "사용량을 읽지 못했습니다"
 
@@ -688,7 +688,7 @@ msgstr "만들기"
 msgid "Create a teammate and they'll show up here."
 msgstr "팀원을 만들면 여기에 나타납니다."
 
-#: src/entities/settings/model/choices/choices.ts:25
+#: src/entities/settings/config/choices/choices.ts:22
 msgid "Default"
 msgstr "기본값"
 
@@ -706,7 +706,7 @@ msgstr "대화 삭제"
 msgid "Deny"
 msgstr "거부"
 
-#: src/widgets/first-hint/ui/FirstHint/FirstHint.tsx:29
+#: src/shared/parts/FirstHint/FirstHint.tsx:29
 msgid "Dismiss this tip"
 msgstr "이 안내 닫기"
 
@@ -758,7 +758,7 @@ msgstr "수정"
 msgid "Editing"
 msgstr "고치는 중"
 
-#: src/entities/settings/model/choices/choices.ts:18
+#: src/entities/settings/config/choices/choices.ts:15
 msgid "Edits files freely, asks before running commands"
 msgstr "파일은 알아서 고치고, 명령을 실행할 때만 묻습니다"
 
@@ -793,7 +793,7 @@ msgstr "실패"
 msgid "Failed"
 msgstr "실패"
 
-#: src/entities/settings/model/choices/choices.ts:33
+#: src/entities/settings/config/choices/choices.ts:30
 msgid "Fast and cheap. Good for quick questions"
 msgstr "빠르고 저렴합니다. 간단한 질문에 좋습니다"
 
@@ -835,7 +835,7 @@ msgstr "폴더 이름"
 msgid "Follows the language your computer is set to"
 msgstr "컴퓨터에 설정된 언어를 따릅니다"
 
-#: src/entities/settings/model/choices/choices.ts:25
+#: src/entities/settings/config/choices/choices.ts:22
 msgid "Follows your account setting"
 msgstr "계정 설정을 따릅니다"
 
@@ -844,7 +844,7 @@ msgstr "계정 설정을 따릅니다"
 msgid "from {0}"
 msgstr "{0}에게서"
 
-#: src/widgets/usage-bar/lib/strip/strip.ts:37
+#: src/widgets/status-bar/lib/strip/strip.ts:37
 msgid "from an earlier reading"
 msgstr "이전에 읽어둔 값"
 
@@ -926,7 +926,7 @@ msgstr "이 폴더에 설치했습니다. 이 폴더를 여는 사람은 모두 
 msgid "Installing Claude Code…"
 msgstr "Claude Code 설치 중…"
 
-#: src/entities/claude-cli/lib/turn/turn.ts:106
+#: src/entities/claude-cli/api/turn/turn.ts:106
 msgid "it could not be loaded"
 msgstr "불러올 수 없었습니다"
 
@@ -1014,7 +1014,7 @@ msgstr "수동"
 msgid "MCP {0}/{1} · {2} need auth"
 msgstr "MCP {0}/{1} · {2}개 로그인 필요"
 
-#: src/entities/claude-cli/lib/turn/turn.ts:96
+#: src/entities/claude-cli/api/turn/turn.ts:96
 msgid "MCP server"
 msgstr "MCP 서버"
 
@@ -1071,7 +1071,7 @@ msgstr "로그인이 필요합니다"
 msgid "Needs you"
 msgstr "기다리는 중"
 
-#: src/entities/settings/model/choices/choices.ts:20
+#: src/entities/settings/config/choices/choices.ts:17
 msgid "Never asks. Anything can run"
 msgstr "묻지 않습니다. 무엇이든 실행됩니다"
 
@@ -1096,7 +1096,7 @@ msgstr "새 팀원"
 msgid "Next"
 msgstr "다음"
 
-#: src/widgets/usage-bar/lib/strip/strip.ts:67
+#: src/widgets/status-bar/lib/strip/strip.ts:67
 msgid "No account limits reported"
 msgstr "계정 한도 정보가 없습니다"
 
@@ -1157,7 +1157,7 @@ msgstr "알림"
 msgid "Older"
 msgstr "그 이전"
 
-#: src/widgets/usage-bar/lib/strip/strip.ts:10
+#: src/widgets/status-bar/lib/strip/strip.ts:10
 msgid "on overage"
 msgstr "초과분 사용 중"
 
@@ -1202,7 +1202,7 @@ msgstr "권한을 바꿨습니다. 실행 중인 세션은 기존 권한을 따�
 msgid "Pick a project first"
 msgstr "먼저 프로젝트를 고르세요"
 
-#: src/pages/workspace/model/session/agent-events/crew/crew.ts:220
+#: src/pages/workspace/model/session/agent-events/crew/crew.ts:219
 msgid "Picked up where they left off"
 msgstr "하던 일을 이어받았습니다"
 
@@ -1210,7 +1210,7 @@ msgstr "하던 일을 이어받았습니다"
 msgid "Planning"
 msgstr "계획하는 중"
 
-#: src/entities/claude-cli/lib/turn/turn.ts:97
+#: src/entities/claude-cli/api/turn/turn.ts:97
 msgid "Plugin"
 msgstr "플러그인"
 
@@ -1275,7 +1275,7 @@ msgstr "보고 읽는 중"
 msgid "Reading the catalog…"
 msgstr "목록을 읽는 중…"
 
-#: src/widgets/usage-bar/lib/strip/strip.ts:65
+#: src/widgets/status-bar/lib/strip/strip.ts:65
 msgid "Reading usage…"
 msgstr "사용량 읽는 중…"
 
@@ -1283,7 +1283,7 @@ msgstr "사용량 읽는 중…"
 msgid "Reading what this session offers. The list fills in a moment."
 msgstr "이 세션에서 쓸 수 있는 것을 읽는 중입니다. 곧 목록이 채워집니다."
 
-#: src/widgets/setup/ui/StockList/StockList.tsx:11
+#: src/entities/teammate/ui/StockList/StockList.tsx:11
 #: src/widgets/team-sidebar/ui/TeamSidebar/TeamSidebar.tsx:78
 msgid "Reading which agents Claude Code brings. They will be listed here."
 msgstr "클로드 코드가 기본으로 주는 에이전트를 읽는 중입니다. 곧 여기에 표시됩니다."
@@ -1361,13 +1361,13 @@ msgstr "폴더 이름 바꾸기"
 msgid "Reported back"
 msgstr "보고 완료"
 
-#: src/widgets/usage-bar/lib/strip/strip.ts:19
+#: src/widgets/status-bar/lib/strip/strip.ts:19
 msgid "reset time not reported"
 msgstr "초기화 시각을 알 수 없음"
 
-#: src/widgets/usage-bar/lib/strip/strip.ts:13
-#: src/widgets/usage-bar/lib/strip/strip.ts:17
-#: src/widgets/usage-bar/lib/strip/strip.ts:30
+#: src/widgets/status-bar/lib/strip/strip.ts:13
+#: src/widgets/status-bar/lib/strip/strip.ts:17
+#: src/widgets/status-bar/lib/strip/strip.ts:30
 msgid "resets {when}"
 msgstr "{when} 초기화"
 
@@ -1465,7 +1465,7 @@ msgstr "Enter로 전송"
 msgid "Session"
 msgstr "세션"
 
-#: src/widgets/usage-bar/ui/UsageBar/UsageBar.tsx:106
+#: src/widgets/status-bar/ui/UsageBar/UsageBar.tsx:106
 msgid "Session details"
 msgstr "세션 상세"
 
@@ -1489,7 +1489,7 @@ msgstr "설정"
 msgid "Settings sections"
 msgstr "설정 구역"
 
-#: src/widgets/usage-bar/lib/strip/strip.ts:40
+#: src/widgets/status-bar/lib/strip/strip.ts:40
 msgid "share unknown"
 msgstr "사용량 알 수 없음"
 
@@ -1713,7 +1713,7 @@ msgstr "claude 명령을 찾지 못했습니다. Claude Code CLI를 설치한 �
 msgid "The CLI does the work. Zetrem shows it as it happens: what you asked for, who is on it, and what they have run."
 msgstr "일은 CLI가 하고, Zetrem은 그걸 보여줍니다. 무엇을 시켰고, 누가 맡았고, 어디까지 했는지."
 
-#: src/entities/settings/model/choices/choices.ts:29
+#: src/entities/settings/config/choices/choices.ts:26
 msgid "The hardest problems. Slowest and priciest of these"
 msgstr "가장 어려운 문제용. 이 중 가장 느리고 가장 비쌉니다"
 
@@ -1721,11 +1721,11 @@ msgstr "가장 어려운 문제용. 이 중 가장 느리고 가장 비쌉니다
 msgid "The kind of work they should get"
 msgstr "어떤 일을 맡길지"
 
-#: src/entities/claude-cli/lib/aside/aside.ts:31
+#: src/entities/claude-cli/api/aside/aside.ts:31
 msgid "The model"
 msgstr "모델"
 
-#: src/entities/claude-cli/lib/aside/aside.ts:25
+#: src/entities/claude-cli/api/aside/aside.ts:25
 msgid "The model declined this"
 msgstr "모델이 이것을 거절했습니다"
 
@@ -1733,7 +1733,7 @@ msgstr "모델이 이것을 거절했습니다"
 msgid "The model is overloaded"
 msgstr "모델에 부하가 걸렸습니다"
 
-#: src/pages/workspace/model/session/agent-events/crew/crew.ts:187
+#: src/pages/workspace/model/session/agent-events/crew/crew.ts:186
 msgid "the orchestrator"
 msgstr "오케스트레이터"
 
@@ -1766,11 +1766,11 @@ msgstr "저장된 대화가 삭제됩니다. 되돌릴 수 없습니다."
 msgid "The server had a problem"
 msgstr "서버에 문제가 있었습니다"
 
-#: src/entities/claude-cli/lib/aside/aside.ts:39
+#: src/entities/claude-cli/api/aside/aside.ts:39
 msgid "The session is closing"
 msgstr "세션을 닫는 중입니다"
 
-#: src/entities/claude-cli/lib/aside/aside.ts:39
+#: src/entities/claude-cli/api/aside/aside.ts:39
 msgid "The session is closing: {why}"
 msgstr "세션을 닫는 중입니다: {why}"
 
@@ -1800,11 +1800,11 @@ msgstr "생각하는 중"
 msgid "This always applies. Write it the way you would explain the job to a person."
 msgstr "항상 적용되는 내용입니다. 사람에게 일을 설명하듯 적으세요."
 
-#: src/widgets/usage-bar/lib/strip/strip.ts:60
+#: src/widgets/status-bar/lib/strip/strip.ts:60
 msgid "this chat {percent}%"
 msgstr "이 대화 {percent}%"
 
-#: src/widgets/usage-bar/lib/strip/strip.ts:57
+#: src/widgets/status-bar/lib/strip/strip.ts:57
 msgid "this chat {size}"
 msgstr "이 대화 {size}"
 
@@ -1857,7 +1857,7 @@ msgstr "오늘"
 msgid "Todo list"
 msgstr "할 일 목록"
 
-#: src/entities/claude-cli/lib/turn/turn.ts:71
+#: src/entities/claude-cli/api/turn/turn.ts:71
 msgid "tool"
 msgstr "도구"
 
@@ -1865,7 +1865,7 @@ msgstr "도구"
 msgid "Tools"
 msgstr "도구"
 
-#: src/widgets/setup/ui/StockList/StockList.tsx:31
+#: src/entities/teammate/ui/StockList/StockList.tsx:31
 msgid "Turn on to let the team call {name}"
 msgstr "켜면 팀이 {name}을(를) 부를 수 있습니다"
 
@@ -2021,7 +2021,7 @@ msgstr "왼쪽에서 대화합니다"
 msgid "Your account"
 msgstr "내 계정"
 
-#: src/entities/settings/model/choices/choices.ts:45
+#: src/entities/settings/config/choices/choices.ts:42
 msgid "Your account turned this one down. Try it again if your plan changed."
 msgstr "계정이 이 모델을 거절했습니다. 요금제가 바뀌었다면 다시 시도해 보세요."
 

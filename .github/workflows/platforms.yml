@@ -39,8 +39,16 @@ jobs:
 
       - run: npm ci
 
+      - name: Formatting and lint
+        run: npm run lint
+
       - name: Types
         run: npm run typecheck
+
+      - name: Architecture
+        # steiger holds the layer direction, the segments and the cross-imports.
+        # tests/conventions holds the rest; CONTRIBUTING says which is which.
+        run: npm run fsd
 
       - name: Tests
         # Includes tests/conventions, which is where this repo's rules live.

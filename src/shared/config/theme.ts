@@ -17,4 +17,3 @@ export const MIN_WINDOW = { width: 720, height: 520 } as const
 export const USAGE_BAR = { height: 30 } as const
 
 export const SIDEBAR = { width: 232, min: 176, max: 420, step: 16, gap: 28, gutter: 16 } as const
-

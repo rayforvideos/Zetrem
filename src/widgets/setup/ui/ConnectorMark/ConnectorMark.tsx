@@ -26,7 +26,11 @@ export function ConnectorMark({ where }: { where: string }) {
       style={tile === null ? undefined : { background: tile.bg }}
       className="flex size-7 flex-none items-center justify-center rounded-md bg-muted"
     >
-      {brand === null ? <Plug className="size-3.5 text-muted-foreground" /> : <BrandMark brand={brand} />}
+      {brand === null ? (
+        <Plug className="size-3.5 text-muted-foreground" />
+      ) : (
+        <BrandMark brand={brand} />
+      )}
     </span>
   )
 }

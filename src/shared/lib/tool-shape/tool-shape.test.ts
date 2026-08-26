@@ -3,13 +3,19 @@ import { resultNote, toolShape } from './tool-shape'
 
 describe('toolShape: reading a tool into its own shape', () => {
   it('splits a path into a folder and a name', () => {
-    expect(toolShape('Read', { file_path: 'src/entities/agent-session/api/claude/status.ts' })).toEqual({
+    expect(
+      toolShape('Read', { file_path: 'src/entities/agent-session/api/claude/status.ts' }),
+    ).toEqual({
       kind: 'file',
       verb: 'read',
       dir: 'src/entities/agent-session/api/claude/',
       name: 'status.ts',
     })
-    expect(toolShape('Write', { file_path: 'a.ts' })).toMatchObject({ verb: 'write', dir: '', name: 'a.ts' })
+    expect(toolShape('Write', { file_path: 'a.ts' })).toMatchObject({
+      verb: 'write',
+      dir: '',
+      name: 'a.ts',
+    })
     expect(toolShape('Edit', { file_path: 'a.ts' })).toMatchObject({ verb: 'edit' })
     expect(toolShape('MultiEdit', { file_path: 'a.ts' })).toMatchObject({ verb: 'edit' })
   })
@@ -31,7 +37,9 @@ describe('toolShape: reading a tool into its own shape', () => {
   })
 
   it('keeps only the domain, because a whole URL eats the line', () => {
-    expect(toolShape('WebFetch', { url: 'https://registry.npmjs.org/@anthropic-ai/claude-code/latest' })).toEqual({
+    expect(
+      toolShape('WebFetch', { url: 'https://registry.npmjs.org/@anthropic-ai/claude-code/latest' }),
+    ).toEqual({
       kind: 'web',
       label: 'registry.npmjs.org',
     })

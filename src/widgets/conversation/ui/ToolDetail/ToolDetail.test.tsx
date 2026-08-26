@@ -5,13 +5,26 @@ import { TOOL_OUTPUT_LINES } from '../../lib/limits/limits'
 import { ToolDetail } from './ToolDetail'
 
 function tool(overrides: Partial<ToolActivity>): ToolActivity {
-  return { line: 'Edit a.ts', toolUseId: 't1', input: null, result: null, startedAtMs: 0, endedAtMs: 100, ...overrides }
+  return {
+    line: 'Edit a.ts',
+    toolUseId: 't1',
+    input: null,
+    result: null,
+    startedAtMs: 0,
+    endedAtMs: 100,
+    ...overrides,
+  }
 }
 
 describe('ToolDetail: each tool drawn in its own shape', () => {
   it('shows an edit as added and removed lines', () => {
     const html = renderToStaticMarkup(
-      <ToolDetail tool={tool({ line: 'Edit a.ts', input: { file_path: 'a.ts', old_string: 'const a = 1', new_string: 'const a = 2' } })} />,
+      <ToolDetail
+        tool={tool({
+          line: 'Edit a.ts',
+          input: { file_path: 'a.ts', old_string: 'const a = 1', new_string: 'const a = 2' },
+        })}
+      />,
     )
     expect(html).toContain('const a = 1')
     expect(html).toContain('const a = 2')
@@ -21,7 +34,9 @@ describe('ToolDetail: each tool drawn in its own shape', () => {
 
   it('shows a write as all additions', () => {
     const html = renderToStaticMarkup(
-      <ToolDetail tool={tool({ line: 'Write b.ts', input: { file_path: 'b.ts', content: 'hi' } })} />,
+      <ToolDetail
+        tool={tool({ line: 'Write b.ts', input: { file_path: 'b.ts', content: 'hi' } })}
+      />,
     )
     expect(html).toContain('hi')
     expect(html).toContain('+')
@@ -48,15 +63,24 @@ describe('ToolDetail: each tool drawn in its own shape', () => {
   })
 
   it('returns nothing at all when a multi-edit is the wrong shape', () => {
-    expect(ToolDetail({ tool: tool({ line: 'MultiEdit a.ts', input: { file_path: 'a.ts' } }) })).toBeNull()
-    expect(ToolDetail({ tool: tool({ line: 'MultiEdit a.ts', input: { edits: '이상함' } }) })).toBeNull()
+    expect(
+      ToolDetail({ tool: tool({ line: 'MultiEdit a.ts', input: { file_path: 'a.ts' } }) }),
+    ).toBeNull()
+    expect(
+      ToolDetail({ tool: tool({ line: 'MultiEdit a.ts', input: { edits: '이상함' } }) }),
+    ).toBeNull()
     expect(ToolDetail({ tool: tool({ line: 'MultiEdit a.ts', input: { edits: [] } }) })).toBeNull()
     expect(
-      ToolDetail({ tool: tool({ line: 'MultiEdit a.ts', input: { edits: [{ old_string: 'x' }] } }) }),
+      ToolDetail({
+        tool: tool({ line: 'MultiEdit a.ts', input: { edits: [{ old_string: 'x' }] } }),
+      }),
     ).toBeNull()
     expect(
       ToolDetail({
-        tool: tool({ line: 'MultiEdit a.ts', input: { edits: [{ old_string: '', new_string: '' }] } }),
+        tool: tool({
+          line: 'MultiEdit a.ts',
+          input: { edits: [{ old_string: '', new_string: '' }] },
+        }),
       }),
     ).toBeNull()
   })
@@ -96,12 +120,24 @@ describe('ToolDetail: each tool drawn in its own shape', () => {
   })
 
   it('draws nothing for a tool with no view of its own', () => {
-    expect(renderToStaticMarkup(<ToolDetail tool={tool({ line: 'Bash ls', input: { command: 'ls' } })} />)).toBe('')
+    expect(
+      renderToStaticMarkup(
+        <ToolDetail tool={tool({ line: 'Bash ls', input: { command: 'ls' } })} />,
+      ),
+    ).toBe('')
   })
 
   it('draws nothing when the input is not the shape it expects', () => {
-    expect(renderToStaticMarkup(<ToolDetail tool={tool({ line: 'Edit a.ts', input: { file_path: 'a.ts' } })} />)).toBe('')
-    expect(renderToStaticMarkup(<ToolDetail tool={tool({ line: 'TodoWrite', input: { todos: '이상함' } })} />)).toBe('')
+    expect(
+      renderToStaticMarkup(
+        <ToolDetail tool={tool({ line: 'Edit a.ts', input: { file_path: 'a.ts' } })} />,
+      ),
+    ).toBe('')
+    expect(
+      renderToStaticMarkup(
+        <ToolDetail tool={tool({ line: 'TodoWrite', input: { todos: '이상함' } })} />,
+      ),
+    ).toBe('')
   })
 
   it('returns nothing when the shape is right but the content is empty, so no empty panel opens', () => {

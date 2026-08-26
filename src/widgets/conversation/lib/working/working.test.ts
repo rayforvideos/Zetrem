@@ -17,7 +17,14 @@ function turn(overrides: Partial<Turn> = {}): Turn {
 }
 
 function tool(line: string, input: unknown, result: ToolActivity['result'] = null): ToolActivity {
-  return { line, toolUseId: 't', input, result, startedAtMs: 0, endedAtMs: result === null ? null : 100 }
+  return {
+    line,
+    toolUseId: 't',
+    input,
+    result,
+    startedAtMs: 0,
+    endedAtMs: result === null ? null : 100,
+  }
 }
 
 describe('saying what is happening while you wait', () => {
@@ -36,7 +43,11 @@ describe('saying what is happening while you wait', () => {
     const done = turn({
       thinking: '음',
       tools: [
-        tool('Read a.ts', { file_path: 'a.ts' }, { stdout: 'x', stderr: '', isError: false, interrupted: false }),
+        tool(
+          'Read a.ts',
+          { file_path: 'a.ts' },
+          { stdout: 'x', stderr: '', isError: false, interrupted: false },
+        ),
       ],
     })
     expect(doingOf([done]).verb).toBe('Thinking')
@@ -75,12 +86,16 @@ describe('saying what is happening while you wait', () => {
   it('says it is waiting once a teammate has been sent out', () => {
     const back = turn({
       tools: [
-        tool('Task', { subagent_type: 'explore', description: 'maps the src tree' }, {
-          stdout: 'here is what I found',
-          stderr: '',
-          isError: false,
-          interrupted: false,
-        }),
+        tool(
+          'Task',
+          { subagent_type: 'explore', description: 'maps the src tree' },
+          {
+            stdout: 'here is what I found',
+            stderr: '',
+            isError: false,
+            interrupted: false,
+          },
+        ),
       ],
     })
     const doing = doingOf([back], 40_000)
@@ -91,15 +106,23 @@ describe('saying what is happening while you wait', () => {
   it('does not leave that gap saying nothing in particular', () => {
     const plain = turn({
       tools: [
-        tool('Bash ls', { command: 'ls' }, { stdout: '', stderr: '', isError: false, interrupted: false }),
+        tool(
+          'Bash ls',
+          { command: 'ls' },
+          { stdout: '', stderr: '', isError: false, interrupted: false },
+        ),
       ],
     })
     expect(doingOf([plain], 40_000).verb).toBe('Working')
   })
 
   it('lets the kind of tool name the work', () => {
-    expect(doingOf([turn({ tools: [tool('Read a.ts', { file_path: 'a.ts' })] })]).verb).toBe('Reading')
-    expect(doingOf([turn({ tools: [tool('Grep foo', { pattern: 'foo' })] })]).verb).toBe('Searching')
+    expect(doingOf([turn({ tools: [tool('Read a.ts', { file_path: 'a.ts' })] })]).verb).toBe(
+      'Reading',
+    )
+    expect(doingOf([turn({ tools: [tool('Grep foo', { pattern: 'foo' })] })]).verb).toBe(
+      'Searching',
+    )
   })
 })
 
@@ -152,7 +175,10 @@ describe('askedAtMs: the clock runs from when you asked, not from the latest rep
 
   it('does not restart when the assistant opens another turn', () => {
     const before = askedAtMs([turn({ role: 'user', startedAtMs: 1000 })], 0)
-    const after = askedAtMs([turn({ role: 'user', startedAtMs: 1000 }), turn({ startedAtMs: 8000 })], 0)
+    const after = askedAtMs(
+      [turn({ role: 'user', startedAtMs: 1000 }), turn({ startedAtMs: 8000 })],
+      0,
+    )
     expect(after).toBe(before)
   })
 

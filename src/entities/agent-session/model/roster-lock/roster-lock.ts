@@ -15,7 +15,10 @@ const ELSEWHERE = [
   'RemoteTrigger',
 ]
 
-type Spec = Record<string, { description: string; prompt: string; model?: string; tools?: string[] }>
+type Spec = Record<
+  string,
+  { description: string; prompt: string; model?: string; tools?: string[] }
+>
 
 export function peopleSpec(people: Person[]): Spec {
   const spec: Spec = {}

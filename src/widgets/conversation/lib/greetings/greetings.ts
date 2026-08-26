@@ -17,7 +17,8 @@ const GREETINGS = [
 export const GREETING_MS = 6000
 
 export function greetingsFor(name: string): string[] {
-  const lines = name.length === 0 ? GREETINGS.filter((line) => !(line.message ?? '').includes(YOU)) : GREETINGS
+  const lines =
+    name.length === 0 ? GREETINGS.filter((line) => !(line.message ?? '').includes(YOU)) : GREETINGS
   return lines.map((line) => i18n._(line.id, { you: name }, { message: line.message }))
 }
 

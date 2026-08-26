@@ -59,7 +59,8 @@ describe('shadcn holds the ruler, and we do not cut new notches', () => {
     const stray: string[] = []
     for (const file of await ourFiles()) {
       if (file.path.includes('agent-face')) continue
-      for (const match of file.text.matchAll(PALETTE)) stray.push(`${file.path}: ${match[0].trim()}`)
+      for (const match of file.text.matchAll(PALETTE))
+        stray.push(`${file.path}: ${match[0].trim()}`)
     }
     expect(stray, 'colour belongs to the agent faces and nowhere else').toEqual([])
   })

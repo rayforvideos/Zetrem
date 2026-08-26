@@ -37,4 +37,3 @@ export function offStock(off: string[], name: string, on: boolean): string[] {
   const without = off.filter((one) => one.toLowerCase() !== low)
   return on ? without : [...without, name]
 }
-

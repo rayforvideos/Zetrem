@@ -55,13 +55,17 @@ export function AgentReport({ session, sessions, nowMs, onClose, onPick }: Agent
           <span className="flex flex-col">
             <span className="text-base leading-tight">{persona.name}</span>
             <span className="font-mono text-xs text-muted-foreground">
-              {i18n._(STATE[session.status])} · {Math.max(0, Math.round(ranMs / 1000))}s · {session.model}
+              {i18n._(STATE[session.status])} · {Math.max(0, Math.round(ranMs / 1000))}s ·{' '}
+              {session.model}
             </span>
           </span>
         </div>
         <div className="flex flex-none items-center gap-3">
           {runs.length > 1 && (
-            <span data-runs className="flex items-center gap-1 font-mono text-xs text-muted-foreground">
+            <span
+              data-runs
+              className="flex items-center gap-1 font-mono text-xs text-muted-foreground"
+            >
               <Button
                 variant="quiet"
                 size="bare"
@@ -132,13 +136,18 @@ export function AgentReport({ session, sessions, nowMs, onClose, onPick }: Agent
         {session.stream.map((call) => {
           const shape = shapeOfLine(call.line)
           return (
-            <span key={call.id} className="flex items-center gap-2 font-mono text-xs text-muted-foreground">
+            <span
+              key={call.id}
+              className="flex items-center gap-2 font-mono text-xs text-muted-foreground"
+            >
               <ToolIcon shape={shape} />
               <span className="truncate">{call.line}</span>
               {call.failed ? (
                 <span className="ml-auto flex-none text-removed">{t`failed`}</span>
               ) : (
-                call.note.length > 0 && <span className="ml-auto flex-none truncate">{call.note}</span>
+                call.note.length > 0 && (
+                  <span className="ml-auto flex-none truncate">{call.note}</span>
+                )
               )}
             </span>
           )

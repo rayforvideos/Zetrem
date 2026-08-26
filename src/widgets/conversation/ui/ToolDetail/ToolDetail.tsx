@@ -19,7 +19,9 @@ export function ToolDetail({ tool }: { tool: ToolActivity }) {
   if (name === 'MultiEdit') {
     if (!Array.isArray(input.edits)) return null
     const groups = (input.edits as Record<string, unknown>[])
-      .filter((edit) => typeof edit?.old_string === 'string' && typeof edit?.new_string === 'string')
+      .filter(
+        (edit) => typeof edit?.old_string === 'string' && typeof edit?.new_string === 'string',
+      )
       .map((edit) => lineDiff(edit.old_string as string, edit.new_string as string))
       .filter((lines) => lines.length > 0)
     if (groups.length === 0) return null

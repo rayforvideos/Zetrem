@@ -21,7 +21,10 @@ describe('grouped', () => {
   })
 
   it('leaves out a group nobody filled', () => {
-    const groups = of([{ name: 'a', where: 'yours' }, { name: 'c', where: 'theirs' }])
+    const groups = of([
+      { name: 'a', where: 'yours' },
+      { name: 'c', where: 'theirs' },
+    ])
     expect(groups.map((group) => group.key)).toEqual(['yours', 'theirs'])
   })
 
@@ -39,7 +42,10 @@ describe('grouped', () => {
   })
 
   it('heads every group once there is more than one', () => {
-    const groups = of([{ name: 'a', where: 'yours' }, { name: 'b', where: 'shared' }])
+    const groups = of([
+      { name: 'a', where: 'yours' },
+      { name: 'b', where: 'shared' },
+    ])
     expect(groups.map((group) => group.titled)).toEqual([true, true])
   })
 

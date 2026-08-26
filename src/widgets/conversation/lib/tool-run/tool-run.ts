@@ -34,7 +34,9 @@ export function summarise(tools: ToolActivity[]): string {
       ? plural(counted.wrote, { one: '# file changed', other: '# files changed' })
       : null,
     counted.ran > 0 ? plural(counted.ran, { one: '# command run', other: '# commands run' }) : null,
-    counted.searched > 0 ? plural(counted.searched, { one: '# search', other: '# searches' }) : null,
+    counted.searched > 0
+      ? plural(counted.searched, { one: '# search', other: '# searches' })
+      : null,
   ].filter((part) => part !== null)
   if (parts.length === 0) return plural(tools.length, { one: '# step', other: '# steps' })
   return parts.join(' · ')

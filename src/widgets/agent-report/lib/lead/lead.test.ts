@@ -5,7 +5,10 @@ describe('leadOf: the line above the report, when it is not already below it', (
   it('drops the headline when the transcript already says it in full', () => {
     expect(
       leadOf('The dwell measures from startedAtMs…', [
-        { role: 'assistant', text: 'The dwell measures from startedAtMs, which is when the tile opened.' },
+        {
+          role: 'assistant',
+          text: 'The dwell measures from startedAtMs, which is when the tile opened.',
+        },
       ]),
     ).toBeNull()
   })

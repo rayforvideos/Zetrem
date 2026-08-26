@@ -55,10 +55,14 @@ describe('barsOf: the strip', () => {
   })
 
   it('marks a call that has not come back as running', () => {
-    expect(barsOf([{ line: 'Bash sleep 30', ms: 4000, failed: false, running: true }])[0]!.running).toBe(true)
+    expect(
+      barsOf([{ line: 'Bash sleep 30', ms: 4000, failed: false, running: true }])[0]!.running,
+    ).toBe(true)
   })
 
   it('carries the failure through', () => {
-    expect(barsOf([{ line: 'Bash exit 1', ms: 40, failed: true, running: false }])[0]!.failed).toBe(true)
+    expect(barsOf([{ line: 'Bash exit 1', ms: 40, failed: true, running: false }])[0]!.failed).toBe(
+      true,
+    )
   })
 })

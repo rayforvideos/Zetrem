@@ -8,7 +8,10 @@ function limit(kind: string, overrides: Partial<RateLimit> = {}): RateLimit {
 
 describe('withLimit: keeping one reading per kind of limit', () => {
   it('replaces the old reading for a kind rather than stacking a second one', () => {
-    const held = withLimit([limit('five_hour', { utilization: 0.2 })], limit('five_hour', { utilization: 0.8 }))
+    const held = withLimit(
+      [limit('five_hour', { utilization: 0.2 })],
+      limit('five_hour', { utilization: 0.8 }),
+    )
     expect(held).toHaveLength(1)
     expect(held[0]!.utilization).toBe(0.8)
   })

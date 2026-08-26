@@ -8,5 +8,12 @@ export type TurnEvent =
   | { type: 'notice'; text: string; refused?: ModelChoice }
   | { type: 'delta'; text: string }
   | { type: 'thinking'; text: string }
-  | { type: 'toolResult'; toolUseId: string; stdout: string; stderr: string; isError: boolean; interrupted: boolean }
+  | {
+      type: 'toolResult'
+      toolUseId: string
+      stdout: string
+      stderr: string
+      isError: boolean
+      interrupted: boolean
+    }
   | Extract<ChildTurnEvent, { type: 'childOpen' }>

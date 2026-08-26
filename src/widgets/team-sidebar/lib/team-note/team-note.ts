@@ -19,7 +19,10 @@ export function noteLine(note: TeamNote, sessionLive: boolean): NoteLine {
         : { text: t`${who} updated.`, restart: false }
     case 'released':
       return sessionLive
-        ? { text: t`${who} left the team. The running session keeps them until it ends.`, restart: false }
+        ? {
+            text: t`${who} left the team. The running session keeps them until it ends.`,
+            restart: false,
+          }
         : { text: t`${who} left the team.`, restart: false }
     case 'trouble':
       return { text: note.text, restart: false }

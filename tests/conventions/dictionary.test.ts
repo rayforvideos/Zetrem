@@ -10,7 +10,9 @@ type Line = { id: string; said: string }
 function catalog(tongue: string): Line[] {
   const po = readFileSync(join(LOCALES, tongue, 'messages.po'), 'utf8')
   const found: Line[] = []
-  for (const [, id, said] of po.matchAll(/^msgid "((?:[^"\\]|\\.)*)"\r?\nmsgstr "((?:[^"\\]|\\.)*)"/gm)) {
+  for (const [, id, said] of po.matchAll(
+    /^msgid "((?:[^"\\]|\\.)*)"\r?\nmsgstr "((?:[^"\\]|\\.)*)"/gm,
+  )) {
     if (id === undefined || id.length === 0) continue
     found.push({ id, said: said ?? '' })
   }
@@ -43,10 +45,9 @@ describe('the catalogs are what the app actually says', () => {
       )
       const after = paths.map((path) => readFileSync(path, 'utf8'))
       const strip = (po: string): string => po.replace(/"POT-Creation-Date:[^"]*"\r?\n/, '')
-      expect(
-        after.map(strip),
-        'run npm run i18n:extract after changing what the app says',
-      ).toEqual(before.map(strip))
+      expect(after.map(strip), 'run npm run i18n:extract after changing what the app says').toEqual(
+        before.map(strip),
+      )
     } finally {
       paths.forEach((path, at) => writeFileSync(path, before[at] ?? ''))
     }
@@ -64,7 +65,10 @@ describe('a line that has been translated is translated properly', () => {
 
   it('never leaves the English standing in for the Korean', () => {
     const copied = done.filter((one) => one.id === one.said)
-    expect(copied.map((one) => one.id), 'a line left in English is a line nobody translated').toEqual([])
+    expect(
+      copied.map((one) => one.id),
+      'a line left in English is a line nobody translated',
+    ).toEqual([])
   })
 
   it('keeps every slot, or the name or number it carries goes missing', () => {

@@ -38,7 +38,11 @@ export function AgentSprite({
       height={size}
       draggable={false}
       className={cn('zt-sprite flex-none object-contain', `zt-sprite--${mood}`, className)}
-      style={{ width: size, height: size, ['--zt-sprite-phase' as string]: `-${phaseOf(subagentType)}ms` }}
+      style={{
+        width: size,
+        height: size,
+        ['--zt-sprite-phase' as string]: `-${phaseOf(subagentType)}ms`,
+      }}
     />
   )
 }

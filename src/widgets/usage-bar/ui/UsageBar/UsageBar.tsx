@@ -21,7 +21,15 @@ type UsageBarProps = {
   onToggle(): void
 }
 
-export function UsageBar({ status, connectors, checked, nowMs, open, details, onToggle }: UsageBarProps) {
+export function UsageBar({
+  status,
+  connectors,
+  checked,
+  nowMs,
+  open,
+  details,
+  onToggle,
+}: UsageBarProps) {
   const marks = marksOfStatus(status, nowMs)
   const chat = chatLine(status)
   const quiet = quietLine(status)

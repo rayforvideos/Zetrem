@@ -83,7 +83,9 @@ describe('canSignIn: which connectors have a sign in at all', () => {
 
 describe('readConnectors: a server the CLI is holding for approval', () => {
   it('reads waiting for approval as its own state, rather than as unknown', () => {
-    const [found] = readConnectors('shadcn: npx shadcn@latest mcp - ⏸ Pending approval (run `claude` to approve)')
+    const [found] = readConnectors(
+      'shadcn: npx shadcn@latest mcp - ⏸ Pending approval (run `claude` to approve)',
+    )
     expect(found!.state).toBe('unapproved')
   })
 })

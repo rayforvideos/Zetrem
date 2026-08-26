@@ -37,7 +37,12 @@ beforeEach(() => {
 describe('closeSession: what the exit leaves behind', () => {
   it('drops an ask nobody can answer any more, card and queue alike', () => {
     const asks = [ask('req-1'), ask('req-2')]
-    conversation.setPermission({ requestId: 'req-1', toolName: 'Bash', line: 'rm -rf /', detail: '' })
+    conversation.setPermission({
+      requestId: 'req-1',
+      toolName: 'Bash',
+      line: 'rm -rf /',
+      detail: '',
+    })
 
     closeSession({ reason: null, stopped: true, asks, childIds: new Set() })
 
@@ -78,7 +83,10 @@ describe('closeSession: what the exit leaves behind', () => {
 
     expect(statusStore.get().activity).toBe('idle')
     expect(sessionStore.find('a')?.status).toBe('done')
-    expect(sessionStore.find('b')?.status, 'only the children this session sent out are ended').toBe('working')
+    expect(
+      sessionStore.find('b')?.status,
+      'only the children this session sent out are ended',
+    ).toBe('working')
     expect(childIds.size).toBe(0)
     expect(conversation.get().chores).toEqual([])
   })
@@ -116,7 +124,10 @@ describe('beginSession: the slate the next run starts on', () => {
     beginSession({ resumed: false, asks: [], sends: new Map(), childIds: new Set() })
 
     expect(conversation.get().status).toBe('working')
-    expect(conversation.get().trouble, "yesterday's trouble does not follow a new conversation").toBe(false)
+    expect(
+      conversation.get().trouble,
+      "yesterday's trouble does not follow a new conversation",
+    ).toBe(false)
   })
 
   it('keeps what the chat already cost when it is being resumed', () => {

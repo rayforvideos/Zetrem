@@ -4,7 +4,11 @@ import { agentEnv } from '@/shared/lib/shell-env/shell-env'
 import { claudeBin, loginPath } from '../../cli/login-path/login-path'
 import { runSettled, trackChild, untrackChild } from '../run-settled/run-settled'
 
-export async function runClaude(args: string[], timeoutMs: number, cwd?: string): Promise<Outcome<string>> {
+export async function runClaude(
+  args: string[],
+  timeoutMs: number,
+  cwd?: string,
+): Promise<Outcome<string>> {
   return runSettled<Outcome<string>>({
     bin: await claudeBin(),
     args,

@@ -1,6 +1,9 @@
 import { readConnectors } from '@/entities/connector/lib/read-connectors/read-connectors'
 import { refusalOf, tidyName } from '@/entities/connector/lib/new-connector/new-connector'
-import type { Connector, ConnectorVerb } from '@/entities/connector/lib/read-connectors/read-connectors.types'
+import type {
+  Connector,
+  ConnectorVerb,
+} from '@/entities/connector/lib/read-connectors/read-connectors.types'
 import type { NewConnector } from '@/entities/connector/lib/new-connector/new-connector.types'
 import { lost, textOf } from '@/shared/lib/outcome/outcome'
 import type { Outcome } from '@/shared/lib/outcome/outcome.types'
@@ -44,7 +47,9 @@ export function registerConnectors(): void {
       if (typeof wanted?.name !== 'string' || typeof wanted?.url !== 'string') {
         return lost('garbled')
       }
-      const held = Array.isArray(taken) ? taken.filter((one): one is string => typeof one === 'string') : []
+      const held = Array.isArray(taken)
+        ? taken.filter((one): one is string => typeof one === 'string')
+        : []
       const refused = refusalOf(wanted, held)
       if (refused !== null) return lost('refused', refused.code)
       return runClaude(

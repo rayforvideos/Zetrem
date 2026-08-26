@@ -96,7 +96,8 @@ export function AddConnector({
             </Button>
           </div>
           <span data-refusal className="text-xs text-muted-foreground">
-            {(showing === null ? null : refusalWhy(showing.code)) ?? t`Letters, numbers, hyphens. Sign in after adding if it asks.`}
+            {(showing === null ? null : refusalWhy(showing.code)) ??
+              t`Letters, numbers, hyphens. Sign in after adding if it asks.`}
           </span>
         </form>
       )}

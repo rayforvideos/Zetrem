@@ -27,7 +27,15 @@ const NOW = 61_000
 
 function html(sessions: AgentSession[], openId: string | null = null): string {
   return renderToStaticMarkup(
-    <CrewBoard sessions={sessions} face="onigiri" name="Ray" rect={RECT} nowMs={NOW} openId={openId} onOpen={() => {}} />,
+    <CrewBoard
+      sessions={sessions}
+      face="onigiri"
+      name="Ray"
+      rect={RECT}
+      nowMs={NOW}
+      openId={openId}
+      onOpen={() => {}}
+    />,
   )
 }
 
@@ -60,7 +68,14 @@ describe('CrewBoard: a card for each of them', () => {
     const out = html([
       session({
         stream: [
-          { id: 'c1', line: 'Read src/app.ts', startedAtMs: 2000, endedAtMs: null, failed: false, note: '' },
+          {
+            id: 'c1',
+            line: 'Read src/app.ts',
+            startedAtMs: 2000,
+            endedAtMs: null,
+            failed: false,
+            note: '',
+          },
         ],
       }),
     ])

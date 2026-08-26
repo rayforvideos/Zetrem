@@ -3,7 +3,11 @@ import { existsSync, statSync } from 'node:fs'
 import { readFile, rename } from 'node:fs/promises'
 import { basename, join } from 'node:path'
 import { app, dialog } from 'electron'
-import { recallProject, recentProjects, rememberProject } from '../store/project-memory/project-memory'
+import {
+  recallProject,
+  recentProjects,
+  rememberProject,
+} from '../store/project-memory/project-memory'
 import { saveFile } from '../store/save-file/save-file'
 import { handle } from '../ipc/ipc'
 import type { StoredProject } from './projects.types'

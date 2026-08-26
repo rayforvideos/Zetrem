@@ -228,7 +228,9 @@ function bareName(to: string): string {
 function closeCall(toolUseId: string, callId: string, failed: boolean, text: string): void {
   const call = sessionStore.find(toolUseId)?.stream.findLast((held) => held.id === callId)
   if (call === undefined) return
-  const note = failed ? clip(text.trim(), NOTE_MAX) : (resultNote(shapeOfLine(call.line), text) ?? '')
+  const note = failed
+    ? clip(text.trim(), NOTE_MAX)
+    : (resultNote(shapeOfLine(call.line), text) ?? '')
   sessionStore.endCall(toolUseId, callId, { failed, note })
 }
 

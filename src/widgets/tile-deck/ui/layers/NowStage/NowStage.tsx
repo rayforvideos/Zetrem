@@ -82,7 +82,16 @@ function Drawing({ scene, live }: { scene: Scene; live: boolean }) {
   const rule = { stroke: 'currentColor', strokeWidth: 1.5, strokeLinecap: 'round' as const }
   const page = (
     <>
-      <rect x={9} y={4} width={34} height={26} rx={3} stroke="currentColor" strokeWidth={1.25} opacity={0.45} />
+      <rect
+        x={9}
+        y={4}
+        width={34}
+        height={26}
+        rx={3}
+        stroke="currentColor"
+        strokeWidth={1.25}
+        opacity={0.45}
+      />
       {[10, 15, 20, 25].map((y) => (
         <line key={y} x1={14} y1={y} x2={y === 25 ? 30 : 38} y2={y} {...rule} opacity={0.35} />
       ))}
@@ -132,10 +141,28 @@ function Drawing({ scene, live }: { scene: Scene; live: boolean }) {
     case 'run':
       return (
         <>
-          <rect x={7} y={5} width={38} height={24} rx={3} stroke="currentColor" strokeWidth={1.25} opacity={0.45} />
+          <rect
+            x={7}
+            y={5}
+            width={38}
+            height={24}
+            rx={3}
+            stroke="currentColor"
+            strokeWidth={1.25}
+            opacity={0.45}
+          />
           <path d="M12 12 L16 15.5 L12 19" {...rule} opacity={0.8} />
           {[0, 1, 2].map((at) => (
-            <rect key={at} x={20 + at * 6} y={14} width={4} height={3} rx={1} fill="currentColor" opacity={0.28} />
+            <rect
+              key={at}
+              x={20 + at * 6}
+              y={14}
+              width={4}
+              height={3}
+              rx={1}
+              fill="currentColor"
+              opacity={0.28}
+            />
           ))}
           <rect
             x={38}
@@ -153,7 +180,15 @@ function Drawing({ scene, live }: { scene: Scene; live: boolean }) {
       return (
         <>
           {[9, 15, 21, 27].map((y, at) => (
-            <line key={y} x1={8} y1={y} x2={at % 2 === 0 ? 44 : 36} y2={y} {...rule} opacity={0.3} />
+            <line
+              key={y}
+              x1={8}
+              y1={y}
+              x2={at % 2 === 0 ? 44 : 36}
+              y2={y}
+              {...rule}
+              opacity={0.3}
+            />
           ))}
           <g style={motion(live, 'zt-now-sweep 2.6s ease-in-out infinite')}>
             <circle cx={16} cy={17} r={7} stroke="currentColor" strokeWidth={1.5} opacity={0.95} />
@@ -165,7 +200,15 @@ function Drawing({ scene, live }: { scene: Scene; live: boolean }) {
       return (
         <>
           <circle cx={26} cy={17} r={11} stroke="currentColor" strokeWidth={1.25} opacity={0.45} />
-          <ellipse cx={26} cy={17} rx={4.5} ry={11} stroke="currentColor" strokeWidth={1.25} opacity={0.35} />
+          <ellipse
+            cx={26}
+            cy={17}
+            rx={4.5}
+            ry={11}
+            stroke="currentColor"
+            strokeWidth={1.25}
+            opacity={0.35}
+          />
           <line x1={15} y1={17} x2={37} y2={17} {...rule} opacity={0.35} />
           <g style={motion(live, 'zt-now-orbit 3s linear infinite')} transform-origin="26 17">
             <circle cx={26} cy={6} r={2.5} fill="currentColor" />

@@ -5,14 +5,7 @@ const CLAUDE_MARK =
 
 export function ClaudeMark({ size = 14, ...rest }: SVGProps<SVGSVGElement> & { size?: number }) {
   return (
-    <svg
-      width={size}
-      height={size}
-      viewBox="0 0 24 24"
-      fill="currentColor"
-      aria-hidden
-      {...rest}
-    >
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" aria-hidden {...rest}>
       <path d={CLAUDE_MARK} />
     </svg>
   )

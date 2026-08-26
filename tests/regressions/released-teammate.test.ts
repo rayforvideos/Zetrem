@@ -16,7 +16,10 @@ const THEIRS = ['claude', 'Explore', 'general-purpose', 'Plan', 'statusline-setu
 
 describe('a released teammate cannot become one of Claude Code’s own', () => {
   it('learns the agents from a probe that was handed nobody', () => {
-    const learned = remembered({ tools: [], agents: THEIRS, probed: true }, { tools: [], agents: [] })
+    const learned = remembered(
+      { tools: [], agents: THEIRS, probed: true },
+      { tools: [], agents: [] },
+    )
     expect(learned?.knownAgents).toEqual(THEIRS)
   })
 
@@ -31,7 +34,10 @@ describe('a released teammate cannot become one of Claude Code’s own', () => {
   })
 
   it('does not show a released teammate among their agents', () => {
-    const learned = remembered({ tools: [], agents: THEIRS, probed: true }, { tools: [], agents: [] })
+    const learned = remembered(
+      { tools: [], agents: THEIRS, probed: true },
+      { tools: [], agents: [] },
+    )
     const shown = stockAgents(learned?.knownAgents ?? [], ['시에나'])
     expect(shown).not.toContain('TTT')
   })

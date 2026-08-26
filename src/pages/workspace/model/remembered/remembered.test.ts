@@ -8,12 +8,17 @@ describe('remembered: writing down what a run told us, in one go', () => {
     // A session is handed our teammates, so its agent list is a mixture. Only
     // the probe is asked empty-handed, and only the probe is believed about
     // agents.
-    const patch = remembered({ tools: ['Read', 'Bash'], agents: ['Explore', 'Plan'], probed: false }, held)
+    const patch = remembered(
+      { tools: ['Read', 'Bash'], agents: ['Explore', 'Plan'], probed: false },
+      held,
+    )
     expect(patch).toEqual({ knownTools: ['Read', 'Bash'] })
   })
 
   it('returns only the half that changed', () => {
-    expect(remembered({ tools: ['Read'], agents: ['Explore', 'Plan'], probed: true }, held)).toEqual({
+    expect(
+      remembered({ tools: ['Read'], agents: ['Explore', 'Plan'], probed: true }, held),
+    ).toEqual({
       knownAgents: ['Explore', 'Plan'],
     })
   })
@@ -31,7 +36,9 @@ describe('remembered: writing down what a run told us, in one go', () => {
   })
 
   it('counts a different order as new', () => {
-    expect(remembered({ tools: ['Read'], agents: ['Plan', 'Explore'], probed: true }, held)).toEqual({
+    expect(
+      remembered({ tools: ['Read'], agents: ['Plan', 'Explore'], probed: true }, held),
+    ).toEqual({
       knownAgents: ['Plan', 'Explore'],
     })
   })
@@ -39,21 +46,35 @@ describe('remembered: writing down what a run told us, in one go', () => {
 
 describe('the tool list only ever grows, since a session sees whatever had connected by then', () => {
   it('keeps a tool this session did not mention, rather than dropping it from the picker', () => {
-    const patch = remembered({ tools: ['Bash'], agents: undefined, probed: false }, { tools: ['Read', 'mcp__figma__x'], agents: [] })
+    const patch = remembered(
+      { tools: ['Bash'], agents: undefined, probed: false },
+      { tools: ['Read', 'mcp__figma__x'], agents: [] },
+    )
     expect(patch).toEqual({ knownTools: ['Read', 'mcp__figma__x', 'Bash'] })
   })
 
   it('writes nothing when the session brought no name we did not have', () => {
-    expect(remembered({ tools: ['Read'], agents: undefined, probed: false }, { tools: ['Read', 'Bash'], agents: [] })).toBe(null)
+    expect(
+      remembered(
+        { tools: ['Read'], agents: undefined, probed: false },
+        { tools: ['Read', 'Bash'], agents: [] },
+      ),
+    ).toBe(null)
   })
 
   it('does not repeat a name it already holds', () => {
-    const patch = remembered({ tools: ['Read', 'Bash'], agents: undefined, probed: false }, { tools: ['Read'], agents: [] })
+    const patch = remembered(
+      { tools: ['Read', 'Bash'], agents: undefined, probed: false },
+      { tools: ['Read'], agents: [] },
+    )
     expect(patch).toEqual({ knownTools: ['Read', 'Bash'] })
   })
 
   it('replaces the agent list even when it shrank, since a probe sees all of theirs at once', () => {
-    const patch = remembered({ tools: undefined, agents: ['Explore'], probed: true }, { tools: [], agents: ['Explore', 'Plan'] })
+    const patch = remembered(
+      { tools: undefined, agents: ['Explore'], probed: true },
+      { tools: [], agents: ['Explore', 'Plan'] },
+    )
     expect(patch).toEqual({ knownAgents: ['Explore'] })
   })
 })
@@ -86,7 +107,7 @@ describe('a probe knows the agents but not the tools, and is believed only that 
 })
 
 describe('the remembered agents come from a probe that handed nothing over', () => {
-  it('learns the agents a probe reports, which are Claude Code\'s own by construction', () => {
+  it("learns the agents a probe reports, which are Claude Code's own by construction", () => {
     const learned = remembered(
       { tools: [], agents: ['claude', 'Explore'], probed: true },
       { tools: [], agents: [] },

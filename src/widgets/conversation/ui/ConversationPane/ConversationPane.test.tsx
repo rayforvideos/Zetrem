@@ -21,15 +21,23 @@ const STATUS: StatusState = {
     lastTurnUsd: 0,
     tokens: { in: 0, out: 0, cacheRead: 0, cacheCreate: 0 },
     durationMs: 0,
-    turns: 0
+    turns: 0,
   },
   limits: [],
   update: null,
-  activity: 'idle'
+  activity: 'idle',
 }
 
 function tool(overrides: Partial<ToolActivity> = {}): ToolActivity {
-  return { line: 'Bash ls', toolUseId: 't1', input: null, result: null, startedAtMs: 0, endedAtMs: 100, ...overrides }
+  return {
+    line: 'Bash ls',
+    toolUseId: 't1',
+    input: null,
+    result: null,
+    startedAtMs: 0,
+    endedAtMs: 100,
+    ...overrides,
+  }
 }
 
 let seq = 0
@@ -43,7 +51,7 @@ function turn(overrides: Partial<Turn> = {}): Turn {
     draft: '',
     thinking: '',
     startedAtMs: 0,
-    ...overrides
+    ...overrides,
   }
 }
 
@@ -52,7 +60,10 @@ function working(turns: Turn[]): string {
     <ConversationPane
       turns={turns}
       status="working"
-      statusState={{ ...STATUS, cost: { ...STATUS.cost, tokens: { ...STATUS.cost.tokens, out: 1240 } } }}
+      statusState={{
+        ...STATUS,
+        cost: { ...STATUS.cost, tokens: { ...STATUS.cost.tokens, out: 1240 } },
+      }}
       permission={null}
       chores={[]}
       you={{ name: 'Ray', face: 'onigiri' }}
@@ -63,25 +74,27 @@ function working(turns: Turn[]): string {
       hint={false}
       onHintSeen={() => {}}
       report={null}
-      composer={<Composer
-        empty={turns.length === 0}
-        busy={false}
-        sessionLive={false}
-        addressee={null}
-        permissionMode="ask"
-        model="default"
-        refusedModels={[]}
+      composer={
+        <Composer
+          empty={turns.length === 0}
+          busy={false}
+          sessionLive={false}
+          addressee={null}
+          permissionMode="ask"
+          model="default"
+          refusedModels={[]}
           enterSends={true}
-        files={[]}
-        onPick={() => {}}
-        onTake={() => {}}
-        onDropFile={() => {}}
-        onSend={() => {}}
-        onStop={() => {}}
-        onClearAddressee={() => {}}
-        onPermissionMode={() => {}}
-        onModel={() => {}}
-      />}
+          files={[]}
+          onPick={() => {}}
+          onTake={() => {}}
+          onDropFile={() => {}}
+          onSend={() => {}}
+          onStop={() => {}}
+          onClearAddressee={() => {}}
+          onPermissionMode={() => {}}
+          onModel={() => {}}
+        />
+      }
     />,
   )
 }
@@ -102,25 +115,27 @@ function pane(turns: Turn[], permission: PermissionAsk | null = null): string {
       hint={false}
       onHintSeen={() => {}}
       report={null}
-      composer={<Composer
-        empty={turns.length === 0}
-        busy={false}
-        sessionLive={false}
-        addressee={null}
-        permissionMode="ask"
-        model="default"
-        refusedModels={[]}
+      composer={
+        <Composer
+          empty={turns.length === 0}
+          busy={false}
+          sessionLive={false}
+          addressee={null}
+          permissionMode="ask"
+          model="default"
+          refusedModels={[]}
           enterSends={true}
-        files={[]}
-        onPick={() => {}}
-        onTake={() => {}}
-        onDropFile={() => {}}
-        onSend={() => {}}
-        onStop={() => {}}
-        onClearAddressee={() => {}}
-        onPermissionMode={() => {}}
-        onModel={() => {}}
-      />}
+          files={[]}
+          onPick={() => {}}
+          onTake={() => {}}
+          onDropFile={() => {}}
+          onSend={() => {}}
+          onStop={() => {}}
+          onClearAddressee={() => {}}
+          onPermissionMode={() => {}}
+          onModel={() => {}}
+        />
+      }
     />,
   )
 }
@@ -145,8 +160,8 @@ describe('a quiet run keeps its log to itself', () => {
     const stdout = ['하나', '둘', '셋'].join('\n')
     const html = pane([
       turn({
-        tools: [tool({ result: { stdout, stderr: '', isError: false, interrupted: false } })]
-      })
+        tools: [tool({ result: { stdout, stderr: '', isError: false, interrupted: false } })],
+      }),
     ])
     expect(html).toContain('3 lines')
     expect(html).not.toContain('하나')
@@ -156,8 +171,8 @@ describe('a quiet run keeps its log to itself', () => {
     const stdout = ['하나', '둘'].join('\n')
     const html = pane([
       turn({
-        tools: [tool({ result: { stdout, stderr: '', isError: true, interrupted: false } })]
-      })
+        tools: [tool({ result: { stdout, stderr: '', isError: true, interrupted: false } })],
+      }),
     ])
     expect(html).toContain('하나')
   })
@@ -168,8 +183,8 @@ describe('ConversationPane: the screen does not lie', () => {
     const stdout = Array.from({ length: TOOL_OUTPUT_LINES + 60 }, (_, i) => `줄${i}`).join('\n')
     const html = pane([
       turn({
-        tools: [tool({ result: { stdout, stderr: '', isError: true, interrupted: false } })]
-      })
+        tools: [tool({ result: { stdout, stderr: '', isError: true, interrupted: false } })],
+      }),
     ])
     expect(html).toContain(`줄${TOOL_OUTPUT_LINES - 1}`)
     expect(html).not.toContain(`줄${TOOL_OUTPUT_LINES}\n`)
@@ -186,7 +201,7 @@ describe('ConversationPane: the screen does not lie', () => {
 
   it('cannot open a row with nothing behind it, rather than opening an empty drawer', () => {
     const html = pane([
-      turn({ tools: [tool({ line: 'Bash ls', toolUseId: 'tk1', input: { command: 'ls' } })] })
+      turn({ tools: [tool({ line: 'Bash ls', toolUseId: 'tk1', input: { command: 'ls' } })] }),
     ])
     const button = tickButton(html, 'tk1')
     expect(button).toContain('disabled=""')
@@ -200,10 +215,10 @@ describe('ConversationPane: the screen does not lie', () => {
           tool({
             line: 'Bash ls',
             toolUseId: 'tk2',
-            result: { stdout: 'a.ts', stderr: '', isError: false, interrupted: false }
-          })
-        ]
-      })
+            result: { stdout: 'a.ts', stderr: '', isError: false, interrupted: false },
+          }),
+        ],
+      }),
     ])
     expect(tickButton(html, 'tk2')).not.toContain('disabled=""')
   })
@@ -236,8 +251,8 @@ describe('the screen is not blank while an answer is on its way', () => {
     const html = working([
       turn({
         startedAtMs: 2_000,
-        tools: [tool({ line: 'Bash npm test', input: { command: 'npm test' } })]
-      })
+        tools: [tool({ line: 'Bash npm test', input: { command: 'npm test' } })],
+      }),
     ])
     expect(html).toContain('Running')
     expect(html).toContain('10s')
@@ -249,7 +264,12 @@ describe('the screen is not blank while an answer is on its way', () => {
 })
 
 describe('approval: the most important moment in this app', () => {
-  const ask = { requestId: 'r1', toolName: 'Bash', line: 'Bash rm -rf build', detail: 'rm -rf build' }
+  const ask = {
+    requestId: 'r1',
+    toolName: 'Bash',
+    line: 'Bash rm -rf build',
+    detail: 'rm -rf build',
+  }
 
   it('says what it wants to do in plain words first', () => {
     const html = pane([], ask)
@@ -270,7 +290,12 @@ describe('approval: the most important moment in this app', () => {
   })
 
   it('asks about a tool it does not know, without inventing a name for it', () => {
-    const html = pane([], { requestId: 'r2', toolName: 'SomeTool', line: '무언가', detail: '무언가' })
+    const html = pane([], {
+      requestId: 'r2',
+      toolName: 'SomeTool',
+      line: '무언가',
+      detail: '무언가',
+    })
     expect(html).toContain('Allow this?')
     expect(html).toContain('SomeTool')
   })
@@ -297,7 +322,9 @@ describe('the row that says the team is still out', () => {
   it('wears the same verb treatment as the row it stands in for', () => {
     const shimmerOf = (html: string): string | undefined =>
       html.match(/class="([^"]*zt-shimmer[^"]*)"/)?.[1]
-    const mine = shimmerOf(renderToStaticMarkup(<Away away={WAITING} face="onigiri" nowMs={36_000} />))
+    const mine = shimmerOf(
+      renderToStaticMarkup(<Away away={WAITING} face="onigiri" nowMs={36_000} />),
+    )
     const theirs = shimmerOf(
       renderToStaticMarkup(
         <Working turns={[]} face="onigiri" nowMs={36_000} startedAtMs={0} tokensOut={0} />,

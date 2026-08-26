@@ -11,7 +11,13 @@ import { t } from '@lingui/core/macro'
 const YOU = 'Sam'
 
 // Read at call time, never at import: the locale is not up yet when this module loads.
-function crew(): { name: string; face: CharacterId; task: string; clock: string; state: 'working' | 'reported' }[] {
+function crew(): {
+  name: string
+  face: CharacterId
+  task: string
+  clock: string
+  state: 'working' | 'reported'
+}[] {
   return [
     {
       name: 'Nova',

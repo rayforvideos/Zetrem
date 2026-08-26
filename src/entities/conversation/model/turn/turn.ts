@@ -31,7 +31,6 @@ export type Turn = {
   to?: string
 }
 
-
 export type Chore = {
   readonly id: string
   readonly line: string

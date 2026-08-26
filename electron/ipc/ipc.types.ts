@@ -1,10 +1,5 @@
 import type { IpcMainEvent, IpcMainInvokeEvent } from 'electron'
-import type {
-  InvokeChannel,
-  Invokes,
-  SendChannel,
-  Sends,
-} from '@/entities/desk/desk.types'
+import type { InvokeChannel, Invokes, SendChannel, Sends } from '@/entities/desk/desk.types'
 
 export type Sender = {
   readonly hasWindow: boolean

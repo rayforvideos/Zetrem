@@ -87,4 +87,3 @@ describe('a tile whose session is gone from under it', () => {
     expect(orphaned([], new Set(['a', 'b']))).toEqual(['a', 'b'])
   })
 })
-

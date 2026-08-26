@@ -3,7 +3,15 @@ import type { Turn } from '@/entities/conversation'
 import { LIVE_OUTPUT_CAP, LIVE_TURN_CAP, heldOutput, heldTurns } from './hold'
 
 function turn(text: string): Turn {
-  return { id: `turn-${text}`, role: 'assistant', text, tools: [], draft: '', thinking: '', startedAtMs: 0 }
+  return {
+    id: `turn-${text}`,
+    role: 'assistant',
+    text,
+    tools: [],
+    draft: '',
+    thinking: '',
+    startedAtMs: 0,
+  }
 }
 
 describe('heldTurns: a chat left open all day does not grow without end', () => {

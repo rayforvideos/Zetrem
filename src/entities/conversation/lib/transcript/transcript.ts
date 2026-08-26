@@ -79,7 +79,8 @@ export function readTranscript(saved: unknown): Transcript | null {
   if (turns.length === 0) return null
   return {
     id: source.id,
-    title: typeof source.title === 'string' && source.title.length > 0 ? source.title : titleOf(turns),
+    title:
+      typeof source.title === 'string' && source.title.length > 0 ? source.title : titleOf(turns),
     sessionId: typeof source.sessionId === 'string' ? source.sessionId : null,
     savedAtMs: typeof source.savedAtMs === 'number' ? source.savedAtMs : 0,
     spend: readSpend(source.spend),

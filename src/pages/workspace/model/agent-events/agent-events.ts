@@ -104,9 +104,7 @@ function announce(turn: ClaudeTurnEvent, refs: AgentEventRefs): void {
       if (turn.limit.status !== 'allowed') conversation.system(limitLine(turn.limit))
       return
     case 'compacted':
-      return conversation.system(
-        compactedLine(turn.trigger, turn.preTokens, turn.postTokens),
-      )
+      return conversation.system(compactedLine(turn.trigger, turn.preTokens, turn.postTokens))
     case 'metrics':
       if (turn.metrics.apiErrorStatus) {
         conversation.system(t`API error ${turn.metrics.apiErrorStatus}`)
@@ -153,7 +151,8 @@ export function compactedLine(
   postTokens: number | null,
 ): string {
   const base = t`Conversation compacted here`
-  if (preTokens === null || postTokens === null) return t`${base}. Earlier turns live on as a summary.`
+  if (preTokens === null || postTokens === null)
+    return t`${base}. Earlier turns live on as a summary.`
   const shrink = `${formatTokens(preTokens)} → ${formatTokens(postTokens)}`
   const cause = triggerLabel(trigger)
   return cause ? `${base} (${cause}): ${shrink}` : `${base}: ${shrink}`

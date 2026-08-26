@@ -42,7 +42,15 @@ describe('tileOf: how to seat a brand mark so it can be seen', () => {
       const [hi, lo] = a > b ? [a, b] : [b, a]
       return (hi + 0.05) / (lo + 0.05)
     }
-    for (const hex of ['#EA4335', '#4285F4', '#F06A6A', '#18BFFF', '#362D59', '#3FCF8E', '#5E6AD2']) {
+    for (const hex of [
+      '#EA4335',
+      '#4285F4',
+      '#F06A6A',
+      '#18BFFF',
+      '#362D59',
+      '#3FCF8E',
+      '#5E6AD2',
+    ]) {
       const tile = tileOf(hex)
       expect(ratio(luminanceOf(tile.bg), luminanceOf(tile.ink)), hex).toBeGreaterThan(3)
     }

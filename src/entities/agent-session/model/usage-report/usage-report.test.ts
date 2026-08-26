@@ -43,7 +43,9 @@ describe('readUsage: reading the limits out of what the CLI prints', () => {
   })
 
   it('is not fooled by the request counts further down the report', () => {
-    expect(readUsage('Last 24h · 4899 requests\n  96% of your usage came from sessions')).toEqual([])
+    expect(readUsage('Last 24h · 4899 requests\n  96% of your usage came from sessions')).toEqual(
+      [],
+    )
   })
 
   it('keeps the first reading when a kind is named twice', () => {

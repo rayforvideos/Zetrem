@@ -4,7 +4,10 @@ import { app } from 'electron'
 import { agentEnv } from '@/shared/lib/shell-env/shell-env'
 import { probeArgs } from '@/entities/agent-session/model/run-config/run-config'
 import type { RunConfig } from '@/entities/agent-session/model/run-config/run-config.types'
-import { ORCHESTRATOR_PROMPT, PERSONA } from '@/entities/agent-session/model/orchestrator/orchestrator'
+import {
+  ORCHESTRATOR_PROMPT,
+  PERSONA,
+} from '@/entities/agent-session/model/orchestrator/orchestrator'
 import { claudeBin, loginPath } from '../../cli/login-path/login-path'
 import { recallProject } from '../../store/project-memory/project-memory'
 import { saveFile } from '../../store/save-file/save-file'
@@ -37,7 +40,12 @@ function isInit(line: string): boolean {
   }
 }
 
-function readInit(bin: string, args: string[], cwd: string, env: NodeJS.ProcessEnv): Promise<string | null> {
+function readInit(
+  bin: string,
+  args: string[],
+  cwd: string,
+  env: NodeJS.ProcessEnv,
+): Promise<string | null> {
   return runSettled<string | null>({
     bin,
     args,
@@ -79,18 +87,21 @@ async function keep(report: string): Promise<void> {
 }
 
 export function registerSessionProbe(): void {
-  handle('session:probe', async (_event, config: Omit<RunConfig, 'persona'>): Promise<string | null> => {
-    if (inFlight !== null) return inFlight
-    inFlight = (async () => {
-      const workspace = await workspaceDir(await recallProject(), app.getPath('userData'))
-      const args = probeArgs({ ...config, persona: PERSONA, orchestrator: ORCHESTRATOR_PROMPT })
-      const env = agentEnv(process.env, await loginPath())
-      return readInit(await claudeBin(), args, workspace, env)
-    })().catch(() => null)
-    const found = await inFlight
-    inFlight = null
-    return found
-  })
+  handle(
+    'session:probe',
+    async (_event, config: Omit<RunConfig, 'persona'>): Promise<string | null> => {
+      if (inFlight !== null) return inFlight
+      inFlight = (async () => {
+        const workspace = await workspaceDir(await recallProject(), app.getPath('userData'))
+        const args = probeArgs({ ...config, persona: PERSONA, orchestrator: ORCHESTRATOR_PROMPT })
+        const env = agentEnv(process.env, await loginPath())
+        return readInit(await claudeBin(), args, workspace, env)
+      })().catch(() => null)
+      const found = await inFlight
+      inFlight = null
+      return found
+    },
+  )
 
   handle('usage:kept', async (): Promise<string | null> => {
     const kept = readKept(await readFile(keptPath(), 'utf8').catch(() => ''))

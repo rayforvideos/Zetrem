@@ -21,9 +21,9 @@ describe('outcomeLine', () => {
   })
 
   it('says what a timeout was, rather than quoting the half-finished output', () => {
-    expect(outcomeLine({ ok: false, why: { code: 'timeout', said: 'Fetching...' } }, 'Added nx')).toBe(
-      'It took too long and was stopped',
-    )
+    expect(
+      outcomeLine({ ok: false, why: { code: 'timeout', said: 'Fetching...' } }, 'Added nx'),
+    ).toBe('It took too long and was stopped')
   })
 
   it('has words for a request main could not read', () => {
@@ -33,15 +33,15 @@ describe('outcomeLine', () => {
   })
 
   it('passes a refusal code through for the caller to say', () => {
-    expect(outcomeLine({ ok: false, why: { code: 'refused', said: 'name-taken' } }, 'Added nx')).toBe(
-      'name-taken',
-    )
+    expect(
+      outcomeLine({ ok: false, why: { code: 'refused', said: 'name-taken' } }, 'Added nx'),
+    ).toBe('name-taken')
   })
 
   it('quotes the complaint when it did not', () => {
-    expect(outcomeLine({ ok: false, why: { code: 'cli', said: 'boom\nno such plugin' } }, 'Added nx')).toBe(
-      'no such plugin',
-    )
+    expect(
+      outcomeLine({ ok: false, why: { code: 'cli', said: 'boom\nno such plugin' } }, 'Added nx'),
+    ).toBe('no such plugin')
   })
 })
 

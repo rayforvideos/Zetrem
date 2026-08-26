@@ -541,7 +541,6 @@ export function WorkspaceScreen() {
             {t`Settings`}
           </Button>
         )}
-
       </Titlebar>
     </CrewProvider>
   )

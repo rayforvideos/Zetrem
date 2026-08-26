@@ -5,14 +5,7 @@ const execFileAsync = promisify(execFile)
 
 export const CONTRACT_TIMEOUT_MS = 180_000
 
-const BASE = [
-  '-p',
-  '--output-format',
-  'stream-json',
-  '--verbose',
-  '--max-turns',
-  '1',
-]
+const BASE = ['-p', '--output-format', 'stream-json', '--verbose', '--max-turns', '1']
 
 export type Init = {
   tools: string[]
@@ -56,11 +49,10 @@ export async function askInit(args: string[] = [], prompt = 'hi'): Promise<Init>
 }
 
 export async function askText(prompt: string, args: string[] = []): Promise<string> {
-  const { stdout } = await execFileAsync(
-    'claude',
-    ['-p', prompt, '--max-turns', '1', ...args],
-    { maxBuffer: 20_000_000, timeout: CONTRACT_TIMEOUT_MS },
-  )
+  const { stdout } = await execFileAsync('claude', ['-p', prompt, '--max-turns', '1', ...args], {
+    maxBuffer: 20_000_000,
+    timeout: CONTRACT_TIMEOUT_MS,
+  })
   return stdout.trim()
 }
 

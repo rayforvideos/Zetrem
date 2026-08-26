@@ -80,7 +80,9 @@ export function AgentTile({
                   )}
                 </div>
                 <div data-log style={logPaneStyle}>
-                  {session.stream.length > 0 && <span style={logHeadStyle}>{t`What they did`}</span>}
+                  {session.stream.length > 0 && (
+                    <span style={logHeadStyle}>{t`What they did`}</span>
+                  )}
                   {live && now === null && (session.doing ?? '').length > 0 && (
                     <div data-doing style={doingStyle}>
                       {session.doing}

@@ -4,7 +4,6 @@ import { cn } from '@/shared/lib/cn'
 import { Switch } from '@/shared/ui/switch'
 import { t } from '@lingui/core/macro'
 
-
 export function StockList({ stock, on, avatar, onChange }: StockListProps) {
   if (stock.length === 0) {
     return (

@@ -32,8 +32,7 @@ describe('a test lives in its own module folder', () => {
       if (!isTest(entry.name) || entry.dir.startsWith('tests')) continue
       const folder = entry.dir.split(sep).at(-1)
       const owns = all.some(
-        (other) =>
-          other.dir === entry.dir && isSource(other.name) && stemOf(other.name) === folder,
+        (other) => other.dir === entry.dir && isSource(other.name) && stemOf(other.name) === folder,
       )
       if (!owns) stray.push(join(entry.dir, entry.name))
     }
@@ -47,7 +46,9 @@ describe('a test lives in its own module folder', () => {
       if (!isSource(entry.name) || entry.dir.startsWith('tests')) continue
       const hasTest = all.some(
         (other) =>
-          other.dir === entry.dir && isTest(other.name) && stemOf(other.name) === stemOf(entry.name),
+          other.dir === entry.dir &&
+          isTest(other.name) &&
+          stemOf(other.name) === stemOf(entry.name),
       )
       if (!hasTest) continue
       const folder = entry.dir.split(sep).at(-1)

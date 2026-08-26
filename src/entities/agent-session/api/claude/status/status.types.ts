@@ -36,4 +36,9 @@ export type StatusEvent =
   | { type: 'metrics'; metrics: ResultMetrics }
   | { type: 'limit'; limit: RateLimit }
   | { type: 'activity'; activity: 'requesting' | 'idle' }
-  | { type: 'compacted'; trigger: string | null; preTokens: number | null; postTokens: number | null }
+  | {
+      type: 'compacted'
+      trigger: string | null
+      preTokens: number | null
+      postTokens: number | null
+    }

@@ -6,10 +6,7 @@ const NAMED: ModelChoice[] = ['fable', 'opus', 'sonnet', 'haiku']
 // parentheses, or it says the deployment does not carry it. Read both, and read
 // them off what the CLI wrote — once we have rewritten it for the screen, the
 // model's name is gone.
-const NAMED_IN = [
-  /selected model \(([^)]+)\)/i,
-  /\bmodel\s+(\S+)\s+is not available on your\b/i,
-]
+const NAMED_IN = [/selected model \(([^)]+)\)/i, /\bmodel\s+(\S+)\s+is not available on your\b/i]
 
 export function modelRefusedIn(said: string): ModelChoice | null {
   const named = NAMED_IN.map((one) => one.exec(said)?.[1])

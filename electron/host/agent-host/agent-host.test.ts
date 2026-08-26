@@ -29,7 +29,9 @@ type Message = { id: string; kind: string; line?: string; code?: number | null; 
 type Renderer = {
   heard: Message[]
   close: () => void
-  event: { sender: { isDestroyed: () => boolean; send: (channel: string, message: Message) => void } }
+  event: {
+    sender: { isDestroyed: () => boolean; send: (channel: string, message: Message) => void }
+  }
 }
 
 type Channel = (event: Renderer['event'], ...args: unknown[]) => unknown
@@ -61,15 +63,18 @@ vi.mock('electron', () => ({
 vi.mock('../../ipc/ipc', () => ({
   handle: (channel: string, listener: Channel) => boundary.channels.set(channel, listener),
   on: (channel: string, listener: Channel) => boundary.channels.set(channel, listener),
-  push: (target: { isDestroyed(): boolean; send(channel: string, payload: unknown): void }, channel: string, payload: unknown) => {
+  push: (
+    target: { isDestroyed(): boolean; send(channel: string, payload: unknown): void },
+    channel: string,
+    payload: unknown,
+  ) => {
     if (!target.isDestroyed()) target.send(channel, payload)
   },
 }))
 
 vi.mock('node:child_process', async () => {
   const { EventEmitter: Emitter } = await import('node:events')
-  const stream = (): FakeStream =>
-    Object.assign(new Emitter(), { setEncoding: () => undefined })
+  const stream = (): FakeStream => Object.assign(new Emitter(), { setEncoding: () => undefined })
   return {
     spawn: (command: string, args: string[]) => {
       const written: string[] = []
@@ -108,7 +113,9 @@ vi.mock('../../cli/login-path/login-path', () => ({
   },
 }))
 
-vi.mock('../../store/project-memory/project-memory', () => ({ recallProject: async () => boundary.project }))
+vi.mock('../../store/project-memory/project-memory', () => ({
+  recallProject: async () => boundary.project,
+}))
 
 vi.mock('../../spawn/kill-tree/kill-tree', () => ({
   killTree: (pid: number) => boundary.killed.push(pid),
@@ -148,7 +155,12 @@ function fire(channel: string, one: Renderer, ...args: unknown[]): unknown {
   return listener(one.event, ...args)
 }
 
-async function startAgent(one: Renderer, id: unknown, prompt: unknown, files: unknown = []): Promise<void> {
+async function startAgent(
+  one: Renderer,
+  id: unknown,
+  prompt: unknown,
+  files: unknown = [],
+): Promise<void> {
   await fire('agent:start', one, id, prompt, config, files)
 }
 
@@ -173,7 +185,8 @@ async function releaseStart(started: unknown): Promise<void> {
   await started
 }
 
-const of = (one: Renderer, kind: string): Message[] => one.heard.filter((message) => message.kind === kind)
+const of = (one: Renderer, kind: string): Message[] =>
+  one.heard.filter((message) => message.kind === kind)
 
 let host: { registerAgentHost: () => void; killAllAgents: () => void }
 
@@ -411,9 +424,7 @@ describe('a start that was never going to work', () => {
     const one = renderer()
     await startAgent(one, '../../etc/passwd', 'hello')
 
-    expect(one.heard).toEqual([
-      { id: '../../etc/passwd', kind: 'exit', code: -1, reason: null },
-    ])
+    expect(one.heard).toEqual([{ id: '../../etc/passwd', kind: 'exit', code: -1, reason: null }])
     expect(boundary.spawns).toEqual([])
   })
 })

@@ -12,7 +12,9 @@ describe('the language picker', () => {
   it('writes each language in that language, so you can find yours', () => {
     const [, english, korean] = tongueChoices()
     expect(english?.label).toBe('English')
-    expect(korean?.label, 'in English, somebody who cannot read Korean would never find it').toBe('한국어')
+    expect(korean?.label, 'in English, somebody who cannot read Korean would never find it').toBe(
+      '한국어',
+    )
   })
 
   it('keeps those two names the same whichever language is being spoken', () => {

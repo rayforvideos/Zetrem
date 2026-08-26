@@ -1,6 +1,14 @@
 import { useState } from 'react'
 import type { ChatListProps } from './ChatList.types'
-import { ChevronDown, ChevronRight, Folder, FolderOpen, MoreHorizontal, Search, SquarePen } from 'lucide-react'
+import {
+  ChevronDown,
+  ChevronRight,
+  Folder,
+  FolderOpen,
+  MoreHorizontal,
+  Search,
+  SquarePen,
+} from 'lucide-react'
 import type { ChatSummary } from '@/entities/conversation'
 import { cn } from '@/shared/lib/cn'
 import {
@@ -55,7 +63,17 @@ type RowKit = {
   onPaired(name: string | null): void
 }
 
-export function ChatList({ chats, openId, nowMs, onOpen, onStart, onRemove, onRename, onFile, onFileMany }: ChatListProps) {
+export function ChatList({
+  chats,
+  openId,
+  nowMs,
+  onOpen,
+  onStart,
+  onRemove,
+  onRename,
+  onFile,
+  onFileMany,
+}: ChatListProps) {
   const [query, setQuery] = useState('')
   // The folders are the way people actually re-find their own things, so they
   // stay whole and in their places. Looking is the way out when that stops
@@ -167,7 +185,15 @@ export function ChatList({ chats, openId, nowMs, onOpen, onStart, onRemove, onRe
 
 // A run of chats under their day bands. The same run appears loose at the top
 // of the list and inside a roomy folder, a margin apart.
-function Grouped({ chats, kit, headClass }: { chats: ChatSummary[]; kit: RowKit; headClass: string }) {
+function Grouped({
+  chats,
+  kit,
+  headClass,
+}: {
+  chats: ChatSummary[]
+  kit: RowKit
+  headClass: string
+}) {
   return (
     <>
       {groupChats(chats, kit.nowMs).map((group) => (
@@ -185,7 +211,19 @@ function Grouped({ chats, kit, headClass }: { chats: ChatSummary[]; kit: RowKit;
 }
 
 function Row({ chat, kit }: { chat: ChatSummary; kit: RowKit }) {
-  const { names, nowMs, onOpen, onRemove, onRename, onFile, onCarry, carried, onPickUp, pairing, onPaired } = kit
+  const {
+    names,
+    nowMs,
+    onOpen,
+    onRemove,
+    onRename,
+    onFile,
+    onCarry,
+    carried,
+    onPickUp,
+    pairing,
+    onPaired,
+  } = kit
   const open = chat.id === kit.openId
   const [editing, setEditing] = useState(false)
   const [naming, setNaming] = useState(false)
@@ -340,7 +378,9 @@ function Row({ chat, kit }: { chat: ChatSummary; kit: RowKit }) {
                       {name}
                     </DropdownMenuItem>
                   ))}
-                <DropdownMenuItem onSelect={() => setNaming(true)}>{t`New folder…`}</DropdownMenuItem>
+                <DropdownMenuItem
+                  onSelect={() => setNaming(true)}
+                >{t`New folder…`}</DropdownMenuItem>
                 {chat.folder.length > 0 && (
                   <>
                     <DropdownMenuSeparator />

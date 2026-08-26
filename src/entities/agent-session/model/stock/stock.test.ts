@@ -18,11 +18,10 @@ describe('stockAgents: what the session lists, minus our own, is what Claude Cod
   })
 
   it('leaves out one the person wrote themselves, which Claude Code did not bring', () => {
-    expect(stockAgents(known, ['Joi'], ['Ray']), 'Ray was written by hand into .claude/agents').toEqual([
-      'Explore',
-      'general-purpose',
-      'Plan',
-    ])
+    expect(
+      stockAgents(known, ['Joi'], ['Ray']),
+      'Ray was written by hand into .claude/agents',
+    ).toEqual(['Explore', 'general-purpose', 'Plan'])
   })
 
   it('keeps the builtins when the person wrote none', () => {
@@ -73,7 +72,6 @@ describe('allowedStock: everything of theirs except what was switched off', () =
     expect(allowedStock(stock, ['general-purpose'])).toEqual(['Explore', 'Plan'])
   })
 })
-
 
 describe('which of their agents are on: everything except what you turned off', () => {
   const stock = ['claude', 'Explore', 'Plan']

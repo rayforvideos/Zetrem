@@ -58,7 +58,14 @@ describe('stoppedLine: what to say when a turn ends badly', () => {
     "There's an issue with the selected model (fable). It may not exist or you may not have access to it. Run --model to pick a different model."
 
   function ended(over: Partial<Parameters<typeof stoppedLine>[0]> = {}) {
-    return stoppedLine({ subtype: 'success', isError: false, error: '', result: '', errors: null, ...over })
+    return stoppedLine({
+      subtype: 'success',
+      isError: false,
+      error: '',
+      result: '',
+      errors: null,
+      ...over,
+    })
   }
 
   it('says nothing about a turn that went fine', () => {
@@ -84,7 +91,10 @@ describe('stoppedLine: what to say when a turn ends badly', () => {
   })
 
   it('passes on any other failure in the CLI words, with the flag advice taken out', () => {
-    const said = ended({ isError: true, result: 'The request was refused. Run --model to pick a different model.' })
+    const said = ended({
+      isError: true,
+      result: 'The request was refused. Run --model to pick a different model.',
+    })
     expect(said).toContain('The request was refused')
     expect(said).not.toContain('--model')
   })
@@ -94,7 +104,9 @@ describe('stoppedLine: what to say when a turn ends badly', () => {
   })
 
   it('leaves the older error subtypes to the reason they already had', () => {
-    expect(ended({ subtype: 'error_max_turns', isError: true })).toContain('limit on how many turns')
+    expect(ended({ subtype: 'error_max_turns', isError: true })).toContain(
+      'limit on how many turns',
+    )
   })
 })
 
@@ -103,7 +115,13 @@ describe('a stop the CLI explained only to itself', () => {
 
   it('says the turn stopped without repeating the diagnostic', () => {
     expect(
-      stoppedLine({ subtype: 'success', isError: true, error: '', result: diagnostic, errors: null }),
+      stoppedLine({
+        subtype: 'success',
+        isError: true,
+        error: '',
+        result: diagnostic,
+        errors: null,
+      }),
     ).toBe('Stopped')
   })
 

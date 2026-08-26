@@ -21,7 +21,13 @@ const full: StatusState = {
     agents: [],
   },
   context: { used: 100_000, window: 1_000_000 },
-  cost: { usd: 0.19, lastTurnUsd: 0.04, tokens: { in: 6, out: 261, cacheRead: 76424, cacheCreate: 14862 }, durationMs: 10485, turns: 3 },
+  cost: {
+    usd: 0.19,
+    lastTurnUsd: 0.04,
+    tokens: { in: 6, out: 261, cacheRead: 76424, cacheCreate: 14862 },
+    durationMs: 10485,
+    turns: 3,
+  },
   limits: [],
   update: { current: '2.1.231', latest: '2.1.231', managedBy: 'Homebrew' },
   activity: 'idle',
@@ -68,7 +74,11 @@ describe('StatusDrawer says where you are and what it costs', () => {
   })
 
   it('shows nothing for context and cost before a turn has run', () => {
-    const fresh: StatusState = { ...full, context: { used: 0, window: 1_000_000 }, cost: { ...full.cost, usd: 0 } }
+    const fresh: StatusState = {
+      ...full,
+      context: { used: 0, window: 1_000_000 },
+      cost: { ...full.cost, usd: 0 },
+    }
     const html = draw(fresh)
     expect(html).not.toContain('Context')
     expect(html).not.toContain('Cost')
@@ -82,7 +92,10 @@ describe('permission mode speaks only when it is not the ordinary one', () => {
   })
 
   it('stays quiet on the default, which is what the reader already assumes', () => {
-    const ordinary: StatusState = { ...full, session: { ...full.session!, permissionMode: 'default' } }
+    const ordinary: StatusState = {
+      ...full,
+      session: { ...full.session!, permissionMode: 'default' },
+    }
     expect(draw(ordinary)).not.toContain('Permission')
   })
 
@@ -95,7 +108,9 @@ describe('permission mode speaks only when it is not the ordinary one', () => {
 describe('the connector list answers which one is broken, not which ones are fine', () => {
   it('raises the one needing sign-in and leaves the healthy one off the list', () => {
     const html = draw()
-    expect(html, 'the heading knows the prefix already, so only the name shows').toContain('>Notion<')
+    expect(html, 'the heading knows the prefix already, so only the name shows').toContain(
+      '>Notion<',
+    )
     expect(html).not.toContain('claude.ai Notion')
     expect(html).toContain('Needs auth')
     expect(html, 'what is fine takes up no line').not.toContain('>playwright<')
@@ -118,7 +133,9 @@ describe('the connector list answers which one is broken, not which ones are fin
   it('keeps a needs-auth verdict on screen, however alive the health check found the server', () => {
     // The check probes the transport; the session knows it could not sign in.
     const html = draw(full, {
-      connectors: [{ name: 'claude.ai Notion', where: 'https://mcp.notion.com/mcp', state: 'connected' }],
+      connectors: [
+        { name: 'claude.ai Notion', where: 'https://mcp.notion.com/mcp', state: 'connected' },
+      ],
     })
     expect(html).toContain('Needs auth')
     expect(html).toContain('1 of 2 connected')
@@ -159,7 +176,10 @@ describe('the version line carries the update, and nothing else', () => {
   })
 
   it('hands a Homebrew install its own command rather than a button that will not do it', () => {
-    const stale: StatusState = { ...full, update: { current: '2.1.231', latest: '2.1.240', managedBy: 'Homebrew' } }
+    const stale: StatusState = {
+      ...full,
+      update: { current: '2.1.231', latest: '2.1.240', managedBy: 'Homebrew' },
+    }
     const html = draw(stale)
     expect(html).toContain('2.1.240')
     expect(html).toContain('brew upgrade claude-code@latest')
@@ -167,14 +187,20 @@ describe('the version line carries the update, and nothing else', () => {
   })
 
   it('keeps the button for an install nothing else owns', () => {
-    const stale: StatusState = { ...full, update: { current: '2.1.231', latest: '2.1.240', managedBy: null } }
+    const stale: StatusState = {
+      ...full,
+      update: { current: '2.1.231', latest: '2.1.240', managedBy: null },
+    }
     const html = draw(stale)
     expect(html).toContain('>Update<')
     expect(html).not.toContain('brew upgrade')
   })
 
   it('offers no update when the local build is newer, comparing numbers and not strings', () => {
-    const newerLocal: StatusState = { ...full, update: { current: '2.2.0', latest: '2.1.240', managedBy: 'Homebrew' } }
+    const newerLocal: StatusState = {
+      ...full,
+      update: { current: '2.2.0', latest: '2.1.240', managedBy: 'Homebrew' },
+    }
     const html = draw(newerLocal)
     expect(html).not.toContain('>Update<')
     expect(html).not.toContain('brew upgrade')

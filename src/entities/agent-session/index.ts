@@ -44,7 +44,13 @@ export { MODELS, PERMISSION_MODES, modelsWith } from './model/choices/choices'
 export type { ModelChoice, PermissionMode, RunConfig } from './model/run-config/run-config.types'
 export { DEFAULT_SETTINGS, readSettings } from './model/settings/settings'
 export type { Settings } from './model/settings/settings.types'
-export { CHARACTERS, DEFAULT_CHARACTER, characterOf, isCharacterId, moodOf } from './model/character/character'
+export {
+  CHARACTERS,
+  DEFAULT_CHARACTER,
+  characterOf,
+  isCharacterId,
+  moodOf,
+} from './model/character/character'
 export type { CharacterId, MemberState, Mood } from './model/character/character.types'
 export { CrewProvider, useModel } from './model/crew/crew'
 export type { Crew, CrewEntry } from './model/crew/crew.types'

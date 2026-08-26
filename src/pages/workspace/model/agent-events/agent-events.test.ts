@@ -20,7 +20,12 @@ function fakeMetrics(costUsd: number, overrides: Partial<ResultMetrics> = {}): R
 }
 
 function fakeRefs(): AgentEventRefs {
-  return { asks: [], childIds: new Set<string>(), sends: new Map<string, { to: string; message: string }>(), onModelRefused: () => {} }
+  return {
+    asks: [],
+    childIds: new Set<string>(),
+    sends: new Map<string, { to: string; message: string }>(),
+    onModelRefused: () => {},
+  }
 }
 
 beforeEach(() => {
@@ -132,16 +137,35 @@ describe('applyAgentEvent: the order has to be nailed down', () => {
       },
       refs,
     )
-    applyAgentEvent({ type: 'childNotified', toolUseId: 'toolu_1', taskId: 'task-toolu_1', summary: '4', done: true }, refs)
+    applyAgentEvent(
+      {
+        type: 'childNotified',
+        toolUseId: 'toolu_1',
+        taskId: 'task-toolu_1',
+        summary: '4',
+        done: true,
+      },
+      refs,
+    )
     expect(sessionStore.get().find((s) => s.id === 'toolu_1')?.status).toBe('reported')
 
     applyAgentEvent({ type: 'childClosed', toolUseId: 'toolu_1' }, refs)
     applyAgentEvent(
-      { type: 'toolResult', toolUseId: 'toolu_1', stdout: '4', stderr: '', isError: false, interrupted: false },
+      {
+        type: 'toolResult',
+        toolUseId: 'toolu_1',
+        stdout: '4',
+        stderr: '',
+        isError: false,
+        interrupted: false,
+      },
       refs,
     )
 
-    const tool = conversation.get().turns.at(-1)!.tools.find((t) => t.toolUseId === 'toolu_1')
+    const tool = conversation
+      .get()
+      .turns.at(-1)!
+      .tools.find((t) => t.toolUseId === 'toolu_1')
     expect(tool?.result?.stdout).toBe('4')
     expect(sessionStore.get().find((s) => s.id === 'toolu_1')?.status).toBe('done')
   })
@@ -149,10 +173,20 @@ describe('applyAgentEvent: the order has to be nailed down', () => {
   it('closes a child that came back with an error, since a dead child files no receipt', () => {
     const refs = fakeRefs()
     applyAgentEvent(
-      { type: 'childOpen', toolUseId: 'toolu_3', label: '실패할 일', subagentType: 'Explore', prompt: 'x', background: false },
+      {
+        type: 'childOpen',
+        toolUseId: 'toolu_3',
+        label: '실패할 일',
+        subagentType: 'Explore',
+        prompt: 'x',
+        background: false,
+      },
       refs,
     )
-    applyAgentEvent({ type: 'childClosed', toolUseId: 'toolu_3', error: '파일을 찾지 못했다' }, refs)
+    applyAgentEvent(
+      { type: 'childClosed', toolUseId: 'toolu_3', error: '파일을 찾지 못했다' },
+      refs,
+    )
 
     const child = sessionStore.get().find((s) => s.id === 'toolu_3')
     expect(child?.status).toBe('done')
@@ -162,13 +196,29 @@ describe('applyAgentEvent: the order has to be nailed down', () => {
   it('does not close a background child on a tool result, which is only a receipt', () => {
     const refs = fakeRefs()
     applyAgentEvent(
-      { type: 'childOpen', toolUseId: 'toolu_2', label: '백그라운드 일', subagentType: 'Explore', prompt: 'x', background: true },
+      {
+        type: 'childOpen',
+        toolUseId: 'toolu_2',
+        label: '백그라운드 일',
+        subagentType: 'Explore',
+        prompt: 'x',
+        background: true,
+      },
       refs,
     )
     applyAgentEvent({ type: 'childClosed', toolUseId: 'toolu_2' }, refs)
     expect(sessionStore.get().find((s) => s.id === 'toolu_2')?.status).toBe('working')
 
-    applyAgentEvent({ type: 'childNotified', toolUseId: 'toolu_2', taskId: 'task-toolu_2', summary: '4', done: true }, refs)
+    applyAgentEvent(
+      {
+        type: 'childNotified',
+        toolUseId: 'toolu_2',
+        taskId: 'task-toolu_2',
+        summary: '4',
+        done: true,
+      },
+      refs,
+    )
     expect(sessionStore.get().find((s) => s.id === 'toolu_2')?.status).toBe('reported')
   })
 })
@@ -209,11 +259,15 @@ describe('turnLine: what a turn came to', () => {
 
 describe('compactedLine: one line about compaction, drawing only what is known', () => {
   it('says what shrank and why when it knows all three', () => {
-    expect(compactedLine('auto', 148200, 31100)).toBe('Conversation compacted here (auto): 148.2k → 31.1k')
+    expect(compactedLine('auto', 148200, 31100)).toBe(
+      'Conversation compacted here (auto): 148.2k → 31.1k',
+    )
   })
 
   it('says manual when the trigger was manual', () => {
-    expect(compactedLine('manual', 100000, 20000)).toBe('Conversation compacted here (manual): 100.0k → 20.0k')
+    expect(compactedLine('manual', 100000, 20000)).toBe(
+      'Conversation compacted here (manual): 100.0k → 20.0k',
+    )
   })
 
   it('drops the brackets entirely for an unknown trigger, rather than printing empty ones', () => {
@@ -221,13 +275,21 @@ describe('compactedLine: one line about compaction, drawing only what is known',
   })
 
   it('drops the brackets for a third trigger it has no word for', () => {
-    expect(compactedLine('scheduled', 148200, 31100)).toBe('Conversation compacted here: 148.2k → 31.1k')
+    expect(compactedLine('scheduled', 148200, 31100)).toBe(
+      'Conversation compacted here: 148.2k → 31.1k',
+    )
   })
 
   it('keeps the fact and drops the numbers when the token counts are unknown', () => {
-    expect(compactedLine('auto', null, 31100)).toBe('Conversation compacted here. Earlier turns live on as a summary.')
-    expect(compactedLine('auto', 148200, null)).toBe('Conversation compacted here. Earlier turns live on as a summary.')
-    expect(compactedLine(null, null, null)).toBe('Conversation compacted here. Earlier turns live on as a summary.')
+    expect(compactedLine('auto', null, 31100)).toBe(
+      'Conversation compacted here. Earlier turns live on as a summary.',
+    )
+    expect(compactedLine('auto', 148200, null)).toBe(
+      'Conversation compacted here. Earlier turns live on as a summary.',
+    )
+    expect(compactedLine(null, null, null)).toBe(
+      'Conversation compacted here. Earlier turns live on as a summary.',
+    )
   })
 })
 
@@ -249,18 +311,42 @@ describe('a child that runs several rounds does not vanish for reporting once', 
   it('puts a child back to working when it speaks again, so round two is visible', () => {
     const refs = fakeRefs()
     open(refs, 'toolu_a')
-    applyAgentEvent({ type: 'childNotified', toolUseId: 'toolu_a', taskId: 'task-toolu_a', summary: 'round one done', done: true }, refs)
+    applyAgentEvent(
+      {
+        type: 'childNotified',
+        toolUseId: 'toolu_a',
+        taskId: 'task-toolu_a',
+        summary: 'round one done',
+        done: true,
+      },
+      refs,
+    )
     expect(sessionStore.get().find((s) => s.id === 'toolu_a')?.status).toBe('reported')
 
-    applyAgentEvent({ type: 'childSay', toolUseId: 'toolu_a', role: 'assistant', text: 'round two' }, refs)
+    applyAgentEvent(
+      { type: 'childSay', toolUseId: 'toolu_a', role: 'assistant', text: 'round two' },
+      refs,
+    )
     expect(sessionStore.get().find((s) => s.id === 'toolu_a')?.status).toBe('working')
   })
 
   it('keeps the tools a child uses after it reported', () => {
     const refs = fakeRefs()
     open(refs, 'toolu_b')
-    applyAgentEvent({ type: 'childNotified', toolUseId: 'toolu_b', taskId: 'task-toolu_b', summary: 'done', done: true }, refs)
-    applyAgentEvent({ type: 'childStream', toolUseId: 'toolu_b', callId: 'call1', line: 'Read b.ts' }, refs)
+    applyAgentEvent(
+      {
+        type: 'childNotified',
+        toolUseId: 'toolu_b',
+        taskId: 'task-toolu_b',
+        summary: 'done',
+        done: true,
+      },
+      refs,
+    )
+    applyAgentEvent(
+      { type: 'childStream', toolUseId: 'toolu_b', callId: 'call1', line: 'Read b.ts' },
+      refs,
+    )
 
     const child = sessionStore.get().find((s) => s.id === 'toolu_b')
     expect(child?.stream.map((call) => call.line)).toContain('Read b.ts')
@@ -270,7 +356,16 @@ describe('a child that runs several rounds does not vanish for reporting once', 
   it('holds a child that reported when the turn ends, because the notice can come mid job', () => {
     const refs = fakeRefs()
     open(refs, 'toolu_c')
-    applyAgentEvent({ type: 'childNotified', toolUseId: 'toolu_c', taskId: 'task-toolu_c', summary: 'round one', done: true }, refs)
+    applyAgentEvent(
+      {
+        type: 'childNotified',
+        toolUseId: 'toolu_c',
+        taskId: 'task-toolu_c',
+        summary: 'round one',
+        done: true,
+      },
+      refs,
+    )
     applyAgentEvent({ type: 'turnEnded' }, refs)
 
     expect(sessionStore.get().find((s) => s.id === 'toolu_c')?.status).toBe('reported')
@@ -280,7 +375,10 @@ describe('a child that runs several rounds does not vanish for reporting once', 
   it('marks the moment it last heard from a child, so quiet can be measured', () => {
     const refs = fakeRefs()
     open(refs, 'toolu_k')
-    applyAgentEvent({ type: 'childStream', toolUseId: 'toolu_k', callId: 'call1', line: 'Read a.ts' }, refs)
+    applyAgentEvent(
+      { type: 'childStream', toolUseId: 'toolu_k', callId: 'call1', line: 'Read a.ts' },
+      refs,
+    )
 
     const child = sessionStore.get().find((s) => s.id === 'toolu_k')
     expect(child?.lastSeenAtMs).toBeGreaterThan(0)
@@ -289,7 +387,16 @@ describe('a child that runs several rounds does not vanish for reporting once', 
   it('brings a settled child back for round two, which is why settling must not drop the id', () => {
     const refs = fakeRefs()
     open(refs, 'toolu_g')
-    applyAgentEvent({ type: 'childNotified', toolUseId: 'toolu_g', taskId: 'task-toolu_g', summary: 'round one', done: true }, refs)
+    applyAgentEvent(
+      {
+        type: 'childNotified',
+        toolUseId: 'toolu_g',
+        taskId: 'task-toolu_g',
+        summary: 'round one',
+        done: true,
+      },
+      refs,
+    )
     sessionStore.patch('toolu_g', { status: 'done' })
     applyAgentEvent({ type: 'turnEnded' }, refs)
     applyAgentEvent(
@@ -324,7 +431,16 @@ describe('a child that runs several rounds does not vanish for reporting once', 
       },
       refs,
     )
-    applyAgentEvent({ type: 'childNotified', toolUseId: 'toolu_m', taskId: 'task-toolu_m', summary: '4', done: true }, refs)
+    applyAgentEvent(
+      {
+        type: 'childNotified',
+        toolUseId: 'toolu_m',
+        taskId: 'task-toolu_m',
+        summary: '4',
+        done: true,
+      },
+      refs,
+    )
     applyAgentEvent({ type: 'childClosed', toolUseId: 'toolu_m' }, refs)
 
     expect(sessionStore.get().find((s) => s.id === 'toolu_m')?.status).toBe('done')
@@ -354,7 +470,10 @@ describe('a child that runs several rounds does not vanish for reporting once', 
     applyAgentEvent({ type: 'childClosed', toolUseId: 'toolu_h', error: 'timed out' }, refs)
     expect(sessionStore.get().find((s) => s.id === 'toolu_h')?.status).toBe('done')
 
-    applyAgentEvent({ type: 'childStream', toolUseId: 'toolu_h', callId: 'call1', line: 'Read late.ts' }, refs)
+    applyAgentEvent(
+      { type: 'childStream', toolUseId: 'toolu_h', callId: 'call1', line: 'Read late.ts' },
+      refs,
+    )
     const child = sessionStore.get().find((s) => s.id === 'toolu_h')
     expect(child?.status).toBe('working')
     expect(child?.endedAtMs).toBeUndefined()
@@ -380,9 +499,17 @@ describe('a child that runs several rounds does not vanish for reporting once', 
     const refs = fakeRefs()
     open(refs, 'toolu_f')
     applyAgentEvent({ type: 'turnEnded' }, refs)
-    applyAgentEvent({ type: 'childStream', toolUseId: 'toolu_f', callId: 'call1', line: 'Read late.ts' }, refs)
+    applyAgentEvent(
+      { type: 'childStream', toolUseId: 'toolu_f', callId: 'call1', line: 'Read late.ts' },
+      refs,
+    )
 
-    expect(sessionStore.get().find((s) => s.id === 'toolu_f')?.stream.map((call) => call.line)).toContain('Read late.ts')
+    expect(
+      sessionStore
+        .get()
+        .find((s) => s.id === 'toolu_f')
+        ?.stream.map((call) => call.line),
+    ).toContain('Read late.ts')
   })
 })
 
@@ -418,7 +545,12 @@ describe('an agent woken by a message gets a tile too', () => {
       { type: 'childStream', toolUseId: 'abc34151ab50738ee', callId: 'call1', line: 'Read a.ts' },
       refs,
     )
-    expect(sessionStore.get().find((s) => s.id === 'abc34151ab50738ee')?.stream.map((call) => call.line)).toContain('Read a.ts')
+    expect(
+      sessionStore
+        .get()
+        .find((s) => s.id === 'abc34151ab50738ee')
+        ?.stream.map((call) => call.line),
+    ).toContain('Read a.ts')
   })
 
   it('opens nothing for a message that only delivered', () => {
@@ -431,7 +563,14 @@ describe('an agent woken by a message gets a tile too', () => {
     const refs = fakeRefs()
     applyAgentEvent({ type: 'stream', line: 'Bash ls', toolUseId: 'tu_4', input: {} }, refs)
     applyAgentEvent(
-      { type: 'toolResult', toolUseId: 'tu_4', stdout: resumed, stderr: '', isError: false, interrupted: false },
+      {
+        type: 'toolResult',
+        toolUseId: 'tu_4',
+        stdout: resumed,
+        stderr: '',
+        isError: false,
+        interrupted: false,
+      },
       refs,
     )
     expect(sessionStore.get()).toHaveLength(0)
@@ -464,7 +603,10 @@ describe('a subagent reports what it is doing while it works', () => {
     const refs = fakeRefs()
     open(refs, 'toolu_p')
     applyAgentEvent(
-      { type: 'childProgress', toolUseId: 'toolu_p', taskId: 'task-toolu_p',
+      {
+        type: 'childProgress',
+        toolUseId: 'toolu_p',
+        taskId: 'task-toolu_p',
         doing: 'Reading the config',
         lastTool: 'Read',
         tokens: 12_822,
@@ -493,7 +635,12 @@ describe('a subagent reports what it is doing while it works', () => {
     applyAgentEvent(tick, refs)
     applyAgentEvent({ ...tick, lastTool: 'Bash' }, refs)
 
-    expect(sessionStore.get().find((s) => s.id === 'toolu_q')?.stream.map((call) => call.line)).toEqual(['Read', 'Bash'])
+    expect(
+      sessionStore
+        .get()
+        .find((s) => s.id === 'toolu_q')
+        ?.stream.map((call) => call.line),
+    ).toEqual(['Read', 'Bash'])
   })
 
   it('does not draw a bare tool name under the detailed line of the same call', () => {
@@ -508,12 +655,22 @@ describe('a subagent reports what it is doing while it works', () => {
       refs,
     )
     applyAgentEvent(
-      { type: 'childProgress', toolUseId: 'toolu_twice', taskId: 'task-twice', doing: 'Reading', lastTool: 'Read', tokens: 2 },
+      {
+        type: 'childProgress',
+        toolUseId: 'toolu_twice',
+        taskId: 'task-twice',
+        doing: 'Reading',
+        lastTool: 'Read',
+        tokens: 2,
+      },
       refs,
     )
 
     expect(
-      sessionStore.get().find((s) => s.id === 'toolu_twice')?.stream.map((call) => call.line),
+      sessionStore
+        .get()
+        .find((s) => s.id === 'toolu_twice')
+        ?.stream.map((call) => call.line),
     ).toEqual(['Read use-cart.ts'])
   })
 
@@ -521,11 +678,19 @@ describe('a subagent reports what it is doing while it works', () => {
     const refs = fakeRefs()
     open(refs, 'toolu_said')
     applyAgentEvent(
-      { type: 'childSay', toolUseId: 'toolu_said', role: 'assistant', text: '설정을 두 군데 고쳤습니다' },
+      {
+        type: 'childSay',
+        toolUseId: 'toolu_said',
+        role: 'assistant',
+        text: '설정을 두 군데 고쳤습니다',
+      },
       refs,
     )
     applyAgentEvent(
-      { type: 'childProgress', toolUseId: 'toolu_said', taskId: 'task-toolu_said',
+      {
+        type: 'childProgress',
+        toolUseId: 'toolu_said',
+        taskId: 'task-toolu_said',
         doing: 'Running echo "--- main.tsx ---"',
         lastTool: 'Bash',
         tokens: 9,
@@ -542,7 +707,14 @@ describe('a subagent reports what it is doing while it works', () => {
     const refs = fakeRefs()
     open(refs, 'toolu_stale')
     applyAgentEvent(
-      { type: 'childProgress', toolUseId: 'toolu_stale', taskId: 'task-toolu_stale', doing: 'Reading', lastTool: 'Read', tokens: 1 },
+      {
+        type: 'childProgress',
+        toolUseId: 'toolu_stale',
+        taskId: 'task-toolu_stale',
+        doing: 'Reading',
+        lastTool: 'Read',
+        tokens: 1,
+      },
       refs,
     )
     applyAgentEvent(
@@ -558,7 +730,14 @@ describe('a subagent reports what it is doing while it works', () => {
     open(refs, 'toolu_r')
     sessionStore.patch('toolu_r', { status: 'done' })
     applyAgentEvent(
-      { type: 'childProgress', toolUseId: 'toolu_r', taskId: 'task-toolu_r', doing: '', lastTool: '', tokens: 5 },
+      {
+        type: 'childProgress',
+        toolUseId: 'toolu_r',
+        taskId: 'task-toolu_r',
+        doing: '',
+        lastTool: '',
+        tokens: 5,
+      },
       refs,
     )
 
@@ -571,11 +750,23 @@ describe('a subagent reports what it is doing while it works', () => {
     const refs = fakeRefs()
     open(refs, 'toolu_done')
     applyAgentEvent(
-      { type: 'childStarted', toolUseId: 'toolu_done', taskId: 'task-d', taskType: 'local_agent', description: '' },
+      {
+        type: 'childStarted',
+        toolUseId: 'toolu_done',
+        taskId: 'task-d',
+        taskType: 'local_agent',
+        description: '',
+      },
       refs,
     )
     applyAgentEvent(
-      { type: 'childStateKnown', toolUseId: 'toolu_done', taskId: 'task-d', state: 'completed', error: '' },
+      {
+        type: 'childStateKnown',
+        toolUseId: 'toolu_done',
+        taskId: 'task-d',
+        state: 'completed',
+        error: '',
+      },
       refs,
     )
     expect(sessionStore.get().find((s) => s.id === 'toolu_done')?.status).toBe('done')
@@ -585,19 +776,44 @@ describe('a subagent reports what it is doing while it works', () => {
     const refs = fakeRefs()
     open(refs, 'toolu_late')
     applyAgentEvent(
-      { type: 'childStarted', toolUseId: 'toolu_late', taskId: 'task-l', taskType: 'local_agent', description: '' },
+      {
+        type: 'childStarted',
+        toolUseId: 'toolu_late',
+        taskId: 'task-l',
+        taskType: 'local_agent',
+        description: '',
+      },
       refs,
     )
     applyAgentEvent(
-      { type: 'childStateKnown', toolUseId: 'toolu_late', taskId: 'task-l', state: 'killed', error: '' },
+      {
+        type: 'childStateKnown',
+        toolUseId: 'toolu_late',
+        taskId: 'task-l',
+        state: 'killed',
+        error: '',
+      },
       refs,
     )
     applyAgentEvent(
-      { type: 'childProgress', toolUseId: 'toolu_late', taskId: 'task-l', doing: 'more', lastTool: '', tokens: 9 },
+      {
+        type: 'childProgress',
+        toolUseId: 'toolu_late',
+        taskId: 'task-l',
+        doing: 'more',
+        lastTool: '',
+        tokens: 9,
+      },
       refs,
     )
     applyAgentEvent(
-      { type: 'childNotified', toolUseId: 'toolu_late', taskId: 'task-l', summary: 'idle', done: false },
+      {
+        type: 'childNotified',
+        toolUseId: 'toolu_late',
+        taskId: 'task-l',
+        summary: 'idle',
+        done: false,
+      },
       refs,
     )
     expect(sessionStore.get().find((s) => s.id === 'toolu_late')?.status).toBe('done')
@@ -607,7 +823,13 @@ describe('a subagent reports what it is doing while it works', () => {
     const refs = fakeRefs()
     open(refs, 'toolu_w')
     applyAgentEvent(
-      { type: 'childStarted', toolUseId: 'toolu_w', taskId: 'task_w', taskType: 'local_agent', description: '' },
+      {
+        type: 'childStarted',
+        toolUseId: 'toolu_w',
+        taskId: 'task_w',
+        taskType: 'local_agent',
+        description: '',
+      },
       refs,
     )
     // The agent starts a shell (a call on its stream), backgrounds it, idles.
@@ -616,7 +838,13 @@ describe('a subagent reports what it is doing while it works', () => {
       refs,
     )
     applyAgentEvent(
-      { type: 'childStarted', toolUseId: 'toolu_sh', taskId: 'task_sh', taskType: 'local_bash', description: 'sleep' },
+      {
+        type: 'childStarted',
+        toolUseId: 'toolu_sh',
+        taskId: 'task_sh',
+        taskType: 'local_bash',
+        description: 'sleep',
+      },
       refs,
     )
     expect(conversation.get().chores, "a child's shell is not the conversation's chore").toEqual([])
@@ -628,7 +856,13 @@ describe('a subagent reports what it is doing while it works', () => {
 
     // The shell ends; the next completed closes the agent for real.
     applyAgentEvent(
-      { type: 'childStateKnown', toolUseId: 'toolu_sh', taskId: 'task_sh', state: 'completed', error: '' },
+      {
+        type: 'childStateKnown',
+        toolUseId: 'toolu_sh',
+        taskId: 'task_sh',
+        state: 'completed',
+        error: '',
+      },
       refs,
     )
     applyAgentEvent(
@@ -641,7 +875,14 @@ describe('a subagent reports what it is doing while it works', () => {
   it('ignores progress from a task that is not one of ours, such as a subagent own shell', () => {
     const refs = fakeRefs()
     applyAgentEvent(
-      { type: 'childProgress', toolUseId: 'toolu_stranger', taskId: 'task-toolu_stranger', doing: 'x', lastTool: 'Bash', tokens: 1 },
+      {
+        type: 'childProgress',
+        toolUseId: 'toolu_stranger',
+        taskId: 'task-toolu_stranger',
+        doing: 'x',
+        lastTool: 'Bash',
+        tokens: 1,
+      },
       refs,
     )
     expect(sessionStore.get()).toEqual([])
@@ -652,7 +893,12 @@ describe('a message names the teammate it is sent to', () => {
   it('reads the recipient from the field SendMessage actually uses', () => {
     const refs = fakeRefs()
     applyAgentEvent(
-      { type: 'stream', line: 'SendMessage Karina', toolUseId: 'toolu_s', input: { to: 'Karina', message: 'go on' } },
+      {
+        type: 'stream',
+        line: 'SendMessage Karina',
+        toolUseId: 'toolu_s',
+        input: { to: 'Karina', message: 'go on' },
+      },
       refs,
     )
     expect(refs.sends.get('toolu_s')?.to).toBe('Karina')
@@ -661,7 +907,12 @@ describe('a message names the teammate it is sent to', () => {
   it('drops the disambiguating reference, since that is not the name on screen', () => {
     const refs = fakeRefs()
     applyAgentEvent(
-      { type: 'stream', line: 'SendMessage', toolUseId: 'toolu_t', input: { to: 'Karina [3fa9c1]' } },
+      {
+        type: 'stream',
+        line: 'SendMessage',
+        toolUseId: 'toolu_t',
+        input: { to: 'Karina [3fa9c1]' },
+      },
       refs,
     )
     expect(refs.sends.get('toolu_t')?.to).toBe('Karina')
@@ -798,7 +1049,13 @@ describe('addressing a child by the id the CLI actually sends', () => {
     open(refs, 'toolu_z')
     link(refs, 'toolu_z', 'task_z')
     applyAgentEvent(
-      { type: 'childNotified', toolUseId: null, taskId: 'task_z', summary: '다 봤습니다', done: true },
+      {
+        type: 'childNotified',
+        toolUseId: null,
+        taskId: 'task_z',
+        summary: '다 봤습니다',
+        done: true,
+      },
       refs,
     )
 
@@ -851,7 +1108,13 @@ describe('addressing a child by the id the CLI actually sends', () => {
     const refs = fakeRefs()
     open(refs, 'toolu_w')
     applyAgentEvent(
-      { type: 'childStarted', toolUseId: 'toolu_w', taskId: 'task_w', taskType: 'local_agent', description: '' },
+      {
+        type: 'childStarted',
+        toolUseId: 'toolu_w',
+        taskId: 'task_w',
+        taskType: 'local_agent',
+        description: '',
+      },
       refs,
     )
     applyAgentEvent(
@@ -882,7 +1145,13 @@ describe('addressing a child by the id the CLI actually sends', () => {
     ).toBe('working')
 
     applyAgentEvent(
-      { type: 'childStateKnown', toolUseId: null, taskId: 'task_bg', state: 'completed', error: '' },
+      {
+        type: 'childStateKnown',
+        toolUseId: null,
+        taskId: 'task_bg',
+        state: 'completed',
+        error: '',
+      },
       refs,
     )
     expect(sessionStore.get().find((s) => s.id === 'toolu_bg')?.status).toBe('done')
@@ -929,7 +1198,13 @@ describe('work the CLI sends to the background stays visible while it runs', () 
   it('takes it off the board once the CLI says it finished', () => {
     const at = refs()
     applyAgentEvent(
-      { type: 'childStarted', toolUseId: 'tu1', taskId: 'task1', taskType: 'local_bash', description: 'x' },
+      {
+        type: 'childStarted',
+        toolUseId: 'tu1',
+        taskId: 'task1',
+        taskType: 'local_bash',
+        description: 'x',
+      },
       at,
     )
     applyAgentEvent(
@@ -942,7 +1217,13 @@ describe('work the CLI sends to the background stays visible while it runs', () 
   it('leaves it there while the state only says it is still running', () => {
     const at = refs()
     applyAgentEvent(
-      { type: 'childStarted', toolUseId: 'tu1', taskId: 'task1', taskType: 'local_bash', description: 'x' },
+      {
+        type: 'childStarted',
+        toolUseId: 'tu1',
+        taskId: 'task1',
+        taskType: 'local_bash',
+        description: 'x',
+      },
       at,
     )
     applyAgentEvent(
@@ -1021,30 +1302,63 @@ describe('a progress ping that carries no count', () => {
   it('leaves the tokens a teammate had rather than reading the silence as none', () => {
     const refs = fakeRefs()
     applyAgentEvent(
-      { type: 'childOpen', toolUseId: 'toolu_tok', label: '토큰', subagentType: 'Explore', prompt: 'x', background: false },
+      {
+        type: 'childOpen',
+        toolUseId: 'toolu_tok',
+        label: '토큰',
+        subagentType: 'Explore',
+        prompt: 'x',
+        background: false,
+      },
       refs,
     )
     applyAgentEvent(
-      { type: 'childProgress', toolUseId: 'toolu_tok', taskId: 't1', doing: '', lastTool: '', tokens: 4200 },
+      {
+        type: 'childProgress',
+        toolUseId: 'toolu_tok',
+        taskId: 't1',
+        doing: '',
+        lastTool: '',
+        tokens: 4200,
+      },
       refs,
     )
     applyAgentEvent(
-      { type: 'childProgress', toolUseId: 'toolu_tok', taskId: 't1', doing: '', lastTool: '', tokens: null },
+      {
+        type: 'childProgress',
+        toolUseId: 'toolu_tok',
+        taskId: 't1',
+        doing: '',
+        lastTool: '',
+        tokens: null,
+      },
       refs,
     )
     expect(sessionStore.get().find((s) => s.id === 'toolu_tok')?.tokens).toBe(4200)
   })
 })
 
-
 describe('the orchestrator speaking to a teammate', () => {
   function hired(refs: AgentEventRefs): void {
     applyAgentEvent(
-      { type: 'childOpen', toolUseId: 'toolu_x', label: 'Nova', subagentType: 'general-purpose', prompt: 'x', background: false },
+      {
+        type: 'childOpen',
+        toolUseId: 'toolu_x',
+        label: 'Nova',
+        subagentType: 'general-purpose',
+        prompt: 'x',
+        background: false,
+      },
       refs,
     )
     applyAgentEvent(
-      { type: 'childStarted', toolUseId: 'toolu_x', taskId: 'agent-x', taskType: '', description: 'Nova' },
+      {
+        type: 'childStarted',
+        toolUseId: 'toolu_x',
+        taskId: 'agent-x',
+        taskType: '',
+        description: 'Nova',
+      },
       refs,
     )
   }
@@ -1062,7 +1376,16 @@ describe('the orchestrator speaking to a teammate', () => {
   it('wakes the tile that teammate already has, rather than opening one named after the id', () => {
     const refs = fakeRefs()
     hired(refs)
-    applyAgentEvent({ type: 'childStateKnown', toolUseId: 'toolu_x', taskId: 'agent-x', state: 'completed', error: '' }, refs)
+    applyAgentEvent(
+      {
+        type: 'childStateKnown',
+        toolUseId: 'toolu_x',
+        taskId: 'agent-x',
+        state: 'completed',
+        error: '',
+      },
+      refs,
+    )
     remember('call_send', { to: 'agent-x', message: '한 번 더' }, refs)
 
     wakeResumed('call_send', JSON.stringify({ success: true, resumedAgentId: 'agent-x' }), refs)

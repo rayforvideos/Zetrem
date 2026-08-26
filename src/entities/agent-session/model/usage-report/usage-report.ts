@@ -1,6 +1,7 @@
 import type { RateLimit } from '../../api/claude/status/status.types'
 
-const LINE = /^Current (session|week)(?: \(([^)]+)\))?:\s*(\d+)%\s*used(?:\s*·\s*resets\s+(.+?))?\s*$/
+const LINE =
+  /^Current (session|week)(?: \(([^)]+)\))?:\s*(\d+)%\s*used(?:\s*·\s*resets\s+(.+?))?\s*$/
 
 const HEAVY = 0.85
 

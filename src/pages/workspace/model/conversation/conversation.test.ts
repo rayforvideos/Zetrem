@@ -51,14 +51,24 @@ describe('conversation: what our screen draws', () => {
 
   it('attaches a result to its own tool, so it is clear whose output it is', () => {
     conversation.tool('Bash ls -la', 'toolu_9')
-    conversation.toolResult('toolu_9', { stdout: 'total 40', stderr: '', isError: false, interrupted: false })
+    conversation.toolResult('toolu_9', {
+      stdout: 'total 40',
+      stderr: '',
+      isError: false,
+      interrupted: false,
+    })
     const tool = conversation.get().turns.at(-1)!.tools[0]!
     expect(tool.result?.stdout).toBe('total 40')
   })
 
   it('drops a result with no tool to attach to', () => {
     conversation.tool('Bash ls', 'toolu_1')
-    conversation.toolResult('없는id', { stdout: 'x', stderr: '', isError: false, interrupted: false })
+    conversation.toolResult('없는id', {
+      stdout: 'x',
+      stderr: '',
+      isError: false,
+      interrupted: false,
+    })
     expect(conversation.get().turns.at(-1)!.tools[0]!.result).toBeNull()
   })
 

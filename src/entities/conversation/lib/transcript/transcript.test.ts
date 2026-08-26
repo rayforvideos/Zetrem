@@ -1,6 +1,15 @@
 import { describe, expect, it } from 'vitest'
 import type { Turn } from '../../model/turn/turn'
-import { UNTITLED, chatId, isChatId, packTranscript, readTranscript, renamed, summaryOf, titleOf } from './transcript'
+import {
+  UNTITLED,
+  chatId,
+  isChatId,
+  packTranscript,
+  readTranscript,
+  renamed,
+  summaryOf,
+  titleOf,
+} from './transcript'
 
 function turn(overrides: Partial<Turn> = {}): Turn {
   return {
@@ -64,7 +73,12 @@ describe('packTranscript: deciding what is worth keeping', () => {
   })
 
   it('falls back to the first message when the given name is empty', () => {
-    expect(packTranscript([turn({ role: 'user', text: '안녕' })], { ...summary, title: '' }).title).toBe('안녕')
+    expect(
+      packTranscript([turn({ role: 'user', text: '안녕' })], {
+        ...summary,
+        title: '',
+      }).title,
+    ).toBe('안녕')
   })
 
   it('tidies a name for the list: one line, trimmed, capped', () => {
@@ -87,7 +101,12 @@ describe('packTranscript: deciding what is worth keeping', () => {
               line: 'Bash npm run build',
               toolUseId: 't1',
               input: null,
-              result: { stdout: long, stderr: '', isError: false, interrupted: false },
+              result: {
+                stdout: long,
+                stderr: '',
+                isError: false,
+                interrupted: false,
+              },
               startedAtMs: 0,
               endedAtMs: 100,
             },
@@ -131,7 +150,10 @@ describe('readTranscript: reading what was saved without trusting it', () => {
   })
 
   it('drops only the turns that are not turns', () => {
-    const back = readTranscript({ id: summary.id, turns: [turn(), { role: '유령' }, { text: 1 }] })
+    const back = readTranscript({
+      id: summary.id,
+      turns: [turn(), { role: '유령' }, { text: 1 }],
+    })
     expect(back?.turns).toHaveLength(1)
   })
 
@@ -151,7 +173,12 @@ describe('readTranscript: reading what was saved without trusting it', () => {
           line: 'Bash npm run build',
           toolUseId: 't1',
           input: { cmd: 'npm run build' },
-          result: { stdout: 'ok', stderr: '', isError: false, interrupted: false },
+          result: {
+            stdout: 'ok',
+            stderr: '',
+            isError: false,
+            interrupted: false,
+          },
           startedAtMs: 10,
           endedAtMs: 20,
         },
@@ -236,7 +263,15 @@ describe('readTranscript: reading what was saved without trusting it', () => {
 
 describe('a saved chat carries what it cost, so reopening it says the same thing', () => {
   const turns = [
-    { id: 'turn-hello', role: 'user' as const, text: '안녕', tools: [], draft: '', thinking: '', startedAtMs: 0 },
+    {
+      id: 'turn-hello',
+      role: 'user' as const,
+      text: '안녕',
+      tools: [],
+      draft: '',
+      thinking: '',
+      startedAtMs: 0,
+    },
   ]
 
   it('keeps the totals beside the words', () => {
@@ -251,13 +286,23 @@ describe('a saved chat carries what it cost, so reopening it says the same thing
       contextUsed: 90_000,
       contextWindow: 1_000_000,
     }
-    const packed = packTranscript(turns, { id: chatId(1, 'aaa'), sessionId: null, savedAtMs: 0 }, spend)
+    const packed = packTranscript(
+      turns,
+      { id: chatId(1, 'aaa'), sessionId: null, savedAtMs: 0 },
+      spend,
+    )
     expect(packed.spend).toEqual(spend)
     expect(readTranscript(JSON.parse(JSON.stringify(packed)))?.spend?.usd).toBe(0.42)
   })
 
   it('reads a chat saved before the totals were kept, rather than dropping it', () => {
-    const old = { id: chatId(1, 'aaa'), title: 'x', sessionId: null, savedAtMs: 0, turns }
+    const old = {
+      id: chatId(1, 'aaa'),
+      title: 'x',
+      sessionId: null,
+      savedAtMs: 0,
+      turns,
+    }
     const read = readTranscript(old)
     expect(read?.turns).toHaveLength(1)
     expect(read?.spend).toBeNull()
@@ -279,7 +324,17 @@ describe('a saved chat carries what it cost, so reopening it says the same thing
 describe('a chat remembers which folder it was filed under', () => {
   const saved = (over: Record<string, unknown> = {}) => ({
     id: 'chat-mt7b569x-az3pn6',
-    turns: [{ id: 't1', role: 'user', text: '하이', tools: [], draft: '', thinking: '', startedAtMs: 1 }],
+    turns: [
+      {
+        id: 't1',
+        role: 'user',
+        text: '하이',
+        tools: [],
+        draft: '',
+        thinking: '',
+        startedAtMs: 1,
+      },
+    ],
     ...over,
   })
 

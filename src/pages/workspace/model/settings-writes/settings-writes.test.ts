@@ -2,7 +2,12 @@ import { describe, expect, it } from 'vitest'
 import { DEFAULT_SETTINGS } from '@/entities/agent-session'
 import { onRead, onUpdate } from './settings-writes'
 
-const saved = { ...DEFAULT_SETTINGS, permissionMode: 'bypass' as const, userName: 'Ray', setupDone: true }
+const saved = {
+  ...DEFAULT_SETTINGS,
+  permissionMode: 'bypass' as const,
+  userName: 'Ray',
+  setupDone: true,
+}
 
 describe('nothing is written before what is on disk has been read', () => {
   it('holds a change made while the file is still being read', () => {

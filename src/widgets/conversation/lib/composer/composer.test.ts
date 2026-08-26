@@ -1,5 +1,13 @@
 import { describe, expect, it } from 'vitest'
-import { beganComposing, endedComposing, maySendNow, newComposer, sendKey, sent, takeOwed } from './composer'
+import {
+  beganComposing,
+  endedComposing,
+  maySendNow,
+  newComposer,
+  sendKey,
+  sent,
+  takeOwed,
+} from './composer'
 
 describe('the composer never sends a half finished syllable', () => {
   it('sends at once when nothing is being composed', () => {
@@ -75,7 +83,9 @@ describe('the composer never sends a half finished syllable', () => {
 })
 
 describe('which keys send', () => {
-  const press = (over: Partial<{ key: string; shift: boolean; alt: boolean; mod: boolean }> = {}) => ({
+  const press = (
+    over: Partial<{ key: string; shift: boolean; alt: boolean; mod: boolean }> = {},
+  ) => ({
     key: 'Enter',
     shift: false,
     alt: false,

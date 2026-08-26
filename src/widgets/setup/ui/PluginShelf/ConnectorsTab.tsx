@@ -66,7 +66,10 @@ export function ConnectorsTab({
                     onClick={() => onConnector('logout', connector.name)}
                   />
                 ) : (
-                  <Quietly label={t`Sign in`} onClick={() => onConnector('login', connector.name)} />
+                  <Quietly
+                    label={t`Sign in`}
+                    onClick={() => onConnector('login', connector.name)}
+                  />
                 ))}
               {removableConnector(connector.name) && (
                 <Quietly

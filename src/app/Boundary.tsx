@@ -35,7 +35,9 @@ export class Boundary extends Component<{ children: ReactNode }, State> {
           lineHeight: 1.7,
         }}
       >
-        <p style={{ fontSize: 15, marginBottom: 16 }}>{t`Something broke. Here is what happened.`}</p>
+        <p
+          style={{ fontSize: 15, marginBottom: 16 }}
+        >{t`Something broke. Here is what happened.`}</p>
         <pre style={{ whiteSpace: 'pre-wrap', margin: 0 }}>{error.message}</pre>
         {/* A crashed render leaves nothing to click but this. Styled by hand,
             like the rest of the screen: whatever broke may be the stylesheet. */}

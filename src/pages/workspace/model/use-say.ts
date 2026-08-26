@@ -6,7 +6,12 @@ import type { Settings } from '@/entities/agent-session'
 
 export function useSay(chosen: Settings['tongue'], settled: boolean): void {
   useEffect(() => {
-    const next = tongueToLoad(chosen, settled, i18n.locale, navigator.languages ?? [navigator.language])
+    const next = tongueToLoad(
+      chosen,
+      settled,
+      i18n.locale,
+      navigator.languages ?? [navigator.language],
+    )
     if (next === null) return
     void loadTongue(next)
   }, [chosen, settled])

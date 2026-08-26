@@ -5,7 +5,9 @@ import { describe, expect, it } from 'vitest'
 const ROOT = process.cwd()
 
 function resolveImport(spec: string, from: string): string | null {
-  const base = spec.startsWith('@/') ? join(ROOT, 'src', spec.slice(2)) : resolve(dirname(from), spec)
+  const base = spec.startsWith('@/')
+    ? join(ROOT, 'src', spec.slice(2))
+    : resolve(dirname(from), spec)
   for (const one of [`${base}.ts`, `${base}.tsx`, join(base, 'index.ts')]) {
     if (existsSync(one)) return one
   }

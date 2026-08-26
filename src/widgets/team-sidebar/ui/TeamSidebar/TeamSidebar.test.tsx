@@ -22,7 +22,7 @@ function bar(props: Partial<Parameters<typeof TeamSidebar>[0]> = {}): string {
         drafts: new Map(),
         knownTools: [],
         sessionUp: false,
-    read: [],
+        read: [],
         canWrite: true,
         note: null,
         onHire: () => {},
@@ -69,7 +69,6 @@ describe('TeamSidebar: the column that stacks the sections in order', () => {
   it('hands the team its own section rather than laying the roster out itself', () => {
     expect(bar({ team: { ...teamOf(), members: [], note: null } })).toContain('No one here yet')
   })
-
 })
 
 function teamOf() {
@@ -78,7 +77,7 @@ function teamOf() {
     drafts: new Map(),
     knownTools: [],
     sessionUp: false,
-        read: [],
+    read: [],
     sessionLive: false,
     canWrite: true,
     hint: false,
@@ -218,8 +217,7 @@ describe('a way out when the folders stop helping', () => {
         onFileMany: () => {},
       },
     })
-  const many = (folder = '') =>
-    Array.from({ length: ROOMY + 1 }, (_, at) => chat(`c${at}`, folder))
+  const many = (folder = '') => Array.from({ length: ROOMY + 1 }, (_, at) => chat(`c${at}`, folder))
 
   it('stays out of the way while the list is short enough to read', () => {
     // Looking is the last resort, not the way in. A field over three chats is

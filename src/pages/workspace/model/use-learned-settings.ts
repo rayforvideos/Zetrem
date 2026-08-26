@@ -22,5 +22,12 @@ export function useLearnedSettings(
     )
     if (learned === null) return
     update(learned)
-  }, [probedSession, sessionTools, sessionAgents, settings.knownTools, settings.knownAgents, update])
+  }, [
+    probedSession,
+    sessionTools,
+    sessionAgents,
+    settings.knownTools,
+    settings.knownAgents,
+    update,
+  ])
 }

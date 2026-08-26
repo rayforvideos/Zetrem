@@ -70,9 +70,9 @@ describe('TeamList: pressing something always does something', () => {
     // Knowing a session id is not the same as having a child alive. The probe
     // keeps reporting one after a restart has already killed ours, and asking
     // to restart what is already gone is how the note came back from the dead.
-    expect(
-      list({ note: { kind: 'created', name: 'Nova' }, sessionUp: false }),
-    ).not.toContain('Restart session')
+    expect(list({ note: { kind: 'created', name: 'Nova' }, sessionUp: false })).not.toContain(
+      'Restart session',
+    )
   })
 
   it('locks hiring without a project and says why', () => {
@@ -116,7 +116,9 @@ describe('a name on the roster is something you can press', () => {
   })
 
   it('leaves someone uncallable unpressable, with the reason attached', () => {
-    const button = row(list({ sessionUp: true, members: [member({ loaded: true, callable: false })] }))
+    const button = row(
+      list({ sessionUp: true, members: [member({ loaded: true, callable: false })] }),
+    )
     expect(button).toContain('disabled=""')
     expect(button).toContain('Not available this session')
   })
@@ -124,7 +126,9 @@ describe('a name on the roster is something you can press', () => {
 
 describe('someone you hired can be edited or let go', () => {
   it('gives each row a menu named after that person', () => {
-    expect(list({ members: [member({ name: 'code-reviewer' })] })).toContain('More for code-reviewer')
+    expect(list({ members: [member({ name: 'code-reviewer' })] })).toContain(
+      'More for code-reviewer',
+    )
   })
 
   it('keeps the menu out of sight until wanted, so it is not pressed by accident', () => {
@@ -161,7 +165,13 @@ describe('the light on a row', () => {
 })
 
 describe('a run you have already read', () => {
-  const back = { ...member(), name: 'Joi', type: 'explore', state: 'done' as const, sessionId: 'run-1' }
+  const back = {
+    ...member(),
+    name: 'Joi',
+    type: 'explore',
+    state: 'done' as const,
+    sessionId: 'run-1',
+  }
 
   it('says they reported back until you have looked', () => {
     expect(list({ members: [back] })).toContain('Reported back')

@@ -76,7 +76,8 @@ function fromAssistantUsage(event: Record<string, unknown>): StatusEvent[] {
   const usage = (event.message as Record<string, unknown> | undefined)?.usage
   if (typeof usage !== 'object' || usage === null) return []
   const u = usage as Record<string, unknown>
-  const used = num(u.input_tokens) + num(u.cache_read_input_tokens) + num(u.cache_creation_input_tokens)
+  const used =
+    num(u.input_tokens) + num(u.cache_read_input_tokens) + num(u.cache_creation_input_tokens)
   return used > 0 ? [{ type: 'context', used }] : []
 }
 
@@ -91,11 +92,17 @@ function carryingModel(
   if (entries.length === 0) return undefined
 
   const tokensOf = (m: Record<string, unknown>) =>
-    num(m.inputTokens) + num(m.outputTokens) + num(m.cacheReadInputTokens) + num(m.cacheCreationInputTokens)
+    num(m.inputTokens) +
+    num(m.outputTokens) +
+    num(m.cacheReadInputTokens) +
+    num(m.cacheCreationInputTokens)
 
   return entries.reduce((heaviest, entry) => {
     if (tokensOf(entry) > tokensOf(heaviest)) return entry
-    if (tokensOf(entry) === tokensOf(heaviest) && num(entry.contextWindow) > num(heaviest.contextWindow)) {
+    if (
+      tokensOf(entry) === tokensOf(heaviest) &&
+      num(entry.contextWindow) > num(heaviest.contextWindow)
+    ) {
       return entry
     }
     return heaviest

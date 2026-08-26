@@ -45,7 +45,11 @@ export function CrewCard({
       <span style={headStyle}>
         <AgentSprite subagentType={lane.subagentType} state={session.status} size={24} />
         <span style={nameStyle}>{lane.name}</span>
-        {model !== null && <span data-model style={modelStyle}>{model}</span>}
+        {model !== null && (
+          <span data-model style={modelStyle}>
+            {model}
+          </span>
+        )}
         <span style={clockStyle}>{formatClock(lane.outMs / 1000)}</span>
       </span>
 

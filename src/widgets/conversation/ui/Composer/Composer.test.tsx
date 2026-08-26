@@ -104,7 +104,11 @@ describe('what you attached, before you send it', () => {
   })
 
   it('shows a file by name rather than pretending to preview it', () => {
-    const out = box({ files: [{ ...shot, path: '/w/a.md', name: 'a.md', kind: 'file', mediaType: null, data: null }] })
+    const out = box({
+      files: [
+        { ...shot, path: '/w/a.md', name: 'a.md', kind: 'file', mediaType: null, data: null },
+      ],
+    })
     expect(out).toContain('a.md')
     expect(out).not.toContain('data:')
   })

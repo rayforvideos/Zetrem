@@ -21,9 +21,12 @@ describe('a result that names a model the account cannot use', () => {
   })
 
   it('says nothing about refusal when the turn simply failed', () => {
-    const notice = fromResult({ subtype: 'error', is_error: true, error: 'error', result: 'boom' }).find(
-      (event) => event.type === 'notice',
-    )
+    const notice = fromResult({
+      subtype: 'error',
+      is_error: true,
+      error: 'error',
+      result: 'boom',
+    }).find((event) => event.type === 'notice')
     expect(notice && 'refused' in notice).toBe(false)
   })
 })

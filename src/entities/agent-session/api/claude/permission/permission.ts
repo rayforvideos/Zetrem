@@ -16,7 +16,12 @@ export function permissionResult(allow: boolean, input: unknown): PermissionResu
 // "Don't ask again" must grant only what the dialog showed. For Bash that is the
 // one command in front of the user, not every Bash call for the rest of the session.
 function alwaysRule(toolName: string, input: unknown): PermissionRule {
-  if (toolName === 'Bash' && isObject(input) && typeof input.command === 'string' && input.command) {
+  if (
+    toolName === 'Bash' &&
+    isObject(input) &&
+    typeof input.command === 'string' &&
+    input.command
+  ) {
     return { toolName: 'Bash', ruleContent: input.command }
   }
   return { toolName }
@@ -31,7 +36,12 @@ export function permissionAlwaysResult(toolName: string, input: unknown): Permis
     behavior: 'allow',
     updatedInput: input,
     updatedPermissions: [
-      { type: 'addRules', rules: [alwaysRule(toolName, input)], behavior: 'allow', destination: 'session' },
+      {
+        type: 'addRules',
+        rules: [alwaysRule(toolName, input)],
+        behavior: 'allow',
+        destination: 'session',
+      },
     ],
   }
 }

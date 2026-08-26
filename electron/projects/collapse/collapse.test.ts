@@ -1,4 +1,13 @@
-import { existsSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, rmSync, utimesSync, writeFileSync } from 'node:fs'
+import {
+  existsSync,
+  mkdirSync,
+  mkdtempSync,
+  readFileSync,
+  readdirSync,
+  rmSync,
+  utimesSync,
+  writeFileSync,
+} from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
@@ -31,7 +40,9 @@ function chat(project: string, id: string, atMs = 1_000): void {
 function chatsIn(project: string): string[] {
   const dir = folder(project)
   if (!existsSync(dir)) return []
-  return readdirSync(dir).filter((one) => one.endsWith('.json')).sort()
+  return readdirSync(dir)
+    .filter((one) => one.endsWith('.json'))
+    .sort()
 }
 
 function overflowIn(project: string): string[] {
@@ -172,8 +183,7 @@ describe('folding the categories of a folder back into one project', () => {
       { id: shop, name: 'shop', path: shop, createdAtMs: 1, lastOpenedAtMs: 1 },
       { id: 'cat-1', name: 'CS봇', path: shop, createdAtMs: 2, lastOpenedAtMs: 2 },
     ])
-    const id = (n: number): string =>
-      `${String(n).padStart(8, '0')}-aaaa-4aaa-8aaa-aaaaaaaaaaaa`
+    const id = (n: number): string => `${String(n).padStart(8, '0')}-aaaa-4aaa-8aaa-aaaaaaaaaaaa`
     for (let n = 0; n < CHAT_CAP; n += 1) chat(shop, id(n), 10_000 + n)
     for (let n = CHAT_CAP; n < CHAT_CAP + 5; n += 1) chat('cat-1', id(n), 1_000 + n)
 
@@ -189,8 +199,7 @@ describe('folding the categories of a folder back into one project', () => {
       { id: shop, name: 'shop', path: shop, createdAtMs: 1, lastOpenedAtMs: 1 },
       { id: 'cat-1', name: 'CS봇', path: shop, createdAtMs: 2, lastOpenedAtMs: 2 },
     ])
-    const id = (n: number): string =>
-      `${String(n).padStart(8, '0')}-aaaa-4aaa-8aaa-aaaaaaaaaaaa`
+    const id = (n: number): string => `${String(n).padStart(8, '0')}-aaaa-4aaa-8aaa-aaaaaaaaaaaa`
     // The folder's own chats are the stale ones this time; the category holds
     // the fresh ones, so the fresh ones are what must stay reachable.
     for (let n = 0; n < CHAT_CAP; n += 1) chat(shop, id(n), 1_000 + n)

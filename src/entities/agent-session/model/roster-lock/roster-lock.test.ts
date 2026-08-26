@@ -29,9 +29,10 @@ describe('peopleSpec: handing the people we hired to the session', () => {
   })
 
   it('says nothing about tools when none were picked, so they inherit the whole session', () => {
-    expect(peopleSpec([person()]).scout, 'name the tools and everything unnamed is lost').not.toHaveProperty(
-      'tools',
-    )
+    expect(
+      peopleSpec([person()]).scout,
+      'name the tools and everything unnamed is lost',
+    ).not.toHaveProperty('tools')
   })
 
   it('leaves the model out for someone with none, rather than inventing one', () => {
@@ -58,7 +59,9 @@ describe('agentsArgs: the lock is expressed as the session main agent', () => {
   it('stands up our orchestrator without naming its tools, so it inherits every one the session has', () => {
     const args = agentsArgs([person(), person({ name: 'reviewer' })], { blockedAgents: [] }, boss)
     const spec = JSON.parse(args[1] as string)
-    expect(spec[ORCHESTRATOR], 'name the tools and everything unnamed is lost').not.toHaveProperty('tools')
+    expect(spec[ORCHESTRATOR], 'name the tools and everything unnamed is lost').not.toHaveProperty(
+      'tools',
+    )
     expect(spec[ORCHESTRATOR].prompt).toBe(boss)
     expect(args[2]).toBe('--agent')
     expect(args[3]).toBe(ORCHESTRATOR)
@@ -115,7 +118,10 @@ describe('the orchestrator is given no way to work off screen', () => {
 
   it('never bars Task, which is the crew tool under its other name', () => {
     const gone = barred(agentsArgs([person()], lock, boss))
-    expect(gone, 'barring Task takes the whole Agent tool, and then nobody can be called').not.toContain('Task')
+    expect(
+      gone,
+      'barring Task takes the whole Agent tool, and then nobody can be called',
+    ).not.toContain('Task')
   })
 
   it('takes away the ones that put work on a clock nobody is watching', () => {

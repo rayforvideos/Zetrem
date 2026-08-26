@@ -3,7 +3,10 @@ import type { Connector, ConnectorState } from './read-connectors.types'
 const LINE = /^(.+?):\s+(.*?)\s+-\s+(.+)$/
 
 function stateOf(said: string): ConnectorState {
-  const plain = said.replace(/[^A-Za-z ]/g, '').trim().toLowerCase()
+  const plain = said
+    .replace(/[^A-Za-z ]/g, '')
+    .trim()
+    .toLowerCase()
   if (plain.startsWith('connected')) return 'connected'
   if (plain.includes('needs authentication')) return 'needs-auth'
   if (plain.includes('pending approval')) return 'unapproved'
@@ -35,4 +38,3 @@ export function readConnectors(out: string): Connector[] {
 export function needingAuth(connectors: Connector[]): Connector[] {
   return connectors.filter((connector) => connector.state === 'needs-auth')
 }
-

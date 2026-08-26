@@ -6,7 +6,9 @@ function str(value: unknown): string | null {
 
 function splitPath(path: string): { dir: string; name: string } {
   const cut = path.lastIndexOf('/')
-  return cut === -1 ? { dir: '', name: path } : { dir: path.slice(0, cut + 1), name: path.slice(cut + 1) }
+  return cut === -1
+    ? { dir: '', name: path }
+    : { dir: path.slice(0, cut + 1), name: path.slice(cut + 1) }
 }
 
 function domainOf(url: string): string {
@@ -27,7 +29,10 @@ const FILE_VERB: Record<string, 'read' | 'write' | 'edit'> = {
 
 export function toolShape(name: string, input: unknown): ToolShape {
   const plain: ToolShape = { kind: 'plain', name }
-  const fields = (typeof input === 'object' && input !== null ? input : {}) as Record<string, unknown>
+  const fields = (typeof input === 'object' && input !== null ? input : {}) as Record<
+    string,
+    unknown
+  >
 
   const verb = FILE_VERB[name]
   if (verb) {

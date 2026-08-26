@@ -77,7 +77,12 @@ export function Approval({
             <Kbd className="bg-primary-foreground/15 text-primary-foreground/70">Enter</Kbd>
           </KbdGroup>
         </Button>
-        <Button size="sm" variant="secondary" onClick={() => decide(false)} className="rounded-full">
+        <Button
+          size="sm"
+          variant="secondary"
+          onClick={() => decide(false)}
+          className="rounded-full"
+        >
           {t`Deny`}
           <Kbd>Esc</Kbd>
         </Button>

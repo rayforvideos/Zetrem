@@ -14,7 +14,11 @@ export function nudgeFor(at: NudgeAt): Nudge | null {
     }
   }
   if (at.trouble === true) {
-    return { reason: 'done', title: t`Zetrem hit a problem`, body: t`A session stopped with an error.` }
+    return {
+      reason: 'done',
+      title: t`Zetrem hit a problem`,
+      body: t`A session stopped with an error.`,
+    }
   }
   return { reason: 'done', title: t`Zetrem is done`, body: t`Your team has finished.` }
 }

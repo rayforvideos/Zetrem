@@ -263,7 +263,9 @@ describe('being told when the work is done is something you can turn off', () =>
   it('offers the switch and says when it would speak', () => {
     const html = pane()
     expect(html).toContain('Notifications')
-    expect(html, 'not knowing when it rings, you cannot decide to turn it on').toContain('behind another window')
+    expect(html, 'not knowing when it rings, you cannot decide to turn it on').toContain(
+      'behind another window',
+    )
   })
 
   function switchState(html: string): string | undefined {

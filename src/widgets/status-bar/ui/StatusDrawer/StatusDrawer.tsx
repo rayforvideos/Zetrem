@@ -24,7 +24,15 @@ function Card({ children }: { children: ReactNode }) {
   return <div className="flex flex-col gap-1 rounded-xl bg-muted/40 px-3.5 py-3">{children}</div>
 }
 
-function Part({ title, aside, children }: { title: string; aside?: ReactNode; children: ReactNode }) {
+function Part({
+  title,
+  aside,
+  children,
+}: {
+  title: string
+  aside?: ReactNode
+  children: ReactNode
+}) {
   return (
     <section className="flex flex-col gap-1.5">
       <div className="flex items-center justify-between gap-3">

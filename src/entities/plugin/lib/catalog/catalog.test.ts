@@ -8,7 +8,8 @@ const real = {
       version: 'unknown',
       scope: 'user',
       enabled: true,
-      installPath: '/Users/sam/.claude/plugins/cache/claude-plugins-official/frontend-design/unknown',
+      installPath:
+        '/Users/sam/.claude/plugins/cache/claude-plugins-official/frontend-design/unknown',
       installedAt: '2026-03-23T04:03:10.735Z',
       lastUpdated: '2026-08-14T13:11:36.817Z',
     },
@@ -81,7 +82,9 @@ describe('readCatalog: reading what the CLI gave without trusting it', () => {
   })
 
   it('drops an entry with no id, since nothing can be done with it', () => {
-    expect(readCatalog({ installed: [{ version: '1' }, real.installed[1]] }).installed).toHaveLength(1)
+    expect(
+      readCatalog({ installed: [{ version: '1' }, real.installed[1]] }).installed,
+    ).toHaveLength(1)
   })
 
   it('does not invent a scope it does not recognise', () => {

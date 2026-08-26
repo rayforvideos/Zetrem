@@ -15,8 +15,8 @@ const woke: ClaudeTurnEvent = {
     cliVersion: '2.0.0',
     mcp: [],
     tools: [],
-    agents: []
-  }
+    agents: [],
+  },
 }
 
 describe('stirred: the session woke up on its own', () => {

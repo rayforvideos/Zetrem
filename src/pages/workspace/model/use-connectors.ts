@@ -25,7 +25,8 @@ function said(verb: ConnectorVerb, target: string): string {
   // claude mcp login opens the browser and exits before anyone has signed
   // in, so a finished command is not a finished sign-in — and either way the
   // tools only load into the next session.
-  if (verb === 'login') return t`Finish signing in to ${name} in the browser. The next session picks it up.`
+  if (verb === 'login')
+    return t`Finish signing in to ${name} in the browser. The next session picks it up.`
   if (verb === 'logout') return `${t`Signed out of`} ${name}`
   return `${t`Removed`} ${name}`
 }
@@ -69,7 +70,10 @@ export function useConnectors(wanted: boolean): Connectors {
   function add(draft: NewConnector): Promise<boolean> {
     const name = tidyName(draft.name)
     return ask(ADDING, t`Could not add ${name}`, () =>
-      window.desk.addConnector(draft, connectors.map((one) => one.name)),
+      window.desk.addConnector(
+        draft,
+        connectors.map((one) => one.name),
+      ),
     ).then((result) => {
       if (result === null) return false
       if (result.ok) reload()

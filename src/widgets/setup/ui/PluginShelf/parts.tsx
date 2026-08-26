@@ -34,7 +34,9 @@ export function Group({
   return (
     <section className="flex flex-col gap-1.5">
       {titled && <GroupName kind={kind} title={title} note={note} />}
-      <div className="-mx-2 flex flex-col gap-0.5 rounded-xl bg-card/50 px-2 py-1.5">{children}</div>
+      <div className="-mx-2 flex flex-col gap-0.5 rounded-xl bg-card/50 px-2 py-1.5">
+        {children}
+      </div>
     </section>
   )
 }
@@ -51,13 +53,13 @@ function GroupName({
   return (
     <div className="flex flex-col gap-0.5 px-2">
       <span className="flex items-center gap-1.5 text-xs font-medium tracking-wide text-foreground/80">
-        <span className="flex-none text-muted-foreground [&_svg]:size-3.5">
-          {GROUP_MARK[kind]}
-        </span>
+        <span className="flex-none text-muted-foreground [&_svg]:size-3.5">{GROUP_MARK[kind]}</span>
         {i18n._(title)}
       </span>
       {note !== null && (
-        <span className="pl-[22px] text-xs leading-snug text-muted-foreground/70">{i18n._(note)}</span>
+        <span className="pl-[22px] text-xs leading-snug text-muted-foreground/70">
+          {i18n._(note)}
+        </span>
       )}
     </div>
   )
@@ -86,10 +88,7 @@ export function Row({
 }) {
   return (
     <div
-      className={cn(
-        'flex items-center gap-3 rounded-lg px-2 py-2',
-        dim && 'text-muted-foreground',
-      )}
+      className={cn('flex items-center gap-3 rounded-lg px-2 py-2', dim && 'text-muted-foreground')}
     >
       {mark}
       <span className="flex min-w-0 flex-1 flex-col gap-0.5">

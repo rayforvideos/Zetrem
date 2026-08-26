@@ -60,7 +60,9 @@ describe('summarise: what a folded stretch amounts to', () => {
 
 describe('marksOfTools: the strip for a stretch of conversation work', () => {
   it('measures a settled call from start to result', () => {
-    expect(marksOfTools([tool('Read a.ts', { startedAtMs: 10, endedAtMs: 60 })], 999)[0]!.ms).toBe(50)
+    expect(marksOfTools([tool('Read a.ts', { startedAtMs: 10, endedAtMs: 60 })], 999)[0]!.ms).toBe(
+      50,
+    )
   })
 
   it('grows a call that has not come back yet against the clock', () => {

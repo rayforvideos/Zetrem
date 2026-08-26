@@ -172,7 +172,10 @@ describe('parseClaudeLine: partial message deltas, as the CLI really sends them'
     const events = parseClaudeLine(
       line({
         type: 'stream_event',
-        event: { type: 'content_block_delta', delta: { type: 'input_json_delta', partial_json: '{"a"' } },
+        event: {
+          type: 'content_block_delta',
+          delta: { type: 'input_json_delta', partial_json: '{"a"' },
+        },
       }),
     )
     expect(events).toEqual([])
@@ -205,7 +208,11 @@ describe('parseClaudeLine: subagents, as forwarded by the CLI', () => {
               type: 'tool_use',
               name: 'Agent',
               id: 'toolu_sub1',
-              input: { description: '산술 문제 해결', prompt: '2+2?', subagent_type: 'general-purpose' },
+              input: {
+                description: '산술 문제 해결',
+                prompt: '2+2?',
+                subagent_type: 'general-purpose',
+              },
             },
           ],
         },
@@ -481,7 +488,14 @@ describe('parseClaudeLine: a child that failed', () => {
     )
     expect(events).toEqual([
       { type: 'childClosed', toolUseId: 't1' },
-      { type: 'toolResult', toolUseId: 't1', stdout: 'ok', stderr: '', isError: false, interrupted: false },
+      {
+        type: 'toolResult',
+        toolUseId: 't1',
+        stdout: 'ok',
+        stderr: '',
+        isError: false,
+        interrupted: false,
+      },
     ])
   })
 })
@@ -557,7 +571,9 @@ describe('parseClaudeLine: thinking, and what tools gave back', () => {
       JSON.stringify({
         type: 'assistant',
         message: {
-          content: [{ type: 'tool_use', id: 'toolu_9', name: 'Bash', input: { command: 'ls -la' } }],
+          content: [
+            { type: 'tool_use', id: 'toolu_9', name: 'Bash', input: { command: 'ls -la' } },
+          ],
         },
       }),
     )
@@ -571,11 +587,21 @@ describe('parseClaudeLine: thinking, and what tools gave back', () => {
       JSON.stringify({
         type: 'assistant',
         message: {
-          content: [{ type: 'tool_use', id: 't1', name: 'Edit', input: { file_path: 'a.ts', old_string: 'a', new_string: 'b' } }],
+          content: [
+            {
+              type: 'tool_use',
+              id: 't1',
+              name: 'Edit',
+              input: { file_path: 'a.ts', old_string: 'a', new_string: 'b' },
+            },
+          ],
         },
       }),
     )
-    expect(event).toMatchObject({ type: 'stream', input: { file_path: 'a.ts', old_string: 'a', new_string: 'b' } })
+    expect(event).toMatchObject({
+      type: 'stream',
+      input: { file_path: 'a.ts', old_string: 'a', new_string: 'b' },
+    })
   })
 
   it('carries the output of a tool result as it came', () => {
@@ -583,7 +609,9 @@ describe('parseClaudeLine: thinking, and what tools gave back', () => {
       JSON.stringify({
         type: 'user',
         message: {
-          content: [{ tool_use_id: 'toolu_9', type: 'tool_result', content: 'total 40', is_error: false }],
+          content: [
+            { tool_use_id: 'toolu_9', type: 'tool_result', content: 'total 40', is_error: false },
+          ],
         },
         tool_use_result: { stdout: 'total 40', stderr: '', interrupted: false },
       }),
@@ -603,7 +631,14 @@ describe('parseClaudeLine: thinking, and what tools gave back', () => {
       JSON.stringify({
         type: 'user',
         message: {
-          content: [{ tool_use_id: 'toolu_9', type: 'tool_result', content: 'no such file', is_error: true }],
+          content: [
+            {
+              tool_use_id: 'toolu_9',
+              type: 'tool_result',
+              content: 'no such file',
+              is_error: true,
+            },
+          ],
         },
       }),
     )
@@ -652,7 +687,10 @@ describe('a nested line belongs to the child, never to the conversation', () => 
       JSON.stringify({
         type: 'assistant',
         parent_tool_use_id: 'toolu_a',
-        message: { content: [{ type: 'text', text: 'thinking out loud' }], usage: { input_tokens: 90_000 } },
+        message: {
+          content: [{ type: 'text', text: 'thinking out loud' }],
+          usage: { input_tokens: 90_000 },
+        },
       }),
     )
     expect(events.some((event) => event.type === 'context')).toBe(false)
@@ -707,7 +745,10 @@ describe('a turn that stops short says so, rather than just stopping', () => {
         errors: ['Reached maximum budget ($0.02)'],
       }),
     )
-    expect(events).toContainEqual({ type: 'notice', text: 'Stopped: Reached maximum budget ($0.02)' })
+    expect(events).toContainEqual({
+      type: 'notice',
+      text: 'Stopped: Reached maximum budget ($0.02)',
+    })
   })
 
   it('says nothing extra when the turn ended well', () => {
@@ -757,7 +798,10 @@ describe('the app says when the CLI is retrying rather than looking frozen', () 
       }),
     )
     expect(events).toEqual([
-      { type: 'notice', text: 'Opus declined this, so Sonnet took it. Retrying on a different model.' },
+      {
+        type: 'notice',
+        text: 'Opus declined this, so Sonnet took it. Retrying on a different model.',
+      },
     ])
   })
 
@@ -836,9 +880,7 @@ describe('the app says when the CLI is retrying rather than looking frozen', () 
 
 describe('a permission request the CLI takes back', () => {
   it('is read as a request to drop, naming which one', () => {
-    const events = parseClaudeLine(
-      line({ type: 'control_cancel_request', request_id: 'req_7' }),
-    )
+    const events = parseClaudeLine(line({ type: 'control_cancel_request', request_id: 'req_7' }))
     expect(events).toEqual([{ type: 'permissionDropped', requestId: 'req_7' }])
   })
 
@@ -859,7 +901,9 @@ describe('a server or plugin that never loaded says so, instead of just being ab
         tools: [],
         agents: [],
         mcp_servers: [],
-        mcp_server_errors: [{ name: 'notion', type: 'url_missing_type', message: 'url entry has no type' }],
+        mcp_server_errors: [
+          { name: 'notion', type: 'url_missing_type', message: 'url entry has no type' },
+        ],
       }),
     )
     expect(events).toContainEqual({
@@ -890,7 +934,16 @@ describe('a server or plugin that never loaded says so, instead of just being ab
 
   it('says nothing when everything loaded, which is the usual case', () => {
     const events = parseClaudeLine(
-      line({ type: 'system', subtype: 'init', session_id: 's', cwd: '/w', model: 'm', tools: [], agents: [], mcp_servers: [] }),
+      line({
+        type: 'system',
+        subtype: 'init',
+        session_id: 's',
+        cwd: '/w',
+        model: 'm',
+        tools: [],
+        agents: [],
+        mcp_servers: [],
+      }),
     )
     expect(events.some((event) => event.type === 'notice')).toBe(false)
   })

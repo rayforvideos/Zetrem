@@ -3,7 +3,11 @@ import type { MessageDescriptor } from '@lingui/core'
 import type { ModelChoice, PermissionMode } from '../run-config/run-config.types'
 import type { Said } from '@/shared/lib/say/read.types'
 
-export const PERMISSION_MODES: { id: PermissionMode; label: MessageDescriptor; hint: MessageDescriptor }[] = [
+export const PERMISSION_MODES: {
+  id: PermissionMode
+  label: MessageDescriptor
+  hint: MessageDescriptor
+}[] = [
   { id: 'ask', label: msg`Ask first`, hint: msg`Asks before editing files or running commands` },
   {
     id: 'acceptEdits',
@@ -33,7 +37,10 @@ export function modelsWith(
   if (refused.length === 0) return models
   return models.map((model) =>
     refused.includes(model.id)
-      ? { ...model, hint: msg`Your account turned this one down. Try it again if your plan changed.` }
+      ? {
+          ...model,
+          hint: msg`Your account turned this one down. Try it again if your plan changed.`,
+        }
       : model,
   )
 }

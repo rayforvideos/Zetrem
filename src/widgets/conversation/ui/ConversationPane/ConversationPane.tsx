@@ -90,7 +90,6 @@ export function ConversationPane({
     return () => cancelAnimationFrame(frame)
   }, [turns, permission, chores, scrollRef])
 
-
   if (turns.length === 0 && !permission) {
     return (
       <div className="relative z-[3] flex h-full gap-7">
@@ -141,7 +140,10 @@ export function ConversationPane({
                 }
                 if (turn.role === 'user') {
                   return (
-                    <div key={turn.id} className="zt-rise flex max-w-[80%] flex-col items-end gap-1 self-end">
+                    <div
+                      key={turn.id}
+                      className="zt-rise flex max-w-[80%] flex-col items-end gap-1 self-end"
+                    >
                       {turn.to !== undefined && (
                         <span
                           data-said-to
@@ -224,4 +226,3 @@ export function ConversationPane({
     </div>
   )
 }
-

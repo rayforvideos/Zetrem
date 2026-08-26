@@ -30,4 +30,3 @@ export function descendantsOf(rows: ProcessRow[], rootPid: number): Set<number> 
   }
   return found
 }
-

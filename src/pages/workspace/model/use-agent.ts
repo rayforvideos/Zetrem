@@ -200,5 +200,16 @@ export function useAgent(
     if (hostId.current) window.desk.stopAgent(hostId.current)
   }
 
-  return { running, conversation: conv, children, status, nowMs, send, decide, stop, reset, restart }
+  return {
+    running,
+    conversation: conv,
+    children,
+    status,
+    nowMs,
+    send,
+    decide,
+    stop,
+    reset,
+    restart,
+  }
 }

@@ -13,7 +13,11 @@ export function FirstHint({
   onClose(): void
 }) {
   return (
-    <div data-hint className="zt-rise flex items-start gap-2 rounded-xl bg-card px-3 py-2.5" style={rootStyle}>
+    <div
+      data-hint
+      className="zt-rise flex items-start gap-2 rounded-xl bg-card px-3 py-2.5"
+      style={rootStyle}
+    >
       <span className="flex min-w-0 flex-col gap-1">
         <span className="text-sm leading-tight">{title}</span>
         <span className="text-xs leading-snug text-muted-foreground">{body}</span>

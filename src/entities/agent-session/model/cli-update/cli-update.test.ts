@@ -33,7 +33,9 @@ describe('managerOf', () => {
 
   it('reads a Windows path, where the separators lean the other way', () => {
     expect(
-      managerOf('C:\\Users\\sam\\AppData\\Roaming\\npm\\node_modules\\@anthropic-ai\\claude-code\\cli.js'),
+      managerOf(
+        'C:\\Users\\sam\\AppData\\Roaming\\npm\\node_modules\\@anthropic-ai\\claude-code\\cli.js',
+      ),
     ).toBe('npm')
   })
 })

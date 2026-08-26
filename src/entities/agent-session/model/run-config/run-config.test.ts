@@ -43,7 +43,13 @@ describe('agentArgs: what claude is started with', () => {
   })
 
   it('leaves partial messages off, so words appear once they are finished', () => {
-    const args = agentArgs({ permissionMode: 'ask' as const, lock: null, people: [], model: 'default', persona: '' })
+    const args = agentArgs({
+      permissionMode: 'ask' as const,
+      lock: null,
+      people: [],
+      model: 'default',
+      persona: '',
+    })
     expect(args).not.toContain('--include-partial-messages')
   })
 

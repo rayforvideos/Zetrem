@@ -5,7 +5,7 @@ import { sessionLive, stirring } from './live'
 function status(session: StatusState['session']): StatusState {
   return {
     usage: 'read',
-  usageAtMs: null,
+    usageAtMs: null,
     session,
     probed: false,
     context: { used: 0, window: null },
@@ -15,10 +15,10 @@ function status(session: StatusState['session']): StatusState {
       turns: 0,
       lastTurnUsd: 0,
       durationMs: 0,
-      tokens: { in: 0, out: 0, cacheRead: 0, cacheCreate: 0 }
+      tokens: { in: 0, out: 0, cacheRead: 0, cacheCreate: 0 },
     },
     update: null,
-    activity: 'idle'
+    activity: 'idle',
   }
 }
 

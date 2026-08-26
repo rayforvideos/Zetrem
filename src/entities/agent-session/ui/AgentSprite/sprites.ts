@@ -44,10 +44,25 @@ import type { CharacterId, Mood } from '../../model/character/character.types'
 export const SPRITES: Record<CharacterId, Record<Mood, string>> = {
   jelly: { default: jelly_default, sleepy: jelly_sleepy, relax: jelly_relax, busy: jelly_busy },
   heart: { default: heart_default, sleepy: heart_sleepy, relax: heart_relax, busy: heart_busy },
-  planet: { default: planet_default, sleepy: planet_sleepy, relax: planet_relax, busy: planet_busy },
+  planet: {
+    default: planet_default,
+    sleepy: planet_sleepy,
+    relax: planet_relax,
+    busy: planet_busy,
+  },
   star: { default: star_default, sleepy: star_sleepy, relax: star_relax, busy: star_busy },
-  double: { default: double_default, sleepy: double_sleepy, relax: double_relax, busy: double_busy },
-  flower: { default: flower_default, sleepy: flower_sleepy, relax: flower_relax, busy: flower_busy },
+  double: {
+    default: double_default,
+    sleepy: double_sleepy,
+    relax: double_relax,
+    busy: double_busy,
+  },
+  flower: {
+    default: flower_default,
+    sleepy: flower_sleepy,
+    relax: flower_relax,
+    busy: flower_busy,
+  },
   ghost: { default: ghost_default, sleepy: ghost_sleepy, relax: ghost_relax, busy: ghost_busy },
   bunny: { default: bunny_default, sleepy: bunny_sleepy, relax: bunny_relax, busy: bunny_busy },
   rock: { default: rock_default, sleepy: rock_sleepy, relax: rock_relax, busy: rock_busy },

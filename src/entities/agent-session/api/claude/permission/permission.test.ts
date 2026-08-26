@@ -4,9 +4,10 @@ import { permissionAlwaysResult } from './permission'
 describe('permissionAlwaysResult: granting only what the dialog showed', () => {
   it('narrows a Bash grant to the exact command shown in the dialog', () => {
     const result = permissionAlwaysResult('Bash', { command: 'ls -la' })
-    expect(result.updatedPermissions[0].rules, 'one command was seen, so one command is allowed').toEqual([
-      { toolName: 'Bash', ruleContent: 'ls -la' },
-    ])
+    expect(
+      result.updatedPermissions[0].rules,
+      'one command was seen, so one command is allowed',
+    ).toEqual([{ toolName: 'Bash', ruleContent: 'ls -la' }])
   })
 
   it('falls back to a tool-wide rule when Bash has no command string', () => {

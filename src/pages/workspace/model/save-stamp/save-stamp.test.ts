@@ -39,7 +39,14 @@ describe('stampOf: catching every change worth saving, not just a new turn or a 
       turns: [
         turn({
           tools: [
-            { line: 'ls', toolUseId: 't1', input: {}, result: null, startedAtMs: 0, endedAtMs: null },
+            {
+              line: 'ls',
+              toolUseId: 't1',
+              input: {},
+              result: null,
+              startedAtMs: 0,
+              endedAtMs: null,
+            },
           ],
         }),
       ],

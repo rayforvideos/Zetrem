@@ -14,10 +14,10 @@ const EMPTY: StatusState = {
     turns: 0,
     lastTurnUsd: 0,
     durationMs: 0,
-    tokens: { in: 0, out: 0, cacheRead: 0, cacheCreate: 0 }
+    tokens: { in: 0, out: 0, cacheRead: 0, cacheCreate: 0 },
   },
   update: null,
-  activity: 'idle'
+  activity: 'idle',
 }
 
 function state(overrides: Partial<StatusState> = {}): StatusState {
@@ -66,7 +66,9 @@ describe('marksOfStatus: every account limit, as a share used', () => {
   })
 
   it('admits when it was told no reset time, rather than inventing one', () => {
-    expect(marksOfStatus(state({ limits: [limit('five_hour')] }))[0]!.hint).toContain('not reported')
+    expect(marksOfStatus(state({ limits: [limit('five_hour')] }))[0]!.hint).toContain(
+      'not reported',
+    )
   })
 
   it('says nothing about staleness once a fresh reading is in hand', () => {
@@ -75,7 +77,9 @@ describe('marksOfStatus: every account limit, as a share used', () => {
   })
 
   it('notes that a limit only came from a kept cache, without touching its percent', () => {
-    const [mark] = marksOfStatus(state({ usage: 'kept', limits: [limit('five_hour', { utilization: 0.42 })] }))
+    const [mark] = marksOfStatus(
+      state({ usage: 'kept', limits: [limit('five_hour', { utilization: 0.42 })] }),
+    )
     expect(mark!.hint).toContain('earlier reading')
     expect(mark!.percent).toBe(42)
   })

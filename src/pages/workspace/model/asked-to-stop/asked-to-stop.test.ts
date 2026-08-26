@@ -2,7 +2,10 @@ import { describe, expect, it } from 'vitest'
 import type { ClaudeTurnEvent } from '@/entities/agent-session'
 import { afterYouStopped, stoppedByYou } from './asked-to-stop'
 
-const stopped: ClaudeTurnEvent = { type: 'notice', text: 'Stopped: Something went wrong while it was working' }
+const stopped: ClaudeTurnEvent = {
+  type: 'notice',
+  text: 'Stopped: Something went wrong while it was working',
+}
 
 describe('afterYouStopped: whose doing it was', () => {
   it('says it was yours when you were the one who stopped it', () => {

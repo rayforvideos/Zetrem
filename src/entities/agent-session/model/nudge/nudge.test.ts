@@ -79,7 +79,9 @@ describe('the notice speaks whichever language the app speaks', () => {
 
   it('puts the tool where Korean wants it, which is not where English does', () => {
     i18n.activate('ko')
-    expect(nudgeFor(at({ reason: 'permission', tool: 'Bash' }))?.body).toBe('Bash 실행을 기다립니다')
+    expect(nudgeFor(at({ reason: 'permission', tool: 'Bash' }))?.body).toBe(
+      'Bash 실행을 기다립니다',
+    )
   })
 
   it('stays English while the app is English', () => {

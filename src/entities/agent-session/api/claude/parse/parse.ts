@@ -11,13 +11,7 @@ import {
 import { fromControlCancel, fromControlRequest } from '../permission/permission'
 import { plainTrouble } from '../plain/plain'
 import { fromStatusLine } from '../status/status'
-import {
-  deniedLine,
-  noFallbackLine,
-  noticeLine,
-  refusalLine,
-  shutdownLine,
-} from '../aside/aside'
+import { deniedLine, noFallbackLine, noticeLine, refusalLine, shutdownLine } from '../aside/aside'
 import {
   fromAssistant,
   fromResult,

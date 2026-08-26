@@ -32,10 +32,10 @@ describe('what --agents does to the tools a session gets', () => {
         '--agent',
         'zetrem',
       ])
-      expect(narrowed.tools.sort(), 'tools is a list of what is allowed, not what is added').toEqual([
-        'Bash',
-        'Read',
-      ])
+      expect(
+        narrowed.tools.sort(),
+        'tools is a list of what is allowed, not what is added',
+      ).toEqual(['Bash', 'Read'])
     },
     CONTRACT_TIMEOUT_MS,
   )
@@ -131,7 +131,9 @@ describe('the init event is a snapshot of connectors part way up', () => {
   // tool. Everything that is not a letter or a digit becomes an underscore.
   const asToolName = (name: string): string => name.replace(/[^A-Za-z0-9]/g, '_')
   const serversInTools = (): Set<string> =>
-    new Set(init.tools.filter((name) => name.startsWith('mcp__')).map((name) => name.split('__')[1]!))
+    new Set(
+      init.tools.filter((name) => name.startsWith('mcp__')).map((name) => name.split('__')[1]!),
+    )
 
   it('gives every server a state the status bar knows how to draw', () => {
     const strange = init.mcp.filter((one) => !STATES.has(one.status))

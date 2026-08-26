@@ -43,7 +43,10 @@ export function registerAuth(): void {
     const env = agentEnv(process.env, await loginPath())
     let failure: string | null = null
     try {
-      await execFileAsync(await claudeBin(), ['auth', 'logout'], { env, timeout: LOGOUT_TIMEOUT_MS })
+      await execFileAsync(await claudeBin(), ['auth', 'logout'], {
+        env,
+        timeout: LOGOUT_TIMEOUT_MS,
+      })
     } catch (cause) {
       const error = cause as { stderr?: string; message?: string }
       failure = (error.stderr || error.message || 'claude auth logout failed').trim()

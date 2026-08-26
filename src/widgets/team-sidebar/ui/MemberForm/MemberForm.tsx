@@ -20,7 +20,13 @@ import { Label } from '@/shared/ui/label'
 import { Popover, PopoverContent, PopoverTrigger } from '@/shared/ui/popover'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/shared/ui/select'
 import { Textarea } from '@/shared/ui/textarea'
-import { characterFor, draftFrom, initialCharacter, toggled, toolSummary } from '../../lib/member-draft/member-draft'
+import {
+  characterFor,
+  draftFrom,
+  initialCharacter,
+  toggled,
+  toolSummary,
+} from '../../lib/member-draft/member-draft'
 import { CharacterPicker } from '../CharacterPicker/CharacterPicker'
 import { ToolPicker } from '../ToolPicker/ToolPicker'
 import { useScrollState } from '@/shared/lib/scroll-state/use-scroll-state'
@@ -198,7 +204,6 @@ export function MemberForm({ initial, knownTools, onSubmit, onCancel }: MemberFo
                   </PopoverContent>
                 </Popover>
               </Row>
-
             </aside>
 
             <div
@@ -324,7 +329,10 @@ export function MemberForm({ initial, knownTools, onSubmit, onCancel }: MemberFo
           <DialogFooter className="flex-none border-t border-border px-6 py-4 sm:justify-between">
             <span
               role={missing === null ? undefined : 'alert'}
-              className={cn('text-xs', missing === null ? 'text-muted-foreground' : 'text-destructive')}
+              className={cn(
+                'text-xs',
+                missing === null ? 'text-muted-foreground' : 'text-destructive',
+              )}
             >
               {missing ??
                 (initial === null

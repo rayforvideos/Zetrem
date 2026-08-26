@@ -18,9 +18,15 @@ import type { Outcome } from '@/shared/lib/outcome/outcome.types'
 import type { ExitReason } from '@/entities/agent-session/lib/exit-line/exit-line.types'
 import type { Attached } from '@/entities/attachment/lib/attachment/attachment.types'
 import type { AuthStatus } from '@/entities/auth/model/auth'
-import type { Connector, ConnectorVerb } from '@/entities/connector/lib/read-connectors/read-connectors.types'
+import type {
+  Connector,
+  ConnectorVerb,
+} from '@/entities/connector/lib/read-connectors/read-connectors.types'
 import type { NewConnector } from '@/entities/connector/lib/new-connector/new-connector.types'
-import type { ChatSummary, Transcript } from '@/entities/conversation/lib/transcript/transcript.types'
+import type {
+  ChatSummary,
+  Transcript,
+} from '@/entities/conversation/lib/transcript/transcript.types'
 import type {
   Catalog,
   Marketplace,

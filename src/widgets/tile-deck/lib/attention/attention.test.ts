@@ -21,7 +21,10 @@ function session(id: string, overrides: Partial<AgentSession> = {}): AgentSessio
 }
 
 function waiting(id: string, since?: number): AgentSession {
-  return session(id, since === undefined ? { status: 'waiting' } : { status: 'waiting', waitingSinceMs: since })
+  return session(
+    id,
+    since === undefined ? { status: 'waiting' } : { status: 'waiting', waitingSinceMs: since },
+  )
 }
 
 describe('attentionId', () => {

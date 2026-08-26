@@ -15,7 +15,11 @@ export function fromAssistant(event: Record<string, unknown>): TurnEvent[] {
     if (block.type === 'text' && typeof block.text === 'string' && block.text.length > 0) {
       out.push({ type: 'headline', text: block.text })
     }
-    if (block.type === 'thinking' && typeof block.thinking === 'string' && block.thinking.length > 0) {
+    if (
+      block.type === 'thinking' &&
+      typeof block.thinking === 'string' &&
+      block.thinking.length > 0
+    ) {
       out.push({ type: 'thinking', text: block.thinking })
     }
     if (block.type === 'tool_use' && typeof block.name === 'string') {
@@ -79,7 +83,9 @@ export function fromResult(event: Record<string, unknown>): TurnEvent[] {
     // Read the model off what the CLI wrote, not off `said`: stoppedLine has
     // already rewritten it for the screen and dropped the name.
     const refused = modelRefusedIn(str(event.result))
-    out.push(refused === null ? { type: 'notice', text: said } : { type: 'notice', text: said, refused })
+    out.push(
+      refused === null ? { type: 'notice', text: said } : { type: 'notice', text: said, refused },
+    )
   }
   out.push({ type: 'turnEnded' })
   return out

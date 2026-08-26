@@ -31,7 +31,11 @@ export function refusalOf(draft: NewConnector, taken: string[]): Refusal | null 
   if (parsed.protocol !== 'https:' && parsed.protocol !== 'http:') {
     return { field: 'url', code: 'url-scheme' }
   }
-  if (parsed.protocol === 'http:' && parsed.hostname !== 'localhost' && parsed.hostname !== '127.0.0.1') {
+  if (
+    parsed.protocol === 'http:' &&
+    parsed.hostname !== 'localhost' &&
+    parsed.hostname !== '127.0.0.1'
+  ) {
     return { field: 'url', code: 'url-insecure' }
   }
   return null

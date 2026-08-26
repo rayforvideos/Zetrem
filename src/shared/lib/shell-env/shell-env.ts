@@ -41,7 +41,13 @@ const KEEP_EXACT = new Set([
   '__CF_USER_TEXT_ENCODING',
 ])
 
-const KEEP_PREFIX = ['ANTHROPIC_', 'AWS_BEARER_TOKEN_BEDROCK', 'HTTP_PROXY', 'HTTPS_PROXY', 'NO_PROXY']
+const KEEP_PREFIX = [
+  'ANTHROPIC_',
+  'AWS_BEARER_TOKEN_BEDROCK',
+  'HTTP_PROXY',
+  'HTTPS_PROXY',
+  'NO_PROXY',
+]
 
 const KEEP_PREFIX_CI = ['http_proxy', 'https_proxy', 'no_proxy']
 

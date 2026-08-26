@@ -1,4 +1,10 @@
 import { sessionStore } from '@/entities/agent-session'
+import { wake } from './wake'
+import { forgetOwnedBash, ownsRunningBash } from './crew-bash'
+export { adoptChildBash, releaseChildBash } from './crew-bash'
+export { addressee, whose } from './addressee'
+export type { Addressed } from './addressee.types'
+import { addressee, whose } from './addressee'
 import { absorbs, resumedAgent } from '@/entities/claude-cli'
 import type { AgentSession, TranscriptEntry } from '@/entities/agent-session'
 import type { ClaudeTurnEvent } from '@/entities/claude-cli'
@@ -220,29 +226,9 @@ export function wakeResumed(toolUseId: string, stdout: string, refs: AgentEventR
   })
 }
 
-type Addressed = { toolUseId: string | null; taskId: string }
-
-export function whose(event: Addressed, refs: AgentEventRefs): string | null {
-  if (event.toolUseId !== null && refs.childIds.has(event.toolUseId)) return event.toolUseId
-  const byTask = sessionStore.findByTask(event.taskId)
-  if (byTask !== null && refs.childIds.has(byTask.id)) return byTask.id
-  return null
-}
-
 function assignment(prompt: string): TranscriptEntry[] {
   const said = prompt.trim()
   return said.length === 0 ? [] : [{ role: 'user', text: said }]
-}
-
-export function addressee(input: unknown): string {
-  if (typeof input !== 'object' || input === null) return ''
-  const held = input as Record<string, unknown>
-  const to = held.to ?? held.agent ?? held.name
-  return typeof to === 'string' ? bareName(to) : ''
-}
-
-function bareName(to: string): string {
-  return to.replace(/\s*\[[^\]]*\]\s*$/, '').trim()
 }
 
 function closeCall(toolUseId: string, callId: string, failed: boolean, text: string): void {
@@ -269,7 +255,7 @@ function note(toolUseId: string, tool: string): void {
 // is stale. The bash map especially: an owner whose shell is never released
 // swallows every completed that follows, and its tile never closes.
 export function forgetCrew(): void {
-  ownedBash.clear()
+  forgetOwnedBash()
   pendingTasks.clear()
 }
 
@@ -278,29 +264,6 @@ export function forgetCrew(): void {
 // tasks whose open never arrives.
 const pendingTasks = new Map<string, string>()
 
-// Background shells a child agent started for itself, task id → owning
-// session. While one runs, the owner is waiting on it, not finished — and its
-// row belongs on the agent's tile, not in the conversation's chores line.
-const ownedBash = new Map<string, string>()
-
-export function adoptChildBash(taskId: string, toolUseId: string | null): boolean {
-  if (toolUseId === null) return false
-  const owner = sessionStore.get().find((s) => s.stream.some((call) => call.id === toolUseId))
-  if (owner === undefined) return false
-  ownedBash.set(taskId, owner.id)
-  wake(owner.id)
-  return true
-}
-
-export function releaseChildBash(taskId: string): void {
-  ownedBash.delete(taskId)
-}
-
-function ownsRunningBash(id: string): boolean {
-  for (const owner of ownedBash.values()) if (owner === id) return true
-  return false
-}
-
 // Done plus a task id means the CLI itself said this child ended, so a
 // straggling notification must not bring the tile back — that is the
 // off-and-on flicker. Without a task id, done may be our own silence guess,
@@ -308,10 +271,4 @@ function ownsRunningBash(id: string): boolean {
 function closedForGood(id: string): boolean {
   const held = sessionStore.find(id)
   return held?.status === 'done' && (held.taskId ?? '').length > 0
-}
-
-function wake(toolUseId: string): void {
-  const status = sessionStore.find(toolUseId)?.status
-  if (status === undefined || status === 'working') return
-  sessionStore.patch(toolUseId, { status: 'working', endedAtMs: undefined })
 }

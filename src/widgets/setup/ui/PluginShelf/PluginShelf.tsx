@@ -1,4 +1,4 @@
-import { useScrollState } from '@/shared/lib/scroll-state/use-scroll-state'
+import { useScrollState } from '@/shared/lib/scroll-state/useScrollState'
 import { RotateCw } from 'lucide-react'
 import { appliesHere } from '@/entities/plugin'
 import type { Catalog, Marketplace, PluginScope, PluginVerb } from '@/entities/plugin'

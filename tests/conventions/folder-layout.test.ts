@@ -24,6 +24,21 @@ const isTest = (name: string) => /\.test\.tsx?$/.test(name)
 const isSource = (name: string) => /\.tsx?$/.test(name) && !isTest(name)
 const stemOf = (name: string) => name.replace(/(\.test)?\.tsx?$/, '')
 
+describe('a hook is named the way it is called', () => {
+  it('writes a hook file in camelCase, since useAgent is what the code says', async () => {
+    const stray: string[] = []
+    for (const entry of await entries()) {
+      if (!isSource(entry.name) && !isTest(entry.name)) continue
+      if (entry.dir.startsWith('tests')) continue
+      const stem = stemOf(entry.name)
+      if (!/^use[A-Z-]/.test(stem)) continue
+      if (!stem.includes('-')) continue
+      stray.push(join(entry.dir, entry.name))
+    }
+    expect(stray, 'name it useAgentDefs.ts, not use-agent-defs.ts').toEqual([])
+  })
+})
+
 describe('a test lives in its own module folder', () => {
   it('gives a module with a test a folder of its own name', async () => {
     const all = await entries()

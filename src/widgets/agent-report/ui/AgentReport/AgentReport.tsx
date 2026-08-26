@@ -1,5 +1,5 @@
 import type { AgentSession, SessionStatus } from '@/entities/agent-session'
-import { useScrollState } from '@/shared/lib/scroll-state/use-scroll-state'
+import { useScrollState } from '@/shared/lib/scroll-state/useScrollState'
 import { shapeOfLine, tally } from '@/shared/lib/tool-line/tool-line'
 import { AgentSprite, personaOf } from '@/entities/agent-session'
 import { Button } from '@/shared/ui/button'

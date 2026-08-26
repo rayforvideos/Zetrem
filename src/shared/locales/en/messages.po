@@ -164,32 +164,32 @@ msgstr "{reported} reported back"
 msgid "{rest, plural, one {# more line} other {# more lines}}"
 msgstr "{rest, plural, one {# more line} other {# more lines}}"
 
-#: src/pages/workspace/model/use-plugins.ts:118
+#: src/pages/workspace/model/usePlugins.ts:118
 msgid "{target} added"
 msgstr "{target} added"
 
-#: src/pages/workspace/model/use-plugins.ts:108
+#: src/pages/workspace/model/usePlugins.ts:108
 msgid "{target} installed. Restart the session to load it."
 msgstr "{target} installed. Restart the session to load it."
 
-#: src/pages/workspace/model/use-plugins.ts:114
+#: src/pages/workspace/model/usePlugins.ts:114
 msgid "{target} off. The running session keeps it until it ends."
 msgstr "{target} off. The running session keeps it until it ends."
 
-#: src/pages/workspace/model/use-plugins.ts:112
+#: src/pages/workspace/model/usePlugins.ts:112
 msgid "{target} on. Restart the session to load it."
 msgstr "{target} on. Restart the session to load it."
 
-#: src/pages/workspace/model/use-plugins.ts:122
+#: src/pages/workspace/model/usePlugins.ts:122
 msgid "{target} refreshed"
 msgstr "{target} refreshed"
 
-#: src/pages/workspace/model/use-plugins.ts:110
-#: src/pages/workspace/model/use-plugins.ts:120
+#: src/pages/workspace/model/usePlugins.ts:110
+#: src/pages/workspace/model/usePlugins.ts:120
 msgid "{target} removed"
 msgstr "{target} removed"
 
-#: src/pages/workspace/model/use-plugins.ts:116
+#: src/pages/workspace/model/usePlugins.ts:116
 msgid "{target} updated. Restart the session to load it."
 msgstr "{target} updated. Restart the session to load it."
 
@@ -332,7 +332,7 @@ msgstr "Add teammate"
 msgid "Add your first teammate"
 msgstr "Add your first teammate"
 
-#: src/pages/workspace/model/use-connectors.ts:80
+#: src/pages/workspace/model/useConnectors.ts:80
 msgid "Added {name}. Sign in if it asks."
 msgstr "Added {name}. Sign in if it asks."
 
@@ -425,7 +425,7 @@ msgstr "Big job? Split it. They like company."
 msgid "Billing refused the request"
 msgstr "Billing refused the request"
 
-#: src/pages/workspace/model/use-connectors.ts:91
+#: src/pages/workspace/model/useConnectors.ts:91
 msgid "Brought over what Claude Desktop had."
 msgstr "Brought over what Claude Desktop had."
 
@@ -557,15 +557,15 @@ msgid "Conversation compacted here"
 msgstr "Conversation compacted here"
 
 #. placeholder {0}: said(verb)
-#: src/pages/workspace/model/use-plugins.ts:73
+#: src/pages/workspace/model/usePlugins.ts:73
 msgid "Could not {0} {target}"
 msgstr "Could not {0} {target}"
 
-#: src/pages/workspace/model/use-connectors.ts:72
+#: src/pages/workspace/model/useConnectors.ts:72
 msgid "Could not add {name}"
 msgstr "Could not add {name}"
 
-#: src/pages/workspace/model/use-connectors.ts:86
+#: src/pages/workspace/model/useConnectors.ts:86
 msgid "Could not bring over Claude Desktop"
 msgstr "Could not bring over Claude Desktop"
 
@@ -573,24 +573,24 @@ msgstr "Could not bring over Claude Desktop"
 msgid "Could not connect"
 msgstr "Could not connect"
 
-#: src/pages/workspace/model/use-transcript.ts:241
-#: src/pages/workspace/model/use-transcript.ts:259
+#: src/pages/workspace/model/useTranscript.ts:241
+#: src/pages/workspace/model/useTranscript.ts:259
 msgid "Could not file that chat"
 msgstr "Could not file that chat"
 
-#: src/pages/workspace/model/use-transcript.ts:208
+#: src/pages/workspace/model/useTranscript.ts:208
 msgid "Could not forget that chat"
 msgstr "Could not forget that chat"
 
-#: src/pages/workspace/model/use-auth.ts:104
+#: src/pages/workspace/model/useAuth.ts:104
 msgid "Could not install Claude Code"
 msgstr "Could not install Claude Code"
 
-#: src/pages/workspace/model/use-transcript.ts:60
+#: src/pages/workspace/model/useTranscript.ts:60
 msgid "Could not list your saved chats"
 msgstr "Could not list your saved chats"
 
-#: src/pages/workspace/model/use-transcript.ts:192
+#: src/pages/workspace/model/useTranscript.ts:192
 msgid "Could not open that chat"
 msgstr "Could not open that chat"
 
@@ -599,21 +599,21 @@ msgstr "Could not open that chat"
 msgid "Could not open that folder"
 msgstr "Could not open that folder"
 
-#: src/pages/workspace/model/use-attachments.ts:63
+#: src/pages/workspace/model/useAttachments.ts:63
 #: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:79
 msgid "Could not open the file picker"
 msgstr "Could not open the file picker"
 
-#: src/pages/workspace/model/use-agent.ts:92
+#: src/pages/workspace/model/useAgent.ts:92
 msgid "Could not pick that conversation back up. Starting a new one."
 msgstr "Could not pick that conversation back up. Starting a new one."
 
 #. placeholder {0}: shortName(target)
-#: src/pages/workspace/model/use-connectors.ts:61
+#: src/pages/workspace/model/useConnectors.ts:61
 msgid "Could not reach {0}"
 msgstr "Could not reach {0}"
 
-#: src/pages/workspace/model/use-plugins.ts:49
+#: src/pages/workspace/model/usePlugins.ts:49
 msgid "Could not read the plugin shelf"
 msgstr "Could not read the plugin shelf"
 
@@ -621,33 +621,33 @@ msgstr "Could not read the plugin shelf"
 msgid "Could not read usage"
 msgstr "Could not read usage"
 
-#: src/pages/workspace/model/use-plugins.ts:63
+#: src/pages/workspace/model/usePlugins.ts:63
 msgid "Could not read what is available"
 msgstr "Could not read what is available"
 
-#: src/pages/workspace/model/use-attachments.ts:56
-#: src/pages/workspace/model/use-attachments.ts:95
+#: src/pages/workspace/model/useAttachments.ts:56
+#: src/pages/workspace/model/useAttachments.ts:95
 #: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:94
 msgid "Could not read what you attached"
 msgstr "Could not read what you attached"
 
-#: src/pages/workspace/model/use-attachments.ts:92
+#: src/pages/workspace/model/useAttachments.ts:92
 msgid "Could not read what you pasted"
 msgstr "Could not read what you pasted"
 
-#: src/pages/workspace/model/use-connectors.ts:46
+#: src/pages/workspace/model/useConnectors.ts:46
 msgid "Could not read your connectors"
 msgstr "Could not read your connectors"
 
-#: src/pages/workspace/model/use-plugins.ts:50
+#: src/pages/workspace/model/usePlugins.ts:50
 msgid "Could not read your marketplaces"
 msgstr "Could not read your marketplaces"
 
-#: src/pages/workspace/model/use-settings.ts:42
+#: src/pages/workspace/model/useSettings.ts:42
 msgid "Could not read your settings"
 msgstr "Could not read your settings"
 
-#: src/pages/workspace/model/use-auth.ts:40
+#: src/pages/workspace/model/useAuth.ts:40
 msgid "Could not read your sign-in"
 msgstr "Could not read your sign-in"
 
@@ -655,7 +655,7 @@ msgstr "Could not read your sign-in"
 msgid "Could not remove that project"
 msgstr "Could not remove that project"
 
-#: src/pages/workspace/model/use-transcript.ts:234
+#: src/pages/workspace/model/useTranscript.ts:234
 msgid "Could not rename that chat"
 msgstr "Could not rename that chat"
 
@@ -663,8 +663,8 @@ msgstr "Could not rename that chat"
 msgid "Could not reopen your last project"
 msgstr "Could not reopen your last project"
 
-#: src/pages/workspace/model/use-settings.ts:30
-#: src/pages/workspace/model/use-settings.ts:56
+#: src/pages/workspace/model/useSettings.ts:30
+#: src/pages/workspace/model/useSettings.ts:56
 msgid "Could not save your settings"
 msgstr "Could not save your settings"
 
@@ -676,7 +676,7 @@ msgstr "Could not start Claude Code"
 msgid "Could not start Claude Code: {said}"
 msgstr "Could not start Claude Code: {said}"
 
-#: src/pages/workspace/model/use-cli-update.ts:40
+#: src/pages/workspace/model/useCliUpdate.ts:40
 msgid "Could not start the update"
 msgstr "Could not start the update"
 
@@ -814,7 +814,7 @@ msgstr "Find a chat"
 msgid "Find why checkout drops the last item"
 msgstr "Find why checkout drops the last item"
 
-#: src/pages/workspace/model/use-connectors.ts:29
+#: src/pages/workspace/model/useConnectors.ts:29
 msgid "Finish signing in to {name} in the browser. The next session picks it up."
 msgstr "Finish signing in to {name} in the browser. The next session picks it up."
 
@@ -1108,7 +1108,7 @@ msgstr "No chat by that name"
 msgid "No connectors yet. Add one below, or bring over what Claude Desktop already has."
 msgstr "No connectors yet. Add one below, or bring over what Claude Desktop already has."
 
-#: src/pages/workspace/model/use-agent-defs.ts:85
+#: src/pages/workspace/model/useAgentDefs.ts:85
 msgid "No handler registered"
 msgstr "No handler registered"
 
@@ -1338,7 +1338,7 @@ msgstr "Remove from team"
 msgid "Remove project"
 msgstr "Remove project"
 
-#: src/pages/workspace/model/use-connectors.ts:31
+#: src/pages/workspace/model/useConnectors.ts:31
 msgid "Removed"
 msgstr "Removed"
 
@@ -1380,7 +1380,7 @@ msgstr "Restart"
 msgid "Restart session"
 msgstr "Restart session"
 
-#: src/pages/workspace/model/use-agent-defs.ts:86
+#: src/pages/workspace/model/useAgentDefs.ts:86
 msgid "Restart Zetrem. This version does not know about it yet."
 msgstr "Restart Zetrem. This version does not know about it yet."
 
@@ -1469,7 +1469,7 @@ msgstr "Session"
 msgid "Session details"
 msgstr "Session details"
 
-#: src/pages/workspace/model/use-agent.ts:162
+#: src/pages/workspace/model/useAgent.ts:162
 msgid "Session stopped. The next message starts a new one with your team as it is now."
 msgstr "Session stopped. The next message starts a new one with your team as it is now."
 
@@ -1527,7 +1527,7 @@ msgstr "Sign in with Anthropic"
 msgid "Sign out"
 msgstr "Sign out"
 
-#: src/pages/workspace/model/use-auth.ts:79
+#: src/pages/workspace/model/useAuth.ts:79
 msgid "Sign out did not take effect."
 msgstr "Sign out did not take effect."
 
@@ -1535,7 +1535,7 @@ msgstr "Sign out did not take effect."
 msgid "Sign out of Claude Code everywhere?"
 msgstr "Sign out of Claude Code everywhere?"
 
-#: src/pages/workspace/model/use-connectors.ts:30
+#: src/pages/workspace/model/useConnectors.ts:30
 msgid "Signed out of"
 msgstr "Signed out of"
 
@@ -1593,7 +1593,7 @@ msgstr "Starting"
 msgid "Stay signed in"
 msgstr "Stay signed in"
 
-#: src/pages/workspace/model/use-auth.ts:84
+#: src/pages/workspace/model/useAuth.ts:84
 msgid "Still signed in. Sign out did not take effect."
 msgstr "Still signed in. Sign out did not take effect."
 
@@ -1681,7 +1681,7 @@ msgstr "That model"
 msgid "That model was not found"
 msgstr "That model was not found"
 
-#: src/pages/workspace/model/use-plugins.ts:33
+#: src/pages/workspace/model/usePlugins.ts:33
 msgid "That name cannot be used"
 msgstr "That name cannot be used"
 
@@ -1808,7 +1808,7 @@ msgstr "this chat {percent}%"
 msgid "this chat {size}"
 msgstr "this chat {size}"
 
-#: src/pages/workspace/model/use-transcript.ts:158
+#: src/pages/workspace/model/useTranscript.ts:158
 msgid "This chat is not being saved"
 msgstr "This chat is not being saved"
 

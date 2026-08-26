@@ -1,6 +1,6 @@
 export type { Rect, Viewport } from './lib/grid/grid.types'
 export type { DeckState } from './model/deck-machine/deck-machine.types'
 export { closingIds, visibleIds } from './model/deck-machine/deck-machine'
-export { useDeck } from './model/use-deck'
-export { useFleet } from './model/use-fleet'
+export { useDeck } from './model/useDeck'
+export { useFleet } from './model/useFleet'
 export { TileDeck } from './ui/TileDeck/TileDeck'

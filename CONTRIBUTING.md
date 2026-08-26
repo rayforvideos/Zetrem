@@ -47,6 +47,10 @@ shared/lib/cn.ts               ← no test, no folder
 A module may have more than one test file in that folder. Tests that guard a
 repo-wide rule rather than a single module go in `tests/conventions/`.
 
+A hook is named the way it is called. `useAgentDefs.ts`, not
+`use-agent-defs.ts`, so the file and the function read the same. Everything
+else stays hyphenated.
+
 ## Types live apart from logic
 
 A module's types go in `<module>.types.ts`, next to the module. The logic file

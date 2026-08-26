@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { PluginShelf } from '@/widgets/setup'
-import type { useConnectors } from '../../model/use-connectors'
-import type { usePlugins } from '../../model/use-plugins'
+import type { useConnectors } from '../../model/useConnectors'
+import type { usePlugins } from '../../model/usePlugins'
 
 // The shelf hook itself stays with the screen: SetupPane reads its catalog
 // for the summary line, and useConnectors gates on shelf.open. Only the

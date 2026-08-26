@@ -46,7 +46,7 @@ vi.mock('react', async (importActual) => {
   }
 })
 
-const { useAppUpdate } = await import('./use-app-update')
+const { useAppUpdate } = await import('./useAppUpdate')
 
 const settle = (): Promise<void> => new Promise((resolve) => setImmediate(resolve))
 

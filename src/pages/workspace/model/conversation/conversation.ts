@@ -100,7 +100,7 @@ export const conversation = {
       startedAtMs: Date.now(),
       endedAtMs: null,
     }
-    if (!last || last.role !== 'assistant') {
+    if (last?.role !== 'assistant') {
       added(fresh('assistant', { tools: [activity] }))
       return
     }
@@ -126,7 +126,7 @@ export const conversation = {
   },
   think(text: string): void {
     const last = state.turns.at(-1)
-    if (!last || last.role !== 'assistant' || last.tools.length > 0) {
+    if (last?.role !== 'assistant' || last.tools.length > 0) {
       added(fresh('assistant', { thinking: text }))
       return
     }
@@ -137,7 +137,7 @@ export const conversation = {
   },
   delta(text: string): void {
     const last = state.turns.at(-1)
-    if (!last || last.role !== 'assistant' || last.tools.length > 0) {
+    if (last?.role !== 'assistant' || last.tools.length > 0) {
       added(fresh('assistant', { draft: text }))
       return
     }

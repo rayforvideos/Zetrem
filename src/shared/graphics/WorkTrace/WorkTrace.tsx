@@ -15,6 +15,7 @@ export function WorkTrace({ marks }: { marks: Mark[] }) {
       <div style={rowStyle}>
         {bars.map((bar, index) => (
           <span
+            // biome-ignore lint/suspicious/noArrayIndexKey: the bars are one fixed row of marks, and where a bar sits is all it is
             key={index}
             data-bar={bar.failed ? 'failed' : bar.running ? 'running' : 'done'}
             style={{

@@ -6,7 +6,7 @@
     "includes": [
       "**",
       // shadcn writes these, and CONTRIBUTING says not to hand-edit them.
-      "!src/shared/ui/**",
+      "!src/shared/ui",
       // Biome's CSS parser does not read Tailwind v4's at-rules.
       "!**/*.css",
       "!package-lock.json",
@@ -33,7 +33,15 @@
   "linter": {
     "enabled": true,
     "rules": {
-      "recommended": true,
+      "preset": "recommended",
+      "a11y": {
+        // Radix renders both of these as a button, which a label may wrap.
+        // Without the names the rule sees a label with nothing in it.
+        "noLabelWithoutControl": {
+          "level": "error",
+          "options": { "inputComponents": ["RadioGroupItem", "Switch"] }
+        }
+      },
       "style": {
         // noUncheckedIndexedAccess is on, so the compiler hands back T | undefined
         // for every index and every one of these ! is an answer to it. Banning
@@ -42,6 +50,22 @@
       }
     }
   },
+  "overrides": [
+    {
+      // Every icon here spreads a props object carrying aria-hidden, and the
+      // rule reads the tag rather than the spread. They are marks beside a
+      // name that is already written out, so a title would say it twice.
+      "includes": ["**/ToolIcon.tsx"],
+      "linter": { "rules": { "a11y": { "noSvgWithoutTitle": "off" } } }
+    },
+    {
+      // The grip is the WAI-ARIA window splitter: a separator that takes focus,
+      // carries a value and moves under the arrow keys. The rule offers hr,
+      // which can hold none of those.
+      "includes": ["**/SidebarGrip.tsx"],
+      "linter": { "rules": { "a11y": { "useSemanticElements": "off" } } }
+    }
+  ],
   "assist": {
     "actions": {
       "source": {

@@ -118,10 +118,12 @@ export function AgentReport({ session, sessions, nowMs, onClose, onPick }: Agent
           <span className="mb-1 text-xs tracking-[0.08em] text-muted-foreground">{t`What they said`}</span>
           {session.transcript.map((entry, index) =>
             entry.role === 'user' ? (
+              // biome-ignore lint/suspicious/noArrayIndexKey: a report only ever grows at the end, so an entry keeps the place it arrived in
               <div key={index} className="border-l border-border pl-3 text-muted-foreground">
                 <Markdown text={entry.text} className="text-sm leading-relaxed" />
               </div>
             ) : (
+              // biome-ignore lint/suspicious/noArrayIndexKey: a report only ever grows at the end, so an entry keeps the place it arrived in
               <Markdown key={index} text={entry.text} className="text-sm leading-relaxed" />
             ),
           )}

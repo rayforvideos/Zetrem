@@ -28,6 +28,7 @@ export function ToolDetail({ tool }: { tool: ToolActivity }) {
     return (
       <div className="flex flex-col gap-1">
         {groups.map((lines, index) => (
+          // biome-ignore lint/suspicious/noArrayIndexKey: the groups are cut out of one diff by position, and have no other name
           <Diff key={index} lines={lines} />
         ))}
       </div>
@@ -53,6 +54,7 @@ export function ToolDetail({ tool }: { tool: ToolActivity }) {
           const status = typeof todo.status === 'string' ? todo.status : 'pending'
           return (
             <li
+              // biome-ignore lint/suspicious/noArrayIndexKey: a todo carries no id, so the position is what tells two identical lines apart
               key={`${index}-${String(todo.content)}`}
               className={cn(
                 'flex items-baseline gap-1.5 font-mono text-xs leading-normal',
@@ -92,6 +94,7 @@ function Diff({ lines }: { lines: DiffLine[] }) {
       className="zt-scroll max-h-56 overflow-auto rounded-lg bg-card py-1 pr-2.5 font-mono text-xs leading-normal whitespace-pre-wrap"
     >
       {shown.map((line, index) => (
+        // biome-ignore lint/suspicious/noArrayIndexKey: output lines arrive in order and never move
         <div key={index} className={cn('px-2', TONE[line.kind])}>
           <span className="mr-1.5 inline-block w-[1ch] select-none">{MARK[line.kind]}</span>
           {line.text}

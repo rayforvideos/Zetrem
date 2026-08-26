@@ -17,7 +17,7 @@ export async function runClaude(
     mergeStderr: true,
     spawned: trackChild,
     settled: untrackChild,
-    timeout: { ms: timeoutMs, then: (text) => lost('timeout', text) },
+    timeout: { ms: timeoutMs, answers: (text) => lost('timeout', text) },
     exit: (code, text) => (code === 0 ? won(text) : lost('cli', text)),
     error: (cause) => lost('failed', cause.message),
   })

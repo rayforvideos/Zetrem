@@ -52,6 +52,7 @@ module.exports = {
     allowToChangeInstallationDirectory: true,
   },
   dmg: {
+    // biome-ignore lint/suspicious/noTemplateCurlyInString: electron-builder fills these in itself, so a template literal would hand it the answer instead of the question
     title: 'Zetrem ${version}',
     background: 'build/dmg-background.tiff',
     window: {
@@ -73,6 +74,7 @@ module.exports = {
       },
     ],
   },
+  // biome-ignore lint/suspicious/noTemplateCurlyInString: electron-builder fills these in itself, so a template literal would hand it the answer instead of the question
   artifactName: '${productName}-${version}-${arch}.${ext}',
   // electron-updater in the packaged app reads this to know where releases
   // live; it also makes electron-builder emit the latest*.yml metadata the

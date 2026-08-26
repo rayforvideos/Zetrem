@@ -87,8 +87,10 @@ function CodeBlock({ code, language }: { code: string; language: string }) {
       {({ tokens, getLineProps, getTokenProps }) => (
         <pre className="zt-scroll my-3 overflow-x-auto rounded-xl bg-card p-3 font-mono text-sm leading-[1.6]">
           {tokens.map((line, i) => (
+            // biome-ignore lint/suspicious/noArrayIndexKey: prism hands the code back as lines, named by nothing but where they sit
             <div key={i} {...getLineProps({ line })}>
               {line.map((token, key) => (
+                // biome-ignore lint/suspicious/noArrayIndexKey: and each line as tokens, the same way
                 <span key={key} {...getTokenProps({ token })} />
               ))}
             </div>

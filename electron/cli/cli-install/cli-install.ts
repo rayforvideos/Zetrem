@@ -40,7 +40,7 @@ export function registerCliInstall(): void {
       settled: untrackChild,
       timeout: {
         ms: INSTALL_TIMEOUT_MS,
-        then: (text) =>
+        answers: (text) =>
           `${text.trim()}\nThe install did not finish within 5 minutes and was stopped`.trim(),
       },
       exit: (_code, text) => text,

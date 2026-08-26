@@ -62,7 +62,7 @@ function optionsAt(at: number): Record<string, unknown> {
 const plain = {
   bin: '/usr/local/bin/claude',
   args: ['--version'],
-  timeout: { ms: 5000, then: () => 'gave up' },
+  timeout: { ms: 5000, answers: () => 'gave up' },
   exit: (code: number | null, text: string) => `${String(code)}:${text}`,
   error: (cause: Error) => `broke:${cause.message}`,
 }
@@ -138,7 +138,7 @@ describe('a run that is watching for one line', () => {
   it('settles on the first line that answers, even split across chunks', async () => {
     const run = runSettled<string | null>({
       ...plain,
-      timeout: { ms: 5000, then: () => null },
+      timeout: { ms: 5000, answers: () => null },
       line: (line) => (line.startsWith('found') ? line : undefined),
       exit: () => null,
       error: () => null,
@@ -154,8 +154,8 @@ describe('a run that is watching for one line', () => {
   it('gives up once the unfinished line outgrows the cap', async () => {
     const run = runSettled<string | null>({
       ...plain,
-      timeout: { ms: 5000, then: () => null },
-      cap: { bytes: 8, then: () => null },
+      timeout: { ms: 5000, answers: () => null },
+      cap: { bytes: 8, answers: () => null },
       line: (line) => (line === 'found' ? line : undefined),
       exit: () => 'exited',
       error: () => null,
@@ -171,8 +171,8 @@ describe('a run that is watching for one line', () => {
   it('reads the whole chunk before the cap can end the run', async () => {
     const run = runSettled<string | null>({
       ...plain,
-      timeout: { ms: 5000, then: () => null },
-      cap: { bytes: 4, then: () => null },
+      timeout: { ms: 5000, answers: () => null },
+      cap: { bytes: 4, answers: () => null },
       line: (line) => (line === 'found' ? line : undefined),
       exit: () => null,
       error: () => null,
@@ -188,7 +188,7 @@ describe('a run that says too much', () => {
   it('cuts the output at the cap', async () => {
     const run = runSettled({
       ...plain,
-      cap: { bytes: 5, then: (text: string) => text.slice(0, 5) },
+      cap: { bytes: 5, answers: (text: string) => text.slice(0, 5) },
     })
 
     childAt(0).stdout.emit('data', 'far too much text')
@@ -202,7 +202,7 @@ describe('a run that never ends', () => {
     vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout'] })
     const run = runSettled({
       ...plain,
-      timeout: { ms: 5000, then: (text: string) => `stopped after ${text}` },
+      timeout: { ms: 5000, answers: (text: string) => `stopped after ${text}` },
     })
     const child = childAt(0)
     child.stdout.emit('data', 'half a word')

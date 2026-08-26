@@ -49,7 +49,9 @@ describe('the catalogs are what the app actually says', () => {
         before.map(strip),
       )
     } finally {
-      paths.forEach((path, at) => writeFileSync(path, before[at] ?? ''))
+      paths.forEach((path, at) => {
+        writeFileSync(path, before[at] ?? '')
+      })
     }
     // Running the extractor is the slow part, and a CI runner is slower than a
     // laptop. The old five-second default failed here for want of time, not truth.

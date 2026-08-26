@@ -68,50 +68,63 @@ function chore(turn: ClaudeTurnEvent): boolean {
 
 function announce(turn: ClaudeTurnEvent, refs: AgentEventRefs): void {
   if (chore(turn)) return
-  if (isCrewEvent(turn)) return applyCrewEvent(turn, refs)
+  if (isCrewEvent(turn)) {
+    applyCrewEvent(turn, refs)
+    return
+  }
   const held = conversation.get()
   if (stirred(turn, { status: held.status, asked: held.permission !== null })) {
     conversation.setStatus('working')
   }
   switch (turn.type) {
     case 'headline':
-      return conversation.say('assistant', turn.text)
+      conversation.say('assistant', turn.text)
+      return
     case 'stream':
       if (turn.toolUseId !== null && turn.line.startsWith(SEND_TOOL)) {
         remember(turn.toolUseId, turn.input, refs)
       }
-      return conversation.tool(turn.line, turn.toolUseId, turn.input)
+      conversation.tool(turn.line, turn.toolUseId, turn.input)
+      return
     case 'delta':
-      return conversation.delta(turn.text)
+      conversation.delta(turn.text)
+      return
     case 'thinking':
-      return conversation.think(turn.text)
+      conversation.think(turn.text)
+      return
     case 'notice': {
       if (turn.refused !== undefined) refs.onModelRefused(turn.refused)
-      return conversation.system(turn.text)
+      conversation.system(turn.text)
+      return
     }
     case 'turnEnded':
       conversation.settleDraft()
-      return conversation.setStatus('waiting')
+      conversation.setStatus('waiting')
+      return
     case 'toolResult':
       wakeResumed(turn.toolUseId, turn.stdout, refs)
-      return conversation.toolResult(turn.toolUseId, {
+      conversation.toolResult(turn.toolUseId, {
         stdout: turn.stdout,
         stderr: turn.stderr,
         isError: turn.isError,
         interrupted: turn.interrupted,
       })
+      return
     case 'limit':
       if (turn.limit.status !== 'allowed') conversation.system(limitLine(turn.limit))
       return
     case 'compacted':
-      return conversation.system(compactedLine(turn.trigger, turn.preTokens, turn.postTokens))
+      conversation.system(compactedLine(turn.trigger, turn.preTokens, turn.postTokens))
+      return
     case 'metrics':
       if (turn.metrics.apiErrorStatus) {
         conversation.system(t`API error ${turn.metrics.apiErrorStatus}`)
       }
-      return conversation.system(turnLine(turn.metrics))
+      conversation.system(turnLine(turn.metrics))
+      return
     case 'permissionDropped':
-      return drop(turn.requestId, refs)
+      drop(turn.requestId, refs)
+      return
     case 'permission':
       refs.asks.push(turn)
       if (refs.asks.length === 1) {
@@ -122,7 +135,8 @@ function announce(turn: ClaudeTurnEvent, refs: AgentEventRefs): void {
           detail: turn.detail,
         })
       }
-      return conversation.setStatus('waiting')
+      conversation.setStatus('waiting')
+      return
     default:
       return
   }

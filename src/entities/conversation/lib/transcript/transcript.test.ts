@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import type { Turn } from '../../model/turn/turn'
+import type { Transcript } from './transcript.types'
 import {
   UNTITLED,
   chatId,
@@ -10,6 +11,15 @@ import {
   summaryOf,
   titleOf,
 } from './transcript'
+
+// readTranscript answers null for anything it cannot read. A test that goes on
+// to look inside the transcript has already said it expects one, so it says so
+// here and stops, rather than reading undefined through the rest of the case.
+function readBack(saved: unknown): Transcript {
+  const back = readTranscript(saved)
+  if (back === null) throw new Error('readTranscript answered null')
+  return back
+}
 
 function turn(overrides: Partial<Turn> = {}): Turn {
   return {
@@ -132,10 +142,10 @@ describe('readTranscript: reading what was saved without trusting it', () => {
       ...summary,
       sessionId: 'sess-2',
     })
-    const back = readTranscript(JSON.parse(JSON.stringify(saved)))
-    expect(back?.sessionId).toBe('sess-2')
-    expect(back?.title).toBe('안녕하세요')
-    expect(back?.turns[0]!.text).toBe('안녕하세요')
+    const back = readBack(JSON.parse(JSON.stringify(saved)))
+    expect(back.sessionId).toBe('sess-2')
+    expect(back.title).toBe('안녕하세요')
+    expect(back.turns[0]!.text).toBe('안녕하세요')
   })
 
   it('treats nonsense as nothing, so a spoiled file cannot stop the app opening', () => {
@@ -150,17 +160,17 @@ describe('readTranscript: reading what was saved without trusting it', () => {
   })
 
   it('drops only the turns that are not turns', () => {
-    const back = readTranscript({
+    const back = readBack({
       id: summary.id,
       turns: [turn(), { role: '유령' }, { text: 1 }],
     })
-    expect(back?.turns).toHaveLength(1)
+    expect(back.turns).toHaveLength(1)
   })
 
   it('still restores the screen without a session id, and only loses the ability to carry on', () => {
-    const back = readTranscript({ id: summary.id, turns: [turn()] })
-    expect(back?.sessionId).toBe(null)
-    expect(back?.turns).toHaveLength(1)
+    const back = readBack({ id: summary.id, turns: [turn()] })
+    expect(back.sessionId).toBe(null)
+    expect(back.turns).toHaveLength(1)
   })
 
   it('leaves a legacy-good turn unchanged', () => {
@@ -188,13 +198,13 @@ describe('readTranscript: reading what was saved without trusting it', () => {
       startedAtMs: 5,
       to: 'agent-1',
     }
-    const back = readTranscript({ id: summary.id, turns: [good] })
-    expect(back?.turns[0]).toEqual({ ...good, id: expect.any(String) })
+    const back = readBack({ id: summary.id, turns: [good] })
+    expect(back.turns[0]).toEqual({ ...good, id: expect.any(String) })
   })
 
   it('keeps only the attached files that are shaped like one', () => {
     const good = { name: 'shot.png', path: '/tmp/shot.png', kind: 'image' }
-    const back = readTranscript({
+    const back = readBack({
       id: summary.id,
       turns: [
         turn({
@@ -207,25 +217,25 @@ describe('readTranscript: reading what was saved without trusting it', () => {
         } as never),
       ],
     })
-    expect(back?.turns[0]!.files).toEqual([good])
+    expect(back.turns[0]!.files).toEqual([good])
   })
 
   it('drops a junk tool entry but keeps the turn it lives on', () => {
-    const back = readTranscript({
+    const back = readBack({
       id: summary.id,
       turns: [turn({ tools: [123, { line: 'ok', startedAtMs: 0 }] as never })],
     })
-    expect(back?.turns).toHaveLength(1)
-    expect(back?.turns[0]!.tools).toHaveLength(1)
-    expect(back?.turns[0]!.tools[0]!.line).toBe('ok')
+    expect(back.turns).toHaveLength(1)
+    expect(back.turns[0]!.tools).toHaveLength(1)
+    expect(back.turns[0]!.tools[0]!.line).toBe('ok')
   })
 
   it('fills in missing draft, thinking and startedAtMs with defaults', () => {
-    const back = readTranscript({
+    const back = readBack({
       id: summary.id,
       turns: [{ role: 'assistant', text: '됩니다', tools: [] }],
     })
-    expect(back?.turns[0]).toEqual({
+    expect(back.turns[0]).toEqual({
       id: expect.any(String),
       role: 'assistant',
       text: '됩니다',
@@ -237,7 +247,7 @@ describe('readTranscript: reading what was saved without trusting it', () => {
   })
 
   it('normalizes a malformed tool result instead of dropping the tool', () => {
-    const back = readTranscript({
+    const back = readBack({
       id: summary.id,
       turns: [
         turn({
@@ -250,14 +260,14 @@ describe('readTranscript: reading what was saved without trusting it', () => {
         }),
       ],
     })
-    expect(back?.turns[0]!.tools[0]!.result).toEqual({
+    expect(back.turns[0]!.tools[0]!.result).toEqual({
       stdout: 'hi',
       stderr: '',
       isError: false,
       interrupted: false,
     })
-    expect(back?.turns[0]!.tools[0]!.toolUseId).toBe(null)
-    expect(back?.turns[0]!.tools[0]!.endedAtMs).toBe(null)
+    expect(back.turns[0]!.tools[0]!.toolUseId).toBe(null)
+    expect(back.turns[0]!.tools[0]!.endedAtMs).toBe(null)
   })
 })
 
@@ -303,9 +313,9 @@ describe('a saved chat carries what it cost, so reopening it says the same thing
       savedAtMs: 0,
       turns,
     }
-    const read = readTranscript(old)
-    expect(read?.turns).toHaveLength(1)
-    expect(read?.spend).toBeNull()
+    const read = readBack(old)
+    expect(read.turns).toHaveLength(1)
+    expect(read.spend).toBeNull()
   })
 
   it('refuses a spoiled total instead of showing a wrong one', () => {

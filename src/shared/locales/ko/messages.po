@@ -13,11 +13,11 @@ msgstr ""
 "Language-Team: \n"
 "Plural-Forms: \n"
 
-#: src/pages/workspace/model/agent-events/agent-events.ts:144
+#: src/pages/workspace/model/agent-events/agent-events.ts:158
 msgid " · on overage"
 msgstr " · 초과분 사용 중"
 
-#: src/pages/workspace/model/agent-events/agent-events.ts:142
+#: src/pages/workspace/model/agent-events/agent-events.ts:156
 msgid " {pct}% used,"
 msgstr " {pct}% 사용,"
 
@@ -61,7 +61,7 @@ msgid "{0} left"
 msgstr "{0} 남음"
 
 #. placeholder {0}: limitKindLabel(limit.kind)
-#: src/pages/workspace/model/agent-events/agent-events.ts:145
+#: src/pages/workspace/model/agent-events/agent-events.ts:159
 msgid "{0} limit{share} resets {when}{overage}"
 msgstr "{0} 한도{share} {when} 초기화{overage}"
 
@@ -112,7 +112,7 @@ msgstr "{0}분 전"
 msgid "{back} teammates"
 msgstr "팀원 {back}명"
 
-#: src/pages/workspace/model/agent-events/agent-events.ts:155
+#: src/pages/workspace/model/agent-events/agent-events.ts:169
 msgid "{base}. Earlier turns live on as a summary."
 msgstr "{base}. 앞선 대화는 요약으로 남습니다."
 
@@ -152,7 +152,7 @@ msgstr "{name}이(가) {max}MB를 넘어서 이미지로 보낼 수 없습니다
 msgid "{percent}% used"
 msgstr "{percent}% 사용"
 
-#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:323
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:324
 msgid "{refused} is not something they can read. Notes and data files only."
 msgstr "{refused}은(는) 읽을 수 없습니다. 글이나 데이터 파일만 됩니다."
 
@@ -279,11 +279,11 @@ msgstr "부를 이름"
 msgid "A plugin brings these. Turn the plugin off to lose them."
 msgstr "플러그인에 딸려 온 항목입니다. 플러그인을 끄면 같이 사라집니다."
 
-#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:339
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:340
 msgid "A running session cannot call them. Restart it, or they join the next one."
 msgstr "실행 중인 세션은 이 팀원을 부를 수 없습니다. 세션을 다시 시작하거나, 다음 세션부터 함께합니다."
 
-#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:340
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:341
 msgid "A running session keeps the old brief until it is restarted"
 msgstr "실행 중인 세션은 다시 시작하기 전까지 이전 지침을 씁니다"
 
@@ -371,7 +371,7 @@ msgid "any moment"
 msgstr "곧"
 
 #. placeholder {0}: turn.metrics.apiErrorStatus
-#: src/pages/workspace/model/agent-events/agent-events.ts:110
+#: src/pages/workspace/model/agent-events/agent-events.ts:121
 msgid "API error {0}"
 msgstr "API 오류 {0}"
 
@@ -392,7 +392,7 @@ msgstr "다음 단계 말고 일 전체를 맡기세요. 오케스트레이터�
 msgid "Asks before editing files or running commands"
 msgstr "파일을 고치거나 명령을 실행하기 전에 묻습니다"
 
-#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:260
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:261
 msgid "Attach"
 msgstr "첨부"
 
@@ -400,7 +400,7 @@ msgstr "첨부"
 msgid "Attach a file"
 msgstr "파일 첨부"
 
-#: src/pages/workspace/model/agent-events/agent-events.ts:162
+#: src/pages/workspace/model/agent-events/agent-events.ts:176
 msgid "auto"
 msgstr "자동"
 
@@ -434,8 +434,8 @@ msgid "Browse"
 msgstr "둘러보기"
 
 #: src/widgets/setup/ui/SetupPane/SetupPane.tsx:199
-#: src/widgets/team-sidebar/ui/ChatList/ChatList.tsx:412
-#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:344
+#: src/widgets/team-sidebar/ui/ChatList/ChatList.tsx:416
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:345
 #: src/widgets/team-sidebar/ui/MemberMenu/MemberMenu.tsx:66
 #: src/widgets/team-sidebar/ui/ProjectSwitcher/ProjectSwitcher.tsx:148
 msgid "Cancel"
@@ -552,7 +552,7 @@ msgstr "컨텍스트"
 msgid "Context {0}% left, compacting soon"
 msgstr "컨텍스트 {0}% 남음, 곧 압축됩니다"
 
-#: src/pages/workspace/model/agent-events/agent-events.ts:153
+#: src/pages/workspace/model/agent-events/agent-events.ts:167
 msgid "Conversation compacted here"
 msgstr "여기서 대화가 압축됐습니다"
 
@@ -680,7 +680,7 @@ msgstr "Claude Code를 실행하지 못했습니다: {said}"
 msgid "Could not start the update"
 msgstr "업데이트를 시작하지 못했습니다"
 
-#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:347
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:348
 msgid "Create"
 msgstr "만들기"
 
@@ -693,12 +693,12 @@ msgid "Default"
 msgstr "기본값"
 
 #. placeholder {0}: named(chat.title)
-#: src/widgets/team-sidebar/ui/ChatList/ChatList.tsx:406
+#: src/widgets/team-sidebar/ui/ChatList/ChatList.tsx:410
 msgid "Delete “{0}”?"
 msgstr "“{0}” 대화를 삭제할까요?"
 
-#: src/widgets/team-sidebar/ui/ChatList/ChatList.tsx:395
-#: src/widgets/team-sidebar/ui/ChatList/ChatList.tsx:414
+#: src/widgets/team-sidebar/ui/ChatList/ChatList.tsx:399
+#: src/widgets/team-sidebar/ui/ChatList/ChatList.tsx:418
 msgid "Delete chat"
 msgstr "대화 삭제"
 
@@ -710,7 +710,7 @@ msgstr "거부"
 msgid "Dismiss this tip"
 msgstr "이 안내 닫기"
 
-#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:322
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:323
 msgid "Documents they read first. Long ones cost nothing until they open them."
 msgstr "이 팀원이 먼저 읽을 문서입니다. 길어도 열기 전까지는 비용이 들지 않습니다."
 
@@ -729,7 +729,7 @@ msgstr "완료"
 msgid "Drag to resize, double-click to reset"
 msgstr "끌어서 크기 조절, 더블클릭하면 원래대로"
 
-#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:275
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:276
 msgid "Drop a document here, or click to pick one."
 msgstr "문서를 여기로 끌어다 놓거나, 눌러서 고르세요."
 
@@ -784,7 +784,7 @@ msgstr "확장"
 msgid "Face"
 msgstr "얼굴"
 
-#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:146
+#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:148
 #: src/widgets/tile-deck/ui/layers/CallLog/CallLog.tsx:77
 msgid "failed"
 msgstr "실패"
@@ -822,12 +822,12 @@ msgstr "브라우저에서 {name} 로그인을 마치세요. 다음 세션부터
 msgid "Folder"
 msgstr "폴더"
 
-#: src/widgets/team-sidebar/ui/ChatList/ChatList.tsx:245
+#: src/widgets/team-sidebar/ui/ChatList/ChatList.tsx:246
 msgid "Folder for both"
 msgstr "둘을 담을 폴더"
 
-#: src/widgets/team-sidebar/ui/ChatList/ChatList.tsx:262
-#: src/widgets/team-sidebar/ui/ChatList/ChatList.tsx:263
+#: src/widgets/team-sidebar/ui/ChatList/ChatList.tsx:264
+#: src/widgets/team-sidebar/ui/ChatList/ChatList.tsx:265
 msgid "Folder name"
 msgstr "폴더 이름"
 
@@ -840,7 +840,7 @@ msgid "Follows your account setting"
 msgstr "계정 설정을 따릅니다"
 
 #. placeholder {0}: entry.from
-#: src/widgets/tile-deck/ui/layers/Transcript/Transcript.tsx:45
+#: src/widgets/tile-deck/ui/layers/Transcript/Transcript.tsx:46
 msgid "from {0}"
 msgstr "{0}에게서"
 
@@ -963,7 +963,7 @@ msgstr "방금"
 msgid "Keep going"
 msgstr "이어서 말하세요"
 
-#: src/widgets/team-sidebar/ui/ChatList/ChatList.tsx:372
+#: src/widgets/team-sidebar/ui/ChatList/ChatList.tsx:376
 msgid "Keep in"
 msgstr "폴더에 넣기"
 
@@ -1003,7 +1003,7 @@ msgstr "관리"
 msgid "Managed on claude.ai. Sign in or out here, remove them there."
 msgstr "claude.ai에서 관리합니다. 로그인과 로그아웃은 여기서, 삭제는 claude.ai에서 하세요."
 
-#: src/pages/workspace/model/agent-events/agent-events.ts:163
+#: src/pages/workspace/model/agent-events/agent-events.ts:177
 msgid "manual"
 msgstr "수동"
 
@@ -1040,8 +1040,8 @@ msgstr "모델을 바꿨습니다. 실행 중인 세션은 기존 모델을 유�
 #. placeholder {0}: current.name
 #. placeholder {0}: folder.name
 #. placeholder {0}: named(chat.title)
-#: src/widgets/team-sidebar/ui/ChatList/ChatList.tsx:363
-#: src/widgets/team-sidebar/ui/ChatList/ChatList.tsx:529
+#: src/widgets/team-sidebar/ui/ChatList/ChatList.tsx:367
+#: src/widgets/team-sidebar/ui/ChatList/ChatList.tsx:535
 #: src/widgets/team-sidebar/ui/ProjectSwitcher/ProjectSwitcher.tsx:91
 msgid "More for {0}"
 msgstr "{0} 더 보기"
@@ -1055,7 +1055,7 @@ msgstr "{name} 더 보기"
 msgid "Name"
 msgstr "이름"
 
-#: src/widgets/team-sidebar/ui/ChatList/ChatList.tsx:244
+#: src/widgets/team-sidebar/ui/ChatList/ChatList.tsx:245
 msgid "Name the folder for these two chats"
 msgstr "두 대화를 담을 폴더 이름"
 
@@ -1084,7 +1084,7 @@ msgstr "그만두기"
 msgid "New chat"
 msgstr "새 대화"
 
-#: src/widgets/team-sidebar/ui/ChatList/ChatList.tsx:383
+#: src/widgets/team-sidebar/ui/ChatList/ChatList.tsx:387
 msgid "New folder…"
 msgstr "새 폴더…"
 
@@ -1144,7 +1144,7 @@ msgstr "“{needle}”에 맞는 것이 없습니다."
 msgid "Nothing written yet."
 msgstr "아직 쓴 것이 없습니다."
 
-#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:134
+#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:136
 msgid "Nothing yet"
 msgstr "아직 없음"
 
@@ -1202,7 +1202,7 @@ msgstr "권한을 바꿨습니다. 실행 중인 세션은 기존 권한을 따�
 msgid "Pick a project first"
 msgstr "먼저 프로젝트를 고르세요"
 
-#: src/pages/workspace/model/agent-events/crew/crew.ts:194
+#: src/pages/workspace/model/agent-events/crew/crew.ts:212
 msgid "Picked up where they left off"
 msgstr "하던 일을 이어받았습니다"
 
@@ -1263,7 +1263,7 @@ msgstr "판단하기 전에 변경 내용을 먼저 읽고, 어디에 영향을 
 msgid "Reading"
 msgstr "읽는 중"
 
-#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:245
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:246
 msgid "Reading list"
 msgstr "읽을 자료"
 
@@ -1317,7 +1317,7 @@ msgid "Remove"
 msgstr "삭제"
 
 #. placeholder {0}: entry.name
-#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:306
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:307
 msgid "Remove {0}"
 msgstr "{0} 지우기"
 
@@ -1342,16 +1342,16 @@ msgstr "프로젝트 제거"
 msgid "Removed"
 msgstr "삭제했습니다"
 
-#: src/widgets/team-sidebar/ui/ChatList/ChatList.tsx:370
-#: src/widgets/team-sidebar/ui/ChatList/ChatList.tsx:536
+#: src/widgets/team-sidebar/ui/ChatList/ChatList.tsx:374
+#: src/widgets/team-sidebar/ui/ChatList/ChatList.tsx:542
 msgid "Rename"
 msgstr "이름 바꾸기"
 
-#: src/widgets/team-sidebar/ui/ChatList/ChatList.tsx:285
+#: src/widgets/team-sidebar/ui/ChatList/ChatList.tsx:288
 msgid "Rename chat"
 msgstr "대화 이름 바꾸기"
 
-#: src/widgets/team-sidebar/ui/ChatList/ChatList.tsx:455
+#: src/widgets/team-sidebar/ui/ChatList/ChatList.tsx:460
 msgid "Rename folder"
 msgstr "폴더 이름 바꾸기"
 
@@ -1411,7 +1411,7 @@ msgstr "실행하는 중"
 msgid "Same as the session"
 msgstr "세션과 같게"
 
-#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:347
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:348
 msgid "Save"
 msgstr "저장"
 
@@ -1640,12 +1640,12 @@ msgstr "멈췄습니다: 무언가 잘못됐습니다"
 msgid "System"
 msgstr "시스템 설정"
 
-#: src/widgets/team-sidebar/ui/ChatList/ChatList.tsx:538
+#: src/widgets/team-sidebar/ui/ChatList/ChatList.tsx:544
 msgid "Take everything out"
 msgstr "전부 빼기"
 
 #. placeholder {0}: chat.folder
-#: src/widgets/team-sidebar/ui/ChatList/ChatList.tsx:388
+#: src/widgets/team-sidebar/ui/ChatList/ChatList.tsx:392
 msgid "Take out of {0}"
 msgstr "{0}에서 빼기"
 
@@ -1733,7 +1733,7 @@ msgstr "모델이 이것을 거절했습니다"
 msgid "The model is overloaded"
 msgstr "모델에 부하가 걸렸습니다"
 
-#: src/pages/workspace/model/agent-events/crew/crew.ts:161
+#: src/pages/workspace/model/agent-events/crew/crew.ts:179
 msgid "the orchestrator"
 msgstr "오케스트레이터"
 
@@ -1758,7 +1758,7 @@ msgstr "요청이 거부됐습니다"
 msgid "The running session keeps its model. This applies from the next one."
 msgstr "실행 중인 세션은 쓰던 모델을 그대로 씁니다. 다음 세션부터 바뀝니다."
 
-#: src/widgets/team-sidebar/ui/ChatList/ChatList.tsx:408
+#: src/widgets/team-sidebar/ui/ChatList/ChatList.tsx:412
 msgid "The saved conversation is deleted. This cannot be undone."
 msgstr "저장된 대화가 삭제됩니다. 되돌릴 수 없습니다."
 
@@ -1782,7 +1782,7 @@ msgstr "{you}, 팀은 몸 다 풀고 기다리는 중입니다."
 msgid "Their file is deleted and they leave the roster. A session already running keeps them until it ends. This cannot be undone."
 msgstr "파일이 지워지고 명단에서 빠집니다. 이미 실행 중인 세션은 끝날 때까지 그대로 씁니다. 되돌릴 수 없습니다."
 
-#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:230
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:231
 #: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:202
 msgid "Their instructions"
 msgstr "지침"
@@ -1795,7 +1795,7 @@ msgstr "빨리 읽고, 지루해하는 법이 없습니다."
 msgid "Thinking"
 msgstr "생각하는 중"
 
-#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:239
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:240
 #: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:208
 msgid "This always applies. Write it the way you would explain the job to a person."
 msgstr "항상 적용되는 내용입니다. 사람에게 일을 설명하듯 적으세요."
@@ -1833,7 +1833,7 @@ msgstr "클로드 코드 CLI 자체를 로그아웃합니다. 이 컴퓨터에�
 msgid "This signs out the Claude Code CLI itself, so every terminal, editor and app using it on this computer is signed out too. The session running here stops."
 msgstr "클로드 코드 CLI 자체를 로그아웃합니다. 이 컴퓨터에서 CLI를 쓰는 터미널과 편집기와 앱이 모두 함께 로그아웃됩니다. 여기서 실행 중인 세션도 멈춥니다."
 
-#: src/pages/workspace/model/agent-events/agent-events.ts:170
+#: src/pages/workspace/model/agent-events/agent-events.ts:184
 msgid "This turn: {out} out · {seconds}s"
 msgstr "이번 턴: {out} 출력 · {seconds}초"
 
@@ -1940,14 +1940,14 @@ msgstr "무슨 일을 맡길까요?"
 msgid "What the session brings"
 msgstr "이 세션이 가진 것"
 
-#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:132
+#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:134
 #: src/widgets/tile-deck/ui/AgentTile/AgentTile.tsx:84
 #: src/widgets/tile-deck/ui/CrewBoard/CrewBoard.tsx:125
 #: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:142
 msgid "What they did"
 msgstr "무엇을 했는지"
 
-#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:235
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:236
 msgid "What they do, how to go about it, and what to hand back."
 msgstr "무슨 일을 어떤 방식으로 하고, 무엇을 돌려줄지 적으세요."
 

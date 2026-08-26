@@ -240,6 +240,7 @@ function Row({ chat, kit }: { chat: ChatSummary; kit: RowKit }) {
   if (pairing !== null && pairing[1] === chat.id) {
     return (
       <input
+        // biome-ignore lint/a11y/noAutofocus: the field is not on the screen until somebody asks for it, and it stands where the row they pressed was
         autoFocus
         aria-label={t`Name the folder for these two chats`}
         placeholder={t`Folder for both`}
@@ -258,6 +259,7 @@ function Row({ chat, kit }: { chat: ChatSummary; kit: RowKit }) {
   if (naming) {
     return (
       <input
+        // biome-ignore lint/a11y/noAutofocus: the field is not on the screen until somebody asks for it, and it stands where the row they pressed was
         autoFocus
         aria-label={t`Folder name`}
         placeholder={t`Folder name`}
@@ -281,6 +283,7 @@ function Row({ chat, kit }: { chat: ChatSummary; kit: RowKit }) {
     return (
       <input
         defaultValue={named(chat.title)}
+        // biome-ignore lint/a11y/noAutofocus: the field is not on the screen until somebody asks for it, and it stands where the row they pressed was
         autoFocus
         aria-label={t`Rename chat`}
         onFocus={(event) => event.target.select()}
@@ -300,6 +303,7 @@ function Row({ chat, kit }: { chat: ChatSummary; kit: RowKit }) {
   }
 
   return (
+    // biome-ignore lint/a11y/noStaticElementInteractions: a drop target is not something you press, and there is no keyboard gesture to hand it
     <div
       className={cn('group/chat relative rounded-lg', under && 'ring-1 ring-ring bg-card/60')}
       onDragOver={(event) => {
@@ -451,6 +455,7 @@ function FolderSection({
     return (
       <input
         defaultValue={folder.name}
+        // biome-ignore lint/a11y/noAutofocus: the field is not on the screen until somebody asks for it, and it stands where the row they pressed was
         autoFocus
         aria-label={t`Rename folder`}
         onFocus={(event) => event.target.select()}
@@ -469,6 +474,7 @@ function FolderSection({
   }
 
   return (
+    // biome-ignore lint/a11y/noStaticElementInteractions: a drop target is not something you press, and there is no keyboard gesture to hand it
     <div
       className={cn(
         'group/folder relative mt-3 flex flex-col gap-0.5 rounded-lg',

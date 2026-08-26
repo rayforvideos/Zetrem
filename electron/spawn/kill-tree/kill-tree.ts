@@ -12,7 +12,7 @@ export function killTree(pid: number): void {
     try {
       process.kill(target, 'SIGTERM')
     } catch {
-      continue
+      // Already gone, which is where this was headed anyway.
     }
   }
 }
@@ -30,7 +30,7 @@ export function killTreeSync(pid: number): void {
     try {
       process.kill(target, 'SIGKILL')
     } catch {
-      continue
+      // Already gone, which is where this was headed anyway.
     }
   }
 }

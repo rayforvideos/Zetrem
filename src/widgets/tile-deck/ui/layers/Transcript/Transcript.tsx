@@ -36,6 +36,7 @@ export function Transcript({ entries }: TranscriptProps) {
     >
       {entries.map((entry, index) => (
         <div
+          // biome-ignore lint/suspicious/noArrayIndexKey: the transcript only ever grows at the end, so an entry keeps its place
           key={`${index}-${entry.role}`}
           data-said={entry.role}
           style={entry.role === 'user' ? userStyle : saidStyle}

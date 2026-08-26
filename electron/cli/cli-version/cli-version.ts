@@ -24,7 +24,7 @@ function probe(command: string, args: string[], path: string): Promise<string | 
     // A packaged app inherits `/` as its directory; ask from somewhere the user owns.
     cwd: homedir(),
     env: agentEnv(process.env, path),
-    timeout: { ms: PROBE_TIMEOUT_MS, then: () => null },
+    timeout: { ms: PROBE_TIMEOUT_MS, answers: () => null },
     exit: (_code, text) => text,
     error: () => null,
   })
@@ -81,7 +81,7 @@ export function registerCliVersion(): void {
       settled: untrackChild,
       timeout: {
         ms: UPDATE_TIMEOUT_MS,
-        then: (text) => ({
+        answers: (text) => ({
           output:
             `${text.trim().slice(-2000)}\nUpdate did not finish within 3 minutes and was stopped — try running claude update in your terminal`.trim(),
         }),

@@ -19,7 +19,7 @@ async function readDir(dir: string, source: AgentDef['source']): Promise<AgentDe
       const def = parseAgentDef(await readFile(path, 'utf8'), source, path)
       if (def !== null) out.push(def)
     } catch {
-      continue
+      // A file that will not parse is not an agent. The rest of the folder still is.
     }
   }
   return out

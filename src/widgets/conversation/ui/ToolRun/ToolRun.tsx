@@ -42,6 +42,7 @@ export function ToolRun({ tools, live, nowMs }: ToolRunProps) {
           {open && (
             <div className="flex flex-col gap-0.5 border-l border-border pl-2.5">
               {folded.map((tool, at) => (
+                // biome-ignore lint/suspicious/noArrayIndexKey: the CLI names a call when it can; the index is what separates two that look alike
                 <Tick key={`${at}-${tool.toolUseId ?? tool.line}`} tool={tool} live={false} />
               ))}
             </div>
@@ -50,6 +51,7 @@ export function ToolRun({ tools, live, nowMs }: ToolRunProps) {
       )}
       {shown.map((tool, at) => (
         <Tick
+          // biome-ignore lint/suspicious/noArrayIndexKey: the CLI names a call when it can; the index is what separates two that look alike
           key={`${at}-${tool.toolUseId ?? tool.line}`}
           tool={tool}
           live={live && at === lastIndex}

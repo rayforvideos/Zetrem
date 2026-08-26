@@ -27,7 +27,7 @@ vi.mock('sonner', () => ({
 const react = vi.hoisted(() => ({
   slots: [] as { current: unknown }[],
   cursor: 0,
-  effects: [] as (() => void | (() => void))[],
+  effects: [] as (() => undefined | (() => void))[],
 }))
 
 vi.mock('react', async (importActual) => {
@@ -40,7 +40,7 @@ vi.mock('react', async (importActual) => {
       react.cursor += 1
       return slot
     },
-    useEffect: (effect: () => void | (() => void)) => {
+    useEffect: (effect: () => undefined | (() => void)) => {
       react.effects.push(effect)
     },
   }
@@ -54,6 +54,7 @@ async function mount(): Promise<() => void> {
   react.slots = []
   react.cursor = 0
   react.effects = []
+  // biome-ignore lint/correctness/useHookAtTopLevel: mount is the test's own renderer, standing in for React with the fake above, which is the only way to drive the hook from node
   useAppUpdate()
   const cleanups = react.effects.map((effect) => effect())
   await settle()

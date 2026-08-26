@@ -95,7 +95,7 @@ export function findCommand(
         accessSync(full, platform === 'win32' ? constants.F_OK : constants.X_OK)
         return full
       } catch {
-        continue
+        // Not there, or there and not runnable. The next name and the next dir get a turn.
       }
     }
   }

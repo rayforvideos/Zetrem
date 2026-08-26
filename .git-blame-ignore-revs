@@ -1,0 +1,9 @@
+# Commits that moved lines without changing what they say. Point git at this
+# file so blame walks past them to the commit that wrote the code:
+#
+#     git config blame.ignoreRevsFile .git-blame-ignore-revs
+#
+# GitHub reads it on its own.
+
+# chore: run the formatter over the tree for the first time
+33de5da967b678bf87c5292329129ab3164b3600

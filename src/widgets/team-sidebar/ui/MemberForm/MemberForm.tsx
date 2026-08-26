@@ -206,6 +206,7 @@ export function MemberForm({ initial, knownTools, onSubmit, onCancel }: MemberFo
               </Row>
             </aside>
 
+            {/* biome-ignore lint/a11y/noStaticElementInteractions: a drop target is not something you press, and there is no keyboard gesture to hand it */}
             <div
               className="flex min-h-0 min-w-0 flex-1 flex-col gap-4 px-6 py-5"
               onDragOver={(event) => {

@@ -24,12 +24,13 @@ export function applyCrewEvent(turn: ClaudeTurnEvent, refs: AgentEventRefs): voi
       const early = pendingTasks.get(turn.toolUseId)
       pendingTasks.delete(turn.toolUseId)
       if (sessionStore.find(turn.toolUseId) !== null) {
-        return sessionStore.patch(turn.toolUseId, {
+        sessionStore.patch(turn.toolUseId, {
           status: 'working',
           ...(early === undefined ? {} : { taskId: early }),
         })
+        return
       }
-      return sessionStore.open({
+      sessionStore.open({
         id: turn.toolUseId,
         runnerId: 'subagent',
         label: turn.label,
@@ -45,6 +46,7 @@ export function applyCrewEvent(turn: ClaudeTurnEvent, refs: AgentEventRefs): voi
         detached: turn.background,
         ...(early === undefined ? {} : { taskId: early }),
       })
+      return
     }
     case 'childStateKnown': {
       const id = whose(turn, refs)
@@ -54,13 +56,21 @@ export function applyCrewEvent(turn: ClaudeTurnEvent, refs: AgentEventRefs): voi
       // the way a one-shot teammate should. The exception: completed also
       // fires when an agent merely idles waiting on its own backgrounded
       // shell — closing there is the mid-job flicker, so it stays working.
-      if (turn.state === 'running' || turn.state === 'pending') return wake(id)
+      if (turn.state === 'running' || turn.state === 'pending') {
+        wake(id)
+        return
+      }
       if (turn.state === 'paused') return
       if (turn.error.length > 0) {
-        return sessionStore.patch(id, { status: 'done', headline: `Failed: ${turn.error.trim()}` })
+        sessionStore.patch(id, { status: 'done', headline: `Failed: ${turn.error.trim()}` })
+        return
       }
-      if (turn.state === 'completed' && ownsRunningBash(id)) return wake(id)
-      return sessionStore.patch(id, { status: 'done' })
+      if (turn.state === 'completed' && ownsRunningBash(id)) {
+        wake(id)
+        return
+      }
+      sessionStore.patch(id, { status: 'done' })
+      return
     }
     case 'childSay':
       if (!refs.childIds.has(turn.toolUseId)) return
@@ -68,11 +78,13 @@ export function applyCrewEvent(turn: ClaudeTurnEvent, refs: AgentEventRefs): voi
       // but a closed tile must not stand back up to show them.
       if (!closedForGood(turn.toolUseId)) wake(turn.toolUseId)
       sessionStore.patch(turn.toolUseId, { headline: turn.text.trim(), doing: '' })
-      return sessionStore.appendTranscript(turn.toolUseId, { role: turn.role, text: turn.text })
+      sessionStore.appendTranscript(turn.toolUseId, { role: turn.role, text: turn.text })
+      return
     case 'childStream':
       if (!refs.childIds.has(turn.toolUseId) || closedForGood(turn.toolUseId)) return
       wake(turn.toolUseId)
-      return sessionStore.beginCall(turn.toolUseId, { id: turn.callId, line: turn.line })
+      sessionStore.beginCall(turn.toolUseId, { id: turn.callId, line: turn.line })
+      return
     case 'childSent': {
       if (!refs.childIds.has(turn.toolUseId)) return
       // SendMessage addresses an agent by its id, which is its task id, so the
@@ -90,7 +102,8 @@ export function applyCrewEvent(turn: ClaudeTurnEvent, refs: AgentEventRefs): voi
     }
     case 'childCallDone':
       if (!refs.childIds.has(turn.toolUseId)) return
-      return closeCall(turn.toolUseId, turn.callId, turn.failed, turn.text)
+      closeCall(turn.toolUseId, turn.callId, turn.failed, turn.text)
+      return
     case 'childNotified': {
       const id = whose(turn, refs)
       if (id === null) return
@@ -101,7 +114,8 @@ export function applyCrewEvent(turn: ClaudeTurnEvent, refs: AgentEventRefs): voi
       // "Done" while the agent's own shell still runs is only a pause for
       // breath; reported would let the silence rule close a tile mid-job.
       const parked = turn.done && !ownsRunningBash(id)
-      return sessionStore.patch(id, { status: parked ? 'reported' : 'working' })
+      sessionStore.patch(id, { status: parked ? 'reported' : 'working' })
+      return
     }
     case 'childStarted': {
       const id = whose(turn, refs)
@@ -112,26 +126,29 @@ export function applyCrewEvent(turn: ClaudeTurnEvent, refs: AgentEventRefs): voi
       // The same agent task starts again when it picks up new work; the CLI
       // saying started outranks whatever the tile settled into meanwhile.
       wake(id)
-      return sessionStore.patch(id, { taskId: turn.taskId })
+      sessionStore.patch(id, { taskId: turn.taskId })
+      return
     }
     case 'childProgress': {
       const id = whose(turn, refs)
       if (id === null || closedForGood(id)) return
       wake(id)
       note(id, turn.lastTool)
-      return sessionStore.patch(id, {
+      sessionStore.patch(id, {
         ...(turn.doing ? { doing: turn.doing.trim() } : {}),
         ...(turn.tokens === null ? {} : { tokens: turn.tokens }),
         lastSeenAtMs: Date.now(),
       })
+      return
     }
     case 'childClosed': {
       if (!refs.childIds.has(turn.toolUseId)) return
       if (turn.error) {
-        return sessionStore.patch(turn.toolUseId, {
+        sessionStore.patch(turn.toolUseId, {
           status: 'done',
           headline: `Failed: ${turn.error.trim()}`,
         })
+        return
       }
       // The CLI hands the Task tool_result back while the child is still
       // running and reports its real end through task events. For anything it
@@ -139,7 +156,8 @@ export function applyCrewEvent(turn: ClaudeTurnEvent, refs: AgentEventRefs): voi
       // tool_result says nothing about the child's life.
       const held = sessionStore.find(turn.toolUseId)
       if (held?.detached === true || (held?.taskId ?? '').length > 0) return
-      return sessionStore.patch(turn.toolUseId, { status: 'done' })
+      sessionStore.patch(turn.toolUseId, { status: 'done' })
+      return
     }
     default:
       return

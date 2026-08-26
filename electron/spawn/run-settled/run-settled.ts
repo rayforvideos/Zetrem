@@ -49,7 +49,7 @@ export function runSettled<T>(plan: RunSettled<T>): Promise<T> {
       resolve(value)
     }
 
-    const timer = setTimeout(() => stop(plan.timeout.then(text), true), plan.timeout.ms)
+    const timer = setTimeout(() => stop(plan.timeout.answers(text), true), plan.timeout.ms)
 
     const take = (chunk: string): void => {
       if (settled) return
@@ -59,12 +59,15 @@ export function runSettled<T>(plan: RunSettled<T>): Promise<T> {
         text = lines.pop() ?? ''
         for (const line of lines) {
           const found = plan.line(line)
-          if (found !== undefined) return stop(found, false)
+          if (found !== undefined) {
+            stop(found, false)
+            return
+          }
         }
       }
       // Only give up once the freshly appended chunk has been read through.
       if (plan.cap !== undefined && text.length > plan.cap.bytes) {
-        stop(plan.cap.then(text), false)
+        stop(plan.cap.answers(text), false)
       }
     }
 

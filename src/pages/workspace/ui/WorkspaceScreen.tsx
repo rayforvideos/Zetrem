@@ -204,7 +204,7 @@ export function WorkspaceScreen() {
         return
       }
       const member = addressable.current[got]
-      if (member !== undefined && member.callable) focus.address(member.type)
+      if (member?.callable) focus.address(member.type)
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)

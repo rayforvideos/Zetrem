@@ -13,6 +13,9 @@
     "dev": "electron-vite dev --watch",
     "build": "electron-vite build",
     "typecheck": "tsc --noEmit",
+    "lint": "biome check .",
+    "lint:fix": "biome check --write .",
+    "format": "biome format --write .",
     "peek": "node --experimental-websocket scripts/peek.mjs",
     "test": "vitest run",
     "test:watch": "vitest",
@@ -25,6 +28,8 @@
     "smoke": "node --experimental-websocket scripts/smoke.mjs"
   },
   "devDependencies": {
+    "@babel/parser": "^7.29.8",
+    "@biomejs/biome": "2.5.10",
     "@lingui/babel-plugin-lingui-macro": "^5.9.5",
     "@lingui/cli": "^5.9.5",
     "@lingui/vite-plugin": "^5.9.5",

@@ -1,0 +1,55 @@
+{
+  "$schema": "https://biomejs.dev/schemas/2.5.10/schema.json",
+  // The ignore file already names out/, release/ and the compiled catalogs.
+  "vcs": { "enabled": true, "clientKind": "git", "useIgnoreFile": true },
+  "files": {
+    "includes": [
+      "**",
+      // shadcn writes these, and CONTRIBUTING says not to hand-edit them.
+      "!src/shared/ui/**",
+      // Biome's CSS parser does not read Tailwind v4's at-rules.
+      "!**/*.css",
+      "!package-lock.json",
+      // Captured from a real run of the CLI. It is a recording, and a
+      // recording is left as it was recorded.
+      "!tests/replay/*.json"
+    ]
+  },
+  "formatter": {
+    "enabled": true,
+    "indentStyle": "space",
+    "indentWidth": 2,
+    "lineWidth": 100
+  },
+  "javascript": {
+    "formatter": {
+      "quoteStyle": "single",
+      "jsxQuoteStyle": "double",
+      "semicolons": "asNeeded",
+      "trailingCommas": "all",
+      "arrowParentheses": "always"
+    }
+  },
+  "linter": {
+    "enabled": true,
+    "rules": {
+      "recommended": true,
+      "style": {
+        // noUncheckedIndexedAccess is on, so the compiler hands back T | undefined
+        // for every index and every one of these ! is an answer to it. Banning
+        // them here would be this tool arguing with tsconfig.json.
+        "noNonNullAssertion": "off"
+      }
+    }
+  },
+  "assist": {
+    "actions": {
+      "source": {
+        // Imports are grouped by where they come from rather than sorted, and
+        // a type import sits with the module it belongs to. Biome sorts by a
+        // rule of its own and would undo that.
+        "organizeImports": "off"
+      }
+    }
+  }
+}

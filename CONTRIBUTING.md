@@ -69,8 +69,17 @@ lists every place that has to handle it.
 
 ## Code
 
-**No comments.** Names and tests carry the intent. The one exception is a
-directive the toolchain reads (`@ts-expect-error`, `eslint-disable`).
+**Comments say why, not what.** The code already says what it does, and a
+comment that repeats it goes stale on the next edit. Write one for the reason
+the code could not carry: a platform's behaviour, a decision that looks wrong
+until you know what it is avoiding, a shape on disk that people already have.
+
+```ts
+// taskkill exits non-zero when the process is already gone.
+```
+
+Names and tests carry the intent, so a comment that only names the intent is
+one the code should have named instead.
 
 **Switch over repeated type checks.** Three or more comparisons against the same
 discriminant become a `switch`, so TypeScript can see which cases are covered

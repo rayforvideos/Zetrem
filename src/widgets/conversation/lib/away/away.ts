@@ -1,5 +1,5 @@
 import type { AgentSession } from '@/entities/agent-session'
-import { personaOf } from '@/entities/agent-session'
+import { personaOf } from '@/entities/teammate'
 import type { Turn } from '@/entities/conversation'
 import type { Away } from './away.types'
 import { t } from '@lingui/core/macro'

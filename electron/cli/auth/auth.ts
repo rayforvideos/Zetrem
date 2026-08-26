@@ -1,7 +1,7 @@
 import { execFile, spawn } from 'node:child_process'
 import { promisify } from 'node:util'
 import type { WebContents } from 'electron'
-import { agentEnv } from '@/shared/lib/shell-env/shell-env'
+import { agentEnv } from '../../spawn/shell-env/shell-env'
 import type { AuthStatus } from '@/entities/auth'
 import { lost, won } from '@/shared/lib/outcome/outcome'
 import type { Outcome } from '@/shared/lib/outcome/outcome.types'

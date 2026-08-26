@@ -1,4 +1,4 @@
-import type { CharacterId } from '@/entities/agent-session'
+import type { CharacterId } from '@/entities/teammate'
 
 export type MemberFields = {
   name: string

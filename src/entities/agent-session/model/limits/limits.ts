@@ -1,4 +1,4 @@
-import type { RateLimit } from '../../api/claude/status/status.types'
+import type { RateLimit } from '@/entities/claude-cli'
 
 const ORDER = ['five_hour', 'seven_day', 'seven_day_opus', 'seven_day_sonnet']
 

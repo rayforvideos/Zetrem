@@ -1,15 +1,7 @@
 import { useEffect, useRef, useState, useSyncExternalStore } from 'react'
-import {
-  CrewProvider,
-  allowedStock,
-  hintDue,
-  hintSeen,
-  roster,
-  offStock,
-  stockAgents,
-  withRefused,
-  withoutRefused,
-} from '@/entities/agent-session'
+import { hintDue, hintSeen } from '@/entities/settings'
+import { CrewProvider, allowedStock, roster, offStock, stockAgents } from '@/entities/teammate'
+import { withRefused, withoutRefused } from '@/entities/claude-cli'
 import { withSessionAuth } from '@/entities/connector'
 import { forgetProject, openProject, pickProject, projectStore } from '@/entities/project'
 import type { Project } from '@/entities/project'
@@ -33,31 +25,36 @@ import { tidyUserName } from '@/entities/user'
 
 import { layerOver } from '@/shared/lib/modal/modal'
 import { Titlebar } from '@/widgets/titlebar'
-import { screenGate } from '../model/screen-gate/screen-gate'
-import { sessionLive, stirring } from '../model/live/live'
-import { useAgent } from '../model/useAgent'
-import { useAgentDefs } from '../model/useAgentDefs'
-import { useAuth } from '../model/useAuth'
-import { useAppUpdate } from '../model/useAppUpdate/useAppUpdate'
-import { useLearnedSettings } from '../model/useLearnedSettings'
-import { useFocus } from '../model/useFocus'
-import { usePlugins } from '../model/usePlugins'
-import { useProjectMemory } from '../model/useProjectMemory'
-import { useProjects } from '../model/useProjects'
-import { useSessionProbe } from '../model/useSessionProbe'
-import { useAuthoredAgents } from '../model/useAuthoredAgents'
-import { useNudge } from '../model/useNudge'
-import { useSay } from '../model/useSay'
-import { useConnectors } from '../model/useConnectors'
-import { useAttachments } from '../model/useAttachments'
-import { useSettings } from '../model/useSettings'
-import { useSettingsPanel } from '../model/useSettingsPanel'
-import { useSidebarWidth } from '../model/useSidebarWidth'
-import { useTranscript } from '../model/useTranscript'
-import { useViewport } from '../model/useViewport'
-import { useOffsetWidth } from '@/pages/workspace/model/offset-width/useOffsetWidth'
-import { tuckedBy } from '../model/tuck/tuck'
-import { crewOf, lockOf, peopleOf, pluginSummary } from '../model/workspace-config/workspace-config'
+import { screenGate } from '../model/screen/screen-gate/screen-gate'
+import { sessionLive, stirring } from '../model/session/live/live'
+import { useAgent } from '../model/session/useAgent'
+import { useAgentDefs } from '../model/team/useAgentDefs'
+import { useAuth } from '../model/account/useAuth'
+import { useAppUpdate } from '../model/session/useAppUpdate/useAppUpdate'
+import { useLearnedSettings } from '../model/settings/useLearnedSettings'
+import { useFocus } from '../model/screen/useFocus'
+import { usePlugins } from '../model/extensions/usePlugins'
+import { useProjectMemory } from '../model/project/useProjectMemory'
+import { useProjects } from '../model/project/useProjects'
+import { useSessionProbe } from '../model/session/useSessionProbe'
+import { useAuthoredAgents } from '../model/team/useAuthoredAgents'
+import { useNudge } from '../model/session/useNudge'
+import { useSay } from '../model/settings/useSay'
+import { useConnectors } from '../model/extensions/useConnectors'
+import { useAttachments } from '../model/chat/useAttachments'
+import { useSettings } from '../model/settings/useSettings'
+import { useSettingsPanel } from '../model/settings/useSettingsPanel'
+import { useSidebarWidth } from '../model/screen/useSidebarWidth'
+import { useTranscript } from '../model/chat/useTranscript'
+import { useViewport } from '../model/screen/useViewport'
+import { useOffsetWidth } from '@/pages/workspace/model/screen/offset-width/useOffsetWidth'
+import { tuckedBy } from '../model/screen/tuck/tuck'
+import {
+  crewOf,
+  lockOf,
+  peopleOf,
+  pluginSummary,
+} from '../model/team/workspace-config/workspace-config'
 import { PluginShelfOverlay } from './controls/PluginShelfOverlay'
 import { StatusBarPanel } from './controls/StatusBarPanel'
 import { t } from '@lingui/core/macro'

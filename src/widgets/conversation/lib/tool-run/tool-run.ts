@@ -1,6 +1,6 @@
 import type { ToolActivity } from '@/entities/conversation'
-import type { Mark } from '@/shared/graphics/WorkTrace/work-trace/work-trace.types'
-import { tally } from '@/shared/lib/tool-line/tool-line'
+import type { Mark } from '@/entities/tool'
+import { tally } from '@/entities/tool'
 import { plural } from '@lingui/core/macro'
 
 export const RUN_TAIL = 4

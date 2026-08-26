@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import type { AgentDef } from '@/entities/agent-def'
-import { personaOf } from '@/entities/agent-session'
-import type { RosterMember } from '@/entities/agent-session'
+import { personaOf } from '@/entities/teammate'
+import type { RosterMember } from '@/entities/teammate'
 import { team } from './team'
 
 function def(overrides: Partial<AgentDef> = {}): AgentDef {

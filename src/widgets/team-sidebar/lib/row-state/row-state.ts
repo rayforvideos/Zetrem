@@ -1,4 +1,4 @@
-import type { RosterState } from '@/entities/agent-session'
+import type { RosterState } from '@/entities/teammate'
 import type { TeamMember } from '../team/team.types'
 import type { RowState } from './row-state.types'
 import { t } from '@lingui/core/macro'

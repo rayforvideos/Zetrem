@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { DEFAULT_CHARACTER } from '@/entities/agent-session'
+import { DEFAULT_CHARACTER } from '@/entities/teammate'
 import type { AgentDefDraft } from '@/entities/agent-def'
 import { characterFor, draftFrom, initialCharacter, toolSummary } from './member-draft'
 

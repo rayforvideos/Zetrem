@@ -1,6 +1,6 @@
 import { lost, won } from '@/shared/lib/outcome/outcome'
 import type { Outcome } from '@/shared/lib/outcome/outcome.types'
-import { agentEnv } from '@/shared/lib/shell-env/shell-env'
+import { agentEnv } from '../shell-env/shell-env'
 import { claudeBin, loginPath } from '../../cli/login-path/login-path'
 import { runSettled, trackChild, untrackChild } from '../run-settled/run-settled'
 

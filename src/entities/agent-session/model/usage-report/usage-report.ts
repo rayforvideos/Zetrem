@@ -1,4 +1,4 @@
-import type { RateLimit } from '../../api/claude/status/status.types'
+import type { RateLimit } from '@/entities/claude-cli'
 
 const LINE =
   /^Current (session|week)(?: \(([^)]+)\))?:\s*(\d+)%\s*used(?:\s*·\s*resets\s+(.+?))?\s*$/

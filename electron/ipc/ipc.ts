@@ -7,7 +7,7 @@ import type {
   Pushes,
   SendChannel,
   Sends,
-} from '@/entities/desk/desk.types'
+} from '@/app/desk/desk.types'
 import type { Handler, Listener, Sender } from './ipc.types'
 
 export function trusted(sender: Sender): boolean {

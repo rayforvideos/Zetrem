@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import type { RateLimit } from '../../api/claude/status/status.types'
+import type { RateLimit } from '@/entities/claude-cli'
 import { withLimit } from './limits'
 
 function limit(kind: string, overrides: Partial<RateLimit> = {}): RateLimit {

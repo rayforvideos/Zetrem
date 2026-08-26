@@ -1,7 +1,7 @@
 import { nativeTheme } from 'electron'
 import type { BrowserWindow } from 'electron'
 import { CHROME_TOP, CONTROL_SYMBOL, GROUND } from '@/shared/config/theme'
-import type { Settings } from '@/entities/agent-session/model/settings/settings.types'
+import type { Settings } from '@/entities/settings/model/settings/settings.types'
 
 // Electron's themeSource takes the same three words the setting does, and setting
 // it moves both sides at once: prefers-color-scheme in the page, and the OS chrome.

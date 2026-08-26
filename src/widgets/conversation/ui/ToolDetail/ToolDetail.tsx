@@ -1,6 +1,6 @@
 import type { ToolActivity } from '@/entities/conversation'
 import { cn } from '@/shared/lib/cn'
-import { toolNameOf } from '@/shared/lib/tool-line/tool-line'
+import { toolNameOf } from '@/entities/tool'
 import type { DiffLine } from '../../lib/diff/diff.types'
 import { lineDiff } from '../../lib/diff/diff'
 import { TOOL_OUTPUT_LINES, moreLine } from '../../lib/limits/limits'

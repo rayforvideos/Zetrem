@@ -1,6 +1,6 @@
 import { Check } from 'lucide-react'
-import { toolShape } from '@/shared/lib/tool-shape/tool-shape'
-import { ToolIcon } from '@/shared/graphics/ToolIcon/ToolIcon'
+import { toolShape } from '@/entities/tool'
+import { ToolIcon } from '@/entities/tool'
 import { Button } from '@/shared/ui/button'
 import { t } from '@lingui/core/macro'
 import {

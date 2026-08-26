@@ -1,6 +1,6 @@
 import type { Call } from '@/entities/agent-session'
-import type { ToolShape } from '@/shared/lib/tool-shape/tool-shape.types'
-import { shapeOfLine } from '@/shared/lib/tool-line/tool-line'
+import type { ToolShape } from '@/entities/tool'
+import { shapeOfLine } from '@/entities/tool'
 import type { Scene } from './now.types'
 
 export function currentCall(calls: Call[]): Call | null {

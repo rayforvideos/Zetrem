@@ -1,12 +1,12 @@
-import { AgentSprite, personaOf } from '@/entities/agent-session'
-import { resultNote, toolShape } from '@/shared/lib/tool-shape/tool-shape'
-import type { ToolShape } from '@/shared/lib/tool-shape/tool-shape.types'
+import { AgentSprite, personaOf } from '@/entities/teammate'
+import { resultNote, toolShape } from '@/entities/tool'
+import type { ToolShape } from '@/entities/tool'
 import type { ToolActivity } from '@/entities/conversation'
-import { ToolIcon } from '@/shared/graphics/ToolIcon/ToolIcon'
+import { ToolIcon } from '@/entities/tool'
 import { Item, ItemContent, ItemMedia } from '@/shared/ui/item'
 import { changeCount } from '../../lib/change-count/change-count'
 import { noteParts } from '../../lib/tool-note/tool-note'
-import { toolNameOf } from '@/shared/lib/tool-line/tool-line'
+import { toolNameOf } from '@/entities/tool'
 import { t } from '@lingui/core/macro'
 
 export function ToolLine({ tool }: { tool: ToolActivity }) {

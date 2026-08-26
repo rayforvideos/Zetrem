@@ -1,8 +1,9 @@
 import { beforeEach, describe, expect, it } from 'vitest'
-import { parseClaudeLine, sessionStore, statusStore } from '@/entities/agent-session'
-import type { AgentEventRefs } from '@/pages/workspace/model/agent-events/agent-events.types'
-import { applyAgentEvent } from '@/pages/workspace/model/agent-events/agent-events'
-import { conversation } from '@/pages/workspace/model/conversation/conversation'
+import { sessionStore, statusStore } from '@/entities/agent-session'
+import { parseClaudeLine } from '@/entities/claude-cli'
+import type { AgentEventRefs } from '@/pages/workspace/model/session/agent-events/agent-events.types'
+import { applyAgentEvent } from '@/pages/workspace/model/session/agent-events/agent-events'
+import { conversation } from '@/pages/workspace/model/chat/conversation/conversation'
 import captured from './live-subagent.json'
 
 function refs(): AgentEventRefs {

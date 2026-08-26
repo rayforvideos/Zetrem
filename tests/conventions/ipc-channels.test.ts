@@ -3,7 +3,7 @@ import { join } from 'node:path'
 import { describe, expect, it } from 'vitest'
 
 const ELECTRON = join(process.cwd(), 'electron')
-const CONTRACT = join(process.cwd(), 'src', 'entities', 'desk', 'desk.types.ts')
+const CONTRACT = join(process.cwd(), 'src', 'app', 'desk', 'desk.types.ts')
 
 async function mainSources(): Promise<{ name: string; text: string }[]> {
   const names = (await readdir(ELECTRON, { recursive: true })).filter(

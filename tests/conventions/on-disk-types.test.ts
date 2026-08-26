@@ -10,7 +10,7 @@ const MARK = '// On disk:'
 // each carries the marker, and each is listed here, so adding a file to the
 // disk means adding a line to this list.
 const ON_DISK = [
-  'src/entities/agent-session/model/settings/settings.types.ts',
+  'src/entities/settings/model/settings/settings.types.ts',
   'src/entities/conversation/lib/transcript/transcript.types.ts',
   'electron/projects/projects.types.ts',
   'electron/store/usage-cache/usage-cache.types.ts',

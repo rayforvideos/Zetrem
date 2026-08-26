@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import type { ResultMetrics } from '../../api/claude/status/status.types'
+import type { ResultMetrics } from '@/entities/claude-cli'
 import type { StatusState } from '../status-store/status-store.types'
 import { spentAfter } from './spend'
 

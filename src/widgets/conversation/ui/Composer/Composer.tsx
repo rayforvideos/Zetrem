@@ -1,8 +1,8 @@
 import { useRef, useState } from 'react'
 import type { FormEvent, KeyboardEvent } from 'react'
 import { ArrowUp, Paperclip, Shield, Square, X } from 'lucide-react'
-import { MODELS, PERMISSION_MODES, modelsWith } from '@/entities/agent-session'
-import type { ModelChoice, PermissionMode } from '@/entities/agent-session'
+import { MODELS, PERMISSION_MODES, modelsWith } from '@/entities/settings'
+import type { ModelChoice, PermissionMode } from '@/entities/claude-cli'
 import { modifierKey } from '@/shared/lib/platform/platform'
 import { Button } from '@/shared/ui/button'
 import {

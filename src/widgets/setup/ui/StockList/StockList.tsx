@@ -1,5 +1,5 @@
 import type { StockListProps } from './StockList.types'
-import { AgentSprite, personaOf } from '@/entities/agent-session'
+import { AgentSprite, personaOf } from '@/entities/teammate'
 import { cn } from '@/shared/lib/cn'
 import { Switch } from '@/shared/ui/switch'
 import { t } from '@lingui/core/macro'

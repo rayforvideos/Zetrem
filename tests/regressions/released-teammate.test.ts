@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
-import { allowedStock, stockAgents } from '@/entities/agent-session/model/stock/stock'
-import { remembered } from '@/pages/workspace/model/remembered/remembered'
+import { allowedStock, stockAgents } from '@/entities/teammate/model/stock/stock'
+import { remembered } from '@/pages/workspace/model/chat/remembered/remembered'
 
 // A teammate that had been let go kept turning up under "Claude Code", switched
 // on. Four fixes failed because each tried to work out, after the fact, which

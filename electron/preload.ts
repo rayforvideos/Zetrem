@@ -1,6 +1,6 @@
 import { contextBridge, ipcRenderer, webUtils } from 'electron'
 import type { IpcRendererEvent } from 'electron'
-import type { DeskBridge } from '@/entities/desk/desk'
+import type { DeskBridge } from '@/app/desk/desk'
 import type {
   Invoke,
   InvokeChannel,
@@ -8,7 +8,7 @@ import type {
   PushChannel,
   Send,
   SendChannel,
-} from '@/entities/desk/desk.types'
+} from '@/app/desk/desk.types'
 
 // Three ways across the bridge, each typed by the channel it names. The
 // contract itself lives in desk.types.ts; this file only wires names to it.

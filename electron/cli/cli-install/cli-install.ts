@@ -1,5 +1,5 @@
 import { homedir } from 'node:os'
-import { agentEnv } from '@/shared/lib/shell-env/shell-env'
+import { agentEnv } from '../../spawn/shell-env/shell-env'
 import { readAuthStatus } from '../auth/auth'
 import { handle } from '../../ipc/ipc'
 import { loginPath, resetLoginPath } from '../login-path/login-path'

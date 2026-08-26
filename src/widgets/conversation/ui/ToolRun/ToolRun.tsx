@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { ChevronDown, ChevronRight } from 'lucide-react'
 import type { ToolActivity } from '@/entities/conversation'
-import { WorkTrace } from '@/shared/graphics/WorkTrace/WorkTrace'
+import { WorkTrace } from '@/entities/tool'
 import { Button } from '@/shared/ui/button'
 import { marksOfTools, splitRun, summarise } from '../../lib/tool-run/tool-run'
 import { Tick } from '../ConversationPane/Tick'

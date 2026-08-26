@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import type { RosterState } from '@/entities/agent-session'
+import type { RosterState } from '@/entities/teammate'
 import type { TeamMember } from '../team/team.types'
 import { rowStateOf } from './row-state'
 

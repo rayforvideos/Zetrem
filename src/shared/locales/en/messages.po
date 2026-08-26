@@ -13,11 +13,11 @@ msgstr ""
 "Language-Team: \n"
 "Plural-Forms: \n"
 
-#: src/pages/workspace/model/agent-events/agent-events.ts:158
+#: src/pages/workspace/model/session/agent-events/agent-events.ts:153
 msgid " · on overage"
 msgstr " · on overage"
 
-#: src/pages/workspace/model/agent-events/agent-events.ts:156
+#: src/pages/workspace/model/session/agent-events/agent-events.ts:151
 msgid " {pct}% used,"
 msgstr " {pct}% used,"
 
@@ -61,7 +61,7 @@ msgid "{0} left"
 msgstr "{0} left"
 
 #. placeholder {0}: limitKindLabel(limit.kind)
-#: src/pages/workspace/model/agent-events/agent-events.ts:159
+#: src/pages/workspace/model/session/agent-events/agent-events.ts:154
 msgid "{0} limit{share} resets {when}{overage}"
 msgstr "{0} limit{share} resets {when}{overage}"
 
@@ -112,11 +112,11 @@ msgstr "{0}m ago"
 msgid "{back} teammates"
 msgstr "{back} teammates"
 
-#: src/pages/workspace/model/agent-events/agent-events.ts:169
+#: src/pages/workspace/model/session/agent-events/agent-events.ts:164
 msgid "{base}. Earlier turns live on as a summary."
 msgstr "{base}. Earlier turns live on as a summary."
 
-#: src/entities/agent-session/api/claude/aside/aside.ts:23
+#: src/entities/claude-cli/lib/aside/aside.ts:23
 msgid "{from} declined this, so {to} took it"
 msgstr "{from} declined this, so {to} took it"
 
@@ -124,11 +124,11 @@ msgstr "{from} declined this, so {to} took it"
 msgid "{held, plural, one {# line} other {# lines}}"
 msgstr "{held, plural, one {# line} other {# lines}}"
 
-#: src/pages/workspace/model/workspace-config/workspace-config.ts:39
+#: src/pages/workspace/model/team/workspace-config/workspace-config.ts:40
 msgid "{installed} installed from {sources, plural, one {# source} other {# sources}}"
 msgstr "{installed} installed from {sources, plural, one {# source} other {# sources}}"
 
-#: src/entities/agent-session/api/claude/turn/turn.ts:107
+#: src/entities/claude-cli/lib/turn/turn.ts:107
 msgid "{kind} {name} did not load: {why}"
 msgstr "{kind} {name} did not load: {why}"
 
@@ -136,11 +136,11 @@ msgstr "{kind} {name} did not load: {why}"
 msgid "{name} can be called this session"
 msgstr "{name} can be called this session"
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:271
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:268
 msgid "{name} is off. The running session keeps them until it ends."
 msgstr "{name} is off. The running session keeps them until it ends."
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:270
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:267
 msgid "{name} is on. The running session cannot call them yet."
 msgstr "{name} is on. The running session cannot call them yet."
 
@@ -164,41 +164,41 @@ msgstr "{reported} reported back"
 msgid "{rest, plural, one {# more line} other {# more lines}}"
 msgstr "{rest, plural, one {# more line} other {# more lines}}"
 
-#: src/pages/workspace/model/usePlugins.ts:118
+#: src/pages/workspace/model/extensions/usePlugins.ts:118
 msgid "{target} added"
 msgstr "{target} added"
 
-#: src/pages/workspace/model/usePlugins.ts:108
+#: src/pages/workspace/model/extensions/usePlugins.ts:108
 msgid "{target} installed. Restart the session to load it."
 msgstr "{target} installed. Restart the session to load it."
 
-#: src/pages/workspace/model/usePlugins.ts:114
+#: src/pages/workspace/model/extensions/usePlugins.ts:114
 msgid "{target} off. The running session keeps it until it ends."
 msgstr "{target} off. The running session keeps it until it ends."
 
-#: src/pages/workspace/model/usePlugins.ts:112
+#: src/pages/workspace/model/extensions/usePlugins.ts:112
 msgid "{target} on. Restart the session to load it."
 msgstr "{target} on. Restart the session to load it."
 
-#: src/pages/workspace/model/usePlugins.ts:122
+#: src/pages/workspace/model/extensions/usePlugins.ts:122
 msgid "{target} refreshed"
 msgstr "{target} refreshed"
 
-#: src/pages/workspace/model/usePlugins.ts:110
-#: src/pages/workspace/model/usePlugins.ts:120
+#: src/pages/workspace/model/extensions/usePlugins.ts:110
+#: src/pages/workspace/model/extensions/usePlugins.ts:120
 msgid "{target} removed"
 msgstr "{target} removed"
 
-#: src/pages/workspace/model/usePlugins.ts:116
+#: src/pages/workspace/model/extensions/usePlugins.ts:116
 msgid "{target} updated. Restart the session to load it."
 msgstr "{target} updated. Restart the session to load it."
 
-#: src/entities/agent-session/api/claude/aside/aside.ts:16
-#: src/entities/agent-session/api/claude/turn/turn.ts:72
+#: src/entities/claude-cli/lib/aside/aside.ts:16
+#: src/entities/claude-cli/lib/turn/turn.ts:72
 msgid "{tool} was not allowed"
 msgstr "{tool} was not allowed"
 
-#: src/entities/agent-session/api/claude/aside/aside.ts:16
+#: src/entities/claude-cli/lib/aside/aside.ts:16
 msgid "{tool} was not allowed: {why}"
 msgstr "{tool} was not allowed: {why}"
 
@@ -211,19 +211,19 @@ msgstr "{using} of {0} agents on"
 msgid "{waiting} waiting on you"
 msgstr "{waiting} waiting on you"
 
-#: src/entities/agent-session/api/claude/failure/failure.ts:69
+#: src/entities/claude-cli/lib/failure/failure.ts:69
 msgid "{what}. Trying again in {seconds}, attempt {which}"
 msgstr "{what}. Trying again in {seconds}, attempt {which}"
 
-#: src/entities/agent-session/api/claude/aside/aside.ts:34
+#: src/entities/claude-cli/lib/aside/aside.ts:34
 msgid "{who} declined this and there is nothing to fall back to"
 msgstr "{who} declined this and there is nothing to fall back to"
 
-#: src/entities/agent-session/api/claude/aside/aside.ts:33
+#: src/entities/claude-cli/lib/aside/aside.ts:33
 msgid "{who} declined this and there is nothing to fall back to. {said}"
 msgstr "{who} declined this and there is nothing to fall back to. {said}"
 
-#: src/entities/agent-session/api/claude/failure/failure.ts:38
+#: src/entities/claude-cli/lib/failure/failure.ts:38
 msgid "{who} is not available on your account. Pick another in Settings."
 msgstr "{who} is not available on your account. Pick another in Settings."
 
@@ -299,7 +299,7 @@ msgstr "A short name for it"
 msgid "a teammate"
 msgstr "a teammate"
 
-#: src/entities/agent-session/api/claude/aside/aside.ts:14
+#: src/entities/claude-cli/lib/aside/aside.ts:14
 msgid "A tool"
 msgstr "A tool"
 
@@ -316,7 +316,7 @@ msgstr "Add"
 msgid "Add a marketplace"
 msgstr "Add a marketplace"
 
-#: src/pages/workspace/model/workspace-config/workspace-config.ts:38
+#: src/pages/workspace/model/team/workspace-config/workspace-config.ts:39
 msgid "Add a marketplace to bring in skills and agents"
 msgstr "Add a marketplace to bring in skills and agents"
 
@@ -332,11 +332,11 @@ msgstr "Add teammate"
 msgid "Add your first teammate"
 msgstr "Add your first teammate"
 
-#: src/pages/workspace/model/useConnectors.ts:80
+#: src/pages/workspace/model/extensions/useConnectors.ts:80
 msgid "Added {name}. Sign in if it asks."
 msgstr "Added {name}. Sign in if it asks."
 
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:162
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:163
 msgid "Agents"
 msgstr "Agents"
 
@@ -349,7 +349,7 @@ msgstr "All {0} connected"
 msgid "Allow"
 msgstr "Allow"
 
-#: src/entities/agent-session/model/choices/choices.ts:17
+#: src/entities/settings/model/choices/choices.ts:20
 #: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:47
 msgid "Allow all"
 msgstr "Allow all"
@@ -371,11 +371,11 @@ msgid "any moment"
 msgstr "any moment"
 
 #. placeholder {0}: turn.metrics.apiErrorStatus
-#: src/pages/workspace/model/agent-events/agent-events.ts:121
+#: src/pages/workspace/model/session/agent-events/agent-events.ts:116
 msgid "API error {0}"
 msgstr "API error {0}"
 
-#: src/entities/agent-session/model/choices/choices.ts:11
+#: src/entities/settings/model/choices/choices.ts:14
 #: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:47
 msgid "Ask first"
 msgstr "Ask first"
@@ -388,7 +388,7 @@ msgstr "Ask for the whole job"
 msgid "Ask for the whole job, not the next step. The orchestrator splits it up, hands out the pieces, and replies when they come back."
 msgstr "Ask for the whole job, not the next step. The orchestrator splits it up, hands out the pieces, and replies when they come back."
 
-#: src/entities/agent-session/model/choices/choices.ts:11
+#: src/entities/settings/model/choices/choices.ts:14
 msgid "Asks before editing files or running commands"
 msgstr "Asks before editing files or running commands"
 
@@ -400,11 +400,11 @@ msgstr "Attach"
 msgid "Attach a file"
 msgstr "Attach a file"
 
-#: src/pages/workspace/model/agent-events/agent-events.ts:176
+#: src/pages/workspace/model/session/agent-events/agent-events.ts:171
 msgid "auto"
 msgstr "auto"
 
-#: src/entities/agent-session/model/choices/choices.ts:14
+#: src/entities/settings/model/choices/choices.ts:17
 #: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:47
 msgid "Auto-edit"
 msgstr "Auto-edit"
@@ -413,7 +413,7 @@ msgstr "Auto-edit"
 msgid "Back"
 msgstr "Back"
 
-#: src/entities/agent-session/model/choices/choices.ts:29
+#: src/entities/settings/model/choices/choices.ts:32
 msgid "Balanced for most tasks"
 msgstr "Balanced for most tasks"
 
@@ -421,11 +421,11 @@ msgstr "Balanced for most tasks"
 msgid "Big job? Split it. They like company."
 msgstr "Big job? Split it. They like company."
 
-#: src/entities/agent-session/api/claude/failure/failure.ts:83
+#: src/entities/claude-cli/lib/failure/failure.ts:83
 msgid "Billing refused the request"
 msgstr "Billing refused the request"
 
-#: src/pages/workspace/model/useConnectors.ts:91
+#: src/pages/workspace/model/extensions/useConnectors.ts:91
 msgid "Brought over what Claude Desktop had."
 msgstr "Brought over what Claude Desktop had."
 
@@ -433,7 +433,7 @@ msgstr "Brought over what Claude Desktop had."
 msgid "Browse"
 msgstr "Browse"
 
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:199
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:200
 #: src/widgets/team-sidebar/ui/ChatList/ChatList.tsx:416
 #: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:345
 #: src/widgets/team-sidebar/ui/MemberMenu/MemberMenu.tsx:66
@@ -449,7 +449,7 @@ msgstr "Cart totals and rounding"
 msgid "Change"
 msgstr "Change"
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:539
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:536
 msgid "Change account, project, and permissions"
 msgstr "Change account, project, and permissions"
 
@@ -514,7 +514,7 @@ msgstr "Close report"
 msgid "Close this tile. The run stays in the sidebar."
 msgstr "Close this tile. The run stays in the sidebar."
 
-#: src/entities/agent-session/model/choices/choices.ts:28
+#: src/entities/settings/model/choices/choices.ts:31
 msgid "Complex work. Slower and pricier"
 msgstr "Complex work. Slower and pricier"
 
@@ -552,20 +552,20 @@ msgstr "Context"
 msgid "Context {0}% left, compacting soon"
 msgstr "Context {0}% left, compacting soon"
 
-#: src/pages/workspace/model/agent-events/agent-events.ts:167
+#: src/pages/workspace/model/session/agent-events/agent-events.ts:162
 msgid "Conversation compacted here"
 msgstr "Conversation compacted here"
 
 #. placeholder {0}: said(verb)
-#: src/pages/workspace/model/usePlugins.ts:73
+#: src/pages/workspace/model/extensions/usePlugins.ts:73
 msgid "Could not {0} {target}"
 msgstr "Could not {0} {target}"
 
-#: src/pages/workspace/model/useConnectors.ts:72
+#: src/pages/workspace/model/extensions/useConnectors.ts:72
 msgid "Could not add {name}"
 msgstr "Could not add {name}"
 
-#: src/pages/workspace/model/useConnectors.ts:86
+#: src/pages/workspace/model/extensions/useConnectors.ts:86
 msgid "Could not bring over Claude Desktop"
 msgstr "Could not bring over Claude Desktop"
 
@@ -573,47 +573,47 @@ msgstr "Could not bring over Claude Desktop"
 msgid "Could not connect"
 msgstr "Could not connect"
 
-#: src/pages/workspace/model/useTranscript.ts:241
-#: src/pages/workspace/model/useTranscript.ts:259
+#: src/pages/workspace/model/chat/useTranscript.ts:241
+#: src/pages/workspace/model/chat/useTranscript.ts:259
 msgid "Could not file that chat"
 msgstr "Could not file that chat"
 
-#: src/pages/workspace/model/useTranscript.ts:208
+#: src/pages/workspace/model/chat/useTranscript.ts:208
 msgid "Could not forget that chat"
 msgstr "Could not forget that chat"
 
-#: src/pages/workspace/model/useAuth.ts:104
+#: src/pages/workspace/model/account/useAuth.ts:104
 msgid "Could not install Claude Code"
 msgstr "Could not install Claude Code"
 
-#: src/pages/workspace/model/useTranscript.ts:60
+#: src/pages/workspace/model/chat/useTranscript.ts:60
 msgid "Could not list your saved chats"
 msgstr "Could not list your saved chats"
 
-#: src/pages/workspace/model/useTranscript.ts:192
+#: src/pages/workspace/model/chat/useTranscript.ts:192
 msgid "Could not open that chat"
 msgstr "Could not open that chat"
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:224
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:228
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:221
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:225
 msgid "Could not open that folder"
 msgstr "Could not open that folder"
 
-#: src/pages/workspace/model/useAttachments.ts:63
+#: src/pages/workspace/model/chat/useAttachments.ts:63
 #: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:79
 msgid "Could not open the file picker"
 msgstr "Could not open the file picker"
 
-#: src/pages/workspace/model/useAgent.ts:92
+#: src/pages/workspace/model/session/useAgent.ts:88
 msgid "Could not pick that conversation back up. Starting a new one."
 msgstr "Could not pick that conversation back up. Starting a new one."
 
 #. placeholder {0}: shortName(target)
-#: src/pages/workspace/model/useConnectors.ts:61
+#: src/pages/workspace/model/extensions/useConnectors.ts:61
 msgid "Could not reach {0}"
 msgstr "Could not reach {0}"
 
-#: src/pages/workspace/model/usePlugins.ts:49
+#: src/pages/workspace/model/extensions/usePlugins.ts:49
 msgid "Could not read the plugin shelf"
 msgstr "Could not read the plugin shelf"
 
@@ -621,62 +621,62 @@ msgstr "Could not read the plugin shelf"
 msgid "Could not read usage"
 msgstr "Could not read usage"
 
-#: src/pages/workspace/model/usePlugins.ts:63
+#: src/pages/workspace/model/extensions/usePlugins.ts:63
 msgid "Could not read what is available"
 msgstr "Could not read what is available"
 
-#: src/pages/workspace/model/useAttachments.ts:56
-#: src/pages/workspace/model/useAttachments.ts:95
+#: src/pages/workspace/model/chat/useAttachments.ts:56
+#: src/pages/workspace/model/chat/useAttachments.ts:95
 #: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:94
 msgid "Could not read what you attached"
 msgstr "Could not read what you attached"
 
-#: src/pages/workspace/model/useAttachments.ts:92
+#: src/pages/workspace/model/chat/useAttachments.ts:92
 msgid "Could not read what you pasted"
 msgstr "Could not read what you pasted"
 
-#: src/pages/workspace/model/useConnectors.ts:46
+#: src/pages/workspace/model/extensions/useConnectors.ts:46
 msgid "Could not read your connectors"
 msgstr "Could not read your connectors"
 
-#: src/pages/workspace/model/usePlugins.ts:50
+#: src/pages/workspace/model/extensions/usePlugins.ts:50
 msgid "Could not read your marketplaces"
 msgstr "Could not read your marketplaces"
 
-#: src/pages/workspace/model/useSettings.ts:42
+#: src/pages/workspace/model/settings/useSettings.ts:42
 msgid "Could not read your settings"
 msgstr "Could not read your settings"
 
-#: src/pages/workspace/model/useAuth.ts:40
+#: src/pages/workspace/model/account/useAuth.ts:40
 msgid "Could not read your sign-in"
 msgstr "Could not read your sign-in"
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:244
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:241
 msgid "Could not remove that project"
 msgstr "Could not remove that project"
 
-#: src/pages/workspace/model/useTranscript.ts:234
+#: src/pages/workspace/model/chat/useTranscript.ts:234
 msgid "Could not rename that chat"
 msgstr "Could not rename that chat"
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:97
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:94
 msgid "Could not reopen your last project"
 msgstr "Could not reopen your last project"
 
-#: src/pages/workspace/model/useSettings.ts:30
-#: src/pages/workspace/model/useSettings.ts:56
+#: src/pages/workspace/model/settings/useSettings.ts:30
+#: src/pages/workspace/model/settings/useSettings.ts:56
 msgid "Could not save your settings"
 msgstr "Could not save your settings"
 
-#: src/entities/agent-session/lib/exit-line/exit-line.ts:9
+#: src/entities/claude-cli/lib/exit-line/exit-line.ts:9
 msgid "Could not start Claude Code"
 msgstr "Could not start Claude Code"
 
-#: src/entities/agent-session/lib/exit-line/exit-line.ts:11
+#: src/entities/claude-cli/lib/exit-line/exit-line.ts:11
 msgid "Could not start Claude Code: {said}"
 msgstr "Could not start Claude Code: {said}"
 
-#: src/pages/workspace/model/useCliUpdate.ts:40
+#: src/pages/workspace/model/session/useCliUpdate.ts:40
 msgid "Could not start the update"
 msgstr "Could not start the update"
 
@@ -688,7 +688,7 @@ msgstr "Create"
 msgid "Create a teammate and they'll show up here."
 msgstr "Create a teammate and they'll show up here."
 
-#: src/entities/agent-session/model/choices/choices.ts:22
+#: src/entities/settings/model/choices/choices.ts:25
 msgid "Default"
 msgstr "Default"
 
@@ -720,7 +720,7 @@ msgstr "Don't ask again this session"
 
 #: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:19
 #: src/widgets/setup/ui/PluginShelf/PluginShelf.tsx:131
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:203
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:204
 #: src/widgets/tile-deck/lib/state-word/state-word.ts:10
 msgid "Done"
 msgstr "Done"
@@ -754,11 +754,11 @@ msgstr "Edit this file?"
 msgid "Edited"
 msgstr "Edited"
 
-#: src/shared/lib/tool-verb/tool-verb.ts:11
+#: src/entities/tool/lib/tool-verb/tool-verb.ts:11
 msgid "Editing"
 msgstr "Editing"
 
-#: src/entities/agent-session/model/choices/choices.ts:15
+#: src/entities/settings/model/choices/choices.ts:18
 msgid "Edits files freely, asks before running commands"
 msgstr "Edits files freely, asks before running commands"
 
@@ -775,7 +775,7 @@ msgstr "Everyone you send out gets a card: their name, their task, and how long 
 msgid "Everything the session has"
 msgstr "Everything the session has"
 
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:29
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:30
 msgid "Extensions"
 msgstr "Extensions"
 
@@ -793,11 +793,11 @@ msgstr "failed"
 msgid "Failed"
 msgstr "Failed"
 
-#: src/entities/agent-session/model/choices/choices.ts:30
+#: src/entities/settings/model/choices/choices.ts:33
 msgid "Fast and cheap. Good for quick questions"
 msgstr "Fast and cheap. Good for quick questions"
 
-#: src/shared/lib/tool-verb/tool-verb.ts:24
+#: src/entities/tool/lib/tool-verb/tool-verb.ts:24
 msgid "Fetching"
 msgstr "Fetching"
 
@@ -814,7 +814,7 @@ msgstr "Find a chat"
 msgid "Find why checkout drops the last item"
 msgstr "Find why checkout drops the last item"
 
-#: src/pages/workspace/model/useConnectors.ts:29
+#: src/pages/workspace/model/extensions/useConnectors.ts:29
 msgid "Finish signing in to {name} in the browser. The next session picks it up."
 msgstr "Finish signing in to {name} in the browser. The next session picks it up."
 
@@ -835,7 +835,7 @@ msgstr "Folder name"
 msgid "Follows the language your computer is set to"
 msgstr "Follows the language your computer is set to"
 
-#: src/entities/agent-session/model/choices/choices.ts:22
+#: src/entities/settings/model/choices/choices.ts:25
 msgid "Follows your account setting"
 msgstr "Follows your account setting"
 
@@ -852,7 +852,7 @@ msgstr "from an earlier reading"
 msgid "From plugins"
 msgstr "From plugins"
 
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:27
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:28
 msgid "General"
 msgstr "General"
 
@@ -876,7 +876,7 @@ msgstr "Give them a name, say when to call them, and write their instructions. T
 msgid "Give them a task"
 msgstr "Give them a task"
 
-#: src/shared/lib/tool-verb/tool-verb.ts:26
+#: src/entities/tool/lib/tool-verb/tool-verb.ts:26
 #: src/widgets/conversation/lib/working/working.ts:62
 msgid "Handing off"
 msgstr "Handing off"
@@ -885,7 +885,7 @@ msgstr "Handing off"
 msgid "Held up"
 msgstr "Held up"
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:168
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:165
 msgid "Hide team sidebar"
 msgstr "Hide team sidebar"
 
@@ -926,11 +926,11 @@ msgstr "Installed for this folder. Anyone who opens it gets them."
 msgid "Installing Claude Code…"
 msgstr "Installing Claude Code…"
 
-#: src/entities/agent-session/api/claude/turn/turn.ts:106
+#: src/entities/claude-cli/lib/turn/turn.ts:106
 msgid "it could not be loaded"
 msgstr "it could not be loaded"
 
-#: src/entities/agent-session/api/claude/failure/failure.ts:7
+#: src/entities/claude-cli/lib/failure/failure.ts:7
 msgid "It could not put the answer in the format that was asked for"
 msgstr "It could not put the answer in the format that was asked for"
 
@@ -942,11 +942,11 @@ msgstr "It could not start"
 msgid "It installs when the app restarts."
 msgstr "It installs when the app restarts."
 
-#: src/entities/agent-session/api/claude/failure/failure.ts:5
+#: src/entities/claude-cli/lib/failure/failure.ts:5
 msgid "It reached the limit on how many turns one message may take"
 msgstr "It reached the limit on how many turns one message may take"
 
-#: src/entities/agent-session/api/claude/failure/failure.ts:6
+#: src/entities/claude-cli/lib/failure/failure.ts:6
 msgid "It reached the spending limit set for this run"
 msgstr "It reached the spending limit set for this run"
 
@@ -971,7 +971,7 @@ msgstr "Keep in"
 msgid "Keep the name under {NAME_MAX} characters"
 msgstr "Keep the name under {NAME_MAX} characters"
 
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:107
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:108
 msgid "Language"
 msgstr "Language"
 
@@ -995,7 +995,7 @@ msgstr "Letters, numbers, hyphens and underscores only"
 msgid "Letters, numbers, hyphens. Sign in after adding if it asks."
 msgstr "Letters, numbers, hyphens. Sign in after adding if it asks."
 
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:175
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:176
 msgid "Manage"
 msgstr "Manage"
 
@@ -1003,7 +1003,7 @@ msgstr "Manage"
 msgid "Managed on claude.ai. Sign in or out here, remove them there."
 msgstr "Managed on claude.ai. Sign in or out here, remove them there."
 
-#: src/pages/workspace/model/agent-events/agent-events.ts:177
+#: src/pages/workspace/model/session/agent-events/agent-events.ts:172
 msgid "manual"
 msgstr "manual"
 
@@ -1014,7 +1014,7 @@ msgstr "manual"
 msgid "MCP {0}/{1} · {2} need auth"
 msgstr "MCP {0}/{1} · {2} need auth"
 
-#: src/entities/agent-session/api/claude/turn/turn.ts:96
+#: src/entities/claude-cli/lib/turn/turn.ts:96
 msgid "MCP server"
 msgstr "MCP server"
 
@@ -1027,13 +1027,13 @@ msgid "Message your team"
 msgstr "Message your team"
 
 #: src/widgets/conversation/ui/Composer/Composer.tsx:178
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:151
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:152
 #: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:107
 #: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:159
 msgid "Model"
 msgstr "Model"
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:418
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:415
 msgid "Model changed. The running session keeps its model."
 msgstr "Model changed. The running session keeps its model."
 
@@ -1071,7 +1071,7 @@ msgstr "Needs signing in"
 msgid "Needs you"
 msgstr "Needs you"
 
-#: src/entities/agent-session/model/choices/choices.ts:17
+#: src/entities/settings/model/choices/choices.ts:20
 msgid "Never asks. Anything can run"
 msgstr "Never asks. Anything can run"
 
@@ -1108,7 +1108,7 @@ msgstr "No chat by that name"
 msgid "No connectors yet. Add one below, or bring over what Claude Desktop already has."
 msgstr "No connectors yet. Add one below, or bring over what Claude Desktop already has."
 
-#: src/pages/workspace/model/useAgentDefs.ts:85
+#: src/pages/workspace/model/team/useAgentDefs.ts:85
 msgid "No handler registered"
 msgstr "No handler registered"
 
@@ -1148,8 +1148,8 @@ msgstr "Nothing written yet."
 msgid "Nothing yet"
 msgstr "Nothing yet"
 
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:128
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:137
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:129
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:138
 msgid "Notifications"
 msgstr "Notifications"
 
@@ -1190,11 +1190,11 @@ msgid "Permission"
 msgstr "Permission"
 
 #: src/widgets/conversation/ui/Composer/Composer.tsx:172
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:145
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:146
 msgid "Permissions"
 msgstr "Permissions"
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:414
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:411
 msgid "Permissions changed. The running session follows the old ones."
 msgstr "Permissions changed. The running session follows the old ones."
 
@@ -1202,19 +1202,19 @@ msgstr "Permissions changed. The running session follows the old ones."
 msgid "Pick a project first"
 msgstr "Pick a project first"
 
-#: src/pages/workspace/model/agent-events/crew/crew.ts:212
+#: src/pages/workspace/model/session/agent-events/crew/crew.ts:214
 msgid "Picked up where they left off"
 msgstr "Picked up where they left off"
 
-#: src/shared/lib/tool-verb/tool-verb.ts:28
+#: src/entities/tool/lib/tool-verb/tool-verb.ts:28
 msgid "Planning"
 msgstr "Planning"
 
-#: src/entities/agent-session/api/claude/turn/turn.ts:97
+#: src/entities/claude-cli/lib/turn/turn.ts:97
 msgid "Plugin"
 msgstr "Plugin"
 
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:171
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:172
 msgid "Plugins"
 msgstr "Plugins"
 
@@ -1242,7 +1242,7 @@ msgstr "Project"
 msgid "Ran"
 msgstr "Ran"
 
-#: src/entities/agent-session/api/claude/failure/failure.ts:75
+#: src/entities/claude-cli/lib/failure/failure.ts:75
 msgid "Rate limited"
 msgstr "Rate limited"
 
@@ -1258,7 +1258,7 @@ msgstr "Read"
 msgid "Read the change before you judge it, and check what it touches."
 msgstr "Read the change before you judge it, and check what it touches."
 
-#: src/shared/lib/tool-verb/tool-verb.ts:7
+#: src/entities/tool/lib/tool-verb/tool-verb.ts:7
 #: src/widgets/conversation/lib/away/away.ts:44
 msgid "Reading"
 msgstr "Reading"
@@ -1338,7 +1338,7 @@ msgstr "Remove from team"
 msgid "Remove project"
 msgstr "Remove project"
 
-#: src/pages/workspace/model/useConnectors.ts:31
+#: src/pages/workspace/model/extensions/useConnectors.ts:31
 msgid "Removed"
 msgstr "Removed"
 
@@ -1380,7 +1380,7 @@ msgstr "Restart"
 msgid "Restart session"
 msgstr "Restart session"
 
-#: src/pages/workspace/model/useAgentDefs.ts:86
+#: src/pages/workspace/model/team/useAgentDefs.ts:86
 msgid "Restart Zetrem. This version does not know about it yet."
 msgstr "Restart Zetrem. This version does not know about it yet."
 
@@ -1402,7 +1402,7 @@ msgstr "run {0} of {1}"
 msgid "Run this command?"
 msgstr "Run this command?"
 
-#: src/shared/lib/tool-verb/tool-verb.ts:20
+#: src/entities/tool/lib/tool-verb/tool-verb.ts:20
 msgid "Running"
 msgstr "Running"
 
@@ -1444,7 +1444,7 @@ msgstr "Search tools"
 msgid "Searched"
 msgstr "Searched"
 
-#: src/shared/lib/tool-verb/tool-verb.ts:22
+#: src/entities/tool/lib/tool-verb/tool-verb.ts:22
 msgid "Searching"
 msgstr "Searching"
 
@@ -1456,12 +1456,12 @@ msgstr "See what they did"
 msgid "Send"
 msgstr "Send"
 
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:114
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:123
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:115
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:124
 msgid "Send with Enter"
 msgstr "Send with Enter"
 
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:28
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:29
 msgid "Session"
 msgstr "Session"
 
@@ -1469,11 +1469,11 @@ msgstr "Session"
 msgid "Session details"
 msgstr "Session details"
 
-#: src/pages/workspace/model/useAgent.ts:162
+#: src/pages/workspace/model/session/useAgent.ts:158
 msgid "Session stopped. The next message starts a new one with your team as it is now."
 msgstr "Session stopped. The next message starts a new one with your team as it is now."
 
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:66
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:67
 msgid "Set a few things and your agents get to work!"
 msgstr "Set a few things and your agents get to work!"
 
@@ -1481,11 +1481,11 @@ msgstr "Set a few things and your agents get to work!"
 msgid "Set for everyone on your account. They cannot be removed or turned off here."
 msgstr "Set for everyone on your account. They cannot be removed or turned off here."
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:541
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:538
 msgid "Settings"
 msgstr "Settings"
 
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:71
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:72
 msgid "Settings sections"
 msgstr "Settings sections"
 
@@ -1493,11 +1493,11 @@ msgstr "Settings sections"
 msgid "share unknown"
 msgstr "share unknown"
 
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:116
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:117
 msgid "Shift+Enter starts a new line. Off, sending takes the modifier key with Enter."
 msgstr "Shift+Enter starts a new line. Off, sending takes the modifier key with Enter."
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:168
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:165
 msgid "Show team sidebar"
 msgstr "Show team sidebar"
 
@@ -1513,7 +1513,7 @@ msgstr "Sign in and choose a project folder"
 msgid "Sign in to your Anthropic account"
 msgstr "Sign in to your Anthropic account"
 
-#: src/entities/agent-session/api/claude/failure/failure.ts:81
+#: src/entities/claude-cli/lib/failure/failure.ts:81
 msgid "Sign in was refused"
 msgstr "Sign in was refused"
 
@@ -1527,7 +1527,7 @@ msgstr "Sign in with Anthropic"
 msgid "Sign out"
 msgstr "Sign out"
 
-#: src/pages/workspace/model/useAuth.ts:79
+#: src/pages/workspace/model/account/useAuth.ts:79
 msgid "Sign out did not take effect."
 msgstr "Sign out did not take effect."
 
@@ -1535,7 +1535,7 @@ msgstr "Sign out did not take effect."
 msgid "Sign out of Claude Code everywhere?"
 msgstr "Sign out of Claude Code everywhere?"
 
-#: src/pages/workspace/model/useConnectors.ts:30
+#: src/pages/workspace/model/extensions/useConnectors.ts:30
 msgid "Signed out of"
 msgstr "Signed out of"
 
@@ -1563,11 +1563,11 @@ msgstr "Skip"
 msgid "Something broke. Here is what happened."
 msgstr "Something broke. Here is what happened."
 
-#: src/entities/agent-session/api/claude/failure/failure.ts:9
+#: src/entities/claude-cli/lib/failure/failure.ts:9
 msgid "Something went wrong"
 msgstr "Something went wrong"
 
-#: src/entities/agent-session/api/claude/failure/failure.ts:8
+#: src/entities/claude-cli/lib/failure/failure.ts:8
 msgid "Something went wrong while it was working"
 msgstr "Something went wrong while it was working"
 
@@ -1576,8 +1576,8 @@ msgstr "Something went wrong while it was working"
 msgid "Sources · {0}"
 msgstr "Sources · {0}"
 
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:26
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:203
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:27
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:204
 msgid "Start"
 msgstr "Start"
 
@@ -1593,7 +1593,7 @@ msgstr "Starting"
 msgid "Stay signed in"
 msgstr "Stay signed in"
 
-#: src/pages/workspace/model/useAuth.ts:84
+#: src/pages/workspace/model/account/useAuth.ts:84
 msgid "Still signed in. Sign out did not take effect."
 msgstr "Still signed in. Sign out did not take effect."
 
@@ -1613,26 +1613,26 @@ msgstr "Stop the running session so the next message starts one that follows the
 msgid "Stop the running session so the next message starts one that knows them"
 msgstr "Stop the running session so the next message starts one that knows them"
 
-#: src/entities/agent-session/api/claude/failure/failure.ts:31
+#: src/entities/claude-cli/lib/failure/failure.ts:31
 msgid "Stopped"
 msgstr "Stopped"
 
 #. placeholder {0}: i18n._(known)
 #. placeholder {0}: said.join('. ')
-#: src/entities/agent-session/api/claude/failure/failure.ts:55
-#: src/entities/agent-session/api/claude/failure/failure.ts:56
+#: src/entities/claude-cli/lib/failure/failure.ts:55
+#: src/entities/claude-cli/lib/failure/failure.ts:56
 msgid "Stopped: {0}"
 msgstr "Stopped: {0}"
 
-#: src/entities/agent-session/api/claude/failure/failure.ts:31
+#: src/entities/claude-cli/lib/failure/failure.ts:31
 msgid "Stopped: {body}"
 msgstr "Stopped: {body}"
 
-#: src/entities/agent-session/api/claude/failure/failure.ts:56
+#: src/entities/claude-cli/lib/failure/failure.ts:56
 msgid "Stopped: {subtype}"
 msgstr "Stopped: {subtype}"
 
-#: src/entities/agent-session/api/claude/failure/failure.ts:29
+#: src/entities/claude-cli/lib/failure/failure.ts:29
 msgid "Stopped: something went wrong"
 msgstr "Stopped: something went wrong"
 
@@ -1661,7 +1661,7 @@ msgstr "Team board width"
 msgid "Teammates are reusable"
 msgstr "Teammates are reusable"
 
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:130
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:131
 msgid "Tells you when the work is done or something needs your say-so, and only while Zetrem is behind another window."
 msgstr "Tells you when the work is done or something needs your say-so, and only while Zetrem is behind another window."
 
@@ -1673,15 +1673,15 @@ msgstr "That did not work"
 msgid "That is not a web address"
 msgstr "That is not a web address"
 
-#: src/entities/agent-session/api/claude/failure/failure.ts:37
+#: src/entities/claude-cli/lib/failure/failure.ts:37
 msgid "That model"
 msgstr "That model"
 
-#: src/entities/agent-session/api/claude/failure/failure.ts:87
+#: src/entities/claude-cli/lib/failure/failure.ts:87
 msgid "That model was not found"
 msgstr "That model was not found"
 
-#: src/pages/workspace/model/usePlugins.ts:33
+#: src/pages/workspace/model/extensions/usePlugins.ts:33
 msgid "That name cannot be used"
 msgstr "That name cannot be used"
 
@@ -1697,15 +1697,15 @@ msgstr "The <0>claude</0> command was not found. Zetrem can install it for you."
 msgid "The address has to be http or https"
 msgstr "The address has to be http or https"
 
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:164
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:165
 msgid "The agents Claude Code brings. Each can be switched off."
 msgstr "The agents Claude Code brings. Each can be switched off."
 
-#: src/entities/agent-session/api/claude/failure/failure.ts:89
+#: src/entities/claude-cli/lib/failure/failure.ts:89
 msgid "The answer hit the output limit"
 msgstr "The answer hit the output limit"
 
-#: src/entities/agent-session/lib/exit-line/exit-line.ts:6
+#: src/entities/claude-cli/lib/exit-line/exit-line.ts:6
 msgid "The claude command was not found. Install the Claude Code CLI, then try again."
 msgstr "The claude command was not found. Install the Claude Code CLI, then try again."
 
@@ -1713,7 +1713,7 @@ msgstr "The claude command was not found. Install the Claude Code CLI, then try 
 msgid "The CLI does the work. Zetrem shows it as it happens: what you asked for, who is on it, and what they have run."
 msgstr "The CLI does the work. Zetrem shows it as it happens: what you asked for, who is on it, and what they have run."
 
-#: src/entities/agent-session/model/choices/choices.ts:26
+#: src/entities/settings/model/choices/choices.ts:29
 msgid "The hardest problems. Slowest and priciest of these"
 msgstr "The hardest problems. Slowest and priciest of these"
 
@@ -1721,19 +1721,19 @@ msgstr "The hardest problems. Slowest and priciest of these"
 msgid "The kind of work they should get"
 msgstr "The kind of work they should get"
 
-#: src/entities/agent-session/api/claude/aside/aside.ts:31
+#: src/entities/claude-cli/lib/aside/aside.ts:31
 msgid "The model"
 msgstr "The model"
 
-#: src/entities/agent-session/api/claude/aside/aside.ts:25
+#: src/entities/claude-cli/lib/aside/aside.ts:25
 msgid "The model declined this"
 msgstr "The model declined this"
 
-#: src/entities/agent-session/api/claude/failure/failure.ts:77
+#: src/entities/claude-cli/lib/failure/failure.ts:77
 msgid "The model is overloaded"
 msgstr "The model is overloaded"
 
-#: src/pages/workspace/model/agent-events/crew/crew.ts:179
+#: src/pages/workspace/model/session/agent-events/crew/crew.ts:181
 msgid "the orchestrator"
 msgstr "the orchestrator"
 
@@ -1746,11 +1746,11 @@ msgstr "The orchestrator reads this to pick who gets the job."
 msgid "The project leaves this list. The folder and everything in it stay on disk."
 msgstr "The project leaves this list. The folder and everything in it stay on disk."
 
-#: src/entities/agent-session/api/claude/failure/failure.ts:93
+#: src/entities/claude-cli/lib/failure/failure.ts:93
 msgid "The request failed"
 msgstr "The request failed"
 
-#: src/entities/agent-session/api/claude/failure/failure.ts:85
+#: src/entities/claude-cli/lib/failure/failure.ts:85
 msgid "The request was rejected"
 msgstr "The request was rejected"
 
@@ -1762,15 +1762,15 @@ msgstr "The running session keeps its model. This applies from the next one."
 msgid "The saved conversation is deleted. This cannot be undone."
 msgstr "The saved conversation is deleted. This cannot be undone."
 
-#: src/entities/agent-session/api/claude/failure/failure.ts:79
+#: src/entities/claude-cli/lib/failure/failure.ts:79
 msgid "The server had a problem"
 msgstr "The server had a problem"
 
-#: src/entities/agent-session/api/claude/aside/aside.ts:39
+#: src/entities/claude-cli/lib/aside/aside.ts:39
 msgid "The session is closing"
 msgstr "The session is closing"
 
-#: src/entities/agent-session/api/claude/aside/aside.ts:39
+#: src/entities/claude-cli/lib/aside/aside.ts:39
 msgid "The session is closing: {why}"
 msgstr "The session is closing: {why}"
 
@@ -1808,7 +1808,7 @@ msgstr "this chat {percent}%"
 msgid "this chat {size}"
 msgstr "this chat {size}"
 
-#: src/pages/workspace/model/useTranscript.ts:158
+#: src/pages/workspace/model/chat/useTranscript.ts:158
 msgid "This chat is not being saved"
 msgstr "This chat is not being saved"
 
@@ -1833,7 +1833,7 @@ msgstr "This signs out the Claude Code CLI itself, so every terminal, editor and
 msgid "This signs out the Claude Code CLI itself, so every terminal, editor and app using it on this computer is signed out too. The session running here stops."
 msgstr "This signs out the Claude Code CLI itself, so every terminal, editor and app using it on this computer is signed out too. The session running here stops."
 
-#: src/pages/workspace/model/agent-events/agent-events.ts:184
+#: src/pages/workspace/model/session/agent-events/agent-events.ts:179
 msgid "This turn: {out} out · {seconds}s"
 msgstr "This turn: {out} out · {seconds}s"
 
@@ -1857,7 +1857,7 @@ msgstr "Today"
 msgid "Todo list"
 msgstr "Todo list"
 
-#: src/entities/agent-session/api/claude/turn/turn.ts:71
+#: src/entities/claude-cli/lib/turn/turn.ts:71
 msgid "tool"
 msgstr "tool"
 
@@ -1964,7 +1964,7 @@ msgstr "When to call them"
 msgid "Why the last item drops"
 msgstr "Why the last item drops"
 
-#: src/shared/lib/tool-verb/tool-verb.ts:30
+#: src/entities/tool/lib/tool-verb/tool-verb.ts:30
 #: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:16
 #: src/widgets/conversation/lib/working/working.ts:87
 #: src/widgets/tile-deck/lib/state-word/state-word.ts:7
@@ -1987,7 +1987,7 @@ msgstr "Write this file?"
 msgid "Write what they do, and how"
 msgstr "Write what they do, and how"
 
-#: src/shared/lib/tool-verb/tool-verb.ts:9
+#: src/entities/tool/lib/tool-verb/tool-verb.ts:9
 #: src/widgets/conversation/lib/working/working.ts:71
 msgid "Writing"
 msgstr "Writing"
@@ -2009,7 +2009,7 @@ msgstr "You already have a connector by that name"
 msgid "You decide what runs"
 msgstr "You decide what runs"
 
-#: src/pages/workspace/model/asked-to-stop/asked-to-stop.ts:6
+#: src/pages/workspace/model/session/asked-to-stop/asked-to-stop.ts:6
 msgid "You stopped this"
 msgstr "You stopped this"
 
@@ -2021,7 +2021,7 @@ msgstr "You talk on the left"
 msgid "Your account"
 msgstr "Your account"
 
-#: src/entities/agent-session/model/choices/choices.ts:42
+#: src/entities/settings/model/choices/choices.ts:45
 msgid "Your account turned this one down. Try it again if your plan changed."
 msgstr "Your account turned this one down. Try it again if your plan changed."
 
@@ -2050,7 +2050,7 @@ msgstr "Your name"
 msgid "Your organisation"
 msgstr "Your organisation"
 
-#: src/entities/agent-session/api/claude/failure/failure.ts:91
+#: src/entities/claude-cli/lib/failure/failure.ts:91
 msgid "Your organisation does not allow this"
 msgstr "Your organisation does not allow this"
 

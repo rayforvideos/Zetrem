@@ -1,13 +1,10 @@
 import { readFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import { app } from 'electron'
-import { agentEnv } from '@/shared/lib/shell-env/shell-env'
-import { probeArgs } from '@/entities/agent-session/model/run-config/run-config'
-import type { RunConfig } from '@/entities/agent-session/model/run-config/run-config.types'
-import {
-  ORCHESTRATOR_PROMPT,
-  PERSONA,
-} from '@/entities/agent-session/model/orchestrator/orchestrator'
+import { agentEnv } from '../../spawn/shell-env/shell-env'
+import { probeArgs } from '@/entities/claude-cli/lib/run-config/run-config'
+import type { RunConfig } from '@/entities/claude-cli/lib/run-config/run-config.types'
+import { ORCHESTRATOR_PROMPT, PERSONA } from '@/entities/teammate/model/orchestrator/orchestrator'
 import { claudeBin, loginPath } from '../../cli/login-path/login-path'
 import { recallProject } from '../../store/project-memory/project-memory'
 import { saveFile } from '../../store/save-file/save-file'

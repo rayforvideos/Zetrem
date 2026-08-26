@@ -3,7 +3,7 @@ import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import type { EventEmitter } from 'node:events'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import type { RunConfig } from '@/entities/agent-session/model/run-config/run-config.types'
+import type { RunConfig } from '@/entities/claude-cli/lib/run-config/run-config.types'
 
 type FakeStream = EventEmitter & { setEncoding: (encoding: string) => void }
 

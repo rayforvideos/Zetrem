@@ -1,6 +1,6 @@
 import type { StatusState, UpdateInfo } from './status-store.types'
 
-import type { StatusEvent } from '../../api/claude/status/status.types'
+import type { StatusEvent } from '@/entities/claude-cli'
 import { withLimit } from '../limits/limits'
 import type { ChatSpend } from '@/entities/conversation'
 import { spentAfter } from '../spend/spend'

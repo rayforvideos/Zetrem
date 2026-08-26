@@ -1,8 +1,8 @@
 import type { TeamMember } from './team.types'
 
 import type { AgentDef } from '@/entities/agent-def'
-import { personaOf } from '@/entities/agent-session'
-import type { RosterMember, RosterState } from '@/entities/agent-session'
+import { personaOf } from '@/entities/teammate'
+import type { RosterMember, RosterState } from '@/entities/teammate'
 
 const RANK: Record<RosterState, number> = { waiting: 0, working: 1, done: 2, idle: 3 }
 

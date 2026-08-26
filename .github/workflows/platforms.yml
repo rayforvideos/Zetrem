@@ -150,20 +150,20 @@ jobs:
           [ "$SIGNED" = "true" ] || unset CSC_LINK CSC_KEY_PASSWORD
           npm run ${{ matrix.os == 'windows-latest' && 'package:win' || 'package:mac' }} -- --publish never
 
-      # What a stranger's Mac will decide when they open it. The signature is on
-      # the app; a dmg is a disk image and carries none of its own. What the dmg
-      # carries is Apple's notarisation, stapled to the file so it is read
-      # without asking their servers. spctl is Gatekeeper answering in advance.
+      # What a stranger's Mac will decide when they open it. electron-builder
+      # signs the app, sends it to Apple, and staples the ticket to the app; the
+      # dmg and the zip are built from the stapled app afterwards and carry
+      # nothing of their own. So the app is what is asked, and spctl is
+      # Gatekeeper answering in advance the question that Mac will ask.
       - name: Prove the macOS build is signed, notarised and would open
         if: matrix.os == 'macos-latest' && env.SIGNED == 'true'
         shell: bash
         run: |
           app=release/mac-universal/Zetrem.app
-          dmg=$(ls release/Zetrem-*-universal.dmg)
           codesign --verify --deep --strict --verbose=2 "$app"
           codesign --display --verbose=2 "$app" 2>&1 | grep -E 'Authority|TeamIdentifier'
-          xcrun stapler validate "$dmg"
-          spctl --assess --type open --context context:primary-signature -vv "$dmg"
+          xcrun stapler validate "$app"
+          spctl --assess --type exec -vv "$app"
 
       # Windows is unsigned wherever it is built, so a runner is as good a place
       # as any, and the download page only offers a release carrying both
@@ -197,7 +197,8 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           tag="${GITHUB_REF_NAME}"
-          xcrun stapler validate release/Zetrem-*-universal.dmg
+          # The ticket is on the app the dmg was built from, never on the dmg.
+          xcrun stapler validate release/mac-universal/Zetrem.app
           gh release view "$tag" >/dev/null 2>&1 ||
             gh release create "$tag" --prerelease --title "Zetrem ${tag#v}" --notes ''
           gh release upload "$tag" \

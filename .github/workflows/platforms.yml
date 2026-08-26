@@ -150,17 +150,18 @@ jobs:
           [ "$SIGNED" = "true" ] || unset CSC_LINK CSC_KEY_PASSWORD
           npm run ${{ matrix.os == 'windows-latest' && 'package:win' || 'package:mac' }} -- --publish never
 
-      # What a stranger's Mac will decide when they open it. codesign says the
-      # signature is ours and intact; stapler says Apple's notarisation is
-      # attached to the file rather than only on their servers; spctl is
-      # Gatekeeper itself being asked the question in advance.
+      # What a stranger's Mac will decide when they open it. The signature is on
+      # the app; a dmg is a disk image and carries none of its own. What the dmg
+      # carries is Apple's notarisation, stapled to the file so it is read
+      # without asking their servers. spctl is Gatekeeper answering in advance.
       - name: Prove the macOS build is signed, notarised and would open
         if: matrix.os == 'macos-latest' && env.SIGNED == 'true'
         shell: bash
         run: |
+          app=release/mac-universal/Zetrem.app
           dmg=$(ls release/Zetrem-*-universal.dmg)
-          echo "checking $dmg"
-          codesign --verify --strict --verbose=2 "$dmg"
+          codesign --verify --deep --strict --verbose=2 "$app"
+          codesign --display --verbose=2 "$app" 2>&1 | grep -E 'Authority|TeamIdentifier'
           xcrun stapler validate "$dmg"
           spctl --assess --type open --context context:primary-signature -vv "$dmg"
 

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import type { InstalledPlugin, PluginScope } from '../catalog/catalog.types'
+import type { InstalledPlugin, PluginScope } from '../../api/catalog/catalog.types'
 import { groupsOf } from './groups'
 
 function plugin(name: string, scope: PluginScope): InstalledPlugin {
@@ -16,11 +16,7 @@ function plugin(name: string, scope: PluginScope): InstalledPlugin {
 
 describe('groupsOf: who a plugin belongs to is a heading, not a suffix on every row', () => {
   it('keeps the order yours, this project, your organisation', () => {
-    const groups = groupsOf([
-      plugin('c', 'managed'),
-      plugin('b', 'project'),
-      plugin('a', 'user'),
-    ])
+    const groups = groupsOf([plugin('c', 'managed'), plugin('b', 'project'), plugin('a', 'user')])
     expect(groups.map((group) => group.key)).toEqual(['yours', 'project', 'organisation'])
   })
 

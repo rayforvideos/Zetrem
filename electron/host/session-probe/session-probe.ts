@@ -1,10 +1,10 @@
 import { readFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import { app } from 'electron'
-import { agentEnv } from '@/shared/lib/shell-env/shell-env'
-import { probeArgs } from '@/entities/agent-session/model/run-config/run-config'
-import type { RunConfig } from '@/entities/agent-session/model/run-config/run-config.types'
-import { ORCHESTRATOR_PROMPT, PERSONA } from '@/entities/agent-session/model/orchestrator/orchestrator'
+import { agentEnv } from '../../spawn/shell-env/shell-env'
+import { probeArgs } from '@/entities/claude-cli/api/run-config/run-config'
+import type { RunConfig } from '@/entities/claude-cli/api/run-config/run-config.types'
+import { ORCHESTRATOR_PROMPT, PERSONA } from '@/entities/teammate/model/orchestrator/orchestrator'
 import { claudeBin, loginPath } from '../../cli/login-path/login-path'
 import { recallProject } from '../../store/project-memory/project-memory'
 import { saveFile } from '../../store/save-file/save-file'
@@ -37,7 +37,12 @@ function isInit(line: string): boolean {
   }
 }
 
-function readInit(bin: string, args: string[], cwd: string, env: NodeJS.ProcessEnv): Promise<string | null> {
+function readInit(
+  bin: string,
+  args: string[],
+  cwd: string,
+  env: NodeJS.ProcessEnv,
+): Promise<string | null> {
   return runSettled<string | null>({
     bin,
     args,
@@ -46,8 +51,8 @@ function readInit(bin: string, args: string[], cwd: string, env: NodeJS.ProcessE
     killOnSettle: true,
     spawned: (pid) => asking.add(pid),
     settled: (pid) => asking.delete(pid),
-    timeout: { ms: PROBE_TIMEOUT_MS, then: () => null },
-    cap: { bytes: PROBE_BUFFER_MAX, then: () => null },
+    timeout: { ms: PROBE_TIMEOUT_MS, answers: () => null },
+    cap: { bytes: PROBE_BUFFER_MAX, answers: () => null },
     line: (line) => (isInit(line) ? line : undefined),
     exit: () => null,
     error: () => null,
@@ -63,8 +68,8 @@ function readReport(bin: string, cwd: string, env: NodeJS.ProcessEnv): Promise<s
     killOnSettle: true,
     spawned: (pid) => asking.add(pid),
     settled: (pid) => asking.delete(pid),
-    timeout: { ms: REPORT_TIMEOUT_MS, then: () => null },
-    cap: { bytes: REPORT_MAX, then: (text) => text.slice(0, REPORT_MAX) },
+    timeout: { ms: REPORT_TIMEOUT_MS, answers: () => null },
+    cap: { bytes: REPORT_MAX, answers: (text) => text.slice(0, REPORT_MAX) },
     exit: (code, text) => (code === 0 && text.length > 0 ? text : null),
     error: () => null,
   })
@@ -79,18 +84,21 @@ async function keep(report: string): Promise<void> {
 }
 
 export function registerSessionProbe(): void {
-  handle('session:probe', async (_event, config: RunConfig): Promise<string | null> => {
-    if (inFlight !== null) return inFlight
-    inFlight = (async () => {
-      const workspace = await workspaceDir(await recallProject(), app.getPath('userData'))
-      const args = probeArgs({ ...config, persona: PERSONA, orchestrator: ORCHESTRATOR_PROMPT })
-      const env = agentEnv(process.env, await loginPath())
-      return readInit(await claudeBin(), args, workspace, env)
-    })().catch(() => null)
-    const found = await inFlight
-    inFlight = null
-    return found
-  })
+  handle(
+    'session:probe',
+    async (_event, config: Omit<RunConfig, 'persona'>): Promise<string | null> => {
+      if (inFlight !== null) return inFlight
+      inFlight = (async () => {
+        const workspace = await workspaceDir(await recallProject(), app.getPath('userData'))
+        const args = probeArgs({ ...config, persona: PERSONA, orchestrator: ORCHESTRATOR_PROMPT })
+        const env = agentEnv(process.env, await loginPath())
+        return readInit(await claudeBin(), args, workspace, env)
+      })().catch(() => null)
+      const found = await inFlight
+      inFlight = null
+      return found
+    },
+  )
 
   handle('usage:kept', async (): Promise<string | null> => {
     const kept = readKept(await readFile(keptPath(), 'utf8').catch(() => ''))

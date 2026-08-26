@@ -1,9 +1,15 @@
-import { useScrollState } from '@/shared/lib/scroll-state/use-scroll-state'
+import { useScrollState } from '@/shared/lib/scroll-state/useScrollState'
 import { RotateCw } from 'lucide-react'
 import { appliesHere } from '@/entities/plugin'
 import type { Catalog, Marketplace, PluginScope, PluginVerb } from '@/entities/plugin'
 import { Button } from '@/shared/ui/button'
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/shared/ui/dialog'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from '@/shared/ui/dialog'
 import { Spinner } from '@/shared/ui/spinner'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/shared/ui/tabs'
 import type { Connector, ConnectorVerb, NewConnector } from '@/entities/connector'

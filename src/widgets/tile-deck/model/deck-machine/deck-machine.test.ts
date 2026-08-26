@@ -176,4 +176,3 @@ describe('a teammate that finishes while the board is still fanning out', () => 
     expect(deckReducer(fanning, { type: 'closeOne', id: 'zz' })).toBe(fanning)
   })
 })
-

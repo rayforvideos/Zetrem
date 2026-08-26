@@ -1,0 +1,90 @@
+{
+  "$schema": "https://biomejs.dev/schemas/2.5.10/schema.json",
+  // The ignore file already names out/, release/ and the compiled catalogs.
+  "vcs": { "enabled": true, "clientKind": "git", "useIgnoreFile": true },
+  "files": {
+    "includes": [
+      "**",
+      // shadcn writes these, and CONTRIBUTING says not to hand-edit them.
+      "!src/shared/ui",
+      // Biome's CSS parser does not read Tailwind v4's at-rules.
+      "!**/*.css",
+      "!package-lock.json",
+      // Captured from a real run of the CLI. It is a recording, and a
+      // recording is left as it was recorded.
+      "!tests/replay/*.json"
+    ]
+  },
+  "formatter": {
+    "enabled": true,
+    "indentStyle": "space",
+    "indentWidth": 2,
+    "lineWidth": 100
+  },
+  "javascript": {
+    "formatter": {
+      "quoteStyle": "single",
+      "jsxQuoteStyle": "double",
+      "semicolons": "asNeeded",
+      "trailingCommas": "all",
+      "arrowParentheses": "always"
+    }
+  },
+  "linter": {
+    "enabled": true,
+    "rules": {
+      "preset": "recommended",
+      "a11y": {
+        // Radix renders both of these as a button, which a label may wrap.
+        // Without the names the rule sees a label with nothing in it.
+        "noLabelWithoutControl": {
+          "level": "error",
+          "options": { "inputComponents": ["RadioGroupItem", "Switch"] }
+        }
+      },
+      "correctness": {
+        // Twenty findings, and nine of them ask for a dependency to be removed
+        // that is there on purpose: useAuthoredAgents reads no project inside
+        // the effect and keys on it so the list is read again when somebody
+        // switches, and taking it out is the bug, not the fix. The other
+        // eleven ask for a helper declared in the same body, which the React
+        // compiler memoises; this rule does not know the compiler is on, and
+        // it marks its own fix unsafe. Whoever turns it back on should be able
+        // to open the app and watch what re-runs.
+        "useExhaustiveDependencies": "off"
+      },
+      "style": {
+        // noUncheckedIndexedAccess is on, so the compiler hands back T | undefined
+        // for every index and every one of these ! is an answer to it. Banning
+        // them here would be this tool arguing with tsconfig.json.
+        "noNonNullAssertion": "off"
+      }
+    }
+  },
+  "overrides": [
+    {
+      // Every icon here spreads a props object carrying aria-hidden, and the
+      // rule reads the tag rather than the spread. They are marks beside a
+      // name that is already written out, so a title would say it twice.
+      "includes": ["**/ToolIcon.tsx"],
+      "linter": { "rules": { "a11y": { "noSvgWithoutTitle": "off" } } }
+    },
+    {
+      // The grip is the WAI-ARIA window splitter: a separator that takes focus,
+      // carries a value and moves under the arrow keys. The rule offers hr,
+      // which can hold none of those.
+      "includes": ["**/SidebarGrip.tsx"],
+      "linter": { "rules": { "a11y": { "useSemanticElements": "off" } } }
+    }
+  ],
+  "assist": {
+    "actions": {
+      "source": {
+        // Imports are grouped by where they come from rather than sorted, and
+        // a type import sits with the module it belongs to. Biome sorts by a
+        // rule of its own and would undo that.
+        "organizeImports": "off"
+      }
+    }
+  }
+}

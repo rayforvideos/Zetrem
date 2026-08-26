@@ -59,7 +59,8 @@ describe('shadcn holds the ruler, and we do not cut new notches', () => {
     const stray: string[] = []
     for (const file of await ourFiles()) {
       if (file.path.includes('agent-face')) continue
-      for (const match of file.text.matchAll(PALETTE)) stray.push(`${file.path}: ${match[0].trim()}`)
+      for (const match of file.text.matchAll(PALETTE))
+        stray.push(`${file.path}: ${match[0].trim()}`)
     }
     expect(stray, 'colour belongs to the agent faces and nowhere else').toEqual([])
   })
@@ -78,7 +79,7 @@ describe('the one colour that is not a face', () => {
       if (file.text.includes('text-claude') || file.text.includes('bg-claude')) worn.push(file.path)
     }
     expect(worn, 'a brand colour is for naming that brand, nothing else').toEqual([
-      join('src', 'widgets', 'usage-bar', 'ui', 'UsageBar', 'UsageBar.tsx'),
+      join('src', 'widgets', 'status-bar', 'ui', 'UsageBar', 'UsageBar.tsx'),
     ])
   })
 })

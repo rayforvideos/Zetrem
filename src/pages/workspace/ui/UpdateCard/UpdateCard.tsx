@@ -1,5 +1,5 @@
 import { t } from '@lingui/core/macro'
-import bunny from '@/entities/agent-session/ui/AgentSprite/sprites/default/bunny_default.png'
+import bunny from '@/entities/teammate/ui/AgentSprite/sprites/default/bunny_default.png'
 import { Button } from '@/shared/ui/button'
 
 export function UpdateCard({

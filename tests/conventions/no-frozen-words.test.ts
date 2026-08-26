@@ -24,7 +24,7 @@ const OPENS = new Set([
 // import time, before a locale is up: the app throws on launch, and if it survives
 // the words are frozen in whatever language happened to load first. Module-level
 // wording belongs in msg`…`, read later with i18n._().
-export function frozenWords(body: string): number[] {
+function frozenWords(body: string): number[] {
   const file = parse(body, { sourceType: 'module', plugins: ['typescript', 'jsx'] })
   const found: number[] = []
 

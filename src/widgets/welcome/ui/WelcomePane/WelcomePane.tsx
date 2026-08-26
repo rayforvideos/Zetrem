@@ -79,7 +79,9 @@ export function WelcomePane({ onDone }: { onDone(): void }) {
 
         <div key={slide.key} className="zt-enter flex max-w-[540px] flex-col gap-2.5 text-center">
           <h1 className="text-xl leading-tight">{i18n._(slide.title)}</h1>
-          <p className="text-sm leading-relaxed break-keep text-muted-foreground">{i18n._(slide.body)}</p>
+          <p className="text-sm leading-relaxed break-keep text-muted-foreground">
+            {i18n._(slide.body)}
+          </p>
         </div>
       </div>
 
@@ -131,7 +133,9 @@ export function WelcomePane({ onDone }: { onDone(): void }) {
             {end ? (
               <Button onClick={finish} className="rounded-full px-5">{t`Get started`}</Button>
             ) : (
-              <Button variant="ghost" onClick={() => walk(1)} className="rounded-full px-4">{t`Next`}<ArrowRight />
+              <Button variant="ghost" onClick={() => walk(1)} className="rounded-full px-4">
+                {t`Next`}
+                <ArrowRight />
               </Button>
             )}
           </span>

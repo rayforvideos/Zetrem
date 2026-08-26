@@ -82,9 +82,9 @@ const MIN_TALK_W = 340
 
 const SIDE_ROWS_MAX = 3
 
-export const LANES_FROM = 10
+const LANES_FROM = 10
 
-export const BOARD_FROM = 3
+const BOARD_FROM = 3
 
 const CARDS_NEED_H = 420
 
@@ -93,7 +93,7 @@ export function roomToFan(viewport: Viewport, sidebarW: number): boolean {
   return areaW - sidebarW - LAYOUT.gapPx - MIN_TALK_W >= MIN_TILE_W
 }
 
-export const CREW_BAR_H = 34
+const CREW_BAR_H = 34
 
 const NARROW_MARGIN = 16
 

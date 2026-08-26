@@ -1,4 +1,4 @@
-import type { ModelChoice, PermissionMode } from '@/entities/agent-session'
+import type { ModelChoice, PermissionMode } from '@/entities/claude-cli'
 import type { AuthStatus } from '@/entities/auth'
 import type { Failure } from '@/shared/lib/failure/failure.types'
 import type { FaceId } from '@/entities/user'

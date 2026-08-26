@@ -3,7 +3,9 @@ import { descendantsOf, parsePsRows } from './process-tree'
 
 describe('parsePsRows', () => {
   it('pulls the pid and parent pid out of ps output', () => {
-    const rows = parsePsRows(['  PID  PPID', '  100     1', '  205   100', ' 3010   205'].join('\n'))
+    const rows = parsePsRows(
+      ['  PID  PPID', '  100     1', '  205   100', ' 3010   205'].join('\n'),
+    )
     expect(rows).toEqual([
       { pid: 100, ppid: 1 },
       { pid: 205, ppid: 100 },

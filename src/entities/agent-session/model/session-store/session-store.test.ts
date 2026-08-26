@@ -134,9 +134,7 @@ describe('sessionStore: the full transcript of a child', () => {
   })
 
   it('does not throw when adding to an id it does not have', () => {
-    expect(() =>
-      sessionStore.appendTranscript('nope', { role: 'user', text: 'x' }),
-    ).not.toThrow()
+    expect(() => sessionStore.appendTranscript('nope', { role: 'user', text: 'x' })).not.toThrow()
   })
 })
 

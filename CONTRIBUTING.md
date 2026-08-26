@@ -8,8 +8,26 @@ that only a reviewer knows.
 npm run dev        # run the app
 npm test           # unit tests plus the convention guards
 npm run typecheck
+npm run lint       # biome: formatting and the general rules
+npm run lint:fix   # and fix what it can
 npm run build
+npm run coverage   # what the tests reach
+npm run fsd        # steiger: the layers, the segments, the cross-imports
+npm run deadcode   # knip: exports and files nothing imports
 ```
+
+Three guards, and the line between them is the point. Biome holds what any
+TypeScript project would want: formatting, accessibility, hooks, the shape of
+an expression. Steiger holds Feature-Sliced Design itself: which layer may
+import which, what belongs in `ui`, `api`, `model`, `lib` and `config`, and
+every cross-import between two slices on one layer. `tests/conventions/` holds
+what only this repo wants: the IPC contract, the catalogs, the tokens, a hook's
+file name, what may be written to disk. A new rule goes to whichever of the
+three it belongs to; nothing is written in two of them.
+
+A slice that must reach another on its own layer says so in `@x/`. The slice
+being taken from declares what the taker may have, so the dependency is read
+where it is given.
 
 ## Layout
 
@@ -30,8 +48,9 @@ tests          repo-wide convention guards
 there. Do not hand-edit those files beyond what a diff review would accept, and
 do not put your own components among them: a component that imports from
 `@/entities`, `@/widgets`, `@/pages` or `@/app` is not shared, it belongs beside
-the thing it knows about. Ours live in `src/shared/graphics/` (marks and icons)
-or in an entity's own `ui/` folder.
+the thing it knows about. Ours live in `src/shared/graphics/` (marks and icons),
+`src/shared/parts/` (a surface, a hint bubble: blocks a screen is built out of
+that mean nothing on their own), or in an entity's own `ui/` folder.
 
 ## Tests live with their module
 
@@ -46,6 +65,10 @@ shared/lib/cn.ts               ← no test, no folder
 
 A module may have more than one test file in that folder. Tests that guard a
 repo-wide rule rather than a single module go in `tests/conventions/`.
+
+A hook is named the way it is called. `useAgentDefs.ts`, not
+`use-agent-defs.ts`, so the file and the function read the same. Everything
+else stays hyphenated.
 
 ## Types live apart from logic
 
@@ -69,8 +92,17 @@ lists every place that has to handle it.
 
 ## Code
 
-**No comments.** Names and tests carry the intent. The one exception is a
-directive the toolchain reads (`@ts-expect-error`, `eslint-disable`).
+**Comments say why, not what.** The code already says what it does, and a
+comment that repeats it goes stale on the next edit. Write one for the reason
+the code could not carry: a platform's behaviour, a decision that looks wrong
+until you know what it is avoiding, a shape on disk that people already have.
+
+```ts
+// taskkill exits non-zero when the process is already gone.
+```
+
+Names and tests carry the intent, so a comment that only names the intent is
+one the code should have named instead.
 
 **Switch over repeated type checks.** Three or more comparisons against the same
 discriminant become a `switch`, so TypeScript can see which cases are covered

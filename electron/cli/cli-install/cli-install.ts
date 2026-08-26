@@ -1,5 +1,5 @@
 import { homedir } from 'node:os'
-import { agentEnv } from '@/shared/lib/shell-env/shell-env'
+import { agentEnv } from '../../spawn/shell-env/shell-env'
 import { readAuthStatus } from '../auth/auth'
 import { handle } from '../../ipc/ipc'
 import { loginPath, resetLoginPath } from '../login-path/login-path'
@@ -40,7 +40,7 @@ export function registerCliInstall(): void {
       settled: untrackChild,
       timeout: {
         ms: INSTALL_TIMEOUT_MS,
-        then: (text) =>
+        answers: (text) =>
           `${text.trim()}\nThe install did not finish within 5 minutes and was stopped`.trim(),
       },
       exit: (_code, text) => text,

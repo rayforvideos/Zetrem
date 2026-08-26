@@ -1,7 +1,6 @@
-import type { CSSProperties } from 'react'
 import type { Call } from '@/entities/agent-session'
-import { AgentSprite } from '@/entities/agent-session'
-import { targetOf, verbOf } from '@/shared/lib/tool-verb/tool-verb'
+import { AgentSprite } from '@/entities/teammate'
+import { targetOf, verbOf } from '@/entities/tool'
 import { reachOf } from '@/shared/lib/reach/reach'
 import { formatClock } from '@/shared/lib/units/units'
 import type { Scene } from '../../../lib/now/now.types'
@@ -21,10 +20,6 @@ const INK_X: Record<Scene, number> = {
   summon: 0,
   think: 15,
 }
-export const ICON_W = 30
-
-const FRAME_W = ICON_W
-const FRAME_H = 20
 
 type NowStageProps = { call: Call; live: boolean; nowMs?: number }
 
@@ -78,203 +73,20 @@ function Picture({ scene, shape, live }: PictureProps) {
   )
 }
 
-function Drawing({ scene, live }: { scene: Scene; live: boolean }) {
-  const rule = { stroke: 'currentColor', strokeWidth: 1.5, strokeLinecap: 'round' as const }
-  const page = (
-    <>
-      <rect x={9} y={4} width={34} height={26} rx={3} stroke="currentColor" strokeWidth={1.25} opacity={0.45} />
-      {[10, 15, 20, 25].map((y) => (
-        <line key={y} x1={14} y1={y} x2={y === 25 ? 30 : 38} y2={y} {...rule} opacity={0.35} />
-      ))}
-    </>
-  )
+import { Drawing } from './Drawing'
+import {
+  elapsedStyle,
+  frameStyle,
+  ringStyle,
+  rootStyle,
+  summonStyle,
+  targetStyle,
+  trackStyle,
+  verbStyle,
+  wordsStyle,
+  FRAME_H,
+  FRAME_W,
+  ICON_W,
+} from './NowStage.styles'
 
-  switch (scene) {
-    case 'read':
-      return (
-        <>
-          {page}
-          <rect
-            x={12}
-            y={7}
-            width={28}
-            height={5}
-            rx={1.5}
-            fill="currentColor"
-            opacity={0.28}
-            style={motion(live, 'zt-now-scan 2.4s ease-in-out infinite')}
-          />
-        </>
-      )
-    case 'write':
-      return (
-        <>
-          {page}
-          <line
-            x1={14}
-            y1={20}
-            x2={34}
-            y2={20}
-            {...rule}
-            opacity={0.9}
-            style={motion(live, 'zt-now-grow 1.8s ease-in-out infinite', 'left center')}
-          />
-          <line
-            x1={36}
-            y1={16}
-            x2={36}
-            y2={24}
-            {...rule}
-            style={motion(live, 'zt-pulse 1s steps(1, end) infinite')}
-          />
-        </>
-      )
-    case 'run':
-      return (
-        <>
-          <rect x={7} y={5} width={38} height={24} rx={3} stroke="currentColor" strokeWidth={1.25} opacity={0.45} />
-          <path d="M12 12 L16 15.5 L12 19" {...rule} opacity={0.8} />
-          {[0, 1, 2].map((at) => (
-            <rect key={at} x={20 + at * 6} y={14} width={4} height={3} rx={1} fill="currentColor" opacity={0.28} />
-          ))}
-          <rect
-            x={38}
-            y={14}
-            width={4}
-            height={3}
-            rx={1}
-            fill="currentColor"
-            style={motion(live, 'zt-now-tick 1.1s steps(1, end) infinite')}
-          />
-          <line x1={12} y1={24} x2={20} y2={24} {...rule} opacity={0.3} />
-        </>
-      )
-    case 'search':
-      return (
-        <>
-          {[9, 15, 21, 27].map((y, at) => (
-            <line key={y} x1={8} y1={y} x2={at % 2 === 0 ? 44 : 36} y2={y} {...rule} opacity={0.3} />
-          ))}
-          <g style={motion(live, 'zt-now-sweep 2.6s ease-in-out infinite')}>
-            <circle cx={16} cy={17} r={7} stroke="currentColor" strokeWidth={1.5} opacity={0.95} />
-            <line x1={21} y1={22} x2={25} y2={26} {...rule} opacity={0.95} />
-          </g>
-        </>
-      )
-    case 'web':
-      return (
-        <>
-          <circle cx={26} cy={17} r={11} stroke="currentColor" strokeWidth={1.25} opacity={0.45} />
-          <ellipse cx={26} cy={17} rx={4.5} ry={11} stroke="currentColor" strokeWidth={1.25} opacity={0.35} />
-          <line x1={15} y1={17} x2={37} y2={17} {...rule} opacity={0.35} />
-          <g style={motion(live, 'zt-now-orbit 3s linear infinite')} transform-origin="26 17">
-            <circle cx={26} cy={6} r={2.5} fill="currentColor" />
-          </g>
-        </>
-      )
-    default:
-      return (
-        <>
-          {[0, 1, 2].map((at) => (
-            <circle
-              key={at}
-              cx={18 + at * 8}
-              cy={17}
-              r={2.5}
-              fill="currentColor"
-              opacity={0.7}
-              style={motion(live, `zt-now-tick 1.5s ease-in-out ${at * 0.18}s infinite`)}
-            />
-          ))}
-        </>
-      )
-  }
-}
-
-function motion(live: boolean, animation: string, origin?: string): CSSProperties {
-  if (!live) return {}
-  if (origin === undefined) return { animation }
-  return { animation, transformBox: 'fill-box', transformOrigin: origin }
-}
-
-const trackStyle: CSSProperties = {
-  position: 'absolute',
-  left: 0,
-  top: 0,
-  bottom: 0,
-  background: 'linear-gradient(to right, currentColor, transparent)',
-  opacity: 0.13,
-  borderRadius: 5,
-  pointerEvents: 'none',
-}
-
-const rootStyle: CSSProperties = {
-  position: 'relative',
-  display: 'flex',
-  alignItems: 'center',
-  gap: 7,
-  minWidth: 0,
-  flex: '0 0 auto',
-  padding: '3px 5px 3px 0',
-  borderRadius: 5,
-  fontSize: 11.5,
-}
-
-const frameStyle: CSSProperties = {
-  flex: '0 0 auto',
-  width: FRAME_W,
-  height: FRAME_H,
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'flex-start',
-  transition: 'opacity 400ms ease',
-}
-
-const summonStyle: CSSProperties = {
-  position: 'relative',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'flex-start',
-  width: FRAME_W,
-  height: FRAME_H,
-}
-
-const ringStyle: CSSProperties = {
-  position: 'absolute',
-  width: 24,
-  height: 24,
-  borderRadius: '50%',
-  border: '1px solid currentColor',
-  animation: 'zt-now-ring 2s ease-out infinite',
-}
-
-const elapsedStyle: CSSProperties = {
-  flex: '0 0 auto',
-  marginLeft: 'auto',
-  paddingLeft: 8,
-  fontFamily: 'var(--zt-mono)',
-  fontVariantNumeric: 'tabular-nums',
-  fontSize: 11,
-  opacity: 0.5,
-}
-
-const wordsStyle: CSSProperties = {
-  display: 'flex',
-  alignItems: 'baseline',
-  gap: 7,
-  flex: '1 1 auto',
-  minWidth: 0,
-}
-
-const verbStyle: CSSProperties = { flex: '0 0 auto' }
-
-const targetStyle: CSSProperties = {
-  fontFamily: 'var(--zt-mono)',
-  fontSize: 11,
-  opacity: 0.75,
-  flex: '1 1 auto',
-  minWidth: 0,
-  whiteSpace: 'nowrap',
-  overflow: 'hidden',
-  textOverflow: 'ellipsis',
-}
+export { ICON_W }

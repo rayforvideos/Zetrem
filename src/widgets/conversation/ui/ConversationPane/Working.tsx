@@ -1,9 +1,9 @@
 import { useEffect, useRef } from 'react'
 import type { Turn } from '@/entities/conversation'
-import { AgentSprite } from '@/entities/agent-session'
+import { AgentSprite } from '@/entities/teammate'
 import { UserFace } from '@/entities/user'
 import type { FaceId } from '@/entities/user'
-import { ToolIcon } from '@/shared/graphics/ToolIcon/ToolIcon'
+import { ToolIcon } from '@/entities/tool'
 import { reachOf } from '@/shared/lib/reach/reach'
 import { doingOf, elapsedLabel, tokenLabel } from '../../lib/working/working'
 

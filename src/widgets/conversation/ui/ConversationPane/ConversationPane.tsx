@@ -4,17 +4,17 @@ import type { ReactNode } from 'react'
 import type { PermissionAsk, SessionStatus, StatusState } from '@/entities/agent-session'
 import type { Chore } from '@/entities/conversation'
 import type { FaceId } from '@/entities/user'
-import { AgentSprite, personaOf } from '@/entities/agent-session'
+import { AgentSprite, personaOf } from '@/entities/teammate'
 import type { Turn } from '@/entities/conversation'
 import { cn } from '@/shared/lib/cn'
 import { atEnd } from '@/shared/lib/scroll-state/scroll-state'
-import { useScrollState } from '@/shared/lib/scroll-state/use-scroll-state'
+import { useScrollState } from '@/shared/lib/scroll-state/useScrollState'
 import { shouldFollow } from '../../lib/follow/follow'
 import { askedAtMs } from '../../lib/working/working'
 import { Wordmark } from '@/shared/graphics/Wordmark/Wordmark'
 import { Markdown } from '@/shared/markdown/Markdown/Markdown'
 import { Approval } from './Approval'
-import { FirstHint } from '@/widgets/first-hint'
+import { FirstHint } from '@/shared/parts/FirstHint/FirstHint'
 import { Greeting } from './Greeting'
 import { Thinking } from './Thinking'
 import { ToolRun } from '../ToolRun/ToolRun'
@@ -90,7 +90,6 @@ export function ConversationPane({
     return () => cancelAnimationFrame(frame)
   }, [turns, permission, chores, scrollRef])
 
-
   if (turns.length === 0 && !permission) {
     return (
       <div className="relative z-[3] flex h-full gap-7">
@@ -141,7 +140,10 @@ export function ConversationPane({
                 }
                 if (turn.role === 'user') {
                   return (
-                    <div key={turn.id} className="zt-rise flex max-w-[80%] flex-col items-end gap-1 self-end">
+                    <div
+                      key={turn.id}
+                      className="zt-rise flex max-w-[80%] flex-col items-end gap-1 self-end"
+                    >
                       {turn.to !== undefined && (
                         <span
                           data-said-to
@@ -224,4 +226,3 @@ export function ConversationPane({
     </div>
   )
 }
-

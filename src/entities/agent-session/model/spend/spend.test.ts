@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import type { ResultMetrics } from '../../api/claude/status/status.types'
+import type { ResultMetrics } from '@/entities/claude-cli/@x/agent-session'
 import type { StatusState } from '../status-store/status-store.types'
 import { spentAfter } from './spend'
 
@@ -46,7 +46,12 @@ describe('spentAfter: what a turn adds to what a session has spent', () => {
   })
 
   it('takes zero tokens when there were none to begin with, since that is the truth', () => {
-    const fresh = { ...before, usd: 0, turns: 0, tokens: { in: 0, out: 0, cacheRead: 0, cacheCreate: 0 } }
+    const fresh = {
+      ...before,
+      usd: 0,
+      turns: 0,
+      tokens: { in: 0, out: 0, cacheRead: 0, cacheCreate: 0 },
+    }
     const empty = { in: 0, out: 0, cacheRead: 0, cacheCreate: 0 }
     expect(spentAfter(fresh, metrics({ tokens: empty })).tokens).toEqual(empty)
   })

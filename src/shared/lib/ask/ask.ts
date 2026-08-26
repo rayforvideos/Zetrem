@@ -1,7 +1,8 @@
 import { useRef, useState } from 'react'
 import { toast } from 'sonner'
 import { reasonOf } from '../failure/failure'
-import type { Asking, Ran } from './ask.types'
+import type { Asking } from './ask.types'
+import type { Outcome, Why } from '../outcome/outcome.types'
 import { t } from '@lingui/core/macro'
 
 export function lastLine(out: string, fallback = t`That did not work`): string {
@@ -12,8 +13,28 @@ export function lastLine(out: string, fallback = t`That did not work`): string {
   return lines.at(-1) ?? fallback
 }
 
-export function outcomeLine(result: Ran, done: string): string {
-  return result.ok ? done : lastLine(result.out)
+// The kind of failure decides the words; the evidence fills them in. A refusal
+// carries a code its own domain knows how to say, so it passes through for the
+// caller to translate (see saidOrWhy in entities/connector).
+function whyLine(why: Why): string {
+  switch (why.code) {
+    case 'timeout':
+      return t`It took too long and was stopped`
+    case 'garbled':
+      return t`Zetrem did not understand that request`
+    case 'unsupported':
+      return t`Zetrem cannot do that`
+    case 'failed':
+      return lastLine(why.said, t`It could not start`)
+    case 'refused':
+      return why.said.length > 0 ? why.said : t`That was not allowed`
+    case 'cli':
+      return lastLine(why.said)
+  }
+}
+
+export function outcomeLine(result: Outcome<unknown>, done: string): string {
+  return result.ok ? done : whyLine(result.why)
 }
 
 export function troubleLine(what: string, cause: unknown): string {

@@ -1,10 +1,15 @@
-import type { PluginRun } from '@/entities/plugin/lib/catalog/catalog.types'
-import { agentEnv } from '@/shared/lib/shell-env/shell-env'
+import { lost, won } from '@/shared/lib/outcome/outcome'
+import type { Outcome } from '@/shared/lib/outcome/outcome.types'
+import { agentEnv } from '../shell-env/shell-env'
 import { claudeBin, loginPath } from '../../cli/login-path/login-path'
 import { runSettled, trackChild, untrackChild } from '../run-settled/run-settled'
 
-export async function runClaude(args: string[], timeoutMs: number, cwd?: string): Promise<PluginRun> {
-  return runSettled<PluginRun>({
+export async function runClaude(
+  args: string[],
+  timeoutMs: number,
+  cwd?: string,
+): Promise<Outcome<string>> {
+  return runSettled<Outcome<string>>({
     bin: await claudeBin(),
     args,
     env: agentEnv(process.env, await loginPath()),
@@ -12,8 +17,8 @@ export async function runClaude(args: string[], timeoutMs: number, cwd?: string)
     mergeStderr: true,
     spawned: trackChild,
     settled: untrackChild,
-    timeout: { ms: timeoutMs, then: (text) => ({ ok: false, out: `${text}\ntimed out` }) },
-    exit: (code, text) => ({ ok: code === 0, out: text }),
-    error: (cause) => ({ ok: false, out: cause.message }),
+    timeout: { ms: timeoutMs, answers: (text) => lost('timeout', text) },
+    exit: (code, text) => (code === 0 ? won(text) : lost('cli', text)),
+    error: (cause) => lost('failed', cause.message),
   })
 }

@@ -1,13 +1,26 @@
 import { useRef, useState } from 'react'
 import type { FormEvent, KeyboardEvent } from 'react'
 import { ArrowUp, Paperclip, Shield, Square, X } from 'lucide-react'
-import { MODELS, PERMISSION_MODES, modelsWith } from '@/entities/agent-session'
-import type { ModelChoice, PermissionMode } from '@/entities/agent-session'
+import { MODELS, PERMISSION_MODES, modelsWith } from '@/entities/settings'
+import type { ModelChoice, PermissionMode } from '@/entities/claude-cli'
 import { modifierKey } from '@/shared/lib/platform/platform'
 import { Button } from '@/shared/ui/button'
-import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupTextarea } from '@/shared/ui/input-group'
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupButton,
+  InputGroupTextarea,
+} from '@/shared/ui/input-group'
 import { Kbd, KbdGroup } from '@/shared/ui/kbd'
-import { beganComposing, endedComposing, maySendNow, newComposer, sendKey, sent, takeOwed } from '../../lib/composer/composer'
+import {
+  beganComposing,
+  endedComposing,
+  maySendNow,
+  newComposer,
+  sendKey,
+  sent,
+  takeOwed,
+} from '../../lib/composer/composer'
 import { ChoicePicker } from '../ChoicePicker/ChoicePicker'
 import { AttachedRow } from './AttachedRow'
 import type { ComposerProps } from './Composer.types'

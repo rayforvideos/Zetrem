@@ -73,9 +73,10 @@ describe('the list of folders someone worked in', () => {
     await rememberProject(a)
     await rememberProject(b)
     await rememberProject(a)
-    const written = JSON.parse(
-      readFileSync(join(boundary.userData, 'project.json'), 'utf8'),
-    ) as { path: string; recent: string[] }
+    const written = JSON.parse(readFileSync(join(boundary.userData, 'project.json'), 'utf8')) as {
+      path: string
+      recent: string[]
+    }
     expect(written.path).toBe(a)
     expect(written.recent).toEqual([a, b])
   })

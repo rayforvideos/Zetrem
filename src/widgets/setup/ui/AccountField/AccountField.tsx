@@ -14,7 +14,11 @@ import { t } from '@lingui/core/macro'
 import { Trans } from '@lingui/react/macro'
 import { Field, FieldDescription, FieldLabel } from '@/shared/ui/field'
 import { Spinner } from '@/shared/ui/spinner'
-import { signOutHint, signOutTitle, signOutWarning } from '../../lib/sign-out-warning/sign-out-warning'
+import {
+  signOutHint,
+  signOutTitle,
+  signOutWarning,
+} from '../../lib/sign-out-warning/sign-out-warning'
 import type { Account } from '../SetupPane/SetupPane.types'
 
 export function AccountField({ account }: { account: Account }) {
@@ -41,9 +45,7 @@ export function AccountField({ account }: { account: Account }) {
             </Trans>
           </FieldDescription>
           {account.error !== null && (
-            <FieldDescription className="w-full text-destructive">
-              {account.error}
-            </FieldDescription>
+            <FieldDescription className="w-full text-destructive">{account.error}</FieldDescription>
           )}
         </div>
       ) : auth?.state === 'signed-in' ? (
@@ -112,4 +114,3 @@ export function AccountField({ account }: { account: Account }) {
     </Field>
   )
 }
-

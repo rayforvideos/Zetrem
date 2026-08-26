@@ -6,7 +6,10 @@ beforeEach(() => {
 })
 
 const session = {
-  id: 's1', cwd: '/w', model: 'claude-opus-5[1m]', permissionMode: 'acceptEdits',
+  id: 's1',
+  cwd: '/w',
+  model: 'claude-opus-5[1m]',
+  permissionMode: 'acceptEdits',
   cliVersion: '2.1.231',
   mcp: [{ name: 'playwright', status: 'connected' }],
   tools: [],
@@ -17,8 +20,11 @@ function metrics(costUsd: number, contextWindow: number | null = 1_000_000) {
   return {
     costUsd,
     tokens: { in: 6, out: 261, cacheRead: 76424, cacheCreate: 14862 },
-    durationMs: 10485, turns: 3,
-    contextWindow, apiErrorStatus: null, stopReason: 'end_turn'
+    durationMs: 10485,
+    turns: 3,
+    contextWindow,
+    apiErrorStatus: null,
+    stopReason: 'end_turn',
   }
 }
 
@@ -68,7 +74,13 @@ describe('statusStore: the last thing known to be true', () => {
   it('holds the latest limit warning', () => {
     statusStore.apply({
       type: 'limit',
-      limit: { kind: 'seven_day', utilization: 0.28, resetsAtMs: 1787173200000, overage: false, status: 'allowed_warning' }
+      limit: {
+        kind: 'seven_day',
+        utilization: 0.28,
+        resetsAtMs: 1787173200000,
+        overage: false,
+        status: 'allowed_warning',
+      },
     })
     expect(statusStore.get().limits[0]?.utilization).toBe(0.28)
   })
@@ -76,11 +88,23 @@ describe('statusStore: the last thing known to be true', () => {
   it('keeps a five hour and a weekly limit side by side, since one does not replace the other', () => {
     statusStore.apply({
       type: 'limit',
-      limit: { kind: 'seven_day', utilization: 0.5, resetsAtMs: 1787173200000, overage: false, status: 'allowed' }
+      limit: {
+        kind: 'seven_day',
+        utilization: 0.5,
+        resetsAtMs: 1787173200000,
+        overage: false,
+        status: 'allowed',
+      },
     })
     statusStore.apply({
       type: 'limit',
-      limit: { kind: 'five_hour', utilization: 0.1, resetsAtMs: 1787000000000, overage: false, status: 'allowed' }
+      limit: {
+        kind: 'five_hour',
+        utilization: 0.1,
+        resetsAtMs: 1787000000000,
+        overage: false,
+        status: 'allowed',
+      },
     })
     expect(statusStore.get().limits.map((limit) => limit.kind)).toEqual(['five_hour', 'seven_day'])
   })
@@ -89,7 +113,13 @@ describe('statusStore: the last thing known to be true', () => {
     for (const utilization of [0.2, 0.4]) {
       statusStore.apply({
         type: 'limit',
-        limit: { kind: 'seven_day', utilization, resetsAtMs: 1787173200000, overage: false, status: 'allowed' }
+        limit: {
+          kind: 'seven_day',
+          utilization,
+          resetsAtMs: 1787173200000,
+          overage: false,
+          status: 'allowed',
+        },
       })
     }
     expect(statusStore.get().limits).toHaveLength(1)
@@ -119,7 +149,11 @@ describe('statusStore: the last thing known to be true', () => {
 
   it('takes update news from us, not from the CLI', () => {
     statusStore.setUpdate({ current: '2.1.231', latest: '2.1.240', managedBy: 'Homebrew' })
-    expect(statusStore.get().update).toEqual({ current: '2.1.231', latest: '2.1.240', managedBy: 'Homebrew' })
+    expect(statusStore.get().update).toEqual({
+      current: '2.1.231',
+      latest: '2.1.240',
+      managedBy: 'Homebrew',
+    })
   })
 
   it('lets go of everything from the last session, or the new one measures against the old cost', () => {
@@ -128,7 +162,13 @@ describe('statusStore: the last thing known to be true', () => {
     statusStore.apply({ type: 'metrics', metrics: metrics(0.9) })
     statusStore.apply({
       type: 'limit',
-      limit: { kind: 'seven_day', utilization: 0.28, resetsAtMs: 1787173200000, overage: false, status: 'allowed_warning' }
+      limit: {
+        kind: 'seven_day',
+        utilization: 0.28,
+        resetsAtMs: 1787173200000,
+        overage: false,
+        status: 'allowed_warning',
+      },
     })
 
     statusStore.reset()
@@ -144,7 +184,11 @@ describe('statusStore: the last thing known to be true', () => {
   it('keeps the CLI version through a reset, because that is a fact about the install', () => {
     statusStore.setUpdate({ current: '2.1.231', latest: '2.1.240', managedBy: 'npm' })
     statusStore.reset()
-    expect(statusStore.get().update).toEqual({ current: '2.1.231', latest: '2.1.240', managedBy: 'npm' })
+    expect(statusStore.get().update).toEqual({
+      current: '2.1.231',
+      latest: '2.1.240',
+      managedBy: 'npm',
+    })
   })
 
   it('never reports a negative turn cost, even if the total drops', () => {
@@ -155,7 +199,9 @@ describe('statusStore: the last thing known to be true', () => {
 
   it('says nothing when context has not changed, so the same number is not redrawn every round trip', () => {
     let count = 0
-    const stop = statusStore.subscribe(() => { count += 1 })
+    const stop = statusStore.subscribe(() => {
+      count += 1
+    })
     statusStore.apply({ type: 'context', used: 28364 })
     expect(count).toBe(1)
     statusStore.apply({ type: 'context', used: 28364 })
@@ -165,7 +211,9 @@ describe('statusStore: the last thing known to be true', () => {
 
   it('tells subscribers about a change and stays quiet when there is none', () => {
     let count = 0
-    const stop = statusStore.subscribe(() => { count += 1 })
+    const stop = statusStore.subscribe(() => {
+      count += 1
+    })
     statusStore.apply({ type: 'activity', activity: 'requesting' })
     expect(count).toBe(1)
     statusStore.apply({ type: 'activity', activity: 'requesting' })
@@ -207,7 +255,7 @@ describe('restoreChat: reopening a chat brings its totals back', () => {
       cacheWrite: 900,
       durationMs: 1800,
       contextUsed: 90_000,
-      contextWindow: 1_000_000
+      contextWindow: 1_000_000,
     })
     const state = statusStore.get()
     expect(state.cost.usd).toBe(0.42)

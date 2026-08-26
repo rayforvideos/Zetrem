@@ -50,7 +50,8 @@ export function withoutPlumbing(text: string): string {
   const kept: string[] = []
   for (const line of withoutBrackets(withoutUsage(text)).split('\n')) {
     if (anAside(line)) continue
-    if (line.trim().length === 0 && (kept.length === 0 || kept.at(-1)?.trim().length === 0)) continue
+    if (line.trim().length === 0 && (kept.length === 0 || kept.at(-1)?.trim().length === 0))
+      continue
     kept.push(line)
   }
   while (kept.length > 0 && kept.at(-1)?.trim().length === 0) kept.pop()

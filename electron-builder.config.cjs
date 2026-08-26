@@ -12,91 +12,84 @@ const notarising =
   Boolean(process.env.APPLE_KEYCHAIN_PROFILE)
 
 module.exports = {
-  "appId": "com.zetrem.app",
-  "productName": "Zetrem",
-  "directories": {
-    "output": "release"
+  appId: 'com.zetrem.app',
+  productName: 'Zetrem',
+  directories: {
+    output: 'release',
   },
-  "files": [
-    "out/**",
-    "package.json"
-  ],
-  "mac": {
-    "icon": "resources/icon.icns",
-    "target": [
+  files: ['out/**', 'package.json'],
+  mac: {
+    icon: 'resources/icon.icns',
+    target: [
       {
-        "target": "dmg",
-        "arch": [
-          "universal"
-        ]
+        target: 'dmg',
+        arch: ['universal'],
       },
       {
-        "target": "zip",
-        "arch": [
-          "universal"
-        ]
-      }
+        target: 'zip',
+        arch: ['universal'],
+      },
     ],
-    "category": "public.app-category.developer-tools",
-    "identity": process.env.CSC_NAME,
-    "hardenedRuntime": true,
-    "gatekeeperAssess": false,
-    "entitlements": "build/entitlements.mac.plist",
-    "entitlementsInherit": "build/entitlements.mac.plist",
-    "notarize": notarising
+    category: 'public.app-category.developer-tools',
+    identity: process.env.CSC_NAME,
+    hardenedRuntime: true,
+    gatekeeperAssess: false,
+    entitlements: 'build/entitlements.mac.plist',
+    entitlementsInherit: 'build/entitlements.mac.plist',
+    notarize: notarising,
   },
-  "win": {
-    "icon": "resources/icon.png",
-    "target": [
+  win: {
+    icon: 'resources/icon.png',
+    target: [
       {
-        "target": "nsis",
-        "arch": [
-          "x64"
-        ]
-      }
-    ]
+        target: 'nsis',
+        arch: ['x64'],
+      },
+    ],
   },
-  "nsis": {
-    "oneClick": false,
-    "allowToChangeInstallationDirectory": true
+  nsis: {
+    oneClick: false,
+    allowToChangeInstallationDirectory: true,
   },
-  "dmg": {
-    "title": "Zetrem ${version}",
-    "background": "build/dmg-background.tiff",
-    "window": {
-      "width": 660,
-      "height": 400
+  dmg: {
+    // biome-ignore lint/suspicious/noTemplateCurlyInString: electron-builder fills these in itself, so a template literal would hand it the answer instead of the question
+    title: 'Zetrem ${version}',
+    background: 'build/dmg-background.tiff',
+    window: {
+      width: 660,
+      height: 400,
     },
-    "iconSize": 128,
-    "contents": [
+    iconSize: 128,
+    contents: [
       {
-        "x": 170,
-        "y": 180,
-        "type": "file"
+        x: 170,
+        y: 180,
+        type: 'file',
       },
       {
-        "x": 490,
-        "y": 180,
-        "type": "link",
-        "path": "/Applications"
-      }
-    ]
+        x: 490,
+        y: 180,
+        type: 'link',
+        path: '/Applications',
+      },
+    ],
   },
-  "artifactName": "${productName}-${version}-${arch}.${ext}",
+  // biome-ignore lint/suspicious/noTemplateCurlyInString: electron-builder fills these in itself, so a template literal would hand it the answer instead of the question
+  artifactName: '${productName}-${version}-${arch}.${ext}',
   // electron-updater in the packaged app reads this to know where releases
   // live; it also makes electron-builder emit the latest*.yml metadata the
   // updater compares versions against. On a tag the Windows installer is
   // published by CI; the mac one is published from wherever the signing
   // certificate is, with `--publish always` and a GH_TOKEN.
-  "publish": [
+  publish: [
     {
-      "provider": "github",
-      "owner": "rayforvideos",
-      "repo": "Zetrem",
+      provider: 'github',
+      owner: 'rayforvideos',
+      repo: 'Zetrem',
       // A draft is invisible to anyone not signed in, and the download page
       // reads the public list, so a draft release is a release nobody gets.
       // Every release so far has gone out as a prerelease; this says so.
-      "releaseType": "prerelease"
-    }
-  ]
+      releaseType: 'prerelease',
+    },
+  ],
 }

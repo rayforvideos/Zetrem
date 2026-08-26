@@ -1,8 +1,15 @@
 import { mkdir, readFile, readdir, rename, rm, stat } from 'node:fs/promises'
 import { join } from 'node:path'
 import { app } from 'electron'
-import { isChatId, readTranscript, summaryOf } from '@/entities/conversation/lib/transcript/transcript'
-import type { ChatSummary, Transcript } from '@/entities/conversation/lib/transcript/transcript.types'
+import {
+  isChatId,
+  readTranscript,
+  summaryOf,
+} from '@/entities/conversation/model/transcript/transcript'
+import type {
+  ChatSummary,
+  Transcript,
+} from '@/entities/conversation/model/transcript/transcript.types'
 import { handle } from '../../ipc/ipc'
 import { queue } from '../queue/queue'
 import { saveFile } from '../save-file/save-file'
@@ -119,8 +126,8 @@ export function registerTranscriptStore(): void {
       const kept = transcript.spend === null ? await load(project, transcript.id) : null
       const merged = kept?.spend == null ? transcript : { ...transcript, spend: kept.spend }
       await mkdir(folder(project), { recursive: true }).catch(() => undefined)
-      await saveFile(chatPath(project, merged.id), JSON.stringify(merged)).catch(
-        (cause: unknown) => console.error('could not save the conversation', cause),
+      await saveFile(chatPath(project, merged.id), JSON.stringify(merged)).catch((cause: unknown) =>
+        console.error('could not save the conversation', cause),
       )
       await prune(project)
     })
@@ -129,6 +136,8 @@ export function registerTranscriptStore(): void {
   handle('transcript:forget', async (_event, project: unknown, id: unknown): Promise<void> => {
     const target = named(project, id)
     if (target === null) return
-    await queued(() => rm(chatPath(target.project, target.id), { force: true }).catch(() => undefined))
+    await queued(() =>
+      rm(chatPath(target.project, target.id), { force: true }).catch(() => undefined),
+    )
   })
 }

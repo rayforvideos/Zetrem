@@ -6,6 +6,8 @@ import { saveFile } from '../save-file/save-file'
 
 const RECENT_MAX = 8
 
+// On disk: project.json under userData, the shape from before projects.json.
+// Still read so an old install seeds its project list from it.
 type Memory = { path?: string; recent?: string[] }
 
 function memoryPath(): string {

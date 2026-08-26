@@ -1,6 +1,6 @@
 import type { LineReader } from './line-reader.types'
 
-export const LINE_MAX = 1_000_000
+const LINE_MAX = 1_000_000
 
 export function lineReader(max: number = LINE_MAX): LineReader {
   let held = ''

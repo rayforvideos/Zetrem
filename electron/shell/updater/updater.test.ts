@@ -35,24 +35,24 @@ vi.mock('electron-updater', () => ({
   // The module under test takes the CJS default and reads autoUpdater off it.
   default: {
     autoUpdater: {
-    set autoDownload(on: boolean) {
-      boundary.flags.autoDownload = on
-    },
-    set autoInstallOnAppQuit(on: boolean) {
-      boundary.flags.autoInstallOnAppQuit = on
-    },
-    set allowPrerelease(on: boolean) {
-      boundary.flags.allowPrerelease = on
-    },
-    on: (name: string, listener: Downloaded) => {
-      boundary.bound.push(name)
-      boundary.listeners.set(name, listener)
-    },
-    checkForUpdates: async () => {
-      boundary.checks += 1
-      if (boundary.checkFails) throw new Error('offline')
-      return null
-    },
+      set autoDownload(on: boolean) {
+        boundary.flags.autoDownload = on
+      },
+      set autoInstallOnAppQuit(on: boolean) {
+        boundary.flags.autoInstallOnAppQuit = on
+      },
+      set allowPrerelease(on: boolean) {
+        boundary.flags.allowPrerelease = on
+      },
+      on: (name: string, listener: Downloaded) => {
+        boundary.bound.push(name)
+        boundary.listeners.set(name, listener)
+      },
+      checkForUpdates: async () => {
+        boundary.checks += 1
+        if (boundary.checkFails) throw new Error('offline')
+        return null
+      },
       quitAndInstall: () => {
         boundary.installs += 1
       },
@@ -65,11 +65,19 @@ vi.mock('../../ipc/ipc', () => ({
     boundary.handled.push(channel)
     boundary.channels.set(channel, listener)
   },
+  push: (
+    target: { isDestroyed(): boolean; send(channel: string, payload: unknown): void },
+    channel: string,
+    payload: unknown,
+  ) => {
+    if (!target.isDestroyed()) target.send(channel, payload)
+  },
 }))
 
 function fakeWindow(): unknown {
   return {
     webContents: {
+      isDestroyed: () => false,
       send: (channel: string, version: unknown) => boundary.sent.push({ channel, version }),
     },
   }

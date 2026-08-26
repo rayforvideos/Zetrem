@@ -1,8 +1,8 @@
 import type { StatusState, UpdateInfo } from './status-store.types'
 
-import type { StatusEvent } from '../../api/claude/status/status.types'
+import type { StatusEvent } from '@/entities/claude-cli/@x/agent-session'
 import { withLimit } from '../limits/limits'
-import type { ChatSpend } from '@/entities/conversation'
+import type { ChatSpend } from '@/entities/conversation/@x/agent-session'
 import { spentAfter } from '../spend/spend'
 
 const EMPTY: StatusState = {

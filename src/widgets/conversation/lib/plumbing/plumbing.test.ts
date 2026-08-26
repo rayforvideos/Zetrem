@@ -19,7 +19,9 @@ hi
 agentId: aed12f (use SendMessage with to: 'aed12f' to continue this agent)
 <usage>subagent_tokens: 16208
 tool_uses: 1</usage>`
-    expect(withoutPlumbing(said)).toBe('The command completed successfully. Here is the output:\n\nhi')
+    expect(withoutPlumbing(said)).toBe(
+      'The command completed successfully. Here is the output:\n\nhi',
+    )
   })
 
   it('leaves an ordinary tool result alone', () => {

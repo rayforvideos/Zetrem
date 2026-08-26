@@ -1,5 +1,5 @@
 import type { CSSProperties } from 'react'
-import { AgentSprite, personaOf, useModel } from '@/entities/agent-session'
+import { AgentSprite, personaOf, useModel } from '@/entities/teammate'
 import type { AgentSession } from '@/entities/agent-session'
 import { modelLabel } from '@/shared/lib/model-label/model-label'
 import { X } from 'lucide-react'

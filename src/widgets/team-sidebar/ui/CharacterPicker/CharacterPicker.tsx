@@ -1,5 +1,5 @@
-import { CHARACTERS, spriteSrc } from '@/entities/agent-session'
-import type { CharacterId } from '@/entities/agent-session'
+import { CHARACTERS, spriteSrc } from '@/entities/teammate'
+import type { CharacterId } from '@/entities/teammate'
 import { cn } from '@/shared/lib/cn'
 import { RadioGroup, RadioGroupItem } from '@/shared/ui/radio-group'
 import { t } from '@lingui/core/macro'

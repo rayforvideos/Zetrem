@@ -1,7 +1,7 @@
 import { t } from '@lingui/core/macro'
 import type { AgentDefDraft } from '@/entities/agent-def'
-import { DEFAULT_CHARACTER, isCharacterId } from '@/entities/agent-session'
-import type { CharacterId } from '@/entities/agent-session'
+import { DEFAULT_CHARACTER, isCharacterId } from '@/entities/teammate'
+import type { CharacterId } from '@/entities/teammate'
 import type { MemberFields } from './member-draft.types'
 
 export function initialCharacter(initial: AgentDefDraft | null): CharacterId | null {

@@ -1,12 +1,12 @@
 import { useEffect, useRef } from 'react'
 import type { PermissionAsk } from '@/entities/agent-session'
-import { toolShape } from '@/shared/lib/tool-shape/tool-shape'
+import { toolShape } from '@/entities/tool'
 import { modifierKey } from '@/shared/lib/platform/platform'
 import { layerOver } from '@/shared/lib/modal/modal'
 import { armed } from '@/widgets/conversation/lib/arming/arming'
 import { Button } from '@/shared/ui/button'
 import { Kbd, KbdGroup } from '@/shared/ui/kbd'
-import { ToolIcon } from '@/shared/graphics/ToolIcon/ToolIcon'
+import { ToolIcon } from '@/entities/tool'
 import { t } from '@lingui/core/macro'
 
 export function Approval({
@@ -77,7 +77,12 @@ export function Approval({
             <Kbd className="bg-primary-foreground/15 text-primary-foreground/70">Enter</Kbd>
           </KbdGroup>
         </Button>
-        <Button size="sm" variant="secondary" onClick={() => decide(false)} className="rounded-full">
+        <Button
+          size="sm"
+          variant="secondary"
+          onClick={() => decide(false)}
+          className="rounded-full"
+        >
           {t`Deny`}
           <Kbd>Esc</Kbd>
         </Button>

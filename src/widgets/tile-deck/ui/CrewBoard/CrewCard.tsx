@@ -1,7 +1,7 @@
 import type { CSSProperties } from 'react'
-import { AgentSprite, useModel } from '@/entities/agent-session'
+import { AgentSprite, useModel } from '@/entities/teammate'
 import type { AgentSession } from '@/entities/agent-session'
-import { ToolIcon } from '@/shared/graphics/ToolIcon/ToolIcon'
+import { ToolIcon } from '@/entities/tool'
 import { reachOf } from '@/shared/lib/reach/reach'
 import { formatClock } from '@/shared/lib/units/units'
 import { Button } from '@/shared/ui/button'
@@ -45,7 +45,11 @@ export function CrewCard({
       <span style={headStyle}>
         <AgentSprite subagentType={lane.subagentType} state={session.status} size={24} />
         <span style={nameStyle}>{lane.name}</span>
-        {model !== null && <span data-model style={modelStyle}>{model}</span>}
+        {model !== null && (
+          <span data-model style={modelStyle}>
+            {model}
+          </span>
+        )}
         <span style={clockStyle}>{formatClock(lane.outMs / 1000)}</span>
       </span>
 

@@ -1,5 +1,5 @@
 import type { Chore } from '@/entities/conversation'
-import { ToolIcon } from '@/shared/graphics/ToolIcon/ToolIcon'
+import { ToolIcon } from '@/entities/tool'
 import { reachOf } from '@/shared/lib/reach/reach'
 import { elapsedLabel } from '../../lib/working/working'
 import { t } from '@lingui/core/macro'

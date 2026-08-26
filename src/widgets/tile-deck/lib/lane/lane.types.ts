@@ -1,4 +1,4 @@
-import type { ToolShape } from '@/shared/lib/tool-shape/tool-shape.types'
+import type { ToolShape } from '@/entities/tool'
 
 export type Lane = {
   id: string

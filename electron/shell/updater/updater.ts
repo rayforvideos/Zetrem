@@ -3,7 +3,7 @@ import { app, BrowserWindow } from 'electron'
 // named import fails at load time in the packaged ESM main. Only the default
 // import survives both.
 import updater from 'electron-updater'
-import { handle } from '../../ipc/ipc'
+import { handle, push } from '../../ipc/ipc'
 
 const { autoUpdater } = updater
 
@@ -38,7 +38,7 @@ export function registerUpdater(): void {
   autoUpdater.on('update-downloaded', (info) => {
     readyVersion = info.version
     for (const win of BrowserWindow.getAllWindows()) {
-      win.webContents.send('updater:ready', info.version)
+      push(win.webContents, 'updater:ready', info.version)
     }
   })
 

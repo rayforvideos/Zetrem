@@ -9,5 +9,5 @@ export {
   renamed,
   summaryOf,
   titleOf,
-} from './lib/transcript/transcript'
-export type { ChatSpend, ChatSummary, Transcript } from './lib/transcript/transcript.types'
+} from './model/transcript/transcript'
+export type { ChatSpend, ChatSummary, Transcript } from './model/transcript/transcript.types'

@@ -3,7 +3,15 @@ import type { Call } from '@/entities/agent-session'
 import { currentCall, sceneOf } from './now'
 
 function call(id: string, overrides: Partial<Call> = {}): Call {
-  return { id, line: `Read ${id}.ts`, startedAtMs: 0, endedAtMs: 100, failed: false, note: '', ...overrides }
+  return {
+    id,
+    line: `Read ${id}.ts`,
+    startedAtMs: 0,
+    endedAtMs: 100,
+    failed: false,
+    note: '',
+    ...overrides,
+  }
 }
 
 describe('currentCall: what the agent has its hands on right now', () => {

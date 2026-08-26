@@ -1,4 +1,4 @@
-import type { RateLimit } from '../../api/claude/status/status.types'
+import type { RateLimit } from '@/entities/claude-cli/@x/agent-session'
 
 const ORDER = ['five_hour', 'seven_day', 'seven_day_opus', 'seven_day_sonnet']
 
@@ -11,8 +11,6 @@ export function withLimit(held: RateLimit[], next: RateLimit): RateLimit[] {
   const before = held.find((limit) => limit.kind === next.kind)
   const rest = held.filter((limit) => limit.kind !== next.kind)
   const kept =
-    next.utilization === null
-      ? { ...next, utilization: before?.utilization ?? null }
-      : next
+    next.utilization === null ? { ...next, utilization: before?.utilization ?? null } : next
   return [...rest, kept].sort((a, b) => rank(a.kind) - rank(b.kind))
 }

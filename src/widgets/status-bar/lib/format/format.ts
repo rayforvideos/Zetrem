@@ -37,16 +37,16 @@ function wiredOf(status: StatusState, connectors: Connector[]): Wired | null {
   }
 }
 
-export function cells(
-  status: StatusState,
-  connectors: Connector[] = [],
-  checked = true,
-): Cell[] {
+export function cells(status: StatusState, connectors: Connector[] = [], checked = true): Cell[] {
   const out: Cell[] = []
 
   const percent = contextPercent(status.context)
   if (percent !== null && percent >= CONTEXT_WARN * 100) {
-    out.push({ key: 'context', text: t`Context ${100 - percent}% left, compacting soon`, warn: true })
+    out.push({
+      key: 'context',
+      text: t`Context ${100 - percent}% left, compacting soon`,
+      warn: true,
+    })
   }
 
   const wired = checked ? wiredOf(status, connectors) : null

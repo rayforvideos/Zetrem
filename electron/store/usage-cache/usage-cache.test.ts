@@ -25,7 +25,10 @@ describe('stillWorthShowing: whether a saved reading is worth putting up first',
 
 describe('readKept: taking the saved reading back off disk', () => {
   it('reads back what was written', () => {
-    expect(readKept('{"report":"5-hour 20%","atMs":42}')).toEqual({ report: '5-hour 20%', atMs: 42 })
+    expect(readKept('{"report":"5-hour 20%","atMs":42}')).toEqual({
+      report: '5-hour 20%',
+      atMs: 42,
+    })
   })
 
   it('returns nothing for a file that is not the shape it expects', () => {

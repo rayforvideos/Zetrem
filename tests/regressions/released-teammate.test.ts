@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
-import { allowedStock, stockAgents } from '@/entities/agent-session/model/stock/stock'
-import { remembered } from '@/pages/workspace/model/remembered/remembered'
+import { allowedStock, stockAgents } from '@/entities/teammate/model/stock/stock'
+import { remembered } from '@/pages/workspace/model/chat/remembered/remembered'
 
 // A teammate that had been let go kept turning up under "Claude Code", switched
 // on. Four fixes failed because each tried to work out, after the fact, which
@@ -16,7 +16,10 @@ const THEIRS = ['claude', 'Explore', 'general-purpose', 'Plan', 'statusline-setu
 
 describe('a released teammate cannot become one of Claude Code’s own', () => {
   it('learns the agents from a probe that was handed nobody', () => {
-    const learned = remembered({ tools: [], agents: THEIRS, probed: true }, { tools: [], agents: [] })
+    const learned = remembered(
+      { tools: [], agents: THEIRS, probed: true },
+      { tools: [], agents: [] },
+    )
     expect(learned?.knownAgents).toEqual(THEIRS)
   })
 
@@ -31,7 +34,10 @@ describe('a released teammate cannot become one of Claude Code’s own', () => {
   })
 
   it('does not show a released teammate among their agents', () => {
-    const learned = remembered({ tools: [], agents: THEIRS, probed: true }, { tools: [], agents: [] })
+    const learned = remembered(
+      { tools: [], agents: THEIRS, probed: true },
+      { tools: [], agents: [] },
+    )
     const shown = stockAgents(learned?.knownAgents ?? [], ['시에나'])
     expect(shown).not.toContain('TTT')
   })

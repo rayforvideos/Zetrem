@@ -1,4 +1,4 @@
-import type { Sent } from '@/entities/attachment/lib/attachment/attachment.types'
+import type { Sent } from '@/entities/attachment/@x/conversation'
 
 export type ToolResult = {
   stdout: string
@@ -30,7 +30,6 @@ export type Turn = {
   startedAtMs: number
   to?: string
 }
-
 
 export type Chore = {
   readonly id: string

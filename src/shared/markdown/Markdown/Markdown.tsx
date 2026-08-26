@@ -26,9 +26,7 @@ export const Markdown = memo(function Markdown({
         components={{
           h1: ({ children }) => <h1 className="mt-6 mb-2 text-base font-semibold">{children}</h1>,
           h2: ({ children }) => <h2 className="mt-6 mb-2 text-base font-semibold">{children}</h2>,
-          h3: ({ children }) => (
-            <h3 className="mt-5 mb-1.5 text-base font-semibold">{children}</h3>
-          ),
+          h3: ({ children }) => <h3 className="mt-5 mb-1.5 text-base font-semibold">{children}</h3>,
           p: ({ children }) => <p className="my-3.5 first:mt-0 last:mb-0">{children}</p>,
           ul: ({ children }) => (
             <ul className="my-3.5 flex flex-col gap-1.5 pl-1 [&>li]:relative [&>li]:pl-4 [&>li]:before:absolute [&>li]:before:top-[0.62em] [&>li]:before:left-[3px] [&>li]:before:size-[3px] [&>li]:before:rounded-full [&>li]:before:bg-muted-foreground">
@@ -36,7 +34,9 @@ export const Markdown = memo(function Markdown({
             </ul>
           ),
           ol: ({ children }) => (
-            <ol className="my-3.5 flex list-decimal flex-col gap-1.5 pl-5 [&>li]:pl-1">{children}</ol>
+            <ol className="my-3.5 flex list-decimal flex-col gap-1.5 pl-5 [&>li]:pl-1">
+              {children}
+            </ol>
           ),
           strong: ({ children }) => <strong className="font-semibold">{children}</strong>,
           em: ({ children }) => <em className="italic">{children}</em>,
@@ -87,8 +87,10 @@ function CodeBlock({ code, language }: { code: string; language: string }) {
       {({ tokens, getLineProps, getTokenProps }) => (
         <pre className="zt-scroll my-3 overflow-x-auto rounded-xl bg-card p-3 font-mono text-sm leading-[1.6]">
           {tokens.map((line, i) => (
+            // biome-ignore lint/suspicious/noArrayIndexKey: prism hands the code back as lines, named by nothing but where they sit
             <div key={i} {...getLineProps({ line })}>
               {line.map((token, key) => (
+                // biome-ignore lint/suspicious/noArrayIndexKey: and each line as tokens, the same way
                 <span key={key} {...getTokenProps({ token })} />
               ))}
             </div>

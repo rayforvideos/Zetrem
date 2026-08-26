@@ -31,11 +31,16 @@ describe('CallLog: every tool the agent reached for, and what came back', () => 
   })
 
   it('marks a call that failed instead of leaving it looking done', () => {
-    expect(draw([call('a', 'Bash npx tsc', { failed: true })], false)).toContain('data-call="failed"')
+    expect(draw([call('a', 'Bash npx tsc', { failed: true })], false)).toContain(
+      'data-call="failed"',
+    )
   })
 
   it('fills a slow call further across its row than a quick one', () => {
-    const html = draw([call('a', 'Read x', { endedAtMs: 20 }), call('b', 'Bash npm test', { endedAtMs: 30_000 })], false)
+    const html = draw(
+      [call('a', 'Read x', { endedAtMs: 20 }), call('b', 'Bash npm test', { endedAtMs: 30_000 })],
+      false,
+    )
     const widths = [...html.matchAll(/width:([\d.]+)%/g)].map((hit) => Number(hit[1]))
     expect(widths[1]!).toBeGreaterThan(widths[0]!)
   })

@@ -1,4 +1,4 @@
-import type { ResultMetrics } from '../../api/claude/status/status.types'
+import type { ResultMetrics } from '@/entities/claude-cli/@x/agent-session'
 import type { StatusState } from '../status-store/status-store.types'
 
 type Spend = StatusState['cost']

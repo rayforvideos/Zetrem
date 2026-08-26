@@ -155,4 +155,3 @@ export function ProjectSwitcher({ projects }: { projects: ProjectsProps }) {
     </Collapsible>
   )
 }
-

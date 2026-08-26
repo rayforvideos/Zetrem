@@ -7,9 +7,10 @@ describe('startBlocker: naming only what is actually missing', () => {
   })
 
   it('asks only for the project when the account is already in hand', () => {
-    expect(startBlocker(true, false)?.message, 'nobody is asked to do again what is already done').toBe(
-      'Choose a project folder',
-    )
+    expect(
+      startBlocker(true, false)?.message,
+      'nobody is asked to do again what is already done',
+    ).toBe('Choose a project folder')
   })
 
   it('asks only for the account when the folder is already picked', () => {

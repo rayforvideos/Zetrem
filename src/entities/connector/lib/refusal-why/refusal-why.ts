@@ -28,8 +28,16 @@ export function refusalWhy(code: RefusalCode): string {
 }
 
 const CODES: RefusalCode[] = [
-  'name-empty', 'name-long', 'name-dash', 'name-chars', 'name-taken',
-  'url-empty', 'url-shape', 'url-scheme', 'url-insecure', 'garbled',
+  'name-empty',
+  'name-long',
+  'name-dash',
+  'name-chars',
+  'name-taken',
+  'url-empty',
+  'url-shape',
+  'url-scheme',
+  'url-insecure',
+  'garbled',
 ]
 
 // The main process only sends codes. Turn a code into a sentence, pass anything else through.

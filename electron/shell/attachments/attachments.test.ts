@@ -26,7 +26,9 @@ vi.mock('../../ipc/ipc', () => ({
   on: (channel: string, listener: Channel) => boundary.channels.set(channel, listener),
 }))
 
-vi.mock('../../store/project-memory/project-memory', () => ({ recallProject: async () => boundary.project }))
+vi.mock('../../store/project-memory/project-memory', () => ({
+  recallProject: async () => boundary.project,
+}))
 
 function fire(channel: string, ...args: unknown[]): unknown {
   const listener = boundary.channels.get(channel)

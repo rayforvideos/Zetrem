@@ -2,9 +2,9 @@ import { useState } from 'react'
 import { ChevronDown, FileText, Paperclip, X } from 'lucide-react'
 import { addReading, readingPath } from '@/entities/agent-def'
 import type { AgentDefDraft } from '@/entities/agent-def'
-import { MODELS } from '@/entities/agent-session'
-import type { CharacterId } from '@/entities/agent-session'
-import { AgentSprite } from '@/entities/agent-session/ui/AgentSprite/AgentSprite'
+import { MODELS } from '@/entities/settings'
+import type { CharacterId } from '@/entities/teammate'
+import { AgentSprite } from '@/entities/teammate/ui/AgentSprite/AgentSprite'
 import { cn } from '@/shared/lib/cn'
 import { Button } from '@/shared/ui/button'
 import {
@@ -20,10 +20,16 @@ import { Label } from '@/shared/ui/label'
 import { Popover, PopoverContent, PopoverTrigger } from '@/shared/ui/popover'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/shared/ui/select'
 import { Textarea } from '@/shared/ui/textarea'
-import { characterFor, draftFrom, initialCharacter, toggled, toolSummary } from '../../lib/member-draft/member-draft'
+import {
+  characterFor,
+  draftFrom,
+  initialCharacter,
+  toggled,
+  toolSummary,
+} from '../../lib/member-draft/member-draft'
 import { CharacterPicker } from '../CharacterPicker/CharacterPicker'
 import { ToolPicker } from '../ToolPicker/ToolPicker'
-import { useScrollState } from '@/shared/lib/scroll-state/use-scroll-state'
+import { useScrollState } from '@/shared/lib/scroll-state/useScrollState'
 import { t } from '@lingui/core/macro'
 import { read } from '@/shared/lib/say/read'
 
@@ -198,9 +204,9 @@ export function MemberForm({ initial, knownTools, onSubmit, onCancel }: MemberFo
                   </PopoverContent>
                 </Popover>
               </Row>
-
             </aside>
 
+            {/* biome-ignore lint/a11y/noStaticElementInteractions: a drop target is not something you press, and there is no keyboard gesture to hand it */}
             <div
               className="flex min-h-0 min-w-0 flex-1 flex-col gap-4 px-6 py-5"
               onDragOver={(event) => {
@@ -324,7 +330,10 @@ export function MemberForm({ initial, knownTools, onSubmit, onCancel }: MemberFo
           <DialogFooter className="flex-none border-t border-border px-6 py-4 sm:justify-between">
             <span
               role={missing === null ? undefined : 'alert'}
-              className={cn('text-xs', missing === null ? 'text-muted-foreground' : 'text-destructive')}
+              className={cn(
+                'text-xs',
+                missing === null ? 'text-muted-foreground' : 'text-destructive',
+              )}
             >
               {missing ??
                 (initial === null

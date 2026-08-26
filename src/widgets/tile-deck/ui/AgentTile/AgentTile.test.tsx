@@ -80,13 +80,7 @@ describe('AgentTile', () => {
 
   it('marks a tile that is waiting on you', () => {
     const waiting = renderToStaticMarkup(
-      <AgentTile
-        session={session({ status: 'waiting' })}
-
-        rect={rect}
-        delayMs={0}
-        nowMs={0}
-      />,
+      <AgentTile session={session({ status: 'waiting' })} rect={rect} delayMs={0} nowMs={0} />,
     )
     expect(waiting).toContain('data-status="waiting"')
   })
@@ -116,7 +110,6 @@ describe('AgentTile', () => {
     const owner = renderToStaticMarkup(
       <AgentTile
         session={session({ status: 'waiting' })}
-
         rect={rect}
         delayMs={0}
         nowMs={0}
@@ -137,7 +130,6 @@ describe('AgentTile', () => {
             { role: 'assistant', text: long },
           ],
         })}
-
         rect={rect}
         delayMs={0}
         nowMs={0}
@@ -157,7 +149,6 @@ describe('AgentTile', () => {
           headline: '어느 테스트인가요?',
           transcript: [{ role: 'assistant', text: '어느 테스트인가요?' }],
         })}
-
         rect={rect}
         delayMs={0}
         nowMs={0}
@@ -175,7 +166,6 @@ describe('AgentTile', () => {
           status: 'waiting',
           transcript: [{ role: 'user', text: '테스트 고쳐줘' }],
         })}
-
         rect={rect}
         delayMs={0}
         nowMs={0}
@@ -225,7 +215,6 @@ describe('AgentTile', () => {
           status: 'working',
           transcript: [{ role: 'user', text: '테스트 고쳐줘' }],
         })}
-
         rect={rect}
         delayMs={0}
         nowMs={0}

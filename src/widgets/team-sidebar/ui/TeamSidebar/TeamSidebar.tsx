@@ -1,12 +1,12 @@
+import { StockList } from '@/entities/teammate'
+import type { StockListProps } from '@/entities/teammate'
 import { useState } from 'react'
 import { ChevronRight } from 'lucide-react'
 import { SIDEBAR } from '@/shared/config/theme'
 import { cn } from '@/shared/lib/cn'
-import { useScrollState } from '@/shared/lib/scroll-state/use-scroll-state'
+import { useScrollState } from '@/shared/lib/scroll-state/useScrollState'
 import { Button } from '@/shared/ui/button'
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/shared/ui/collapsible'
-import { StockList } from '@/widgets/setup'
-import type { StockListProps } from '@/widgets/setup'
 import { ChatList } from '../ChatList/ChatList'
 import type { ChatListProps } from '../ChatList/ChatList.types'
 import { SidebarGrip } from '../SidebarGrip/SidebarGrip'
@@ -62,7 +62,6 @@ export function TeamSidebar({
         <Heading>{t`Claude Code`}</Heading>
         <BuiltinAgents agents={agents} />
       </div>
-
     </aside>
   )
 }
@@ -90,7 +89,9 @@ function BuiltinAgents({ agents }: { agents: Omit<StockListProps, 'avatar'> }) {
           className="h-8 w-full min-w-0 justify-start gap-1.5 rounded-lg px-2 text-left text-sm text-muted-foreground"
         >
           <span className="truncate">{t`${using} of ${agents.stock.length} agents on`}</span>
-          <ChevronRight className={cn('size-3.5 flex-none transition-transform', open && 'rotate-90')} />
+          <ChevronRight
+            className={cn('size-3.5 flex-none transition-transform', open && 'rotate-90')}
+          />
         </Button>
       </CollapsibleTrigger>
       <CollapsibleContent>
@@ -101,9 +102,5 @@ function BuiltinAgents({ agents }: { agents: Omit<StockListProps, 'avatar'> }) {
 }
 
 function Heading({ children }: { children: string }) {
-  return (
-    <div className="mt-7 px-2 text-xs tracking-wide text-muted-foreground">
-      {children}
-    </div>
-  )
+  return <div className="mt-7 px-2 text-xs tracking-wide text-muted-foreground">{children}</div>
 }

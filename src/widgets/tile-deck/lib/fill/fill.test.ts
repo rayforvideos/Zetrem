@@ -3,7 +3,15 @@ import type { Call } from '@/entities/agent-session'
 import { fillOf } from './fill'
 
 function call(overrides: Partial<Call> = {}): Call {
-  return { id: 'c', line: 'Bash x', startedAtMs: 0, endedAtMs: 100, failed: false, note: '', ...overrides }
+  return {
+    id: 'c',
+    line: 'Bash x',
+    startedAtMs: 0,
+    endedAtMs: 100,
+    failed: false,
+    note: '',
+    ...overrides,
+  }
 }
 
 describe('fillOf: how far a row is filled by how long the call took', () => {

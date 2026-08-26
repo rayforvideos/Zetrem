@@ -1,7 +1,11 @@
 import { readFile, stat } from 'node:fs/promises'
 import { basename } from 'node:path'
 import { dialog } from 'electron'
-import { IMAGE_MAX_BYTES, imageTypeOf, kindOf } from '@/entities/attachment/lib/attachment/attachment'
+import {
+  IMAGE_MAX_BYTES,
+  imageTypeOf,
+  kindOf,
+} from '@/entities/attachment/lib/attachment/attachment'
 import type { Attached } from '@/entities/attachment/lib/attachment/attachment.types'
 import { recallProject } from '../../store/project-memory/project-memory'
 import { handle } from '../../ipc/ipc'
@@ -58,12 +62,12 @@ export function registerAttachments(): void {
 
   // Only preload calls this, on a path webUtils resolved from a real dropped or
   // pasted file. The bridge exposes no method for it, so the page cannot.
-  handle('files:admit', (_event, path: string): void => {
+  handle('files:admit', (_event, path: unknown): void => {
     if (typeof path !== 'string' || path.length === 0) return
     admit(path)
   })
 
-  handle('files:read', async (_event, paths: string[]): Promise<Attached[]> => {
+  handle('files:read', async (_event, paths: unknown): Promise<Attached[]> => {
     if (!Array.isArray(paths)) return []
     const allowed = paths.filter((p) => typeof p === 'string' && admitted.has(p))
     const found = await Promise.all(allowed.map(read))

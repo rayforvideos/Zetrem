@@ -1,8 +1,12 @@
-import type { ExitReason } from './exit-reason.types'
+import type { ExitReason } from '@/entities/claude-cli/lib/exit-line/exit-line.types'
 
 const MISSING = /\bENOENT\b|not found|no such file/i
 
-export function exitReason(code: number | null, stderr: string, spawnError: string): ExitReason | null {
+export function exitReason(
+  code: number | null,
+  stderr: string,
+  spawnError: string,
+): ExitReason | null {
   if (code === 0) return null
   if (spawnError.trim().length > 0) return startTrouble(spawnError)
   const said = lastLine(stderr)

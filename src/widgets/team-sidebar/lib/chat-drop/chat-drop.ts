@@ -1,3 +1,7 @@
+// Its own type, so a file dragged in from the desktop is never mistaken for a
+// chat being carried.
+export const CARRIED = 'application/x-zetrem-chat'
+
 import type { ChatSummary } from '@/entities/conversation'
 import type { Drop } from './chat-drop.types'
 

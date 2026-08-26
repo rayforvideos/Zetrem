@@ -27,7 +27,16 @@ describe('laneOf: one line for one hire', () => {
   it('names the call they are on right now', () => {
     const lane = laneOf(
       session({
-        stream: [{ id: 'c1', line: 'Read src/app.ts', startedAtMs: 2000, endedAtMs: null, failed: false, note: '' }],
+        stream: [
+          {
+            id: 'c1',
+            line: 'Read src/app.ts',
+            startedAtMs: 2000,
+            endedAtMs: null,
+            failed: false,
+            note: '',
+          },
+        ],
       }),
       NOW,
     )

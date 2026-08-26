@@ -13,7 +13,10 @@ describe('how much changed, without opening anything', () => {
   })
 
   it('counts a write as all additions, with nothing removed', () => {
-    expect(changeCount(tool('Write a.ts', { content: 'x\ny\nz' }))).toEqual({ added: 3, removed: 0 })
+    expect(changeCount(tool('Write a.ts', { content: 'x\ny\nz' }))).toEqual({
+      added: 3,
+      removed: 0,
+    })
   })
 
   it('adds the pieces of a multi-edit together', () => {

@@ -38,7 +38,10 @@ describe('the projects a person can come back to', () => {
     // live in (keyed by a hash of that same string) is reached unchanged.
     const a = dir('shop')
     const b = dir('blog')
-    writeFileSync(join(boundary.userData, 'project.json'), JSON.stringify({ path: a, recent: [a, b] }))
+    writeFileSync(
+      join(boundary.userData, 'project.json'),
+      JSON.stringify({ path: a, recent: [a, b] }),
+    )
     const found = await listProjects()
     expect(found.map((one) => one.id)).toEqual([a, b])
     expect(found[0]?.name).toBe('shop')

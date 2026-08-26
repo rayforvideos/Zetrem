@@ -1,5 +1,5 @@
 import type { MessageDescriptor } from '@lingui/core'
-import type { InstalledPlugin } from '../catalog/catalog.types'
+import type { InstalledPlugin } from '../../api/catalog/catalog.types'
 
 export type PluginGroupKey = 'yours' | 'project' | 'organisation'
 

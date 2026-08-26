@@ -1,4 +1,4 @@
-import wordmarkUrl from '@/shared/assets/wordmark.png'
+import wordmarkUrl from './wordmark.png'
 import { cn } from '@/shared/lib/cn'
 
 const SOURCE = { width: 720, height: 298 }

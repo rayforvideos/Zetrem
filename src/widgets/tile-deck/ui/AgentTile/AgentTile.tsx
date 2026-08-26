@@ -1,6 +1,6 @@
 import type { CSSProperties } from 'react'
 import type { AgentSession } from '@/entities/agent-session'
-import { Surface } from '@/entities/surface'
+import { Surface } from '@/shared/parts/Surface/Surface'
 import { MOTION } from '@/shared/config/motion/motion'
 import type { Rect } from '../../lib/grid/grid.types'
 import { Gauge } from '../layers/Gauge/Gauge'
@@ -80,7 +80,9 @@ export function AgentTile({
                   )}
                 </div>
                 <div data-log style={logPaneStyle}>
-                  {session.stream.length > 0 && <span style={logHeadStyle}>{t`What they did`}</span>}
+                  {session.stream.length > 0 && (
+                    <span style={logHeadStyle}>{t`What they did`}</span>
+                  )}
                   {live && now === null && (session.doing ?? '').length > 0 && (
                     <div data-doing style={doingStyle}>
                       {session.doing}

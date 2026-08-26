@@ -5,7 +5,9 @@ import { describe, expect, it } from 'vitest'
 const ROOT = process.cwd()
 
 function resolveImport(spec: string, from: string): string | null {
-  const base = spec.startsWith('@/') ? join(ROOT, 'src', spec.slice(2)) : resolve(dirname(from), spec)
+  const base = spec.startsWith('@/')
+    ? join(ROOT, 'src', spec.slice(2))
+    : resolve(dirname(from), spec)
   for (const one of [`${base}.ts`, `${base}.tsx`, join(base, 'index.ts')]) {
     if (existsSync(one)) return one
   }
@@ -15,7 +17,7 @@ function resolveImport(spec: string, from: string): string | null {
 // The main process has no babel, so the Lingui macros never compile there: a t`…`
 // that rides in through a barrel import crashes the app at launch. Main must reach
 // only modules that say nothing — importing the exact file, never the barrel.
-export function macroReach(entries: string[]): string[] {
+function macroReach(entries: string[]): string[] {
   const seen = new Set<string>()
   const caught: string[] = []
 

@@ -50,7 +50,9 @@ describe.skipIf(history === null)('a commit says what kind it is', () => {
   })
 
   it('names its type, so the log can be read at a glance', () => {
-    const wrong = all.filter((one) => !TYPE.test(one.subject)).map((one) => `${one.sha} ${one.subject}`)
+    const wrong = all
+      .filter((one) => !TYPE.test(one.subject))
+      .map((one) => `${one.sha} ${one.subject}`)
     expect(wrong, 'name the kind, as in feat:. See Commits in CONTRIBUTING.md').toEqual([])
   })
 

@@ -1,9 +1,9 @@
 import type { CSSProperties } from 'react'
-import { AgentSprite } from '@/entities/agent-session'
-import type { CharacterId } from '@/entities/agent-session'
-import { ToolIcon } from '@/shared/graphics/ToolIcon/ToolIcon'
-import { targetOf, verbOf } from '@/shared/lib/tool-verb/tool-verb'
-import type { ToolShape } from '@/shared/lib/tool-shape/tool-shape.types'
+import { AgentSprite } from '@/entities/teammate'
+import type { CharacterId } from '@/entities/teammate'
+import { ToolIcon } from '@/entities/tool'
+import { targetOf, verbOf } from '@/entities/tool'
+import type { ToolShape } from '@/entities/tool'
 import { MOCK_HEIGHT, MOCK_WIDTH } from '../../lib/fit/fit'
 import type { SlideFocus } from '../../lib/slides/slides.types'
 import { t } from '@lingui/core/macro'
@@ -11,7 +11,13 @@ import { t } from '@lingui/core/macro'
 const YOU = 'Sam'
 
 // Read at call time, never at import: the locale is not up yet when this module loads.
-function crew(): { name: string; face: CharacterId; task: string; clock: string; state: 'working' | 'reported' }[] {
+function crew(): {
+  name: string
+  face: CharacterId
+  task: string
+  clock: string
+  state: 'working' | 'reported'
+}[] {
   return [
     {
       name: 'Nova',

@@ -1,4 +1,4 @@
-import type { ModelChoice, PermissionMode } from '@/entities/agent-session'
+import type { ModelChoice, PermissionMode } from '@/entities/claude-cli'
 import type { Attached } from '@/entities/attachment'
 
 export type ComposerProps = {

@@ -12,7 +12,10 @@ export function AttachedRow({
   if (files.length === 0) return null
 
   return (
-    <div data-attached={files.length} className="flex w-full flex-wrap justify-start gap-1.5 px-1.5 pt-1.5">
+    <div
+      data-attached={files.length}
+      className="flex w-full flex-wrap justify-start gap-1.5 px-1.5 pt-1.5"
+    >
       {files.map((file) => (
         <span
           key={file.path}

@@ -1,10 +1,14 @@
 import { BrowserWindow, ipcMain } from 'electron'
-import type { IpcMainEvent, IpcMainInvokeEvent } from 'electron'
-
-type Sender = {
-  readonly hasWindow: boolean
-  readonly isMainFrame: boolean
-}
+import type { IpcMainEvent, IpcMainInvokeEvent, WebContents } from 'electron'
+import type {
+  InvokeChannel,
+  Invokes,
+  PushChannel,
+  Pushes,
+  SendChannel,
+  Sends,
+} from '@/app/desk/desk.types'
+import type { Handler, Listener, Sender } from './ipc.types'
 
 export function trusted(sender: Sender): boolean {
   return sender.hasWindow && sender.isMainFrame
@@ -17,22 +21,28 @@ function senderOf(event: IpcMainInvokeEvent | IpcMainEvent): Sender {
   }
 }
 
-export function handle(
-  channel: string,
-  listener: (event: IpcMainInvokeEvent, ...args: never[]) => unknown,
-): void {
+export function handle<C extends InvokeChannel>(channel: C, listener: Handler<C>): void {
   ipcMain.handle(channel, (event, ...args) => {
     if (!trusted(senderOf(event))) throw new Error(`refused ${channel}: untrusted sender`)
-    return listener(event, ...(args as never[]))
+    return listener(event, ...(args as Parameters<Invokes[C]>))
   })
 }
 
-export function on(
-  channel: string,
-  listener: (event: IpcMainEvent, ...args: never[]) => void,
-): void {
+export function on<C extends SendChannel>(channel: C, listener: Listener<C>): void {
   ipcMain.on(channel, (event, ...args) => {
     if (!trusted(senderOf(event))) return
-    listener(event, ...(args as never[]))
+    listener(event, ...(args as Parameters<Sends[C]>))
   })
+}
+
+// Main speaking to a page. A page that has gone away is skipped rather than
+// thrown at, since the push usually comes from a child process callback that
+// outlives the window.
+export function push<C extends PushChannel>(
+  target: WebContents,
+  channel: C,
+  payload: Pushes[C],
+): void {
+  if (target.isDestroyed()) return
+  target.send(channel, payload)
 }

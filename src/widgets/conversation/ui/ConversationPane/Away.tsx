@@ -1,4 +1,4 @@
-import { AgentSprite } from '@/entities/agent-session'
+import { AgentSprite } from '@/entities/teammate'
 import { UserFace } from '@/entities/user'
 import type { FaceId } from '@/entities/user'
 import { reachOf } from '@/shared/lib/reach/reach'

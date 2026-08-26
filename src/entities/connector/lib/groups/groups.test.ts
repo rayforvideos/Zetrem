@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import type { Connector } from '../read-connectors/read-connectors.types'
+import type { Connector } from '../../api/read-connectors/read-connectors.types'
 import { connectorGroupsOf } from './groups'
 
 function connector(name: string): Connector {

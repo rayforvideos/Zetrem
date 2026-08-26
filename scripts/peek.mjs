@@ -27,7 +27,8 @@ async function target() {
   const res = await fetch(`${ORIGIN}/json`)
   const pages = (await res.json()).filter((one) => one.type === 'page')
   const page = pages.find((one) => one.url.startsWith('http')) ?? pages[0]
-  if (page === undefined) throw new Error(`no page on ${ORIGIN}. Is the app running with ZT_INSPECT?`)
+  if (page === undefined)
+    throw new Error(`no page on ${ORIGIN}. Is the app running with ZT_INSPECT?`)
   return page.webSocketDebuggerUrl
 }
 

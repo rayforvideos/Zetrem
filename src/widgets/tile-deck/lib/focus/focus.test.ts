@@ -55,10 +55,7 @@ describe('focusOf: one of them is always the one you are looking at', () => {
   })
 
   it('takes the one out longest among equals, so the choice does not wander', () => {
-    const held = [
-      session({ id: 'a', startedAtMs: 5000 }),
-      session({ id: 'b', startedAtMs: 1000 }),
-    ]
+    const held = [session({ id: 'a', startedAtMs: 5000 }), session({ id: 'b', startedAtMs: 1000 })]
     expect(focusOf(held, null)).toBe('b')
   })
 })

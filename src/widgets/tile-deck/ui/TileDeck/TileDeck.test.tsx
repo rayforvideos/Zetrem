@@ -65,7 +65,10 @@ describe('TileDeck: the rule about where the eye goes', () => {
       waitingSinceMs: i === 3 ? 10 : 1000 + i,
     }))
     const html = render({ kind: 'fanned', ids, closing: [] }, waitingFleet)
-    const owners = html.split('data-card').slice(1).filter((chunk) => chunk.includes('data-eye'))
+    const owners = html
+      .split('data-card')
+      .slice(1)
+      .filter((chunk) => chunk.includes('data-eye'))
     expect(owners).toHaveLength(1)
     expect(owners[0]).toContain('"s3"')
   })

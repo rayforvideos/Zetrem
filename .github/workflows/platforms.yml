@@ -2,6 +2,11 @@ name: Platforms
 
 on:
   workflow_dispatch:
+    inputs:
+      sign:
+        description: 'Sign and notarise the macOS build. Publishes nothing.'
+        type: boolean
+        default: false
   push:
     tags: ['v*']
 
@@ -104,9 +109,13 @@ jobs:
     env:
       # A tag is a release build; anything else is only proving the build runs.
       RELEASING: ${{ startsWith(github.ref, 'refs/tags/v') }}
-      # And a release build is only publishable for macOS if a certificate is
-      # here to sign it. Without one the mac half stays a test, as it was.
-      SIGNED: ${{ startsWith(github.ref, 'refs/tags/v') && secrets.CSC_LINK != '' }}
+      # Signing and notarising can be asked for on their own, because the only
+      # way to find out whether the certificate and the Apple credentials are
+      # right used to be to tag a release and watch it fail. This says nothing
+      # about publishing: that is still the tag's job, below.
+      SIGNED: >-
+        ${{ (startsWith(github.ref, 'refs/tags/v') || inputs.sign == true)
+            && secrets.CSC_LINK != '' }}
     strategy:
       fail-fast: false
       matrix:
@@ -125,11 +134,11 @@ jobs:
           CSC_IDENTITY_AUTO_DISCOVERY: ${{ env.SIGNED }}
           CSC_LINK: ${{ secrets.CSC_LINK }}
           CSC_KEY_PASSWORD: ${{ secrets.CSC_KEY_PASSWORD }}
-          # Notarising talks to Apple and takes minutes, so it happens on a
-          # release and not on every push. The config gates on these being set.
-          APPLE_ID: ${{ env.RELEASING == 'true' && secrets.APPLE_ID || '' }}
-          APPLE_APP_SPECIFIC_PASSWORD: ${{ env.RELEASING == 'true' && secrets.APPLE_APP_SPECIFIC_PASSWORD || '' }}
-          APPLE_TEAM_ID: ${{ env.RELEASING == 'true' && secrets.APPLE_TEAM_ID || '' }}
+          # Notarising talks to Apple and takes minutes, so it happens only where
+          # signing does. The config gates on these three being set.
+          APPLE_ID: ${{ env.SIGNED == 'true' && secrets.APPLE_ID || '' }}
+          APPLE_APP_SPECIFIC_PASSWORD: ${{ env.SIGNED == 'true' && secrets.APPLE_APP_SPECIFIC_PASSWORD || '' }}
+          APPLE_TEAM_ID: ${{ env.SIGNED == 'true' && secrets.APPLE_TEAM_ID || '' }}
         # --publish never: electron-builder's own uploader raced itself here and
         # left a release holding a 100KB blockmap and no installer. The upload
         # is its own step below, where it either works or fails the job.
@@ -140,6 +149,20 @@ jobs:
         run: |
           [ "$SIGNED" = "true" ] || unset CSC_LINK CSC_KEY_PASSWORD
           npm run ${{ matrix.os == 'windows-latest' && 'package:win' || 'package:mac' }} -- --publish never
+
+      # What a stranger's Mac will decide when they open it. codesign says the
+      # signature is ours and intact; stapler says Apple's notarisation is
+      # attached to the file rather than only on their servers; spctl is
+      # Gatekeeper itself being asked the question in advance.
+      - name: Prove the macOS build is signed, notarised and would open
+        if: matrix.os == 'macos-latest' && env.SIGNED == 'true'
+        shell: bash
+        run: |
+          dmg=$(ls release/Zetrem-*-universal.dmg)
+          echo "checking $dmg"
+          codesign --verify --strict --verbose=2 "$dmg"
+          xcrun stapler validate "$dmg"
+          spctl --assess --type open --context context:primary-signature -vv "$dmg"
 
       # Windows is unsigned wherever it is built, so a runner is as good a place
       # as any, and the download page only offers a release carrying both
@@ -167,7 +190,7 @@ jobs:
       # refuses on anybody else's machine, and it would be worse than none:
       # the page offers whatever release carries both installers.
       - name: Publish the macOS installer
-        if: matrix.os == 'macos-latest' && env.SIGNED == 'true'
+        if: matrix.os == 'macos-latest' && startsWith(github.ref, 'refs/tags/v') && env.SIGNED == 'true'
         shell: bash
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -27,13 +27,13 @@ jobs:
       matrix:
         node: ['20.19', '22.19']
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
         with:
           # The commit-shape test reads the log, and a shallow clone holds only
           # the merge commit GitHub writes for a pull request run.
           fetch-depth: 0
 
-      - uses: actions/setup-node@v7
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
         with:
           node-version: ${{ matrix.node }}
           cache: npm

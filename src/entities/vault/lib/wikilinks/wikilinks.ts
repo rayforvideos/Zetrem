@@ -1,4 +1,4 @@
-export const WIKILINK_PREFIX = '#vault/'
+const WIKILINK_PREFIX = '#vault/'
 
 const CODE = /(```[\s\S]*?```|`[^`\n]*`)/g
 const LINK = /\[\[([^\]|]+)(?:\|([^\]]+))?\]\]/g

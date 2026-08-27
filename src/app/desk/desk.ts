@@ -1,7 +1,5 @@
 import type { Invoke, Listen, Send } from './desk.types'
 
-export type { AgentHostEvent, CliVersions } from './desk.types'
-
 export type DeskBridge = {
   appVersion: Invoke<'app:version'>
 

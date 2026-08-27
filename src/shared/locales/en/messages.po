@@ -1257,7 +1257,7 @@ msgstr "Pick a note"
 msgid "Pick a project first"
 msgstr "Pick a project first"
 
-#: src/pages/workspace/model/session/agent-events/crew/crew.ts:197
+#: src/pages/workspace/model/session/agent-events/crew/crew.ts:196
 msgid "Picked up where they left off"
 msgstr "Picked up where they left off"
 
@@ -1806,7 +1806,7 @@ msgstr "The model is overloaded"
 msgid "The note is deleted from the vault. This cannot be undone."
 msgstr "The note is deleted from the vault. This cannot be undone."
 
-#: src/pages/workspace/model/session/agent-events/crew/crew.ts:167
+#: src/pages/workspace/model/session/agent-events/crew/crew.ts:166
 msgid "the orchestrator"
 msgstr "the orchestrator"
 

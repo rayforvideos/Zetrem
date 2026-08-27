@@ -1,4 +1,4 @@
-export type TaskState = 'pending' | 'running' | 'completed' | 'failed' | 'killed' | 'paused'
+type TaskState = 'pending' | 'running' | 'completed' | 'failed' | 'killed' | 'paused'
 
 export type ChildTurnEvent =
   | {

@@ -28,12 +28,12 @@ import type {
   PluginVerb,
 } from '@/entities/plugin/api/catalog/catalog.types'
 
-export type AgentHostEvent =
+type AgentHostEvent =
   | { id: string; kind: 'line'; line: string }
   | { id: string; kind: 'workspace'; cwd: string }
   | { id: string; kind: 'exit'; code: number | null; reason: ExitReason | null }
 
-export type CliVersions = {
+type CliVersions = {
   installed: string | null
   latest: string | null
   managedBy: string | null

@@ -1257,7 +1257,7 @@ msgstr "노트를 고르세요"
 msgid "Pick a project first"
 msgstr "먼저 프로젝트를 고르세요"
 
-#: src/pages/workspace/model/session/agent-events/crew/crew.ts:197
+#: src/pages/workspace/model/session/agent-events/crew/crew.ts:196
 msgid "Picked up where they left off"
 msgstr "하던 일을 이어받았습니다"
 
@@ -1806,7 +1806,7 @@ msgstr "모델에 부하가 걸렸습니다"
 msgid "The note is deleted from the vault. This cannot be undone."
 msgstr "볼트에서 노트가 지워집니다. 되돌릴 수 없습니다."
 
-#: src/pages/workspace/model/session/agent-events/crew/crew.ts:167
+#: src/pages/workspace/model/session/agent-events/crew/crew.ts:166
 msgid "the orchestrator"
 msgstr "오케스트레이터"
 

@@ -19,7 +19,7 @@ import type {
 } from '@/entities/vault/model/note'
 import { GUIDE_TEXT } from '../vault-folders'
 
-export const GUIDE_ID = 'CLAUDE.md'
+const GUIDE_ID = 'CLAUDE.md'
 const FOLDER_MAX = 60
 const TITLE_MAX = 80
 const LEAD_MAX = 160

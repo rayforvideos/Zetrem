@@ -93,18 +93,32 @@ function createWindow(): void {
 
   win.once('ready-to-show', () => win.show())
 
+  // did-finish-load fires for a failed navigation too, still naming the page
+  // that was asked for, so the failure has to be remembered until the next one.
+  let loadFailed = false
+
   win.webContents.on('did-fail-load', (_event, errorCode, errorDescription, _url, isMainFrame) => {
     if (!isMainFrame) return
     const line = loadTroubleLine(errorCode, errorDescription)
     if (line === null) return
+    loadFailed = true
     console.error(`[window] ${line}`)
     win.show()
     void win.webContents.loadURL(troublePage(line))
   })
 
+  // The one line the packaging job looks for: a process that stays alive can
+  // still be showing the trouble page, and that page is a data: URL.
+  win.webContents.on('did-finish-load', () => {
+    const url = win.webContents.getURL()
+    if (loadFailed || url.startsWith('data:')) return
+    console.log(`[window] showing ${url}`)
+  })
+
   win.webContents.on('did-start-navigation', (details) => {
     if (!details.isMainFrame) return
     if (details.isSameDocument) return
+    if (!details.url.startsWith('data:')) loadFailed = false
     // A clicked link lands here before will-navigate cancels it, and the page
     // is staying, so only a load that really replaces it drops the agents.
     if (details.url !== win.webContents.getURL() && !details.url.startsWith('data:')) return

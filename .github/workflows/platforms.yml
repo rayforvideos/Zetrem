@@ -150,6 +150,48 @@ jobs:
           [ "$SIGNED" = "true" ] || unset CSC_LINK CSC_KEY_PASSWORD
           npm run ${{ matrix.os == 'windows-latest' && 'package:win' || 'package:mac' }} -- --publish never
 
+      # The fuses are what the signature is worth: a binary that will run as Node
+      # for anybody, or load an app from outside its asar, is signed in name only.
+      # Read back from the artifact, not the config, on both platforms.
+      - name: Prove the fuses took
+        shell: bash
+        run: |
+          if [ "${{ matrix.os }}" = "windows-latest" ]; then
+            app=release/win-unpacked/Zetrem.exe
+          else
+            app=release/mac-universal/Zetrem.app
+          fi
+          npx @electron/fuses read --app "$app" | tee fuses.txt
+          grep -q 'RunAsNode is Disabled' fuses.txt
+          grep -q 'EnableNodeOptionsEnvironmentVariable is Disabled' fuses.txt
+          grep -q 'EnableNodeCliInspectArguments is Disabled' fuses.txt
+          grep -q 'EnableEmbeddedAsarIntegrityValidation is Enabled' fuses.txt
+          grep -q 'OnlyLoadAppFromAsar is Enabled' fuses.txt
+
+      # Asar integrity is checked at launch, and a build whose hash was written
+      # wrong dies there. So the packaged app is opened for real, and the test
+      # is whether it is still alive a little later. The Windows runner has no
+      # display, but Electron draws to nothing without complaint.
+      - name: Prove the packaged app opens
+        shell: bash
+        run: |
+          if [ "${{ matrix.os }}" = "windows-latest" ]; then
+            bin=release/win-unpacked/Zetrem.exe
+          else
+            bin=release/mac-universal/Zetrem.app/Contents/MacOS/Zetrem
+          fi
+          "$bin" > opened.log 2>&1 &
+          pid=$!
+          sleep 20
+          if kill -0 "$pid" 2>/dev/null; then
+            echo "alive after 20s"
+            kill "$pid" || true
+          else
+            echo "::error::the packaged app exited on its own"
+            cat opened.log
+            exit 1
+          fi
+
       # What a stranger's Mac will decide when they open it. electron-builder
       # signs the app, sends it to Apple, and staples the ticket to the app; the
       # dmg and the zip are built from the stapled app afterwards and carry

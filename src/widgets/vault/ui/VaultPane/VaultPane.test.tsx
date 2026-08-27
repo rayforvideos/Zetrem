@@ -13,12 +13,7 @@ const summary = {
 function pane(over: Partial<Parameters<typeof VaultPane>[0]> = {}): string {
   return renderToStaticMarkup(
     <VaultPane
-      folders={[
-        { name: 'analysis' },
-        { name: 'sources' },
-        { name: 'outputs' },
-        { name: 'taste' },
-      ]}
+      folders={[{ name: 'analysis' }, { name: 'sources' }, { name: 'outputs' }, { name: 'taste' }]}
       notes={[summary]}
       open={null}
       loading={false}

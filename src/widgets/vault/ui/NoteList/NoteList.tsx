@@ -148,27 +148,27 @@ export function NoteList({
             {empty
               ? null
               : inside.map((note) => (
-                <Button
-                  key={note.id}
-                  variant="ghost"
-                  size="bare"
-                  aria-current={note.id === openId ? 'true' : undefined}
-                  onClick={() => onOpen(note.id)}
-                  className={cn(
-                    'h-auto w-full min-w-0 flex-col items-start gap-0.5 rounded-lg px-2 py-1.5 text-left',
-                    note.id === openId
-                      ? 'bg-card text-foreground'
-                      : 'text-muted-foreground hover:bg-card/60',
-                  )}
-                >
-                  <span className="w-full truncate text-sm">{note.title}</span>
-                  {note.lead.length > 0 && (
-                    <span className="w-full truncate text-xs text-muted-foreground">
-                      {note.lead}
-                    </span>
-                  )}
-                </Button>
-              ))}
+                  <Button
+                    key={note.id}
+                    variant="ghost"
+                    size="bare"
+                    aria-current={note.id === openId ? 'true' : undefined}
+                    onClick={() => onOpen(note.id)}
+                    className={cn(
+                      'h-auto w-full min-w-0 flex-col items-start gap-0.5 rounded-lg px-2 py-1.5 text-left',
+                      note.id === openId
+                        ? 'bg-card text-foreground'
+                        : 'text-muted-foreground hover:bg-card/60',
+                    )}
+                  >
+                    <span className="w-full truncate text-sm">{note.title}</span>
+                    {note.lead.length > 0 && (
+                      <span className="w-full truncate text-xs text-muted-foreground">
+                        {note.lead}
+                      </span>
+                    )}
+                  </Button>
+                ))}
           </section>
         )
       })}

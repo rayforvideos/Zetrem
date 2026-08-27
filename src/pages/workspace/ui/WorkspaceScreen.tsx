@@ -12,6 +12,7 @@ import { AgentReport } from '@/widgets/agent-report'
 import { awayOf, spokeAtMs, Composer, ConversationPane, RestartNote } from '@/widgets/conversation'
 import { SetupPane } from '@/widgets/setup'
 import { TeamSidebar } from '@/widgets/team-sidebar'
+import { LibraryPane } from '@/widgets/library'
 import { WelcomePane } from '@/widgets/welcome'
 import { TileDeck } from '@/widgets/tile-deck'
 import { MOTION } from '@/shared/config/motion/motion'
@@ -22,6 +23,8 @@ import { PluginShelfOverlay } from './controls/PluginShelfOverlay'
 import { StatusBarPanel } from './controls/StatusBarPanel'
 import { t } from '@lingui/core/macro'
 
+import { useLibraryAccess } from '../model/library/useLibraryAccess'
+import { useLibraryNotes } from '../model/library/useLibraryNotes'
 import { useWorkspace } from '../model/screen/useWorkspace/useWorkspace'
 
 export function WorkspaceScreen() {
@@ -50,9 +53,11 @@ export function WorkspaceScreen() {
     hasProject,
     held,
     hire,
+    leaveLibrary,
     live,
     nowMs,
     openAgent,
+    openLibrary,
     panel,
     pendingRestart,
     project,
@@ -74,10 +79,84 @@ export function WorkspaceScreen() {
     teamMembers,
     teamNote,
     update,
+    libraryOpen,
     viewport,
     wires,
     yourName,
   } = useWorkspace()
+  const library = useLibraryNotes(libraryOpen, conv.status !== 'working', project?.path ?? null)
+  const libraryAccess = useLibraryAccess(project?.path ?? null, live)
+
+  function pickTeammate(id: string | null): void {
+    leaveLibrary()
+    focus.pick(id)
+  }
+
+  function addressTeammate(name: string | null): void {
+    leaveLibrary()
+    focus.address(name)
+  }
+
+  const teamSidebar = (
+    <div
+      ref={attachSidebar}
+      data-tucked={sidebar.open ? undefined : ''}
+      style={{
+        marginLeft: tuckedBy(sidebar.open, sidebarBoxW, sidebar.width),
+        transition: `margin ${MOTION.moveMs}ms ${MOTION.easing}`,
+      }}
+      className="flex flex-none"
+    >
+      <TeamSidebar
+        projects={{
+          current: project,
+          all: allProjects,
+          onOpen: handleOpenProject,
+          onPickFolder: handlePickProject,
+          onForget: handleForgetProject,
+        }}
+        chats={{
+          chats: chat.chats,
+          openId: libraryOpen ? null : chat.openId,
+          onOpen: (id) => swap(() => chat.open(id)),
+          onStart: () => swap(chat.start),
+          onRemove: chat.remove,
+          onRename: chat.rename,
+          onFile: chat.file,
+          onFileMany: chat.fileMany,
+        }}
+        team={{
+          members: teamMembers,
+          drafts,
+          knownTools: settings.knownTools,
+          sessionUp: held !== null,
+          read: focus.read,
+          canWrite: true,
+          hint: hintDue('hire-first', settings.hintsSeen, defs.length === 0),
+          onHintSeen: () => update({ hintsSeen: hintSeen('hire-first', settings.hintsSeen) }),
+          note: teamNote,
+          onHire: hire,
+          onEdit: edit,
+          onRelease: release,
+          onPick: pickTeammate,
+          onAddress: addressTeammate,
+          onRestart: () => {
+            focus.clearAll()
+            settleNote()
+            agent.restart()
+          },
+        }}
+        agents={agentToggles}
+        nowMs={nowMs}
+        width={sidebar.width}
+        onResize={sidebar.resize}
+        onResizeEnd={sidebar.commit}
+        libraryOpen={libraryOpen}
+        libraryUnseen={library.unseen}
+        onOpenLibrary={openLibrary}
+      />
+    </div>
+  )
 
   return (
     <CrewProvider crew={crewOf(defs, status.session?.model ?? null)}>
@@ -166,6 +245,36 @@ export function WorkspaceScreen() {
                   }}
                   notice={settingsFailure ?? projectFailure}
                 />
+              ) : libraryOpen ? (
+                <LibraryPane
+                  folders={library.folders}
+                  notes={library.notes}
+                  hits={library.hits}
+                  query={library.query}
+                  tag={library.tag}
+                  open={library.open}
+                  backlinks={library.backlinks}
+                  loading={library.loading}
+                  editing={library.editing}
+                  fresh={library.fresh}
+                  savedAtMs={library.savedAtMs}
+                  nowMs={nowMs}
+                  onQuery={library.setQuery}
+                  onTag={library.setTag}
+                  onOpen={library.openNote}
+                  onOpenTitle={library.openTitle}
+                  onCreate={library.create}
+                  onRemove={library.remove}
+                  onStartEdit={library.startEdit}
+                  onStopEdit={library.stopEdit}
+                  onSave={library.save}
+                  onRename={library.rename}
+                  onTags={library.tags}
+                  onAddFolder={library.addFolder}
+                  onRenameFolder={library.renameFolder}
+                  onRemoveFolder={library.removeFolder}
+                  sidebar={teamSidebar}
+                />
               ) : (
                 <ConversationPane
                   turns={conv.turns}
@@ -181,6 +290,7 @@ export function WorkspaceScreen() {
                     update({ hintsSeen: hintSeen('ask-whole-job', settings.hintsSeen) })
                   }
                   onDecide={agent.decide}
+                  onFileTurn={(text) => library.file(text)}
                   composer={
                     <>
                       {pendingRestart !== null && agent.running && (
@@ -206,6 +316,8 @@ export function WorkspaceScreen() {
                         model={settings.model}
                         refusedModels={settings.refusedModels}
                         enterSends={settings.enterSends}
+                        library={libraryAccess.open}
+                        onLibrary={libraryAccess.set}
                         onSend={(text) => {
                           agent.send(text, focus.addressee, attach.files)
                           attach.clear()
@@ -236,64 +348,7 @@ export function WorkspaceScreen() {
                       />
                     )
                   }
-                  sidebar={
-                    <div
-                      ref={attachSidebar}
-                      data-tucked={sidebar.open ? undefined : ''}
-                      style={{
-                        marginLeft: tuckedBy(sidebar.open, sidebarBoxW, sidebar.width),
-                        transition: `margin ${MOTION.moveMs}ms ${MOTION.easing}`,
-                      }}
-                      className="flex flex-none"
-                    >
-                      <TeamSidebar
-                        projects={{
-                          current: project,
-                          all: allProjects,
-                          onOpen: handleOpenProject,
-                          onPickFolder: handlePickProject,
-                          onForget: handleForgetProject,
-                        }}
-                        chats={{
-                          chats: chat.chats,
-                          openId: chat.openId,
-                          onOpen: (id) => swap(() => chat.open(id)),
-                          onStart: () => swap(chat.start),
-                          onRemove: chat.remove,
-                          onRename: chat.rename,
-                          onFile: chat.file,
-                          onFileMany: chat.fileMany,
-                        }}
-                        team={{
-                          members: teamMembers,
-                          drafts,
-                          knownTools: settings.knownTools,
-                          sessionUp: held !== null,
-                          read: focus.read,
-                          canWrite: true,
-                          hint: hintDue('hire-first', settings.hintsSeen, defs.length === 0),
-                          onHintSeen: () =>
-                            update({ hintsSeen: hintSeen('hire-first', settings.hintsSeen) }),
-                          note: teamNote,
-                          onHire: hire,
-                          onEdit: edit,
-                          onRelease: release,
-                          onPick: focus.pick,
-                          onAddress: focus.address,
-                          onRestart: () => {
-                            focus.clearAll()
-                            settleNote()
-                            agent.restart()
-                          },
-                        }}
-                        agents={agentToggles}
-                        nowMs={nowMs}
-                        width={sidebar.width}
-                        onResize={sidebar.resize}
-                        onResizeEnd={sidebar.commit}
-                      />
-                    </div>
-                  }
+                  sidebar={teamSidebar}
                 />
               )
             }

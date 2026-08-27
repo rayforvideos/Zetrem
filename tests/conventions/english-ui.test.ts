@@ -6,6 +6,10 @@ const HANGUL = /[가-힣]/
 const LOCALE = /toLocale(?:String|DateString|TimeString)\(\s*'([a-zA-Z-]+)'/g
 const ENGLISH_LOCALES = new Set(['en-US', 'en-CA', 'en-GB'])
 const BOOK = join('src', 'shared', 'lib', 'say')
+const LIBRARY_CONTENT = new Set([
+  join('electron', 'library', 'library.ts'),
+  join('electron', 'library', 'library-mcp', 'instructions.ts'),
+])
 
 function sources(dir: string): string[] {
   return readdirSync(dir, { withFileTypes: true }).flatMap((one) => {
@@ -19,9 +23,9 @@ function sources(dir: string): string[] {
 const FILES = [...sources('src'), ...sources('electron')]
 
 describe('Korean lives in the dictionary, not scattered through the app', () => {
-  it('keeps Hangul out of every file but the book it is written in', () => {
+  it('keeps Hangul out of every file but the book and the library guide', () => {
     const found = FILES.filter((path) => {
-      if (path.startsWith(BOOK)) return false
+      if (path.startsWith(BOOK) || LIBRARY_CONTENT.has(path)) return false
       const body = readFileSync(path, 'utf8')
       return body
         .split('\n')
@@ -29,7 +33,7 @@ describe('Korean lives in the dictionary, not scattered through the app', () => 
     })
     expect(
       found,
-      'Korean lives in the catalogs; scattered, nobody knows which line is real',
+      'Korean lives in the catalogs and the library guide; scattered, nobody knows which line is real',
     ).toEqual([])
   })
 

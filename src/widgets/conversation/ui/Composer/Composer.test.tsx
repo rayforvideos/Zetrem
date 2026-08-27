@@ -13,6 +13,7 @@ function box(props: Partial<Parameters<typeof Composer>[0]> = {}): string {
       model="default"
       refusedModels={[]}
       enterSends
+      library
       files={[]}
       onPick={() => {}}
       onTake={() => {}}
@@ -22,6 +23,7 @@ function box(props: Partial<Parameters<typeof Composer>[0]> = {}): string {
       onClearAddressee={() => {}}
       onPermissionMode={() => {}}
       onModel={() => {}}
+      onLibrary={() => {}}
       {...props}
     />,
   )
@@ -61,6 +63,11 @@ describe('Composer: the line you type into', () => {
     const html = box()
     expect(html).toContain('Permissions')
     expect(html).toContain('Default')
+  })
+
+  it('has the library switch where you type, pressed while agents get the library', () => {
+    expect(box()).toMatch(/data-library-toggle[^>]*aria-pressed="true"/)
+    expect(box({ library: false })).toMatch(/data-library-toggle[^>]*aria-pressed="false"/)
   })
 
   it('shows the shortcut that sends, since the button is not the only way', () => {

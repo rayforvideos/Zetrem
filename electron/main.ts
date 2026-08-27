@@ -19,9 +19,11 @@ import { killAllProbes, registerSessionProbe } from './host/session-probe/sessio
 import { registerTranscriptStore } from './store/transcript-store/transcript-store'
 import { registerUpdater } from './shell/updater/updater'
 import { registerProjects } from './projects/projects'
+import { closeLibraryMcp, registerLibrary, stopFollowing } from './library/library'
 import { collapseCategories } from './projects/collapse/collapse'
 import { handle } from './ipc/ipc'
 import { loadTroubleLine, troublePage } from './shell/window-trouble/window-trouble'
+import { isPackagedRun } from './shell/packaged/packaged'
 
 const isMac = process.platform === 'darwin'
 
@@ -34,7 +36,7 @@ function dropChildren(): void {
   killTrackedChildren()
 }
 
-const inspectPort = app.isPackaged
+const inspectPort = isPackagedRun()
   ? null
   : (process.env.ZT_INSPECT ?? (process.env.ELECTRON_RENDERER_URL ? '0' : null))
 if (inspectPort !== null) app.commandLine.appendSwitch('remote-debugging-port', inspectPort)
@@ -91,18 +93,32 @@ function createWindow(): void {
 
   win.once('ready-to-show', () => win.show())
 
+  // did-finish-load fires for a failed navigation too, still naming the page
+  // that was asked for, so the failure has to be remembered until the next one.
+  let loadFailed = false
+
   win.webContents.on('did-fail-load', (_event, errorCode, errorDescription, _url, isMainFrame) => {
     if (!isMainFrame) return
     const line = loadTroubleLine(errorCode, errorDescription)
     if (line === null) return
+    loadFailed = true
     console.error(`[window] ${line}`)
     win.show()
     void win.webContents.loadURL(troublePage(line))
   })
 
+  // The one line the packaging job looks for: a process that stays alive can
+  // still be showing the trouble page, and that page is a data: URL.
+  win.webContents.on('did-finish-load', () => {
+    const url = win.webContents.getURL()
+    if (loadFailed || url.startsWith('data:')) return
+    console.log(`[window] showing ${url}`)
+  })
+
   win.webContents.on('did-start-navigation', (details) => {
     if (!details.isMainFrame) return
     if (details.isSameDocument) return
+    if (!details.url.startsWith('data:')) loadFailed = false
     // A clicked link lands here before will-navigate cancels it, and the page
     // is staying, so only a load that really replaces it drops the agents.
     if (details.url !== win.webContents.getURL() && !details.url.startsWith('data:')) return
@@ -195,6 +211,7 @@ if (!primary) {
   registerTranscriptStore()
   registerPlugins()
   registerProjects()
+  registerLibrary()
   registerNudge()
   registerUpdater()
   handle('app:version', () => app.getVersion())
@@ -229,7 +246,11 @@ if (!primary) {
     if (!isMac) app.quit()
   })
 
-  app.on('before-quit', dropChildren)
+  app.on('before-quit', () => {
+    dropChildren()
+    stopFollowing()
+    void closeLibraryMcp()
+  })
 
   process.on('uncaughtException', (cause) => {
     console.error('[zetrem] main crashed', cause)

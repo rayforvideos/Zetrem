@@ -4,7 +4,13 @@ import { describe, expect, it } from 'vitest'
 
 const SPRITE_SURFACES = ['CharacterPicker', 'AgentSprite', 'YouField']
 
-const REVEALED_ON_HOVER = ['MemberMenu', 'ChatList', 'ProjectSwitcher']
+const REVEALED_ON_HOVER = [
+  'MemberMenu',
+  'ChatList',
+  'ProjectSwitcher',
+  'NoteList',
+  'ConversationPane',
+]
 
 const OURS = [
   join('src', 'entities'),

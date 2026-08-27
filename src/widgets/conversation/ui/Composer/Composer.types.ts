@@ -10,6 +10,8 @@ export type ComposerProps = {
   model: ModelChoice
   refusedModels: ModelChoice[]
   enterSends: boolean
+  // Whether sessions in this project are handed the library to search.
+  library: boolean
   files: Attached[]
   onSend(text: string): void
   onPick(): void
@@ -19,4 +21,5 @@ export type ComposerProps = {
   onClearAddressee(): void
   onPermissionMode(mode: PermissionMode): void
   onModel(model: ModelChoice): void
+  onLibrary(open: boolean): void
 }

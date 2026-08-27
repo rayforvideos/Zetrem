@@ -70,6 +70,7 @@ function working(turns: Turn[]): string {
       away={null}
       nowMs={12_000}
       onDecide={() => {}}
+      onFileTurn={() => {}}
       sidebar={null}
       hint={false}
       onHintSeen={() => {}}
@@ -84,6 +85,7 @@ function working(turns: Turn[]): string {
           model="default"
           refusedModels={[]}
           enterSends={true}
+          library
           files={[]}
           onPick={() => {}}
           onTake={() => {}}
@@ -93,6 +95,7 @@ function working(turns: Turn[]): string {
           onClearAddressee={() => {}}
           onPermissionMode={() => {}}
           onModel={() => {}}
+          onLibrary={() => {}}
         />
       }
     />,
@@ -111,6 +114,7 @@ function pane(turns: Turn[], permission: PermissionAsk | null = null): string {
       away={null}
       nowMs={0}
       onDecide={() => {}}
+      onFileTurn={() => {}}
       sidebar={null}
       hint={false}
       onHintSeen={() => {}}
@@ -125,6 +129,7 @@ function pane(turns: Turn[], permission: PermissionAsk | null = null): string {
           model="default"
           refusedModels={[]}
           enterSends={true}
+          library
           files={[]}
           onPick={() => {}}
           onTake={() => {}}
@@ -134,6 +139,7 @@ function pane(turns: Turn[], permission: PermissionAsk | null = null): string {
           onClearAddressee={() => {}}
           onPermissionMode={() => {}}
           onModel={() => {}}
+          onLibrary={() => {}}
         />
       }
     />,
@@ -310,6 +316,19 @@ const WAITING = {
   sinceMs: 0,
   many: '팀원 3명',
 }
+
+describe('an answer can be filed to the library on its own', () => {
+  it('offers the per-answer action once the answer is in and settled', () => {
+    const html = pane([turn({ text: '다 했다' })])
+    expect(html).toContain('To library')
+    expect(html).toContain('group/answer')
+  })
+
+  it('keeps the action off the streaming answer, since it is not written yet', () => {
+    const html = working([turn({ role: 'user', text: '고쳐줘' }), turn({ text: '쓰는 중' })])
+    expect(html).not.toContain('To library')
+  })
+})
 
 describe('the row that says the team is still out', () => {
   it('shimmers its verb the way the working row does', () => {

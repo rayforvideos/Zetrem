@@ -1,8 +1,9 @@
 import { useRef, useState } from 'react'
 import type { FormEvent, KeyboardEvent } from 'react'
-import { ArrowUp, Paperclip, Shield, Square, X } from 'lucide-react'
+import { ArrowUp, Library, Paperclip, Shield, Square, X } from 'lucide-react'
 import { MODELS, PERMISSION_MODES, modelsWith } from '@/entities/settings'
 import type { ModelChoice, PermissionMode } from '@/entities/claude-cli'
+import { cn } from '@/shared/lib/cn'
 import { modifierKey } from '@/shared/lib/platform/platform'
 import { Button } from '@/shared/ui/button'
 import {
@@ -35,6 +36,7 @@ export function Composer({
   model,
   refusedModels,
   enterSends,
+  library,
   files,
   onSend,
   onPick,
@@ -44,6 +46,7 @@ export function Composer({
   onClearAddressee,
   onPermissionMode,
   onModel,
+  onLibrary,
 }: ComposerProps) {
   const [draft, setDraft] = useState('')
   const [over, setOver] = useState(false)
@@ -170,6 +173,27 @@ export function Composer({
             onSelect={(id) => onPermissionMode(id as PermissionMode)}
             label={t`Permissions`}
           />
+          <InputGroupButton
+            type="button"
+            size="xs"
+            data-library-toggle
+            aria-pressed={library}
+            onClick={() => onLibrary(!library)}
+            title={
+              library
+                ? t`Agents search the library and file what they learn. Click to turn it off.`
+                : t`Agents work without the library. Click to turn it on.`
+            }
+            className={cn(
+              'rounded-full transition-colors duration-150',
+              library
+                ? 'bg-card text-foreground hover:bg-card'
+                : 'text-muted-foreground hover:text-foreground',
+            )}
+          >
+            <Library />
+            {t`Library`}
+          </InputGroupButton>
           <ChoicePicker
             options={modelsWith(MODELS, refusedModels)}
             selected={model}

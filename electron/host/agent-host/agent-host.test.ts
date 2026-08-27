@@ -47,6 +47,8 @@ const boundary = vi.hoisted(() => ({
   nextPid: 4200,
   holdLogin: false,
   releaseLogin: null as (() => void) | null,
+  laid: [] as string[],
+  libraryFails: false,
 }))
 
 vi.mock('electron', () => ({
@@ -113,6 +115,19 @@ vi.mock('../../cli/login-path/login-path', () => ({
 
 vi.mock('../../store/project-memory/project-memory', () => ({
   recallProject: async () => boundary.project,
+}))
+
+vi.mock('../../library/library', () => ({
+  librarySessionArgs: async (workspace: string) => {
+    if (boundary.libraryFails) throw new Error('read-only disk')
+    boundary.laid.push(workspace)
+    return [
+      '--add-dir',
+      `${workspace}/.zetrem/library`,
+      '--mcp-config',
+      '/data/Zetrem/library-mcp.json',
+    ]
+  },
 }))
 
 vi.mock('../../spawn/kill-tree/kill-tree', () => ({
@@ -195,6 +210,8 @@ beforeEach(async () => {
   boundary.nextPid = 4200
   boundary.holdLogin = false
   boundary.releaseLogin = null
+  boundary.laid.length = 0
+  boundary.libraryFails = false
   boundary.userData = mkdtempSync(join(tmpdir(), 'zetrem-agent-host-'))
   vi.spyOn(console, 'error').mockImplementation(() => undefined)
   vi.resetModules()
@@ -261,6 +278,33 @@ describe('what the child says reaches the renderer, and its death is told once',
 
     expect(of(one, 'exit')).toHaveLength(1)
     expect(of(one, 'exit')[0]).toMatchObject({ code: -1, reason: { code: 'start-failed' } })
+  })
+})
+
+describe('the library every session is handed', () => {
+  it('hands every session its workspace library as an added directory and an MCP server', async () => {
+    const one = renderer()
+    await startAgent(one, 'a1', 'hello')
+    const spawn = boundary.spawns[0]
+    if (spawn === undefined) throw new Error('nothing was spawned')
+    const workspace = boundary.laid[0]
+    if (workspace === undefined) throw new Error('no library was laid out')
+    expect(spawn.args.slice(-4)).toEqual([
+      '--add-dir',
+      `${workspace}/.zetrem/library`,
+      '--mcp-config',
+      '/data/Zetrem/library-mcp.json',
+    ])
+    expect(boundary.laid).toHaveLength(1)
+  })
+
+  it('still starts the session when the library cannot be laid out, just without it', async () => {
+    boundary.libraryFails = true
+    const one = renderer()
+    await startAgent(one, 'a3', 'hello')
+    const spawn = boundary.spawns[0]
+    if (spawn === undefined) throw new Error('nothing was spawned')
+    expect(spawn.args).not.toContain('--add-dir')
   })
 })
 

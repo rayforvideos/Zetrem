@@ -1,7 +1,7 @@
 import { StockList } from '@/entities/teammate'
 import type { StockListProps } from '@/entities/teammate'
 import { useState } from 'react'
-import { ChevronRight } from 'lucide-react'
+import { ChevronRight, Library } from 'lucide-react'
 import { SIDEBAR } from '@/shared/config/theme'
 import { cn } from '@/shared/lib/cn'
 import { useScrollState } from '@/shared/lib/scroll-state/useScrollState'
@@ -27,6 +27,9 @@ type TeamSidebarProps = {
   width: number
   onResize(width: number): void
   onResizeEnd(width: number): void
+  onOpenLibrary(): void
+  libraryOpen: boolean
+  libraryUnseen: boolean
 }
 
 export function TeamSidebar({
@@ -38,6 +41,9 @@ export function TeamSidebar({
   width,
   onResize,
   onResizeEnd,
+  onOpenLibrary,
+  libraryOpen,
+  libraryUnseen,
 }: TeamSidebarProps) {
   const [column] = useScrollState<HTMLDivElement>()
 
@@ -61,6 +67,33 @@ export function TeamSidebar({
 
         <Heading>{t`Claude Code`}</Heading>
         <BuiltinAgents agents={agents} />
+
+        <Button
+          data-library-row
+          variant="ghost"
+          size="sm"
+          aria-current={libraryOpen ? 'true' : undefined}
+          onClick={onOpenLibrary}
+          className={cn(
+            'mt-auto justify-start gap-2 rounded-lg px-2',
+            libraryOpen
+              ? 'bg-card text-foreground'
+              : libraryUnseen
+                ? 'text-foreground hover:bg-card/60'
+                : 'text-muted-foreground hover:text-foreground',
+          )}
+          title={t`Open the library`}
+        >
+          <Library className="size-4" />
+          <span className="truncate">{t`Library`}</span>
+          {libraryUnseen && (
+            <span
+              data-library-unseen
+              aria-hidden
+              className="size-1.5 flex-none rounded-full bg-current"
+            />
+          )}
+        </Button>
       </div>
     </aside>
   )

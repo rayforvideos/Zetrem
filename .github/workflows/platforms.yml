@@ -148,7 +148,9 @@ jobs:
 
       # The Windows runner has no display, but Electron draws to nothing without
       # complaint, so launching for real still proves asar integrity took.
-      - name: Prove the packaged app opens
+      # Staying alive is not enough: a window that failed to load its page
+      # stays open on a trouble page, so main has to say what it is showing.
+      - name: Prove the packaged app opens and shows its page
         shell: bash
         run: |
           if [ "${{ matrix.os }}" = "windows-latest" ]; then
@@ -159,14 +161,23 @@ jobs:
           "$bin" > opened.log 2>&1 &
           pid=$!
           sleep 20
-          if kill -0 "$pid" 2>/dev/null; then
-            echo "alive after 20s"
-            kill "$pid" || true
-          else
+          if ! kill -0 "$pid" 2>/dev/null; then
             echo "::error::the packaged app exited on its own"
             cat opened.log
             exit 1
           fi
+          kill "$pid" || true
+          if grep -qE '\[window\] The window could not load|\[renderer\] crashed' opened.log; then
+            echo "::error::the packaged app opened on its trouble page"
+            cat opened.log
+            exit 1
+          fi
+          if ! grep -q '^\[window\] showing ' opened.log; then
+            echo "::error::the packaged app never said it was showing its page"
+            cat opened.log
+            exit 1
+          fi
+          grep '^\[window\] showing ' opened.log
 
       - name: Prove the macOS build is signed, notarised and would open
         if: matrix.os == 'macos-latest' && env.SIGNED == 'true'

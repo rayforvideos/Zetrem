@@ -3,6 +3,7 @@ import { app, BrowserWindow } from 'electron'
 // default import survives in the packaged ESM main.
 import updater from 'electron-updater'
 import { handle, push } from '../../ipc/ipc'
+import { isPackagedRun } from '../packaged/packaged'
 
 const { autoUpdater } = updater
 
@@ -22,7 +23,7 @@ export function registerUpdater(): void {
   })
 
   // electron-updater reads app-update.yml, which only a packaged build has.
-  if (!app.isPackaged) return
+  if (!isPackagedRun()) return
 
   autoUpdater.autoDownload = true
   autoUpdater.autoInstallOnAppQuit = true

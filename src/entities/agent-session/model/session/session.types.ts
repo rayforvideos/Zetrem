@@ -1,6 +1,6 @@
 export type SessionStatus = 'working' | 'waiting' | 'reported' | 'done'
 
-export type RunnerId = string
+type RunnerId = string
 
 export type PermissionAsk = {
   requestId: string

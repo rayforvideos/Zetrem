@@ -23,7 +23,7 @@ export type Project = {
   onPickRecent(id: string): void
 }
 
-export type Defaults = {
+type Defaults = {
   permissionMode: PermissionMode
   model: ModelChoice
   tongue: 'system' | 'en' | 'ko'
@@ -36,18 +36,18 @@ export type Defaults = {
   onModel(model: ModelChoice): void
 }
 
-export type Plugins = {
+type Plugins = {
   summary: string
   onOpen(): void
 }
 
-export type Agents = {
+type Agents = {
   stock: string[]
   on: string[]
   onChange(name: string, on: boolean): void
 }
 
-export type Actions = {
+type Actions = {
   reopened: boolean
   signedIn: boolean
   hasProject: boolean
@@ -55,7 +55,7 @@ export type Actions = {
   onCancel(): void
 }
 
-export type You = {
+type You = {
   name: string
   face: FaceId
   onName(next: string): void

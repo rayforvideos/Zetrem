@@ -31,7 +31,7 @@
     "smoke": "node --experimental-websocket scripts/smoke.mjs"
   },
   "devDependencies": {
-    "@babel/parser": "^7.29.8",
+    "@babel/parser": "^8.0.4",
     "@biomejs/biome": "2.5.10",
     "@feature-sliced/steiger-plugin": "0.7.0",
     "@lingui/babel-plugin-lingui-macro": "^5.9.5",

@@ -9,9 +9,22 @@ const execFileAsync = promisify(execFile)
 const isWindows = process.platform === 'win32'
 
 let cached: string | null = null
+let pending: Promise<string> | null = null
+let generation = 0
+let remembered: string | null = null
+let keep: ((path: string) => void) | null = null
 
 export function resetLoginPath(): void {
   cached = null
+  pending = null
+  remembered = null
+  generation += 1
+}
+
+// A login shell can take seconds; last launch's answer is used while the shell is asked again.
+export function rememberLoginPath(path: string | null, save: (path: string) => void): void {
+  remembered = path
+  keep = save
 }
 
 async function shellPath(inherited: string): Promise<string> {
@@ -28,12 +41,34 @@ async function shellPath(inherited: string): Promise<string> {
   }
 }
 
+function askTheShell(): Promise<string> {
+  if (pending !== null) return pending
+  const asked = generation
+  pending = (async () => {
+    const inherited = process.env.PATH ?? ''
+    const found = isWindows ? inherited : await shellPath(inherited)
+    const full = withKnownDirs(found, knownInstallDirs())
+    if (asked === generation) {
+      cached = full
+      pending = null
+      if (full !== remembered) {
+        remembered = full
+        keep?.(full)
+      }
+    }
+    return full
+  })()
+  return pending
+}
+
 export async function loginPath(): Promise<string> {
   if (cached !== null) return cached
-  const inherited = process.env.PATH ?? ''
-  const found = isWindows ? inherited : await shellPath(inherited)
-  cached = withKnownDirs(found, knownInstallDirs())
-  return cached
+  if (remembered !== null && canFind('claude', remembered)) {
+    cached = remembered
+    void askTheShell()
+    return cached
+  }
+  return askTheShell()
 }
 
 // The migrate-installer leaves the binary in ~/.claude/local and reaches it

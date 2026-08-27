@@ -7,6 +7,7 @@ import { handle, push } from '../../ipc/ipc'
 const { autoUpdater } = updater
 
 const RECHECK_MS = 4 * 60 * 60 * 1000
+const FIRST_CHECK_MS = 10 * 1000
 
 let readyVersion: string | null = null
 let registered = false
@@ -43,7 +44,7 @@ export function registerUpdater(): void {
   }
 
   void app.whenReady().then(() => {
-    check()
+    setTimeout(check, FIRST_CHECK_MS).unref()
     setInterval(check, RECHECK_MS).unref()
   })
 }

@@ -116,7 +116,7 @@ beforeEach(() => {
   boundary.windows = [fakeWindow()]
   // Only the recheck clock is faked; the promise flush below still needs a real
   // setImmediate.
-  vi.useFakeTimers({ toFake: ['setInterval', 'clearInterval'] })
+  vi.useFakeTimers({ toFake: ['setInterval', 'clearInterval', 'setTimeout', 'clearTimeout'] })
 })
 
 afterEach(() => {
@@ -182,8 +182,10 @@ describe('a packaged launch', () => {
     ])
   })
 
-  it('checks once the app is ready, and again a workday later', async () => {
+  it('checks shortly after the app is ready, and again a workday later', async () => {
     await register()
+    expect(boundary.checks).toBe(0)
+    await vi.advanceTimersByTimeAsync(10 * 1000)
     expect(boundary.checks).toBe(1)
 
     await vi.advanceTimersByTimeAsync(4 * 60 * 60 * 1000)
@@ -201,6 +203,7 @@ describe('a packaged launch', () => {
 
     expect(boundary.bound).toEqual(['update-downloaded'])
     expect(boundary.handled).toEqual(['updater:state', 'updater:restart'])
+    await vi.advanceTimersByTimeAsync(10 * 1000)
     expect(boundary.checks).toBe(1)
 
     await vi.advanceTimersByTimeAsync(4 * 60 * 60 * 1000)
@@ -212,6 +215,7 @@ describe('a packaged launch', () => {
     boundary.checkFails = true
 
     await register()
+    await vi.advanceTimersByTimeAsync(10 * 1000)
 
     expect(boundary.checks).toBe(1)
   })

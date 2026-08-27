@@ -1,5 +1,5 @@
 import { resolve } from 'node:path'
-import { BrowserWindow, app, dialog, session, shell } from 'electron'
+import { BrowserWindow, Menu, app, dialog, session, shell } from 'electron'
 import { CHROME_TOP, MIN_WINDOW, TRAFFIC_LIGHT } from '@/shared/config/theme'
 import { killAllAgents, registerAgentHost } from './host/agent-host/agent-host'
 import { chromeNow, followScheme, wearTheme } from './shell/app-theme/app-theme'
@@ -11,6 +11,8 @@ import { registerCliVersion } from './cli/cli-version/cli-version'
 import { registerNudge } from './host/nudge/nudge'
 import { registerPlugins } from './catalog/plugins/plugins'
 import { loadSettings, registerSettingsStore } from './store/settings-store/settings-store'
+import { readLoginPath, saveLoginPath } from './store/login-path-store/login-path-store'
+import { rememberLoginPath } from './cli/login-path/login-path'
 import { registerConnectors } from './catalog/connectors/connectors'
 import { killTrackedChildren } from './spawn/run-settled/run-settled'
 import { killAllProbes, registerSessionProbe } from './host/session-probe/session-probe'
@@ -24,6 +26,7 @@ import { loadTroubleLine, troublePage } from './shell/window-trouble/window-trou
 const isMac = process.platform === 'darwin'
 
 app.setName('Zetrem')
+if (!isMac) Menu.setApplicationMenu(null)
 
 function dropChildren(): void {
   killAllAgents()
@@ -206,6 +209,7 @@ if (!primary) {
       guardThePage()
       wearTheName()
       await collapseCategories(app.getPath('userData'))
+      rememberLoginPath(await readLoginPath(), saveLoginPath)
       // Settled before the window exists, or the first paint is the wrong
       // colour and the page opens under the machine's scheme.
       wearTheme((await loadSettings()).theme)

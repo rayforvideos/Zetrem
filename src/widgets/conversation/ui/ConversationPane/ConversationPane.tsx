@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react'
-import { FileText, Image } from 'lucide-react'
+import { FileText, Image, Zap } from 'lucide-react'
+import { Button } from '@/shared/ui/button'
 import type { ReactNode } from 'react'
 import type { PermissionAsk, SessionStatus, StatusState } from '@/entities/agent-session'
 import type { Chore } from '@/entities/conversation'
@@ -36,6 +37,7 @@ type ConversationPaneProps = {
   chores: Chore[]
   nowMs: number
   onDecide(allow: boolean, always?: boolean): void
+  onFileTurn(text: string): void
   sidebar: ReactNode
   report: ReactNode
   composer: ReactNode
@@ -55,6 +57,7 @@ export function ConversationPane({
   chores,
   nowMs,
   onDecide,
+  onFileTurn,
   sidebar,
   report,
   composer,
@@ -188,7 +191,10 @@ export function ConversationPane({
                 return (
                   <article
                     key={turn.id}
-                    className={cn('zt-rail zt-rise flex flex-col gap-2.5', live && 'zt-rail--live')}
+                    className={cn(
+                      'group/answer zt-rail zt-rise flex flex-col gap-2.5',
+                      live && 'zt-rail--live',
+                    )}
                   >
                     {turn.thinking.length > 0 && <Thinking text={turn.thinking} />}
                     {turn.text.length > 0 && (
@@ -202,6 +208,20 @@ export function ConversationPane({
                     )}
                     {turn.tools.length > 0 && (
                       <ToolRun tools={turn.tools} live={live} nowMs={nowMs} />
+                    )}
+                    {turn.text.length > 0 && !live && (
+                      <div className="flex">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => onFileTurn(turn.text)}
+                          className="h-7 rounded-lg px-2 text-xs text-muted-foreground opacity-0 transition-opacity group-hover/answer:opacity-100 group-focus-within/answer:opacity-100"
+                          title={t`File this answer to the vault as its own note`}
+                        >
+                          <Zap className="size-3" />
+                          {t`To vault`}
+                        </Button>
+                      </div>
                     )}
                   </article>
                 )

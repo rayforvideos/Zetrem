@@ -94,6 +94,16 @@ const desk: DeskBridge = {
   runCliUpdate: invoke('cli:update'),
   installCli: invoke('cli:install'),
 
+  listVaultNotes: invoke('vault:list'),
+  readVaultNote: invoke('vault:read'),
+  removeVaultNote: invoke('vault:remove'),
+  writeVaultNote: invoke('vault:write'),
+  createVaultNote: invoke('vault:create'),
+  renameVaultNote: invoke('vault:rename'),
+  addVaultFolder: invoke('vault:folder-add'),
+  renameVaultFolder: invoke('vault:folder-rename'),
+  removeVaultFolder: invoke('vault:folder-remove'),
+
   updaterState: invoke('updater:state'),
   updaterRestart: invoke('updater:restart'),
   onUpdaterReady: listen('updater:ready'),

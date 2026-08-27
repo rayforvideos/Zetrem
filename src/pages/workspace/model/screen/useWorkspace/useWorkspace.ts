@@ -92,6 +92,7 @@ export function useWorkspace() {
   })
 
   const [drawerOpen, setDrawerOpen] = useState(false)
+  const [vaultOpen, setVaultOpen] = useState(false)
   const [pendingRestart, setPendingRestart] = useState<string | null>(null)
   const shelf = usePlugins(gate === 'setup')
   const attach = useAttachments()
@@ -217,7 +218,16 @@ export function useWorkspace() {
   function swap(go: () => void): void {
     agent.reset()
     focus.clearAll()
+    setVaultOpen(false)
     go()
+  }
+
+  function openVault(): void {
+    setVaultOpen(true)
+  }
+
+  function leaveVault(): void {
+    setVaultOpen(false)
   }
 
   const agentToggles = {
@@ -257,9 +267,11 @@ export function useWorkspace() {
     hasProject,
     held,
     hire,
+    leaveVault,
     live,
     nowMs,
     openAgent,
+    openVault,
     panel,
     pendingRestart,
     project,
@@ -281,6 +293,7 @@ export function useWorkspace() {
     teamMembers,
     teamNote,
     update,
+    vaultOpen,
     viewport,
     wires,
     yourName,

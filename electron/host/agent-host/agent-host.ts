@@ -9,6 +9,7 @@ import { claudeBin, loginPath } from '../../cli/login-path/login-path'
 import { exitReason, startTrouble } from '../../spawn/exit-reason/exit-reason'
 import type { ExitReason } from '@/entities/claude-cli/lib/exit-line/exit-line.types'
 import { recallProject } from '../../store/project-memory/project-memory'
+import { ensureVault, vaultArgs, vaultRoot } from '../../vault/vault'
 import { handle, on, push } from '../../ipc/ipc'
 import { lineReader } from '../../spawn/line-reader/line-reader'
 import { killTree, killTreeSync } from '../../spawn/kill-tree/kill-tree'
@@ -81,10 +82,18 @@ export function registerAgentHost(): void {
       try {
         const project = await recallProject()
         workspace = project ?? scratchWorkspace(app.getPath('userData'))
-        const launch = launchFor(
-          await claudeBin(),
-          agentArgs({ ...run, persona: PERSONA, orchestrator: ORCHESTRATOR_PROMPT }),
-        )
+        const vault = vaultRoot()
+        let added: string[] = []
+        try {
+          await ensureVault(vault)
+          added = vaultArgs(vault)
+        } catch (cause: unknown) {
+          console.error('[vault] could not lay out', vault, cause)
+        }
+        const launch = launchFor(await claudeBin(), [
+          ...agentArgs({ ...run, persona: PERSONA, orchestrator: ORCHESTRATOR_PROMPT }),
+          ...added,
+        ])
         const env = agentEnv(process.env, await loginPath())
 
         // Nothing below may await: the spawn and the map entry have to happen

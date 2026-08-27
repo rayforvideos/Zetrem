@@ -7,6 +7,7 @@ import { runConfigOf } from '../run-config-guard/run-config-guard'
 import { ORCHESTRATOR_PROMPT, PERSONA } from '@/entities/teammate/model/orchestrator/orchestrator'
 import { claudeBin, loginPath } from '../../cli/login-path/login-path'
 import { recallProject } from '../../store/project-memory/project-memory'
+import { ensureVault, vaultArgs, vaultRoot } from '../../vault/vault'
 import { saveFile } from '../../store/save-file/save-file'
 import { readKept, stillWorthShowing } from '../../store/usage-cache/usage-cache'
 import { workspaceDir } from '../../shell/workspace-dir/workspace-dir'
@@ -90,7 +91,18 @@ export function registerSessionProbe(): void {
     if (inFlight !== null) return inFlight
     inFlight = (async () => {
       const workspace = await workspaceDir(await recallProject(), app.getPath('userData'))
-      const args = probeArgs({ ...run, persona: PERSONA, orchestrator: ORCHESTRATOR_PROMPT })
+      const vault = vaultRoot()
+      let added: string[] = []
+      try {
+        await ensureVault(vault)
+        added = vaultArgs(vault)
+      } catch (cause: unknown) {
+        console.error('[vault] could not lay out', vault, cause)
+      }
+      const args = [
+        ...probeArgs({ ...run, persona: PERSONA, orchestrator: ORCHESTRATOR_PROMPT }),
+        ...added,
+      ]
       const env = agentEnv(process.env, await loginPath())
       return readInit(await claudeBin(), args, workspace, env)
     })().catch(() => null)

@@ -1,7 +1,7 @@
 import { StockList } from '@/entities/teammate'
 import type { StockListProps } from '@/entities/teammate'
 import { useState } from 'react'
-import { ChevronRight } from 'lucide-react'
+import { Zap, ChevronRight } from 'lucide-react'
 import { SIDEBAR } from '@/shared/config/theme'
 import { cn } from '@/shared/lib/cn'
 import { useScrollState } from '@/shared/lib/scroll-state/useScrollState'
@@ -27,6 +27,9 @@ type TeamSidebarProps = {
   width: number
   onResize(width: number): void
   onResizeEnd(width: number): void
+  onOpenVault(): void
+  vaultOpen: boolean
+  vaultUnseen: boolean
 }
 
 export function TeamSidebar({
@@ -38,6 +41,9 @@ export function TeamSidebar({
   width,
   onResize,
   onResizeEnd,
+  onOpenVault,
+  vaultOpen,
+  vaultUnseen,
 }: TeamSidebarProps) {
   const [column] = useScrollState<HTMLDivElement>()
 
@@ -61,6 +67,33 @@ export function TeamSidebar({
 
         <Heading>{t`Claude Code`}</Heading>
         <BuiltinAgents agents={agents} />
+
+        <Button
+          data-vault-row
+          variant="ghost"
+          size="sm"
+          aria-current={vaultOpen ? 'true' : undefined}
+          onClick={onOpenVault}
+          className={cn(
+            'mt-auto justify-start gap-2 rounded-lg px-2',
+            vaultOpen
+              ? 'bg-card text-foreground'
+              : vaultUnseen
+                ? 'text-foreground hover:bg-card/60'
+                : 'text-muted-foreground hover:text-foreground',
+          )}
+          title={t`Open the vault`}
+        >
+          <Zap className="size-4" />
+          <span className="truncate">{t`Vault`}</span>
+          {vaultUnseen && (
+            <span
+              data-vault-unseen
+              aria-hidden
+              className="size-1.5 flex-none rounded-full bg-current"
+            />
+          )}
+        </Button>
       </div>
     </aside>
   )

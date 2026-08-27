@@ -64,6 +64,16 @@ export type DeskBridge = {
   runCliUpdate: Invoke<'cli:update'>
   installCli: Invoke<'cli:install'>
 
+  listVaultNotes: Invoke<'vault:list'>
+  readVaultNote: Invoke<'vault:read'>
+  removeVaultNote: Invoke<'vault:remove'>
+  writeVaultNote: Invoke<'vault:write'>
+  createVaultNote: Invoke<'vault:create'>
+  renameVaultNote: Invoke<'vault:rename'>
+  addVaultFolder: Invoke<'vault:folder-add'>
+  renameVaultFolder: Invoke<'vault:folder-rename'>
+  removeVaultFolder: Invoke<'vault:folder-remove'>
+
   updaterState: Invoke<'updater:state'>
   updaterRestart: Invoke<'updater:restart'>
   onUpdaterReady: Listen<'updater:ready'>

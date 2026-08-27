@@ -132,15 +132,19 @@ msgstr "{sources, plural, other {출처 #곳}}에서 {installed}개 설치됨"
 msgid "{kind} {name} did not load: {why}"
 msgstr "{kind} {name}을(를) 불러오지 못했습니다: {why}"
 
+#: src/widgets/status-bar/lib/format/format.ts:62
+msgid "{n} need auth"
+msgstr "{n}개 로그인 필요"
+
 #: src/entities/teammate/ui/StockList/StockList.tsx:30
 msgid "{name} can be called this session"
 msgstr "{name}은(는) 이번 세션에서 부를 수 있습니다"
 
-#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:231
+#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:241
 msgid "{name} is off. The running session keeps them until it ends."
 msgstr "{name}을(를) 껐습니다. 실행 중인 세션은 끝날 때까지 그대로 데리고 있습니다."
 
-#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:230
+#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:240
 msgid "{name} is on. The running session cannot call them yet."
 msgstr "{name}을(를) 켰습니다. 실행 중인 세션은 아직 부를 수 없습니다."
 
@@ -203,7 +207,7 @@ msgid "{tool} was not allowed: {why}"
 msgstr "{tool} 사용이 허용되지 않았습니다: {why}"
 
 #. placeholder {0}: agents.stock.length
-#: src/widgets/team-sidebar/ui/TeamSidebar/TeamSidebar.tsx:89
+#: src/widgets/team-sidebar/ui/TeamSidebar/TeamSidebar.tsx:122
 msgid "{using} of {0} agents on"
 msgstr "에이전트 {0}개 중 {using}개 사용 중"
 
@@ -380,7 +384,7 @@ msgstr "API 오류 {0}"
 msgid "Ask first"
 msgstr "먼저 묻기"
 
-#: src/widgets/conversation/ui/ConversationPane/ConversationPane.tsx:103
+#: src/widgets/conversation/ui/ConversationPane/ConversationPane.tsx:106
 msgid "Ask for the whole job"
 msgstr "일 전체를 맡기세요"
 
@@ -438,6 +442,8 @@ msgstr "둘러보기"
 #: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:340
 #: src/widgets/team-sidebar/ui/MemberMenu/MemberMenu.tsx:66
 #: src/widgets/team-sidebar/ui/ProjectSwitcher/ProjectSwitcher.tsx:145
+#: src/widgets/vault/ui/NoteList/NoteList.tsx:242
+#: src/widgets/vault/ui/NoteReader/NoteReader.tsx:116
 msgid "Cancel"
 msgstr "취소"
 
@@ -449,7 +455,7 @@ msgstr "장바구니 합계와 반올림"
 msgid "Change"
 msgstr "바꾸기"
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:344
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:396
 msgid "Change account, project, and permissions"
 msgstr "계정과 프로젝트, 권한을 바꿉니다"
 
@@ -479,7 +485,7 @@ msgid "Choose what can run without asking, check your remaining limits along the
 msgstr "묻지 않고 실행해도 되는 범위를 정하고, 남은 사용량은 아래쪽에서 확인하고, 실행 중인 작업은 언제든 멈출 수 있습니다."
 
 #: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:21
-#: src/widgets/team-sidebar/ui/TeamSidebar/TeamSidebar.tsx:62
+#: src/widgets/team-sidebar/ui/TeamSidebar/TeamSidebar.tsx:68
 msgid "Claude Code"
 msgstr "클로드 코드"
 
@@ -491,11 +497,6 @@ msgstr "클로드 코드에 화면을 붙였습니다"
 #: src/widgets/team-sidebar/ui/ToolPicker/ToolPicker.tsx:71
 msgid "Clear"
 msgstr "지우기"
-
-#. placeholder {0}: update.current
-#: src/widgets/status-bar/lib/format/format.ts:70
-msgid "CLI {0} → {latest} available"
-msgstr "CLI {0} → {latest} 사용 가능"
 
 #: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:93
 msgid "Close"
@@ -513,6 +514,10 @@ msgstr "보고서 닫기"
 #: src/widgets/tile-deck/ui/layers/Headline/Headline.tsx:41
 msgid "Close this tile. The run stays in the sidebar."
 msgstr "이 타일을 닫습니다. 기록은 사이드바에 남습니다."
+
+#: src/widgets/status-bar/lib/format/format.ts:46
+msgid "compacting soon"
+msgstr "곧 압축"
 
 #: src/entities/settings/config/choices/choices.ts:27
 msgid "Complex work. Slower and pricier"
@@ -546,11 +551,6 @@ msgstr "커넥터 · {0}"
 #: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:112
 msgid "Context"
 msgstr "컨텍스트"
-
-#. placeholder {0}: 100 - percent
-#: src/widgets/status-bar/lib/format/format.ts:47
-msgid "Context {0}% left, compacting soon"
-msgstr "컨텍스트 {0}% 남음, 곧 압축됩니다"
 
 #: src/pages/workspace/model/session/agent-events/agent-events.ts:158
 msgid "Conversation compacted here"
@@ -594,8 +594,8 @@ msgstr "저장된 대화 목록을 읽지 못했습니다"
 msgid "Could not open that chat"
 msgstr "그 대화를 열지 못했습니다"
 
-#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:189
-#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:193
+#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:190
+#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:194
 msgid "Could not open that folder"
 msgstr "그 폴더를 열지 못했습니다"
 
@@ -651,7 +651,7 @@ msgstr "설정을 읽지 못했습니다"
 msgid "Could not read your sign-in"
 msgstr "로그인 상태를 읽지 못했습니다"
 
-#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:208
+#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:209
 msgid "Could not remove that project"
 msgstr "프로젝트를 지우지 못했습니다"
 
@@ -692,6 +692,10 @@ msgstr "팀원을 만들면 여기에 나타납니다."
 msgid "Default"
 msgstr "기본값"
 
+#: src/widgets/vault/ui/NoteReader/NoteReader.tsx:100
+msgid "Delete"
+msgstr "삭제"
+
 #. placeholder {0}: named(chat.title)
 #: src/widgets/team-sidebar/ui/ChatList/ChatRow.tsx:220
 msgid "Delete “{0}”?"
@@ -701,6 +705,24 @@ msgstr "“{0}” 대화를 삭제할까요?"
 #: src/widgets/team-sidebar/ui/ChatList/ChatRow.tsx:228
 msgid "Delete chat"
 msgstr "대화 삭제"
+
+#: src/widgets/vault/ui/NoteList/NoteList.tsx:141
+#: src/widgets/vault/ui/NoteList/NoteList.tsx:243
+msgid "Delete folder"
+msgstr "폴더 삭제"
+
+#: src/widgets/vault/ui/NoteReader/NoteReader.tsx:117
+msgid "Delete note"
+msgstr "노트 삭제"
+
+#: src/widgets/vault/ui/NoteList/NoteList.tsx:236
+msgid "Delete the folder “{name}”?"
+msgstr "“{name}” 폴더를 삭제할까요?"
+
+#. placeholder {0}: note.title
+#: src/widgets/vault/ui/NoteReader/NoteReader.tsx:110
+msgid "Delete the note “{0}”?"
+msgstr "“{0}” 노트를 삭제할까요?"
 
 #: src/widgets/conversation/ui/ConversationPane/Approval.tsx:84
 msgid "Deny"
@@ -722,6 +744,7 @@ msgstr "이번 세션에서는 다시 묻지 않기"
 #: src/widgets/setup/ui/PluginShelf/PluginShelf.tsx:131
 #: src/widgets/setup/ui/SetupPane/SetupPane.tsx:204
 #: src/widgets/tile-deck/lib/state-word/state-word.ts:10
+#: src/widgets/vault/ui/NoteReader/NoteReader.tsx:90
 msgid "Done"
 msgstr "완료"
 
@@ -738,6 +761,7 @@ msgid "Earlier run"
 msgstr "이전 실행"
 
 #: src/widgets/team-sidebar/ui/MemberMenu/MemberMenu.tsx:49
+#: src/widgets/vault/ui/NoteReader/NoteReader.tsx:90
 msgid "Edit"
 msgstr "수정"
 
@@ -801,6 +825,10 @@ msgstr "빠르고 저렴합니다. 간단한 질문에 좋습니다"
 msgid "Fetching"
 msgstr "가져오는 중"
 
+#: src/widgets/conversation/ui/ConversationPane/ConversationPane.tsx:219
+msgid "File this answer to the vault as its own note"
+msgstr "이 답변을 별도 노트로 볼트에 정리"
+
 #: src/widgets/welcome/lib/slides/slides.ts:27
 msgid "Files read, commands run, edits made. Each one shows up as it happens, not as a summary afterwards."
 msgstr "읽은 파일, 실행한 명령, 고친 내용이 그때그때 올라옵니다. 끝나고 요약만 보여주지 않습니다."
@@ -828,6 +856,8 @@ msgstr "둘을 담을 폴더"
 
 #: src/widgets/team-sidebar/ui/ChatList/ChatRow.tsx:83
 #: src/widgets/team-sidebar/ui/ChatList/ChatRow.tsx:84
+#: src/widgets/vault/ui/NoteList/NoteList.tsx:179
+#: src/widgets/vault/ui/NoteList/NoteList.tsx:180
 msgid "Folder name"
 msgstr "폴더 이름"
 
@@ -843,6 +873,10 @@ msgstr "계정 설정을 따릅니다"
 #: src/widgets/tile-deck/ui/layers/Transcript/Transcript.tsx:46
 msgid "from {0}"
 msgstr "{0}에게서"
+
+#: src/widgets/vault/ui/NoteReader/NoteReader.tsx:55
+msgid "from {project}"
+msgstr "{project}에서"
 
 #: src/widgets/status-bar/lib/strip/strip.ts:36
 msgid "from an earlier reading"
@@ -885,13 +919,17 @@ msgstr "넘기는 중"
 msgid "Held up"
 msgstr "멈춰 있음"
 
-#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:137
+#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:138
 msgid "Hide team sidebar"
 msgstr "팀 사이드바 접기"
 
 #: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:212
 msgid "Hire"
 msgstr "채용"
+
+#: src/widgets/vault/ui/VaultPane/VaultPane.tsx:62
+msgid "Hover an answer in a conversation and press the bolt to file it here"
+msgstr "대화에서 답변에 마우스를 올리고 번개를 누르면 여기에 정리됩니다"
 
 #: src/widgets/setup/ui/AccountField/AccountField.tsx:103
 msgid "If the browser did not open, <0>open this link</0>."
@@ -1007,13 +1045,6 @@ msgstr "claude.ai에서 관리합니다. 로그인과 로그아웃은 여기서,
 msgid "manual"
 msgstr "수동"
 
-#. placeholder {0}: wired.connected
-#. placeholder {1}: wired.total
-#. placeholder {2}: wired.needsAuth
-#: src/widgets/status-bar/lib/format/format.ts:58
-msgid "MCP {0}/{1} · {2} need auth"
-msgstr "MCP {0}/{1} · {2}개 로그인 필요"
-
 #: src/entities/claude-cli/api/turn/turn.ts:96
 msgid "MCP server"
 msgstr "MCP 서버"
@@ -1033,7 +1064,7 @@ msgstr "팀에게 말하기"
 msgid "Model"
 msgstr "모델"
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:223
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:332
 msgid "Model changed. The running session keeps its model."
 msgstr "모델을 바꿨습니다. 실행 중인 세션은 기존 모델을 유지합니다."
 
@@ -1049,6 +1080,10 @@ msgstr "{0} 더 보기"
 #: src/widgets/team-sidebar/ui/MemberMenu/MemberMenu.tsx:41
 msgid "More for {name}"
 msgstr "{name} 더 보기"
+
+#: src/widgets/vault/ui/NoteList/NoteList.tsx:123
+msgid "More options for the folder {name}"
+msgstr "{name} 폴더 메뉴"
 
 #: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:129
 #: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:177
@@ -1084,9 +1119,21 @@ msgstr "그만두기"
 msgid "New chat"
 msgstr "새 대화"
 
+#: src/widgets/vault/ui/NoteList/NoteList.tsx:200
+msgid "New folder"
+msgstr "새 폴더"
+
 #: src/widgets/team-sidebar/ui/ChatList/ChatRow.tsx:199
 msgid "New folder…"
 msgstr "새 폴더…"
+
+#: src/widgets/vault/ui/NoteList/NoteList.tsx:108
+msgid "New note"
+msgstr "새 노트"
+
+#: src/widgets/vault/ui/NoteList/NoteList.tsx:107
+msgid "New note in {name}"
+msgstr "{name}에 새 노트"
 
 #: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:116
 msgid "New teammate"
@@ -1173,6 +1220,10 @@ msgstr "한 명은 쓰고 한 명은 검토하고, 어때요?"
 msgid "Open folder…"
 msgstr "폴더 열기…"
 
+#: src/widgets/team-sidebar/ui/TeamSidebar/TeamSidebar.tsx:85
+msgid "Open the vault"
+msgstr "볼트 열기"
+
 #: src/widgets/tile-deck/lib/leading/leading.ts:10
 msgid "Orchestrating"
 msgstr "지휘하는 중"
@@ -1194,9 +1245,13 @@ msgstr "권한"
 msgid "Permissions"
 msgstr "권한"
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:219
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:328
 msgid "Permissions changed. The running session follows the old ones."
 msgstr "권한을 바꿨습니다. 실행 중인 세션은 기존 권한을 따릅니다."
+
+#: src/widgets/vault/ui/VaultPane/VaultPane.tsx:67
+msgid "Pick a note"
+msgstr "노트를 고르세요"
 
 #: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:68
 msgid "Pick a project first"
@@ -1209,6 +1264,10 @@ msgstr "하던 일을 이어받았습니다"
 #: src/entities/tool/lib/tool-verb/tool-verb.ts:28
 msgid "Planning"
 msgstr "계획하는 중"
+
+#: src/widgets/conversation/lib/filing/filing.ts:9
+msgid "Please file this into the vault's analysis folder as a markdown note. Put which project it came from on the first line, and link any related notes with [[links]]:"
+msgstr "이 내용을 볼트의 분석/ 폴더에 마크다운 노트로 정리해 줘. 어느 프로젝트에서 나온 것인지 첫 줄에 적고, 관련 노트가 있으면 [[링크]]로 이어 줘:"
 
 #: src/entities/claude-cli/api/turn/turn.ts:97
 msgid "Plugin"
@@ -1275,6 +1334,10 @@ msgstr "보고 읽는 중"
 msgid "Reading the catalog…"
 msgstr "목록을 읽는 중…"
 
+#: src/widgets/vault/ui/VaultPane/VaultPane.tsx:56
+msgid "Reading the vault…"
+msgstr "볼트를 읽는 중…"
+
 #: src/widgets/status-bar/lib/strip/strip.ts:64
 msgid "Reading usage…"
 msgstr "사용량 읽는 중…"
@@ -1284,7 +1347,7 @@ msgid "Reading what this session offers. The list fills in a moment."
 msgstr "이 세션에서 쓸 수 있는 것을 읽는 중입니다. 곧 목록이 채워집니다."
 
 #: src/entities/teammate/ui/StockList/StockList.tsx:11
-#: src/widgets/team-sidebar/ui/TeamSidebar/TeamSidebar.tsx:76
+#: src/widgets/team-sidebar/ui/TeamSidebar/TeamSidebar.tsx:109
 msgid "Reading which agents Claude Code brings. They will be listed here."
 msgstr "클로드 코드가 기본으로 주는 에이전트를 읽는 중입니다. 곧 여기에 표시됩니다."
 
@@ -1344,6 +1407,7 @@ msgstr "삭제했습니다"
 
 #: src/widgets/team-sidebar/ui/ChatList/ChatRow.tsx:186
 #: src/widgets/team-sidebar/ui/ChatList/FolderSection.tsx:128
+#: src/widgets/vault/ui/NoteList/NoteList.tsx:135
 msgid "Rename"
 msgstr "이름 바꾸기"
 
@@ -1352,6 +1416,7 @@ msgid "Rename chat"
 msgstr "대화 이름 바꾸기"
 
 #: src/widgets/team-sidebar/ui/ChatList/FolderSection.tsx:46
+#: src/widgets/vault/ui/NoteList/NoteList.tsx:85
 msgid "Rename folder"
 msgstr "폴더 이름 바꾸기"
 
@@ -1419,7 +1484,7 @@ msgstr "저장"
 msgid "Say the word and the whole team wakes up."
 msgstr "말 한마디면 팀 전체가 깨어납니다."
 
-#: src/widgets/conversation/ui/ConversationPane/ConversationPane.tsx:104
+#: src/widgets/conversation/ui/ConversationPane/ConversationPane.tsx:107
 msgid "Say what you want done, not the next step. The orchestrator splits it up and hands out the pieces."
 msgstr "다음 단계 말고 원하는 결과를 말하세요. 오케스트레이터가 알아서 쪼개서 나눠 줍니다."
 
@@ -1465,7 +1530,7 @@ msgstr "Enter로 전송"
 msgid "Session"
 msgstr "세션"
 
-#: src/widgets/status-bar/ui/UsageBar/UsageBar.tsx:106
+#: src/widgets/status-bar/ui/UsageBar/UsageBar.tsx:90
 msgid "Session details"
 msgstr "세션 상세"
 
@@ -1481,7 +1546,7 @@ msgstr "몇 가지만 정하면 바로 일을 시작합니다"
 msgid "Set for everyone on your account. They cannot be removed or turned off here."
 msgstr "계정 전체에 설정된 것입니다. 여기서는 지우거나 끌 수 없습니다."
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:346
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:398
 msgid "Settings"
 msgstr "설정"
 
@@ -1497,7 +1562,7 @@ msgstr "사용량 알 수 없음"
 msgid "Shift+Enter starts a new line. Off, sending takes the modifier key with Enter."
 msgstr "Shift+Enter로 줄을 바꿉니다. 끄면 보조키+Enter로 보냅니다."
 
-#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:137
+#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:138
 msgid "Show team sidebar"
 msgstr "팀 사이드바 펼치기"
 
@@ -1713,6 +1778,10 @@ msgstr "claude 명령을 찾지 못했습니다. Claude Code CLI를 설치한 �
 msgid "The CLI does the work. Zetrem shows it as it happens: what you asked for, who is on it, and what they have run."
 msgstr "일은 CLI가 하고, Zetrem은 그걸 보여줍니다. 무엇을 시켰고, 누가 맡았고, 어디까지 했는지."
 
+#: src/widgets/vault/ui/NoteList/NoteList.tsx:238
+msgid "The empty folder is removed from the vault."
+msgstr "빈 폴더가 볼트에서 지워집니다."
+
 #: src/entities/settings/config/choices/choices.ts:25
 msgid "The hardest problems. Slowest and priciest of these"
 msgstr "가장 어려운 문제용. 이 중 가장 느리고 가장 비쌉니다"
@@ -1732,6 +1801,10 @@ msgstr "모델이 이것을 거절했습니다"
 #: src/entities/claude-cli/lib/failure/failure.ts:77
 msgid "The model is overloaded"
 msgstr "모델에 부하가 걸렸습니다"
+
+#: src/widgets/vault/ui/NoteReader/NoteReader.tsx:112
+msgid "The note is deleted from the vault. This cannot be undone."
+msgstr "볼트에서 노트가 지워집니다. 되돌릴 수 없습니다."
 
 #: src/pages/workspace/model/session/agent-events/crew/crew.ts:167
 msgid "the orchestrator"
@@ -1778,6 +1851,10 @@ msgstr "세션을 닫는 중입니다: {why}"
 msgid "The team is warm and waiting, {you}."
 msgstr "{you}, 팀은 몸 다 풀고 기다리는 중입니다."
 
+#: src/widgets/vault/ui/VaultPane/VaultPane.tsx:60
+msgid "The vault is empty"
+msgstr "볼트가 비어 있습니다"
+
 #: src/widgets/team-sidebar/ui/MemberMenu/MemberMenu.tsx:62
 msgid "Their file is deleted and they leave the roster. A session already running keeps them until it ends. This cannot be undone."
 msgstr "파일이 지워지고 명단에서 빠집니다. 이미 실행 중인 세션은 끝날 때까지 그대로 씁니다. 되돌릴 수 없습니다."
@@ -1799,6 +1876,10 @@ msgstr "생각하는 중"
 #: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:208
 msgid "This always applies. Write it the way you would explain the job to a person."
 msgstr "항상 적용되는 내용입니다. 사람에게 일을 설명하듯 적으세요."
+
+#: src/widgets/status-bar/lib/format/format.ts:46
+msgid "this chat"
+msgstr "이 대화"
 
 #: src/widgets/status-bar/lib/strip/strip.ts:59
 msgid "this chat {percent}%"
@@ -1845,9 +1926,17 @@ msgstr "생각 · {paragraphs}단락"
 msgid "Three teammates are on it: the checkout flow, the cart totals and the stock rules. I'll put their reports together into one answer."
 msgstr "팀원 셋이 붙었습니다. 결제 흐름, 장바구니 합계, 재고 규칙을 각각 봅니다. 결과가 오면 하나로 정리해 드리겠습니다."
 
+#: src/widgets/vault/ui/NoteEditor/NoteEditor.tsx:49
+msgid "Title"
+msgstr "제목"
+
 #: src/widgets/conversation/ui/Composer/Composer.tsx:106
 msgid "To {addressee}"
 msgstr "{addressee}에게"
+
+#: src/widgets/conversation/ui/ConversationPane/ConversationPane.tsx:222
+msgid "To vault"
+msgstr "볼트에"
 
 #: src/widgets/team-sidebar/lib/chat-groups/chat-groups.ts:9
 msgid "Today"
@@ -1883,6 +1972,10 @@ msgstr "알 수 없음"
 msgid "Update"
 msgstr "업데이트"
 
+#: src/widgets/status-bar/lib/format/format.ts:70
+msgid "Update CLI"
+msgstr "CLI 업데이트"
+
 #: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:163
 msgid "Updating…"
 msgstr "업데이트하는 중…"
@@ -1890,6 +1983,16 @@ msgstr "업데이트하는 중…"
 #: src/entities/connector/lib/refusal-why/refusal-why.ts:24
 msgid "Use https, or http only for a server on this machine"
 msgstr "https를 쓰세요. http는 이 컴퓨터의 서버일 때만 됩니다"
+
+#: src/widgets/team-sidebar/ui/TeamSidebar/TeamSidebar.tsx:88
+#: src/widgets/vault/ui/VaultPane/VaultPane.tsx:37
+msgid "Vault"
+msgstr "볼트"
+
+#: src/widgets/vault/ui/NoteList/NoteList.tsx:68
+#: src/widgets/vault/ui/NoteReader/NoteReader.tsx:70
+msgid "Vault guide"
+msgstr "볼트 안내"
 
 #: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:182
 msgid "Waiting for approval"
@@ -1975,6 +2078,10 @@ msgstr "일하는 중"
 msgid "Wrapped up"
 msgstr "마무리됨"
 
+#: src/widgets/vault/ui/NoteEditor/NoteEditor.tsx:71
+msgid "Write in markdown"
+msgstr "마크다운으로 적으세요"
+
 #: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:82
 msgid "Write their instructions once and the orchestrator can call them in any project."
 msgstr "지침을 한 번 써두면 어느 프로젝트에서든 부를 수 있습니다."
@@ -2054,7 +2161,7 @@ msgstr "조직"
 msgid "Your organisation does not allow this"
 msgstr "조직 정책이 이것을 허용하지 않습니다"
 
-#: src/widgets/team-sidebar/ui/TeamSidebar/TeamSidebar.tsx:59
+#: src/widgets/team-sidebar/ui/TeamSidebar/TeamSidebar.tsx:65
 msgid "Your team"
 msgstr "내 팀"
 

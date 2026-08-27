@@ -19,6 +19,7 @@ import { killAllProbes, registerSessionProbe } from './host/session-probe/sessio
 import { registerTranscriptStore } from './store/transcript-store/transcript-store'
 import { registerUpdater } from './shell/updater/updater'
 import { registerProjects } from './projects/projects'
+import { registerVault } from './vault/vault'
 import { collapseCategories } from './projects/collapse/collapse'
 import { handle } from './ipc/ipc'
 import { loadTroubleLine, troublePage } from './shell/window-trouble/window-trouble'
@@ -195,6 +196,7 @@ if (!primary) {
   registerTranscriptStore()
   registerPlugins()
   registerProjects()
+  registerVault()
   registerNudge()
   registerUpdater()
   handle('app:version', () => app.getVersion())

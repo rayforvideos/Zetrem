@@ -1,6 +1,7 @@
 import { hintDue, hintSeen } from '@/entities/settings'
 import { CrewProvider } from '@/entities/teammate'
 import { withSessionAuth } from '@/entities/connector'
+import { isGuide } from '@/entities/vault'
 import { PanelLeft } from 'lucide-react'
 import { Button } from '@/shared/ui/button'
 import {
@@ -9,9 +10,17 @@ import {
   Wordmark,
 } from '@/shared/graphics/Wordmark/Wordmark'
 import { AgentReport } from '@/widgets/agent-report'
-import { awayOf, spokeAtMs, Composer, ConversationPane, RestartNote } from '@/widgets/conversation'
+import {
+  awayOf,
+  spokeAtMs,
+  Composer,
+  ConversationPane,
+  filingTurnRequest,
+  RestartNote,
+} from '@/widgets/conversation'
 import { SetupPane } from '@/widgets/setup'
 import { TeamSidebar } from '@/widgets/team-sidebar'
+import { VaultPane } from '@/widgets/vault'
 import { WelcomePane } from '@/widgets/welcome'
 import { TileDeck } from '@/widgets/tile-deck'
 import { MOTION } from '@/shared/config/motion/motion'
@@ -22,6 +31,7 @@ import { PluginShelfOverlay } from './controls/PluginShelfOverlay'
 import { StatusBarPanel } from './controls/StatusBarPanel'
 import { t } from '@lingui/core/macro'
 
+import { useVaultNotes } from '../model/vault/useVaultNotes'
 import { useWorkspace } from '../model/screen/useWorkspace/useWorkspace'
 
 export function WorkspaceScreen() {
@@ -50,9 +60,11 @@ export function WorkspaceScreen() {
     hasProject,
     held,
     hire,
+    leaveVault,
     live,
     nowMs,
     openAgent,
+    openVault,
     panel,
     pendingRestart,
     project,
@@ -74,10 +86,83 @@ export function WorkspaceScreen() {
     teamMembers,
     teamNote,
     update,
+    vaultOpen,
     viewport,
     wires,
     yourName,
   } = useWorkspace()
+  const vault = useVaultNotes(vaultOpen, conv.status !== 'working')
+
+  function pickTeammate(id: string | null): void {
+    leaveVault()
+    focus.pick(id)
+  }
+
+  function addressTeammate(name: string | null): void {
+    leaveVault()
+    focus.address(name)
+  }
+
+  const teamSidebar = (
+    <div
+      ref={attachSidebar}
+      data-tucked={sidebar.open ? undefined : ''}
+      style={{
+        marginLeft: tuckedBy(sidebar.open, sidebarBoxW, sidebar.width),
+        transition: `margin ${MOTION.moveMs}ms ${MOTION.easing}`,
+      }}
+      className="flex flex-none"
+    >
+      <TeamSidebar
+        projects={{
+          current: project,
+          all: allProjects,
+          onOpen: handleOpenProject,
+          onPickFolder: handlePickProject,
+          onForget: handleForgetProject,
+        }}
+        chats={{
+          chats: chat.chats,
+          openId: vaultOpen ? null : chat.openId,
+          onOpen: (id) => swap(() => chat.open(id)),
+          onStart: () => swap(chat.start),
+          onRemove: chat.remove,
+          onRename: chat.rename,
+          onFile: chat.file,
+          onFileMany: chat.fileMany,
+        }}
+        team={{
+          members: teamMembers,
+          drafts,
+          knownTools: settings.knownTools,
+          sessionUp: held !== null,
+          read: focus.read,
+          canWrite: true,
+          hint: hintDue('hire-first', settings.hintsSeen, defs.length === 0),
+          onHintSeen: () => update({ hintsSeen: hintSeen('hire-first', settings.hintsSeen) }),
+          note: teamNote,
+          onHire: hire,
+          onEdit: edit,
+          onRelease: release,
+          onPick: pickTeammate,
+          onAddress: addressTeammate,
+          onRestart: () => {
+            focus.clearAll()
+            settleNote()
+            agent.restart()
+          },
+        }}
+        agents={agentToggles}
+        nowMs={nowMs}
+        width={sidebar.width}
+        onResize={sidebar.resize}
+        onResizeEnd={sidebar.commit}
+        vaultOpen={vaultOpen}
+        vaultUnseen={vault.unseen}
+        onOpenVault={openVault}
+      />
+    </div>
+  )
 
   return (
     <CrewProvider crew={crewOf(defs, status.session?.model ?? null)}>
@@ -166,6 +251,29 @@ export function WorkspaceScreen() {
                   }}
                   notice={settingsFailure ?? projectFailure}
                 />
+              ) : vaultOpen ? (
+                <VaultPane
+                  folders={vault.folders}
+                  notes={vault.notes}
+                  open={vault.open}
+                  loading={vault.loading}
+                  onOpen={vault.openNote}
+                  onOpenTitle={vault.openTitle}
+                  onRemove={vault.remove}
+                  editing={vault.editing}
+                  fresh={vault.fresh}
+                  guideOpen={isGuide(vault.open?.id ?? null)}
+                  onStartEdit={vault.startEdit}
+                  onStopEdit={vault.stopEdit}
+                  onSave={vault.save}
+                  onRename={vault.rename}
+                  onCreate={vault.create}
+                  onOpenGuide={vault.openGuide}
+                  onAddFolder={vault.addFolder}
+                  onRenameFolder={vault.renameFolder}
+                  onRemoveFolder={vault.removeFolder}
+                  sidebar={teamSidebar}
+                />
               ) : (
                 <ConversationPane
                   turns={conv.turns}
@@ -181,6 +289,7 @@ export function WorkspaceScreen() {
                     update({ hintsSeen: hintSeen('ask-whole-job', settings.hintsSeen) })
                   }
                   onDecide={agent.decide}
+                  onFileTurn={(text) => agent.send(filingTurnRequest(text), null, [])}
                   composer={
                     <>
                       {pendingRestart !== null && agent.running && (
@@ -236,64 +345,7 @@ export function WorkspaceScreen() {
                       />
                     )
                   }
-                  sidebar={
-                    <div
-                      ref={attachSidebar}
-                      data-tucked={sidebar.open ? undefined : ''}
-                      style={{
-                        marginLeft: tuckedBy(sidebar.open, sidebarBoxW, sidebar.width),
-                        transition: `margin ${MOTION.moveMs}ms ${MOTION.easing}`,
-                      }}
-                      className="flex flex-none"
-                    >
-                      <TeamSidebar
-                        projects={{
-                          current: project,
-                          all: allProjects,
-                          onOpen: handleOpenProject,
-                          onPickFolder: handlePickProject,
-                          onForget: handleForgetProject,
-                        }}
-                        chats={{
-                          chats: chat.chats,
-                          openId: chat.openId,
-                          onOpen: (id) => swap(() => chat.open(id)),
-                          onStart: () => swap(chat.start),
-                          onRemove: chat.remove,
-                          onRename: chat.rename,
-                          onFile: chat.file,
-                          onFileMany: chat.fileMany,
-                        }}
-                        team={{
-                          members: teamMembers,
-                          drafts,
-                          knownTools: settings.knownTools,
-                          sessionUp: held !== null,
-                          read: focus.read,
-                          canWrite: true,
-                          hint: hintDue('hire-first', settings.hintsSeen, defs.length === 0),
-                          onHintSeen: () =>
-                            update({ hintsSeen: hintSeen('hire-first', settings.hintsSeen) }),
-                          note: teamNote,
-                          onHire: hire,
-                          onEdit: edit,
-                          onRelease: release,
-                          onPick: focus.pick,
-                          onAddress: focus.address,
-                          onRestart: () => {
-                            focus.clearAll()
-                            settleNote()
-                            agent.restart()
-                          },
-                        }}
-                        agents={agentToggles}
-                        nowMs={nowMs}
-                        width={sidebar.width}
-                        onResize={sidebar.resize}
-                        onResizeEnd={sidebar.commit}
-                      />
-                    </div>
-                  }
+                  sidebar={teamSidebar}
                 />
               )
             }

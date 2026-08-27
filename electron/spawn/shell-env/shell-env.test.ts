@@ -91,6 +91,11 @@ describe('agentEnv: what an agent inherits', () => {
     expect(env.ZETREM).toBe('1')
   })
 
+  it('tells the CLI to read the CLAUDE.md of an added directory, which is how the vault speaks', () => {
+    const env = agentEnv({})
+    expect(env.CLAUDE_CODE_ADDITIONAL_DIRECTORIES_CLAUDE_MD).toBe('1')
+  })
+
   it('uses the login shell PATH when given one, so claude is found even from Finder', () => {
     const withPath = agentEnv(HOST_ENV, '/opt/homebrew/bin:/usr/bin')
     expect(withPath.PATH).toBe('/opt/homebrew/bin:/usr/bin')

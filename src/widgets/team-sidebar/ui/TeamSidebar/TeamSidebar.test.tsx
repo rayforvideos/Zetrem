@@ -46,6 +46,9 @@ function bar(props: Partial<Parameters<typeof TeamSidebar>[0]> = {}): string {
       width={SIDEBAR.width}
       onResize={() => {}}
       onResizeEnd={() => {}}
+      onOpenVault={() => {}}
+      vaultOpen={false}
+      vaultUnseen={false}
       {...props}
     />,
   )
@@ -264,6 +267,29 @@ describe('carrying a chat onto another to make a place for both', () => {
 
   it('keeps the menu as the way that needs no dragging', () => {
     expect(withChats([chat('one')])).toContain('More for one')
+  })
+})
+
+describe('the sidebar ends with a way into the vault', () => {
+  it('ends with a row that opens the vault', () => {
+    const out = bar()
+    expect(out).toContain('data-vault-row')
+    expect(out).toContain('Vault')
+  })
+
+  it('lights the row with a dot only once a note has been filed unseen', () => {
+    expect(bar()).not.toContain('data-vault-unseen')
+    const lit = bar({ vaultUnseen: true })
+    const at = lit.indexOf('data-vault-row')
+    expect(lit.slice(at)).toContain('data-vault-unseen')
+    expect(lit.slice(at)).toContain('size-1.5')
+  })
+
+  it('marks that row as where you are while the vault is open', () => {
+    const out = bar({ vaultOpen: true })
+    const at = out.indexOf('data-vault-row')
+    expect(at).toBeGreaterThan(-1)
+    expect(out.slice(at)).toContain('aria-current="true"')
   })
 })
 

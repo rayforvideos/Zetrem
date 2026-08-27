@@ -1,9 +1,7 @@
-# Actions only, the way Ghostty runs it. Every action is pinned to a commit,
-# and this is what moves the pin. The app's own packages are not handed to a
-# bot: the first week it opened five pull requests that all failed CI, since
-# packages that must move together were bumped one at a time. Those are read
-# and bumped by a person, with npm audit and the security alerts as the
-# prompt to do so.
+# Every action is pinned to a commit; this is what moves the pin. The app's
+# own packages are not covered here: several of them have to move together,
+# so they are bumped by a person, with npm audit and the security alerts as
+# the prompt.
 version: 2
 updates:
   - package-ecosystem: github-actions

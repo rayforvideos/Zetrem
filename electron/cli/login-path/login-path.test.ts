@@ -8,6 +8,7 @@ import {
   findCommand,
   knownInstallDirs,
   loginPath,
+  rememberLoginPath,
   resetLoginPath,
   withKnownDirs,
 } from './login-path'
@@ -131,4 +132,40 @@ describe('what Windows will actually run', () => {
     expect(findCommand('claude', dir, 'win32')).toBe(join(dir, 'claude.cmd'))
     rmSync(dir, { recursive: true, force: true })
   })
+})
+
+describe('one shell answers everybody who asks at once', () => {
+  afterEach(() => {
+    rememberLoginPath(null, () => undefined)
+    resetLoginPath()
+  })
+
+  it('hands the same promise to callers that arrive before the shell answers', async () => {
+    resetLoginPath()
+    const [a, b, c] = await Promise.all([loginPath(), loginPath(), loginPath()])
+    expect(a).toBe(b)
+    expect(b).toBe(c)
+  }, 20_000)
+
+  it('answers at once from a remembered path that still finds claude, and saves what the shell says', async () => {
+    if (windows) return
+    const real = process.env.PATH ?? ''
+    if (!canFind('claude', real)) return
+    const saved: string[] = []
+    resetLoginPath()
+    rememberLoginPath(real, (path) => saved.push(path))
+    const started = Date.now()
+    expect(await loginPath()).toBe(real)
+    expect(Date.now() - started).toBeLessThan(200)
+    await new Promise((settle) => setTimeout(settle, 9000))
+    for (const path of saved) expect(canFind('claude', path)).toBe(true)
+  }, 20_000)
+
+  it('ignores a remembered path that no longer finds claude', async () => {
+    const saved: string[] = []
+    resetLoginPath()
+    rememberLoginPath('/nowhere-at-all', (path) => saved.push(path))
+    const found = await loginPath()
+    expect(found).not.toBe('/nowhere-at-all')
+  }, 20_000)
 })

@@ -13,6 +13,7 @@ const ON_DISK = [
   'electron/projects/projects.types.ts',
   'electron/store/usage-cache/usage-cache.types.ts',
   'electron/store/project-memory/project-memory.ts',
+  'electron/cli/login-path/login-path.types.ts',
 ]
 
 const WRITERS: Record<string, string> = {
@@ -22,6 +23,7 @@ const WRITERS: Record<string, string> = {
   'electron/projects/collapse/collapse.ts': ON_DISK[2]!,
   'electron/host/session-probe/session-probe.ts': ON_DISK[3]!,
   'electron/store/project-memory/project-memory.ts': ON_DISK[4]!,
+  'electron/store/login-path-store/login-path-store.ts': ON_DISK[5]!,
   'electron/agents/agent-store/agent-store.ts': '',
 }
 

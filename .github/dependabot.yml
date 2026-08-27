@@ -1,6 +1,7 @@
 # Alerts alone say a package is bad after the fact; these open the pull request
-# that moves off it. Grouped so a week's worth of bumps is one PR to read, and
-# CI runs against the lot at once.
+# that moves off it. Patch and minor bumps arrive as one PR a week and merge
+# on their own once CI is green (see workflows/dependabot.yml). A major bump
+# gets its own PR and waits for a person.
 version: 2
 updates:
   - package-ecosystem: npm
@@ -10,6 +11,11 @@ updates:
     groups:
       dependencies:
         patterns: ['*']
+        update-types: ['minor', 'patch']
+    ignore:
+      # electron-vite 5 accepts vite up to 7. This goes when it accepts 8.
+      - dependency-name: vite
+        update-types: ['version-update:semver-major']
   - package-ecosystem: github-actions
     directory: /
     schedule:

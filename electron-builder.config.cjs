@@ -18,6 +18,20 @@ module.exports = {
     output: 'release',
   },
   files: ['out/**', 'package.json'],
+  // The binary is signed, so what it is willing to run has to be pinned too. Off
+  // goes every way of using the app as a Node runtime for somebody else's code:
+  // ELECTRON_RUN_AS_NODE, NODE_OPTIONS, --inspect. On goes the check that the
+  // app inside the asar is the one that was signed, and that nothing outside the
+  // asar is loaded in its place. The dev run is unpackaged and never sees these.
+  electronFuses: {
+    runAsNode: false,
+    enableNodeOptionsEnvironmentVariable: false,
+    enableNodeCliInspectArguments: false,
+    enableEmbeddedAsarIntegrityValidation: true,
+    onlyLoadAppFromAsar: true,
+    enableCookieEncryption: true,
+    grantFileProtocolExtraPrivileges: false,
+  },
   mac: {
     icon: 'resources/icon.icns',
     target: [

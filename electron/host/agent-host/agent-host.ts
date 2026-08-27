@@ -4,7 +4,6 @@ import { mkdirSync } from 'node:fs'
 import { app } from 'electron'
 import { agentEnv } from '../../spawn/shell-env/shell-env'
 import { agentArgs } from '@/entities/claude-cli/api/run-config/run-config'
-import type { RunConfig } from '@/entities/claude-cli/api/run-config/run-config.types'
 import { ORCHESTRATOR_PROMPT, PERSONA } from '@/entities/teammate/model/orchestrator/orchestrator'
 import { claudeBin, loginPath } from '../../cli/login-path/login-path'
 import { exitReason, startTrouble } from '../../spawn/exit-reason/exit-reason'
@@ -15,6 +14,7 @@ import { lineReader } from '../../spawn/line-reader/line-reader'
 import { killTree, killTreeSync } from '../../spawn/kill-tree/kill-tree'
 import { errorTail } from '../../spawn/error-tail/error-tail'
 import { tell } from '../tell/tell'
+import { runConfigOf } from '../run-config-guard/run-config-guard'
 import { launchFor } from '../../spawn/spawn-claude/spawn-claude'
 import { scratchWorkspace } from '../../shell/workspace-dir/workspace-dir'
 import { dropSends, holdSend, releaseSends } from '../pending-sends/pending-sends'
@@ -64,7 +64,7 @@ export function registerAgentHost(): void {
     'agent:start',
     // Typed by the contract, read as unknown: the values come off the wire
     // from the renderer, so the checks below are the real gate.
-    async (event, id: unknown, prompt: unknown, config: RunConfig, files: unknown = []) => {
+    async (event, id: unknown, prompt: unknown, config: unknown, files: unknown = []) => {
       const sender = event.sender
       const fail = (reason: ExitReason | null): void => {
         if (typeof id === 'string')
@@ -75,6 +75,8 @@ export function registerAgentHost(): void {
       // for it would tell the renderer that agent died, so say nothing instead.
       if (agents.has(id)) return
       if (!/^[A-Za-z0-9-]+$/.test(id)) return fail(null)
+      const run = runConfigOf(config)
+      if (run === null) return fail(null)
 
       agents.set(id, 'starting')
 
@@ -85,7 +87,7 @@ export function registerAgentHost(): void {
         workspace = project ?? scratchWorkspace(app.getPath('userData'))
         const launch = launchFor(
           await claudeBin(),
-          agentArgs({ ...config, persona: PERSONA, orchestrator: ORCHESTRATOR_PROMPT }),
+          agentArgs({ ...run, persona: PERSONA, orchestrator: ORCHESTRATOR_PROMPT }),
         )
         const env = agentEnv(process.env, await loginPath())
 

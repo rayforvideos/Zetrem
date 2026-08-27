@@ -47,8 +47,16 @@ function wearTheName(): void {
   })
 }
 
+// Parsed rather than prefix-matched: what reaches the browser is what a URL
+// parser makes of the string, so that is what the check should read.
 function openIfExternal(url: string): void {
-  if (url.startsWith('https://')) void shell.openExternal(url)
+  let parsed: URL
+  try {
+    parsed = new URL(url)
+  } catch {
+    return
+  }
+  if (parsed.protocol === 'https:') void shell.openExternal(parsed.href)
 }
 
 function createWindow(): void {

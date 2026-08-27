@@ -41,8 +41,26 @@ function html(status: StatusState, open = false): string {
 }
 
 describe('UsageBar: one strip at the foot of the window', () => {
-  it('carries the session facts that used to sit in their own row', () => {
-    expect(html(state())).toContain('2.1.231')
+  it('draws this chat as a gauge, filled by its share of the window', () => {
+    const out = html(state())
+    expect(out).toContain('data-session-gauge="chat"')
+    expect(out).toContain('this chat')
+    expect(out).toContain('10%')
+  })
+
+  it('points at a CLI update only when there is one', () => {
+    expect(html(state())).not.toContain('data-session-gauge="update"')
+    const stale = html(
+      state({
+        update: {
+          current: '2.1.231',
+          latest: '2.1.240',
+          managedBy: 'Homebrew',
+        },
+      }),
+    )
+    expect(stale).toContain('data-session-gauge="update"')
+    expect(stale).toContain('title="2.1.231 → 2.1.240"')
   })
 
   it('says nothing about what it does not know', () => {
@@ -52,14 +70,15 @@ describe('UsageBar: one strip at the foot of the window', () => {
       update: null,
     })
     const out = html(bare)
-    expect(out).not.toContain('Context')
-    expect(out).not.toContain('CLI')
+    expect(out).not.toContain('data-session-gauge')
   })
 
   it('marks a warning by weight and not by colour', () => {
     const warned = state({ context: { used: 880_000, window: 1_000_000 } })
     const out = html(warned)
     expect(out).toContain('compacting soon')
+    expect(out).toContain('88%')
+    expect(out).not.toContain('this chat')
     expect(out).not.toMatch(/text-(red|amber|yellow|orange)-/)
   })
 

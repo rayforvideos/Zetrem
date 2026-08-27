@@ -27,7 +27,7 @@ jobs:
       matrix:
         node: ['20.19', '22.19']
     steps:
-      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           # The commit-shape test reads the log, and a shallow clone holds only
           # the merge commit GitHub writes for a pull request run.

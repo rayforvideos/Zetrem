@@ -44,8 +44,6 @@ describe('editing does not lose what the form never asked about', () => {
   })
 
   it('keeps the default face until somebody picks one', () => {
-    // The face used to be read off the name, so editing the name changed their
-    // appearance. It stays put now.
     expect(characterFor('star')).toBe('star')
     expect(characterFor(null)).toBe(DEFAULT_CHARACTER)
   })

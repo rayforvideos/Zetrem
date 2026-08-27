@@ -33,8 +33,7 @@ afterEach(() => {
 
 describe('the projects a person can come back to', () => {
   it('lifts the folders a version without projects knew into projects, chats intact', async () => {
-    // The legacy file holds a current path and the recent list. Each becomes a
-    // project whose id IS the path, so the transcript folder its chats already
+    // A project's id IS the path, so the transcript folder its chats already
     // live in (keyed by a hash of that same string) is reached unchanged.
     const a = dir('shop')
     const b = dir('blog')
@@ -58,8 +57,6 @@ describe('the projects a person can come back to', () => {
   })
 
   it('refuses a creation with no folder to stand on', async () => {
-    // A project is a folder that already exists. There is no naming a project
-    // into being any more, so there is nothing to make without one.
     expect(await createProject('')).toBeNull()
     expect(await createProject('   ')).toBeNull()
   })
@@ -87,8 +84,6 @@ describe('the projects a person can come back to', () => {
   })
 
   it('refuses to split one folder into two projects', async () => {
-    // One folder is one project. Landing on a folder that already wears one
-    // reopens it rather than minting a twin beside it.
     const path = dir('shop')
     const one = await createProject(path)
     const two = await createProject(path)

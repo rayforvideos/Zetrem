@@ -4,13 +4,10 @@ import { describe, expect, it } from 'vitest'
 
 const ROOT = process.cwd()
 
-// A main-process handler answers with an Outcome; the renderer reads why and
-// says it in words. A throw crosses the bridge as "Error invoking remote
-// method", which is only right for a request that should never have been made.
+// A throw crosses the bridge as "Error invoking remote method", which is only
+// right for a request that should never have been made.
 const MAY_THROW = [
-  // an untrusted sender
   join('electron', 'ipc', 'ipc.ts'),
-  // a path outside the roster folder
   join('electron', 'agents', 'agent-store', 'agent-store.ts'),
 ]
 

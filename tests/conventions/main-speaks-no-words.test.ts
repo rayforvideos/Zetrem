@@ -15,8 +15,7 @@ function resolveImport(spec: string, from: string): string | null {
 }
 
 // The main process has no babel, so the Lingui macros never compile there: a t`…`
-// that rides in through a barrel import crashes the app at launch. Main must reach
-// only modules that say nothing — importing the exact file, never the barrel.
+// that rides in through a barrel import crashes the app at launch.
 function macroReach(entries: string[]): string[] {
   const seen = new Set<string>()
   const caught: string[] = []
@@ -58,7 +57,6 @@ describe('the main process says nothing a person reads', () => {
   })
 
   it('is a guard that can actually see through a barrel', () => {
-    // The screen does reach the macro through its barrels, which is what it is for.
     const speaking = sources(join(ROOT, 'src', 'widgets'))
     expect(macroReach(speaking).length).toBeGreaterThan(0)
   })

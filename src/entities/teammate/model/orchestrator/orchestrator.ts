@@ -1,16 +1,6 @@
-// A wrapper around the CLI may add what it needs to work, and nothing that shapes
-// the answer. Anything here is read by the model, so anything here can change the
-// reply — which means the only things that belong are the ones without which a
-// feature of this app would not function. Telling it how to write or what to be
-// called is not that: the CLI decides those, and Zetrem must give back what the
-// CLI would have given.
-//
-// Language is the one place where saying nothing does not give back what the CLI
-// would have given. Run plainly, it hands work to a teammate in the language the
-// person is speaking; run through the roster, with an orchestrator brief and
-// stock teammates whose own definitions are English, the handoff and the report
-// both drift to English. The last line pins that back to the person, and names
-// no particular language.
+// Everything here is read by the model and can change the reply, so nothing may be added that
+// shapes it. The language line is the exception: through the roster, stock teammates whose own
+// definitions are English drag the handoff and the report to English.
 export const PERSONA = ''
 
 export const ORCHESTRATOR_PROMPT = [

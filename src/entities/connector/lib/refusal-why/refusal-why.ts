@@ -40,7 +40,6 @@ const CODES: RefusalCode[] = [
   'garbled',
 ]
 
-// The main process only sends codes. Turn a code into a sentence, pass anything else through.
 export function saidOrWhy(out: string): string {
   const code = CODES.find((one) => one === out)
   return code === undefined ? out : refusalWhy(code)

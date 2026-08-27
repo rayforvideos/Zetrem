@@ -38,9 +38,6 @@ describe('the directory row, one quiet level above the filing', () => {
   })
 
   it('carries a menu for the project on the row itself', () => {
-    // Rename and remove used to sit on the category divider. With no dividers
-    // left, this row is the only place they can live, and its trigger is the
-    // one part of the menu that is on the page before anybody presses it.
     expect(bar()).toContain('More for 출고 자동화')
   })
 

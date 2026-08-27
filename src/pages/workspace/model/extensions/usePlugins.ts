@@ -27,7 +27,6 @@ type Shelf = {
 
 const EMPTY: Catalog = { installed: [], available: [] }
 
-// The one refusal the plugin handler sends as a code of its own.
 function pluginWhy(result: Outcome<unknown>): string | null {
   if (result.ok || result.why.code !== 'refused' || result.why.said !== 'plugin-name') return null
   return t`That name cannot be used`

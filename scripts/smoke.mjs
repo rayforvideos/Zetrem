@@ -1,8 +1,3 @@
-// Does the app actually open, and does its window draw anything?
-//
-// Every other check reads the source or runs a function. This one launches the
-// built app the way a person would and asks the window what it is showing, which
-// is the only way to know a platform is really supported rather than compiled for.
 import { spawn } from 'node:child_process'
 import { existsSync } from 'node:fs'
 import electron from 'electron'

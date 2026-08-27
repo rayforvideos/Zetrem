@@ -28,10 +28,8 @@ function isLock(value: unknown): value is RosterLock | null {
   return value === null || strings((value as RosterLock)?.blockedAgents)
 }
 
-// The config came off the wire from the renderer, typed by the contract but not
-// yet proven. Every value that becomes an argument to the CLI is read here
-// before it does, the permission mode above all: 'bypass' is the one word that
-// turns into --dangerously-skip-permissions.
+// Every value here comes off the wire and becomes a CLI argument: 'bypass' is
+// the word that turns into --dangerously-skip-permissions.
 export function runConfigOf(value: unknown): Omit<RunConfig, 'persona'> | null {
   const raw = value as Partial<RunConfig> | null
   if (raw === null || typeof raw !== 'object') return null

@@ -8,9 +8,6 @@ import { unfenced } from '../unfenced/unfenced'
 import { Separator } from '@/shared/ui/separator'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/shared/ui/table'
 
-// A tile re-renders on every tick of the clock it shows, so parsing the same
-// markdown a second later, for as many tiles as are on the board, is work
-// nobody asked for.
 export const Markdown = memo(function Markdown({
   text,
   className,

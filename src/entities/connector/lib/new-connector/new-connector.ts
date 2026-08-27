@@ -8,8 +8,7 @@ export function tidyName(raw: string): string {
   return raw.trim()
 }
 
-// Reasons come back as codes. Turning them into sentences is the screen's job.
-// This also runs in the main process, where the translation macro cannot go.
+// Also runs in the main process, where the translation macro cannot go.
 export function refusalOf(draft: NewConnector, taken: string[]): Refusal | null {
   const name = tidyName(draft.name)
   if (name.length === 0) return { field: 'name', code: 'name-empty' }

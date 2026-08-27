@@ -12,8 +12,6 @@ type FakeChild = EventEmitter & {
 
 type Spawn = { command: string; args: string[]; options: Record<string, unknown>; child: FakeChild }
 
-// Everything the helper touches outside itself is mocked here, and every mock
-// writes into this one record, so a test reads the outside world from one place.
 const boundary = vi.hoisted(() => ({
   spawns: [] as Spawn[],
   killed: [] as number[],

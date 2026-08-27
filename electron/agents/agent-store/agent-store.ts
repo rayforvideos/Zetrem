@@ -33,8 +33,8 @@ export async function listAgentDefs(dir: string): Promise<AgentDef[]> {
 function insideRoster(dir: string, name: string): string {
   const root = resolve(dir)
   const path = resolve(root, fileNameOf(name))
-  // Comparing against `${root}/` assumed one separator, so on Windows this
-  // refused every legitimate path. Ask the path library what is inside instead.
+  // Comparing against `${root}/` assumes one separator and refuses every
+  // legitimate Windows path; ask the path library what is inside instead.
   const step = relative(root, path)
   const escapes = step.length === 0 || step.startsWith('..') || isAbsolute(step)
   if (escapes) throw new Error('refusing to touch a path outside the roster')

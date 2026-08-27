@@ -22,25 +22,14 @@ export function ChatList({
   onFileMany,
 }: ChatListProps) {
   const [query, setQuery] = useState('')
-  // The folders are the way people actually re-find their own things, so they
-  // stay whole and in their places. Looking is the way out when that stops
-  // working, and while somebody is looking the folders lie open, because a
-  // shut folder cannot show a match.
   const looking = query.trim().length > 0
   const { folders, loose } = fileChats(matchChats(chats, query))
   const names = fileChats(chats).folders.map((one) => one.name)
   const nothing = looking && folders.length === 0 && loose.length === 0
-  // Two chats carried together need somewhere to go, so the pair waits here
-  // while the name is typed.
   const [pairing, setPairing] = useState<[string, string] | null>(null)
-  // A drag cannot be read while it is in flight, so the chat being carried is
-  // held here. Without it a ring can only promise that something is being
-  // dragged, not that dropping it would do anything.
+  // A drag cannot be read while it is in flight, so the chat being carried is held here.
   const [carried, setCarried] = useState<ChatSummary | null>(null)
 
-  // The pair is named where it landed, so the answer appears under the cursor
-  // rather than at the top of the list. Leaving the field alone keeps the pair
-  // waiting instead of throwing the drag away.
   function paired(name: string | null): void {
     const pair = pairing
     if (name === null || pair === null) return
@@ -129,6 +118,3 @@ export function ChatList({
     </div>
   )
 }
-
-// A run of chats under their day bands. The same run appears loose at the top
-// of the list and inside a roomy folder, a margin apart.

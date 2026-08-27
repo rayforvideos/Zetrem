@@ -26,8 +26,6 @@ describe('matchChats: the way out when the folders stop helping', () => {
   })
 
   it('finds a chat by the folder it was filed under, so the name is a cue too', () => {
-    // A folder name is what the person chose to call that work. Typing it
-    // should reach the chats inside, the way walking into the folder would.
     expect(matchChats([chat('무제', '출고 자동화')], '출고')).toHaveLength(1)
   })
 
@@ -40,8 +38,6 @@ describe('matchChats: the way out when the folders stop helping', () => {
   })
 
   it('calls a folder roomy at the size navigation starts to fail', () => {
-    // Folder navigation holds up while a folder stays small; past about a
-    // dozen items people give up on it. That is where the days come back in.
     expect(ROOMY).toBe(12)
   })
 })

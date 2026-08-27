@@ -7,8 +7,6 @@ function toProject(stored: Stored): Project | null {
   return { id: stored.id, name: stored.name, path: stored.path }
 }
 
-// The folder dialog and the entity are one gesture: picking a folder makes a
-// project on it, named after it until somebody renames it.
 export async function pickProject(): Promise<Project | null> {
   const path = await window.desk.pickProjectDir()
   if (path === null) return null
@@ -32,8 +30,6 @@ export async function forgetProject(id: string): Promise<void> {
   return window.desk.forgetProject(id)
 }
 
-// A project made as a grouping gets its real folder here, chosen in the
-// folder dialog.
 export async function repathProject(id: string): Promise<Project | null> {
   const path = await window.desk.pickProjectDir()
   if (path === null) return null

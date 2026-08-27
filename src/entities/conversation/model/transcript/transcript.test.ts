@@ -12,9 +12,6 @@ import {
   titleOf,
 } from './transcript'
 
-// readTranscript answers null for anything it cannot read. A test that goes on
-// to look inside the transcript has already said it expects one, so it says so
-// here and stops, rather than reading undefined through the rest of the case.
 function readBack(saved: unknown): Transcript {
   const back = readTranscript(saved)
   if (back === null) throw new Error('readTranscript answered null')
@@ -349,8 +346,6 @@ describe('a chat remembers which folder it was filed under', () => {
   })
 
   it('reads a chat filed before folders existed as unfiled', () => {
-    // Every chat already on disk has no folder at all. It has to come back as
-    // one that simply was never filed, not as a broken file.
     expect(readTranscript(saved())?.folder).toBe('')
   })
 

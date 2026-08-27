@@ -20,9 +20,6 @@ export function draftFrom(fields: MemberFields, initial: AgentDefDraft | null): 
   }
 }
 
-// The face stays where it is until somebody picks one. Deriving it from the
-// name meant editing the name changed their appearance, which is not a change
-// anybody asked for.
 export function characterFor(picked: CharacterId | null): CharacterId {
   return picked ?? DEFAULT_CHARACTER
 }

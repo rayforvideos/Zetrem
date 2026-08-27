@@ -65,8 +65,6 @@ export function MemberForm({ initial, knownTools, onSubmit, onCancel }: MemberFo
 
   const [over, setOver] = useState(false)
   const [refused, setRefused] = useState<string | null>(null)
-  // The picker not opening at all is a different thing to say than a file it
-  // turned down, and the same line under the list says it.
   const [trouble, setTrouble] = useState<string | null>(null)
 
   function attach(): void {
@@ -79,9 +77,6 @@ export function MemberForm({ initial, knownTools, onSubmit, onCancel }: MemberFo
       .catch(() => setTrouble(t`Could not open the file picker`))
   }
 
-  // Dropping the file is how a person hands over a document everywhere else,
-  // and the picker cannot reach a folder the Finder hides anyway. A drop that
-  // adds nothing says so: silence reads as a broken drop target.
   function take(files: File[]): void {
     void Promise.all(files.map((file) => window.desk.pathForFile(file)))
       .then((paths) => {

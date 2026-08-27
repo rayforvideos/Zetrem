@@ -1,7 +1,3 @@
-# Every action is pinned to a commit; this is what moves the pin. The app's
-# own packages are not covered here: several of them have to move together,
-# so they are bumped by a person, with npm audit and the security alerts as
-# the prompt.
 version: 2
 updates:
   - package-ecosystem: github-actions

@@ -34,17 +34,12 @@ export function useTranscript(project: string | null): Chats {
   const [ready, setReady] = useState(false)
   const lastSaved = useRef('')
   const opened = useRef<ChatSpend | null>(null)
-  // The open chat's saved title, carried through every re-save so a name
-  // somebody gave does not fall back to the first message.
   const titled = useRef<string | null>(null)
-  // The autosave rewrites the whole chat, so where it was filed has to be held
-  // here too, or every save would quietly unfile it.
+  // The autosave rewrites the whole chat, so the title and folder have to be
+  // held here too, or every save would quietly drop them.
   const filed = useRef('')
   const toldSaveTrouble = useRef(false)
   const loadedFor = useRef<string | null>(null)
-  // Two quick switches leave two reads in flight, and the slower one lands
-  // last. Only the newest read may speak, or it would restore turns from a
-  // chat nobody is looking at and the autosave would write them back.
   const openTicket = useRef(0)
 
   const turns = conv.turns
@@ -159,8 +154,6 @@ export function useTranscript(project: string | null): Chats {
       })
   }, [ready, project, openId, turns, conv.status, thread])
 
-  // Leaving one chat for another drops everything held about the old one, or
-  // the next autosave would write its title, folder and spend onto the new one.
   function letGo(): number {
     lastSaved.current = ''
     opened.current = null
@@ -210,8 +203,6 @@ export function useTranscript(project: string | null): Chats {
     if (id === openId) start()
   }
 
-  // Renaming and filing are the same errand on a chat that may not be the open
-  // one: read it back, change the one field, write it, then relist.
   function amend(id: string, patch: Partial<Transcript>, trouble: string): void {
     if (project === null) return
     void window.desk
@@ -241,8 +232,6 @@ export function useTranscript(project: string | null): Chats {
     amend(id, { folder: wanted }, t`Could not file that chat`)
   }
 
-  // Renaming a folder, or emptying it, is the same write on every chat that
-  // wore its name. One pass, then one refresh, rather than a refresh each.
   function fileMany(ids: string[], folder: string): void {
     if (project === null || ids.length === 0) return
     const wanted = folder.trim()

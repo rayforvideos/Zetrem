@@ -1,4 +1,4 @@
-// On disk: the kept usage report under userData, read by readKept().
+// On disk: the kept usage report under userData.
 export type Kept = {
   report: string
   atMs: number

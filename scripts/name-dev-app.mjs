@@ -30,7 +30,6 @@ async function set(key, value) {
 
 async function main() {
   if (process.platform !== 'darwin') return
-  // migration: an earlier version of this script named the dev app "Zetrem" — pick that up if present
   if ((await there(OLD_APP)) && !(await there(APP))) await rename(OLD_APP, APP)
   if (await there(STOCK_APP)) await rename(STOCK_APP, APP)
   if (!(await there(PLIST))) return

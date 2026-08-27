@@ -1,7 +1,6 @@
-// The allowlist was written on a Mac, and every name in it was a POSIX one. On
-// Windows that left a child with almost no environment: no home, so the CLI
-// could not find the credentials it had just written, and no SystemRoot, which
-// a great many Windows APIs need before they will run at all.
+// Without these a Windows child has no home, so the CLI cannot find the
+// credentials it just wrote, and no SystemRoot, which many Windows APIs need
+// before they will run at all.
 const KEEP_WINDOWS = [
   'USERPROFILE',
   'HOMEDRIVE',

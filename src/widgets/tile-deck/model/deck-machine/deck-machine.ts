@@ -15,8 +15,8 @@ export function deckReducer(state: DeckState, event: DeckEvent): DeckState {
       if (event.type === 'openOne' && !state.ids.includes(event.id)) {
         return { kind: 'fanning', ids: [...state.ids, event.id] }
       }
-      // A teammate can finish inside the fan, and dropping that close leaves a
-      // tile on the board for a session nobody is running any more.
+      // A teammate can finish inside the fan; dropping that close leaves a tile on the
+      // board for a session nobody runs any more.
       if (event.type === 'closeOne' && state.ids.includes(event.id)) {
         return { kind: 'fanning', ids: without(state.ids, event.id) }
       }

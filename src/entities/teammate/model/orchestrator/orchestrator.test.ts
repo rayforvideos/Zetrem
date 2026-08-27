@@ -14,9 +14,8 @@ describe('what the orchestrator is told', () => {
   })
 
   it('does say to hand off in the language being spoken, which the roster otherwise loses', () => {
-    // Plainly, the CLI writes the handoff in the person's language; behind the
-    // roster it drifts to English, and the teammate answers in English too.
-    // Naming it back is restoring the CLI's own behaviour, not shaping it.
+    // Behind the roster the CLI's handoff drifts to English. Naming the language
+    // back restores the CLI's own behaviour rather than shaping the reply.
     expect(ORCHESTRATOR_PROMPT).toContain('the language the person is using')
   })
 

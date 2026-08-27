@@ -80,8 +80,8 @@ export function fromResult(event: Record<string, unknown>): TurnEvent[] {
     errors: event.errors,
   })
   if (said !== null) {
-    // Read the model off what the CLI wrote, not off `said`: stoppedLine has
-    // already rewritten it for the screen and dropped the name.
+    // Read the model off the raw CLI text, not off `said`: stoppedLine has already rewritten it
+    // for the screen and dropped the name.
     const refused = modelRefusedIn(str(event.result))
     out.push(
       refused === null ? { type: 'notice', text: said } : { type: 'notice', text: said, refused },

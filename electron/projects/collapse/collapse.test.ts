@@ -176,8 +176,7 @@ describe('folding the categories of a folder back into one project', () => {
 
   it('sets the overflow aside instead of letting the cap prune it away', async () => {
     // Merging can carry a folder past the cap, and the store prunes on every
-    // autosave. Anything over the cap goes somewhere the prune does not read,
-    // because deleting a person's chats is not a migration's decision.
+    // autosave. Anything over the cap goes where the prune does not read.
     const shop = dir('shop')
     write(shop, [
       { id: shop, name: 'shop', path: shop, createdAtMs: 1, lastOpenedAtMs: 1 },
@@ -200,8 +199,6 @@ describe('folding the categories of a folder back into one project', () => {
       { id: 'cat-1', name: 'CS봇', path: shop, createdAtMs: 2, lastOpenedAtMs: 2 },
     ])
     const id = (n: number): string => `${String(n).padStart(8, '0')}-aaaa-4aaa-8aaa-aaaaaaaaaaaa`
-    // The folder's own chats are the stale ones this time; the category holds
-    // the fresh ones, so the fresh ones are what must stay reachable.
     for (let n = 0; n < CHAT_CAP; n += 1) chat(shop, id(n), 1_000 + n)
     chat('cat-1', id(999), 90_000)
 

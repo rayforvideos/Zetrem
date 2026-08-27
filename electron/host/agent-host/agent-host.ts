@@ -62,8 +62,6 @@ export function killAllAgents(): void {
 export function registerAgentHost(): void {
   handle(
     'agent:start',
-    // Typed by the contract, read as unknown: the values come off the wire
-    // from the renderer, so the checks below are the real gate.
     async (event, id: unknown, prompt: unknown, config: unknown, files: unknown = []) => {
       const sender = event.sender
       const fail = (reason: ExitReason | null): void => {
@@ -71,8 +69,6 @@ export function registerAgentHost(): void {
           push(sender, 'agent:event', { id, kind: 'exit', code: -1, reason })
       }
       if (typeof id !== 'string' || typeof prompt !== 'string') return fail(null)
-      // An id that is already running belongs to a live agent. Reporting an exit
-      // for it would tell the renderer that agent died, so say nothing instead.
       if (agents.has(id)) return
       if (!/^[A-Za-z0-9-]+$/.test(id)) return fail(null)
       const run = runConfigOf(config)
@@ -91,9 +87,8 @@ export function registerAgentHost(): void {
         )
         const env = agentEnv(process.env, await loginPath())
 
-        // A stop that lands while this was waiting only removes the map entry, so
-        // the last word on whether to spawn is here. Nothing below may await:
-        // the spawn and the map entry have to happen in one uninterrupted step.
+        // Nothing below may await: the spawn and the map entry have to happen
+        // in one uninterrupted step, or a stop can land between them.
         if (agents.get(id) !== 'starting') {
           dropSends(waiting, id)
           return fail(null)
@@ -113,8 +108,7 @@ export function registerAgentHost(): void {
       push(sender, 'agent:event', { id, kind: 'workspace', cwd: workspace })
 
       const read = lineReader()
-      // killTree walks the process table, so the kill for a window that went away
-      // happens once rather than on every chunk still in flight.
+      // killTree walks the process table, so it happens once, not per chunk.
       let dropped = false
       child.stdout.on('data', (chunk: string) => {
         if (sender.isDestroyed()) {
@@ -149,8 +143,6 @@ export function registerAgentHost(): void {
       child.on('error', (cause: Error) => reportExit(-1, startTrouble(cause.message)))
 
       tell(child.stdin, userMessage(prompt, files))
-      // Anything typed during the start waited for this stdin, and it has to
-      // follow the opening prompt rather than race ahead of it.
       for (const send of releaseSends(waiting, id)) {
         tell(child.stdin, userMessage(send.text, send.files))
       }
@@ -159,8 +151,6 @@ export function registerAgentHost(): void {
 
   on('agent:send', (_event, id: unknown, text: unknown, files: unknown = []) => {
     if (typeof id !== 'string' || typeof text !== 'string') return
-    // An id nobody knows has no host coming, and the renderer starts a fresh
-    // agent on its side, so text held for it would never be read.
     const agent = agents.get(id)
     if (agent === 'starting') holdSend(waiting, id, { text, files })
     else if (agent) tell(agent.stdin, userMessage(text, files))

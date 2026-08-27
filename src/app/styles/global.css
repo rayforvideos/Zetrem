@@ -1,19 +1,7 @@
 @import 'tailwindcss';
 @import 'tw-animate-css';
 
-/* The palette below is the light one, and the dark block further down holds the
-   values the app shipped with. Both hang off the OS scheme, which the main
-   process steers through nativeTheme, so the renderer needs no class of its
-   own — and the `dark:` utilities shadcn brings with it follow the same media
-   query as the tokens, instead of the permanent `.dark` on <html> they used to. */
 :root {
-  /* The ground sits below white so a panel can rise off it without a border,
-     and the interactive fills sit below the ground so a hover reads as pressed
-     into it — the same order dark uses, where the ground is black, panels rise
-     to 0.17 and fills to 0.22. Light cannot spread these over 26% of lightness
-     the way dark does, because it runs out of room at white, but it does not
-     need to: near white a small step in lightness goes a long way, and this
-     ramp puts the card/ground contrast at 1.11:1 against dark's 1.10:1. */
   --background: oklch(0.965 0 0);
   --foreground: oklch(0.15 0 0);
 
@@ -34,16 +22,14 @@
   --accent-foreground: oklch(0.15 0 0);
   --destructive: oklch(0.42 0.2 25);
 
-  /* Diff colours keep their hue from the dark palette and swap lightness, so a
-     removal still reads as the same red. Chroma is held too where sRGB can hold
-     it: at L 0.93 the reddish hue runs out of gamut around C 0.035, so the
-     removed surface is as pink as that lightness allows. */
+  /* At L 0.93 the reddish hue leaves sRGB gamut around C 0.035, which caps how
+     pink --removed-surface can get. */
   --added: oklch(0.48 0.13 150);
   --added-surface: oklch(0.93 0.07 150);
   --removed: oklch(0.48 0.17 20);
   --removed-surface: oklch(0.93 0.035 20);
 
-  /* Claude's own colour, which belongs to Claude and not to a scheme. */
+  /* Claude's brand colour: the same in both schemes, so dark does not override it. */
   --claude: #d97757;
 
   --border: oklch(0.885 0 0);
@@ -60,15 +46,11 @@
   --font-zt-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   --font-zt-mono: ui-monospace, SFMono-Regular, Menlo, monospace;
 
-  /* Scrollbars and form controls the UA draws itself take their colour from
-     here, not from the tokens above. Without it Chromium draws light ones in
-     either scheme — a wide markdown table got a light scrollbar on black. */
+  /* UA-drawn scrollbars and form controls read this, not the tokens above.
+     Without it Chromium draws light ones in either scheme. */
   color-scheme: light;
 }
 
-/* The palette the app shipped with, unchanged. Only the colour tokens live
-   here; radius, timings and fonts mean the same thing in either scheme, and
-   --claude is Claude's colour in both. */
 @media (prefers-color-scheme: dark) {
   :root {
     --background: oklch(0 0 0);
@@ -453,9 +435,8 @@
     var(--color-foreground) 50%,
     var(--color-muted-foreground) 65%
   );
-  /* An angled gradient can't tile without a seam, so the image never repeats:
-     at 300% width, positions 100%→0% keep it covering the text while the
-     bright band enters from one side and leaves out the other. */
+  /* An angled gradient can't tile without a seam, so it never repeats: at 300%
+     width, positions 100%→0% keep it covering the text. */
   background-size: 300% 100%;
   background-repeat: no-repeat;
   background-color: var(--color-muted-foreground);

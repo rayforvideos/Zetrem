@@ -7,8 +7,6 @@ import { spawnResult, withoutPlumbing } from '../../lib/plumbing/plumbing'
 import { ToolDetail } from '../ToolDetail/ToolDetail'
 import { ToolLine } from '../ToolLine/ToolLine'
 
-// Most output only proves the tool ran, so a quiet run folds away; a failed
-// one lays itself open, that being the part worth reading.
 export function tickOpen(override: boolean | null, failed: boolean): boolean {
   return override ?? failed
 }

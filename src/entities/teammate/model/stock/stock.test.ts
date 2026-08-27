@@ -77,9 +77,6 @@ describe('which of their agents are on: everything except what you turned off', 
   const stock = ['claude', 'Explore', 'Plan']
 
   it('has them all on before anybody touches a switch', () => {
-    // Nothing writes to say they are on. Being one of theirs is enough, so a
-    // name that turns up later needs no write to be honest — and no write can
-    // flip it on behind your back either.
     expect(allowedStock(stock, [])).toEqual(stock)
   })
 

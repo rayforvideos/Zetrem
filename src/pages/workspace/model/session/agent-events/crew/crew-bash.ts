@@ -1,9 +1,8 @@
 import { sessionStore } from '@/entities/agent-session'
 import { wake } from './wake'
 
-// Background shells a child agent started for itself, task id → owning
-// session. While one runs, the owner is waiting on it, not finished — and its
-// row belongs on the agent's tile, not in the conversation's chores line.
+// Task id → the session that backgrounded the shell. While one runs its owner
+// is waiting on it, not finished.
 const ownedBash = new Map<string, string>()
 
 export function adoptChildBash(taskId: string, toolUseId: string | null): boolean {

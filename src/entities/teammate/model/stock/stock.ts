@@ -19,19 +19,12 @@ export function stockAgents(
   return [...found].sort((a, b) => a.localeCompare(b))
 }
 
-// Which of their agents are on. Being one of theirs is enough — the only thing
-// written down is what somebody turned off.
-//
-// It used to be the other way round: the enabled set was a list of names, and
-// anything newly discovered wrote itself into it. That made the switches depend
-// on the discovery list being right, which is how a name that should never have
-// been there ended up switched on by itself.
+// Being one of theirs is enough to be on: the only thing written down is what was turned off.
 export function allowedStock(stock: string[], off: string[]): string[] {
   const refused = new Set(off.map((name) => name.toLowerCase()))
   return stock.filter((name) => !refused.has(name.toLowerCase()))
 }
 
-// Records a switch. Only an off lands in the list; an on takes its name back out.
 export function offStock(off: string[], name: string, on: boolean): string[] {
   const low = name.toLowerCase()
   const without = off.filter((one) => one.toLowerCase() !== low)

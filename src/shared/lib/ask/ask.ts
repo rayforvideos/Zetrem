@@ -13,8 +13,7 @@ export function lastLine(out: string, fallback = t`That did not work`): string {
   return lines.at(-1) ?? fallback
 }
 
-// The kind of failure decides the words; the evidence fills them in. A refusal
-// carries a code its own domain knows how to say, so it passes through for the
+// A refusal's `said` is a domain code, not a sentence: it passes through for the
 // caller to translate (see saidOrWhy in entities/connector).
 function whyLine(why: Why): string {
   switch (why.code) {

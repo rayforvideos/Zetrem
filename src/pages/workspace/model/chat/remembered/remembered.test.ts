@@ -6,8 +6,7 @@ const held = { tools: ['Read'], agents: ['Explore'] }
 describe('remembered: writing down what a run told us, in one go', () => {
   it('takes the tools from a session and leaves its agent list alone', () => {
     // A session is handed our teammates, so its agent list is a mixture. Only
-    // the probe is asked empty-handed, and only the probe is believed about
-    // agents.
+    // the probe is asked empty-handed, and only the probe is believed.
     const patch = remembered(
       { tools: ['Read', 'Bash'], agents: ['Explore', 'Plan'], probed: false },
       held,
@@ -116,9 +115,6 @@ describe('the remembered agents come from a probe that handed nothing over', () 
   })
 
   it('learns nothing about agents from a live session', () => {
-    // A session is handed our teammates, so its list is a mixture and cannot
-    // say which are Claude Code's. Every bug here came from trying to work
-    // that out afterwards; the probe is asked empty-handed instead.
     const learned = remembered(
       { tools: [], agents: ['claude', 'Explore', '시에나'], probed: false },
       { tools: [], agents: ['claude'] },

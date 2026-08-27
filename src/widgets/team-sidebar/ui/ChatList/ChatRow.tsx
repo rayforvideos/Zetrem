@@ -84,8 +84,6 @@ export function Row({ chat, kit }: { chat: ChatSummary; kit: RowKit }) {
         placeholder={t`Folder name`}
         onBlur={() => setNaming(false)}
         onKeyDown={(event) => {
-          // Naming a folder is deliberate: Enter files the chat, and leaving
-          // the field walks away rather than making a folder nobody asked for.
           if (event.key === 'Escape') setNaming(false)
           if (event.key !== 'Enter') return
           event.preventDefault()
@@ -108,8 +106,7 @@ export function Row({ chat, kit }: { chat: ChatSummary; kit: RowKit }) {
         onFocus={(event) => event.target.select()}
         onBlur={(event) => commit(event.target.value)}
         onKeyDown={(event) => {
-          // The chat behind this row may be live; a stray Enter must not
-          // reach anything but this field.
+          // The chat behind this row may be live; a stray Enter must not reach past this field.
           if (event.key === 'Enter') {
             event.preventDefault()
             commit(event.currentTarget.value)
@@ -126,9 +123,6 @@ export function Row({ chat, kit }: { chat: ChatSummary; kit: RowKit }) {
     <div
       className={cn('group/chat relative rounded-lg', under && 'ring-1 ring-ring bg-card/60')}
       onDragOver={(event) => {
-        // Only ring where dropping would actually do something. A ring over the
-        // chat being carried, or over its own folder-mate, is a promise the
-        // drop cannot keep.
         if (!canLand(carried ?? undefined, chat)) return
         event.preventDefault()
         event.stopPropagation()
@@ -142,8 +136,7 @@ export function Row({ chat, kit }: { chat: ChatSummary; kit: RowKit }) {
       onDrop={(event) => {
         if (!event.dataTransfer.types.includes(CARRIED)) return
         event.preventDefault()
-        // A row inside a folder sits inside the folder's own drop target; the
-        // row is the more specific answer, so the folder never hears this.
+        // A row inside a folder sits inside the folder's own drop target.
         event.stopPropagation()
         setUnder(false)
         onCarry(event.dataTransfer.getData(CARRIED), chat)
@@ -221,8 +214,6 @@ export function Row({ chat, kit }: { chat: ChatSummary; kit: RowKit }) {
         </DropdownMenu>
       </div>
 
-      {/* Removing a teammate asks first; forgetting a whole conversation is
-          no smaller a loss, so it asks the same way. */}
       <AlertDialog open={asking} onOpenChange={setAsking}>
         <AlertDialogContent>
           <AlertDialogHeader>
@@ -242,7 +233,3 @@ export function Row({ chat, kit }: { chat: ChatSummary; kit: RowKit }) {
     </div>
   )
 }
-
-// A folder stands where it is and folds open in place. Nothing else moves, and
-// the loose chats below stay where they were — opening a folder shows more, it
-// never takes the rest away.

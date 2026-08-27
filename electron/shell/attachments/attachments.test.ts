@@ -6,8 +6,6 @@ import type { Attached } from '@/entities/attachment/lib/attachment/attachment.t
 
 type Channel = (event: unknown, ...args: unknown[]) => unknown
 
-// Everything the module touches outside itself is mocked here, and every mock
-// writes into this one record, so a test reads the outside world from one place.
 const boundary = vi.hoisted(() => ({
   channels: new Map<string, Channel>(),
   picked: [] as string[],

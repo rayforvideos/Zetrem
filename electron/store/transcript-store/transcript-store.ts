@@ -47,8 +47,6 @@ async function load(project: string, id: string): Promise<Transcript | null> {
   } catch {
     // fall through to quarantine below
   }
-  // A file that reads but does not parse into a transcript would otherwise be
-  // re-parsed on every list. Move it aside so it stops costing anything.
   await rename(path, `${path}.broken`).catch(() => undefined)
   return null
 }
@@ -87,8 +85,6 @@ async function prune(project: string): Promise<void> {
     return
   }
   if (names.length <= CHAT_CAP) return
-  // Reading every file is only worth it once the folder is full, and it is the
-  // only way to know which chats were filed — those are kept whatever their age.
   const dated = await Promise.all(
     names.map(async (name) => {
       const path = join(dir, name)

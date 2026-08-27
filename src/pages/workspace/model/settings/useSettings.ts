@@ -44,8 +44,6 @@ export function useSettings(): SettingsSource {
       .finally(() => setLoading(false))
   }, [report, hold])
 
-  // Stable on purpose: the screen hands this to effects that would otherwise
-  // re-run on every render.
   const update = useCallback(
     (patch: Partial<Settings>): void => {
       clear()

@@ -66,8 +66,6 @@ export function TeamSidebar({
   )
 }
 
-// On or off is decided once and rarely touched, so the rows sit shut behind
-// their tally and unfold where they stand, instead of taking a line each.
 function BuiltinAgents({ agents }: { agents: Omit<StockListProps, 'avatar'> }) {
   const [open, setOpen] = useState(false)
   const using = agents.stock.filter((name) => agents.on.includes(name)).length

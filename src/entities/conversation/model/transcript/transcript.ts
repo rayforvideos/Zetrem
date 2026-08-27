@@ -1,5 +1,4 @@
-// The exact module, not the attachment barrel: the barrel carries heavy-line,
-// which uses the Lingui macro, and the main process bundles this file.
+// Not the attachment barrel: it pulls heavy-line's Lingui macro, and the main process bundles this file.
 import type { Sent } from '@/entities/attachment/@x/conversation'
 import { freshTurnId } from '../../model/turn-id/turn-id'
 import type { ToolActivity, ToolResult, Turn } from '../turn/turn'
@@ -9,7 +8,6 @@ const TURN_CAP = 200
 const OUTPUT_CAP = 4000
 const TITLE_CAP = 60
 
-// An untitled chat stays empty here. Naming it is the screen's job.
 export const UNTITLED = ''
 
 const CHAT_ID = /^chat-[0-9a-z]{1,32}-[0-9a-z]{1,16}$/
@@ -30,7 +28,6 @@ export function titleOf(turns: Turn[]): string {
   return line.length <= TITLE_CAP ? line : `${line.slice(0, TITLE_CAP)}…`
 }
 
-// One line, trimmed, capped like an automatic title; nothing is no name.
 export function renamed(title: string): string | null {
   const line = title.replace(/\s+/g, ' ').trim()
   if (line.length === 0) return null
@@ -45,10 +42,7 @@ export function packTranscript(
   const given = summary.title === undefined ? null : renamed(summary.title)
   return {
     ...summary,
-    // A name somebody gave outlives every re-save; only a nameless chat
-    // keeps taking its title from the first message.
     title: given ?? titleOf(turns),
-    // A chat nobody filed is unfiled; saving one never invents a folder.
     folder: summary.folder ?? '',
     spend,
     turns: turns.slice(-TURN_CAP).map(packTurn),
@@ -121,8 +115,6 @@ function isRole(value: unknown): value is Turn['role'] {
   return value === 'user' || value === 'assistant' || value === 'system'
 }
 
-// A turn from an older schema, or a partially corrupted file, must not carry
-// bad shapes into the renderer. Unknown fields default rather than reject.
 function readTurn(value: unknown): Turn | null {
   if (typeof value !== 'object' || value === null) return null
   const turn = value as Record<string, unknown>

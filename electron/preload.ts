@@ -10,8 +10,6 @@ import type {
   SendChannel,
 } from '@/app/desk/desk.types'
 
-// Three ways across the bridge, each typed by the channel it names. The
-// contract itself lives in desk.types.ts; this file only wires names to it.
 function invoke<C extends InvokeChannel>(channel: C): Invoke<C> {
   return (...args) => ipcRenderer.invoke(channel, ...args)
 }
@@ -67,8 +65,6 @@ const desk: DeskBridge = {
 
   pickFiles: invoke('files:pick'),
   readFiles: invoke('files:read'),
-  // Resolving a dropped or pasted file is the one moment main can tell the path
-  // came from the OS and not from the page, so the read side is told here.
   // A synthetic File resolves to '', which stays unadmitted. The admit is
   // awaited, or a read that follows straight after could beat it there.
   pathForFile: async (file) => {

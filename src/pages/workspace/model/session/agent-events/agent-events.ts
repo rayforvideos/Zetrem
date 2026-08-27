@@ -42,16 +42,12 @@ const OVER = ['completed', 'failed', 'killed']
 
 function chore(turn: ClaudeTurnEvent): boolean {
   if (turn.type === 'childStarted' && turn.taskType === BACKGROUND) {
-    // A shell a child agent backgrounded for itself is that agent still at
-    // work, not a conversation chore; it rides the agent's tile instead.
     if (adoptChildBash(turn.taskId, turn.toolUseId)) return true
     conversation.startChore(turn.taskId, turn.description)
     return true
   }
   if (turn.type === 'childNotified') {
     conversation.endChore(turn.taskId)
-    // A notification for an adopted shell is that shell finishing; its owner
-    // stops waiting on it either way.
     releaseChildBash(turn.taskId)
   }
   if (turn.type === 'childStateKnown' && OVER.includes(turn.state)) {

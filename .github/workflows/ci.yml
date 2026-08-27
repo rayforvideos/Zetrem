@@ -16,9 +16,6 @@ permissions:
   contents: read
 
 jobs:
-  # Ubuntu because these checks are platform-agnostic and Linux minutes bill
-  # at 1x against macOS's 10x. The platform-specific jobs (os-matrix check,
-  # launch, package, smoke) live in platforms.yml and run on demand.
   check:
     name: check (node ${{ matrix.node }})
     runs-on: ubuntu-latest
@@ -47,20 +44,15 @@ jobs:
         run: npm run typecheck
 
       - name: Architecture
-        # steiger holds the layer direction, the segments and the cross-imports.
-        # tests/conventions holds the rest; CONTRIBUTING says which is which.
         run: npm run fsd
 
       - name: Tests
-        # Includes tests/conventions, which is where this repo's rules live.
         run: npm test
 
       - name: Build
         run: npm run build
 
       - name: Coverage
-        # Reported, not gated. Nobody has set a floor yet, and a threshold
-        # picked before anybody has read the numbers is a number out of the air.
         run: npm run coverage
 
       - name: Translations are in step with the source

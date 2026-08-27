@@ -20,11 +20,9 @@ type Connectors = {
 
 // Read at call time, never at import: the locale is not up yet when this module loads.
 function said(verb: ConnectorVerb, target: string): string {
-  // The rows already drop the "claude.ai " mouthful; the toast follows suit.
   const name = shortName(target)
-  // claude mcp login opens the browser and exits before anyone has signed
-  // in, so a finished command is not a finished sign-in — and either way the
-  // tools only load into the next session.
+  // claude mcp login opens the browser and exits before anyone has signed in,
+  // so a finished command is not a finished sign-in.
   if (verb === 'login')
     return t`Finish signing in to ${name} in the browser. The next session picks it up.`
   if (verb === 'logout') return `${t`Signed out of`} ${name}`

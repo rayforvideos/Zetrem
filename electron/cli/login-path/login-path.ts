@@ -10,7 +10,6 @@ const isWindows = process.platform === 'win32'
 
 let cached: string | null = null
 
-// An install that just finished wrote a binary the cached answer predates.
 export function resetLoginPath(): void {
   cached = null
 }
@@ -37,10 +36,8 @@ export async function loginPath(): Promise<string> {
   return cached
 }
 
-// A working claude is not always on any PATH: the migrate-installer leaves the
-// binary in ~/.claude/local and reaches it through a shell alias, and when the
-// login-shell probe above fails, a packaged app is left with the bare GUI PATH.
-// These are the folders the installers actually write to.
+// The migrate-installer leaves the binary in ~/.claude/local and reaches it
+// through a shell alias, so a working claude is not always on any PATH.
 export function knownInstallDirs(
   platform: string = process.platform,
   home: string = homedir(),
@@ -70,10 +67,9 @@ export function withKnownDirs(
 
 export function commandNames(command: string, platform: string = process.platform): string[] {
   if (platform !== 'win32') return [command]
-  // npm leaves three files behind on Windows: claude, claude.cmd and claude.ps1.
-  // The bare one is a shell script that Windows cannot run, and it used to be
-  // tried first, so the app resolved a file it could not spawn. Windows itself
-  // resolves by PATHEXT, so follow that and keep the bare name as a last resort.
+  // npm leaves claude, claude.cmd and claude.ps1 on Windows, and the bare one is
+  // a shell script Windows cannot spawn. Resolve by PATHEXT the way Windows does
+  // and keep the bare name last.
   const exts = (process.env.PATHEXT ?? '.COM;.EXE;.BAT;.CMD')
     .split(';')
     .map((ext) => ext.trim())

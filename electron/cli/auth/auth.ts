@@ -78,7 +78,6 @@ export function registerAuth(): void {
         if (child.pid !== undefined) untrackChild(child.pid)
         resolve()
       }
-      // A login nobody finished would otherwise sit on the browser flow forever.
       const timer = setTimeout(() => {
         if (child.pid !== undefined) killTree(child.pid)
         else child.kill()
@@ -87,9 +86,8 @@ export function registerAuth(): void {
       const relay = (chunk: string): void => push(sender, 'auth:progress', chunk)
       child.stdout.on('data', relay)
       child.stderr.on('data', relay)
-      // 'close' rather than 'exit', like run-settled: by then stdio has
-      // flushed, so the last progress line reaches the renderer before the
-      // status check answers.
+      // 'close' rather than 'exit': stdio has flushed by then, so the last
+      // progress line reaches the renderer before the status check answers.
       child.on('close', stop)
       child.on('error', stop)
     })

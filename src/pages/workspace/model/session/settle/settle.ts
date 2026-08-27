@@ -21,9 +21,8 @@ export function settled(children: AgentSession[], at: Quiet): string[] {
         return silenceOf(session, at.nowMs) >= REPORTED_QUIET_MS
       }
       if (session.status !== 'working') return false
-      // A working child the CLI tracks by task id gets an explicit end
-      // (childStateKnown); guessing from silence would close one that is
-      // merely between notifications.
+      // A child the CLI tracks by task id gets an explicit end (childStateKnown);
+      // guessing from silence would close one merely between notifications.
       if (told(session)) return false
       return !at.parentWorking && silenceOf(session, at.nowMs) >= LOST_QUIET_MS
     })

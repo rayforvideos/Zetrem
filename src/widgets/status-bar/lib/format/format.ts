@@ -18,8 +18,8 @@ export function reachable(status: StatusState, connectors: Connector[]): Map<str
   const state = new Map<string, string>()
   for (const server of status.session?.mcp ?? []) state.set(server.name, server.status)
   for (const one of connectors) state.set(one.name, one.state)
-  // The health check is fresher about reachability, but only the session
-  // knows which servers it could not sign in to; that verdict stands.
+  // Only the session knows which servers it could not sign in to, so that verdict
+  // stands over the fresher health check.
   for (const server of status.session?.mcp ?? []) {
     if (server.status === 'needs-auth') state.set(server.name, 'needs-auth')
   }

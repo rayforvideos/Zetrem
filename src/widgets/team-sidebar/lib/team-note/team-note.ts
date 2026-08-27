@@ -1,11 +1,8 @@
 import { t } from '@lingui/core/macro'
 import type { NoteLine, TeamNote } from './team-note.types'
 
-// The note says what is true at this moment. While a session is up it holds the
-// roster it started with, so a change to the team is something it cannot take
-// up — that is worth saying, and worth offering the restart for. With nothing
-// running there is no wait to describe: whatever gets sent next already knows
-// them, so the note just confirms the change and stops talking.
+// A running session holds the roster it started with, so a team change cannot reach it
+// until a restart.
 export function noteLine(note: TeamNote, sessionLive: boolean): NoteLine {
   const who = note.kind === 'trouble' ? '' : note.name
   switch (note.kind) {

@@ -1,10 +1,8 @@
 import type { ModelChoice } from '../../model/model-choice/model-choice.types'
 import { NAMED_MODELS as NAMED } from '../../model/model-choice/model-choice'
 
-// The CLI turns a 404 into one of two sentences: it names the model in
-// parentheses, or it says the deployment does not carry it. Read both, and read
-// them off what the CLI wrote — once we have rewritten it for the screen, the
-// model's name is gone.
+// The CLI turns a 404 into one of two sentences, so both are matched. Read them off the raw CLI
+// text: once it is rewritten for the screen the model's name is gone.
 const NAMED_IN = [/selected model \(([^)]+)\)/i, /\bmodel\s+(\S+)\s+is not available on your\b/i]
 
 export function modelRefusedIn(said: string): ModelChoice | null {

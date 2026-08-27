@@ -40,8 +40,7 @@ describe('finding claude works differently on each machine', () => {
 
 describe('an install the PATH never heard of', () => {
   // claude migrate-installer leaves the binary in ~/.claude/local and reaches
-  // it through a shell alias, so no PATH entry ever points at it. Zetrem has
-  // to look where the installers actually put it.
+  // it through a shell alias, so no PATH entry ever points at it.
   const temps: string[] = []
   const fakeInstall = (): { home: string; bin: string } => {
     const home = mkdtempSync(join(tmpdir(), 'zetrem-home-'))
@@ -59,8 +58,6 @@ describe('an install the PATH never heard of', () => {
   })
 
   it('knows the folders the installers use', () => {
-    // join, not a literal: the folders are built with the separator of the
-    // machine running the test, and this test runs on Windows too.
     const dirs = knownInstallDirs('darwin', '/Users/someone')
     expect(dirs).toContain(join('/Users/someone', '.claude', 'local'))
     expect(dirs).toContain(join('/Users/someone', '.local', 'bin'))
@@ -98,8 +95,6 @@ describe('an install the PATH never heard of', () => {
       // or /usr/local, so only the folder inside the throwaway home is judged.
       const dir = join(home, '.local', 'bin')
       expect(await loginPath()).not.toContain(dir)
-      // The installer writes the binary while the app is running. The cached
-      // answer would say "missing" forever; a reset reads the world again.
       mkdirSync(dir, { recursive: true })
       writeFileSync(join(dir, 'claude'), '#!/bin/sh\n')
       chmodSync(join(dir, 'claude'), 0o755)

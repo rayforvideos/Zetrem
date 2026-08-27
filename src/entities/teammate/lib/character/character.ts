@@ -14,7 +14,6 @@ export const CHARACTERS: readonly CharacterId[] = [
   'cloud',
 ]
 
-// The face a teammate wears until somebody picks one for them.
 export const DEFAULT_CHARACTER: CharacterId = 'jelly'
 
 export function isCharacterId(value: unknown): value is CharacterId {

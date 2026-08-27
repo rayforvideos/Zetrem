@@ -31,8 +31,6 @@ function dropChildren(): void {
   killTrackedChildren()
 }
 
-// A packaged build has no developer attached to read the port, so it never
-// opens one no matter what the environment asks for.
 const inspectPort = app.isPackaged
   ? null
   : (process.env.ZT_INSPECT ?? (process.env.ELECTRON_RENDERER_URL ? '0' : null))
@@ -47,8 +45,7 @@ function wearTheName(): void {
   })
 }
 
-// Parsed rather than prefix-matched: what reaches the browser is what a URL
-// parser makes of the string, so that is what the check should read.
+// Parsed rather than prefix-matched: the browser reads the string the same way.
 function openIfExternal(url: string): void {
   let parsed: URL
   try {
@@ -102,11 +99,9 @@ function createWindow(): void {
 
   win.webContents.on('did-start-navigation', (details) => {
     if (!details.isMainFrame) return
-    // In-page navigation (hash change, pushState) is not a real page load, so don't kill agents for it.
     if (details.isSameDocument) return
-    // A clicked link lands here before will-navigate cancels it. The page is
-    // staying, so its agents keep running. Only a load that really replaces
-    // the page drops them: a reload, or the app's own data: trouble page.
+    // A clicked link lands here before will-navigate cancels it, and the page
+    // is staying, so only a load that really replaces it drops the agents.
     if (details.url !== win.webContents.getURL() && !details.url.startsWith('data:')) return
     dropChildren()
   })
@@ -121,9 +116,6 @@ function createWindow(): void {
   win.webContents.on('will-navigate', (event, url) => {
     if (url === win.webContents.getURL()) return
     event.preventDefault()
-    // A plain https link inside the page cannot navigate the window, but it is
-    // still where the person meant to go, so it opens the same way a
-    // target=_blank link would.
     openIfExternal(url)
   })
 
@@ -150,14 +142,8 @@ function createWindow(): void {
   void loading.catch(() => undefined)
 }
 
-// The window holds text somebody else's agent wrote, including markdown that
-// can name any URL it likes. Nothing here loads from the network on purpose:
-// the page and everything it needs ship inside the app, and it talks to the
-// main process over IPC. Saying so out loud means a remote script or a tracking
-// pixel that finds its way into the page does not get to run or phone home.
-//
-// Styles are the one exception: Tailwind writes a style element, and inline
-// style attributes are all over the components.
+// 'unsafe-inline' for styles: Tailwind writes a style element and the
+// components carry inline style attributes.
 const POLICY = [
   "default-src 'self'",
   "script-src 'self'",
@@ -172,9 +158,7 @@ const POLICY = [
   "form-action 'none'",
 ].join('; ')
 
-// Only where the page is the built one. The dev server needs its own websocket
-// and an eval to hot-reload, and locking that down would be locking down a page
-// nobody ships.
+// The dev server needs its own websocket and an eval to hot-reload.
 function guardThePage(): void {
   if (process.env.ELECTRON_RENDERER_URL) return
   session.defaultSession.webRequest.onHeadersReceived((details, done) => {
@@ -221,12 +205,9 @@ if (!primary) {
       session.defaultSession.setPermissionCheckHandler(() => false)
       guardThePage()
       wearTheName()
-      // Categories were a second project wearing the same folder. Fold any that
-      // are still on disk back into one project per folder before the window
-      // asks for the list.
       await collapseCategories(app.getPath('userData'))
-      // The scheme has to be settled before the window exists, or the first paint
-      // is the wrong colour and the page opens under the machine's scheme.
+      // Settled before the window exists, or the first paint is the wrong
+      // colour and the page opens under the machine's scheme.
       wearTheme((await loadSettings()).theme)
       createWindow()
       app.on('activate', () => {

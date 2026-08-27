@@ -12,10 +12,8 @@ export type ChildTurnEvent =
   | { type: 'childSay'; toolUseId: string; role: 'user' | 'assistant'; text: string }
   | { type: 'childStream'; toolUseId: string; callId: string; line: string }
   | {
-      // One teammate speaking to another. The CLI carries the exchange in the
-      // sender's tool call and nowhere else: the agent on the other end is
-      // woken without ever being handed the words, so this is the only place
-      // the message itself can be read.
+      // The CLI carries a teammate-to-teammate message only in the sender's tool call: the
+      // agent on the other end is woken without ever being handed the words.
       type: 'childSent'
       toolUseId: string
       callId: string
@@ -60,5 +58,4 @@ export type ChildTurnEvent =
       error: string
     }
 
-// What every task event names: its task, and the tool_use that spawned it if known.
 export type Task = { toolUseId: string | null; taskId: string }

@@ -15,8 +15,6 @@ export function useFailure(): {
 } {
   const [failure, setFailure] = useState<Failure | null>(null)
 
-  // Stable on purpose: these end up in effect dependency lists, and a fresh
-  // pair every render would make those effects run every render.
   const clear = useCallback((): void => setFailure(null), [])
 
   const report = useCallback(

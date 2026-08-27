@@ -1,6 +1,3 @@
-// Everything the workspace screen knows, gathered in the order React needs
-// it. The screen itself only lays this out; nothing here decides how any of
-// it looks.
 import { useEffect, useRef, useState, useSyncExternalStore } from 'react'
 import { allowedStock, roster, offStock, stockAgents } from '@/entities/teammate'
 import { withRefused, withoutRefused } from '@/entities/claude-cli'
@@ -118,9 +115,7 @@ export function useWorkspace() {
   )
   const openAgent = children.find((session) => session.id === focus.openAgentId) ?? null
   // The probe keeps reporting a session after our child has been stopped, so
-  // status.session outlives the thing it describes. For everything the sidebar
-  // decides — who can be called, who is held back, whether a restart is worth
-  // offering — a session only exists while a child of ours is alive.
+  // status.session outlives the thing it describes.
   const held = agent.running ? status.session : null
   const sessionAgentNames = held?.agents ?? []
   const teamMembers = team(
@@ -128,9 +123,6 @@ export function useWorkspace() {
     sessionAgentNames,
     roster(sessionAgentNames, children, conv.status !== 'done'),
   )
-  // A file written before the switches were inverted lists the ones that were
-  // on. Only here is the full set of theirs known, so this is where that list
-  // becomes the off switches it always meant.
   useEffect(() => {
     if (settings.wasStockOn === null || stock.length === 0) return
     const wasOn = new Set(settings.wasStockOn.map((one) => one.toLocaleLowerCase()))
@@ -144,8 +136,6 @@ export function useWorkspace() {
   const atWork = stirring(conv.status, children)
   const sidebarLabel = sidebar.open ? t`Hide team sidebar` : t`Show team sidebar`
   const sessionId = status.session?.id ?? null
-  // The note asks for a restart; once a different session is up (or none is),
-  // the change is either in force or about to be, and the ask is stale.
   useEffect(() => {
     setPendingRestart(null)
     settleNote()
@@ -160,8 +150,6 @@ export function useWorkspace() {
     return () => window.removeEventListener('keydown', onKey)
   }, [drawerOpen])
 
-  // The modifier and a digit hand the next message to that teammate, in
-  // sidebar order, the way tabs answer to their number everywhere else.
   const addressable = useRef(teamMembers)
   useEffect(() => {
     addressable.current = teamMembers
@@ -190,8 +178,8 @@ export function useWorkspace() {
   function adoptProject(picked: Project | null): void {
     // Two projects may share one folder, so identity is the id, not the path.
     if (!picked || picked.id === project?.id) return
-    // The running agent is rooted in the old folder; left alive it would
-    // keep streaming turns into the new project's transcript.
+    // The running agent is rooted in the old folder; left alive it would keep
+    // streaming turns into the new project's transcript.
     agent.reset()
     focus.clearAll()
     projectStore.set(picked)
@@ -209,7 +197,6 @@ export function useWorkspace() {
     forgetProject(id)
       .then(async () => {
         if (project !== null && project.id === id) {
-          // The next freshest project takes over; with none left, setup asks.
           const next = allProjects.filter((one) => one.id !== id)[0]
           const opened = next === undefined ? null : await openProject(next.id)
           agent.reset()
@@ -221,10 +208,6 @@ export function useWorkspace() {
       .catch(reportProject(t`Could not remove that project`))
   }
 
-  // A settings change used to stop a running session on the spot; a teammate
-  // change always waited for the restart button. This is the teammate way:
-  // the change lands in settings, the session runs on, and a note carries
-  // the restart for whoever wants it now.
   function reload(patch: Partial<typeof settings>, said: string): void {
     update(patch)
     if (status.session === null) return

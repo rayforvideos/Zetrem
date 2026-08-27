@@ -11,8 +11,7 @@ function sources(dir: string): string[] {
 }
 
 // Node refuses to spawn the .cmd that an npm install leaves on a Windows PATH,
-// and a shell would strip the quotes out of the JSON we pass to --agents. Every
-// spawn has to go through launchFor, which was measured against both.
+// and a shell would strip the quotes out of the JSON we pass to --agents.
 describe('the CLI is launched the one way that works on both platforms', () => {
   const files = sources('electron').filter((path) => !path.includes('spawn-claude'))
 
@@ -23,7 +22,6 @@ describe('the CLI is launched the one way that works on both platforms', () => {
       body.split('\n').forEach((line, at) => {
         const spawns = /(?<![a-zA-Z])spawn\(/.test(line)
         if (!spawns) return
-        // A launch already resolved above reads as spawn(x.command, x.args, …).
         if (/spawn\(\s*[a-zA-Z]+\.command\b/.test(line)) return
         raw.push(`${path}:${at + 1} ${line.trim().slice(0, 70)}`)
       })

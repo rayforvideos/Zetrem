@@ -61,8 +61,6 @@ describe('lockOf: who the orchestrator may call', () => {
   })
 
   it('bars none of theirs while none were switched off', () => {
-    // Being one of theirs is enough to be callable now, so an untouched
-    // install blocks nothing.
     const lock = lockOf({ ...settings, knownAgents: ['Explore'] }, [def('Ray')])
     expect(lock.blockedAgents).toEqual([])
   })

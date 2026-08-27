@@ -1,8 +1,3 @@
-// The face the renderer sees: window.desk. Every method is a channel from
-// desk.types.ts under a name that reads well at the call site. Declaring
-// a method as Invoke<'x'> ties it to that channel, so the preload cannot wire
-// a name to the wrong channel and the compiler carries each side's changes to
-// the other.
 import type { Invoke, Listen, Send } from './desk.types'
 
 export type { AgentHostEvent, CliVersions } from './desk.types'
@@ -45,8 +40,7 @@ export type DeskBridge = {
 
   pickFiles: Invoke<'files:pick'>
   readFiles: Invoke<'files:read'>
-  // The one method with a body of its own: it turns a dropped or pasted File
-  // into an OS path and admits that path for reading. See preload.ts.
+  // Implemented in preload, not a channel: it also admits the path for reading.
   pathForFile(file: File): Promise<string>
 
   pluginCatalog: Invoke<'plugins:catalog'>

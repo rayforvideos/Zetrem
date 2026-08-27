@@ -128,8 +128,7 @@ export function Composer({
           onCompositionStart={() => beganComposing(keying.current)}
           onCompositionEnd={() => {
             if (!endedComposing(keying.current)) return
-            // The key may come back on its own and send first; this only runs
-            // if it did not.
+            // The key may come back on its own and send first; this only runs if it did not.
             window.setTimeout(() => {
               if (takeOwed(keying.current)) submit()
             }, 0)

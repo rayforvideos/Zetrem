@@ -29,9 +29,8 @@ function isProject(value: unknown): value is StoredProject {
   )
 }
 
-// A version without projects knew only paths. Each becomes a project whose id
-// IS the path: the transcript store keys its folders by a hash of this very
-// string, so every chat lands where it already was.
+// The seeded id IS the path: the transcript store keys its folders by a hash
+// of that string, so every chat lands where it already was.
 async function seeded(nowMs: number): Promise<Memory> {
   const current = await recallProject()
   const known = await recentProjects()
@@ -95,9 +94,6 @@ export async function createProject(
   spot: string,
   nowMs: number = Date.now(),
 ): Promise<StoredProject | null> {
-  // A project is a folder that is already there. Naming one into being made a
-  // second project wear a folder some other project already had, which is the
-  // shape categories were; picking the folder is the whole of it now.
   const path = spot.trim()
   if (path.length === 0) return null
   try {
@@ -106,8 +102,6 @@ export async function createProject(
     return null
   }
   const memory = await readMemory(nowMs)
-  // One folder is one project, so landing on a folder that already wears one
-  // reopens it instead of minting a twin.
   const worn = freshestFirst(memory.projects).find((one) => one.path === path)
   if (worn !== undefined) return openProject(worn.id, nowMs)
   const made: StoredProject = {
@@ -118,8 +112,6 @@ export async function createProject(
     lastOpenedAtMs: nowMs,
   }
   await writeMemory({ current: made.id, projects: [...memory.projects, made] })
-  // The rest of main asks project-memory for the working folder; opening a
-  // project is what points it somewhere.
   await rememberProject(path)
   return made
 }
@@ -170,10 +162,7 @@ export async function forgetProject(id: string, nowMs: number = Date.now()): Pro
   })
 }
 
-// A folder becomes a project only after the dialog handed it over. The renderer
-// naming a path on its own is not enough: that path becomes the agent's working
-// directory, so a page that turned hostile could otherwise point the CLI at any
-// folder on the disk.
+// A renderer path becomes the agent's cwd, so only dialog paths are admitted.
 const picked = new Set<string>()
 const PICKED_MAX = 64
 
@@ -204,8 +193,6 @@ export function registerProjects(): void {
     wasPicked(path) ? createProject(path) : null,
   )
 
-  // Only ids this store handed out, and only paths the dialog handed out, act;
-  // the renderer never points main at an arbitrary path.
   handle('project:open', (_event, id: string) => openProject(id))
 
   handle('project:forget', (_event, id: string) => forgetProject(id))

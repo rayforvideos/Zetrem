@@ -131,7 +131,6 @@ describe('the connector list answers which one is broken, not which ones are fin
   })
 
   it('keeps a needs-auth verdict on screen, however alive the health check found the server', () => {
-    // The check probes the transport; the session knows it could not sign in.
     const html = draw(full, {
       connectors: [
         { name: 'claude.ai Notion', where: 'https://mcp.notion.com/mcp', state: 'connected' },

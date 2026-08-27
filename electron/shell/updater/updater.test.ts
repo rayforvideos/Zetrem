@@ -3,8 +3,6 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 type Channel = (event: unknown, ...args: unknown[]) => unknown
 type Downloaded = (info: { version: string }) => void
 
-// Everything the module touches outside itself is mocked here, and every mock
-// writes into this one record, so a test reads the outside world from one place.
 const boundary = vi.hoisted(() => ({
   channels: new Map<string, Channel>(),
   packaged: true,
@@ -95,8 +93,6 @@ function downloaded(version: string): void {
   listener({ version })
 }
 
-// whenReady resolves on the microtask queue, so the launch check lands a tick
-// after registerUpdater returns.
 const settle = (): Promise<void> => new Promise((resolve) => setImmediate(resolve))
 
 async function register(): Promise<void> {

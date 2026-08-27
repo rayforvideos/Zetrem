@@ -15,7 +15,6 @@ const { mergeRecent, recallProject, recentProjects, rememberProject } = await im
 
 let home = ''
 
-// A recent entry only counts when the folder is still there to open.
 const realDir = (name: string): string => {
   const dir = join(home, name)
   mkdirSync(dir, { recursive: true })

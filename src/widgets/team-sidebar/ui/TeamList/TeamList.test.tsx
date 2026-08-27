@@ -56,8 +56,6 @@ describe('TeamList: pressing something always does something', () => {
   })
 
   it('offers the restart button while a session is up, instead of only mentioning it', () => {
-    // Up, not busy. A session between turns still holds the roster it started
-    // with, and that is the easiest moment to hand it a new one.
     expect(list({ note: { kind: 'created', name: 'Nova' }, sessionUp: true })).toContain(
       'Restart session',
     )
@@ -67,9 +65,8 @@ describe('TeamList: pressing something always does something', () => {
   })
 
   it('offers nothing once the session has been stopped, however much is still known of it', () => {
-    // Knowing a session id is not the same as having a child alive. The probe
-    // keeps reporting one after a restart has already killed ours, and asking
-    // to restart what is already gone is how the note came back from the dead.
+    // The probe keeps reporting a session id after a restart has already
+    // killed ours, so an id is not proof a child is alive.
     expect(list({ note: { kind: 'created', name: 'Nova' }, sessionUp: false })).not.toContain(
       'Restart session',
     )
@@ -233,10 +230,6 @@ describe('the first teammate is offered, once', () => {
 
 describe('nothing is held back when no session is holding it back', () => {
   it('greys nobody out once the session is gone', () => {
-    // A teammate is only unreachable because a running session started without
-    // them. With no session running there is nothing to be locked out of, and
-    // greying them out while the tooltip says "joins the next session" says two
-    // opposite things at once.
     const html = list({
       sessionUp: false,
       members: [member({ loaded: false, callable: false })],

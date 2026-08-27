@@ -1,9 +1,5 @@
 name: Dependabot
 
-# Dependabot opens the pull request; this decides whether a person has to
-# read it. A patch or minor bump that passed the checks merges on its own,
-# since every action is pinned to a commit and Dependabot keeps the pin. A
-# major bump waits, because a major is somebody else saying "this changed".
 on:
   pull_request_target:
     types: [opened, synchronize, reopened]

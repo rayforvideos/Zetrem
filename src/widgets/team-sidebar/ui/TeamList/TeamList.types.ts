@@ -6,9 +6,8 @@ export type TeamListProps = {
   members: TeamMember[]
   drafts: Map<string, AgentDefDraft>
   knownTools: string[]
-  // A child of ours is alive, holding the roster it started with. Not "a
-  // session id is known": the probe keeps reporting one after a restart has
-  // already killed ours, and everything here depends on the living thing.
+  // Not "a session id is known": the probe keeps reporting one after a restart has
+  // already killed ours.
   sessionUp: boolean
   read: string[]
   canWrite: boolean

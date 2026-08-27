@@ -10,9 +10,8 @@ const gmail: Connector = {
 
 describe('what the health check says, corrected by the session that knows', () => {
   it('marks a connector the session could not sign in to, whatever the health check said', () => {
-    // claude mcp list probes the transport, and a server that answers while
-    // handing out nothing but an authenticate tool still reads as connected.
-    // The session's init is the one place the auth truth shows up.
+    // claude mcp list probes the transport, so a server handing out nothing
+    // but an authenticate tool still reads as connected. Init knows better.
     const merged = withSessionAuth([gmail], [{ name: 'claude.ai Gmail', status: 'needs-auth' }])
     expect(merged[0]?.state).toBe('needs-auth')
   })

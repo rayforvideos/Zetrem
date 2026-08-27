@@ -52,9 +52,7 @@ export function toAgentFile(draft: AgentDefDraft): string {
   return `${head.join('\n')}${draft.prompt.trim()}\n${readingOrder(draft.knowledge)}`
 }
 
-// The brief as the CLI must receive it. The reading order is part of what the
-// teammate is told, so it has to ride in the prompt: --agents carries no other
-// channel for it, and the file this app writes is its own store, not the CLI's.
+// --agents carries no channel for the reading order, so it has to ride in the prompt.
 export function briefOf(prompt: string, knowledge: string[]): string {
   if (knowledge.length === 0) return prompt.trim()
   return [prompt.trim(), '', ...readingLines(knowledge)].join('\n').trimEnd()
@@ -67,8 +65,7 @@ function readingLines(knowledge: string[]): string[] {
   ]
 }
 
-// The file keeps a marker so parsing can tell the brief from the reading order.
-// What the CLI is sent does not: the marker is our plumbing, not an instruction.
+// The marker is our own plumbing, so it stays in the file and never goes to the CLI.
 function readingOrder(knowledge: string[]): string {
   if (knowledge.length === 0) return ''
   return ['', READING_MARK, ...readingLines(knowledge), ''].join('\n')
@@ -131,8 +128,7 @@ function unquote(value: string): string {
     (trimmed.startsWith("'") && trimmed.endsWith("'"))
   if (!quoted) return trimmed
   const body = trimmed.slice(1, -1)
-  // quote() escapes the quote it wrapped with, so a description carrying one
-  // comes back whole rather than a backslash short.
+  // quote() escapes the quote it wrapped with, so strip that escape back out.
   return trimmed.startsWith('"') ? body.replace(/\\"/g, '"') : body
 }
 

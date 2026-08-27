@@ -25,8 +25,6 @@ describe('dropOnChat: what carrying one chat onto another should mean', () => {
   })
 
   it('joins the folder the chat underneath is already in', () => {
-    // Landing on a chat that lives somewhere means "put me where that one is",
-    // not "make a third place".
     expect(dropOnChat(chat(), chat('출고'))).toEqual({ kind: 'file', folder: '출고' })
   })
 
@@ -39,7 +37,6 @@ describe('dropOnChat: what carrying one chat onto another should mean', () => {
   })
 
   it('asks for a name when a filed chat lands on a loose one', () => {
-    // The loose chat has no place to offer, so the two of them make one.
     expect(dropOnChat(chat('리깅'), chat())).toEqual({ kind: 'name' })
   })
 })
@@ -60,8 +57,6 @@ describe('canLand: whether the ring should promise anything', () => {
   })
 
   it('promises nothing when the carried chat is not known', () => {
-    // A file dragged in from the desktop is not a chat, and neither is a stale
-    // id from a list that has moved on.
     expect(canLand(undefined, chat())).toBe(false)
   })
 })

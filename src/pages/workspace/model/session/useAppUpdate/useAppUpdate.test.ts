@@ -1,7 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
-// Everything the hook touches outside itself is mocked here, and every mock
-// writes into this one record, so a test reads the outside world from one place.
 const boundary = vi.hoisted(() => ({
   state: null as string | null,
   ready: [] as ((version: string) => void)[],
@@ -134,8 +132,6 @@ describe('an update that finishes downloading while the app is open', () => {
   })
 
   it('takes the older card down when a newer version lands on top of it', async () => {
-    // A session that outlives two releases: beta.3 downloads, then the recheck
-    // brings beta.4. Restarting installs only the newest, so one card is true.
     await mount()
 
     arrives('1.0.0-beta.3')

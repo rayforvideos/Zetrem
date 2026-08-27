@@ -6,10 +6,9 @@ import { saveFile } from '../save-file/save-file'
 
 const RECENT_MAX = 8
 
-// On disk: project.json under userData, the shape from before projects.json.
-// Still read so an old install seeds its project list from it.
 type Memory = { path?: string; recent?: string[] }
 
+// On disk: project.json under userData, the shape from before projects.json.
 function memoryPath(): string {
   return join(app.getPath('userData'), 'project.json')
 }
@@ -26,7 +25,6 @@ export function mergeRecent(recent: string[], path: string): string[] {
   return [path, ...recent.filter((one) => one !== path)].slice(0, RECENT_MAX)
 }
 
-// A file written before the list existed holds only the one path.
 function recentOf(memory: Memory): string[] {
   if (Array.isArray(memory.recent)) return memory.recent.filter((one) => typeof one === 'string')
   return typeof memory.path === 'string' ? [memory.path] : []
@@ -51,8 +49,7 @@ export async function recentProjects(): Promise<string[]> {
   return recentOf(memory).filter((one) => existsSync(one))
 }
 
-// Several IPC handlers pass the current project as a CLI cwd, which takes
-// undefined rather than null for "no project yet".
+// Passed on as a CLI cwd, which takes undefined rather than null.
 export async function hereOrUndefined(): Promise<string | undefined> {
   return (await recallProject()) ?? undefined
 }

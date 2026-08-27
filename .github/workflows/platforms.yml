@@ -20,10 +20,6 @@ permissions:
 jobs:
   check:
     name: check (${{ matrix.os }}, node ${{ matrix.node }})
-    # The app ships for macOS and Windows, so both run the checks. 20.19 is what
-    # it is developed on and 22.19 is what .nvmrc asks for; both are claimed to
-    # work, so both are tested rather than trusted. Release-time proof that
-    # both platforms still pass.
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -51,12 +47,9 @@ jobs:
         run: npm run typecheck
 
       - name: Architecture
-        # steiger holds the layer direction, the segments and the cross-imports.
-        # tests/conventions holds the rest; CONTRIBUTING says which is which.
         run: npm run fsd
 
       - name: Tests
-        # Includes tests/conventions, which is where this repo's rules live.
         run: npm test
 
       - name: Build
@@ -71,9 +64,7 @@ jobs:
           git diff --exit-code -- src/shared/locales \
             || (echo "::error::카탈로그가 원문과 다르다. npm run i18n:extract 를 돌려 커밋해라" && exit 1)
 
-  # What the unit tests cannot answer: whether the way the app launches the CLI
-  # works against the CLI as it is really installed. On Windows npm leaves a
-  # claude.cmd shim on the PATH, which is the case that used to fail outright.
+  # On Windows npm leaves a claude.cmd shim on the PATH, not a claude binary.
   launch:
     name: launch (${{ matrix.os }})
     runs-on: ${{ matrix.os }}
@@ -99,20 +90,13 @@ jobs:
       - name: Launch it the way the app does
         run: npm run test:contract -- tests/contract/launch.contract.test.ts
 
-  # Proves the installer for each platform can actually be produced.
   package:
     name: package (${{ matrix.os }})
     runs-on: ${{ matrix.os }}
-    # Writing the release is the whole point on a tag.
     permissions:
       contents: write
     env:
-      # A tag is a release build; anything else is only proving the build runs.
       RELEASING: ${{ startsWith(github.ref, 'refs/tags/v') }}
-      # Signing and notarising can be asked for on their own, because the only
-      # way to find out whether the certificate and the Apple credentials are
-      # right used to be to tag a release and watch it fail. This says nothing
-      # about publishing: that is still the tag's job, below.
       SIGNED: >-
         ${{ (startsWith(github.ref, 'refs/tags/v') || inputs.sign == true)
             && secrets.CSC_LINK != '' }}
@@ -129,30 +113,24 @@ jobs:
       - run: npm ci
       - name: Package
         env:
-          # Discovery finds nothing unless the certificate was handed over, and
-          # a check build has no business signing anything.
           CSC_IDENTITY_AUTO_DISCOVERY: ${{ env.SIGNED }}
           CSC_LINK: ${{ secrets.CSC_LINK }}
           CSC_KEY_PASSWORD: ${{ secrets.CSC_KEY_PASSWORD }}
-          # Notarising talks to Apple and takes minutes, so it happens only where
-          # signing does. The config gates on these three being set.
+          # Blanking any of these three is what turns notarisation off.
           APPLE_ID: ${{ env.SIGNED == 'true' && secrets.APPLE_ID || '' }}
           APPLE_APP_SPECIFIC_PASSWORD: ${{ env.SIGNED == 'true' && secrets.APPLE_APP_SPECIFIC_PASSWORD || '' }}
           APPLE_TEAM_ID: ${{ env.SIGNED == 'true' && secrets.APPLE_TEAM_ID || '' }}
-        # --publish never: electron-builder's own uploader raced itself here and
-        # left a release holding a 100KB blockmap and no installer. The upload
-        # is its own step below, where it either works or fails the job.
+        # --publish never: electron-builder's own uploader races itself and can
+        # leave a release holding a blockmap and no installer; the upload below
+        # either works or fails the job.
         #
-        # An empty CSC_LINK is not "no certificate" to electron-builder — it is
+        # An empty CSC_LINK is not "no certificate" to electron-builder, it is
         # a path, and "not a file". Unsigned builds must not carry the variable.
         shell: bash
         run: |
           [ "$SIGNED" = "true" ] || unset CSC_LINK CSC_KEY_PASSWORD
           npm run ${{ matrix.os == 'windows-latest' && 'package:win' || 'package:mac' }} -- --publish never
 
-      # The fuses are what the signature is worth: a binary that will run as Node
-      # for anybody, or load an app from outside its asar, is signed in name only.
-      # Read back from the artifact, not the config, on both platforms.
       - name: Prove the fuses took
         shell: bash
         run: |
@@ -168,10 +146,8 @@ jobs:
           grep -q 'EnableEmbeddedAsarIntegrityValidation is Enabled' fuses.txt
           grep -q 'OnlyLoadAppFromAsar is Enabled' fuses.txt
 
-      # Asar integrity is checked at launch, and a build whose hash was written
-      # wrong dies there. So the packaged app is opened for real, and the test
-      # is whether it is still alive a little later. The Windows runner has no
-      # display, but Electron draws to nothing without complaint.
+      # The Windows runner has no display, but Electron draws to nothing without
+      # complaint, so launching for real still proves asar integrity took.
       - name: Prove the packaged app opens
         shell: bash
         run: |
@@ -192,11 +168,6 @@ jobs:
             exit 1
           fi
 
-      # What a stranger's Mac will decide when they open it. electron-builder
-      # signs the app, sends it to Apple, and staples the ticket to the app; the
-      # dmg and the zip are built from the stapled app afterwards and carry
-      # nothing of their own. So the app is what is asked, and spctl is
-      # Gatekeeper answering in advance the question that Mac will ask.
       - name: Prove the macOS build is signed, notarised and would open
         if: matrix.os == 'macos-latest' && env.SIGNED == 'true'
         shell: bash
@@ -207,9 +178,6 @@ jobs:
           xcrun stapler validate "$app"
           spctl --assess --type exec -vv "$app"
 
-      # Windows is unsigned wherever it is built, so a runner is as good a place
-      # as any, and the download page only offers a release carrying both
-      # installers.
       - name: Publish the Windows installer
         if: matrix.os == 'windows-latest' && startsWith(github.ref, 'refs/tags/v')
         shell: bash
@@ -217,9 +185,6 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           tag="${GITHUB_REF_NAME}"
-          # Titled the way every release before it was: the product and the
-          # version. The notes are somebody's to write, so an empty release
-          # waits for them rather than getting a generated changelog.
           gh release view "$tag" >/dev/null 2>&1 ||
             gh release create "$tag" --prerelease --title "Zetrem ${tag#v}" --notes ''
           gh release upload "$tag" \
@@ -229,9 +194,6 @@ jobs:
             --clobber
           gh release view "$tag" --json assets --jq '.assets[].name'
 
-      # Only when a certificate signed it. An unsigned dmg is one Gatekeeper
-      # refuses on anybody else's machine, and it would be worse than none:
-      # the page offers whatever release carries both installers.
       - name: Publish the macOS installer
         if: matrix.os == 'macos-latest' && startsWith(github.ref, 'refs/tags/v') && env.SIGNED == 'true'
         shell: bash
@@ -256,8 +218,6 @@ jobs:
         shell: bash
         run: ls -la release/ | head -20
 
-  # The one thing no other check can answer: whether the app opens and its window
-  # draws anything. A platform that only compiles is not a platform that works.
   smoke:
     name: smoke (${{ matrix.os }})
     runs-on: ${{ matrix.os }}

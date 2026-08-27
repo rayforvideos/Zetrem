@@ -4,8 +4,6 @@ import { conversation } from '../../chat/conversation/conversation'
 import { forgetCrew } from '../agent-events/crew/crew'
 import type { SessionBegin, SessionClose } from './session-bookkeeping.types'
 
-// The order here is the order the screen sees: a drafted turn settles before the
-// exit line lands after it.
 export function closeSession({ reason, stopped, asks, childIds }: SessionClose): void {
   conversation.settleDraft()
   if (reason !== null) conversation.system(exitLine(reason))

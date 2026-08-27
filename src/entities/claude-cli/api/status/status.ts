@@ -81,9 +81,8 @@ function fromAssistantUsage(event: Record<string, unknown>): StatusEvent[] {
   return used > 0 ? [{ type: 'context', used }] : []
 }
 
-// Picks the model entry that carried the conversation, not just the first key in
-// modelUsage — object order does not reflect which model did the most work (e.g. a
-// Haiku subagent call can sit before the main model that should drive the context %).
+// modelUsage key order says nothing about which model did the work: a Haiku subagent call can
+// sit before the main model that should drive the context %.
 function carryingModel(
   models: Record<string, Record<string, unknown>> | undefined,
 ): Record<string, unknown> | undefined {

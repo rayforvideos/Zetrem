@@ -36,8 +36,6 @@ type Renderer = {
 
 type Channel = (event: Renderer['event'], ...args: unknown[]) => unknown
 
-// Everything the host touches outside itself is mocked here, and every mock
-// writes into this one record, so a test reads the outside world from one place.
 const boundary = vi.hoisted(() => ({
   channels: new Map<string, Channel>(),
   spawns: [] as Spawn[],
@@ -170,9 +168,6 @@ function childAt(at: number): FakeChild {
   return spawn.child
 }
 
-// The held start parks inside loginPath, and it is only parked once loginPath
-// has handed back the release. Waiting on ticks rather than a timer keeps the
-// test honest about where the start actually is.
 async function untilParked(): Promise<void> {
   for (let tick = 0; tick < 100 && boundary.releaseLogin === null; tick += 1) {
     await Promise.resolve()

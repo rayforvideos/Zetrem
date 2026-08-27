@@ -58,8 +58,8 @@ export function SetupPane({
   return (
     <div className="relative z-[3] flex h-full min-h-0 flex-col">
       <div className="zt-scroll min-h-0 flex-1 overflow-y-auto pr-2.5">
-        {/* Anchored to the top: the tabs differ in height, and a vertically
-            centred column would jump the header and the rail on every switch. */}
+        {/* Anchored to the top: the tabs differ in height, and a centred column would
+            jump the header on every switch. */}
         <div className="zt-enter mx-auto flex w-full max-w-[680px] flex-col gap-8 pt-14 pb-20">
           <div className="flex flex-col gap-3">
             <Wordmark width={WORDMARK_SIZE.setup} />
@@ -88,8 +88,8 @@ export function SetupPane({
             </nav>
 
             <div className="min-h-[420px] min-w-0 flex-1">
-              {/* Every tab stays mounted, hidden rather than gone, so a name
-                  someone is typing survives a wander through the tabs. */}
+              {/* Tabs stay mounted, hidden rather than gone, so a name someone is typing
+                  survives a wander through the tabs. */}
               <section hidden={tab !== 'start'} className="zt-rise">
                 <FieldGroup className="gap-5">
                   <AccountField account={account} />

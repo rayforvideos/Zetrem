@@ -34,9 +34,6 @@ export function FolderSection({
   const [editing, setEditing] = useState(false)
   const [shut, setShut] = useState(false)
   const holdsOpen = folder.chats.some((chat) => chat.id === kit.openId)
-  // The chat you are in is never hidden: a folder holding it stays open, and
-  // pressing it shut only lasts while it holds nothing of yours. A shut folder
-  // cannot show a search match either, so looking opens them all.
   const open = looking || holdsOpen || !shut
   const roomy = folder.chats.length > ROOMY
 

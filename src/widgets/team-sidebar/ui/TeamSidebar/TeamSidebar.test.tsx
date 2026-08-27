@@ -111,8 +111,6 @@ describe('the builtins fold to one line that can open where it stands', () => {
 
 describe('the sidebar has no filing layer of its own', () => {
   it('puts the chats straight under the project, with no divider between', () => {
-    // A category used to sit here, a second project record wearing the same
-    // folder. The chats belong to the project directly now.
     const html = bar()
     expect(html).not.toContain('New category')
     expect(html).not.toContain('Category name')
@@ -147,7 +145,6 @@ describe('chats gathered into folders, without hiding the rest', () => {
   })
 
   it('keeps a loose chat on the page when another one is filed away', () => {
-    // Filing one chat must never look like losing the others.
     const html = bar({
       chats: {
         chats: [chat('filed', '출고'), chat('loose', '')],
@@ -220,8 +217,6 @@ describe('a way out when the folders stop helping', () => {
   const many = (folder = '') => Array.from({ length: ROOMY + 1 }, (_, at) => chat(`c${at}`, folder))
 
   it('stays out of the way while the list is short enough to read', () => {
-    // Looking is the last resort, not the way in. A field over three chats is
-    // just something else to read past.
     expect(withChats([chat('one'), chat('two')])).not.toContain('Find a chat')
   })
 
@@ -230,8 +225,6 @@ describe('a way out when the folders stop helping', () => {
   })
 
   it('brings the days back inside a folder once walking it stops paying', () => {
-    // Folder navigation holds up while a folder is small. Past a dozen the
-    // days have to come back, or the folder is just a wall.
     const chats = many('출고')
     const html = withChats(chats, chats[0]!.id)
     expect(html.indexOf('Today')).toBeGreaterThan(html.indexOf('data-folder="출고"'))
@@ -270,8 +263,6 @@ describe('carrying a chat onto another to make a place for both', () => {
   })
 
   it('keeps the menu as the way that needs no dragging', () => {
-    // Dragging is the shortcut. Anything it can do has to be reachable by a
-    // plain click as well, for the hands that cannot hold a drag.
     expect(withChats([chat('one')])).toContain('More for one')
   })
 })
@@ -280,9 +271,6 @@ describe('the offer to restart a session that is still up', () => {
   const created = { kind: 'created' as const, name: '시에나' }
 
   it('keeps offering the restart after the turn has finished', () => {
-    // The child is still up and still holds the roster it started with, so it
-    // still cannot call the new teammate. Idle is the cheapest moment to
-    // restart — hiding the button there is backwards.
     const html = bar({
       team: {
         members: [],

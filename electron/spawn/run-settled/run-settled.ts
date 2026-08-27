@@ -13,8 +13,6 @@ export function untrackChild(pid: number): void {
   running.delete(pid)
 }
 
-// SIGTERM rather than a kill: an update or a login may be part way through a
-// write, and it is given the chance to stop on its own terms.
 export function killTrackedChildren(): void {
   for (const pid of running) killTree(pid)
   running.clear()
@@ -65,14 +63,13 @@ export function runSettled<T>(plan: RunSettled<T>): Promise<T> {
           }
         }
       }
-      // Only give up once the freshly appended chunk has been read through.
       if (plan.cap !== undefined && text.length > plan.cap.bytes) {
         stop(plan.cap.answers(text), false)
       }
     }
 
     child.stdout.on('data', take)
-    // Drained unconditionally: a child that fills a full stderr pipe blocks on
+    // Drained unconditionally: a child that fills the stderr pipe blocks on
     // write even when nothing here reads the text back.
     child.stderr.on('data', plan.mergeStderr === true ? take : () => undefined)
     child.on('error', (cause: Error) => stop(plan.error(cause), false))

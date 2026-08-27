@@ -10,13 +10,9 @@ import type { Attached } from '@/entities/attachment/lib/attachment/attachment.t
 import { recallProject } from '../../store/project-memory/project-memory'
 import { handle } from '../../ipc/ipc'
 
-// files:read serves only paths that came out of the dialog or out of a real file
-// the user dropped or pasted. The renderer asking for a path is not enough, so a
-// page that turned hostile cannot name /etc/passwd and be handed it.
+// files:read serves only paths the dialog or a real dropped file produced.
 const admitted = new Set<string>()
 
-// A Set iterates in insertion order, so the first value is the oldest. Dropping it
-// keeps drop spam from a hostile renderer out of main process memory.
 const ADMITTED_MAX = 512
 
 function admit(path: string): void {
@@ -60,8 +56,7 @@ export function registerAttachments(): void {
     return result.filePaths
   })
 
-  // Only preload calls this, on a path webUtils resolved from a real dropped or
-  // pasted file. The bridge exposes no method for it, so the page cannot.
+  // Only preload calls this; the bridge exposes no method for it.
   handle('files:admit', (_event, path: unknown): void => {
     if (typeof path !== 'string' || path.length === 0) return
     admit(path)

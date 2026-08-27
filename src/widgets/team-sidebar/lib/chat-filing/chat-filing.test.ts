@@ -23,8 +23,6 @@ describe('fileChats: the folders a project has, and what is still loose', () => 
   })
 
   it('keeps the loose chats visible rather than hiding them behind a folder', () => {
-    // Filing one chat must never make the others look gone. That is what the
-    // categories did, and it read as losing your work.
     const loose = chat('')
     expect(fileChats([chat('출고'), loose]).loose.map((one) => one.id)).toEqual([loose.id])
   })
@@ -53,8 +51,6 @@ describe('one place per name, in the order a person would count them', () => {
   })
 
   it('treats one name typed two ways as one place', () => {
-    // Typing "ops" when "Ops" already exists means that folder, not a second
-    // one standing beside it wearing the same word.
     const filing = fileChats([chat('Ops'), chat('ops')])
     expect(filing.folders).toHaveLength(1)
     expect(filing.folders[0]?.chats).toHaveLength(2)
@@ -98,8 +94,6 @@ describe('renamedFolder: fixing a name somebody typed', () => {
   })
 
   it('refuses a blank name rather than unfiling everything by accident', () => {
-    // Emptying the name is how a chat gets unfiled, so a blank rename would
-    // quietly disband the folder. Taking everything out is its own verb.
     expect(renamedFolder([chat('출고')], '출고', '   ')).toEqual([])
   })
 

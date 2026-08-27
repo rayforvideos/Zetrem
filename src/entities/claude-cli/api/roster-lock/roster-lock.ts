@@ -2,9 +2,6 @@ import type { Person, RosterLock } from './roster-lock.types'
 
 export const ORCHESTRATOR = 'zetrem'
 
-// Tools that belong to a Claude Code that runs itself, not to a session a
-// person is watching. SendMessage is not among them: a teammate handing work
-// to another teammate is the point, and the board draws that exchange.
 const ELSEWHERE = [
   'Workflow',
   'ListAgents',
@@ -24,8 +21,8 @@ export function peopleSpec(people: Person[]): Spec {
   const spec: Spec = {}
   for (const person of people) {
     if (person.name.length === 0 || person.prompt.trim().length === 0) continue
-    // Naming tools makes the list exhaustive: the teammate loses everything not
-    // named. An empty pick means "whatever the session has", so it stays off.
+    // Naming tools makes the list exhaustive: the teammate loses everything not named, so an
+    // empty pick is left off entirely.
     spec[person.name] = {
       description: person.description.length > 0 ? person.description : person.name,
       prompt: person.prompt,

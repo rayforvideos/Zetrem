@@ -35,9 +35,6 @@ export function on<C extends SendChannel>(channel: C, listener: Listener<C>): vo
   })
 }
 
-// Main speaking to a page. A page that has gone away is skipped rather than
-// thrown at, since the push usually comes from a child process callback that
-// outlives the window.
 export function push<C extends PushChannel>(
   target: WebContents,
   channel: C,

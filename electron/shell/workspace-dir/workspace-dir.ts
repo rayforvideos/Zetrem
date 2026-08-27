@@ -1,10 +1,8 @@
 import { mkdir } from 'node:fs/promises'
 import { join } from 'node:path'
 
-// Where a claude run happens while no project is picked. Everything that
-// spawns has to go through here: the folder is only there because we made it,
-// and a spawn into a missing cwd fails before the process exists — which is
-// how a fresh install used to learn no agent roster at all.
+// A spawn into a missing cwd fails before the process exists, so everything
+// that spawns while no project is picked goes through here.
 export function scratchWorkspace(userData: string): string {
   return join(userData, 'agent-workspace')
 }

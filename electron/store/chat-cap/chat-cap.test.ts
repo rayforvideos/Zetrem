@@ -15,9 +15,6 @@ describe('withinCap: what the list hands over', () => {
   })
 
   it('never drops a filed chat, however far down the list it sits', () => {
-    // The prune spares filed chats on purpose. Truncating the list anyway made
-    // them vanish from the sidebar while their files sat on disk — filing
-    // promised keeping and delivered disappearing.
     const held = [chat('new'), chat('mid'), chat('filed', '출고')]
     expect(withinCap(held, 1).map((one) => one.id)).toEqual(['new', 'filed'])
   })

@@ -1,8 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { CONTROL_SYMBOL, GROUND } from '@/shared/config/theme'
 
-// nativeTheme is the whole outside world here, so one fake record stands for it
-// and a test reads what the app process did from that one place.
 const boundary = vi.hoisted(() => ({
   themeSource: 'system' as string,
   dark: true,
@@ -57,7 +55,6 @@ function fakeWindow(): FakeWindow {
   return win
 }
 
-// dressWindow only ever sees a BrowserWindow through the few calls it makes.
 const asWindow = (win: FakeWindow) => win as unknown as Parameters<typeof dressWindow>[0]
 
 beforeEach(() => {

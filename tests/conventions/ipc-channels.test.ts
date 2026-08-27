@@ -14,19 +14,16 @@ async function mainSources(): Promise<{ name: string; text: string }[]> {
   )
 }
 
-// Channels named as the first argument of a call: handle('x', ...), invoke('x').
 function named(text: string, call: string): string[] {
   const found = [...text.matchAll(new RegExp(`(?<![.\\w])${call}\\(\\s*'([^']+)'`, 'g'))]
   return found.map((match) => match[1] as string)
 }
 
-// Channels named as the second argument: push(target, 'x', payload).
 function pushed(text: string): string[] {
   const found = [...text.matchAll(/(?<![.\w])push\(\s*[^,]+,\s*'([^']+)'/g)]
   return found.map((match) => match[1] as string)
 }
 
-// The keys of one exported map in the contract file.
 function keysOf(text: string, map: string): string[] {
   const start = text.indexOf(`export type ${map} = {`)
   if (start === -1) return []
@@ -49,7 +46,6 @@ describe('the IPC bridge: one contract, and every side follows it', () => {
     expect(sends.length).toBeGreaterThan(0)
     expect(pushes.length).toBeGreaterThan(0)
 
-    // The preload wires each channel by the helper that matches its kind.
     expect(sorted(named(preload, 'invoke')), 'preload invoke() vs Invokes').toEqual(sorted(invokes))
     expect(sorted(named(preload, 'send')), 'preload send() vs Sends').toEqual(sorted(sends))
     expect(sorted(named(preload, 'listen')), 'preload listen() vs Pushes').toEqual(sorted(pushes))

@@ -1,12 +1,5 @@
-// The one place the IPC contract is written down. Each channel names the
-// arguments the renderer sends and the value main answers with. The preload
-// bridge, the main-process handlers, and the push sites are all typed against
-// these maps, so adding or changing a channel here makes the compiler point at
-// every side that has not followed.
-//
-// Types are imported from their exact files, never a barrel: the main process
-// reaches these maps too, and a barrel may drag in a module that uses the
-// Lingui macro, which main cannot compile.
+// Import types from their exact files, never a barrel: main reaches these maps
+// too, and a barrel may drag in a module using the Lingui macro, which main cannot compile.
 import type {
   AgentDef,
   AgentDefDraft,
@@ -45,7 +38,6 @@ export type CliVersions = {
   managedBy: string | null
 }
 
-// Request and reply: ipcRenderer.invoke on one side, ipcMain.handle on the other.
 export type Invokes = {
   'app:version': () => string
 
@@ -104,7 +96,6 @@ export type Invokes = {
   'updater:restart': () => void
 }
 
-// Fire and forget from the renderer: ipcRenderer.send, ipcMain.on.
 export type Sends = {
   'agent:send': (id: string, text: string, files?: Attached[]) => void
   'agent:stop': (id: string) => void
@@ -112,7 +103,6 @@ export type Sends = {
   'nudge:show': (title: string, body: string) => void
 }
 
-// Pushed from main to the renderer: webContents.send, ipcRenderer.on.
 export type Pushes = {
   'agent:event': AgentHostEvent
   'auth:progress': string
@@ -123,7 +113,6 @@ export type InvokeChannel = keyof Invokes
 export type SendChannel = keyof Sends
 export type PushChannel = keyof Pushes
 
-// What the renderer sees for each kind of channel.
 export type Invoke<C extends InvokeChannel> = (
   ...args: Parameters<Invokes[C]>
 ) => Promise<ReturnType<Invokes[C]>>

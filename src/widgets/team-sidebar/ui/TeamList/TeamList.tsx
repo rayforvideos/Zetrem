@@ -40,8 +40,6 @@ export function TeamList({
   onHintSeen,
 }: TeamListProps) {
   const [editing, setEditing] = useState<'new' | string | null>(null)
-  // Idle is the cheapest moment to restart, so that is the last moment to hide
-  // the offer — and a session already stopped has nothing to offer at all.
   const said = note === null ? null : noteLine(note, sessionUp)
   const target = typeof editing === 'string' ? (drafts.get(editing) ?? null) : null
 

@@ -65,7 +65,6 @@ function turns(event: Record<string, unknown>, parent: string | null): ClaudeTur
 }
 
 function system(event: Record<string, unknown>, parent: string | null): ClaudeTurnEvent[] {
-  // A task event belongs to the child it names, whoever spawned it.
   switch (event.subtype) {
     case 'task_notification':
       return childNotified(event)

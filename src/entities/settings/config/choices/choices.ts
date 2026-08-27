@@ -17,7 +17,6 @@ export const PERMISSION_MODES: {
   { id: 'bypass', label: msg`Allow all`, hint: msg`Never asks. Anything can run` },
 ]
 
-// Model names are proper nouns. They read the same in every language.
 export const MODELS: { id: ModelChoice; label: Said; hint: MessageDescriptor }[] = [
   { id: 'default', label: msg`Default`, hint: msg`Follows your account setting` },
   {

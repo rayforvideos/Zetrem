@@ -20,11 +20,7 @@ export const DEFAULT_SETTINGS: Settings = {
   hintsSeen: [],
   knownTools: [],
   tongue: 'system',
-  // Enter sends, as in every chat the person came from; the setting keeps
-  // the modifier-only send for the hands that want it.
   enterSends: true,
-  // Dark is the shipped default because the agent sprites are drawn for dark
-  // ground; the light palette and wiring stay in place for when light returns.
   theme: 'dark',
   notify: true,
   knownAgents: [],
@@ -67,13 +63,9 @@ export function readSettings(saved: unknown): Settings {
     hintsSeen: names(source.hintsSeen, DEFAULT_SETTINGS.hintsSeen),
     knownTools: names(source.knownTools, DEFAULT_SETTINGS.knownTools),
     knownAgents: names(source.knownAgents, DEFAULT_SETTINGS.knownAgents),
-    // A file written before the switches were inverted holds the ones that
-    // were ON. Anything of theirs it does not name was off, and only the
-    // screen knows the full set — so the migration happens there, once.
     stockOff: names(source.stockOff, DEFAULT_SETTINGS.stockOff),
-    // Read back from the marker as well as from the legacy key: every write
-    // re-reads the settings first, so a save landing before the screen inverts
-    // the switches would otherwise write the old list away for good.
+    // Read from the marker as well as the legacy key: every write re-reads settings first, so a
+    // save landing before the screen inverts the switches would write the old list away for good.
     wasStockOn: Array.isArray(source.wasStockOn)
       ? names(source.wasStockOn, [])
       : Array.isArray(source.stockAgents)

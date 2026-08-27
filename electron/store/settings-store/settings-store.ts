@@ -22,8 +22,6 @@ function queueWrite(settings: Settings): Promise<void> {
   )
 }
 
-// Startup wants the settings before there is a window to ask for them, so the
-// read sits here on its own and the channel is only a way in.
 export async function loadSettings(): Promise<Settings> {
   let text: string
   try {

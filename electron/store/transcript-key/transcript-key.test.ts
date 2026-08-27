@@ -4,8 +4,7 @@ import { transcriptKey } from './transcript-key'
 
 describe('the folder name a project keeps its chats under', () => {
   // The store has always hashed the project string this way. Anything that
-  // moves chats between projects has to agree with it exactly, or a migration
-  // writes into a folder nobody reads.
+  // moves chats between projects has to agree with it exactly.
   it('is the first half of the sha256 of the project string', () => {
     const project = '/Users/sam/work/shop'
     const want = createHash('sha256').update(project).digest('hex').slice(0, 32)

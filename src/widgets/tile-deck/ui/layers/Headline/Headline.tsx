@@ -48,8 +48,6 @@ export function Headline({ session, withText = true, onDismiss }: HeadlineProps)
       </div>
       {withText && session.headline.length > 0 && (
         <div className="zt-scroll" style={textStyle}>
-          {/* A teammate writes markdown like anyone else; showing it raw put
-              asterisks and pipe tables on the tile. */}
           <Markdown text={session.headline} />
         </div>
       )}

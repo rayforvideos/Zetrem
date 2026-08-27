@@ -26,8 +26,6 @@ export function useAgentDefs(): TeamSource {
 
   useEffect(reload, [])
 
-  // Every roster change is the same errand: clear the note, do the write, then
-  // reload and say what happened — or say why it did not.
   function errand(work: () => Promise<unknown>, done: TeamNote): void {
     setNote(null)
     work()
@@ -68,13 +66,8 @@ export function useAgentDefs(): TeamSource {
     ]),
   )
 
-  // The note is about a change a running session has not taken up yet, so it
-  // stops being true the moment that session is replaced. Nothing else clears
-  // it, which is how it used to come back — button and all — as soon as a
-  // session appeared again.
   // Stable on purpose: the screen clears the note from an effect keyed on the
-  // session, and a fresh function every render would make that effect run every
-  // render — wiping the note before anybody could read it.
+  // session, and a fresh function every render would wipe it before it is read.
   const settleNote = useCallback(() => setNote(null), [])
 
   return { defs, drafts, hire, edit, release, note, settleNote }

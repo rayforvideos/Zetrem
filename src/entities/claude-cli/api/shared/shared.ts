@@ -10,12 +10,7 @@ export function num(value: unknown, fallback = 0): number {
 
 const TARGET_KEYS = ['file_path', 'command', 'pattern', 'path', 'url', 'query'] as const
 
-// A command that starts by walking to the project is not doing anything worth
-// the width: the path can be longer than the line, and what the command
-// actually does gets cut off the end.
 export function withoutCd(command: string): string {
-  // Only an absolute one. `cd packages/ui && pnpm build` says where the build
-  // ran, and that is worth the width; the machine's own path is not.
   const cut = /^\s*cd\s+(?:'(?=[/~])[^']*'|"(?=[/~])[^"]*"|(?=[/~])[^;&|]+?)\s*(?:;|&&)\s*/
   return cut.test(command) ? command.replace(cut, '') : command
 }
@@ -34,8 +29,7 @@ export function toolLine(name: string, input: unknown): string {
   return `${name} ${toolTarget(input)}`.trim().slice(0, STREAM_LINE_MAX)
 }
 
-// A content array off the wire can carry a null element; reading .type off one
-// throws and takes the whole line's parse with it.
+// A content array off the wire can carry a null element, and reading .type off one throws.
 export function blocksIn(content: unknown[]): Record<string, unknown>[] {
   return content.filter(
     (block): block is Record<string, unknown> => typeof block === 'object' && block !== null,

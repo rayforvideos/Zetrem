@@ -5,13 +5,9 @@ const TYPE = /^(feat|fix|refactor|test|chore|docs|perf|build|ci)(\([a-z0-9-]+\))
 const SUBJECT_MAX = 72
 const THEIRS = /^Merge [0-9a-f]{40} into [0-9a-f]{40}$/
 
-// CONTRIBUTING says what a commit looks like, and until now nothing checked it.
-// A convention no test holds is one that drifts the moment somebody is in a hurry.
-//
-// On a pull request the runner checks out a merge commit GitHub wrote for the
-// occasion, "Merge <sha> into <sha>": 92 characters, no type, nobody's to fix.
-// The clone is shallow, so it arrives with no parents and --no-merges cannot
-// tell it is a merge at all; it is named by its subject instead.
+// On a pull request the runner checks out a merge commit GitHub wrote, "Merge
+// <sha> into <sha>". The clone is shallow, so it has no parents and --no-merges
+// cannot tell it is a merge; it is named by its subject instead.
 function commits(): { sha: string; subject: string; body: string }[] | null {
   let out: string
   try {
@@ -20,7 +16,6 @@ function commits(): { sha: string; subject: string; body: string }[] | null {
       maxBuffer: 32 * 1024 * 1024,
     })
   } catch {
-    // A source archive downloaded without git has no history to judge.
     return null
   }
   return out

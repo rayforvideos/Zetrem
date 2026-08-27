@@ -3,8 +3,6 @@ import type { StatusState } from '@/entities/agent-session'
 import type { Settings } from '@/entities/settings'
 import { remembered } from '../chat/remembered/remembered'
 
-// When a probe or session teaches us which tools and agents exist, fold that
-// into settings once, and turn newly learned stock agents on for the user.
 export function useLearnedSettings(
   status: StatusState,
   settings: Settings,
@@ -13,9 +11,8 @@ export function useLearnedSettings(
   const probedSession = status.probed
   const sessionTools = status.session?.tools
   const sessionAgents = status.session?.agents
-  // settings.stockAgents, defs and authored are read but deliberately not
-  // dependencies: this must fire only when the probe learns something new,
-  // or it would overwrite the user's own stock-agent toggles.
+  // settings.stockAgents, defs and authored are deliberately not dependencies:
+  // firing on those would overwrite the user's own stock-agent toggles.
   useEffect(() => {
     const learned = remembered(
       { tools: sessionTools, agents: sessionAgents, probed: probedSession },

@@ -1,8 +1,5 @@
 import type { Group } from './grouped.types'
 
-// Sorts items into the given order, drops the groups nobody filled, and says
-// which of the survivors need a heading. `plain` is the group that speaks for
-// itself: when it is the only one left, a heading over it would say nothing.
 export function grouped<Key extends string, Item>(
   order: readonly Key[],
   items: readonly Item[],

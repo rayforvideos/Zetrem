@@ -33,7 +33,6 @@ function leftLabel(limit: StatusState['limits'][number], nowMs: number): string 
 }
 
 export function marksOfStatus(status: StatusState, nowMs = Date.now()): Mark[] {
-  // limits held from the kept cache without a fresh read since are marked stale, not hidden
   const stale = status.usage === 'kept' ? ` · ${t`from an earlier reading`}` : ''
   return status.limits.map((limit) => {
     const percent = limit.utilization === null ? null : Math.round(limit.utilization * 100)

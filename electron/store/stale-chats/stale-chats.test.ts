@@ -35,8 +35,6 @@ describe('staleChats: which saved chats fall off the end', () => {
 
 describe('a chat somebody filed is kept, not pruned', () => {
   it('never drops a filed chat, however old it is', () => {
-    // Filing says keep. Deleting it anyway would promise a folder and deliver
-    // a deletion.
     expect(staleChats([filed('kept', 1), at('new', 9)], 1)).toEqual([])
   })
 

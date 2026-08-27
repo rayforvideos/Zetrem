@@ -22,8 +22,6 @@ export function useSessionProbe(
 ): void {
   const held = useRef(config)
 
-  // Written after commit, not during render, so a thrown-away render can't
-  // leave its config behind for the probe to send.
   useEffect(() => {
     held.current = config
   })
@@ -37,17 +35,12 @@ export function useSessionProbe(
     readUsage()
   }, [wanted])
 
-  // The probe runs claude in the project, so which project it is changes the
-  // answer: a first launch asks before one is picked, and the roster it learns
-  // then knows nothing of the project's own agents. Asking again when the
-  // project lands is what keeps the board honest — and what saves a first
-  // launch whose probe came back with nothing.
+  // The probe runs claude in the project, so a first launch asks before one is
+  // picked and learns nothing of that project's own agents.
   useEffect(() => {
     if (!wanted) return
-    // Empty-handed on purpose. Which agents Claude Code has of its own is the
-    // one thing a session cannot tell us — it is handed our teammates and
-    // reports one flat list with theirs. Asking with no teammates at all makes
-    // the answer theirs by construction, and leaves nothing to work out.
+    // Empty-handed on purpose: a session is handed our teammates and reports one
+    // flat list with theirs, so only a probe with none names the CLI's own.
     void window.desk
       .probeSession({ ...held.current, people: [], lock: null })
       .then(learnSession)

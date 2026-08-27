@@ -32,9 +32,8 @@ function probe(command: string, args: string[], path: string): Promise<string | 
 
 export async function latestVersion(): Promise<string | null> {
   try {
-    // Node's own fetch ignores HTTP_PROXY, so behind a corporate proxy it
-    // would fail forever and read as "up to date". Chromium's stack honours
-    // the system proxy.
+    // Node's own fetch ignores HTTP_PROXY and would read as "up to date"
+    // behind a corporate proxy; Chromium's stack honours the system proxy.
     const response = await net.fetch(REGISTRY, { signal: AbortSignal.timeout(FETCH_TIMEOUT_MS) })
     if (!response.ok) return null
     const body = (await response.json()) as { version?: unknown }

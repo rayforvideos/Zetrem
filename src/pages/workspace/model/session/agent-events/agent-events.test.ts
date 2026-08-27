@@ -832,7 +832,6 @@ describe('a subagent reports what it is doing while it works', () => {
       },
       refs,
     )
-    // The agent starts a shell (a call on its stream), backgrounds it, idles.
     applyAgentEvent(
       { type: 'childStream', toolUseId: 'toolu_w', callId: 'toolu_sh', line: 'Bash sleep 60' },
       refs,
@@ -854,7 +853,6 @@ describe('a subagent reports what it is doing while it works', () => {
     )
     expect(sessionStore.get().find((s) => s.id === 'toolu_w')?.status).toBe('working')
 
-    // The shell ends; the next completed closes the agent for real.
     applyAgentEvent(
       {
         type: 'childStateKnown',

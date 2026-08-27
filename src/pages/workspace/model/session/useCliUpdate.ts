@@ -8,8 +8,6 @@ export function useCliUpdate(cliVersion: string | null): { updating: boolean; st
   const asked = useRef(false)
   const fallback = useRef<string | null>(null)
 
-  // Written after commit, not during render: a render React throws away must
-  // not leave its version behind for query() to report.
   useEffect(() => {
     fallback.current = cliVersion
   })

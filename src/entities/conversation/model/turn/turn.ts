@@ -17,9 +17,7 @@ export type ToolActivity = {
 }
 
 export type Turn = {
-  /** View identity only: keys the list so trims can't shift state between
-   * turns. Assigned fresh on creation and on every transcript read; the value
-   * that lands in a saved file carries no meaning. */
+  /** View identity only: reassigned on every transcript read, so a saved value means nothing. */
   id: string
   role: 'user' | 'assistant' | 'system'
   text: string

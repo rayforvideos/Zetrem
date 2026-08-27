@@ -3,9 +3,6 @@ import { PluginShelf } from '@/widgets/setup'
 import type { useConnectors } from '../../model/extensions/useConnectors'
 import type { usePlugins } from '../../model/extensions/usePlugins'
 
-// The shelf hook itself stays with the screen: SetupPane reads its catalog
-// for the summary line, and useConnectors gates on shelf.open. Only the
-// overlay and its tab bookkeeping live here.
 export function PluginShelfOverlay({
   shelf,
   wires,

@@ -45,10 +45,7 @@ describe('the composer never sends a half finished syllable', () => {
 
   it('drops the owed send when the key came back and sent it first', () => {
     // A Korean IME delivers one Enter twice: once to finish the syllable, then
-    // again as the key itself. The first is owed a send, the composition ends
-    // and schedules it, and the second press sends straight away — so by the
-    // time the scheduled one runs there is nothing left to send. Sending it
-    // anyway is what put the message in twice.
+    // again as the key itself. The first one's scheduled send must not fire.
     const keying = newComposer()
     beganComposing(keying)
     maySendNow(keying)

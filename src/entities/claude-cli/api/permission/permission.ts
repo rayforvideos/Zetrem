@@ -13,8 +13,6 @@ export function permissionResult(allow: boolean, input: unknown): PermissionResu
     : { behavior: 'deny', message: 'The user denied this tool call' }
 }
 
-// "Don't ask again" must grant only what the dialog showed. For Bash that is the
-// one command in front of the user, not every Bash call for the rest of the session.
 function alwaysRule(toolName: string, input: unknown): PermissionRule {
   if (
     toolName === 'Bash' &&

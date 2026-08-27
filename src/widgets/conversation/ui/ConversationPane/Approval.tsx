@@ -16,8 +16,6 @@ export function Approval({
   ask: PermissionAsk
   onDecide(allow: boolean, always?: boolean): void
 }) {
-  // Tracks when this ask was shown, so a decision aimed at the previous ask
-  // (a held keyboard shortcut, or a second click) cannot land on this one.
   const shownAtRef = useRef(Date.now())
   useEffect(() => {
     shownAtRef.current = Date.now()

@@ -1,5 +1,4 @@
 import type { ModelChoice } from './model-choice.types'
 
-// 'default' is the absence of a choice: the CLI is left to pick, and never
-// names it back. Only these four ever appear in what it writes.
+// 'default' is the absence of a choice: the CLI picks, and never names 'default' back.
 export const NAMED_MODELS: ModelChoice[] = ['fable', 'opus', 'sonnet', 'haiku']

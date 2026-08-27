@@ -40,8 +40,7 @@ export function childSays(
   return out
 }
 
-// SendMessage addresses an agent by the id the CLI gave it, which is the same
-// string as its task id. That is what makes the other side findable.
+// SendMessage addresses an agent by the id the CLI gave it, the same string as its task id.
 function crewTalk(block: Record<string, unknown>): { to: string; message: string } | null {
   if (block.name !== 'SendMessage') return null
   const input = block.input as Record<string, unknown> | undefined
@@ -66,8 +65,6 @@ export function childCloses(event: Record<string, unknown>): ChildTurnEvent[] {
   return out
 }
 
-// Every task event names its task, and may name the tool_use that spawned it.
-// One that names no task belongs to nobody and is dropped before the body runs.
 function taskEvent(
   event: Record<string, unknown>,
   body: (task: Task, event: Record<string, unknown>) => ChildTurnEvent | null,

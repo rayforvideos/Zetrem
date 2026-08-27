@@ -25,9 +25,6 @@ function state(overrides: Partial<StatusState> = {}): StatusState {
 
 describe('what counts as reachable', () => {
   it('believes the session over the health check about who needs signing in', () => {
-    // The health check probes the transport, so a server handing out nothing
-    // but an authenticate tool still reads as connected there. The session
-    // sat through init and knows better.
     const withSession = state({
       session: {
         id: 's1',
@@ -182,10 +179,6 @@ function withMcp(mcp: { name: string; status: string }[]): StatusState {
 
 describe('the strip counts what this session can actually reach', () => {
   it('believes the session about who needs signing in, however alive the check found them', () => {
-    // The check probes the transport, and a server that answers while handing
-    // out nothing but an authenticate tool still reads as connected there.
-    // The session sat through init: needs-auth there means this session
-    // really cannot use the tools, until it is signed in and restarted.
     const honest = withMcp([
       { name: 'claude.ai Notion', status: 'needs-auth' },
       { name: 'playwright', status: 'connected' },
@@ -256,9 +249,6 @@ describe('the strip reports the freshest reading it has', () => {
     })
 
   it('clears a pending connector once the check says it came up, but not one that could not sign in', () => {
-    // Init writes pending for a remote server it has not finished reaching,
-    // and that snapshot goes stale the moment the check reaches it. Its
-    // needs-auth is different: that is a verdict, not a snapshot.
     const cell = cells(
       session([
         { name: 'Gmail', status: 'needs-auth' },

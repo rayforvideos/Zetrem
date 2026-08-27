@@ -1,9 +1,8 @@
 import { describe, expect, it, vi } from 'vitest'
 
-// Node's own fetch (undici) ignores HTTP_PROXY and HTTPS_PROXY, so behind a
-// corporate proxy the registry check would fail forever, silently reading as
-// "up to date". Chromium's stack honours the system proxy, so the check must
-// go through electron's net.fetch and never through the global.
+// Node's own fetch (undici) ignores HTTP_PROXY and HTTPS_PROXY. Chromium's
+// stack honours the system proxy, so the check must go through electron's
+// net.fetch and never through the global.
 const boundary = vi.hoisted(() => ({
   netFetched: [] as string[],
   globalFetched: [] as string[],

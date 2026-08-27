@@ -5,10 +5,8 @@ import { describe, expect, it } from 'vitest'
 const ROOT = process.cwd()
 const MARK = '// On disk:'
 
-// Every shape that is written under userData. A file people already have is
-// read by a later version, so these types cannot change the way the rest can:
-// each carries the marker, and each is listed here, so adding a file to the
-// disk means adding a line to this list.
+// A file people already have is read by a later version, so these types cannot
+// change the way the rest can. Adding a file to the disk means adding a line here.
 const ON_DISK = [
   'src/entities/settings/model/settings/settings.types.ts',
   'src/entities/conversation/model/transcript/transcript.types.ts',
@@ -17,7 +15,6 @@ const ON_DISK = [
   'electron/store/project-memory/project-memory.ts',
 ]
 
-// Modules allowed to write under userData, and the shape each one writes.
 const WRITERS: Record<string, string> = {
   'electron/store/settings-store/settings-store.ts': ON_DISK[0]!,
   'electron/store/transcript-store/transcript-store.ts': ON_DISK[1]!,
@@ -25,14 +22,11 @@ const WRITERS: Record<string, string> = {
   'electron/projects/collapse/collapse.ts': ON_DISK[2]!,
   'electron/host/session-probe/session-probe.ts': ON_DISK[3]!,
   'electron/store/project-memory/project-memory.ts': ON_DISK[4]!,
-  // Agent definitions are the project's own .claude/agents/*.md, a format
-  // Claude Code owns, not a shape of ours.
   'electron/agents/agent-store/agent-store.ts': '',
 }
 
-// readdir hands back names with the platform's separator, and the two lists
-// above are written with slashes. These paths are compared, never walked, so
-// they are read as slashes everywhere rather than as Windows writes them.
+// readdir hands back names with the platform's separator and the lists above are
+// written with slashes. These paths are compared, never walked.
 const slashed = (path: string): string => path.split(sep).join('/')
 
 async function sources(dir: string): Promise<string[]> {

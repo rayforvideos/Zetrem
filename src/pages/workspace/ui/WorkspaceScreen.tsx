@@ -122,8 +122,6 @@ export function WorkspaceScreen() {
                     onSignIn: auth.login,
                     onInstall: auth.install,
                     onSignOut: () => {
-                      // The warning says the running session stops. Stop it, rather
-                      // than leaving it holding credentials the user just revoked.
                       swap(auth.logout)
                     },
                   }}

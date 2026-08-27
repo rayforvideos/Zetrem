@@ -6,8 +6,6 @@ import { CONTRACT_TIMEOUT_MS, ORCHESTRATOR_ONLY, askInit, askText } from './cli'
 // the same connectors, so comparing them raw compares the race, not the spec.
 const FROM_MCP = new Set(['ListMcpResourcesTool', 'ReadMcpResourceTool', 'ReadMcpResourceDirTool'])
 
-// What init calls a server. A state outside this list is one the status bar
-// has no words for, and it would reach the screen as the raw string.
 const STATES = new Set(['connected', 'pending', 'needs-auth', 'failed'])
 
 describe('what --agents does to the tools a session gets', () => {
@@ -119,16 +117,14 @@ describe('--disallowedTools narrows who may be called', () => {
 })
 
 describe('the init event is a snapshot of connectors part way up', () => {
-  // One session answers all three questions. Every one of them reads the same
-  // snapshot, and the contract tests pay real money for each session they open.
+  // One session answers all three questions: contract runs pay real money.
   let init: { tools: string[]; agents: string[]; mcp: { name: string; status: string }[] }
 
   beforeAll(async () => {
     init = await askInit()
   }, CONTRACT_TIMEOUT_MS)
 
-  // "claude.ai Gmail" is the server; mcp__claude_ai_Gmail__send_message is its
-  // tool. Everything that is not a letter or a digit becomes an underscore.
+  // Everything that is not a letter or a digit becomes an underscore.
   const asToolName = (name: string): string => name.replace(/[^A-Za-z0-9]/g, '_')
   const serversInTools = (): Set<string> =>
     new Set(

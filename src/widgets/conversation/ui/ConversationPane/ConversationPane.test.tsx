@@ -313,8 +313,6 @@ const WAITING = {
 
 describe('the row that says the team is still out', () => {
   it('shimmers its verb the way the working row does', () => {
-    // Waiting on teammates is drawn by Away rather than Working, and the moving
-    // gradient on the verb is what says the wait is live rather than stuck.
     const html = renderToStaticMarkup(<Away away={WAITING} face="onigiri" nowMs={36_000} />)
     expect(html).toContain('zt-shimmer')
   })

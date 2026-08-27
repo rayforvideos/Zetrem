@@ -1,7 +1,4 @@
-// A tool result can carry notes the CLI writes for the model and nobody else:
-// the id it must not repeat, the transcript file it must not read, a reminder
-// not to duplicate the work. None of it is what the tool did, and all of it was
-// landing in the conversation, several lines at a time, on every spawn.
+// Notes the CLI writes for the model, not part of what the tool did.
 const ASIDES = [
   'agentid:',
   'output_file:',
@@ -25,21 +22,18 @@ function anAside(line: string): boolean {
   return ASIDES.some((mark) => said.includes(mark))
 }
 
-// The note can also ride along in brackets after a sentence worth keeping, so
-// it comes off before anything is judged line by line.
+// The note can also ride in brackets mid-sentence, so it comes off before anything
+// is judged line by line.
 function withoutBrackets(text: string): string {
   return text.replace(/\s*\((?=[^()]*internal metadata)[^()]*\)/gi, '')
 }
 
-// The usage block is the same story: the tile already carries the tokens and
-// the clock, in a form a person can read.
 function withoutUsage(text: string): string {
   return text.replace(/<usage>[\s\S]*?<\/usage>/g, '')
 }
 
-// Only a spawn writes these notes. Running the filter over every tool result
-// would quietly eat a line of somebody's build log that happens to say
-// output_file, so the caller has to say which tool this came from.
+// Only a spawn writes these notes. Over every tool result the filter would eat a
+// build log line that happens to say output_file.
 const SPAWNS = ['Agent', 'Task']
 
 export function spawnResult(line: string): boolean {

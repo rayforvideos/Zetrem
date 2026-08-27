@@ -1,21 +1,11 @@
-# Alerts alone say a package is bad after the fact; these open the pull request
-# that moves off it. Patch and minor bumps arrive as one PR a week and merge
-# on their own once CI is green (see workflows/dependabot.yml). A major bump
-# gets its own PR and waits for a person.
+# Actions only, the way Ghostty runs it. Every action is pinned to a commit,
+# and this is what moves the pin. The app's own packages are not handed to a
+# bot: the first week it opened five pull requests that all failed CI, since
+# packages that must move together were bumped one at a time. Those are read
+# and bumped by a person, with npm audit and the security alerts as the
+# prompt to do so.
 version: 2
 updates:
-  - package-ecosystem: npm
-    directory: /
-    schedule:
-      interval: weekly
-    groups:
-      dependencies:
-        patterns: ['*']
-        update-types: ['minor', 'patch']
-    ignore:
-      # electron-vite 5 accepts vite up to 7. This goes when it accepts 8.
-      - dependency-name: vite
-        update-types: ['version-update:semver-major']
   - package-ecosystem: github-actions
     directory: /
     schedule:

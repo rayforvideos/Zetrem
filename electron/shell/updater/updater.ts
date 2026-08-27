@@ -34,6 +34,9 @@ export function registerUpdater(): void {
   autoUpdater.autoInstallOnAppQuit = true
   // Every Zetrem release so far is a semver prerelease (1.0.0-beta.n).
   autoUpdater.allowPrerelease = true
+  // The default, said out loud: a feed that offers an older version is a feed
+  // somebody tampered with, not one to follow.
+  autoUpdater.allowDowngrade = false
 
   autoUpdater.on('update-downloaded', (info) => {
     readyVersion = info.version

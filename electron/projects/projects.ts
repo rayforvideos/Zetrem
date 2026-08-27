@@ -170,23 +170,47 @@ export async function forgetProject(id: string, nowMs: number = Date.now()): Pro
   })
 }
 
+// A folder becomes a project only after the dialog handed it over. The renderer
+// naming a path on its own is not enough: that path becomes the agent's working
+// directory, so a page that turned hostile could otherwise point the CLI at any
+// folder on the disk.
+const picked = new Set<string>()
+const PICKED_MAX = 64
+
+function admit(path: string): void {
+  picked.add(path)
+  if (picked.size <= PICKED_MAX) return
+  const oldest = picked.values().next()
+  if (!oldest.done) picked.delete(oldest.value)
+}
+
+function wasPicked(path: unknown): path is string {
+  return typeof path === 'string' && picked.has(path)
+}
+
 export function registerProjects(): void {
   handle('project:pick', async () => {
     const result = await dialog.showOpenDialog({ properties: ['openDirectory'] })
-    return result.canceled ? null : (result.filePaths[0] ?? null)
+    const path = result.canceled ? null : (result.filePaths[0] ?? null)
+    if (path !== null) admit(path)
+    return path
   })
 
   handle('project:restore', () => restoreProject())
 
   handle('project:list', () => listProjects())
 
-  handle('project:create', (_event, path: string) => createProject(path))
+  handle('project:create', (_event, path: unknown) =>
+    wasPicked(path) ? createProject(path) : null,
+  )
 
-  // Only ids this store handed out act; the renderer never points main at an
-  // arbitrary path.
+  // Only ids this store handed out, and only paths the dialog handed out, act;
+  // the renderer never points main at an arbitrary path.
   handle('project:open', (_event, id: string) => openProject(id))
 
   handle('project:forget', (_event, id: string) => forgetProject(id))
 
-  handle('project:repath', (_event, id: string, path: string) => repathProject(id, path))
+  handle('project:repath', (_event, id: string, path: unknown) =>
+    wasPicked(path) ? repathProject(id, path) : null,
+  )
 }

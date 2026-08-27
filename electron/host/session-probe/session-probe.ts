@@ -3,7 +3,7 @@ import { join } from 'node:path'
 import { app } from 'electron'
 import { agentEnv } from '../../spawn/shell-env/shell-env'
 import { probeArgs } from '@/entities/claude-cli/api/run-config/run-config'
-import type { RunConfig } from '@/entities/claude-cli/api/run-config/run-config.types'
+import { runConfigOf } from '../run-config-guard/run-config-guard'
 import { ORCHESTRATOR_PROMPT, PERSONA } from '@/entities/teammate/model/orchestrator/orchestrator'
 import { claudeBin, loginPath } from '../../cli/login-path/login-path'
 import { recallProject } from '../../store/project-memory/project-memory'
@@ -84,21 +84,20 @@ async function keep(report: string): Promise<void> {
 }
 
 export function registerSessionProbe(): void {
-  handle(
-    'session:probe',
-    async (_event, config: Omit<RunConfig, 'persona'>): Promise<string | null> => {
-      if (inFlight !== null) return inFlight
-      inFlight = (async () => {
-        const workspace = await workspaceDir(await recallProject(), app.getPath('userData'))
-        const args = probeArgs({ ...config, persona: PERSONA, orchestrator: ORCHESTRATOR_PROMPT })
-        const env = agentEnv(process.env, await loginPath())
-        return readInit(await claudeBin(), args, workspace, env)
-      })().catch(() => null)
-      const found = await inFlight
-      inFlight = null
-      return found
-    },
-  )
+  handle('session:probe', async (_event, config: unknown): Promise<string | null> => {
+    const run = runConfigOf(config)
+    if (run === null) return null
+    if (inFlight !== null) return inFlight
+    inFlight = (async () => {
+      const workspace = await workspaceDir(await recallProject(), app.getPath('userData'))
+      const args = probeArgs({ ...run, persona: PERSONA, orchestrator: ORCHESTRATOR_PROMPT })
+      const env = agentEnv(process.env, await loginPath())
+      return readInit(await claudeBin(), args, workspace, env)
+    })().catch(() => null)
+    const found = await inFlight
+    inFlight = null
+    return found
+  })
 
   handle('usage:kept', async (): Promise<string | null> => {
     const kept = readKept(await readFile(keptPath(), 'utf8').catch(() => ''))

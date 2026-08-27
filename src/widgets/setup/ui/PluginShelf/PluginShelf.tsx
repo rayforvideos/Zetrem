@@ -1,7 +1,13 @@
-import { useScrollState } from '@/shared/lib/scroll-state/useScrollState'
 import { RotateCw } from 'lucide-react'
+import type {
+  Catalog,
+  InstalledPlugin,
+  Marketplace,
+  PluginScope,
+  PluginVerb,
+} from '@/entities/plugin'
 import { appliesHere } from '@/entities/plugin'
-import type { Catalog, Marketplace, PluginScope, PluginVerb } from '@/entities/plugin'
+import type { Connector, ConnectorVerb, NewConnector } from '@/entities/connector'
 import { Button } from '@/shared/ui/button'
 import {
   Dialog,
@@ -12,49 +18,48 @@ import {
 } from '@/shared/ui/dialog'
 import { Spinner } from '@/shared/ui/spinner'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/shared/ui/tabs'
-import type { Connector, ConnectorVerb, NewConnector } from '@/entities/connector'
+import { useScrollState } from '@/shared/lib/scroll-state/useScrollState'
 import { t } from '@lingui/core/macro'
 import { BrowseTab } from './BrowseTab'
 import { ConnectorsTab } from './ConnectorsTab'
 import { InstalledTab } from './InstalledTab'
-import { SourcesTab } from './SourcesTab'
 
 type PluginShelfProps = {
+  catalog: Catalog
+  marketplaces: Marketplace[]
   connectors: Connector[]
+  busy: string | null
+  loading: boolean
+  browsing: boolean
+  adding: boolean
+  project: string | null
+  onTab(value: string): void
+  onAct(verb: PluginVerb, target: string, scope?: PluginScope): void
   onConnector(verb: ConnectorVerb, target: string): void
   onAddConnector(draft: NewConnector): Promise<boolean>
   onImportConnectors(): void
-  adding: boolean
-  catalog: Catalog
-  marketplaces: Marketplace[]
-  loading: boolean
-  browsing: boolean
-  onTab(value: string): void
-  busy: string | null
-  onAct(verb: PluginVerb, target: string, scope?: PluginScope): void
   onReload(): void
-  project: string | null
   onClose(): void
 }
 
 export function PluginShelf({
+  catalog,
+  marketplaces,
   connectors,
+  busy,
+  loading,
+  browsing,
+  adding,
+  project,
+  onTab,
+  onAct,
   onConnector,
   onAddConnector,
   onImportConnectors,
-  adding,
-  catalog,
-  marketplaces,
-  loading,
-  browsing,
-  onTab,
-  busy,
-  onAct,
   onReload,
-  project,
   onClose,
 }: PluginShelfProps) {
-  const here = catalog.installed.filter((plugin) =>
+  const here = catalog.installed.filter((plugin: InstalledPlugin) =>
     appliesHere(plugin.scope, plugin.projectPath, project),
   )
   const [body] = useScrollState<HTMLDivElement>()
@@ -73,37 +78,18 @@ export function PluginShelf({
         </DialogHeader>
 
         <Tabs
-          defaultValue="installed"
+          defaultValue="have"
           onValueChange={onTab}
           className="flex min-h-0 flex-1 flex-col gap-0"
         >
           <TabsList className="mx-6 mt-4 w-fit">
-            <TabsTrigger value="installed">{t`Installed · ${here.length}`}</TabsTrigger>
-            <TabsTrigger value="browse">{t`Browse`}</TabsTrigger>
-            <TabsTrigger value="sources">{t`Sources · ${marketplaces.length}`}</TabsTrigger>
-            <TabsTrigger value="connectors">{t`Connectors · ${connectors.length}`}</TabsTrigger>
+            <TabsTrigger value="have">{t`What you have`}</TabsTrigger>
+            <TabsTrigger value="browse">{t`Add more`}</TabsTrigger>
           </TabsList>
 
           <div ref={body} className="zt-scroll zt-fade-y min-h-0 flex-1 overflow-y-auto px-4 py-4">
-            <TabsContent value="installed" className="flex flex-col gap-5">
+            <TabsContent value="have" className="flex flex-col gap-6">
               <InstalledTab here={here} busy={busy} onAct={onAct} project={project} />
-            </TabsContent>
-
-            <TabsContent value="browse">
-              <BrowseTab
-                available={catalog.available}
-                held={new Set(catalog.installed.map((plugin) => plugin.id))}
-                busy={busy}
-                loading={browsing}
-                onInstall={(id) => onAct('install', id)}
-              />
-            </TabsContent>
-
-            <TabsContent value="sources" className="flex flex-col gap-1">
-              <SourcesTab marketplaces={marketplaces} busy={busy} onAct={onAct} />
-            </TabsContent>
-
-            <TabsContent value="connectors" className="flex flex-col gap-5">
               <ConnectorsTab
                 connectors={connectors}
                 busy={busy}
@@ -111,6 +97,18 @@ export function PluginShelf({
                 onConnector={onConnector}
                 onAddConnector={onAddConnector}
                 onImportConnectors={onImportConnectors}
+              />
+            </TabsContent>
+
+            <TabsContent value="browse">
+              <BrowseTab
+                available={catalog.available}
+                held={new Set(catalog.installed.map((plugin) => plugin.id))}
+                marketplaces={marketplaces}
+                busy={busy}
+                loading={browsing}
+                onInstall={(id) => onAct('install', id)}
+                onAct={onAct}
               />
             </TabsContent>
           </div>

@@ -57,9 +57,7 @@ function GroupName({
         {i18n._(title)}
       </span>
       {note !== null && (
-        <span className="pl-[22px] text-xs leading-snug text-muted-foreground/70">
-          {i18n._(note)}
-        </span>
+        <span className="text-xs leading-snug text-muted-foreground/70">{i18n._(note)}</span>
       )}
     </div>
   )
@@ -136,4 +134,32 @@ export function Quietly({
 
 export function Quiet({ children }: { children: React.ReactNode }) {
   return <p className="px-2 py-1 text-xs text-muted-foreground">{children}</p>
+}
+
+// The larger heading that separates plugins from connectors on the one
+// management surface; the Group headings sit under it, one level down.
+export function SectionTitle({ children }: { children: React.ReactNode }) {
+  return (
+    <h3 className="px-2 pt-1 text-xs font-semibold tracking-wide text-foreground">{children}</h3>
+  )
+}
+
+// State is shown, never operated: a word, its tone the only colour. Actions
+// are buttons elsewhere in the row.
+export function Badge({
+  tone = 'muted',
+  children,
+}: {
+  tone?: 'ok' | 'attention' | 'danger' | 'muted'
+  children: React.ReactNode
+}) {
+  // The word carries the state; only its weight and one token separate the
+  // tones, since the palette belongs to the agent faces alone.
+  const paint = {
+    ok: 'text-muted-foreground',
+    attention: 'font-medium text-foreground',
+    danger: 'text-destructive',
+    muted: 'text-muted-foreground',
+  }[tone]
+  return <span className={cn('flex-none rounded-md px-1.5 py-0.5 text-xs', paint)}>{children}</span>
 }

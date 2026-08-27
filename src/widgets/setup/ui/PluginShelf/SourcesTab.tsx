@@ -6,7 +6,7 @@ import { Input } from '@/shared/ui/input'
 import { t } from '@lingui/core/macro'
 import { Quietly, Row } from './parts'
 
-export function SourcesTab({
+export function Sources({
   marketplaces,
   busy,
   onAct,

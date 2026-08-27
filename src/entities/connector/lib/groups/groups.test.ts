@@ -3,7 +3,7 @@ import type { Connector } from '../../api/read-connectors/read-connectors.types'
 import { connectorGroupsOf } from './groups'
 
 function connector(name: string): Connector {
-  return { name, where: 'npx thing', state: 'connected' }
+  return { name, where: 'npx thing', state: 'connected', authByHeader: false }
 }
 
 describe('connectorGroupsOf: a connector sits with the others it shares a fate with', () => {

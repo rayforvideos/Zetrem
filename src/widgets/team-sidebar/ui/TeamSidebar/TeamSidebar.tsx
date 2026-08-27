@@ -1,7 +1,7 @@
 import { StockList } from '@/entities/teammate'
 import type { StockListProps } from '@/entities/teammate'
 import { useState } from 'react'
-import { Zap, ChevronRight } from 'lucide-react'
+import { ChevronRight, Library } from 'lucide-react'
 import { SIDEBAR } from '@/shared/config/theme'
 import { cn } from '@/shared/lib/cn'
 import { useScrollState } from '@/shared/lib/scroll-state/useScrollState'
@@ -84,7 +84,7 @@ export function TeamSidebar({
           )}
           title={t`Open the vault`}
         >
-          <Zap className="size-4" />
+          <Library className="size-4" />
           <span className="truncate">{t`Vault`}</span>
           {vaultUnseen && (
             <span

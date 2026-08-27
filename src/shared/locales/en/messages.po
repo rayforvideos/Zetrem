@@ -136,6 +136,18 @@ msgstr "{kind} {name} did not load: {why}"
 msgid "{n} need auth"
 msgstr "{n} need auth"
 
+#: src/widgets/vault/lib/since/since.ts:22
+msgid "{n}d ago"
+msgstr "{n}d ago"
+
+#: src/widgets/vault/lib/since/since.ts:18
+msgid "{n}h ago"
+msgstr "{n}h ago"
+
+#: src/widgets/vault/lib/since/since.ts:14
+msgid "{n}m ago"
+msgstr "{n}m ago"
+
 #: src/entities/teammate/ui/StockList/StockList.tsx:30
 msgid "{name} can be called this session"
 msgstr "{name} can be called this session"
@@ -340,9 +352,22 @@ msgstr "Add your first teammate"
 msgid "Added {name}. Sign in if it asks."
 msgstr "Added {name}. Sign in if it asks."
 
+#: src/widgets/vault/ui/NoteList/NoteList.tsx:82
+#: src/widgets/vault/ui/NoteReader/NoteReader.tsx:65
+msgid "Agent"
+msgstr "Agent"
+
 #: src/widgets/setup/ui/SetupPane/SetupPane.tsx:163
 msgid "Agents"
 msgstr "Agents"
+
+#: src/widgets/vault/ui/VaultPane/VaultPane.tsx:68
+msgid "Agents search here before they answer."
+msgstr "Agents search here before they answer."
+
+#: src/widgets/vault/ui/NoteList/NoteList.tsx:81
+msgid "All"
+msgstr "All"
 
 #. placeholder {0}: n(reached)
 #: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:144
@@ -442,8 +467,8 @@ msgstr "Browse"
 #: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:340
 #: src/widgets/team-sidebar/ui/MemberMenu/MemberMenu.tsx:66
 #: src/widgets/team-sidebar/ui/ProjectSwitcher/ProjectSwitcher.tsx:145
-#: src/widgets/vault/ui/NoteList/NoteList.tsx:242
-#: src/widgets/vault/ui/NoteReader/NoteReader.tsx:116
+#: src/widgets/vault/ui/NoteList/NoteList.tsx:287
+#: src/widgets/vault/ui/NoteReader/NoteReader.tsx:178
 msgid "Cancel"
 msgstr "Cancel"
 
@@ -455,7 +480,7 @@ msgstr "Cart totals and rounding"
 msgid "Change"
 msgstr "Change"
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:396
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:400
 msgid "Change account, project, and permissions"
 msgstr "Change account, project, and permissions"
 
@@ -692,7 +717,7 @@ msgstr "Create a teammate and they'll show up here."
 msgid "Default"
 msgstr "Default"
 
-#: src/widgets/vault/ui/NoteReader/NoteReader.tsx:100
+#: src/widgets/vault/ui/NoteReader/NoteReader.tsx:97
 msgid "Delete"
 msgstr "Delete"
 
@@ -706,21 +731,21 @@ msgstr "Delete “{0}”?"
 msgid "Delete chat"
 msgstr "Delete chat"
 
-#: src/widgets/vault/ui/NoteList/NoteList.tsx:141
-#: src/widgets/vault/ui/NoteList/NoteList.tsx:243
+#: src/widgets/vault/ui/NoteList/NoteList.tsx:217
+#: src/widgets/vault/ui/NoteList/NoteList.tsx:294
 msgid "Delete folder"
 msgstr "Delete folder"
 
-#: src/widgets/vault/ui/NoteReader/NoteReader.tsx:117
+#: src/widgets/vault/ui/NoteReader/NoteReader.tsx:181
 msgid "Delete note"
 msgstr "Delete note"
 
-#: src/widgets/vault/ui/NoteList/NoteList.tsx:236
-msgid "Delete the folder “{name}”?"
-msgstr "Delete the folder “{name}”?"
+#: src/widgets/vault/ui/NoteList/NoteList.tsx:281
+msgid "Delete the folder “{asking}”?"
+msgstr "Delete the folder “{asking}”?"
 
 #. placeholder {0}: note.title
-#: src/widgets/vault/ui/NoteReader/NoteReader.tsx:110
+#: src/widgets/vault/ui/NoteReader/NoteReader.tsx:172
 msgid "Delete the note “{0}”?"
 msgstr "Delete the note “{0}”?"
 
@@ -744,7 +769,7 @@ msgstr "Don't ask again this session"
 #: src/widgets/setup/ui/PluginShelf/PluginShelf.tsx:131
 #: src/widgets/setup/ui/SetupPane/SetupPane.tsx:204
 #: src/widgets/tile-deck/lib/state-word/state-word.ts:10
-#: src/widgets/vault/ui/NoteReader/NoteReader.tsx:90
+#: src/widgets/vault/ui/NoteReader/NoteReader.tsx:86
 msgid "Done"
 msgstr "Done"
 
@@ -761,7 +786,7 @@ msgid "Earlier run"
 msgstr "Earlier run"
 
 #: src/widgets/team-sidebar/ui/MemberMenu/MemberMenu.tsx:49
-#: src/widgets/vault/ui/NoteReader/NoteReader.tsx:90
+#: src/widgets/vault/ui/NoteReader/NoteReader.tsx:86
 msgid "Edit"
 msgstr "Edit"
 
@@ -829,6 +854,11 @@ msgstr "Fetching"
 msgid "File this answer to the vault as its own note"
 msgstr "File this answer to the vault as its own note"
 
+#. placeholder {0}: note.title
+#: src/pages/workspace/model/vault/useVaultNotes.ts:222
+msgid "Filed to the vault · {0}"
+msgstr "Filed to the vault · {0}"
+
 #: src/widgets/welcome/lib/slides/slides.ts:27
 msgid "Files read, commands run, edits made. Each one shows up as it happens, not as a summary afterwards."
 msgstr "Files read, commands run, edits made. Each one shows up as it happens, not as a summary afterwards."
@@ -856,8 +886,8 @@ msgstr "Folder for both"
 
 #: src/widgets/team-sidebar/ui/ChatList/ChatRow.tsx:83
 #: src/widgets/team-sidebar/ui/ChatList/ChatRow.tsx:84
-#: src/widgets/vault/ui/NoteList/NoteList.tsx:179
-#: src/widgets/vault/ui/NoteList/NoteList.tsx:180
+#: src/widgets/vault/ui/NoteList/NoteList.tsx:235
+#: src/widgets/vault/ui/NoteList/NoteList.tsx:236
 msgid "Folder name"
 msgstr "Folder name"
 
@@ -873,10 +903,6 @@ msgstr "Follows your account setting"
 #: src/widgets/tile-deck/ui/layers/Transcript/Transcript.tsx:46
 msgid "from {0}"
 msgstr "from {0}"
-
-#: src/widgets/vault/ui/NoteReader/NoteReader.tsx:55
-msgid "from {project}"
-msgstr "from {project}"
 
 #: src/widgets/status-bar/lib/strip/strip.ts:36
 msgid "from an earlier reading"
@@ -926,10 +952,6 @@ msgstr "Hide team sidebar"
 #: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:212
 msgid "Hire"
 msgstr "Hire"
-
-#: src/widgets/vault/ui/VaultPane/VaultPane.tsx:62
-msgid "Hover an answer in a conversation and press the bolt to file it here"
-msgstr "Hover an answer in a conversation and press the bolt to file it here"
 
 #: src/widgets/setup/ui/AccountField/AccountField.tsx:103
 msgid "If the browser did not open, <0>open this link</0>."
@@ -993,6 +1015,7 @@ msgid "It took too long and was stopped"
 msgstr "It took too long and was stopped"
 
 #: src/widgets/team-sidebar/lib/when/when.ts:12
+#: src/widgets/vault/lib/since/since.ts:11
 msgid "just now"
 msgstr "just now"
 
@@ -1033,6 +1056,10 @@ msgstr "Letters, numbers, hyphens and underscores only"
 msgid "Letters, numbers, hyphens. Sign in after adding if it asks."
 msgstr "Letters, numbers, hyphens. Sign in after adding if it asks."
 
+#: src/widgets/vault/ui/NoteReader/NoteReader.tsx:148
+msgid "Linked from"
+msgstr "Linked from"
+
 #: src/widgets/setup/ui/SetupPane/SetupPane.tsx:176
 msgid "Manage"
 msgstr "Manage"
@@ -1057,6 +1084,10 @@ msgstr "Message for {addressee}"
 msgid "Message your team"
 msgstr "Message your team"
 
+#: src/widgets/vault/ui/NoteList/NoteList.tsx:83
+msgid "Mine"
+msgstr "Mine"
+
 #: src/widgets/conversation/ui/Composer/Composer.tsx:177
 #: src/widgets/setup/ui/SetupPane/SetupPane.tsx:152
 #: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:107
@@ -1064,7 +1095,7 @@ msgstr "Message your team"
 msgid "Model"
 msgstr "Model"
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:332
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:336
 msgid "Model changed. The running session keeps its model."
 msgstr "Model changed. The running session keeps its model."
 
@@ -1081,7 +1112,7 @@ msgstr "More for {0}"
 msgid "More for {name}"
 msgstr "More for {name}"
 
-#: src/widgets/vault/ui/NoteList/NoteList.tsx:123
+#: src/widgets/vault/ui/NoteList/NoteList.tsx:202
 msgid "More options for the folder {name}"
 msgstr "More options for the folder {name}"
 
@@ -1119,7 +1150,7 @@ msgstr "Never mind"
 msgid "New chat"
 msgstr "New chat"
 
-#: src/widgets/vault/ui/NoteList/NoteList.tsx:200
+#: src/widgets/vault/ui/NoteList/NoteList.tsx:267
 msgid "New folder"
 msgstr "New folder"
 
@@ -1127,11 +1158,11 @@ msgstr "New folder"
 msgid "New folder…"
 msgstr "New folder…"
 
-#: src/widgets/vault/ui/NoteList/NoteList.tsx:108
+#: src/widgets/vault/ui/NoteList/NoteList.tsx:258
 msgid "New note"
 msgstr "New note"
 
-#: src/widgets/vault/ui/NoteList/NoteList.tsx:107
+#: src/widgets/vault/ui/NoteList/NoteList.tsx:189
 msgid "New note in {name}"
 msgstr "New note in {name}"
 
@@ -1182,6 +1213,10 @@ msgstr "Nothing installed yet."
 #: src/widgets/setup/ui/PluginShelf/BrowseTab.tsx:46
 msgid "Nothing left to add. Every plugin your sources offer is installed."
 msgstr "Nothing left to add. Every plugin your sources offer is installed."
+
+#: src/widgets/vault/ui/NoteList/NoteList.tsx:130
+msgid "Nothing matches"
+msgstr "Nothing matches"
 
 #: src/widgets/setup/ui/PluginShelf/BrowseTab.tsx:43
 msgid "Nothing matches “{needle}”."
@@ -1245,11 +1280,11 @@ msgstr "Permission"
 msgid "Permissions"
 msgstr "Permissions"
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:328
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:332
 msgid "Permissions changed. The running session follows the old ones."
 msgstr "Permissions changed. The running session follows the old ones."
 
-#: src/widgets/vault/ui/VaultPane/VaultPane.tsx:67
+#: src/widgets/vault/ui/VaultPane/VaultPane.tsx:79
 msgid "Pick a note"
 msgstr "Pick a note"
 
@@ -1264,10 +1299,6 @@ msgstr "Picked up where they left off"
 #: src/entities/tool/lib/tool-verb/tool-verb.ts:28
 msgid "Planning"
 msgstr "Planning"
-
-#: src/widgets/conversation/lib/filing/filing.ts:9
-msgid "Please file this into the vault's analysis folder as a markdown note. Put which project it came from on the first line, and link any related notes with [[links]]:"
-msgstr "Please file this into the vault's analysis folder as a markdown note. Put which project it came from on the first line, and link any related notes with [[links]]:"
 
 #: src/entities/claude-cli/api/turn/turn.ts:97
 msgid "Plugin"
@@ -1334,7 +1365,7 @@ msgstr "Reading reports"
 msgid "Reading the catalog…"
 msgstr "Reading the catalog…"
 
-#: src/widgets/vault/ui/VaultPane/VaultPane.tsx:56
+#: src/widgets/vault/ui/VaultPane/VaultPane.tsx:58
 msgid "Reading the vault…"
 msgstr "Reading the vault…"
 
@@ -1407,7 +1438,7 @@ msgstr "Removed"
 
 #: src/widgets/team-sidebar/ui/ChatList/ChatRow.tsx:186
 #: src/widgets/team-sidebar/ui/ChatList/FolderSection.tsx:128
-#: src/widgets/vault/ui/NoteList/NoteList.tsx:135
+#: src/widgets/vault/ui/NoteList/NoteList.tsx:210
 msgid "Rename"
 msgstr "Rename"
 
@@ -1416,7 +1447,7 @@ msgid "Rename chat"
 msgstr "Rename chat"
 
 #: src/widgets/team-sidebar/ui/ChatList/FolderSection.tsx:46
-#: src/widgets/vault/ui/NoteList/NoteList.tsx:85
+#: src/widgets/vault/ui/NoteList/NoteList.tsx:167
 msgid "Rename folder"
 msgstr "Rename folder"
 
@@ -1480,6 +1511,11 @@ msgstr "Same as the session"
 msgid "Save"
 msgstr "Save"
 
+#. placeholder {0}: sinceOf(savedAtMs, nowMs)
+#: src/widgets/vault/ui/NoteReader/NoteReader.tsx:134
+msgid "Saved · {0}"
+msgstr "Saved · {0}"
+
 #: src/widgets/conversation/lib/greetings/greetings.ts:9
 msgid "Say the word and the whole team wakes up."
 msgstr "Say the word and the whole team wakes up."
@@ -1492,6 +1528,10 @@ msgstr "Say what you want done, not the next step. The orchestrator splits it up
 msgid "Say what you would change and why, in that order."
 msgstr "Say what you would change and why, in that order."
 
+#: src/widgets/vault/ui/NoteList/NoteList.tsx:110
+msgid "Search"
+msgstr "Search"
+
 #. placeholder {0}: pool.length
 #: src/widgets/setup/ui/PluginShelf/BrowseTab.tsx:34
 msgid "Search {0} plugins"
@@ -1500,6 +1540,10 @@ msgstr "Search {0} plugins"
 #: src/widgets/setup/ui/PluginShelf/BrowseTab.tsx:35
 msgid "Search plugins"
 msgstr "Search plugins"
+
+#: src/widgets/vault/ui/NoteList/NoteList.tsx:109
+msgid "Search the vault"
+msgstr "Search the vault"
 
 #: src/widgets/team-sidebar/ui/ToolPicker/ToolPicker.tsx:34
 msgid "Search tools"
@@ -1546,7 +1590,7 @@ msgstr "Set a few things and your agents get to work!"
 msgid "Set for everyone on your account. They cannot be removed or turned off here."
 msgstr "Set for everyone on your account. They cannot be removed or turned off here."
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:398
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:402
 msgid "Settings"
 msgstr "Settings"
 
@@ -1705,6 +1749,14 @@ msgstr "Stopped: something went wrong"
 msgid "System"
 msgstr "System"
 
+#: src/widgets/vault/ui/NoteEditor/NoteEditor.tsx:68
+msgid "Tags"
+msgstr "Tags"
+
+#: src/widgets/vault/ui/NoteEditor/NoteEditor.tsx:69
+msgid "Tags, separated by commas"
+msgstr "Tags, separated by commas"
+
 #: src/widgets/team-sidebar/ui/ChatList/FolderSection.tsx:130
 msgid "Take everything out"
 msgstr "Take everything out"
@@ -1766,9 +1818,18 @@ msgstr "The address has to be http or https"
 msgid "The agents Claude Code brings. Each can be switched off."
 msgstr "The agents Claude Code brings. Each can be switched off."
 
+#: src/pages/workspace/model/vault/useVaultNotes.ts:219
+#: src/pages/workspace/model/vault/useVaultNotes.ts:232
+msgid "The answer could not be filed"
+msgstr "The answer could not be filed"
+
 #: src/entities/claude-cli/lib/failure/failure.ts:89
 msgid "The answer hit the output limit"
 msgstr "The answer hit the output limit"
+
+#: src/widgets/vault/ui/VaultPane/VaultPane.tsx:70
+msgid "The bolt on an answer files it here."
+msgstr "The bolt on an answer files it here."
 
 #: src/entities/claude-cli/lib/exit-line/exit-line.ts:6
 msgid "The claude command was not found. Install the Claude Code CLI, then try again."
@@ -1778,7 +1839,7 @@ msgstr "The claude command was not found. Install the Claude Code CLI, then try 
 msgid "The CLI does the work. Zetrem shows it as it happens: what you asked for, who is on it, and what they have run."
 msgstr "The CLI does the work. Zetrem shows it as it happens: what you asked for, who is on it, and what they have run."
 
-#: src/widgets/vault/ui/NoteList/NoteList.tsx:238
+#: src/widgets/vault/ui/NoteList/NoteList.tsx:283
 msgid "The empty folder is removed from the vault."
 msgstr "The empty folder is removed from the vault."
 
@@ -1802,7 +1863,7 @@ msgstr "The model declined this"
 msgid "The model is overloaded"
 msgstr "The model is overloaded"
 
-#: src/widgets/vault/ui/NoteReader/NoteReader.tsx:112
+#: src/widgets/vault/ui/NoteReader/NoteReader.tsx:174
 msgid "The note is deleted from the vault. This cannot be undone."
 msgstr "The note is deleted from the vault. This cannot be undone."
 
@@ -1851,7 +1912,7 @@ msgstr "The session is closing: {why}"
 msgid "The team is warm and waiting, {you}."
 msgstr "The team is warm and waiting, {you}."
 
-#: src/widgets/vault/ui/VaultPane/VaultPane.tsx:60
+#: src/widgets/vault/ui/VaultPane/VaultPane.tsx:66
 msgid "The vault is empty"
 msgstr "The vault is empty"
 
@@ -1926,7 +1987,7 @@ msgstr "Thought · {paragraphs} paragraphs"
 msgid "Three teammates are on it: the checkout flow, the cart totals and the stock rules. I'll put their reports together into one answer."
 msgstr "Three teammates are on it: the checkout flow, the cart totals and the stock rules. I'll put their reports together into one answer."
 
-#: src/widgets/vault/ui/NoteEditor/NoteEditor.tsx:49
+#: src/widgets/vault/ui/NoteEditor/NoteEditor.tsx:53
 msgid "Title"
 msgstr "Title"
 
@@ -1962,6 +2023,10 @@ msgstr "Turn on to let the team call {name}"
 msgid "under a minute"
 msgstr "under a minute"
 
+#: src/pages/workspace/model/vault/useVaultNotes.ts:224
+msgid "Undo"
+msgstr "Undo"
+
 #: src/widgets/setup/ui/PluginShelf/ConnectorsTab.tsx:17
 #: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:186
 msgid "Unknown"
@@ -1985,12 +2050,12 @@ msgid "Use https, or http only for a server on this machine"
 msgstr "Use https, or http only for a server on this machine"
 
 #: src/widgets/team-sidebar/ui/TeamSidebar/TeamSidebar.tsx:88
-#: src/widgets/vault/ui/VaultPane/VaultPane.tsx:37
+#: src/widgets/vault/ui/VaultPane/VaultPane.tsx:19
 msgid "Vault"
 msgstr "Vault"
 
-#: src/widgets/vault/ui/NoteList/NoteList.tsx:68
-#: src/widgets/vault/ui/NoteReader/NoteReader.tsx:70
+#: src/widgets/vault/ui/NoteReader/NoteReader.tsx:58
+#: src/widgets/vault/ui/VaultPane/VaultPane.tsx:24
 msgid "Vault guide"
 msgstr "Vault guide"
 
@@ -2078,9 +2143,13 @@ msgstr "Working"
 msgid "Wrapped up"
 msgstr "Wrapped up"
 
-#: src/widgets/vault/ui/NoteEditor/NoteEditor.tsx:71
+#: src/widgets/vault/ui/NoteEditor/NoteEditor.tsx:85
 msgid "Write in markdown"
 msgstr "Write in markdown"
+
+#: src/widgets/vault/ui/VaultPane/VaultPane.tsx:75
+msgid "Write the first note"
+msgstr "Write the first note"
 
 #: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:82
 msgid "Write their instructions once and the orchestrator can call them in any project."
@@ -2105,12 +2174,17 @@ msgstr "Yesterday"
 
 #: src/widgets/setup/ui/YouField/YouField.tsx:22
 #: src/widgets/tile-deck/ui/CrewBoard/CrewBoard.tsx:62
+#: src/widgets/vault/ui/NoteReader/NoteReader.tsx:65
 msgid "You"
 msgstr "You"
 
 #: src/entities/connector/lib/refusal-why/refusal-why.ts:16
 msgid "You already have a connector by that name"
 msgstr "You already have a connector by that name"
+
+#: src/widgets/vault/ui/VaultPane/VaultPane.tsx:72
+msgid "You can write here too."
+msgstr "You can write here too."
 
 #: src/widgets/welcome/lib/slides/slides.ts:38
 msgid "You decide what runs"

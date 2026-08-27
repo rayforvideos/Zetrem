@@ -5,7 +5,10 @@ const note = (updatedAtMs: number) => ({
   id: `분석/${updatedAtMs}.md`,
   folder: '분석',
   title: String(updatedAtMs),
-  lead: '',
+  summary: '',
+  source: 'person' as const,
+  tags: [],
+  createdAtMs: 0,
   updatedAtMs,
 })
 

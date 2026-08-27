@@ -6,33 +6,37 @@ const note = {
   id: 'analysis/api-choice.md',
   folder: 'analysis',
   title: 'api-choice',
-  lead: 'Use B',
+  summary: 'Use B',
+  source: 'agent' as const,
+  tags: ['api', 'billing'],
+  createdAtMs: 1_700_000_000_000,
   updatedAtMs: 1_700_000_000_000,
-  text: 'Use B\nforceteller-cs\n\n## Why\nWe weighed both.',
+  body: '## Why\nWe weighed both.',
+  session: null,
 }
 
 function editor(over: Partial<Parameters<typeof NoteEditor>[0]> = {}): string {
   return renderToStaticMarkup(
     <NoteEditor
       note={note}
-      title={note.title}
-      onChange={() => {}}
-      onTitle={() => Promise.resolve(true)}
       guide={false}
       fresh={false}
-      meta={<p>analysis</p>}
-      actions={null}
+      onChange={() => {}}
+      onTitle={() => Promise.resolve(true)}
+      onTags={() => {}}
       {...over}
     />,
   )
 }
 
 describe('NoteEditor', () => {
-  it('puts the note text in a textarea and the title in an input', () => {
+  it('puts the body in a textarea, the title in an input and the tags in a field', () => {
     const out = editor()
     expect(out).toContain('<textarea')
     expect(out).toContain('We weighed both.')
     expect(out).toContain('value="api-choice"')
+    expect(out).toContain('value="api, billing"')
+    expect(out).not.toContain('font-mono')
   })
 
   it('opens on the body of a note that was already written', () => {
@@ -42,13 +46,13 @@ describe('NoteEditor', () => {
   })
 
   it('opens on the title of a note that was just made', () => {
-    const out = editor({ fresh: true, note: { ...note, text: '' }, title: 'New note' })
+    const out = editor({ fresh: true, note: { ...note, body: '', title: 'New note' } })
     expect(out).toMatch(/<input[^>]*autofocus/)
     expect(out).not.toMatch(/<textarea[^>]*autofocus/)
   })
 
-  it('has no title field for the guide, which is not renamed', () => {
-    const out = editor({ guide: true, title: 'CLAUDE.md' })
+  it('has no title or tags field for the guide, which is a plain body', () => {
+    const out = editor({ guide: true, note: { ...note, id: 'CLAUDE.md', title: 'CLAUDE.md' } })
     expect(out).toContain('<textarea')
     expect(out).not.toContain('<input')
   })

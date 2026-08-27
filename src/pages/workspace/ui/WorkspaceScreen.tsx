@@ -10,14 +10,7 @@ import {
   Wordmark,
 } from '@/shared/graphics/Wordmark/Wordmark'
 import { AgentReport } from '@/widgets/agent-report'
-import {
-  awayOf,
-  spokeAtMs,
-  Composer,
-  ConversationPane,
-  filingTurnRequest,
-  RestartNote,
-} from '@/widgets/conversation'
+import { awayOf, spokeAtMs, Composer, ConversationPane, RestartNote } from '@/widgets/conversation'
 import { SetupPane } from '@/widgets/setup'
 import { TeamSidebar } from '@/widgets/team-sidebar'
 import { VaultPane } from '@/widgets/vault'
@@ -255,20 +248,31 @@ export function WorkspaceScreen() {
                 <VaultPane
                   folders={vault.folders}
                   notes={vault.notes}
+                  hits={vault.hits}
+                  query={vault.query}
+                  filter={vault.filter}
+                  tag={vault.tag}
                   open={vault.open}
+                  backlinks={vault.backlinks}
                   loading={vault.loading}
-                  onOpen={vault.openNote}
-                  onOpenTitle={vault.openTitle}
-                  onRemove={vault.remove}
                   editing={vault.editing}
                   fresh={vault.fresh}
                   guideOpen={isGuide(vault.open?.id ?? null)}
+                  savedAtMs={vault.savedAtMs}
+                  nowMs={nowMs}
+                  onQuery={vault.setQuery}
+                  onFilter={vault.setFilter}
+                  onTag={vault.setTag}
+                  onOpen={vault.openNote}
+                  onOpenTitle={vault.openTitle}
+                  onOpenGuide={vault.openGuide}
+                  onCreate={vault.create}
+                  onRemove={vault.remove}
                   onStartEdit={vault.startEdit}
                   onStopEdit={vault.stopEdit}
                   onSave={vault.save}
                   onRename={vault.rename}
-                  onCreate={vault.create}
-                  onOpenGuide={vault.openGuide}
+                  onTags={vault.tags}
                   onAddFolder={vault.addFolder}
                   onRenameFolder={vault.renameFolder}
                   onRemoveFolder={vault.removeFolder}
@@ -289,7 +293,7 @@ export function WorkspaceScreen() {
                     update({ hintsSeen: hintSeen('ask-whole-job', settings.hintsSeen) })
                   }
                   onDecide={agent.decide}
-                  onFileTurn={(text) => agent.send(filingTurnRequest(text), null, [])}
+                  onFileTurn={(text) => vault.file(text, status.session?.id ?? null)}
                   composer={
                     <>
                       {pendingRestart !== null && agent.running && (

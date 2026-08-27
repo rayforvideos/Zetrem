@@ -118,12 +118,16 @@ vi.mock('../../store/project-memory/project-memory', () => ({
 }))
 
 vi.mock('../../vault/vault', () => ({
-  vaultRoot: () => '/data/Zetrem/vault',
-  ensureVault: async (root: string) => {
+  vaultSessionArgs: async (workspace: string) => {
     if (boundary.vaultFails) throw new Error('read-only disk')
-    boundary.laid.push(root)
+    boundary.laid.push(workspace)
+    return [
+      '--add-dir',
+      `${workspace}/.zetrem/vault`,
+      '--mcp-config',
+      '/data/Zetrem/vault-mcp.json',
+    ]
   },
-  vaultArgs: (path: string) => ['--add-dir', path],
 }))
 
 vi.mock('../../spawn/kill-tree/kill-tree', () => ({
@@ -278,13 +282,20 @@ describe('what the child says reaches the renderer, and its death is told once',
 })
 
 describe('the vault every session is handed', () => {
-  it('hands every session the vault as an added directory, laid out first', async () => {
+  it('hands every session its workspace vault as an added directory and an MCP server', async () => {
     const one = renderer()
     await startAgent(one, 'a1', 'hello')
     const spawn = boundary.spawns[0]
     if (spawn === undefined) throw new Error('nothing was spawned')
-    expect(spawn.args.slice(-2)).toEqual(['--add-dir', '/data/Zetrem/vault'])
-    expect(boundary.laid).toEqual(['/data/Zetrem/vault'])
+    const workspace = boundary.laid[0]
+    if (workspace === undefined) throw new Error('no vault was laid out')
+    expect(spawn.args.slice(-4)).toEqual([
+      '--add-dir',
+      `${workspace}/.zetrem/vault`,
+      '--mcp-config',
+      '/data/Zetrem/vault-mcp.json',
+    ])
+    expect(boundary.laid).toHaveLength(1)
   })
 
   it('still starts the session when the vault cannot be laid out, just without it', async () => {

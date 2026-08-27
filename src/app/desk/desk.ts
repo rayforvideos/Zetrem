@@ -68,6 +68,10 @@ export type DeskBridge = {
   writeVaultNote: Invoke<'vault:write'>
   createVaultNote: Invoke<'vault:create'>
   renameVaultNote: Invoke<'vault:rename'>
+  fileVaultNote: Invoke<'vault:file'>
+  searchVault: Invoke<'vault:search'>
+  vaultBacklinks: Invoke<'vault:backlinks'>
+  onVaultChanged: Listen<'vault:changed'>
   addVaultFolder: Invoke<'vault:folder-add'>
   renameVaultFolder: Invoke<'vault:folder-rename'>
   removeVaultFolder: Invoke<'vault:folder-remove'>

@@ -14,6 +14,7 @@ const ON_DISK = [
   'electron/store/usage-cache/usage-cache.types.ts',
   'electron/store/project-memory/project-memory.ts',
   'electron/cli/login-path/login-path.types.ts',
+  'src/entities/vault/lib/frontmatter/frontmatter.types.ts',
 ]
 
 const WRITERS: Record<string, string> = {

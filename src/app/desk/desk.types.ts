@@ -7,7 +7,12 @@ import type {
 import type { RunConfig } from '@/entities/claude-cli/api/run-config/run-config.types'
 import type { Settings } from '@/entities/settings/model/settings/settings.types'
 import type { Project } from '@/entities/project/model/project'
-import type { VaultListing, VaultNote } from '@/entities/vault/model/note'
+import type {
+  VaultHit,
+  VaultListing,
+  VaultNote,
+  VaultNoteSummary,
+} from '@/entities/vault/model/note'
 import type { Outcome } from '@/shared/lib/outcome/outcome.types'
 import type { ExitReason } from '@/entities/claude-cli/lib/exit-line/exit-line.types'
 import type { Attached } from '@/entities/attachment/lib/attachment/attachment.types'
@@ -96,9 +101,16 @@ export type Invokes = {
   'vault:list': () => VaultListing
   'vault:read': (id: string) => VaultNote | null
   'vault:remove': (id: string) => void
-  'vault:write': (id: string, text: string) => VaultNote | null
-  'vault:create': (folder: string, title: string) => VaultNote | null
+  'vault:write': (
+    id: string,
+    body: string,
+    patch?: { title?: string; tags?: string[] },
+  ) => VaultNote | null
+  'vault:create': (folder: string | null, title: string) => VaultNote | null
   'vault:rename': (id: string, title: string) => VaultNote | null
+  'vault:file': (text: string, session: string | null) => VaultNote | null
+  'vault:search': (query: string) => VaultHit[]
+  'vault:backlinks': (id: string) => VaultNoteSummary[]
   'vault:folder-add': (name: string) => VaultListing
   'vault:folder-rename': (name: string, next: string) => VaultListing
   'vault:folder-remove': (name: string) => VaultListing
@@ -118,6 +130,7 @@ export type Pushes = {
   'agent:event': AgentHostEvent
   'auth:progress': string
   'updater:ready': string
+  'vault:changed': null
 }
 
 export type InvokeChannel = keyof Invokes

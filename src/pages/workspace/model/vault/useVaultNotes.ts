@@ -1,30 +1,41 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
+import { t } from '@lingui/core/macro'
+import { toast } from 'sonner'
 import { GUIDE_ID, unseenSince } from '@/entities/vault'
-import type { VaultFolder, VaultListing, VaultNote, VaultNoteSummary } from '@/entities/vault'
+import type {
+  VaultFolder,
+  VaultHit,
+  VaultListing,
+  VaultNote,
+  VaultNoteSummary,
+} from '@/entities/vault'
+import type { VaultFilter } from '@/widgets/vault'
 
 const SAVE_AFTER_MS = 800
-
-function newest(notes: VaultNoteSummary[]): VaultNoteSummary | null {
-  return notes.reduce<VaultNoteSummary | null>(
-    (best, one) => (best === null || one.updatedAtMs > best.updatedAtMs ? one : best),
-    null,
-  )
-}
+const SEARCH_AFTER_MS = 150
+const FRESH_TITLE = 'New note'
 
 export function useVaultNotes(active: boolean, idle: boolean) {
   const [folders, setFolders] = useState<VaultFolder[]>([])
   const [notes, setNotes] = useState<VaultNoteSummary[]>([])
   const [open, setOpen] = useState<VaultNote | null>(null)
+  const [backlinks, setBacklinks] = useState<VaultNoteSummary[]>([])
+  const [hits, setHits] = useState<VaultHit[] | null>(null)
+  const [query, setQuery] = useState('')
+  const [filter, setFilter] = useState<VaultFilter>('all')
+  const [tag, setTag] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
   const [unseen, setUnseen] = useState(false)
   const [editing, setEditing] = useState(false)
   const [fresh, setFresh] = useState(false)
+  const [savedAtMs, setSavedAtMs] = useState<number | null>(null)
   const openId = useRef<string | null>(null)
   const onScreen = useRef(active)
   const seenAtMs = useRef(Date.now())
   const writing = useRef(false)
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null)
-  const waiting = useRef<{ id: string; text: string } | null>(null)
+  const searchTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const waiting = useRef<{ id: string; body: string } | null>(null)
 
   useEffect(() => {
     openId.current = open?.id ?? null
@@ -40,14 +51,22 @@ export function useVaultNotes(active: boolean, idle: boolean) {
     waiting.current = null
     if (job === null) return Promise.resolve()
     return window.desk
-      .writeVaultNote(job.id, job.text)
-      .then(() => undefined)
+      .writeVaultNote(job.id, job.body)
+      .then(() => setSavedAtMs(Date.now()))
       .catch(() => undefined)
   }, [])
 
   const land = useCallback((listing: VaultListing): void => {
     setFolders(listing.folders)
     setNotes(listing.notes)
+  }, [])
+
+  const show = useCallback(async (id: string): Promise<void> => {
+    const note = await window.desk.readVaultNote(id)
+    if (note === null) return
+    setOpen(note)
+    openId.current = id
+    setBacklinks(id === GUIDE_ID ? [] : await window.desk.vaultBacklinks(id))
   }, [])
 
   const relist = useCallback((): void => {
@@ -57,15 +76,14 @@ export function useVaultNotes(active: boolean, idle: boolean) {
       .then(async (listing) => {
         land(listing)
         if (!onScreen.current || writing.current) return
-        const id = openId.current ?? newest(listing.notes)?.id ?? null
+        const id = openId.current
         if (id === null) return
-        const note = await window.desk.readVaultNote(id)
-        if (note !== null) setOpen(note)
-        else if (!listing.notes.some((one) => one.id === id)) setOpen(null)
+        if (id === GUIDE_ID || listing.notes.some((one) => one.id === id)) await show(id)
+        else setOpen(null)
       })
       .catch(() => undefined)
       .finally(() => setLoading(false))
-  }, [land])
+  }, [land, show])
 
   useEffect(() => {
     seenAtMs.current = Date.now()
@@ -82,10 +100,19 @@ export function useVaultNotes(active: boolean, idle: boolean) {
       writing.current = false
       setEditing(false)
       setOpen(null)
+      setQuery('')
+      setHits(null)
       void flush()
     }
     relist()
   }, [active, idle, relist, flush])
+
+  // Agents write files while the screen is open; main says when they do.
+  useEffect(() => {
+    return window.desk.onVaultChanged(() => {
+      if (onScreen.current && !writing.current) relist()
+    })
+  }, [relist])
 
   useEffect(() => {
     return () => {
@@ -93,20 +120,35 @@ export function useVaultNotes(active: boolean, idle: boolean) {
     }
   }, [flush])
 
+  useEffect(() => {
+    if (searchTimer.current !== null) clearTimeout(searchTimer.current)
+    if (query.trim().length === 0) {
+      setHits(null)
+      return
+    }
+    searchTimer.current = setTimeout(() => {
+      void window.desk
+        .searchVault(query)
+        .then(setHits)
+        .catch(() => setHits([]))
+    }, SEARCH_AFTER_MS)
+  }, [query])
+
   function startEdit(): void {
     writing.current = true
+    setSavedAtMs(null)
     setEditing(true)
   }
 
   function stopEdit(): void {
     writing.current = false
     setEditing(false)
+    setFresh(false)
     void flush().then(relist)
   }
 
-  function save(id: string, text: string): void {
-    setFresh(false)
-    waiting.current = { id, text }
+  function save(id: string, body: string): void {
+    waiting.current = { id, body }
     if (timer.current !== null) clearTimeout(timer.current)
     timer.current = setTimeout(() => {
       void flush()
@@ -127,13 +169,22 @@ export function useVaultNotes(active: boolean, idle: boolean) {
       .catch(() => false)
   }
 
-  function create(folder: string, title: string): void {
+  function tags(id: string, next: string[]): void {
     void flush()
-      .then(() => window.desk.createVaultNote(folder, title))
+      .then(() => window.desk.writeVaultNote(id, open?.id === id ? open.body : '', { tags: next }))
       .then((note) => {
+        if (note !== null) setOpen(note)
+        relist()
+      })
+      .catch(() => undefined)
+  }
+
+  function create(folder: string | null): void {
+    void flush()
+      .then(() => window.desk.createVaultNote(folder, FRESH_TITLE))
+      .then(async (note) => {
         if (note === null) return
-        openId.current = note.id
-        setOpen(note)
+        await show(note.id)
         setFresh(true)
         startEdit()
         relist()
@@ -146,10 +197,7 @@ export function useVaultNotes(active: boolean, idle: boolean) {
     writing.current = false
     setEditing(false)
     void flush()
-      .then(() => window.desk.readVaultNote(id))
-      .then((note) => {
-        if (note !== null) setOpen(note)
-      })
+      .then(() => show(id))
       .catch(() => undefined)
   }
 
@@ -160,6 +208,28 @@ export function useVaultNotes(active: boolean, idle: boolean) {
   function openTitle(title: string): void {
     const found = notes.find((one) => one.title === title)
     if (found) openNote(found.id)
+  }
+
+  // The bolt on an answer: the note lands at once, and the toast says where.
+  function file(text: string, session: string | null): void {
+    void window.desk
+      .fileVaultNote(text, session)
+      .then((note) => {
+        if (note === null) {
+          toast.error(t`The answer could not be filed`)
+          return
+        }
+        toast(t`Filed to the vault · ${note.title}`, {
+          action: {
+            label: t`Undo`,
+            onClick: () => {
+              void window.desk.removeVaultNote(note.id).then(relist)
+            },
+          },
+        })
+        relist()
+      })
+      .catch(() => toast.error(t`The answer could not be filed`))
   }
 
   function addFolder(name: string): void {
@@ -178,10 +248,7 @@ export function useVaultNotes(active: boolean, idle: boolean) {
         const id = openId.current
         const moved = id === null || !id.startsWith(at) ? null : `${next}/${id.slice(at.length)}`
         if (moved === null || !listing.notes.some((one) => one.id === moved)) return
-        const note = await window.desk.readVaultNote(moved)
-        if (note === null) return
-        openId.current = moved
-        setOpen(note)
+        await show(moved)
       })
       .catch(() => undefined)
   }
@@ -214,11 +281,20 @@ export function useVaultNotes(active: boolean, idle: boolean) {
   return {
     folders,
     notes,
+    hits,
+    query,
+    filter,
+    tag,
     open,
+    backlinks,
     loading,
     unseen,
     editing,
     fresh,
+    savedAtMs,
+    setQuery,
+    setFilter,
+    setTag,
     openNote,
     openTitle,
     openGuide,
@@ -227,7 +303,9 @@ export function useVaultNotes(active: boolean, idle: boolean) {
     stopEdit,
     save,
     rename,
+    tags,
     create,
+    file,
     addFolder,
     renameFolder,
     removeFolder,

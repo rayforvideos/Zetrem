@@ -19,7 +19,7 @@ import { killAllProbes, registerSessionProbe } from './host/session-probe/sessio
 import { registerTranscriptStore } from './store/transcript-store/transcript-store'
 import { registerUpdater } from './shell/updater/updater'
 import { registerProjects } from './projects/projects'
-import { registerVault } from './vault/vault'
+import { closeVaultMcp, registerVault, stopFollowing } from './vault/vault'
 import { collapseCategories } from './projects/collapse/collapse'
 import { handle } from './ipc/ipc'
 import { loadTroubleLine, troublePage } from './shell/window-trouble/window-trouble'
@@ -246,7 +246,11 @@ if (!primary) {
     if (!isMac) app.quit()
   })
 
-  app.on('before-quit', dropChildren)
+  app.on('before-quit', () => {
+    dropChildren()
+    stopFollowing()
+    void closeVaultMcp()
+  })
 
   process.on('uncaughtException', (cause) => {
     console.error('[zetrem] main crashed', cause)

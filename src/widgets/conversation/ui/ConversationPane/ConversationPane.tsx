@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react'
-import { FileText, Image, Zap } from 'lucide-react'
+import { BookmarkPlus, FileText, Image } from 'lucide-react'
 import { Button } from '@/shared/ui/button'
 import type { ReactNode } from 'react'
 import type { PermissionAsk, SessionStatus, StatusState } from '@/entities/agent-session'
@@ -218,7 +218,7 @@ export function ConversationPane({
                           className="h-7 rounded-lg px-2 text-xs text-muted-foreground opacity-0 transition-opacity group-hover/answer:opacity-100 group-focus-within/answer:opacity-100"
                           title={t`File this answer to the vault as its own note`}
                         >
-                          <Zap className="size-3" />
+                          <BookmarkPlus className="size-3" />
                           {t`To vault`}
                         </Button>
                       </div>

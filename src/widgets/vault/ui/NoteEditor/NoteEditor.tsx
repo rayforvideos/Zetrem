@@ -4,18 +4,13 @@ import { Input } from '@/shared/ui/input'
 import { Textarea } from '@/shared/ui/textarea'
 import type { NoteEditorProps } from './NoteEditor.types'
 
-export function NoteEditor({
-  note,
-  title,
-  onChange,
-  onTitle,
-  guide,
-  fresh,
-  meta,
-  actions,
-}: NoteEditorProps) {
-  const [text, setText] = useState(note.text)
-  const [named, setNamed] = useState(title)
+const BARE =
+  '-ml-2 h-7 w-full border-transparent bg-transparent px-2 shadow-none dark:bg-transparent'
+
+export function NoteEditor({ note, guide, fresh, onChange, onTitle, onTags }: NoteEditorProps) {
+  const [body, setBody] = useState(note.body)
+  const [named, setNamed] = useState(note.title)
+  const [tagged, setTagged] = useState(note.tags.join(', '))
   const naming = fresh && !guide
   const field = useRef<HTMLInputElement>(null)
 
@@ -23,57 +18,76 @@ export function NoteEditor({
     if (naming) field.current?.select()
   }, [naming])
 
-  function commit(): void {
+  function commitTitle(): void {
     const wanted = named.trim()
-    if (wanted.length === 0 || wanted === title) {
-      setNamed(title)
+    if (wanted.length === 0 || wanted === note.title) {
+      setNamed(note.title)
       return
     }
     void onTitle(wanted).then((landed) => {
-      if (!landed) setNamed(title)
+      if (!landed) setNamed(note.title)
     })
   }
 
+  function commitTags(): void {
+    const tags = [
+      ...new Set(
+        tagged
+          .split(',')
+          .map((one) => one.trim())
+          .filter(Boolean),
+      ),
+    ]
+    setTagged(tags.join(', '))
+    if (tags.join('\n') !== note.tags.join('\n')) onTags(tags)
+  }
+
   return (
-    <div className="zt-scroll flex min-h-0 w-full max-w-3xl flex-1 flex-col overflow-y-auto px-2">
-      <div className="sticky top-0 z-[1] flex flex-col gap-1.5 bg-background pb-4">
-        <div className="flex items-baseline justify-between gap-4">
-          <div className="min-w-0 flex-1">
-            {guide ? (
-              <h2 className="h-7 truncate text-base font-semibold leading-7">{note.title}</h2>
-            ) : (
-              <Input
-                ref={field}
-                autoFocus={naming}
-                value={named}
-                aria-label={t`Title`}
-                onChange={(event) => setNamed(event.target.value)}
-                onBlur={commit}
-                onKeyDown={(event) => {
-                  if (event.key === 'Enter') {
-                    event.preventDefault()
-                    commit()
-                  }
-                  if (event.key === 'Escape') setNamed(title)
-                }}
-                className="-ml-2 h-7 w-full border-transparent bg-transparent px-2 text-base font-semibold shadow-none dark:bg-transparent"
-              />
-            )}
-            {meta}
-          </div>
-          {actions}
-        </div>
-      </div>
+    <div data-note-editor className="flex flex-col gap-1">
+      {!guide && (
+        <>
+          <Input
+            ref={field}
+            autoFocus={naming}
+            value={named}
+            aria-label={t`Title`}
+            onChange={(event) => setNamed(event.target.value)}
+            onBlur={commitTitle}
+            onKeyDown={(event) => {
+              if (event.key === 'Enter') {
+                event.preventDefault()
+                commitTitle()
+              }
+              if (event.key === 'Escape') setNamed(note.title)
+            }}
+            className={`${BARE} text-xl font-semibold tracking-tight md:text-xl`}
+          />
+          <Input
+            data-tags-field
+            value={tagged}
+            aria-label={t`Tags`}
+            placeholder={t`Tags, separated by commas`}
+            onChange={(event) => setTagged(event.target.value)}
+            onBlur={commitTags}
+            onKeyDown={(event) => {
+              if (event.key !== 'Enter') return
+              event.preventDefault()
+              commitTags()
+            }}
+            className={`${BARE} h-6 text-xs text-muted-foreground md:text-xs`}
+          />
+        </>
+      )}
       <Textarea
         autoFocus={!naming}
-        value={text}
+        value={body}
         aria-label={note.title}
         placeholder={t`Write in markdown`}
         onChange={(event) => {
-          setText(event.target.value)
+          setBody(event.target.value)
           onChange(event.target.value)
         }}
-        className="min-h-[60vh] resize-none border-transparent bg-transparent px-0 font-mono text-sm leading-relaxed shadow-none dark:bg-transparent"
+        className="mt-2 min-h-[60vh] resize-none border-transparent bg-transparent px-0 text-base leading-7 shadow-none md:text-base dark:bg-transparent"
       />
     </div>
   )

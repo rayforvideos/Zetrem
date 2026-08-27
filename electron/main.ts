@@ -23,6 +23,7 @@ import { registerVault } from './vault/vault'
 import { collapseCategories } from './projects/collapse/collapse'
 import { handle } from './ipc/ipc'
 import { loadTroubleLine, troublePage } from './shell/window-trouble/window-trouble'
+import { isPackagedRun } from './shell/packaged/packaged'
 
 const isMac = process.platform === 'darwin'
 
@@ -35,7 +36,7 @@ function dropChildren(): void {
   killTrackedChildren()
 }
 
-const inspectPort = app.isPackaged
+const inspectPort = isPackagedRun()
   ? null
   : (process.env.ZT_INSPECT ?? (process.env.ELECTRON_RENDERER_URL ? '0' : null))
 if (inspectPort !== null) app.commandLine.appendSwitch('remote-debugging-port', inspectPort)

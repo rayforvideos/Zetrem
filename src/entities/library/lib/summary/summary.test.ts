@@ -2,6 +2,11 @@ import { describe, expect, it } from 'vitest'
 import { summaryOf, titleFrom } from './summary'
 
 describe('the summary is the first paragraph, said plainly', () => {
+  it('never ends a title in a period, since that file could not be named again', () => {
+    expect(titleFrom('Ship it.\n\nmore')).toBe('Ship it')
+    expect(titleFrom('Done...')).toBe('Done')
+  })
+
   it('takes the first paragraph and flattens its lines', () => {
     expect(summaryOf('One line.\nStill the same paragraph.\n\nNext.')).toBe(
       'One line. Still the same paragraph.',

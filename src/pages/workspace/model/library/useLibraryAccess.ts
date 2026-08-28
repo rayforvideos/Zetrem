@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { t } from '@lingui/core/macro'
 import { toast } from 'sonner'
 
@@ -8,6 +8,8 @@ import { toast } from 'sonner'
 // next one, and the toast says so when there is one running.
 export function useLibraryAccess(project: string | null, sessionLive: boolean) {
   const [open, setOpen] = useState(true)
+  const shown = useRef(project)
+  shown.current = project
 
   useEffect(() => {
     let stale = false
@@ -25,9 +27,12 @@ export function useLibraryAccess(project: string | null, sessionLive: boolean) {
   const set = useCallback(
     (next: boolean): void => {
       setOpen(next)
+      const asked = project
       window.desk
         .setLibraryOpenToAgents(next)
         .then((now) => {
+          // The answer is for the project that was open when the switch was pressed.
+          if (shown.current !== asked) return
           setOpen(now)
           if (!sessionLive) return
           toast(
@@ -38,7 +43,7 @@ export function useLibraryAccess(project: string | null, sessionLive: boolean) {
         })
         .catch(() => setOpen(!next))
     },
-    [sessionLive],
+    [sessionLive, project],
   )
 
   return { open, set }

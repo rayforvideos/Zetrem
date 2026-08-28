@@ -1,4 +1,4 @@
-import { mkdtemp, readFile, readdir, writeFile } from 'node:fs/promises'
+import { mkdtemp, readFile, readdir, writeFile, utimes } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { beforeEach, describe, expect, it } from 'vitest'
@@ -44,13 +44,24 @@ describe('saveFile: a file is never left half written', () => {
 
   it('overwrites a leftover from a run that died', async () => {
     const path = join(dir, 'settings.json')
-    await writeFile(partnerOf(path), 'half of something', 'utf8')
+    const dead = partnerOf(path)
+    await writeFile(dead, 'half of something', 'utf8')
+    const old = new Date(Date.now() - 120_000)
+    await utimes(dead, old, old)
     await saveFile(path, 'whole')
     expect(await readFile(path, 'utf8')).toBe('whole')
     expect(await readdir(dir)).toEqual(['settings.json'])
   })
 
   it('writes beside the file it replaces, so the rename stays on one volume', () => {
-    expect(partnerOf('/a/b/c.json')).toBe('/a/b/c.json.saving')
+    expect(partnerOf('/a/b/c.json', 'w1')).toBe('/a/b/c.json.w1.saving')
+  })
+
+  it('gives every write its own partner, so two at once cannot mix', async () => {
+    const path = join(dir, 'settings.json')
+    expect(partnerOf(path)).not.toBe(partnerOf(path))
+    await Promise.all([saveFile(path, 'first'), saveFile(path, 'second')])
+    expect(['first', 'second']).toContain(await readFile(path, 'utf8'))
+    expect(await readdir(dir)).toEqual(['settings.json'])
   })
 })

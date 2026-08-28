@@ -54,6 +54,7 @@ function pane(over: Partial<Flat> = {}): string {
           onSignIn: () => {},
           onSignOut: () => {},
           onInstall: () => {},
+          onRecheck: () => {},
         }}
         you={{ name: 'Ray', face: 'onigiri', onName: () => {}, onFace: () => {} }}
         project={{

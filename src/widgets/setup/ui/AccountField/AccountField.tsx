@@ -48,6 +48,18 @@ export function AccountField({ account }: { account: Account }) {
             <FieldDescription className="w-full text-destructive">{account.error}</FieldDescription>
           )}
         </div>
+      ) : auth?.state === 'unreachable' ? (
+        <div className="flex flex-wrap items-center gap-3">
+          <Button size="sm" onClick={account.onRecheck} className="rounded-full">
+            {t`Check again`}
+          </Button>
+          <FieldDescription className="w-full">
+            {t`Claude Code did not say whether you are signed in, so nothing was changed.`}
+          </FieldDescription>
+          <FieldDescription className="w-full break-all text-muted-foreground">
+            {auth.said}
+          </FieldDescription>
+        </div>
       ) : auth?.state === 'signed-in' ? (
         <>
           <div className="flex flex-wrap items-center gap-3 rounded-xl bg-card px-3.5 py-2.5 text-sm">

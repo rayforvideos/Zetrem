@@ -179,6 +179,14 @@ describe('writing', () => {
     expect(existsSync(join(outside, 'x.md'))).toBe(false)
   })
 
+  it('refuses a title that ends in a period, and allows a case-only rename', async () => {
+    file('one.md', headed('One', 'x'))
+    expect(await renameNote(root, 'one.md', 'etc.', NOW)).toBeNull()
+    expect(existsSync(join(root, 'one.md'))).toBe(true)
+    const renamed = await renameNote(root, 'one.md', 'ONE', NOW)
+    expect(renamed?.id).toBe('ONE.md')
+  })
+
   it('renames a note in place, updating its head, and refuses a taken name', async () => {
     file('one.md', headed('One', 'x'))
     file('two.md', headed('Two', 'y'))

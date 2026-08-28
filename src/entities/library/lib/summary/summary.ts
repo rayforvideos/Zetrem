@@ -70,5 +70,5 @@ export function titleFrom(text: string): string {
     .replace(/\s+/g, ' ')
     .trim()
   if (named.length === 0) return 'Untitled'
-  return cut(named, TITLE_MAX).replace(/…$/, '').trim() || 'Untitled'
+  return cut(named, TITLE_MAX).replace(/…$/, '').replace(/\.+$/, '').trim() || 'Untitled'
 }

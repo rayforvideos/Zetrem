@@ -6,6 +6,7 @@ import type { AuthStatus } from '@/entities/auth'
 import { lost, won } from '@/shared/lib/outcome/outcome'
 import type { Outcome } from '@/shared/lib/outcome/outcome.types'
 import { claudeBin, loginPath } from '../login-path/login-path'
+import { authFailureOf, authStatusOf } from './auth-status/auth-status'
 import { handle, push } from '../../ipc/ipc'
 import { killTree } from '../../spawn/kill-tree/kill-tree'
 import { trackChild, untrackChild } from '../../spawn/run-settled/run-settled'
@@ -23,16 +24,9 @@ export async function readAuthStatus(): Promise<AuthStatus> {
       env: agentEnv(process.env, await loginPath()),
       timeout: STATUS_TIMEOUT_MS,
     })
-    const parsed = JSON.parse(stdout) as Record<string, unknown>
-    if (parsed.loggedIn !== true) return { state: 'signed-out' }
-    return {
-      state: 'signed-in',
-      email: typeof parsed.email === 'string' ? parsed.email : '',
-      orgName: typeof parsed.orgName === 'string' ? parsed.orgName : null,
-    }
+    return authStatusOf(stdout)
   } catch (cause) {
-    const code = (cause as { code?: string }).code
-    return { state: code === 'ENOENT' ? 'cli-missing' : 'signed-out' }
+    return authFailureOf(cause)
   }
 }
 

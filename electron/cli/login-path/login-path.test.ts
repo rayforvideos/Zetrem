@@ -82,7 +82,7 @@ describe('an install the PATH never heard of', () => {
     expect(withKnownDirs('/nowhere-a', ['/nowhere-b'])).toBe('/nowhere-a')
   })
 
-  it('reads PATH again after a reset, for the binary an install just wrote', async () => {
+  it('keeps looking until it finds claude, so an install just written is seen next time', async () => {
     if (windows) return
     const kept = { HOME: process.env.HOME, SHELL: process.env.SHELL, PATH: process.env.PATH }
     const home = mkdtempSync(join(tmpdir(), 'zetrem-home-'))
@@ -99,8 +99,7 @@ describe('an install the PATH never heard of', () => {
       mkdirSync(dir, { recursive: true })
       writeFileSync(join(dir, 'claude'), '#!/bin/sh\n')
       chmodSync(join(dir, 'claude'), 0o755)
-      expect(await loginPath()).not.toContain(dir)
-      resetLoginPath()
+      // No reset needed: a PATH without claude was never kept as the answer.
       expect((await loginPath()).split(delimiter)).toContain(dir)
     } finally {
       process.env.HOME = kept.HOME

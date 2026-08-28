@@ -14,6 +14,7 @@ export type Account = {
   onSignIn(): void
   onSignOut(): void
   onInstall(): void
+  onRecheck(): void
 }
 
 export type Project = {

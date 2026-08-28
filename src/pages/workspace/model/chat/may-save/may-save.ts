@@ -14,6 +14,20 @@ export function maySave(at: {
   return true
 }
 
+// Leaving a chat (another chat, a new one, another project) must not lose it:
+// whatever is on screen is written back first, even mid-turn, as long as it
+// belongs to the project it was loaded for.
+export function mustKeepOnLeave(at: {
+  project: string | null
+  loadedFor: string | null
+  openId: string | null
+  turnCount: number
+}): boolean {
+  if (at.project === null || at.openId === null) return false
+  if (at.loadedFor !== at.project) return false
+  return at.turnCount > 0
+}
+
 export function threadToSave(at: {
   liveSessionId: string | null
   probed: boolean

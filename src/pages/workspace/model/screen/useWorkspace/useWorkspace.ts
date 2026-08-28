@@ -13,6 +13,7 @@ import { layerOver } from '@/shared/lib/modal/modal'
 import { screenGate } from '../screen-gate/screen-gate'
 import { sessionLive, stirring } from '../../session/live/live'
 import { useAgent } from '../../session/useAgent'
+import { conversation } from '../../chat/conversation/conversation'
 import { useAgentDefs } from '../../team/useAgentDefs'
 import { useAuth } from '../../account/useAuth'
 import { useAppUpdate } from '../../session/useAppUpdate/useAppUpdate'
@@ -96,7 +97,10 @@ export function useWorkspace() {
   const [pendingRestart, setPendingRestart] = useState<string | null>(null)
   const shelf = usePlugins(gate === 'setup')
   const attach = useAttachments()
-  const wires = useConnectors(shelf.open || drawerOpen || gate === 'conversation')
+  const wires = useConnectors(
+    shelf.open || drawerOpen || gate === 'conversation',
+    project?.id ?? null,
+  )
   useSessionProbe(
     runConfig,
     gate !== 'holding' && status.session === null,
@@ -190,18 +194,30 @@ export function useWorkspace() {
     pickProject().then(adoptProject).catch(reportProject(t`Could not open that folder`))
   }
 
+  // Two quick clicks: only the last one decides what the screen shows.
+  const opening = useRef(0)
   function handleOpenProject(id: string): void {
-    openProject(id).then(adoptProject).catch(reportProject(t`Could not open that folder`))
+    const ticket = ++opening.current
+    openProject(id)
+      .then((picked) => {
+        if (opening.current === ticket) adoptProject(picked)
+      })
+      .catch(reportProject(t`Could not open that folder`))
   }
 
   function handleForgetProject(id: string): void {
+    const current = project !== null && project.id === id
+    // The agent is rooted in the folder being forgotten: it goes first, not
+    // after the round-trips, or it streams on into whatever comes next.
+    if (current) {
+      agent.reset()
+      focus.clearAll()
+    }
     forgetProject(id)
       .then(async () => {
-        if (project !== null && project.id === id) {
+        if (current) {
           const next = allProjects.filter((one) => one.id !== id)[0]
           const opened = next === undefined ? null : await openProject(next.id)
-          agent.reset()
-          focus.clearAll()
           projectStore.set(opened)
         }
         refreshProjects()
@@ -216,7 +232,9 @@ export function useWorkspace() {
   }
 
   function swap(go: () => void): void {
+    const cutOff = agent.conversation.status === 'working'
     agent.reset()
+    if (cutOff) conversation.system(t`You left before the reply finished, so it stops here.`)
     focus.clearAll()
     setLibraryOpen(false)
     go()

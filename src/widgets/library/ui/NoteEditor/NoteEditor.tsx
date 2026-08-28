@@ -18,15 +18,24 @@ export function NoteEditor({ note, guide, fresh, onChange, onTitle, onTags }: No
     if (naming) field.current?.select()
   }, [naming])
 
+  // Enter commits, and the blur that follows would commit the same title
+  // again while the first rename is still in flight.
+  const committing = useRef<string | null>(null)
   function commitTitle(): void {
     const wanted = named.trim()
     if (wanted.length === 0 || wanted === note.title) {
       setNamed(note.title)
       return
     }
-    void onTitle(wanted).then((landed) => {
-      if (!landed) setNamed(note.title)
-    })
+    if (committing.current === wanted) return
+    committing.current = wanted
+    void onTitle(wanted)
+      .then((landed) => {
+        if (!landed) setNamed(note.title)
+      })
+      .finally(() => {
+        committing.current = null
+      })
   }
 
   function commitTags(): void {

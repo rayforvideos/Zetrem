@@ -66,20 +66,47 @@ async function indexKey(root: string): Promise<string> {
 }
 
 const indexes = new Map<string, LibraryIndex>()
+const opening = new Map<string, Promise<LibraryIndex>>()
 const watchers = new Map<string, FSWatcher>()
 
 function tellRenderers(): void {
   for (const win of BrowserWindow.getAllWindows()) push(win.webContents, 'library:changed', null)
 }
 
+// The index is derived, so one that will not open is thrown away and rebuilt
+// from the notes rather than left to fail every search from then on.
+async function openIndex(key: string): Promise<LibraryIndex> {
+  const dir = join(app.getPath('userData'), 'library-index')
+  await mkdir(dir, { recursive: true })
+  const file = join(dir, `${key}.sqlite`)
+  try {
+    return openLibraryIndex(file)
+  } catch (cause: unknown) {
+    console.error('[library] index unreadable, rebuilding', file, cause)
+    await Promise.all(
+      [file, `${file}-wal`, `${file}-shm`].map((one) =>
+        rm(one, { force: true }).catch(() => undefined),
+      ),
+    )
+    return openLibraryIndex(file)
+  }
+}
+
 async function indexFor(root: string): Promise<LibraryIndex> {
   const key = await indexKey(root)
   let index = indexes.get(key)
   if (index === undefined) {
-    const dir = join(app.getPath('userData'), 'library-index')
-    await mkdir(dir, { recursive: true })
-    index = openLibraryIndex(join(dir, `${key}.sqlite`))
-    indexes.set(key, index)
+    // Two callers arriving together must not open the file twice.
+    let pending = opening.get(key)
+    if (pending === undefined) {
+      pending = openIndex(key).then((opened) => {
+        indexes.set(key, opened)
+        return opened
+      })
+      opening.set(key, pending)
+      pending.finally(() => opening.delete(key)).catch(() => undefined)
+    }
+    index = await pending
   }
   index.sync(await notesForIndex(root))
   return index
@@ -156,8 +183,17 @@ export async function librarySessionArgs(workspace: string): Promise<string[]> {
   const root = libraryRootFor(workspace)
   await ensureLibrary(root)
   follow(root)
+  // Sessions end when the project changes, so a server for another library
+  // has nobody left to serve.
+  await closeServersExcept(root)
   // The CLI takes the MCP config as a JSON string, so nothing is written for it.
   return ['--add-dir', root, '--mcp-config', mcpConfigFor(await serverFor(root))]
+}
+
+async function closeServersExcept(root: string): Promise<void> {
+  const others = [...servers.entries()].filter(([held]) => held !== root)
+  for (const [held] of others) servers.delete(held)
+  await Promise.all(others.map(([, server]) => server.close()))
 }
 
 export async function closeLibraryMcp(): Promise<void> {

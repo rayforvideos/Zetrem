@@ -3,7 +3,7 @@ import { shouldRelaunch } from './relaunch'
 import type { Attempt } from './relaunch.types'
 
 function attempt(overrides: Partial<Attempt> = {}): Attempt {
-  return { prompt: 'Carry on', resumed: true, spoke: false, ...overrides }
+  return { prompt: 'Carry on', files: [], resumed: true, spoke: false, ...overrides }
 }
 
 describe('shouldRelaunch: only when picking the old conversation back up failed', () => {

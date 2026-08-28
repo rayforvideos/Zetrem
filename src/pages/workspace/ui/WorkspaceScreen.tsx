@@ -111,7 +111,8 @@ export function WorkspaceScreen() {
         projects={{
           current: project,
           all: allProjects,
-          onOpen: handleOpenProject,
+          // A note still being typed is saved into this project before the next one takes over.
+          onOpen: (id) => void library.flush().then(() => handleOpenProject(id)),
           onPickFolder: handlePickProject,
           onForget: handleForgetProject,
         }}
@@ -120,7 +121,8 @@ export function WorkspaceScreen() {
           openId: libraryOpen ? null : chat.openId,
           onOpen: (id) => swap(() => chat.open(id)),
           onStart: () => swap(chat.start),
-          onRemove: chat.remove,
+          // Removing the chat that is open mid-reply must also let its agent go.
+          onRemove: (id) => (id === chat.openId ? swap(() => chat.remove(id)) : chat.remove(id)),
           onRename: chat.rename,
           onFile: chat.file,
           onFileMany: chat.fileMany,
@@ -143,6 +145,7 @@ export function WorkspaceScreen() {
           onRestart: () => {
             focus.clearAll()
             settleNote()
+            chat.detach()
             agent.restart()
           },
         }}
@@ -200,6 +203,7 @@ export function WorkspaceScreen() {
                     installing: auth.installing,
                     onSignIn: auth.login,
                     onInstall: auth.install,
+                    onRecheck: auth.recheck,
                     onSignOut: () => {
                       swap(auth.logout)
                     },
@@ -214,7 +218,7 @@ export function WorkspaceScreen() {
                     chosen: project,
                     recent: allProjects.filter((one) => one.id !== project?.id),
                     onChoose: handlePickProject,
-                    onPickRecent: handleOpenProject,
+                    onPickRecent: (id) => void library.flush().then(() => handleOpenProject(id)),
                   }}
                   defaults={{
                     permissionMode: settings.permissionMode,
@@ -299,6 +303,7 @@ export function WorkspaceScreen() {
                           onRestart={() => {
                             setPendingRestart(null)
                             focus.clearAll()
+                            chat.detach()
                             agent.restart()
                           }}
                         />

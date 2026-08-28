@@ -16,7 +16,10 @@ import { rememberLoginPath } from './cli/login-path/login-path'
 import { registerConnectors } from './catalog/connectors/connectors'
 import { killTrackedChildren } from './spawn/run-settled/run-settled'
 import { killAllProbes, registerSessionProbe } from './host/session-probe/session-probe'
-import { registerTranscriptStore } from './store/transcript-store/transcript-store'
+import {
+  registerTranscriptStore,
+  settleTranscripts,
+} from './store/transcript-store/transcript-store'
 import { registerUpdater } from './shell/updater/updater'
 import { registerProjects } from './projects/projects'
 import { closeLibraryMcp, registerLibrary, stopFollowing } from './library/library'
@@ -125,11 +128,23 @@ function createWindow(): void {
     dropChildren()
   })
 
+  // One crash is reloaded quietly; a second within a minute means reloading
+  // will not help, and the page says so.
+  let lastCrashMs = 0
   win.webContents.on('render-process-gone', (_event, details) => {
     console.error('[renderer] crashed', details.reason)
     if (details.reason === 'clean-exit' || win.isDestroyed()) return
     win.show()
-    void win.webContents.loadURL(troublePage(`The screen stopped: ${details.reason}`))
+    const now = Date.now()
+    const again = now - lastCrashMs < 60_000
+    lastCrashMs = now
+    if (!again) {
+      win.webContents.reload()
+      return
+    }
+    void win.webContents.loadURL(
+      troublePage(`The screen stopped twice: ${details.reason}. Quit Zetrem and open it again.`),
+    )
   })
 
   win.webContents.on('will-navigate', (event, url) => {
@@ -246,10 +261,18 @@ if (!primary) {
     if (!isMac) app.quit()
   })
 
-  app.on('before-quit', () => {
+  // The first before-quit is held while queued chat writes and the MCP
+  // servers settle; the quit it then asks for goes straight through.
+  let settledForQuit = false
+  app.on('before-quit', (event) => {
     dropChildren()
     stopFollowing()
-    void closeLibraryMcp()
+    if (settledForQuit) return
+    event.preventDefault()
+    Promise.allSettled([settleTranscripts(), closeLibraryMcp()]).then(() => {
+      settledForQuit = true
+      app.quit()
+    })
   })
 
   process.on('uncaughtException', (cause) => {

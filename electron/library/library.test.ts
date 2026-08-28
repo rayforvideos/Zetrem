@@ -144,10 +144,59 @@ describe('what a session is handed', () => {
     expect(written).toContain('It learned this.')
   })
 
+  it('closes the server of a library no session will reach again', async () => {
+    const other = mkdtempSync(join(tmpdir(), 'zetrem-ws-'))
+    try {
+      const first = JSON.parse((await librarySessionArgs(workspace))[3] as string).mcpServers
+        .library
+      await librarySessionArgs(other)
+      const reply = await fetch(first.url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: first.headers.Authorization },
+        body: JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'ping' }),
+      }).catch(() => null)
+      expect(reply).toBeNull()
+    } finally {
+      rmSync(other, { recursive: true, force: true })
+    }
+  })
+
   it('starts one server for the whole app and reuses it', async () => {
     const first = await librarySessionArgs(workspace)
     const second = await librarySessionArgs(workspace)
     expect(second[3]).toBe(first[3])
+  })
+})
+
+describe('the search index', () => {
+  it('rebuilds itself when the file on disk is not a database', async () => {
+    const { createNote } = await import('./library-notes/library-notes')
+    const root = libraryRootFor(workspace)
+    await ensureLibrary(root)
+    await createNote(root, '', 'Auth choice')
+    const args = await librarySessionArgs(workspace)
+    const library = JSON.parse(args[3] as string).mcpServers.library
+    const ask = () =>
+      fetch(library.url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json, text/event-stream',
+          Authorization: library.headers.Authorization,
+        },
+        body: JSON.stringify({
+          jsonrpc: '2.0',
+          id: 1,
+          method: 'tools/call',
+          params: { name: 'library_search', arguments: { query: 'auth' } },
+        }),
+      }).then((reply) => reply.json() as Promise<{ result: { isError?: true } }>)
+    expect((await ask()).result.isError).toBeUndefined()
+
+    stopFollowing()
+    const dir = join(userData, 'library-index')
+    for (const name of readdirSync(dir)) writeFileSync(join(dir, name), 'not a database')
+    expect((await ask()).result.isError).toBeUndefined()
   })
 })
 

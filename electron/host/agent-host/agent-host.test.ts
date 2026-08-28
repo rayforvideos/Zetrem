@@ -340,6 +340,36 @@ describe('a stop that lands while the agent is still starting', () => {
   })
 })
 
+describe('a stop that the child ignores', () => {
+  it('kills the tree hard after the grace period, and not if it closed in time', async () => {
+    vi.useFakeTimers()
+    try {
+      const one = renderer()
+      await startAgent(one, 'a1', 'hello')
+      fire('agent:stop', one, 'a1')
+      expect(boundary.killed).toEqual([childAt(0).pid])
+      await vi.advanceTimersByTimeAsync(5000)
+      expect(boundary.killedSync).toEqual([childAt(0).pid])
+
+      await startAgent(one, 'a2', 'again')
+      fire('agent:stop', one, 'a2')
+      childAt(1).emit('close', 0)
+      await vi.advanceTimersByTimeAsync(5000)
+      expect(boundary.killedSync).toEqual([childAt(0).pid])
+    } finally {
+      vi.useRealTimers()
+    }
+  })
+
+  it('is still killed at quit, even though it no longer holds its id', async () => {
+    const one = renderer()
+    await startAgent(one, 'a1', 'hello')
+    fire('agent:stop', one, 'a1')
+    host.killAllAgents()
+    expect(boundary.killedSync).toEqual([childAt(0).pid])
+  })
+})
+
 describe('text typed while the agent is starting', () => {
   it('waits for the stdin and follows the opening prompt in the order it was typed', async () => {
     const one = renderer()

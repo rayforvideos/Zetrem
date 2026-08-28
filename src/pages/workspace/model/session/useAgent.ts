@@ -86,7 +86,7 @@ export function useAgent(
         attempt.current = null
         if (failed !== null && shouldRelaunch(failed, event.code)) {
           conversation.system(t`Could not pick that conversation back up. Starting a new one.`)
-          launch(failed.prompt, null)
+          launch(failed.prompt, null, failed.files)
           return
         }
         closeSession({
@@ -112,7 +112,15 @@ export function useAgent(
     })
     return () => {
       unsubscribe()
-      if (hostId.current) window.desk.stopAgent(hostId.current)
+      if (hostId.current) {
+        // The screen is being rebuilt (a language change does this) and the
+        // session cannot follow it across; say so where the chat will be read.
+        conversation.settleDraft()
+        conversation.system(
+          t`The screen was rebuilt, so this session ended. Your next message starts a new one.`,
+        )
+        window.desk.stopAgent(hostId.current)
+      }
     }
   }, [])
 
@@ -125,9 +133,10 @@ export function useAgent(
     })
     const id = `agent-${Date.now()}`
     hostId.current = id
+    stopping.current = false
     setRunning(true)
     stopping.current = false
-    attempt.current = { prompt: text, resumed: resume !== null, spoke: false }
+    attempt.current = { prompt: text, files, resumed: resume !== null, spoke: false }
     void window.desk
       .startAgent(id, text, { ...configRef.current, persona: '', resume }, files)
       .catch((cause: unknown) => {
@@ -145,7 +154,8 @@ export function useAgent(
     conversation.say('user', text, to ?? undefined, sentOf(files))
     conversation.setStatus('working')
     const dressed = withPaths(addressed(text, to), files)
-    if (hostId.current) {
+    // A stopped session is on its way out: this message starts a fresh one.
+    if (hostId.current && !stopping.current) {
       window.desk.sendToAgent(hostId.current, dressed, files)
       return
     }

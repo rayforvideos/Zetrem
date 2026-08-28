@@ -48,7 +48,9 @@ function isTitle(title: unknown): title is string {
     title.length <= TITLE_MAX &&
     SEGMENT.test(title) &&
     !title.includes('..') &&
-    !title.startsWith('.')
+    !title.startsWith('.') &&
+    // 'x.' would become the file 'x..md', which no id can ever name again.
+    !title.endsWith('.')
   )
 }
 
@@ -328,7 +330,8 @@ export async function renameNote(
   const next = idOf(folder, title)
   if (next !== id) {
     const to = await target(root, next)
-    if (to === null || (await taken(to))) return null
+    const sameFile = next.toLowerCase() === id.toLowerCase()
+    if (to === null || (!sameFile && (await taken(to)))) return null
     try {
       await rename(join(root, id), to)
     } catch {

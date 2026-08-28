@@ -10,7 +10,7 @@ export function exitReason(
   if (code === 0) return null
   if (spawnError.trim().length > 0) return startTrouble(spawnError)
   const said = lastLine(stderr)
-  if (said.length === 0) return null
+  if (said.length === 0) return code === null ? null : { code: 'died', said: String(code) }
   return MISSING.test(said) ? startTrouble(said) : { code: 'cli-said', said }
 }
 

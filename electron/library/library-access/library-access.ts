@@ -1,4 +1,4 @@
-import { readFile } from 'node:fs/promises'
+import { readFile, rename } from 'node:fs/promises'
 import { join } from 'node:path'
 import { app } from 'electron'
 import { queue } from '../../store/queue/queue'
@@ -21,7 +21,11 @@ async function readClosed(): Promise<Closed> {
     return Object.fromEntries(
       Object.entries(parsed as Record<string, unknown>).filter(([, on]) => on === false),
     ) as Closed
-  } catch {
+  } catch (cause: unknown) {
+    if ((cause as { code?: string }).code === 'ENOENT') return {}
+    const kept = `${accessPath()}.broken`
+    await rename(accessPath(), kept).catch(() => undefined)
+    console.error(`the library switches were unreadable, kept a copy at ${kept}`, cause)
     return {}
   }
 }

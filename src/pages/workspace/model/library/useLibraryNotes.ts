@@ -35,6 +35,10 @@ export function useLibraryNotes(active: boolean, idle: boolean, project: string 
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null)
   const searchTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
   const waiting = useRef<{ id: string; body: string } | null>(null)
+  // The last write handed to main, so a delete can wait for it to land first.
+  const inFlight = useRef<Promise<void>>(Promise.resolve())
+  // The body as last typed, which `open` does not follow while an edit is on.
+  const typed = useRef<{ id: string; body: string } | null>(null)
 
   useEffect(() => {
     openId.current = open?.id ?? null
@@ -48,11 +52,13 @@ export function useLibraryNotes(active: boolean, idle: boolean, project: string 
     }
     const job = waiting.current
     waiting.current = null
-    if (job === null) return Promise.resolve()
-    return window.desk
+    if (job === null) return inFlight.current
+    const write = window.desk
       .writeLibraryNote(job.id, job.body)
       .then(() => setSavedAtMs(Date.now()))
       .catch(() => undefined)
+    inFlight.current = write
+    return write
   }, [])
 
   const land = useCallback((listing: LibraryListing): void => {
@@ -63,6 +69,7 @@ export function useLibraryNotes(active: boolean, idle: boolean, project: string 
   const show = useCallback(async (id: string): Promise<void> => {
     const note = await window.desk.readLibraryNote(id)
     if (note === null) return
+    if (typed.current?.id !== id) typed.current = null
     setOpen(note)
     openId.current = id
     setBacklinks(await window.desk.libraryBacklinks(id))
@@ -128,6 +135,16 @@ export function useLibraryNotes(active: boolean, idle: boolean, project: string 
     relist()
   }, [active, idle, project, relist, flush])
 
+  // Closing the window or quitting must not drop the last few hundred
+  // milliseconds of typing.
+  useEffect(() => {
+    const leave = (): void => {
+      void flush()
+    }
+    window.addEventListener('beforeunload', leave)
+    return () => window.removeEventListener('beforeunload', leave)
+  }, [flush])
+
   // Agents write files while the screen is open; main says when they do.
   useEffect(() => {
     return window.desk.onLibraryChanged(() => {
@@ -170,6 +187,7 @@ export function useLibraryNotes(active: boolean, idle: boolean, project: string 
 
   function save(id: string, body: string): void {
     waiting.current = { id, body }
+    typed.current = { id, body }
     if (timer.current !== null) clearTimeout(timer.current)
     timer.current = setTimeout(() => {
       void flush()
@@ -182,6 +200,9 @@ export function useLibraryNotes(active: boolean, idle: boolean, project: string 
       .then(() => window.desk.renameLibraryNote(id, title))
       .then((note) => {
         if (note === null) return false
+        // Typing that queued during the rename belongs to the new id.
+        if (waiting.current?.id === id) waiting.current = { ...waiting.current, id: note.id }
+        if (typed.current?.id === id) typed.current = { ...typed.current, id: note.id }
         openId.current = note.id
         setOpen(note)
         relist()
@@ -190,11 +211,15 @@ export function useLibraryNotes(active: boolean, idle: boolean, project: string 
       .catch(() => false)
   }
 
+  // What the file should say now: the text being typed, or the note as read.
+  function bodyOf(id: string): string {
+    if (typed.current?.id === id) return typed.current.body
+    return open?.id === id ? open.body : ''
+  }
+
   function tags(id: string, next: string[]): void {
     void flush()
-      .then(() =>
-        window.desk.writeLibraryNote(id, open?.id === id ? open.body : '', { tags: next }),
-      )
+      .then(() => window.desk.writeLibraryNote(id, bodyOf(id), { tags: next }))
       .then((note) => {
         if (note !== null) setOpen(note)
         relist()
@@ -231,6 +256,7 @@ export function useLibraryNotes(active: boolean, idle: boolean, project: string 
 
   // The bolt on an answer: the note lands at once, and the toast says where.
   function file(text: string): void {
+    const filedIn = shownProject.current
     void window.desk
       .fileLibraryNote(text)
       .then((note) => {
@@ -242,6 +268,12 @@ export function useLibraryNotes(active: boolean, idle: boolean, project: string 
           action: {
             label: t`Undo`,
             onClick: () => {
+              // The note is in the project it was filed to; after a switch the
+              // same id in another project must not be the one removed.
+              if (shownProject.current !== filedIn) {
+                toast(t`That note is in another project now; open it there to remove it.`)
+                return
+              }
               void window.desk.removeLibraryNote(note.id).then(relist)
             },
           },
@@ -285,8 +317,9 @@ export function useLibraryNotes(active: boolean, idle: boolean, project: string 
       timer.current = null
     }
     waiting.current = null
-    void window.desk
-      .removeLibraryNote(id)
+    // A write already on its way would recreate the file after the remove.
+    void inFlight.current
+      .then(() => window.desk.removeLibraryNote(id))
       .then(() => {
         writing.current = false
         setEditing(false)
@@ -325,5 +358,6 @@ export function useLibraryNotes(active: boolean, idle: boolean, project: string 
     addFolder,
     renameFolder,
     removeFolder,
+    flush,
   }
 }

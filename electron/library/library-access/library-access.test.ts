@@ -33,9 +33,11 @@ describe('whether agents may read a project library', () => {
     expect(await libraryOpenToAgents('/a')).toBe(true)
   })
 
-  it('shrugs off a broken file and treats it as open', async () => {
-    const { writeFileSync } = await import('node:fs')
+  it('sets a broken file aside, treats every project as open, and keeps a copy', async () => {
+    const { writeFileSync, existsSync } = await import('node:fs')
     writeFileSync(join(userData, 'library-agents.json'), '{not json')
     expect(await libraryOpenToAgents('/a')).toBe(true)
+    expect(existsSync(join(userData, 'library-agents.json.broken'))).toBe(true)
+    expect(existsSync(join(userData, 'library-agents.json'))).toBe(false)
   })
 })

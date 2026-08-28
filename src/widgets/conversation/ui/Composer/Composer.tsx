@@ -201,21 +201,16 @@ export function Composer({
             selected={model}
             onSelect={(id) => onModel(id as ModelChoice)}
             label={t`Model`}
+            sub={{
+              icon: <Gauge />,
+              label: t`Effort`,
+              options: EFFORTS,
+              selected: effort,
+              onSelect: (id) => onEffort(id as EffortChoice),
+            }}
             note={
               sessionLive
-                ? t`The running session keeps its model. This applies from the next one.`
-                : null
-            }
-          />
-          <ChoicePicker
-            icon={<Gauge />}
-            options={EFFORTS}
-            selected={effort}
-            onSelect={(id) => onEffort(id as EffortChoice)}
-            label={t`Effort`}
-            note={
-              sessionLive
-                ? t`The running session keeps its effort. This applies from the next one.`
+                ? t`The running session keeps its model and effort. This applies from the next one.`
                 : null
             }
           />

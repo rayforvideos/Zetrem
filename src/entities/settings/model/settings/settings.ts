@@ -3,8 +3,8 @@ import type { Settings } from './settings.types'
 import { SIDEBAR } from '@/shared/config/theme'
 // Not the barrel: the main process reads settings, and the barrel pulls UserFace's PNG art.
 import { isFaceId, tidyUserName } from '@/entities/user/@x/settings'
+import { NAMED_EFFORTS } from '@/entities/claude-cli/@x/settings'
 import type { EffortChoice, ModelChoice, PermissionMode } from '@/entities/claude-cli/@x/settings'
-import { NAMED_EFFORTS } from '@/entities/claude-cli/model/effort-choice/effort-choice'
 
 const EFFORT_IDS: EffortChoice[] = ['default', ...NAMED_EFFORTS]
 

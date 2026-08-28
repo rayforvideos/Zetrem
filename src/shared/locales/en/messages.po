@@ -840,7 +840,7 @@ msgstr "Editing"
 msgid "Edits files freely, asks before running commands"
 msgstr "Edits files freely, asks before running commands"
 
-#: src/widgets/conversation/ui/Composer/Composer.tsx:215
+#: src/widgets/conversation/ui/Composer/Composer.tsx:206
 #: src/widgets/setup/ui/SetupPane/SetupPane.tsx:158
 msgid "Effort"
 msgstr "Effort"
@@ -1659,7 +1659,7 @@ msgstr "Searching"
 msgid "See what they did"
 msgstr "See what they did"
 
-#: src/widgets/conversation/ui/Composer/Composer.tsx:247
+#: src/widgets/conversation/ui/Composer/Composer.tsx:242
 msgid "Send"
 msgstr "Send"
 
@@ -1819,7 +1819,7 @@ msgstr "Still signed in. Sign out did not take effect."
 msgid "Stock rules"
 msgstr "Stock rules"
 
-#: src/widgets/conversation/ui/Composer/Composer.tsx:236
+#: src/widgets/conversation/ui/Composer/Composer.tsx:231
 msgid "Stop"
 msgstr "Stop"
 
@@ -2005,13 +2005,9 @@ msgstr "The request was rejected"
 msgid "The running session goes on without the library. Agents read it from the next one."
 msgstr "The running session goes on without the library. Agents read it from the next one."
 
-#: src/widgets/conversation/ui/Composer/Composer.tsx:218
-msgid "The running session keeps its effort. This applies from the next one."
-msgstr "The running session keeps its effort. This applies from the next one."
-
-#: src/widgets/conversation/ui/Composer/Composer.tsx:206
-msgid "The running session keeps its model. This applies from the next one."
-msgstr "The running session keeps its model. This applies from the next one."
+#: src/widgets/conversation/ui/Composer/Composer.tsx:213
+msgid "The running session keeps its model and effort. This applies from the next one."
+msgstr "The running session keeps its model and effort. This applies from the next one."
 
 #: src/pages/workspace/model/library/useLibraryAccess.ts:41
 msgid "The running session keeps the library. Agents stop seeing it from the next one."

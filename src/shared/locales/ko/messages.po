@@ -840,7 +840,7 @@ msgstr "고치는 중"
 msgid "Edits files freely, asks before running commands"
 msgstr "파일은 알아서 고치고, 명령을 실행할 때만 묻습니다"
 
-#: src/widgets/conversation/ui/Composer/Composer.tsx:215
+#: src/widgets/conversation/ui/Composer/Composer.tsx:206
 #: src/widgets/setup/ui/SetupPane/SetupPane.tsx:158
 msgid "Effort"
 msgstr "노력"
@@ -859,7 +859,7 @@ msgstr "내보낸 팀원마다 카드가 하나씩 생깁니다. 이름, 맡은 
 
 #: src/entities/settings/config/choices/choices.ts:39
 msgid "Everything it has. Slowest and priciest"
-msgstr "가진 걸 다 써요. 가장 느리고 가장 비싸요"
+msgstr "가진 것을 다 씁니다. 가장 느리고 가장 비쌉니다"
 
 #: src/widgets/team-sidebar/lib/member-draft/member-draft.ts:34
 #: src/widgets/team-sidebar/ui/ToolPicker/ToolPicker.tsx:61
@@ -947,7 +947,7 @@ msgstr "계정 설정을 따릅니다"
 
 #: src/entities/settings/config/choices/choices.ts:34
 msgid "Follows your Claude Code setting"
-msgstr "Claude Code 설정을 따라요"
+msgstr "Claude Code 설정을 따릅니다"
 
 #. placeholder {0}: entry.from
 #: src/widgets/tile-deck/ui/layers/Transcript/Transcript.tsx:46
@@ -993,7 +993,7 @@ msgstr "넘기는 중"
 
 #: src/entities/settings/config/choices/choices.ts:38
 msgid "Hard problems. Much slower"
-msgstr "어려운 문제. 훨씬 느려요"
+msgstr "어려운 문제용. 훨씬 느립니다"
 
 #: src/widgets/tile-deck/lib/leading/leading.ts:11
 msgid "Held up"
@@ -1420,7 +1420,7 @@ msgstr "프로젝트"
 
 #: src/entities/settings/config/choices/choices.ts:35
 msgid "Quick answers. Least thinking, cheapest"
-msgstr "빠른 답. 가장 적게 생각하고 가장 싸요"
+msgstr "빠른 답. 가장 적게 생각하고 가장 저렴합니다"
 
 #: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:104
 msgid "Ran"
@@ -1659,7 +1659,7 @@ msgstr "찾는 중"
 msgid "See what they did"
 msgstr "무엇을 했는지 보기"
 
-#: src/widgets/conversation/ui/Composer/Composer.tsx:247
+#: src/widgets/conversation/ui/Composer/Composer.tsx:242
 msgid "Send"
 msgstr "보내기"
 
@@ -1819,7 +1819,7 @@ msgstr "아직 로그인 상태입니다. 로그아웃이 되지 않았습니다
 msgid "Stock rules"
 msgstr "재고 규칙"
 
-#: src/widgets/conversation/ui/Composer/Composer.tsx:236
+#: src/widgets/conversation/ui/Composer/Composer.tsx:231
 msgid "Stop"
 msgstr "멈추기"
 
@@ -2005,13 +2005,9 @@ msgstr "요청이 거부됐습니다"
 msgid "The running session goes on without the library. Agents read it from the next one."
 msgstr "지금 세션은 라이브러리 없이 이어져요. 다음 세션부터 참고해요."
 
-#: src/widgets/conversation/ui/Composer/Composer.tsx:218
-msgid "The running session keeps its effort. This applies from the next one."
-msgstr "지금 세션은 노력 수준을 그대로 써요. 다음 세션부터 적용돼요."
-
-#: src/widgets/conversation/ui/Composer/Composer.tsx:206
-msgid "The running session keeps its model. This applies from the next one."
-msgstr "실행 중인 세션은 쓰던 모델을 그대로 씁니다. 다음 세션부터 바뀝니다."
+#: src/widgets/conversation/ui/Composer/Composer.tsx:213
+msgid "The running session keeps its model and effort. This applies from the next one."
+msgstr "실행 중인 세션은 모델과 노력 수준을 그대로 씁니다. 다음 세션부터 적용됩니다."
 
 #: src/pages/workspace/model/library/useLibraryAccess.ts:41
 msgid "The running session keeps the library. Agents stop seeing it from the next one."
@@ -2060,7 +2056,7 @@ msgstr "생각하는 중"
 
 #: src/entities/settings/config/choices/choices.ts:37
 msgid "Thinks longer. Slower and pricier"
-msgstr "더 오래 생각해요. 느리고 비싸요"
+msgstr "더 오래 생각합니다. 느리고 비쌉니다"
 
 #: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:235
 #: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:208

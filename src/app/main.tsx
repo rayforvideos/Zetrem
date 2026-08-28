@@ -1,6 +1,7 @@
 import { StrictMode, useSyncExternalStore } from 'react'
 import { createRoot } from 'react-dom/client'
 import { i18n } from '@lingui/core'
+import { I18nProvider } from '@lingui/react'
 import { WorkspaceScreen } from '@/pages/workspace'
 import { Boundary } from './Boundary'
 import { Toaster } from '@/shared/ui/sonner'
@@ -36,15 +37,20 @@ void firstTongue()
   .finally(() => {
     createRoot(root).render(
       <StrictMode>
-        <Boundary>
-          <Root />
-          <Toaster
-            position="bottom-right"
-            offset={{ bottom: USAGE_BAR.height + 12, right: 16 }}
-            richColors
-            closeButton
-          />
-        </Boundary>
+        {/* <Trans> and useLingui read i18n from this provider; without it the
+            first screen that renders one (the account field when claude is
+            not found) throws "Cannot read properties of null (reading 'i18n')". */}
+        <I18nProvider i18n={i18n}>
+          <Boundary>
+            <Root />
+            <Toaster
+              position="bottom-right"
+              offset={{ bottom: USAGE_BAR.height + 12, right: 16 }}
+              richColors
+              closeButton
+            />
+          </Boundary>
+        </I18nProvider>
       </StrictMode>,
     )
   })

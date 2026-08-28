@@ -185,6 +185,10 @@ describe('writing', () => {
     expect(existsSync(join(root, 'one.md'))).toBe(true)
     const renamed = await renameNote(root, 'one.md', 'ONE', NOW)
     expect(renamed?.id).toBe('ONE.md')
+    // Another file that merely matches by case is still a collision.
+    file('alpha.md', headed('Alpha', 'a'))
+    file('beta.md', headed('Beta', 'b'))
+    expect(await renameNote(root, 'alpha.md', 'beta', NOW)).toBeNull()
   })
 
   it('renames a note in place, updating its head, and refuses a taken name', async () => {
@@ -193,7 +197,7 @@ describe('writing', () => {
     const moved = await renameNote(root, 'one.md', 'Uno', NOW)
     expect(moved).toMatchObject({ id: 'Uno.md', title: 'Uno', updatedAtMs: NOW })
     expect(existsSync(join(root, 'one.md'))).toBe(false)
-    expect(await renameNote(root, 'Uno.md', 'Two')).toBeNull()
+    expect(await renameNote(root, 'Uno.md', 'two')).toBeNull()
   })
 
   it('removes only a real note id', async () => {

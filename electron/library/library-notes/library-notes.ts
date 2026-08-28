@@ -92,6 +92,15 @@ async function isDir(path: string): Promise<boolean> {
   }
 }
 
+async function sameFile(a: string, b: string): Promise<boolean> {
+  try {
+    const [one, two] = await Promise.all([stat(a), stat(b)])
+    return one.ino === two.ino && one.dev === two.dev
+  } catch {
+    return false
+  }
+}
+
 async function taken(path: string): Promise<boolean> {
   try {
     await lstat(path)
@@ -330,8 +339,10 @@ export async function renameNote(
   const next = idOf(folder, title)
   if (next !== id) {
     const to = await target(root, next)
-    const sameFile = next.toLowerCase() === id.toLowerCase()
-    if (to === null || (!sameFile && (await taken(to)))) return null
+    if (to === null) return null
+    // A name already there blocks the rename, unless it is this very file seen
+    // through a case-insensitive disk: then only the case is changing.
+    if ((await taken(to)) && !(await sameFile(join(root, id), to))) return null
     try {
       await rename(join(root, id), to)
     } catch {

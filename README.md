@@ -69,7 +69,7 @@ would get in a terminal.
 
 ## Running it
 
-You need Node 20.19 or newer. The [Claude Code](https://claude.com/claude-code)
+You need Node 22.13 or newer. The [Claude Code](https://claude.com/claude-code)
 CLI is found wherever its installers put it, and if it is missing the setup
 screen offers to install it; signing in happens there too.
 

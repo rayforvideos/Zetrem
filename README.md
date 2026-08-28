@@ -61,9 +61,10 @@ Zetrem lays that same information out on a screen:
 - what has finished so far
 - whether anything is waiting for approval
 
-It does not touch the answers. No persona, no style rules and no extra
-instructions are passed to the CLI, so the same question gets the same reply it
-would get in a terminal.
+It does not touch the answers. No persona and no style rules are passed to the
+CLI; the one thing Zetrem adds is the project's library and how to use it, so
+the same question gets the same reply it would get in a terminal, informed by
+what the project already knows.
 
 ---
 
@@ -87,8 +88,8 @@ go without asking, and start.
 
 When you hand over a job, this is what happens:
 
-1. **Zetrem starts one Claude Code session** with your teammates declared to it,
-   and reads its `stream-json` output.
+1. **Zetrem starts one Claude Code session** with your teammates and the
+   project's library declared to it, and reads its `stream-json` output.
 2. **The orchestrator decides who gets what.** It can read, edit and run things
    itself, or hand a piece to a teammate whose brief fits.
 3. **Each teammate gets a tile** carrying their name, what they were asked, how
@@ -122,9 +123,11 @@ to read first. Both are passed to the session.
 
 | | |
 |---|---|
+| **Library** | Notes each project keeps, under its own `.zetrem/library`. Agents search it before they say they do not know and file what they learn; "To library" under an answer files that answer. A switch in the composer decides, per project, whether sessions get it. |
 | **Teammates** | Created in the app, stored per user. Callable from any project, each with its own model, tools and reading list. |
 | **Built-in agents** | The agents Claude Code provides. Each can be switched off. |
 | **Permission modes** | Ask first · Auto-edit (edits files, asks before commands) · Allow all. |
+| **Model and effort** | Picked where you type, applied from the next session: the model, and Claude Code's effort level (low to max) under it. |
 | **Connectors** | Add, sign into and remove MCP servers in the app. |
 | **Plugins** | Browse and install marketplaces in the app. |
 | **Usage** | Shows your account limits, including per-model limits where they exist. |
@@ -180,11 +183,15 @@ Security issues go through [SECURITY.md](SECURITY.md), privately.
 ## Data and network
 
 There is no analytics, no crash reporting and no account of ours. Zetrem makes
-one request of its own, to `registry.npmjs.org`, to check whether a newer Claude
-Code has been published. All other traffic is the CLI you installed, using your
-account.
+two requests of its own: to `registry.npmjs.org`, to check whether a newer
+Claude Code has been published, and to GitHub Releases, to fetch its own
+updates. All other traffic is the CLI you installed, using your account.
 
-Conversations, teammates and settings are files in the app's data directory.
+Conversations, teammates and settings are files in the app's data directory;
+a removed conversation goes to a `trash/` folder there, never unlinked. A
+project's library is Markdown files inside the project itself, under
+`.zetrem/library`, so it travels with the folder. Each library is served to
+sessions by a local MCP server on `127.0.0.1` with a per-launch token.
 Signing in and out is handled by the CLI, so signing out here signs out every
 Claude Code on the computer.
 

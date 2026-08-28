@@ -11,8 +11,13 @@ if (!existsSync('out/main/index.js')) {
   process.exit(1)
 }
 
-const child = spawn(electron, ['.', `--remote-debugging-port=${PORT}`], {
-  env: { ...process.env, ZETREM_SMOKE: '1' },
+// A CI Linux box has no display of its own and no user namespaces for the
+// sandbox; xvfb gives it the first, these flags excuse the rest.
+const LINUX_FLAGS =
+  process.platform === 'linux' ? ['--no-sandbox', '--disable-gpu', '--disable-dev-shm-usage'] : []
+
+const child = spawn(electron, ['.', `--remote-debugging-port=${PORT}`, ...LINUX_FLAGS], {
+  env: { ...process.env, ZETREM_SMOKE: '1', ELECTRON_ENABLE_LOGGING: '1' },
   stdio: ['ignore', 'pipe', 'pipe'],
 })
 let said = ''
@@ -26,7 +31,7 @@ child.on('exit', (exit) => (code = exit))
 
 function stop(status, why) {
   console.log(why)
-  if (said.trim().length > 0) console.log(`--- app output ---\n${said.trim().slice(-2000)}`)
+  console.log(`--- app output (exit ${code}) ---\n${said.trim().slice(-3000) || '(nothing)'}`)
   try {
     child.kill('SIGKILL')
   } catch {

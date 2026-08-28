@@ -19,6 +19,12 @@ describe('reading claude auth status', () => {
     })
   })
 
+  it('reads signed out from a non-zero exit that still printed its JSON', () => {
+    expect(authFailureOf({ code: 1, stdout: '{\n  "loggedIn": false\n}\n' })).toEqual({
+      state: 'signed-out',
+    })
+  })
+
   it('tells a missing binary from a hang from a failed run', () => {
     expect(authFailureOf({ code: 'ENOENT' })).toEqual({ state: 'cli-missing' })
     expect(authFailureOf({ killed: true })).toEqual({

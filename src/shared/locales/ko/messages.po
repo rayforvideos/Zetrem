@@ -512,7 +512,7 @@ msgstr "계정과 프로젝트, 권한을 바꿉니다"
 msgid "Character"
 msgstr "캐릭터"
 
-#: src/widgets/setup/ui/AccountField/AccountField.tsx:54
+#: src/widgets/setup/ui/AccountField/AccountField.tsx:111
 msgid "Check again"
 msgstr "다시 확인"
 
@@ -542,9 +542,9 @@ msgstr "묻지 않고 실행해도 되는 범위를 정하고, 남은 사용량�
 msgid "Claude Code"
 msgstr ""
 
-#: src/widgets/setup/ui/AccountField/AccountField.tsx:57
-msgid "Claude Code did not say whether you are signed in, so nothing was changed."
-msgstr "Claude Code가 로그인 상태를 알려주지 않아서, 아무것도 바꾸지 않았어요."
+#: src/widgets/setup/ui/AccountField/AccountField.tsx:114
+msgid "Claude Code did not say whether you are signed in."
+msgstr "Claude Code가 로그인 상태를 알려주지 않았습니다."
 
 #: src/entities/claude-cli/lib/exit-line/exit-line.ts:11
 msgid "Claude Code stopped without a word (exit {code}). Your next message starts a new session."
@@ -1011,7 +1011,7 @@ msgstr "높음"
 msgid "Hire"
 msgstr "채용"
 
-#: src/widgets/setup/ui/AccountField/AccountField.tsx:115
+#: src/widgets/setup/ui/AccountField/AccountField.tsx:120
 msgid "If the browser did not open, <0>open this link</0>."
 msgstr "브라우저가 열리지 않았다면 <0>이 링크를 여세요</0>."
 
@@ -1728,12 +1728,12 @@ msgstr "Anthropic 계정으로 로그인하세요"
 msgid "Sign in was refused"
 msgstr "로그인이 거절됐습니다"
 
-#: src/widgets/setup/ui/AccountField/AccountField.tsx:111
+#: src/widgets/setup/ui/AccountField/AccountField.tsx:101
 msgid "Sign in with Anthropic"
 msgstr "Anthropic 계정으로 로그인"
 
+#: src/widgets/setup/ui/AccountField/AccountField.tsx:69
 #: src/widgets/setup/ui/AccountField/AccountField.tsx:81
-#: src/widgets/setup/ui/AccountField/AccountField.tsx:93
 #: src/widgets/setup/ui/PluginShelf/ConnectorsTab.tsx:86
 msgid "Sign out"
 msgstr "로그아웃"
@@ -1754,7 +1754,7 @@ msgstr "로그인·로그아웃은 여기서, 삭제는 claude.ai에서 합니�
 msgid "Signed out of"
 msgstr "로그아웃했습니다:"
 
-#: src/widgets/setup/ui/AccountField/AccountField.tsx:111
+#: src/widgets/setup/ui/AccountField/AccountField.tsx:101
 msgid "Signing in through your browser…"
 msgstr "브라우저에서 로그인하는 중…"
 
@@ -1762,7 +1762,7 @@ msgstr "브라우저에서 로그인하는 중…"
 msgid "Signing out stops the running session, and every other Claude Code on this computer."
 msgstr "실행 중인 세션이 멈추고, 이 컴퓨터의 다른 Claude Code도 전부 로그아웃됩니다."
 
-#: src/widgets/setup/ui/AccountField/AccountField.tsx:81
+#: src/widgets/setup/ui/AccountField/AccountField.tsx:69
 msgid "Signing out…"
 msgstr "로그아웃하는 중…"
 
@@ -1807,7 +1807,7 @@ msgstr "새 대화를 시작합니다"
 msgid "Starting"
 msgstr "시작하는 중"
 
-#: src/widgets/setup/ui/AccountField/AccountField.tsx:92
+#: src/widgets/setup/ui/AccountField/AccountField.tsx:80
 msgid "Stay signed in"
 msgstr "로그인 유지"
 

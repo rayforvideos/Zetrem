@@ -23,15 +23,22 @@ export function authStatusOf(stdout: string): AuthStatus {
   }
 }
 
-// The run itself failed: no binary, a hang, or a non-zero exit.
+// The run ended badly. Signed out is one such ending: the CLI exits non-zero
+// and still prints its JSON, so what it printed is read before anything else
+// is concluded. Only a run that said nothing usable is unreachable.
 export function authFailureOf(cause: unknown): AuthStatus {
   const failed = cause as {
     code?: string | number
     killed?: boolean
+    stdout?: string
     stderr?: string
     message?: string
   }
   if (failed.code === 'ENOENT') return { state: 'cli-missing' }
+  if (typeof failed.stdout === 'string' && failed.stdout.includes('{')) {
+    const said = authStatusOf(failed.stdout)
+    if (said.state !== 'unreachable') return said
+  }
   const said = failed.killed
     ? 'claude auth status did not answer in time'
     : (failed.stderr || failed.message || 'claude auth status failed').trim()

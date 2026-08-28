@@ -512,7 +512,7 @@ msgstr "Change account, project, and permissions"
 msgid "Character"
 msgstr "Character"
 
-#: src/widgets/setup/ui/AccountField/AccountField.tsx:54
+#: src/widgets/setup/ui/AccountField/AccountField.tsx:111
 msgid "Check again"
 msgstr "Check again"
 
@@ -542,9 +542,9 @@ msgstr "Choose what can run without asking, check your remaining limits along th
 msgid "Claude Code"
 msgstr "Claude Code"
 
-#: src/widgets/setup/ui/AccountField/AccountField.tsx:57
-msgid "Claude Code did not say whether you are signed in, so nothing was changed."
-msgstr "Claude Code did not say whether you are signed in, so nothing was changed."
+#: src/widgets/setup/ui/AccountField/AccountField.tsx:114
+msgid "Claude Code did not say whether you are signed in."
+msgstr "Claude Code did not say whether you are signed in."
 
 #: src/entities/claude-cli/lib/exit-line/exit-line.ts:11
 msgid "Claude Code stopped without a word (exit {code}). Your next message starts a new session."
@@ -1011,7 +1011,7 @@ msgstr "High"
 msgid "Hire"
 msgstr "Hire"
 
-#: src/widgets/setup/ui/AccountField/AccountField.tsx:115
+#: src/widgets/setup/ui/AccountField/AccountField.tsx:120
 msgid "If the browser did not open, <0>open this link</0>."
 msgstr "If the browser did not open, <0>open this link</0>."
 
@@ -1728,12 +1728,12 @@ msgstr "Sign in to your Anthropic account"
 msgid "Sign in was refused"
 msgstr "Sign in was refused"
 
-#: src/widgets/setup/ui/AccountField/AccountField.tsx:111
+#: src/widgets/setup/ui/AccountField/AccountField.tsx:101
 msgid "Sign in with Anthropic"
 msgstr "Sign in with Anthropic"
 
+#: src/widgets/setup/ui/AccountField/AccountField.tsx:69
 #: src/widgets/setup/ui/AccountField/AccountField.tsx:81
-#: src/widgets/setup/ui/AccountField/AccountField.tsx:93
 #: src/widgets/setup/ui/PluginShelf/ConnectorsTab.tsx:86
 msgid "Sign out"
 msgstr "Sign out"
@@ -1754,7 +1754,7 @@ msgstr "Signed in and out here. To remove one, go to claude.ai."
 msgid "Signed out of"
 msgstr "Signed out of"
 
-#: src/widgets/setup/ui/AccountField/AccountField.tsx:111
+#: src/widgets/setup/ui/AccountField/AccountField.tsx:101
 msgid "Signing in through your browser…"
 msgstr "Signing in through your browser…"
 
@@ -1762,7 +1762,7 @@ msgstr "Signing in through your browser…"
 msgid "Signing out stops the running session, and every other Claude Code on this computer."
 msgstr "Signing out stops the running session, and every other Claude Code on this computer."
 
-#: src/widgets/setup/ui/AccountField/AccountField.tsx:81
+#: src/widgets/setup/ui/AccountField/AccountField.tsx:69
 msgid "Signing out…"
 msgstr "Signing out…"
 
@@ -1807,7 +1807,7 @@ msgstr "Start a conversation from scratch"
 msgid "Starting"
 msgstr "Starting"
 
-#: src/widgets/setup/ui/AccountField/AccountField.tsx:92
+#: src/widgets/setup/ui/AccountField/AccountField.tsx:80
 msgid "Stay signed in"
 msgstr "Stay signed in"
 

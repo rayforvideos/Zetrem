@@ -20,9 +20,11 @@ const LOGOUT_TIMEOUT_MS = 20_000
 
 export async function readAuthStatus(): Promise<AuthStatus> {
   try {
-    const { stdout } = await execFileAsync(await claudeBin(), ['auth', 'status', '--json'], {
+    const launch = launchFor(await claudeBin(), ['auth', 'status', '--json'])
+    const { stdout } = await execFileAsync(launch.command, launch.args, {
       env: agentEnv(process.env, await loginPath()),
       timeout: STATUS_TIMEOUT_MS,
+      windowsHide: true,
     })
     return authStatusOf(stdout)
   } catch (cause) {
@@ -37,9 +39,11 @@ export function registerAuth(): void {
     const env = agentEnv(process.env, await loginPath())
     let failure: string | null = null
     try {
-      await execFileAsync(await claudeBin(), ['auth', 'logout'], {
+      const launch = launchFor(await claudeBin(), ['auth', 'logout'])
+      await execFileAsync(launch.command, launch.args, {
         env,
         timeout: LOGOUT_TIMEOUT_MS,
+        windowsHide: true,
       })
     } catch (cause) {
       const error = cause as { stderr?: string; message?: string }

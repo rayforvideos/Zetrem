@@ -48,18 +48,6 @@ export function AccountField({ account }: { account: Account }) {
             <FieldDescription className="w-full text-destructive">{account.error}</FieldDescription>
           )}
         </div>
-      ) : auth?.state === 'unreachable' ? (
-        <div className="flex flex-wrap items-center gap-3">
-          <Button size="sm" onClick={account.onRecheck} className="rounded-full">
-            {t`Check again`}
-          </Button>
-          <FieldDescription className="w-full">
-            {t`Claude Code did not say whether you are signed in, so nothing was changed.`}
-          </FieldDescription>
-          <FieldDescription className="w-full break-all text-muted-foreground">
-            {auth.said}
-          </FieldDescription>
-        </div>
       ) : auth?.state === 'signed-in' ? (
         <>
           <div className="flex flex-wrap items-center gap-3 rounded-xl bg-card px-3.5 py-2.5 text-sm">
@@ -100,6 +88,8 @@ export function AccountField({ account }: { account: Account }) {
           </FieldDescription>
         </>
       ) : (
+        // Signed out, or the CLI did not say: either way signing in is the
+        // next step, and the button for it is here.
         <div className="flex flex-wrap items-center gap-3">
           <Button
             size="sm"
@@ -110,6 +100,21 @@ export function AccountField({ account }: { account: Account }) {
             {account.signingIn && <Spinner data-icon="inline-start" />}
             {account.signingIn ? t`Signing in through your browser…` : t`Sign in with Anthropic`}
           </Button>
+          {auth?.state === 'unreachable' && (
+            <>
+              <Button
+                size="sm"
+                variant="ghost"
+                onClick={account.onRecheck}
+                className="rounded-full text-muted-foreground"
+              >
+                {t`Check again`}
+              </Button>
+              <FieldDescription className="w-full break-all">
+                {t`Claude Code did not say whether you are signed in.`} {auth.said}
+              </FieldDescription>
+            </>
+          )}
           {account.note !== '' && (
             <FieldDescription className="w-full break-all">
               <Trans>

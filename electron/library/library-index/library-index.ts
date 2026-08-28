@@ -98,8 +98,15 @@ function migrate(db: DatabaseSync): void {
 
 export function openLibraryIndex(file: string): LibraryIndex {
   const db = new DatabaseSync(file)
-  db.exec('PRAGMA journal_mode = WAL')
-  migrate(db)
+  try {
+    db.exec('PRAGMA journal_mode = WAL')
+    migrate(db)
+  } catch (cause: unknown) {
+    // The handle is released before the error leaves: Windows will not let
+    // a file that is still open be removed and rebuilt.
+    db.close()
+    throw cause
+  }
 
   const hashes = db.prepare('SELECT id, hash FROM notes')
   const removeNote = db.prepare('DELETE FROM notes WHERE id = ?')

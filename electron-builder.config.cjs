@@ -54,7 +54,10 @@ module.exports = {
     enableEmbeddedAsarIntegrityValidation: true,
     onlyLoadAppFromAsar: true,
     enableCookieEncryption: true,
-    grantFileProtocolExtraPrivileges: false,
+    // Stays on: the renderer is a file:// page inside app.asar, and this is the
+    // privilege that lets file:// read from the archive. With it off the
+    // packaged window opens on ERR_FILE_NOT_FOUND (seen on both platforms).
+    grantFileProtocolExtraPrivileges: true,
   },
   mac: {
     icon: 'resources/icon.icns',

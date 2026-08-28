@@ -9,6 +9,11 @@ on:
         default: false
   push:
     tags: ['v*']
+  # Every change headed for master is built, launched and smoked on both
+  # platforms first: a crash that only Windows shows is caught here, not by
+  # the people who install the release.
+  pull_request:
+    branches: [master]
 
 concurrency:
   group: platforms-${{ github.workflow }}-${{ github.ref }}

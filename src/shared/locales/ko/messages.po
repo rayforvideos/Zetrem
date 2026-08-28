@@ -165,11 +165,11 @@ msgstr "{n}분 전"
 msgid "{name} can be called this session"
 msgstr "{name}은(는) 이번 세션에서 부를 수 있습니다"
 
-#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:259
+#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:260
 msgid "{name} is off. The running session keeps them until it ends."
 msgstr "{name}을(를) 껐습니다. 실행 중인 세션은 끝날 때까지 그대로 데리고 있습니다."
 
-#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:258
+#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:259
 msgid "{name} is on. The running session cannot call them yet."
 msgstr "{name}을(를) 켰습니다. 실행 중인 세션은 아직 부를 수 없습니다."
 
@@ -373,7 +373,7 @@ msgstr "첫 팀원을 만들어 보세요"
 msgid "Added {name}. Sign in if it asks."
 msgstr "{name} 추가했습니다. 로그인이 필요하면 로그인하세요."
 
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:163
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:169
 msgid "Agents"
 msgstr "에이전트"
 
@@ -381,11 +381,11 @@ msgstr "에이전트"
 msgid "Agents file what they learn while the library button is on."
 msgstr "라이브러리 버튼이 켜져 있으면 에이전트도 여기에 남겨요."
 
-#: src/widgets/conversation/ui/Composer/Composer.tsx:184
+#: src/widgets/conversation/ui/Composer/Composer.tsx:186
 msgid "Agents search the library and file what they learn. Click to turn it off."
 msgstr "에이전트가 라이브러리를 검색하고 알게 된 것을 기록해요. 누르면 꺼져요."
 
-#: src/widgets/conversation/ui/Composer/Composer.tsx:185
+#: src/widgets/conversation/ui/Composer/Composer.tsx:187
 msgid "Agents work without the library. Click to turn it on."
 msgstr "에이전트가 라이브러리 없이 일해요. 누르면 켜져요."
 
@@ -445,7 +445,7 @@ msgstr "파일을 고치거나 명령을 실행하기 전에 묻습니다"
 msgid "Attach"
 msgstr "첨부"
 
-#: src/widgets/conversation/ui/Composer/Composer.tsx:164
+#: src/widgets/conversation/ui/Composer/Composer.tsx:166
 msgid "Attach a file"
 msgstr "파일 첨부"
 
@@ -488,7 +488,7 @@ msgstr "연결 안 됨"
 
 #: src/widgets/library/ui/NoteList/NoteList.tsx:273
 #: src/widgets/library/ui/NoteReader/NoteReader.tsx:193
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:200
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:206
 #: src/widgets/team-sidebar/ui/ChatList/ChatRow.tsx:226
 #: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:340
 #: src/widgets/team-sidebar/ui/MemberMenu/MemberMenu.tsx:66
@@ -504,7 +504,7 @@ msgstr "장바구니 합계와 반올림"
 msgid "Change"
 msgstr "바꾸기"
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:429
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:433
 msgid "Change account, project, and permissions"
 msgstr "계정과 프로젝트, 권한을 바꿉니다"
 
@@ -554,7 +554,7 @@ msgstr "Claude Code가 아무 말 없이 멈췄어요 (종료 코드 {code}). �
 msgid "Claude Code, with a screen"
 msgstr "Claude Code에 화면을 붙였습니다"
 
-#: src/widgets/conversation/ui/Composer/Composer.tsx:115
+#: src/widgets/conversation/ui/Composer/Composer.tsx:117
 #: src/widgets/team-sidebar/ui/ToolPicker/ToolPicker.tsx:71
 msgid "Clear"
 msgstr "지우기"
@@ -647,8 +647,8 @@ msgstr "저장된 대화 목록을 읽지 못했습니다"
 msgid "Could not open that chat"
 msgstr "그 대화를 열지 못했습니다"
 
-#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:194
-#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:205
+#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:195
+#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:206
 msgid "Could not open that folder"
 msgstr "그 폴더를 열지 못했습니다"
 
@@ -704,7 +704,7 @@ msgstr "설정을 읽지 못했습니다"
 msgid "Could not read your sign-in"
 msgstr "로그인 상태를 읽지 못했습니다"
 
-#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:225
+#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:226
 msgid "Could not remove that project"
 msgstr "프로젝트를 지우지 못했습니다"
 
@@ -712,7 +712,7 @@ msgstr "프로젝트를 지우지 못했습니다"
 msgid "Could not rename that chat"
 msgstr "대화 이름을 바꾸지 못했습니다"
 
-#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:72
+#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:73
 msgid "Could not reopen your last project"
 msgstr "마지막 프로젝트를 다시 열지 못했습니다"
 
@@ -742,6 +742,7 @@ msgid "Create a teammate and they'll show up here."
 msgstr "팀원을 만들면 여기에 나타납니다."
 
 #: src/entities/settings/config/choices/choices.ts:21
+#: src/entities/settings/config/choices/choices.ts:34
 msgid "Default"
 msgstr "기본값"
 
@@ -796,7 +797,7 @@ msgstr "이번 세션에서는 다시 묻지 않기"
 #: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:19
 #: src/widgets/library/ui/NoteReader/NoteReader.tsx:95
 #: src/widgets/setup/ui/PluginShelf/PluginShelf.tsx:129
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:204
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:210
 #: src/widgets/tile-deck/lib/state-word/state-word.ts:10
 msgid "Done"
 msgstr "완료"
@@ -839,13 +840,26 @@ msgstr "고치는 중"
 msgid "Edits files freely, asks before running commands"
 msgstr "파일은 알아서 고치고, 명령을 실행할 때만 묻습니다"
 
+#: src/widgets/conversation/ui/Composer/Composer.tsx:215
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:158
+msgid "Effort"
+msgstr "노력"
+
 #: src/widgets/welcome/lib/slides/slides.ts:26
 msgid "Every command is on screen"
 msgstr "실행한 명령이 전부 보입니다"
 
+#: src/entities/settings/config/choices/choices.ts:36
+msgid "Everyday work"
+msgstr "평소 작업"
+
 #: src/widgets/welcome/lib/slides/slides.ts:21
 msgid "Everyone you send out gets a card: their name, their task, and how long they have been at it. Open one to see what they were asked and what they sent back."
 msgstr "내보낸 팀원마다 카드가 하나씩 생깁니다. 이름, 맡은 일, 걸린 시간이 보입니다. 눌러 보면 무엇을 시켰고 뭐라고 답했는지 볼 수 있습니다."
+
+#: src/entities/settings/config/choices/choices.ts:39
+msgid "Everything it has. Slowest and priciest"
+msgstr "가진 걸 다 써요. 가장 느리고 가장 비싸요"
 
 #: src/widgets/team-sidebar/lib/member-draft/member-draft.ts:34
 #: src/widgets/team-sidebar/ui/ToolPicker/ToolPicker.tsx:61
@@ -931,6 +945,10 @@ msgstr "컴퓨터에 설정된 언어를 따릅니다"
 msgid "Follows your account setting"
 msgstr "계정 설정을 따릅니다"
 
+#: src/entities/settings/config/choices/choices.ts:34
+msgid "Follows your Claude Code setting"
+msgstr "Claude Code 설정을 따라요"
+
 #. placeholder {0}: entry.from
 #: src/widgets/tile-deck/ui/layers/Transcript/Transcript.tsx:46
 msgid "from {0}"
@@ -973,13 +991,21 @@ msgstr "일을 맡기기"
 msgid "Handing off"
 msgstr "넘기는 중"
 
+#: src/entities/settings/config/choices/choices.ts:38
+msgid "Hard problems. Much slower"
+msgstr "어려운 문제. 훨씬 느려요"
+
 #: src/widgets/tile-deck/lib/leading/leading.ts:11
 msgid "Held up"
 msgstr "멈춰 있음"
 
-#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:142
+#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:143
 msgid "Hide team sidebar"
 msgstr "팀 사이드바 접기"
+
+#: src/entities/settings/config/choices/choices.ts:37
+msgid "High"
+msgstr "높음"
 
 #: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:212
 msgid "Hire"
@@ -1054,7 +1080,7 @@ msgstr "너무 오래 걸려 중단했습니다"
 msgid "just now"
 msgstr "방금"
 
-#: src/widgets/conversation/ui/Composer/Composer.tsx:152
+#: src/widgets/conversation/ui/Composer/Composer.tsx:154
 #: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:95
 msgid "Keep going"
 msgstr "이어서 말하세요"
@@ -1091,7 +1117,7 @@ msgstr "영문, 숫자, 하이픈, 밑줄만 쓸 수 있습니다"
 msgid "Letters, numbers, hyphens. Sign in after adding if it asks."
 msgstr "영문, 숫자, 하이픈. 추가한 뒤 로그인을 요구하면 로그인하세요."
 
-#: src/widgets/conversation/ui/Composer/Composer.tsx:195
+#: src/widgets/conversation/ui/Composer/Composer.tsx:197
 #: src/widgets/library/ui/LibraryPane/LibraryPane.tsx:75
 #: src/widgets/team-sidebar/ui/TeamSidebar/TeamSidebar.tsx:88
 msgid "Library"
@@ -1105,7 +1131,11 @@ msgstr "라이브러리 안내"
 msgid "Linked from"
 msgstr "이 노트를 가리키는 노트"
 
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:176
+#: src/entities/settings/config/choices/choices.ts:35
+msgid "Low"
+msgstr "낮음"
+
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:182
 msgid "Manage"
 msgstr "관리"
 
@@ -1113,26 +1143,34 @@ msgstr "관리"
 msgid "manual"
 msgstr "수동"
 
+#: src/entities/settings/config/choices/choices.ts:39
+msgid "Max"
+msgstr "최대"
+
 #: src/entities/claude-cli/api/turn/turn.ts:96
 msgid "MCP server"
 msgstr "MCP 서버"
 
-#: src/widgets/conversation/ui/Composer/Composer.tsx:146
+#: src/entities/settings/config/choices/choices.ts:36
+msgid "Medium"
+msgstr "보통"
+
+#: src/widgets/conversation/ui/Composer/Composer.tsx:148
 msgid "Message for {addressee}"
 msgstr "{addressee}에게 보낼 말"
 
-#: src/widgets/conversation/ui/Composer/Composer.tsx:146
+#: src/widgets/conversation/ui/Composer/Composer.tsx:148
 msgid "Message your team"
 msgstr "팀에게 말하기"
 
-#: src/widgets/conversation/ui/Composer/Composer.tsx:201
+#: src/widgets/conversation/ui/Composer/Composer.tsx:203
 #: src/widgets/setup/ui/SetupPane/SetupPane.tsx:152
 #: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:107
 #: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:154
 msgid "Model"
 msgstr "모델"
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:365
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:369
 msgid "Model changed. The running session keeps its model."
 msgstr "모델을 바꿨습니다. 실행 중인 세션은 기존 모델을 유지합니다."
 
@@ -1326,12 +1364,12 @@ msgstr "서버 주소를 붙여넣으세요"
 msgid "Permission"
 msgstr "권한"
 
-#: src/widgets/conversation/ui/Composer/Composer.tsx:174
+#: src/widgets/conversation/ui/Composer/Composer.tsx:176
 #: src/widgets/setup/ui/SetupPane/SetupPane.tsx:146
 msgid "Permissions"
 msgstr "권한"
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:361
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:365
 msgid "Permissions changed. The running session follows the old ones."
 msgstr "권한을 바꿨습니다. 실행 중인 세션은 기존 권한을 따릅니다."
 
@@ -1356,7 +1394,7 @@ msgid "Plugin"
 msgstr "플러그인"
 
 #: src/widgets/setup/ui/PluginShelf/InstalledTab.tsx:37
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:172
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:178
 msgid "Plugins"
 msgstr "플러그인"
 
@@ -1379,6 +1417,10 @@ msgstr "지난 7일"
 #: src/widgets/setup/ui/ProjectField/ProjectField.tsx:9
 msgid "Project"
 msgstr "프로젝트"
+
+#: src/entities/settings/config/choices/choices.ts:35
+msgid "Quick answers. Least thinking, cheapest"
+msgstr "빠른 답. 가장 적게 생각하고 가장 싸요"
 
 #: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:104
 msgid "Ran"
@@ -1617,7 +1659,7 @@ msgstr "찾는 중"
 msgid "See what they did"
 msgstr "무엇을 했는지 보기"
 
-#: src/widgets/conversation/ui/Composer/Composer.tsx:233
+#: src/widgets/conversation/ui/Composer/Composer.tsx:247
 msgid "Send"
 msgstr "보내기"
 
@@ -1646,7 +1688,7 @@ msgstr "몇 가지만 정하면 바로 일을 시작합니다"
 msgid "Set for everyone on your account. They cannot be removed or turned off here."
 msgstr "계정 전체에 설정된 것입니다. 여기서는 지우거나 끌 수 없습니다."
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:431
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:435
 msgid "Settings"
 msgstr "설정"
 
@@ -1662,7 +1704,7 @@ msgstr "사용량 알 수 없음"
 msgid "Shift+Enter starts a new line. Off, sending takes the modifier key with Enter."
 msgstr "Shift+Enter로 줄을 바꿉니다. 끄면 보조키+Enter로 보냅니다."
 
-#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:142
+#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:143
 msgid "Show team sidebar"
 msgstr "팀 사이드바 펼치기"
 
@@ -1753,7 +1795,7 @@ msgid "Star it"
 msgstr "스타 주기"
 
 #: src/widgets/setup/ui/SetupPane/SetupPane.tsx:27
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:204
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:210
 msgid "Start"
 msgstr "시작"
 
@@ -1777,7 +1819,7 @@ msgstr "아직 로그인 상태입니다. 로그아웃이 되지 않았습니다
 msgid "Stock rules"
 msgstr "재고 규칙"
 
-#: src/widgets/conversation/ui/Composer/Composer.tsx:222
+#: src/widgets/conversation/ui/Composer/Composer.tsx:236
 msgid "Stop"
 msgstr "멈추기"
 
@@ -1833,7 +1875,7 @@ msgstr "전부 빼기"
 msgid "Take out of {0}"
 msgstr "{0}에서 빼기"
 
-#: src/widgets/conversation/ui/Composer/Composer.tsx:149
+#: src/widgets/conversation/ui/Composer/Composer.tsx:151
 msgid "Task for {addressee}"
 msgstr "{addressee}에게 맡길 일"
 
@@ -1885,7 +1927,7 @@ msgstr "<0>claude</0> 명령을 찾지 못했습니다. Zetrem이 대신 설치�
 msgid "The address has to be http or https"
 msgstr "주소는 http나 https여야 합니다"
 
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:165
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:171
 msgid "The agents Claude Code brings. Each can be switched off."
 msgstr "Claude Code가 기본으로 제공하는 에이전트입니다. 하나씩 끌 수 있습니다."
 
@@ -1963,7 +2005,11 @@ msgstr "요청이 거부됐습니다"
 msgid "The running session goes on without the library. Agents read it from the next one."
 msgstr "지금 세션은 라이브러리 없이 이어져요. 다음 세션부터 참고해요."
 
-#: src/widgets/conversation/ui/Composer/Composer.tsx:204
+#: src/widgets/conversation/ui/Composer/Composer.tsx:218
+msgid "The running session keeps its effort. This applies from the next one."
+msgstr "지금 세션은 노력 수준을 그대로 써요. 다음 세션부터 적용돼요."
+
+#: src/widgets/conversation/ui/Composer/Composer.tsx:206
 msgid "The running session keeps its model. This applies from the next one."
 msgstr "실행 중인 세션은 쓰던 모델을 그대로 씁니다. 다음 세션부터 바뀝니다."
 
@@ -2011,6 +2057,10 @@ msgstr "빨리 읽고, 지루해하는 법이 없습니다."
 #: src/widgets/conversation/lib/working/working.ts:73
 msgid "Thinking"
 msgstr "생각하는 중"
+
+#: src/entities/settings/config/choices/choices.ts:37
+msgid "Thinks longer. Slower and pricier"
+msgstr "더 오래 생각해요. 느리고 비싸요"
 
 #: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:235
 #: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:208
@@ -2070,7 +2120,7 @@ msgstr "팀원 셋이 붙었습니다. 결제 흐름, 장바구니 합계, 재�
 msgid "Title"
 msgstr "제목"
 
-#: src/widgets/conversation/ui/Composer/Composer.tsx:109
+#: src/widgets/conversation/ui/Composer/Composer.tsx:111
 msgid "To {addressee}"
 msgstr "{addressee}에게"
 
@@ -2128,6 +2178,10 @@ msgstr "업데이트하는 중…"
 msgid "Use https, or http only for a server on this machine"
 msgstr "https를 쓰세요. http는 이 컴퓨터의 서버일 때만 됩니다"
 
+#: src/entities/settings/config/choices/choices.ts:38
+msgid "Very high"
+msgstr "매우 높음"
+
 #: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:182
 msgid "Waiting for approval"
 msgstr "승인 대기 중"
@@ -2165,7 +2219,7 @@ msgstr "주간 {rest}"
 msgid "Weekly overage"
 msgstr "주간 초과분"
 
-#: src/widgets/conversation/ui/Composer/Composer.tsx:151
+#: src/widgets/conversation/ui/Composer/Composer.tsx:153
 msgid "What should they work on?"
 msgstr "무슨 일을 맡길까요?"
 
@@ -2270,7 +2324,7 @@ msgstr "같은 이름의 커넥터가 이미 있습니다"
 msgid "You decide what runs"
 msgstr "무엇을 실행할지 직접 정합니다"
 
-#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:237
+#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:238
 msgid "You left before the reply finished, so it stops here."
 msgstr "답변이 끝나기 전에 자리를 떠나서, 여기서 멈췄어요."
 
@@ -2286,7 +2340,7 @@ msgstr "왼쪽에서 대화합니다"
 msgid "Your account"
 msgstr "내 계정"
 
-#: src/entities/settings/config/choices/choices.ts:41
+#: src/entities/settings/config/choices/choices.ts:51
 msgid "Your account turned this one down. Try it again if your plan changed."
 msgstr "계정이 이 모델을 거절했습니다. 요금제가 바뀌었다면 다시 시도해 보세요."
 

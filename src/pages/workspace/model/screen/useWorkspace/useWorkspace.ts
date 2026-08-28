@@ -49,6 +49,7 @@ export function useWorkspace() {
   const runConfig = {
     permissionMode: settings.permissionMode,
     model: settings.model,
+    effort: settings.effort,
     people: peopleOf(defs),
     lock: lockOf(settings, defs, authored),
     resume: chat.resumeId,

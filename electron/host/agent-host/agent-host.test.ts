@@ -138,6 +138,7 @@ vi.mock('../../spawn/kill-tree/kill-tree', () => ({
 const config: RunConfig = {
   permissionMode: 'ask',
   model: 'default',
+  effort: 'default',
   persona: '',
   people: [],
   lock: null,

@@ -3,7 +3,10 @@ import type { Settings } from './settings.types'
 import { SIDEBAR } from '@/shared/config/theme'
 // Not the barrel: the main process reads settings, and the barrel pulls UserFace's PNG art.
 import { isFaceId, tidyUserName } from '@/entities/user/@x/settings'
-import type { ModelChoice, PermissionMode } from '@/entities/claude-cli/@x/settings'
+import type { EffortChoice, ModelChoice, PermissionMode } from '@/entities/claude-cli/@x/settings'
+import { NAMED_EFFORTS } from '@/entities/claude-cli/model/effort-choice/effort-choice'
+
+const EFFORT_IDS: EffortChoice[] = ['default', ...NAMED_EFFORTS]
 
 const TONGUES: Settings['tongue'][] = ['system', 'en', 'ko']
 
@@ -12,6 +15,7 @@ const THEMES: Settings['theme'][] = ['system', 'dark', 'light']
 export const DEFAULT_SETTINGS: Settings = {
   permissionMode: 'ask',
   model: 'default',
+  effort: 'default',
   refusedModels: [],
   userName: '',
   userFace: 'onigiri',
@@ -55,6 +59,7 @@ export function readSettings(saved: unknown): Settings {
   return {
     permissionMode: oneOf(MODE_IDS, source.permissionMode, DEFAULT_SETTINGS.permissionMode),
     model: oneOf(MODEL_IDS, source.model, DEFAULT_SETTINGS.model),
+    effort: oneOf(EFFORT_IDS, source.effort, DEFAULT_SETTINGS.effort),
     refusedModels: names(source.refusedModels, []).filter((one): one is ModelChoice =>
       MODEL_IDS.some((id) => id === one),
     ),

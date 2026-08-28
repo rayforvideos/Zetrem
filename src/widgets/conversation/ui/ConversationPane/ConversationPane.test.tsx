@@ -83,6 +83,7 @@ function working(turns: Turn[]): string {
           addressee={null}
           permissionMode="ask"
           model="default"
+          effort="default"
           refusedModels={[]}
           enterSends={true}
           library
@@ -95,6 +96,7 @@ function working(turns: Turn[]): string {
           onClearAddressee={() => {}}
           onPermissionMode={() => {}}
           onModel={() => {}}
+          onEffort={() => {}}
           onLibrary={() => {}}
         />
       }
@@ -127,6 +129,7 @@ function pane(turns: Turn[], permission: PermissionAsk | null = null): string {
           addressee={null}
           permissionMode="ask"
           model="default"
+          effort="default"
           refusedModels={[]}
           enterSends={true}
           library
@@ -139,6 +142,7 @@ function pane(turns: Turn[], permission: PermissionAsk | null = null): string {
           onClearAddressee={() => {}}
           onPermissionMode={() => {}}
           onModel={() => {}}
+          onEffort={() => {}}
           onLibrary={() => {}}
         />
       }

@@ -1,4 +1,4 @@
-import type { ModelChoice, PermissionMode } from '@/entities/claude-cli'
+import type { EffortChoice, ModelChoice, PermissionMode } from '@/entities/claude-cli'
 import type { Attached } from '@/entities/attachment'
 
 export type ComposerProps = {
@@ -8,6 +8,7 @@ export type ComposerProps = {
   addressee: string | null
   permissionMode: PermissionMode
   model: ModelChoice
+  effort: EffortChoice
   refusedModels: ModelChoice[]
   enterSends: boolean
   // Whether sessions in this project are handed the library to search.
@@ -21,5 +22,6 @@ export type ComposerProps = {
   onClearAddressee(): void
   onPermissionMode(mode: PermissionMode): void
   onModel(model: ModelChoice): void
+  onEffort(effort: EffortChoice): void
   onLibrary(open: boolean): void
 }

@@ -1,4 +1,5 @@
 export type { ModelChoice } from './model/model-choice/model-choice.types'
+export type { EffortChoice } from './model/effort-choice/effort-choice.types'
 export { parseClaudeLine, permissionAlwaysResult, permissionResult } from './api/parse/parse'
 export type { ClaudeTurnEvent } from './api/parse/parse.types'
 export { resumedAgent } from './api/resumed/resumed'

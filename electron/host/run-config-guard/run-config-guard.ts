@@ -1,13 +1,16 @@
 import type {
+  EffortChoice,
   ModelChoice,
   PermissionMode,
   RunConfig,
 } from '@/entities/claude-cli/api/run-config/run-config.types'
 import type { Person, RosterLock } from '@/entities/claude-cli/api/roster-lock/roster-lock.types'
 import { NAMED_MODELS } from '@/entities/claude-cli/model/model-choice/model-choice'
+import { NAMED_EFFORTS } from '@/entities/claude-cli/model/effort-choice/effort-choice'
 
 const PERMISSION_MODES: readonly PermissionMode[] = ['ask', 'acceptEdits', 'bypass']
 const MODELS: readonly ModelChoice[] = ['default', ...NAMED_MODELS]
+const EFFORTS: readonly EffortChoice[] = ['default', ...NAMED_EFFORTS]
 
 function strings(value: unknown): value is string[] {
   return Array.isArray(value) && value.every((one) => typeof one === 'string')
@@ -35,12 +38,14 @@ export function runConfigOf(value: unknown): Omit<RunConfig, 'persona'> | null {
   if (raw === null || typeof raw !== 'object') return null
   if (!PERMISSION_MODES.includes(raw.permissionMode as PermissionMode)) return null
   if (!MODELS.includes(raw.model as ModelChoice)) return null
+  if (!EFFORTS.includes(raw.effort as EffortChoice)) return null
   if (raw.resume !== undefined && raw.resume !== null && typeof raw.resume !== 'string') return null
   if (!Array.isArray(raw.people) || !raw.people.every(isPerson)) return null
   if (!isLock(raw.lock)) return null
   return {
     permissionMode: raw.permissionMode as PermissionMode,
     model: raw.model as ModelChoice,
+    effort: raw.effort as EffortChoice,
     resume: raw.resume ?? null,
     people: raw.people,
     lock: raw.lock,

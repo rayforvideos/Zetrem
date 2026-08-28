@@ -1,8 +1,8 @@
 import { useRef, useState } from 'react'
 import type { FormEvent, KeyboardEvent } from 'react'
-import { ArrowUp, Library, Paperclip, Shield, Square, X } from 'lucide-react'
-import { MODELS, PERMISSION_MODES, modelsWith } from '@/entities/settings'
-import type { ModelChoice, PermissionMode } from '@/entities/claude-cli'
+import { ArrowUp, Gauge, Library, Paperclip, Shield, Square, X } from 'lucide-react'
+import { EFFORTS, MODELS, PERMISSION_MODES, modelsWith } from '@/entities/settings'
+import type { EffortChoice, ModelChoice, PermissionMode } from '@/entities/claude-cli'
 import { cn } from '@/shared/lib/cn'
 import { modifierKey } from '@/shared/lib/platform/platform'
 import { Button } from '@/shared/ui/button'
@@ -34,6 +34,7 @@ export function Composer({
   addressee,
   permissionMode,
   model,
+  effort,
   refusedModels,
   enterSends,
   library,
@@ -46,6 +47,7 @@ export function Composer({
   onClearAddressee,
   onPermissionMode,
   onModel,
+  onEffort,
   onLibrary,
 }: ComposerProps) {
   const [draft, setDraft] = useState('')
@@ -202,6 +204,18 @@ export function Composer({
             note={
               sessionLive
                 ? t`The running session keeps its model. This applies from the next one.`
+                : null
+            }
+          />
+          <ChoicePicker
+            icon={<Gauge />}
+            options={EFFORTS}
+            selected={effort}
+            onSelect={(id) => onEffort(id as EffortChoice)}
+            label={t`Effort`}
+            note={
+              sessionLive
+                ? t`The running session keeps its effort. This applies from the next one.`
                 : null
             }
           />

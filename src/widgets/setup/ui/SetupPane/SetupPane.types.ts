@@ -1,4 +1,4 @@
-import type { ModelChoice, PermissionMode } from '@/entities/claude-cli'
+import type { ModelChoice, PermissionMode, EffortChoice } from '@/entities/claude-cli'
 import type { AuthStatus } from '@/entities/auth'
 import type { Failure } from '@/shared/lib/failure/failure.types'
 import type { FaceId } from '@/entities/user'
@@ -27,6 +27,7 @@ export type Project = {
 type Defaults = {
   permissionMode: PermissionMode
   model: ModelChoice
+  effort: EffortChoice
   tongue: 'system' | 'en' | 'ko'
   onTongue(next: 'system' | 'en' | 'ko'): void
   notify: boolean
@@ -35,6 +36,7 @@ type Defaults = {
   onEnterSends(on: boolean): void
   onPermissionMode(mode: PermissionMode): void
   onModel(model: ModelChoice): void
+  onEffort(effort: EffortChoice): void
 }
 
 type Plugins = {

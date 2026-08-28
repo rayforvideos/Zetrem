@@ -4,6 +4,7 @@ import { runConfigOf } from './run-config-guard'
 const sound = {
   permissionMode: 'ask',
   model: 'default',
+  effort: 'default',
   persona: 'ignored here',
   resume: null,
   people: [{ name: 'a', description: 'b', prompt: 'c', model: null, tools: [] }],
@@ -15,6 +16,7 @@ describe('runConfigOf', () => {
     expect(runConfigOf(sound)).toEqual({
       permissionMode: 'ask',
       model: 'default',
+      effort: 'default',
       resume: null,
       people: sound.people,
       lock: null,
@@ -27,6 +29,14 @@ describe('runConfigOf', () => {
     }
     expect(runConfigOf({ ...sound, permissionMode: 'plan' })).toBeNull()
     expect(runConfigOf({ ...sound, permissionMode: '--dangerously-skip-permissions' })).toBeNull()
+  })
+
+  it('takes every effort level the CLI knows and nothing else', () => {
+    for (const effort of ['low', 'medium', 'high', 'xhigh', 'max']) {
+      expect(runConfigOf({ ...sound, effort })?.effort).toBe(effort)
+    }
+    expect(runConfigOf({ ...sound, effort: 'ultra' })).toBeNull()
+    expect(runConfigOf({ ...sound, effort: undefined })).toBeNull()
   })
 
   it('refuses a model name it has not heard of, since it becomes an argument', () => {

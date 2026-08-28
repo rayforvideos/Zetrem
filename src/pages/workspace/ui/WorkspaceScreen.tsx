@@ -248,6 +248,8 @@ export function WorkspaceScreen() {
                   defaults={{
                     permissionMode: settings.permissionMode,
                     model: settings.model,
+                    effort: settings.effort,
+                    onEffort: (effort) => update({ effort }),
                     onPermissionMode: (permissionMode) => update({ permissionMode }),
                     tongue: settings.tongue,
                     onTongue: (next) => update({ tongue: next }),
@@ -344,6 +346,8 @@ export function WorkspaceScreen() {
                         addressee={focus.addressee}
                         permissionMode={settings.permissionMode}
                         model={settings.model}
+                        effort={settings.effort}
+                        onEffort={(effort) => update({ effort })}
                         refusedModels={settings.refusedModels}
                         enterSends={settings.enterSends}
                         library={libraryAccess.open}

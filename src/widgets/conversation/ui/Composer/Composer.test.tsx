@@ -11,6 +11,7 @@ function box(props: Partial<Parameters<typeof Composer>[0]> = {}): string {
       addressee={null}
       permissionMode="ask"
       model="default"
+      effort="default"
       refusedModels={[]}
       enterSends
       library
@@ -23,6 +24,7 @@ function box(props: Partial<Parameters<typeof Composer>[0]> = {}): string {
       onClearAddressee={() => {}}
       onPermissionMode={() => {}}
       onModel={() => {}}
+      onEffort={() => {}}
       onLibrary={() => {}}
       {...props}
     />,
@@ -59,10 +61,11 @@ describe('Composer: the line you type into', () => {
     expect(box()).toContain('disabled=""')
   })
 
-  it('offers the permission and model pickers where you type, not in a settings screen', () => {
+  it('offers the permission, model and effort pickers where you type, not in a settings screen', () => {
     const html = box()
     expect(html).toContain('Permissions')
     expect(html).toContain('Default')
+    expect(html).toContain('aria-label="Effort"')
   })
 
   it('has the library switch where you type, pressed while agents get the library', () => {

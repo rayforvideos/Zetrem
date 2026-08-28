@@ -172,6 +172,11 @@ jobs:
             cat opened.log
             exit 1
           fi
+          if grep -qE '\[renderer\].*(the screen crashed|TypeError|ReferenceError)' opened.log; then
+            echo "::error::the packaged app drew its crash screen"
+            cat opened.log
+            exit 1
+          fi
           if ! grep -q '^\[window\] showing ' opened.log; then
             echo "::error::the packaged app never said it was showing its page"
             cat opened.log

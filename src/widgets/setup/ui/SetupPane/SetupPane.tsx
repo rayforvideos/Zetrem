@@ -56,7 +56,7 @@ export function SetupPane({
   }, [reopened, onCancel])
 
   return (
-    <div className="relative z-[3] flex h-full min-h-0 flex-col">
+    <div data-setup-pane className="relative z-[3] flex h-full min-h-0 flex-col">
       <div className="zt-scroll min-h-0 flex-1 overflow-y-auto pr-2.5">
         {/* Anchored to the top: the tabs differ in height, and a centred column would
             jump the header on every switch. */}

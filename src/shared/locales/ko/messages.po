@@ -1492,7 +1492,7 @@ msgstr "새로 고침"
 msgid "Reload"
 msgstr "다시 읽기"
 
-#: src/app/Boundary.tsx:58
+#: src/app/Boundary.tsx:59
 msgid "Reload the app"
 msgstr "앱 다시 불러오기"
 
@@ -1774,7 +1774,7 @@ msgstr "Zetrem만이 아니라 이 컴퓨터의 Claude Code를 전부 로그아�
 msgid "Skip"
 msgstr "건너뛰기"
 
-#: src/app/Boundary.tsx:40
+#: src/app/Boundary.tsx:41
 msgid "Something broke. Here is what happened."
 msgstr "무언가 잘못됐습니다. 무슨 일이 있었는지 알려드립니다."
 

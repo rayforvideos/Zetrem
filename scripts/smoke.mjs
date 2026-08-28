@@ -71,19 +71,37 @@ function ask(id, method, params) {
   })
 }
 
+// One of the screens the app can open on. The crash screen (Boundary) also
+// draws words, so words alone prove nothing.
+const SCREENS = '[data-welcome], [data-setup-pane], [data-talk], [data-library-pane]'
+
 const until = Date.now() + PATIENCE_MS
-let text = ''
+let seen = { text: '', screen: false, crashed: false }
+let tick = 1
 while (Date.now() < until) {
-  const result = await ask(1, 'Runtime.evaluate', {
-    expression: 'document.body ? document.body.innerText : ""',
+  const result = await ask(++tick, 'Runtime.evaluate', {
+    expression: `JSON.stringify({
+      text: document.body ? document.body.innerText : '',
+      screen: document.querySelector(${JSON.stringify(SCREENS)}) !== null,
+      crashed: document.querySelector('[data-crashed]') !== null,
+    })`,
     returnByValue: true,
   })
-  text = result?.result?.value ?? ''
-  if (WANT.test(text)) break
+  try {
+    seen = JSON.parse(result?.result?.value ?? '{}')
+  } catch {
+    // not a page yet
+  }
+  if (seen.crashed || seen.screen) break
   await new Promise((wake) => setTimeout(wake, 500))
 }
 
-if (!WANT.test(text)) stop(1, 'smoke: the window opened but drew no words')
-console.log(`smoke: the window is showing ${text.trim().split('\n').length} lines`)
-console.log(text.trim().split('\n').slice(0, 12).join(' | ').slice(0, 400))
+if (seen.crashed) stop(1, `smoke: the screen crashed:\n${seen.text.trim().slice(0, 1200)}`)
+if (!seen.screen) stop(1, 'smoke: the window opened but never reached a screen')
+if (/\[renderer\]/.test(said) && /error|crash|TypeError|ReferenceError/i.test(said)) {
+  stop(1, 'smoke: the renderer logged an error while opening')
+}
+if (!WANT.test(seen.text)) stop(1, 'smoke: the screen has no words on it')
+console.log(`smoke: the window is showing ${seen.text.trim().split('\n').length} lines`)
+console.log(seen.text.trim().split('\n').slice(0, 12).join(' | ').slice(0, 400))
 stop(0, 'smoke: ok')

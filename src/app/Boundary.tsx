@@ -22,6 +22,7 @@ export class Boundary extends Component<{ children: ReactNode }, State> {
 
     return (
       <div
+        data-crashed
         style={{
           position: 'fixed',
           inset: 0,

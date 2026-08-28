@@ -22,5 +22,5 @@ export function sinceOf(updatedAtMs: number, nowMs: number): string {
     const n = Math.floor(gap / DAY)
     return t`${n}d ago`
   }
-  return new Date(updatedAtMs).toLocaleDateString(i18n.locale)
+  return new Date(updatedAtMs).toLocaleDateString(i18n.locale || undefined)
 }

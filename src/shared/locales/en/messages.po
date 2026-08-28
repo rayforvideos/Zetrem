@@ -1492,7 +1492,7 @@ msgstr "Refresh"
 msgid "Reload"
 msgstr "Reload"
 
-#: src/app/Boundary.tsx:58
+#: src/app/Boundary.tsx:59
 msgid "Reload the app"
 msgstr "Reload the app"
 
@@ -1774,7 +1774,7 @@ msgstr "Signs out every Claude Code on this computer, not just Zetrem."
 msgid "Skip"
 msgstr "Skip"
 
-#: src/app/Boundary.tsx:40
+#: src/app/Boundary.tsx:41
 msgid "Something broke. Here is what happened."
 msgstr "Something broke. Here is what happened."
 

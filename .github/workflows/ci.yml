@@ -52,6 +52,11 @@ jobs:
       - name: Build
         run: npm run build
 
+      # Building is not opening: the window must reach a real screen, not the
+      # crash screen, before a change is called good.
+      - name: Open the built app and read its window
+        run: xvfb-run -a npm run smoke
+
       - name: Coverage
         run: npm run coverage
 

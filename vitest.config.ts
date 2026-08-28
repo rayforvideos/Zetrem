@@ -21,6 +21,9 @@ export default defineConfig({
   test: {
     environment: 'node',
     setupFiles: ['tests/setup-i18n.ts'],
+    // A Windows CI runner writes sixty small files in the time a laptop
+    // writes six hundred; the tests that fold and index chats need the room.
+    testTimeout: 20_000,
     include: [
       'src/**/*.test.ts',
       'src/**/*.test.tsx',

@@ -296,10 +296,6 @@ msgstr "38% · 4h 12m left"
 msgid "5-hour"
 msgstr "5-hour"
 
-#: src/widgets/star-ask/lib/star-toast/star-toast.ts:12
-msgid "A GitHub star helps others find it, and keeps us going."
-msgstr "A GitHub star helps others find it, and keeps us going."
-
 #: src/entities/connector/lib/refusal-why/refusal-why.ts:12
 msgid "A name cannot start with a dash"
 msgstr "A name cannot start with a dash"
@@ -323,6 +319,10 @@ msgstr "A session stopped with an error."
 #: src/widgets/setup/ui/AddConnector/AddConnector.tsx:74
 msgid "A short name for it"
 msgstr "A short name for it"
+
+#: src/widgets/star-ask/ui/StarCard/StarCard.tsx:17
+msgid "A star on GitHub goes a long way."
+msgstr "A star on GitHub goes a long way."
 
 #: src/widgets/conversation/lib/working/working.ts:81
 msgid "a teammate"
@@ -1043,7 +1043,7 @@ msgstr "Installed for this folder. Anyone who opens it gets them."
 msgid "Installing Claude Code…"
 msgstr "Installing Claude Code…"
 
-#: src/widgets/star-ask/lib/star-toast/star-toast.ts:11
+#: src/widgets/star-ask/ui/StarCard/StarCard.tsx:15
 msgid "Is Zetrem earning its keep?"
 msgstr "Is Zetrem earning its keep?"
 
@@ -1287,7 +1287,7 @@ msgstr "Not available this session. Unlock it in Settings."
 msgid "Not known yet"
 msgstr "Not known yet"
 
-#: src/widgets/star-ask/lib/star-toast/star-toast.ts:21
+#: src/widgets/star-ask/ui/StarCard/StarCard.tsx:22
 msgid "Not now"
 msgstr "Not now"
 
@@ -1790,7 +1790,7 @@ msgstr "Something went wrong while it was working"
 msgid "Sources"
 msgstr "Sources"
 
-#: src/widgets/star-ask/lib/star-toast/star-toast.ts:15
+#: src/widgets/star-ask/ui/StarCard/StarCard.tsx:21
 msgid "Star it"
 msgstr "Star it"
 

@@ -55,10 +55,14 @@ export function ChoicePicker({
           {icon}
           {current === undefined ? label : read(current.label)}
           {subShown && (
-            <span data-sub-choice className="flex items-center gap-1 text-muted-foreground">
-              {sub.icon}
-              {read(subCurrent.label)}
-            </span>
+            <>
+              <span aria-hidden className="text-muted-foreground/50">
+                ·
+              </span>
+              <span data-sub-choice className="text-muted-foreground">
+                {read(subCurrent.label)}
+              </span>
+            </>
           )}
           <ChevronDown />
         </InputGroupButton>

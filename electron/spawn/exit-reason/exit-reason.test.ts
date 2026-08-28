@@ -21,6 +21,8 @@ describe('exitReason', () => {
   it('says nothing for a signal with nothing to quote, but names a silent exit code', () => {
     expect(exitReason(null, '   \n\n', '')).toBeNull()
     expect(exitReason(1, '   \n\n', '')).toEqual({ code: 'died', said: '1' })
+    expect(exitReason(143, '', '')).toBeNull()
+    expect(exitReason(130, '', '')).toBeNull()
   })
 
   it('recognises a missing command reported through stderr instead', () => {

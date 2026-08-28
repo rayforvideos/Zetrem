@@ -296,10 +296,6 @@ msgstr "38% · 4시간 12분 남음"
 msgid "5-hour"
 msgstr "5시간"
 
-#: src/widgets/star-ask/lib/star-toast/star-toast.ts:12
-msgid "A GitHub star helps others find it, and keeps us going."
-msgstr "GitHub 스타 하나가 알려지는 데도, 계속 만드는 데도 큰 힘이 돼요."
-
 #: src/entities/connector/lib/refusal-why/refusal-why.ts:12
 msgid "A name cannot start with a dash"
 msgstr "이름은 하이픈으로 시작할 수 없습니다"
@@ -323,6 +319,10 @@ msgstr "세션이 오류로 멈췄습니다."
 #: src/widgets/setup/ui/AddConnector/AddConnector.tsx:74
 msgid "A short name for it"
 msgstr "짧은 이름"
+
+#: src/widgets/star-ask/ui/StarCard/StarCard.tsx:17
+msgid "A star on GitHub goes a long way."
+msgstr "GitHub 스타 하나가 큰 힘이 돼요."
 
 #: src/widgets/conversation/lib/working/working.ts:81
 msgid "a teammate"
@@ -1043,7 +1043,7 @@ msgstr "이 폴더에 설치했습니다. 이 폴더를 여는 사람은 모두 
 msgid "Installing Claude Code…"
 msgstr "Claude Code 설치 중…"
 
-#: src/widgets/star-ask/lib/star-toast/star-toast.ts:11
+#: src/widgets/star-ask/ui/StarCard/StarCard.tsx:15
 msgid "Is Zetrem earning its keep?"
 msgstr "Zetrem이 쓸 만한가요?"
 
@@ -1287,7 +1287,7 @@ msgstr "이번 세션에서는 쓸 수 없습니다. 설정에서 켜세요."
 msgid "Not known yet"
 msgstr "아직 모릅니다"
 
-#: src/widgets/star-ask/lib/star-toast/star-toast.ts:21
+#: src/widgets/star-ask/ui/StarCard/StarCard.tsx:22
 msgid "Not now"
 msgstr "나중에"
 
@@ -1790,7 +1790,7 @@ msgstr "일하던 중에 무언가 잘못됐습니다"
 msgid "Sources"
 msgstr "마켓플레이스"
 
-#: src/widgets/star-ask/lib/star-toast/star-toast.ts:15
+#: src/widgets/star-ask/ui/StarCard/StarCard.tsx:21
 msgid "Star it"
 msgstr "스타 주기"
 

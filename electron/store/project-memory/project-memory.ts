@@ -2,7 +2,10 @@ import { existsSync } from 'node:fs'
 import { readFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import { app } from 'electron'
+import { queue } from '../queue/queue'
 import { saveFile } from '../save-file/save-file'
+
+const queued = queue()
 
 const RECENT_MAX = 8
 
@@ -30,12 +33,26 @@ function recentOf(memory: Memory): string[] {
   return typeof memory.path === 'string' ? [memory.path] : []
 }
 
-export async function rememberProject(path: string): Promise<void> {
-  const memory = await readMemory()
-  const recent = mergeRecent(recentOf(memory), path)
-  await saveFile(memoryPath(), JSON.stringify({ path, recent })).catch((cause: unknown) =>
-    console.error('could not save the project', cause),
-  )
+export function rememberProject(path: string): Promise<void> {
+  return queued(async () => {
+    const memory = await readMemory()
+    const recent = mergeRecent(recentOf(memory), path)
+    await saveFile(memoryPath(), JSON.stringify({ path, recent })).catch((cause: unknown) =>
+      console.error('could not save the project', cause),
+    )
+  })
+}
+
+// The folder is no longer a project: nothing in main may keep working in it.
+export function forgetRememberedProject(path: string): Promise<void> {
+  return queued(async () => {
+    const memory = await readMemory()
+    if (memory.path !== path) return
+    const recent = recentOf(memory).filter((one) => one !== path)
+    await saveFile(memoryPath(), JSON.stringify({ recent })).catch((cause: unknown) =>
+      console.error('could not save the project', cause),
+    )
+  })
 }
 
 export async function recallProject(): Promise<string | null> {

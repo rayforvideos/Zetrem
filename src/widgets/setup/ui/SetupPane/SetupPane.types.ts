@@ -1,4 +1,4 @@
-import type { ModelChoice, PermissionMode } from '@/entities/claude-cli'
+import type { ModelChoice, PermissionMode, EffortChoice } from '@/entities/claude-cli'
 import type { AuthStatus } from '@/entities/auth'
 import type { Failure } from '@/shared/lib/failure/failure.types'
 import type { FaceId } from '@/entities/user'
@@ -14,6 +14,7 @@ export type Account = {
   onSignIn(): void
   onSignOut(): void
   onInstall(): void
+  onRecheck(): void
 }
 
 export type Project = {
@@ -23,9 +24,10 @@ export type Project = {
   onPickRecent(id: string): void
 }
 
-export type Defaults = {
+type Defaults = {
   permissionMode: PermissionMode
   model: ModelChoice
+  effort: EffortChoice
   tongue: 'system' | 'en' | 'ko'
   onTongue(next: 'system' | 'en' | 'ko'): void
   notify: boolean
@@ -34,20 +36,21 @@ export type Defaults = {
   onEnterSends(on: boolean): void
   onPermissionMode(mode: PermissionMode): void
   onModel(model: ModelChoice): void
+  onEffort(effort: EffortChoice): void
 }
 
-export type Plugins = {
+type Plugins = {
   summary: string
   onOpen(): void
 }
 
-export type Agents = {
+type Agents = {
   stock: string[]
   on: string[]
   onChange(name: string, on: boolean): void
 }
 
-export type Actions = {
+type Actions = {
   reopened: boolean
   signedIn: boolean
   hasProject: boolean
@@ -55,7 +58,7 @@ export type Actions = {
   onCancel(): void
 }
 
-export type You = {
+type You = {
   name: string
   face: FaceId
   onName(next: string): void

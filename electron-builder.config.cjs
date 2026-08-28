@@ -6,6 +6,40 @@ const notarising =
     Boolean(process.env.APPLE_TEAM_ID)) ||
   Boolean(process.env.APPLE_KEYCHAIN_PROFILE)
 
+// macOS charges what a child process does to the app that spawned it, so when
+// an agent Zetrem started reaches for the camera, a folder or another app, the
+// dialog macOS shows carries Zetrem's name and one of these sentences. A
+// category with no sentence is refused with no dialog (Apple events, the local
+// network) or, for the camera and microphone, ends the process. The person
+// still says yes or no; this only lets the question be asked.
+const reason = (doing) => `Zetrem lets the agents it runs ${doing} when you ask them to.`
+const usage = {
+  NSAppleEventsUsageDescription: reason('control other apps'),
+  NSDocumentsFolderUsageDescription: reason('read and change files in your Documents folder'),
+  NSDesktopFolderUsageDescription: reason('read and change files on your Desktop'),
+  NSDownloadsFolderUsageDescription: reason('read and change files in your Downloads folder'),
+  NSRemovableVolumesUsageDescription: reason('read and change files on removable drives'),
+  NSNetworkVolumesUsageDescription: reason('read and change files on network volumes'),
+  NSFileProviderDomainUsageDescription: reason('read and change files in cloud-synced folders'),
+  NSSystemAdministrationUsageDescription: reason('change system settings'),
+  NSLocalNetworkUsageDescription: reason('connect to servers and devices on your local network'),
+  NSCameraUsageDescription: reason('use the camera'),
+  NSMicrophoneUsageDescription: reason('use the microphone'),
+  NSAudioCaptureUsageDescription: reason('record system audio'),
+  NSScreenCaptureUsageDescription: reason('capture the screen'),
+  NSBluetoothAlwaysUsageDescription: reason('use Bluetooth devices'),
+  // iOS-only, but Electron's Info.plist ships a stock sentence under it.
+  NSBluetoothPeripheralUsageDescription: reason('use Bluetooth devices'),
+  NSLocationUsageDescription: reason('use your location'),
+  NSSpeechRecognitionUsageDescription: reason('use speech recognition'),
+  NSContactsUsageDescription: reason('read your contacts'),
+  NSCalendarsUsageDescription: reason('read and update your calendars'),
+  NSCalendarsFullAccessUsageDescription: reason('read and update your calendars'),
+  NSRemindersUsageDescription: reason('read and update your reminders'),
+  NSRemindersFullAccessUsageDescription: reason('read and update your reminders'),
+  NSPhotoLibraryUsageDescription: reason('read and add to your photo library'),
+}
+
 module.exports = {
   appId: 'com.zetrem.app',
   productName: 'Zetrem',
@@ -20,7 +54,10 @@ module.exports = {
     enableEmbeddedAsarIntegrityValidation: true,
     onlyLoadAppFromAsar: true,
     enableCookieEncryption: true,
-    grantFileProtocolExtraPrivileges: false,
+    // Stays on: the renderer is a file:// page inside app.asar, and this is the
+    // privilege that lets file:// read from the archive. With it off the
+    // packaged window opens on ERR_FILE_NOT_FOUND (seen on both platforms).
+    grantFileProtocolExtraPrivileges: true,
   },
   mac: {
     icon: 'resources/icon.icns',
@@ -35,6 +72,7 @@ module.exports = {
       },
     ],
     category: 'public.app-category.developer-tools',
+    extendInfo: usage,
     identity: process.env.CSC_NAME,
     hardenedRuntime: true,
     gatekeeperAssess: false,

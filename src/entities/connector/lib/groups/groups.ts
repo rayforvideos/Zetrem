@@ -11,12 +11,12 @@ const ORDER: { key: ConnectorOrigin; title: MessageDescriptor; note: MessageDesc
     {
       key: 'account',
       title: msg`Your Claude account`,
-      note: msg`Managed on claude.ai. Sign in or out here, remove them there.`,
+      note: msg`Signed in and out here. To remove one, go to claude.ai.`,
     },
     {
       key: 'plugin',
       title: msg`From plugins`,
-      note: msg`A plugin brings these. Turn the plugin off to lose them.`,
+      note: msg`Included in a plugin. To remove one, turn its plugin off.`,
     },
   ]
 

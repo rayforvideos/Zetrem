@@ -22,7 +22,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        node: ['20.19', '22.19']
+        node: ['22.19', '24.11']
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -51,6 +51,11 @@ jobs:
 
       - name: Build
         run: npm run build
+
+      # Building is not opening: the window must reach a real screen, not the
+      # crash screen, before a change is called good.
+      - name: Open the built app and read its window
+        run: xvfb-run -a npm run smoke
 
       - name: Coverage
         run: npm run coverage

@@ -1,5 +1,5 @@
-import { mkdir, readFile, readdir, rename, rm, stat } from 'node:fs/promises'
-import { join } from 'node:path'
+import { mkdir, readFile, readdir, rename, stat } from 'node:fs/promises'
+import { basename, dirname, join } from 'node:path'
 import { app } from 'electron'
 import {
   isChatId,
@@ -67,6 +67,19 @@ async function chats(project: string): Promise<Transcript[]> {
   return found.sort((a, b) => b.savedAtMs - a.savedAtMs)
 }
 
+// A chat is never unlinked. Whatever lets go of one, the prune or a person,
+// moves it under trash/ beside the others, where the listing does not look,
+// and says so in the log; a chat that goes missing can then be found and
+// the reason read.
+async function discard(path: string, why: string): Promise<void> {
+  const trash = join(dirname(path), 'trash')
+  await mkdir(trash, { recursive: true }).catch(() => undefined)
+  const to = join(trash, `${Date.now()}-${basename(path)}`)
+  await rename(path, to)
+    .then(() => console.log(`[transcripts] ${why}: ${basename(path)} → trash`))
+    .catch(() => undefined)
+}
+
 async function isFiled(path: string): Promise<boolean> {
   try {
     const saved = JSON.parse(await readFile(path, 'utf8')) as { folder?: unknown }
@@ -95,9 +108,12 @@ async function prune(project: string): Promise<void> {
       return { path, at, filed: await isFiled(path) }
     }),
   )
-  for (const path of staleChats(dated, CHAT_CAP)) {
-    await rm(path, { force: true }).catch(() => undefined)
-  }
+  for (const path of staleChats(dated, CHAT_CAP)) await discard(path, 'over the cap')
+}
+
+// Quit waits on this: a chat write still in the queue lands before the exit.
+export function settleTranscripts(): Promise<void> {
+  return queued(async () => undefined)
 }
 
 export function registerTranscriptStore(): void {
@@ -132,8 +148,6 @@ export function registerTranscriptStore(): void {
   handle('transcript:forget', async (_event, project: unknown, id: unknown): Promise<void> => {
     const target = named(project, id)
     if (target === null) return
-    await queued(() =>
-      rm(chatPath(target.project, target.id), { force: true }).catch(() => undefined),
-    )
+    await queued(() => discard(chatPath(target.project, target.id), 'removed by the person'))
   })
 }

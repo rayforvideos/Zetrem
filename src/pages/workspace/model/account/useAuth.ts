@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback, useRef } from 'react'
 import type { AuthStatus } from '@/entities/auth'
 import { urlFrom } from '@/entities/claude-cli/lib/cli-output/cli-output'
 import { reasonOf } from '@/shared/lib/failure/failure'
@@ -8,6 +8,7 @@ import { t } from '@lingui/core/macro'
 type Auth = {
   auth: AuthStatus | null
   authKnown: boolean
+  recheck(): void
   loggingIn: boolean
   loginNote: string
   login(): void
@@ -29,23 +30,32 @@ export function useAuth(): Auth {
   const [installing, setInstalling] = useState(false)
   const [authError, setAuthError] = useState<string | null>(null)
 
+  const alive = useRef(true)
   useEffect(() => {
-    let alive = true
+    alive.current = true
+    return () => {
+      alive.current = false
+    }
+  }, [])
+
+  const recheck = useCallback((): void => {
+    setAuthError(null)
     window.desk
       .authStatus()
       .then((status) => {
-        if (alive) setAuth(status)
+        if (alive.current) setAuth(status)
       })
       .catch((cause: unknown) => {
-        if (alive) setAuthError(troubleLine(t`Could not read your sign-in`, cause))
+        if (alive.current) setAuthError(troubleLine(t`Could not read your sign-in`, cause))
       })
       .finally(() => {
-        if (alive) setAuthKnown(true)
+        if (alive.current) setAuthKnown(true)
       })
-    return () => {
-      alive = false
-    }
   }, [])
+
+  useEffect(() => {
+    recheck()
+  }, [recheck])
 
   useEffect(() => {
     let seen = ''
@@ -118,6 +128,7 @@ export function useAuth(): Auth {
     logout,
     installing,
     install,
+    recheck,
     authError,
   }
 }

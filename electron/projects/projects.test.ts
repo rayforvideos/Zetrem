@@ -107,6 +107,18 @@ describe('the projects a person can come back to', () => {
     await forgetProject(made?.id ?? '')
     expect(await listProjects()).toEqual([])
     expect(await restoreProject()).toBeNull()
+    expect(await recallProject()).toBeNull()
+  })
+
+  it('takes two quick opens in turn, so the list and the working folder agree', async () => {
+    const a = dir('shop')
+    const b = dir('blog')
+    const one = await createProject(a, 1000)
+    const two = await createProject(b, 2000)
+    await Promise.all([openProject(one?.id ?? '', 3000), openProject(two?.id ?? '', 4000)])
+    expect((await listProjects())[0]?.id).toBe(two?.id)
+    expect(await recallProject()).toBe(b)
+    expect((await restoreProject())?.id).toBe(two?.id)
   })
 
   it('answers nothing for an id it never handed out', async () => {

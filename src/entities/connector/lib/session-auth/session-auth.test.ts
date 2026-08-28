@@ -6,6 +6,7 @@ const gmail: Connector = {
   name: 'claude.ai Gmail',
   where: 'https://gmailmcp.googleapis.com/mcp/v1',
   state: 'connected',
+  authByHeader: false,
 }
 
 describe('what the health check says, corrected by the session that knows', () => {

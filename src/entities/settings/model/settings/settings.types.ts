@@ -1,11 +1,12 @@
 import type { FaceId } from '@/entities/user/@x/settings'
-import type { ModelChoice, PermissionMode } from '@/entities/claude-cli/@x/settings'
+import type { EffortChoice, ModelChoice, PermissionMode } from '@/entities/claude-cli/@x/settings'
 
 // On disk: settings.json under userData. readSettings() must still read the old shape.
 // and fill what is missing.
 export type Settings = {
   permissionMode: PermissionMode
   model: ModelChoice
+  effort: EffortChoice
   refusedModels: ModelChoice[]
   userName: string
   userFace: FaceId
@@ -25,4 +26,7 @@ export type Settings = {
   notify: boolean
   sidebarOpen: boolean
   sidebarWidth: number
+  // The GitHub star ask: when it was last shown (null: never), and whether it was taken up.
+  starAskedAtMs: number | null
+  starred: boolean
 }

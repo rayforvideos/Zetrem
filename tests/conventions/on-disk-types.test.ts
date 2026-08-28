@@ -14,6 +14,8 @@ const ON_DISK = [
   'electron/store/usage-cache/usage-cache.types.ts',
   'electron/store/project-memory/project-memory.ts',
   'electron/cli/login-path/login-path.types.ts',
+  'src/entities/library/lib/frontmatter/frontmatter.types.ts',
+  'electron/library/library-access/library-access.ts',
 ]
 
 const WRITERS: Record<string, string> = {
@@ -25,6 +27,7 @@ const WRITERS: Record<string, string> = {
   'electron/store/project-memory/project-memory.ts': ON_DISK[4]!,
   'electron/store/login-path-store/login-path-store.ts': ON_DISK[5]!,
   'electron/agents/agent-store/agent-store.ts': '',
+  'electron/library/library-access/library-access.ts': ON_DISK[7]!,
 }
 
 // readdir hands back names with the platform's separator and the lists above are

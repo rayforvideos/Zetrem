@@ -2,7 +2,7 @@ import type { CSSProperties } from 'react'
 
 export const ICON_W = 30
 
-export const FRAME_W = ICON_W
+const FRAME_W = ICON_W
 export const FRAME_H = 20
 
 export function motion(live: boolean, animation: string, origin?: string): CSSProperties {

@@ -7,6 +7,12 @@ import type {
 import type { RunConfig } from '@/entities/claude-cli/api/run-config/run-config.types'
 import type { Settings } from '@/entities/settings/model/settings/settings.types'
 import type { Project } from '@/entities/project/model/project'
+import type {
+  LibraryHit,
+  LibraryListing,
+  LibraryNote,
+  LibraryNoteSummary,
+} from '@/entities/library/model/note'
 import type { Outcome } from '@/shared/lib/outcome/outcome.types'
 import type { ExitReason } from '@/entities/claude-cli/lib/exit-line/exit-line.types'
 import type { Attached } from '@/entities/attachment/lib/attachment/attachment.types'
@@ -27,12 +33,12 @@ import type {
   PluginVerb,
 } from '@/entities/plugin/api/catalog/catalog.types'
 
-export type AgentHostEvent =
+type AgentHostEvent =
   | { id: string; kind: 'line'; line: string }
   | { id: string; kind: 'workspace'; cwd: string }
   | { id: string; kind: 'exit'; code: number | null; reason: ExitReason | null }
 
-export type CliVersions = {
+type CliVersions = {
   installed: string | null
   latest: string | null
   managedBy: string | null
@@ -92,6 +98,26 @@ export type Invokes = {
   'cli:update': () => { output: string }
   'cli:install': () => { status: AuthStatus; output: string }
 
+  'library:list': () => LibraryListing
+  'library:read': (id: string) => LibraryNote | null
+  'library:remove': (id: string) => void
+  'library:write': (
+    id: string,
+    body: string,
+    patch?: { title?: string; tags?: string[] },
+  ) => LibraryNote | null
+  'library:create': (folder: string | null, title: string) => LibraryNote | null
+  'library:rename': (id: string, title: string) => LibraryNote | null
+  'library:file': (text: string) => LibraryNote | null
+  'library:search': (query: string) => LibraryHit[]
+  'library:backlinks': (id: string) => LibraryNoteSummary[]
+  'library:folder-add': (name: string) => LibraryListing
+  'library:folder-rename': (name: string, next: string) => LibraryListing
+  'library:folder-remove': (name: string) => LibraryListing
+  // Whether new sessions in this project get the library as a folder and tools.
+  'library:agents': () => boolean
+  'library:agents-set': (open: boolean) => boolean
+
   'updater:state': () => string | null
   'updater:restart': () => void
 }
@@ -107,6 +133,7 @@ export type Pushes = {
   'agent:event': AgentHostEvent
   'auth:progress': string
   'updater:ready': string
+  'library:changed': null
 }
 
 export type InvokeChannel = keyof Invokes

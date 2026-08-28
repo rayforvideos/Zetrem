@@ -14,12 +14,10 @@ function settingsPath(): string {
 
 const queued = queue()
 
+// A failed write (disk full, no permission) reaches the renderer as a
+// rejection, so the screen can say the settings were not saved.
 function queueWrite(settings: Settings): Promise<void> {
-  return queued(() =>
-    saveFile(settingsPath(), JSON.stringify(settings, null, 2)).catch((cause: unknown) =>
-      console.error('could not save settings', cause),
-    ),
-  )
+  return queued(() => saveFile(settingsPath(), JSON.stringify(settings, null, 2)))
 }
 
 export async function loadSettings(): Promise<Settings> {

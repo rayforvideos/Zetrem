@@ -9,6 +9,7 @@ import { claudeBin, loginPath } from '../../cli/login-path/login-path'
 import { exitReason, startTrouble } from '../../spawn/exit-reason/exit-reason'
 import type { ExitReason } from '@/entities/claude-cli/lib/exit-line/exit-line.types'
 import { recallProject } from '../../store/project-memory/project-memory'
+import { librarySessionArgs } from '../../library/library'
 import { handle, on, push } from '../../ipc/ipc'
 import { lineReader } from '../../spawn/line-reader/line-reader'
 import { killTree, killTreeSync } from '../../spawn/kill-tree/kill-tree'
@@ -22,6 +23,10 @@ import type { PendingSend } from '../pending-sends/pending-sends.types'
 
 const agents = new Map<string, ChildProcessWithoutNullStreams | 'starting'>()
 const waiting = new Map<string, PendingSend[]>()
+// Children told to stop and not yet gone. SIGTERM is asked first; one that is
+// still here after the grace period is killed, and so is one alive at quit.
+const dying = new Set<ChildProcessWithoutNullStreams>()
+const STOP_GRACE_MS = 5000
 
 type Picture = { mediaType: string | null; data: string | null }
 
@@ -55,8 +60,26 @@ export function killAllAgents(): void {
     if (agent === 'starting' || agent.pid === undefined) continue
     killTreeSync(agent.pid)
   }
+  for (const child of dying) {
+    if (child.pid !== undefined) killTreeSync(child.pid)
+  }
   agents.clear()
+  dying.clear()
   waiting.clear()
+}
+
+function stopChild(child: ChildProcessWithoutNullStreams): void {
+  if (child.pid === undefined || dying.has(child)) return
+  dying.add(child)
+  const { pid } = child
+  killTree(pid)
+  const timer = setTimeout(() => {
+    if (dying.has(child)) killTreeSync(pid)
+  }, STOP_GRACE_MS)
+  child.once('close', () => {
+    clearTimeout(timer)
+    dying.delete(child)
+  })
 }
 
 export function registerAgentHost(): void {
@@ -72,7 +95,7 @@ export function registerAgentHost(): void {
       if (agents.has(id)) return
       if (!/^[A-Za-z0-9-]+$/.test(id)) return fail(null)
       const run = runConfigOf(config)
-      if (run === null) return fail(null)
+      if (run === null) return fail(startTrouble('the run settings were not usable'))
 
       agents.set(id, 'starting')
 
@@ -81,10 +104,16 @@ export function registerAgentHost(): void {
       try {
         const project = await recallProject()
         workspace = project ?? scratchWorkspace(app.getPath('userData'))
-        const launch = launchFor(
-          await claudeBin(),
-          agentArgs({ ...run, persona: PERSONA, orchestrator: ORCHESTRATOR_PROMPT }),
-        )
+        let added: string[] = []
+        try {
+          added = await librarySessionArgs(workspace)
+        } catch (cause: unknown) {
+          console.error('[library] could not lay out', workspace, cause)
+        }
+        const launch = launchFor(await claudeBin(), [
+          ...agentArgs({ ...run, persona: PERSONA, orchestrator: ORCHESTRATOR_PROMPT }),
+          ...added,
+        ])
         const env = agentEnv(process.env, await loginPath())
 
         // Nothing below may await: the spawn and the map entry have to happen
@@ -112,7 +141,7 @@ export function registerAgentHost(): void {
       let dropped = false
       child.stdout.on('data', (chunk: string) => {
         if (sender.isDestroyed()) {
-          if (!dropped && child.pid !== undefined) killTree(child.pid)
+          if (!dropped) stopChild(child)
           dropped = true
           return
         }
@@ -167,6 +196,6 @@ export function registerAgentHost(): void {
     const agent = agents.get(id)
     agents.delete(id)
     dropSends(waiting, id)
-    if (agent && agent !== 'starting' && agent.pid !== undefined) killTree(agent.pid)
+    if (agent && agent !== 'starting') stopChild(agent)
   })
 }

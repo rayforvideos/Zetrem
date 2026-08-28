@@ -58,7 +58,7 @@ function Row({ label, children }: { label: string; children: ReactNode }) {
 }
 
 function n(value: number): string {
-  return value.toLocaleString(i18n.locale)
+  return value.toLocaleString(i18n.locale || undefined)
 }
 
 function known(value: string): string | null {

@@ -14,8 +14,15 @@ function stateOf(said: string): ConnectorState {
   return 'unknown'
 }
 
+// The CLI names the Authorization header when a server authenticates by one,
+// whether the token is missing, malformed or rejected. Such a server has no
+// sign-in; its header is changed in the Claude settings, not here.
+function authByHeaderIn(said: string): boolean {
+  return /authorization header|headers\.authorization/i.test(said)
+}
+
 export function canSignIn(connector: Connector): boolean {
-  if (connector.state === 'unapproved') return false
+  if (connector.state === 'unapproved' || connector.authByHeader) return false
   return /^https?:\/\//i.test(connector.where.trim())
 }
 
@@ -30,7 +37,8 @@ export function readConnectors(out: string): Connector[] {
     if (name.length === 0 || where.length === 0) continue
     if (held.has(name)) continue
     held.add(name)
-    found.push({ name, where, state: stateOf(match[3] ?? '') })
+    const said = match[3] ?? ''
+    found.push({ name, where, state: stateOf(said), authByHeader: authByHeaderIn(said) })
   }
   return found
 }

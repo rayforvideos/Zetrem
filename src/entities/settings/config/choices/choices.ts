@@ -1,6 +1,6 @@
 import { msg } from '@lingui/core/macro'
 import type { MessageDescriptor } from '@lingui/core'
-import type { ModelChoice, PermissionMode } from '@/entities/claude-cli/@x/settings'
+import type { EffortChoice, ModelChoice, PermissionMode } from '@/entities/claude-cli/@x/settings'
 import type { Said } from '@/shared/lib/say/read.types'
 
 export const PERMISSION_MODES: {
@@ -27,6 +27,16 @@ export const MODELS: { id: ModelChoice; label: Said; hint: MessageDescriptor }[]
   { id: 'opus', label: 'Opus', hint: msg`Complex work. Slower and pricier` },
   { id: 'sonnet', label: 'Sonnet', hint: msg`Balanced for most tasks` },
   { id: 'haiku', label: 'Haiku', hint: msg`Fast and cheap. Good for quick questions` },
+]
+
+// The CLI's --effort levels: how long it thinks before it answers.
+export const EFFORTS: { id: EffortChoice; label: MessageDescriptor; hint: MessageDescriptor }[] = [
+  { id: 'default', label: msg`Default`, hint: msg`Follows your Claude Code setting` },
+  { id: 'low', label: msg`Low`, hint: msg`Quick answers. Least thinking, cheapest` },
+  { id: 'medium', label: msg`Medium`, hint: msg`Everyday work` },
+  { id: 'high', label: msg`High`, hint: msg`Thinks longer. Slower and pricier` },
+  { id: 'xhigh', label: msg`Very high`, hint: msg`Hard problems. Much slower` },
+  { id: 'max', label: msg`Max`, hint: msg`Everything it has. Slowest and priciest` },
 ]
 
 export function modelsWith(

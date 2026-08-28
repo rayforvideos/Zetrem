@@ -47,6 +47,8 @@ const boundary = vi.hoisted(() => ({
   nextPid: 4200,
   holdLogin: false,
   releaseLogin: null as (() => void) | null,
+  laid: [] as string[],
+  libraryFails: false,
 }))
 
 vi.mock('electron', () => ({
@@ -115,6 +117,19 @@ vi.mock('../../store/project-memory/project-memory', () => ({
   recallProject: async () => boundary.project,
 }))
 
+vi.mock('../../library/library', () => ({
+  librarySessionArgs: async (workspace: string) => {
+    if (boundary.libraryFails) throw new Error('read-only disk')
+    boundary.laid.push(workspace)
+    return [
+      '--add-dir',
+      `${workspace}/.zetrem/library`,
+      '--mcp-config',
+      '/data/Zetrem/library-mcp.json',
+    ]
+  },
+}))
+
 vi.mock('../../spawn/kill-tree/kill-tree', () => ({
   killTree: (pid: number) => boundary.killed.push(pid),
   killTreeSync: (pid: number) => boundary.killedSync.push(pid),
@@ -123,6 +138,7 @@ vi.mock('../../spawn/kill-tree/kill-tree', () => ({
 const config: RunConfig = {
   permissionMode: 'ask',
   model: 'default',
+  effort: 'default',
   persona: '',
   people: [],
   lock: null,
@@ -195,6 +211,8 @@ beforeEach(async () => {
   boundary.nextPid = 4200
   boundary.holdLogin = false
   boundary.releaseLogin = null
+  boundary.laid.length = 0
+  boundary.libraryFails = false
   boundary.userData = mkdtempSync(join(tmpdir(), 'zetrem-agent-host-'))
   vi.spyOn(console, 'error').mockImplementation(() => undefined)
   vi.resetModules()
@@ -264,6 +282,33 @@ describe('what the child says reaches the renderer, and its death is told once',
   })
 })
 
+describe('the library every session is handed', () => {
+  it('hands every session its workspace library as an added directory and an MCP server', async () => {
+    const one = renderer()
+    await startAgent(one, 'a1', 'hello')
+    const spawn = boundary.spawns[0]
+    if (spawn === undefined) throw new Error('nothing was spawned')
+    const workspace = boundary.laid[0]
+    if (workspace === undefined) throw new Error('no library was laid out')
+    expect(spawn.args.slice(-4)).toEqual([
+      '--add-dir',
+      `${workspace}/.zetrem/library`,
+      '--mcp-config',
+      '/data/Zetrem/library-mcp.json',
+    ])
+    expect(boundary.laid).toHaveLength(1)
+  })
+
+  it('still starts the session when the library cannot be laid out, just without it', async () => {
+    boundary.libraryFails = true
+    const one = renderer()
+    await startAgent(one, 'a3', 'hello')
+    const spawn = boundary.spawns[0]
+    if (spawn === undefined) throw new Error('nothing was spawned')
+    expect(spawn.args).not.toContain('--add-dir')
+  })
+})
+
 describe('a stop that lands while the agent is still starting', () => {
   it('spawns nothing, because the last word on spawning comes after the wait', async () => {
     const one = renderer()
@@ -293,6 +338,36 @@ describe('a stop that lands while the agent is still starting', () => {
 
     expect(childAt(0).stdin.written).toHaveLength(1)
     expect(childAt(0).stdin.written[0]).toContain('hello again')
+  })
+})
+
+describe('a stop that the child ignores', () => {
+  it('kills the tree hard after the grace period, and not if it closed in time', async () => {
+    vi.useFakeTimers()
+    try {
+      const one = renderer()
+      await startAgent(one, 'a1', 'hello')
+      fire('agent:stop', one, 'a1')
+      expect(boundary.killed).toEqual([childAt(0).pid])
+      await vi.advanceTimersByTimeAsync(5000)
+      expect(boundary.killedSync).toEqual([childAt(0).pid])
+
+      await startAgent(one, 'a2', 'again')
+      fire('agent:stop', one, 'a2')
+      childAt(1).emit('close', 0)
+      await vi.advanceTimersByTimeAsync(5000)
+      expect(boundary.killedSync).toEqual([childAt(0).pid])
+    } finally {
+      vi.useRealTimers()
+    }
+  })
+
+  it('is still killed at quit, even though it no longer holds its id', async () => {
+    const one = renderer()
+    await startAgent(one, 'a1', 'hello')
+    fire('agent:stop', one, 'a1')
+    host.killAllAgents()
+    expect(boundary.killedSync).toEqual([childAt(0).pid])
   })
 })
 

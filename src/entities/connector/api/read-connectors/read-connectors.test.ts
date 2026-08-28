@@ -62,8 +62,8 @@ describe('needingAuth: who is waiting on you', () => {
 })
 
 describe('canSignIn: which connectors have a sign in at all', () => {
-  function one(where: string, state: Connector['state']): Connector {
-    return { name: 'x', where, state }
+  function one(where: string, state: Connector['state'], authByHeader = false): Connector {
+    return { name: 'x', where, state, authByHeader }
   }
 
   it('offers it for a remote server, which is what signing in is for', () => {
@@ -78,6 +78,24 @@ describe('canSignIn: which connectors have a sign in at all', () => {
 
   it('does not offer it to a server still waiting to be approved, which signing in will not fix', () => {
     expect(canSignIn(one('https://mcp.example.com/mcp', 'unapproved'))).toBe(false)
+  })
+
+  it('does not offer it to a server that authenticates by a header, which has no sign in', () => {
+    expect(canSignIn(one('https://api.githubcopilot.com/mcp/', 'failed', true))).toBe(false)
+  })
+})
+
+describe('readConnectors: a server that authenticates by a header', () => {
+  it('marks it, whether the header is missing, malformed or rejected', () => {
+    const bad = readConnectors(
+      'plugin:github:github: https://api.githubcopilot.com/mcp/ - ✘ Failed to connect — Authorization header is badly formatted',
+    )
+    expect(bad[0]).toMatchObject({ state: 'failed', authByHeader: true })
+    const rejected = readConnectors(
+      'g: https://x/mcp - ✘ Failed — OAuth fallback is disabled when headers.Authorization is set',
+    )
+    expect(rejected[0]?.authByHeader).toBe(true)
+    expect(readConnectors('a: https://x/mcp - ✔ Connected')[0]?.authByHeader).toBe(false)
   })
 })
 

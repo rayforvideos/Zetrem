@@ -61,7 +61,7 @@ function Picture({ scene, shape, live }: PictureProps) {
   }
   return (
     <svg
-      width={FRAME_W}
+      width={ICON_W}
       height={FRAME_H}
       viewBox={`${INK_X[scene] - INK_PAD} 3 ${W - 12} ${H - 6}`}
       preserveAspectRatio="xMinYMid meet"
@@ -85,7 +85,6 @@ import {
   verbStyle,
   wordsStyle,
   FRAME_H,
-  FRAME_W,
   ICON_W,
 } from './NowStage.styles'
 

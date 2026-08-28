@@ -49,7 +49,9 @@ function askTheShell(): Promise<string> {
     const found = isWindows ? inherited : await shellPath(inherited)
     const full = withKnownDirs(found, knownInstallDirs())
     if (asked === generation) {
-      cached = full
+      // A PATH with no claude on it is not an answer to keep: the person may
+      // install it any minute, and the next look must find it.
+      if (canFind('claude', full)) cached = full
       pending = null
       if (full !== remembered) {
         remembered = full

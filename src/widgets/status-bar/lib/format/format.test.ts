@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { cells, contextPercent, reachable } from './format'
+import { contextPercent, gauges, reachable } from './format'
 import type { StatusState } from '@/entities/agent-session'
 
 function state(overrides: Partial<StatusState> = {}): StatusState {
@@ -48,35 +48,58 @@ describe('what counts as reachable', () => {
   })
 })
 
-describe('the cells in the status bar', () => {
-  it('shows no cell while nothing is known, rather than making an empty one', () => {
-    expect(cells(state())).toEqual([])
+describe('the gauges in the status bar', () => {
+  it('shows no gauge while nothing is known, rather than making an empty one', () => {
+    expect(gauges(state())).toEqual([])
   })
 
-  it('leaves a comfortable context alone, since the sidebar already carries the level', () => {
+  it('shows the chat as a gauge once it has used anything', () => {
     expect(contextPercent({ used: 100_000, window: 1_000_000 })).toBe(10)
-    expect(cells(state({ context: { used: 100_000, window: 1_000_000 } }))).toEqual([])
+    const [chat] = gauges(state({ context: { used: 100_000, window: 1_000_000 } }))
+    expect(chat).toEqual({
+      key: 'chat',
+      label: 'this chat',
+      value: '10%',
+      percent: 10,
+      warn: false,
+      hint: null,
+    })
   })
 
-  it('speaks up once the chat is close to being compacted', () => {
-    const [cell] = cells(state({ context: { used: 880_000, window: 1_000_000 } }))
-    expect(cell).toEqual({ key: 'context', text: 'Context 12% left, compacting soon', warn: true })
+  it('turns the same gauge into a warning once the chat is close to being compacted', () => {
+    const all = gauges(state({ context: { used: 880_000, window: 1_000_000 } }))
+    expect(all).toHaveLength(1)
+    expect(all[0]).toEqual({
+      key: 'chat',
+      label: 'compacting soon',
+      value: '88%',
+      percent: 88,
+      warn: true,
+      hint: null,
+    })
   })
 
-  it('says nothing about context while the window size is unknown', () => {
+  it('falls back to a token count with no fill while the window size is unknown', () => {
     expect(contextPercent({ used: 28364, window: null })).toBeNull()
-    expect(cells(state({ context: { used: 28364, window: null } }))).toEqual([])
+    const [chat] = gauges(state({ context: { used: 28364, window: null } }))
+    expect(chat).toMatchObject({
+      key: 'chat',
+      label: 'this chat',
+      value: '28.4k',
+      percent: null,
+      warn: false,
+    })
   })
 
   it('does not repeat the money the sidebar already shows', () => {
-    const found = cells(state({ cost: { ...state().cost, usd: 0.19338 } })).find(
-      (c) => c.key === 'cost',
+    const found = gauges(state({ cost: { ...state().cost, usd: 0.19338 } })).find(
+      (c) => c.key === ('cost' as never),
     )
     expect(found).toBeUndefined()
   })
 
-  it('leaves the account limits to the bar along the foot of the window', () => {
-    const held = cells(
+  it('leaves the account limits to the marks along the left', () => {
+    const held = gauges(
       state({
         limits: [
           {
@@ -89,10 +112,10 @@ describe('the cells in the status bar', () => {
         ],
       }),
     )
-    expect(held.find((c) => c.key === 'limit')).toBeUndefined()
+    expect(held.find((c) => c.key === ('limit' as never))).toBeUndefined()
   })
 
-  it('counts connected MCP servers and grows when some need signing in', () => {
+  it('fills the MCP gauge by connected share and warns when some need signing in', () => {
     const session = {
       id: 's',
       cwd: '/w',
@@ -109,56 +132,95 @@ describe('the cells in the status bar', () => {
         { name: 'd', status: 'pending' },
       ],
     }
-    const found = cells(state({ session })).find((c) => c.key === 'mcp')
-    expect(found).toEqual({ key: 'mcp', text: 'MCP 2/4 · 1 need auth', warn: true })
-  })
-
-  it('makes no MCP cell when there are none', () => {
-    const session = { ...state().session, mcp: [] }
-    expect(cells(state({ session: session as never })).find((c) => c.key === 'mcp')).toBeUndefined()
-  })
-
-  it('grows the version cell when there is a newer one', () => {
-    const calm = cells(
-      state({ update: { current: '2.1.231', latest: '2.1.231', managedBy: 'Homebrew' } }),
-    )
-    expect(calm.find((c) => c.key === 'update')).toEqual({
-      key: 'update',
-      text: 'CLI 2.1.231',
-      warn: false,
+    const found = gauges(state({ session })).find((c) => c.key === 'mcp')
+    expect(found).toEqual({
+      key: 'mcp',
+      label: 'MCP',
+      value: '2/4',
+      percent: 50,
+      warn: true,
+      hint: '1 need auth',
     })
+  })
 
-    const stale = cells(
-      state({ update: { current: '2.1.231', latest: '2.1.240', managedBy: 'Homebrew' } }),
+  it('keeps the MCP gauge quiet when everyone is signed in', () => {
+    const session = {
+      ...state().session,
+      mcp: [{ name: 'a', status: 'connected' }],
+    }
+    const found = gauges(state({ session: session as never })).find((c) => c.key === 'mcp')
+    expect(found).toMatchObject({
+      value: '1/1',
+      percent: 100,
+      warn: false,
+      hint: null,
+    })
+  })
+
+  it('makes no MCP gauge when there are none', () => {
+    const session = { ...state().session, mcp: [] }
+    expect(
+      gauges(state({ session: session as never })).find((c) => c.key === 'mcp'),
+    ).toBeUndefined()
+  })
+
+  it('mentions the CLI only when there is a newer one', () => {
+    const calm = gauges(
+      state({
+        update: {
+          current: '2.1.231',
+          latest: '2.1.231',
+          managedBy: 'Homebrew',
+        },
+      }),
+    )
+    expect(calm.find((c) => c.key === 'update')).toBeUndefined()
+
+    const stale = gauges(
+      state({
+        update: {
+          current: '2.1.231',
+          latest: '2.1.240',
+          managedBy: 'Homebrew',
+        },
+      }),
     )
     expect(stale.find((c) => c.key === 'update')).toEqual({
       key: 'update',
-      text: 'CLI 2.1.231 → 2.1.240 available',
+      label: 'Update CLI',
+      value: '',
+      percent: null,
       warn: true,
+      hint: '2.1.231 → 2.1.240',
     })
   })
 
   it('does not read an older latest as an update', () => {
-    const downgrade = cells(
-      state({ update: { current: '2.1.231', latest: '2.1.200', managedBy: 'Homebrew' } }),
+    const downgrade = gauges(
+      state({
+        update: {
+          current: '2.1.231',
+          latest: '2.1.200',
+          managedBy: 'Homebrew',
+        },
+      }),
     )
-    expect(downgrade.find((c) => c.key === 'update')).toEqual({
-      key: 'update',
-      text: 'CLI 2.1.231',
-      warn: false,
-    })
+    expect(downgrade.find((c) => c.key === 'update')).toBeUndefined()
   })
 
-  it('keeps the cells in a fixed order, so the row does not shuffle as values arrive', () => {
-    const session = { ...state().session, mcp: [{ name: 'a', status: 'connected' }] }
-    const full = cells(
+  it('keeps the gauges in a fixed order, so the row does not shuffle as values arrive', () => {
+    const session = {
+      ...state().session,
+      mcp: [{ name: 'a', status: 'connected' }],
+    }
+    const full = gauges(
       state({
         context: { used: 900_000, window: 1_000_000 },
         session: session as never,
-        update: { current: '2.1.231', latest: '2.1.231', managedBy: null },
+        update: { current: '2.1.231', latest: '2.1.240', managedBy: null },
       }),
     )
-    expect(full.map((c) => c.key)).toEqual(['context', 'mcp', 'update'])
+    expect(full.map((c) => c.key)).toEqual(['chat', 'mcp', 'update'])
   })
 })
 
@@ -183,19 +245,33 @@ describe('the strip counts what this session can actually reach', () => {
       { name: 'claude.ai Notion', status: 'needs-auth' },
       { name: 'playwright', status: 'connected' },
     ])
-    const [mcp] = cells(honest, [
-      { name: 'claude.ai Notion', where: 'https://mcp.notion.com/mcp', state: 'connected' },
-      { name: 'playwright', where: 'npx @playwright/mcp@latest', state: 'connected' },
+    const [mcp] = gauges(honest, [
+      {
+        name: 'claude.ai Notion',
+        where: 'https://mcp.notion.com/mcp',
+        state: 'connected',
+      },
+      {
+        name: 'playwright',
+        where: 'npx @playwright/mcp@latest',
+        state: 'connected',
+      },
     ]).filter((cell) => cell.key === 'mcp')
-    expect(mcp?.text).toBe('MCP 1/2 · 1 need auth')
+    expect(mcp?.value).toBe('1/2')
+    expect(mcp?.hint).toBe('1 need auth')
     expect(mcp?.warn).toBe(true)
   })
 
   it('still reports trouble the health check itself found', () => {
-    const [mcp] = cells(withMcp([{ name: 'claude.ai Slack', status: 'connected' }]), [
-      { name: 'claude.ai Slack', where: 'https://mcp.slack.com/mcp', state: 'needs-auth' },
+    const [mcp] = gauges(withMcp([{ name: 'claude.ai Slack', status: 'connected' }]), [
+      {
+        name: 'claude.ai Slack',
+        where: 'https://mcp.slack.com/mcp',
+        state: 'needs-auth',
+      },
     ]).filter((cell) => cell.key === 'mcp')
-    expect(mcp?.text).toBe('MCP 0/1 · 1 need auth')
+    expect(mcp?.value).toBe('0/1')
+    expect(mcp?.warn).toBe(true)
     expect(mcp?.warn).toBe(true)
   })
 
@@ -204,8 +280,9 @@ describe('the strip counts what this session can actually reach', () => {
       { name: 'claude.ai Notion', status: 'needs-auth' },
       { name: 'playwright', status: 'connected' },
     ])
-    const [mcp] = cells(stale, []).filter((cell) => cell.key === 'mcp')
-    expect(mcp?.text).toBe('MCP 1/2 · 1 need auth')
+    const [mcp] = gauges(stale, []).filter((cell) => cell.key === 'mcp')
+    expect(mcp?.value).toBe('1/2')
+    expect(mcp?.hint).toBe('1 need auth')
   })
 
   it('says nothing at all until the health check has come back', () => {
@@ -213,23 +290,27 @@ describe('the strip counts what this session can actually reach', () => {
       { name: 'claude.ai Gmail', status: 'needs-auth' },
       { name: 'playwright', status: 'connected' },
     ])
-    const keys = cells(stale, [], false).map((cell) => cell.key)
+    const keys = gauges(stale, [], false).map((cell) => cell.key)
     expect(keys, 'three seconds of false warning on every launch is not on').not.toContain('mcp')
   })
 
   it('still says the things that do not wait on the health check', () => {
     const tight = state({
       context: { used: 950_000, window: 1_000_000 },
-      update: { current: '2.1.231', latest: '2.1.231', managedBy: null },
+      update: { current: '2.1.231', latest: '2.1.240', managedBy: null },
     })
-    expect(cells(tight, [], false).map((cell) => cell.key)).toEqual(['context', 'update'])
+    expect(gauges(tight, [], false).map((cell) => cell.key)).toEqual(['chat', 'update'])
   })
 
   it('keeps a server the health check never mentioned, rather than losing it', () => {
-    const [mcp] = cells(withMcp([{ name: 'only-in-session', status: 'connected' }]), [
-      { name: 'claude.ai Slack', where: 'https://mcp.slack.com/mcp', state: 'connected' },
+    const [mcp] = gauges(withMcp([{ name: 'only-in-session', status: 'connected' }]), [
+      {
+        name: 'claude.ai Slack',
+        where: 'https://mcp.slack.com/mcp',
+        state: 'connected',
+      },
     ]).filter((cell) => cell.key === 'mcp')
-    expect(mcp?.text).toBe('MCP 2/2')
+    expect(mcp?.value).toBe('2/2')
   })
 })
 
@@ -249,7 +330,7 @@ describe('the strip reports the freshest reading it has', () => {
     })
 
   it('clears a pending connector once the check says it came up, but not one that could not sign in', () => {
-    const cell = cells(
+    const cell = gauges(
       session([
         { name: 'Gmail', status: 'needs-auth' },
         { name: 'Figma', status: 'pending' },
@@ -261,15 +342,17 @@ describe('the strip reports the freshest reading it has', () => {
         { name: 'playwright', where: 'z', state: 'connected' },
       ],
     ).find((one) => one.key === 'mcp')
-    expect(cell?.text).toBe('MCP 2/3 · 1 need auth')
+    expect(cell?.value).toBe('2/3')
+    expect(cell?.hint).toBe('1 need auth')
     expect(cell?.warn).toBe(true)
   })
 
   it('falls back to the config while no session has started', () => {
-    const cell = cells(state(), [
+    const cell = gauges(state(), [
       { name: 'Gmail', where: 'x', state: 'connected' },
       { name: 'Slack', where: 'y', state: 'needs-auth' },
     ]).find((one) => one.key === 'mcp')
-    expect(cell?.text).toBe('MCP 1/2 · 1 need auth')
+    expect(cell?.value).toBe('1/2')
+    expect(cell?.hint).toBe('1 need auth')
   })
 })

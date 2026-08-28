@@ -36,6 +36,7 @@ describe('what the orchestrator is told', () => {
     const args = agentArgs({
       permissionMode: 'ask',
       model: 'default',
+      effort: 'default',
       persona: ORCHESTRATOR_PROMPT,
       people: [person],
       lock: null,
@@ -47,6 +48,7 @@ describe('what the orchestrator is told', () => {
     const args = agentArgs({
       permissionMode: 'ask',
       model: 'default',
+      effort: 'default',
       persona: '',
       people: [],
       lock: null,

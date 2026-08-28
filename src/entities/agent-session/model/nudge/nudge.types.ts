@@ -1,4 +1,4 @@
-export type NudgeReason = 'done' | 'permission'
+type NudgeReason = 'done' | 'permission'
 
 export type Nudge = { reason: NudgeReason; title: string; body: string }
 

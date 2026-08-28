@@ -7,8 +7,8 @@ import { Button } from '@/shared/ui/button'
 import { Popover, PopoverContent, PopoverTrigger } from '@/shared/ui/popover'
 import { cn } from '@/shared/lib/cn'
 import { USAGE_BAR } from '@/shared/config/theme'
-import { cells } from '@/widgets/status-bar'
-import { chatLine, marksOfStatus, quietLine } from '../../lib/strip/strip'
+import { gauges } from '../../lib/format/format'
+import { marksOfStatus, quietLine } from '../../lib/strip/strip'
 import { t } from '@lingui/core/macro'
 
 type UsageBarProps = {
@@ -31,9 +31,8 @@ export function UsageBar({
   onToggle,
 }: UsageBarProps) {
   const marks = marksOfStatus(status, nowMs)
-  const chat = chatLine(status)
   const quiet = quietLine(status)
-  const session = cells(status, connectors, checked)
+  const session = gauges(status, connectors, checked)
 
   return (
     <footer
@@ -57,7 +56,9 @@ export function UsageBar({
             <span
               data-fill
               className="absolute inset-y-0 left-0 rounded-full bg-current"
-              style={{ width: `${Math.min(100, Math.max(0, mark.percent ?? 0))}%` }}
+              style={{
+                width: `${Math.min(100, Math.max(0, mark.percent ?? 0))}%`,
+              }}
             />
           </span>
           {mark.label.length > 0 && <span>{mark.label}</span>}
@@ -80,33 +81,52 @@ export function UsageBar({
         </span>
       )}
 
-      <span className="ml-auto flex min-w-0 items-center gap-4 text-muted-foreground">
-        {session.map((cell) => (
-          <span
-            key={cell.key}
-            data-session-cell={cell.key}
-            className={cn('min-w-0 truncate', cell.warn ? 'text-foreground' : 'hidden lg:inline')}
-          >
-            {cell.text}
-          </span>
-        ))}
-        {chat !== null && (
-          <span data-chat className="hidden flex-none md:inline">
-            {chat}
-          </span>
-        )}
-      </span>
-
       <Popover open={open} onOpenChange={(next) => next !== open && onToggle()}>
         <PopoverTrigger asChild>
           <Button
-            variant="quiet"
+            variant="ghost"
             size="bare"
             aria-expanded={open}
             aria-label={t`Session details`}
-            className="zt-hit flex-none"
+            className="ml-auto flex min-w-0 items-center gap-4 self-stretch border-l border-border pr-1.5 pl-4 text-muted-foreground hover:bg-muted hover:text-foreground"
           >
-            {open ? <ChevronDown className="size-3" /> : <ChevronUp className="size-3" />}
+            {session.map((gauge) => (
+              <span
+                key={gauge.key}
+                data-session-gauge={gauge.key}
+                title={gauge.hint ?? undefined}
+                className={cn('flex min-w-0 items-center gap-1.5', gauge.warn && 'text-foreground')}
+              >
+                {gauge.warn && (
+                  <span aria-hidden className="size-1.5 flex-none rounded-full bg-current" />
+                )}
+                {gauge.percent !== null && (
+                  <span className="relative h-1 w-8 flex-none overflow-hidden rounded-full bg-muted">
+                    <span
+                      data-fill
+                      className="absolute inset-y-0 left-0 rounded-full bg-current"
+                      style={{ width: `${Math.min(100, Math.max(0, gauge.percent))}%` }}
+                    />
+                  </span>
+                )}
+                {gauge.label.length > 0 && (
+                  <span
+                    className={cn(
+                      'min-w-0 truncate',
+                      gauge.key !== 'update' && !gauge.warn && 'hidden xl:inline',
+                    )}
+                  >
+                    {gauge.label}
+                  </span>
+                )}
+                {gauge.value.length > 0 && <span className="flex-none">{gauge.value}</span>}
+              </span>
+            ))}
+            {open ? (
+              <ChevronDown className="size-3 flex-none" />
+            ) : (
+              <ChevronUp className="size-3 flex-none" />
+            )}
           </Button>
         </PopoverTrigger>
         <PopoverContent

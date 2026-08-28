@@ -1,6 +1,4 @@
 export { TeamSidebar } from './ui/TeamSidebar/TeamSidebar'
 export { team } from './lib/team/team'
-export type { TeamMember } from './lib/team/team.types'
-export { noteLine } from './lib/team-note/team-note'
-export type { NoteLine, TeamNote } from './lib/team-note/team-note.types'
+export type { TeamNote } from './lib/team-note/team-note.types'
 export { addressKey } from './lib/address-key/address-key'

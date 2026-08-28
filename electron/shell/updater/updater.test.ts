@@ -19,9 +19,10 @@ const boundary = vi.hoisted(() => ({
 
 vi.mock('electron', () => ({
   app: {
-    get isPackaged(): boolean {
-      return boundary.packaged
-    },
+    getAppPath: () =>
+      boundary.packaged
+        ? '/Applications/Zetrem.app/Contents/Resources/app.asar'
+        : '/Users/r/workspace/Zetrem',
     whenReady: async () => undefined,
   },
   BrowserWindow: {

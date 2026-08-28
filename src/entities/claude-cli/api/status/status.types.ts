@@ -1,4 +1,4 @@
-export type McpServer = { name: string; status: string }
+type McpServer = { name: string; status: string }
 
 export type SessionIdentity = {
   id: string

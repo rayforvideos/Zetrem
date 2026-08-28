@@ -3,7 +3,6 @@ export {
   listProjects,
   openProject,
   pickProject,
-  repathProject,
   restoreProject,
 } from './api/project-dir'
 export type { Project } from './model/project'

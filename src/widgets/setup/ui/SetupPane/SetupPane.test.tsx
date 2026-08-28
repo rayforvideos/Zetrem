@@ -54,6 +54,7 @@ function pane(over: Partial<Flat> = {}): string {
           onSignIn: () => {},
           onSignOut: () => {},
           onInstall: () => {},
+          onRecheck: () => {},
         }}
         you={{ name: 'Ray', face: 'onigiri', onName: () => {}, onFace: () => {} }}
         project={{
@@ -65,6 +66,7 @@ function pane(over: Partial<Flat> = {}): string {
         defaults={{
           permissionMode: flat.permissionMode,
           model: flat.model,
+          effort: 'default',
           tongue: 'system' as const,
           onTongue: () => {},
           notify: flat.notify,
@@ -73,6 +75,7 @@ function pane(over: Partial<Flat> = {}): string {
           onEnterSends: () => {},
           onPermissionMode: () => {},
           onModel: () => {},
+          onEffort: () => {},
         }}
         plugins={{ summary: 'none', onOpen: () => {} }}
         agents={{ stock: ['Explore', 'Plan'], on: ['Explore'], onChange: () => {} }}
@@ -246,7 +249,7 @@ describe('SetupPane: everything to settle before starting, on one screen', () =>
     const groups = [...html.matchAll(/<div[^>]*data-slot="toggle-group"[^>]*class="([^"]*)"/g)].map(
       (match) => match[1] as string,
     )
-    expect(groups, 'language, permission and model: three of them').toHaveLength(3)
+    expect(groups, 'language, permission, model and effort: four of them').toHaveLength(4)
     for (const cls of groups) {
       expect(cls, 'no wider than what it holds').toContain('w-fit')
       expect(cls, 'stretched to the row, the pill trails off empty').not.toContain('w-full')

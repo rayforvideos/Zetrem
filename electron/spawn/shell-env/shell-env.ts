@@ -53,6 +53,7 @@ const KEEP_PREFIX_CI = ['http_proxy', 'https_proxy', 'no_proxy']
 const OURS: Record<string, string> = {
   GIT_EDITOR: 'true',
   ZETREM: '1',
+  CLAUDE_CODE_ADDITIONAL_DIRECTORIES_CLAUDE_MD: '1',
 }
 
 export function agentEnv(

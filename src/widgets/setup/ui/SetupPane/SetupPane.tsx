@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react'
 import { startBlocker } from '../../lib/start-blocker/start-blocker'
 import { tongueChoices } from '../../lib/tongues/tongues'
-import { MODELS, PERMISSION_MODES } from '@/entities/settings'
+import { EFFORTS, MODELS, PERMISSION_MODES } from '@/entities/settings'
 import type { Settings } from '@/entities/settings'
-import type { ModelChoice, PermissionMode } from '@/entities/claude-cli'
+import type { ModelChoice, PermissionMode, EffortChoice } from '@/entities/claude-cli'
 import { i18n } from '@lingui/core'
 import { t } from '@lingui/core/macro'
 import type { MessageDescriptor } from '@lingui/core'
@@ -56,7 +56,7 @@ export function SetupPane({
   }, [reopened, onCancel])
 
   return (
-    <div className="relative z-[3] flex h-full min-h-0 flex-col">
+    <div data-setup-pane className="relative z-[3] flex h-full min-h-0 flex-col">
       <div className="zt-scroll min-h-0 flex-1 overflow-y-auto pr-2.5">
         {/* Anchored to the top: the tabs differ in height, and a centred column would
             jump the header on every switch. */}
@@ -153,6 +153,12 @@ export function SetupPane({
                     options={MODELS}
                     chosen={defaults.model}
                     onChoose={(id) => defaults.onModel(id as ModelChoice)}
+                  />
+                  <ChoiceField
+                    label={t`Effort`}
+                    options={EFFORTS}
+                    chosen={defaults.effort}
+                    onChoose={(id) => defaults.onEffort(id as EffortChoice)}
                   />
                 </FieldGroup>
               </section>

@@ -1,20 +1,36 @@
-import { Trash2 } from 'lucide-react'
-import { canSignIn, connectorGroupsOf, removableConnector, shortName } from '@/entities/connector'
+import { MoreHorizontal } from 'lucide-react'
+import {
+  canSignIn,
+  connectorGroupsOf,
+  originOf,
+  removableConnector,
+  shortName,
+} from '@/entities/connector'
 import type { Connector, ConnectorState, ConnectorVerb, NewConnector } from '@/entities/connector'
+import { Button } from '@/shared/ui/button'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/shared/ui/dropdown-menu'
 import { ConnectorMark } from '../ConnectorMark/ConnectorMark'
 import { AddConnector } from '../AddConnector/AddConnector'
 import { t } from '@lingui/core/macro'
 import { i18n } from '@lingui/core'
 import { msg } from '@lingui/core/macro'
 import type { MessageDescriptor } from '@lingui/core'
-import { Group, Quietly, Row } from './parts'
+import { Badge, Group, Quietly, Row, SectionTitle } from './parts'
 
-const CONNECTOR_STATE: Record<ConnectorState, MessageDescriptor> = {
-  connected: msg`Connected`,
-  'needs-auth': msg`Needs signing in`,
-  unapproved: msg`Waiting for your approval in the CLI`,
-  failed: msg`Could not connect`,
-  unknown: msg`Unknown`,
+const STATE: Record<
+  ConnectorState,
+  { word: MessageDescriptor; tone: 'ok' | 'attention' | 'danger' | 'muted' }
+> = {
+  connected: { word: msg`Connected`, tone: 'ok' },
+  'needs-auth': { word: msg`Sign in needed`, tone: 'attention' },
+  unapproved: { word: msg`Awaiting approval`, tone: 'muted' },
+  failed: { word: msg`Can't connect`, tone: 'danger' },
+  unknown: { word: msg`Unknown`, tone: 'muted' },
 }
 
 export function ConnectorsTab({
@@ -35,9 +51,10 @@ export function ConnectorsTab({
   const wires = connectorGroupsOf(connectors)
 
   return (
-    <>
+    <section className="flex flex-col gap-2">
+      <SectionTitle>{t`Connectors`}</SectionTitle>
       {connectors.length === 0 && (
-        <p className="px-2 py-2 text-xs text-muted-foreground">
+        <p className="px-2 py-1 text-xs text-muted-foreground">
           {t`No connectors yet. Add one below, or bring over what Claude Desktop already has.`}
         </p>
       )}
@@ -49,37 +66,57 @@ export function ConnectorsTab({
           note={group.note}
           titled={group.titled}
         >
-          {group.connectors.map((connector) => (
-            <Row
-              key={connector.name}
-              title={shortName(connector.name)}
-              note={[i18n._(CONNECTOR_STATE[connector.state]), connector.where]
-                .filter(Boolean)
-                .join(' · ')}
-              busy={busy === connector.name}
-              mark={<ConnectorMark where={connector.where} />}
-            >
-              {canSignIn(connector) &&
-                (connector.state === 'connected' ? (
-                  <Quietly
-                    label={t`Sign out`}
-                    onClick={() => onConnector('logout', connector.name)}
-                  />
-                ) : (
-                  <Quietly
-                    label={t`Sign in`}
-                    onClick={() => onConnector('login', connector.name)}
-                  />
-                ))}
-              {removableConnector(connector.name) && (
-                <Quietly
-                  label={t`Remove`}
-                  icon={<Trash2 />}
-                  onClick={() => onConnector('remove', connector.name)}
-                />
-              )}
-            </Row>
-          ))}
+          {group.connectors.map((connector) => {
+            const state = STATE[connector.state]
+            // The URL is the identity only for one a person added by it; for an
+            // account or plugin connector the brand name is the identity.
+            const showUrl = originOf(connector.name) === 'yours'
+            return (
+              <Row
+                key={connector.name}
+                title={shortName(connector.name)}
+                note={showUrl ? connector.where : ''}
+                busy={busy === connector.name}
+                mark={<ConnectorMark where={connector.where} />}
+              >
+                <Badge tone={state.tone}>{i18n._(state.word)}</Badge>
+                {canSignIn(connector) &&
+                  (connector.state === 'connected' ? (
+                    <Quietly
+                      label={t`Sign out`}
+                      onClick={() => onConnector('logout', connector.name)}
+                    />
+                  ) : (
+                    <Quietly
+                      label={t`Sign in`}
+                      onClick={() => onConnector('login', connector.name)}
+                    />
+                  ))}
+                {removableConnector(connector.name) && (
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="icon-xs"
+                        aria-label={t`More for ${shortName(connector.name)}`}
+                        className="rounded-md text-muted-foreground"
+                      >
+                        <MoreHorizontal />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" className="w-40">
+                      <DropdownMenuItem
+                        variant="destructive"
+                        onSelect={() => onConnector('remove', connector.name)}
+                      >
+                        {t`Remove`}
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                )}
+              </Row>
+            )
+          })}
         </Group>
       ))}
       <AddConnector
@@ -88,6 +125,6 @@ export function ConnectorsTab({
         onAdd={onAddConnector}
         onImport={onImportConnectors}
       />
-    </>
+    </section>
   )
 }

@@ -7,10 +7,27 @@ import {
   DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from '@/shared/ui/dropdown-menu'
 import { InputGroupButton } from '@/shared/ui/input-group'
-import type { ChoicePickerProps } from './ChoicePicker.types'
+import type { ChoicePickerProps, SubChoice } from './ChoicePicker.types'
+
+function items(choice: Pick<SubChoice, 'options' | 'selected' | 'onSelect'>) {
+  return choice.options.map((option) => (
+    <DropdownMenuItem key={option.id} onSelect={() => choice.onSelect(option.id)}>
+      <span className={cn(option.id !== choice.selected && 'text-muted-foreground')}>
+        <span className="block text-sm">{read(option.label)}</span>
+        <span className="block text-xs leading-snug text-muted-foreground">
+          {read(option.hint)}
+        </span>
+      </span>
+    </DropdownMenuItem>
+  ))
+}
 
 export function ChoicePicker({
   icon,
@@ -19,8 +36,13 @@ export function ChoicePicker({
   onSelect,
   label,
   note = null,
+  sub,
 }: ChoicePickerProps) {
   const current = options.find((option) => option.id === selected)
+  const subCurrent = sub?.options.find((option) => option.id === sub.selected)
+  // A sub-choice left on its first option says nothing; any other shows beside the main one.
+  const subShown =
+    sub !== undefined && subCurrent !== undefined && sub.options[0]?.id !== sub.selected
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -32,23 +54,44 @@ export function ChoicePicker({
         >
           {icon}
           {current === undefined ? label : read(current.label)}
+          {subShown && (
+            <>
+              <span aria-hidden className="text-muted-foreground/50">
+                ·
+              </span>
+              <span data-sub-choice className="text-muted-foreground">
+                {read(subCurrent.label)}
+              </span>
+            </>
+          )}
           <ChevronDown />
         </InputGroupButton>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="start" className="w-64">
+      {/* The menu was opened with the pointer; handing focus back to the trigger
+          would leave it wearing the keyboard ring. */}
+      <DropdownMenuContent
+        align="start"
+        className="w-64"
+        onCloseAutoFocus={(event) => event.preventDefault()}
+      >
         <DropdownMenuLabel className="text-xs text-muted-foreground">{label}</DropdownMenuLabel>
-        <DropdownMenuGroup>
-          {options.map((option) => (
-            <DropdownMenuItem key={option.id} onSelect={() => onSelect(option.id)}>
-              <span className={cn(option.id !== selected && 'text-muted-foreground')}>
-                <span className="block text-sm">{read(option.label)}</span>
-                <span className="block text-xs leading-snug text-muted-foreground">
-                  {read(option.hint)}
-                </span>
-              </span>
-            </DropdownMenuItem>
-          ))}
-        </DropdownMenuGroup>
+        <DropdownMenuGroup>{items({ options, selected, onSelect })}</DropdownMenuGroup>
+        {sub !== undefined && subCurrent !== undefined && (
+          <>
+            <DropdownMenuSeparator />
+            {/* One row that says the current level; the levels themselves open beside it. */}
+            <DropdownMenuSub>
+              <DropdownMenuSubTrigger data-sub-trigger className="gap-2 [&_svg]:size-3.5">
+                {sub.icon}
+                <span className="text-muted-foreground">{sub.label}</span>
+                <span className="ml-auto text-sm">{read(subCurrent.label)}</span>
+              </DropdownMenuSubTrigger>
+              <DropdownMenuSubContent data-sub-options className="w-60">
+                {items(sub)}
+              </DropdownMenuSubContent>
+            </DropdownMenuSub>
+          </>
+        )}
         {note !== null && (
           <DropdownMenuLabel className="text-xs font-normal text-muted-foreground">
             {note}

@@ -20,6 +20,7 @@ export function agentArgs(config: RunConfig): string[] {
   args.push(...agentsArgs(config.people, config.lock, config.orchestrator ?? config.persona))
 
   if (config.model !== 'default') args.push('--model', config.model)
+  if (config.effort !== 'default') args.push('--effort', config.effort)
 
   if (config.permissionMode === 'bypass') {
     args.push('--dangerously-skip-permissions')

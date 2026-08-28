@@ -41,6 +41,17 @@ describe('the list of folders someone worked in', () => {
     expect(mergeRecent(eight, '/9')).toEqual(['/9', '/1', '/2', '/3', '/4', '/5', '/6', '/7'])
   })
 
+  it('lets go of the remembered folder when it is forgotten, and no other', async () => {
+    const { forgetRememberedProject } = await import('./project-memory')
+    const a = realDir('a')
+    const b = realDir('b')
+    await rememberProject(a)
+    await forgetRememberedProject(b)
+    expect(await recallProject()).toBe(a)
+    await forgetRememberedProject(a)
+    expect(await recallProject()).toBeNull()
+  })
+
   it('remembers each pick, most recent first', async () => {
     const a = realDir('one')
     const b = realDir('two')

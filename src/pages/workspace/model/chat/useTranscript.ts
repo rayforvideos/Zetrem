@@ -4,7 +4,7 @@ import { chatId, packTranscript, renamed } from '@/entities/conversation'
 import type { ChatSpend, ChatSummary, Transcript } from '@/entities/conversation'
 import { conversation } from './conversation/conversation'
 import { troubleLine } from '@/shared/lib/ask/ask'
-import { maySave, threadToSave } from './may-save/may-save'
+import { maySave, mustKeepOnLeave, threadToSave } from './may-save/may-save'
 import { stampOf } from './save-stamp/save-stamp'
 import { t } from '@lingui/core/macro'
 
@@ -15,6 +15,8 @@ type Chats = {
   ready: boolean
   open(id: string): void
   start(): void
+  // The next message begins a new session: nothing older is resumed.
+  detach(): void
   remove(id: string): void
   rename(id: string, wanted: string): void
   file(id: string, folder: string): void
@@ -41,6 +43,10 @@ export function useTranscript(project: string | null): Chats {
   const toldSaveTrouble = useRef(false)
   const loadedFor = useRef<string | null>(null)
   const openTicket = useRef(0)
+  const shown = useRef(project)
+  shown.current = project
+  // For the unmount, which sees no render: the chat that was open and its thread.
+  const leaving = useRef({ openId, thread: null as string | null })
 
   const turns = conv.turns
   const thread = threadToSave({
@@ -48,6 +54,20 @@ export function useTranscript(project: string | null): Chats {
     probed: status.probed,
     resumeId,
   })
+  leaving.current = { openId, thread }
+
+  // The whole screen can be torn down with a chat still open (a language
+  // change rebuilds it): that chat is written back on the way out.
+  useEffect(() => {
+    return () => {
+      const into = loadedFor.current
+      const { openId: id, thread: session } = leaving.current
+      const turnCount = conversation.get().turns.length
+      if (!mustKeepOnLeave({ project: into, loadedFor: into, openId: id, turnCount })) return
+      if (into === null || id === null) return
+      void window.desk.writeTranscript(into, pack(id, session)).catch(() => undefined)
+    }
+  }, [])
 
   async function refresh(): Promise<ChatSummary[]> {
     if (project === null) return []
@@ -56,7 +76,8 @@ export function useTranscript(project: string | null): Chats {
       return null
     })
     if (found === null) return []
-    setChats(found)
+    // The list may come back after the screen moved to another project.
+    if (shown.current === project) setChats(found)
     return found
   }
 
@@ -68,6 +89,7 @@ export function useTranscript(project: string | null): Chats {
     let alive = true
     setReady(false)
     openTicket.current += 1
+    keepFor(loadedFor.current)
     loadedFor.current = null
     lastSaved.current = ''
     conversation.reset()
@@ -102,28 +124,19 @@ export function useTranscript(project: string | null): Chats {
     }
   }, [project])
 
-  useEffect(() => {
-    const allowed = maySave({
-      ready,
-      project,
-      loadedFor: loadedFor.current,
-      openId,
-      status: conv.status,
-      turnCount: turns.length,
-    })
-    if (!allowed || project === null || openId === null) return
+  function pack(id: string, sessionId: string | null): Transcript {
+    const live = conversation.get().turns
     const spent = statusStore.get()
-    const live = spent.cost.turns > 0
-    const packed = packTranscript(
-      turns,
+    return packTranscript(
+      live,
       {
-        id: openId,
-        sessionId: thread,
+        id,
+        sessionId,
         savedAtMs: Date.now(),
         title: titled.current ?? undefined,
         folder: filed.current,
       },
-      live
+      spent.cost.turns > 0
         ? {
             usd: spent.cost.usd,
             turns: spent.cost.turns,
@@ -137,11 +150,14 @@ export function useTranscript(project: string | null): Chats {
           }
         : opened.current,
     )
+  }
+
+  function write(into: string, packed: Transcript): void {
     const stamp = stampOf(packed)
     if (stamp === lastSaved.current) return
     lastSaved.current = stamp
     void window.desk
-      .writeTranscript(project, packed)
+      .writeTranscript(into, packed)
       .then(() => {
         toldSaveTrouble.current = false
         return refresh()
@@ -152,9 +168,39 @@ export function useTranscript(project: string | null): Chats {
         toldSaveTrouble.current = true
         conversation.system(troubleLine(t`This chat is not being saved`, cause))
       })
+  }
+
+  useEffect(() => {
+    const allowed = maySave({
+      ready,
+      project,
+      loadedFor: loadedFor.current,
+      openId,
+      status: conv.status,
+      turnCount: turns.length,
+    })
+    if (!allowed || project === null || openId === null) return
+    write(project, pack(openId, thread))
   }, [ready, project, openId, turns, conv.status, thread])
 
+  // Whatever is on screen goes to disk before it is replaced. The autosave
+  // waits for a turn to settle; this does not, or a chat left mid-reply would
+  // vanish. It reads the stores directly: the caller may have just changed them.
+  function keep(): void {
+    keepFor(loadedFor.current, project)
+  }
+
+  // On a project switch the prop already names the new project; the turns on
+  // screen still belong to the one they were loaded for, so that is where they go.
+  function keepFor(into: string | null, owner: string | null = into): void {
+    const turnCount = conversation.get().turns.length
+    if (!mustKeepOnLeave({ project: owner, loadedFor: into, openId, turnCount })) return
+    if (into === null || openId === null) return
+    write(into, pack(openId, thread))
+  }
+
   function letGo(): number {
+    keep()
     lastSaved.current = ''
     opened.current = null
     titled.current = null
@@ -169,6 +215,7 @@ export function useTranscript(project: string | null): Chats {
     const ticket = letGo()
     setOpenId(id)
     setResumeId(null)
+    setReady(false)
     void window.desk
       .readTranscript(project, id)
       .then((saved) => {
@@ -184,6 +231,13 @@ export function useTranscript(project: string | null): Chats {
         if (openTicket.current !== ticket) return
         conversation.system(troubleLine(t`Could not open that chat`, cause))
       })
+      .finally(() => {
+        if (openTicket.current === ticket) setReady(true)
+      })
+  }
+
+  function detach(): void {
+    setResumeId(null)
   }
 
   function start(): void {
@@ -256,6 +310,7 @@ export function useTranscript(project: string | null): Chats {
     ready,
     open,
     start,
+    detach,
     remove,
     rename,
     file,

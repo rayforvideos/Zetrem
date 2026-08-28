@@ -7,6 +7,7 @@ describe('agentArgs: what claude is started with', () => {
     lock: null,
     people: [],
     model: 'default' as const,
+    effort: 'default' as const,
     persona: '말투',
   }
 
@@ -30,6 +31,15 @@ describe('agentArgs: what claude is started with', () => {
     expect(args).not.toContain('--permission-prompt-tool')
   })
 
+  it('passes a chosen effort and leaves it to the CLI on default', () => {
+    const args = agentArgs({ ...base, effort: 'high' })
+    expect(args.slice(args.indexOf('--effort'), args.indexOf('--effort') + 2)).toEqual([
+      '--effort',
+      'high',
+    ])
+    expect(agentArgs(base)).not.toContain('--effort')
+  })
+
   it('passes a chosen model and leaves the choice to the CLI on default', () => {
     expect(agentArgs({ ...base, model: 'haiku' })).toContain('haiku')
     expect(agentArgs(base)).not.toContain('--model')
@@ -47,6 +57,7 @@ describe('agentArgs: what claude is started with', () => {
       lock: null,
       people: [],
       model: 'default',
+      effort: 'default',
       persona: '',
     })
     expect(args).not.toContain('--include-partial-messages')
@@ -66,6 +77,7 @@ describe('the lock: only the people we hired can be called', () => {
     const args = agentArgs({
       permissionMode: 'ask' as const,
       model: 'default' as const,
+      effort: 'default' as const,
       persona: '말투',
       people: [{ name: 'scout', description: '찾는다', prompt: '찾아라', model: null, tools: [] }],
       lock: { blockedAgents: [] },
@@ -81,6 +93,7 @@ describe('the lock: only the people we hired can be called', () => {
     const args = agentArgs({
       permissionMode: 'ask' as const,
       model: 'default' as const,
+      effort: 'default' as const,
       persona: '말투',
       people: [{ name: 'scout', description: '찾는다', prompt: '찾아라', model: null, tools: [] }],
       lock: null,
@@ -95,6 +108,7 @@ describe('what a locked orchestrator is told', () => {
     const args = agentArgs({
       permissionMode: 'ask' as const,
       model: 'default' as const,
+      effort: 'default' as const,
       persona: '말투',
       orchestrator: '너는 오케스트레이터다',
       people: [{ name: 'scout', description: '찾는다', prompt: '찾아라', model: null, tools: [] }],
@@ -109,6 +123,7 @@ describe('what a locked orchestrator is told', () => {
     const args = agentArgs({
       permissionMode: 'ask' as const,
       model: 'default' as const,
+      effort: 'default' as const,
       persona: '말투',
       people: [{ name: 'scout', description: '찾는다', prompt: '찾아라', model: null, tools: [] }],
       lock: { blockedAgents: [] },
@@ -121,6 +136,7 @@ describe('probeArgs: asking what the session would be, without starting one', ()
   const base = {
     permissionMode: 'ask' as const,
     model: 'default' as const,
+    effort: 'default' as const,
     people: [],
     lock: null,
     persona: 'P',
@@ -138,7 +154,12 @@ describe('probeArgs: asking what the session would be, without starting one', ()
   })
 
   it('asks in the same shape the real session runs in, or the answer would not match', () => {
-    const args = probeArgs({ ...base, model: 'opus', permissionMode: 'acceptEdits' })
+    const args = probeArgs({
+      ...base,
+      model: 'opus',
+      effort: 'default',
+      permissionMode: 'acceptEdits',
+    })
     expect(args).toContain('--verbose')
     expect(args[args.indexOf('--model') + 1]).toBe('opus')
     expect(args[args.indexOf('--permission-mode') + 1]).toBe('acceptEdits')

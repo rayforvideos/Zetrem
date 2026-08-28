@@ -31,7 +31,7 @@ function said(verb: ConnectorVerb, target: string): string {
 
 const ADDING = 'adding'
 
-export function useConnectors(wanted: boolean): Connectors {
+export function useConnectors(wanted: boolean, project: string | null): Connectors {
   const [connectors, setConnectors] = useState<Connector[]>([])
   const [loading, setLoading] = useState(false)
   const [checked, setChecked] = useState(false)
@@ -50,10 +50,16 @@ export function useConnectors(wanted: boolean): Connectors {
       .finally(() => setLoading(false))
   }
 
+  // Connectors are read in the project's folder, so another project means
+  // another answer.
+  useEffect(() => {
+    asked.current = false
+  }, [project])
+
   useEffect(() => {
     if (!wanted || asked.current) return
     reload()
-  }, [wanted])
+  }, [wanted, project])
 
   function act(verb: ConnectorVerb, target: string): void {
     void ask(target, t`Could not reach ${shortName(target)}`, () =>

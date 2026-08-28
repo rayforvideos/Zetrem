@@ -1,7 +1,5 @@
 import type { Invoke, Listen, Send } from './desk.types'
 
-export type { AgentHostEvent, CliVersions } from './desk.types'
-
 export type DeskBridge = {
   appVersion: Invoke<'app:version'>
 
@@ -63,6 +61,22 @@ export type DeskBridge = {
   latestCliVersion: Invoke<'cli:latest'>
   runCliUpdate: Invoke<'cli:update'>
   installCli: Invoke<'cli:install'>
+
+  listLibraryNotes: Invoke<'library:list'>
+  readLibraryNote: Invoke<'library:read'>
+  removeLibraryNote: Invoke<'library:remove'>
+  writeLibraryNote: Invoke<'library:write'>
+  createLibraryNote: Invoke<'library:create'>
+  renameLibraryNote: Invoke<'library:rename'>
+  fileLibraryNote: Invoke<'library:file'>
+  searchLibrary: Invoke<'library:search'>
+  libraryBacklinks: Invoke<'library:backlinks'>
+  onLibraryChanged: Listen<'library:changed'>
+  addLibraryFolder: Invoke<'library:folder-add'>
+  renameLibraryFolder: Invoke<'library:folder-rename'>
+  removeLibraryFolder: Invoke<'library:folder-remove'>
+  libraryOpenToAgents: Invoke<'library:agents'>
+  setLibraryOpenToAgents: Invoke<'library:agents-set'>
 
   updaterState: Invoke<'updater:state'>
   updaterRestart: Invoke<'updater:restart'>

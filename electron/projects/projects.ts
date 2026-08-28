@@ -4,10 +4,12 @@ import { readFile, rename } from 'node:fs/promises'
 import { basename, join } from 'node:path'
 import { app, dialog } from 'electron'
 import {
+  forgetRememberedProject,
   recallProject,
   recentProjects,
   rememberProject,
 } from '../store/project-memory/project-memory'
+import { queue } from '../store/queue/queue'
 import { saveFile } from '../store/save-file/save-file'
 import { handle } from '../ipc/ipc'
 import type { StoredProject } from './projects.types'
@@ -90,10 +92,7 @@ export async function restoreProject(nowMs: number = Date.now()): Promise<Stored
   return current
 }
 
-export async function createProject(
-  spot: string,
-  nowMs: number = Date.now(),
-): Promise<StoredProject | null> {
+async function createProjectNow(spot: string, nowMs: number): Promise<StoredProject | null> {
   const path = spot.trim()
   if (path.length === 0) return null
   try {
@@ -103,7 +102,7 @@ export async function createProject(
   }
   const memory = await readMemory(nowMs)
   const worn = freshestFirst(memory.projects).find((one) => one.path === path)
-  if (worn !== undefined) return openProject(worn.id, nowMs)
+  if (worn !== undefined) return openProjectNow(worn.id, nowMs)
   const made: StoredProject = {
     id: randomUUID(),
     name: basename(path),
@@ -116,10 +115,7 @@ export async function createProject(
   return made
 }
 
-export async function openProject(
-  id: string,
-  nowMs: number = Date.now(),
-): Promise<StoredProject | null> {
+async function openProjectNow(id: string, nowMs: number): Promise<StoredProject | null> {
   const memory = await readMemory(nowMs)
   const found = memory.projects.find((one) => one.id === id)
   if (found === undefined || !existsSync(found.path)) return null
@@ -132,10 +128,10 @@ export async function openProject(
   return opened
 }
 
-export async function repathProject(
+async function repathProjectNow(
   id: string,
   path: string,
-  nowMs: number = Date.now(),
+  nowMs: number,
 ): Promise<StoredProject | null> {
   try {
     if (!statSync(path).isDirectory()) return null
@@ -154,12 +150,44 @@ export async function repathProject(
   return moved
 }
 
-export async function forgetProject(id: string, nowMs: number = Date.now()): Promise<void> {
+async function forgetProjectNow(id: string, nowMs: number): Promise<void> {
   const memory = await readMemory(nowMs)
+  const gone = memory.projects.find((one) => one.id === id)
   await writeMemory({
     current: memory.current === id ? null : memory.current,
     projects: memory.projects.filter((one) => one.id !== id),
   })
+  // Main resolves its working folder from what was last remembered; a
+  // forgotten current must not go on being the agents' and library's home.
+  if (memory.current === id && gone !== undefined) await forgetRememberedProject(gone.path)
+}
+
+// Each of these reads projects.json, changes it and writes it back. Two at
+// once, as from two quick clicks, would interleave and disagree; they run in
+// turn instead.
+const serial = queue()
+
+export function createProject(
+  spot: string,
+  nowMs: number = Date.now(),
+): Promise<StoredProject | null> {
+  return serial(() => createProjectNow(spot, nowMs))
+}
+
+export function openProject(id: string, nowMs: number = Date.now()): Promise<StoredProject | null> {
+  return serial(() => openProjectNow(id, nowMs))
+}
+
+export function repathProject(
+  id: string,
+  path: string,
+  nowMs: number = Date.now(),
+): Promise<StoredProject | null> {
+  return serial(() => repathProjectNow(id, path, nowMs))
+}
+
+export function forgetProject(id: string, nowMs: number = Date.now()): Promise<void> {
+  return serial(() => forgetProjectNow(id, nowMs))
 }
 
 // A renderer path becomes the agent's cwd, so only dialog paths are admitted.

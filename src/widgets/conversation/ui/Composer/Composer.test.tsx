@@ -11,8 +11,10 @@ function box(props: Partial<Parameters<typeof Composer>[0]> = {}): string {
       addressee={null}
       permissionMode="ask"
       model="default"
+      effort="default"
       refusedModels={[]}
       enterSends
+      library
       files={[]}
       onPick={() => {}}
       onTake={() => {}}
@@ -22,6 +24,8 @@ function box(props: Partial<Parameters<typeof Composer>[0]> = {}): string {
       onClearAddressee={() => {}}
       onPermissionMode={() => {}}
       onModel={() => {}}
+      onEffort={() => {}}
+      onLibrary={() => {}}
       {...props}
     />,
   )
@@ -57,10 +61,21 @@ describe('Composer: the line you type into', () => {
     expect(box()).toContain('disabled=""')
   })
 
-  it('offers the permission and model pickers where you type, not in a settings screen', () => {
+  it('offers the permission, model and effort pickers where you type, not in a settings screen', () => {
     const html = box()
     expect(html).toContain('Permissions')
     expect(html).toContain('Default')
+    expect(html).not.toContain('aria-label="Effort"')
+  })
+
+  it('has the library switch where you type, pressed while agents get the library', () => {
+    expect(box()).toMatch(/data-library-toggle[^>]*aria-pressed="true"/)
+    expect(box({ library: false })).toMatch(/data-library-toggle[^>]*aria-pressed="false"/)
+  })
+
+  it('shows a chosen effort beside the model, and nothing when it is left to the CLI', () => {
+    expect(box()).not.toContain('data-sub-choice')
+    expect(box({ effort: 'high' })).toMatch(/data-sub-choice[^>]*>[\s\S]*?High/)
   })
 
   it('shows the shortcut that sends, since the button is not the only way', () => {

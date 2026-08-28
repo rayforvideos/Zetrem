@@ -7,6 +7,7 @@ import { runConfigOf } from '../run-config-guard/run-config-guard'
 import { ORCHESTRATOR_PROMPT, PERSONA } from '@/entities/teammate/model/orchestrator/orchestrator'
 import { claudeBin, loginPath } from '../../cli/login-path/login-path'
 import { recallProject } from '../../store/project-memory/project-memory'
+import { librarySessionArgs } from '../../library/library'
 import { saveFile } from '../../store/save-file/save-file'
 import { readKept, stillWorthShowing } from '../../store/usage-cache/usage-cache'
 import { workspaceDir } from '../../shell/workspace-dir/workspace-dir'
@@ -19,7 +20,7 @@ const PROBE_BUFFER_MAX = 200_000
 const REPORT_TIMEOUT_MS = 30_000
 const REPORT_MAX = 100_000
 
-let inFlight: Promise<string | null> | null = null
+let inFlight: { project: string | null; answer: Promise<string | null> } | null = null
 let reporting: Promise<string | null> | null = null
 const asking = new Set<number>()
 
@@ -87,15 +88,27 @@ export function registerSessionProbe(): void {
   handle('session:probe', async (_event, config: unknown): Promise<string | null> => {
     const run = runConfigOf(config)
     if (run === null) return null
-    if (inFlight !== null) return inFlight
-    inFlight = (async () => {
-      const workspace = await workspaceDir(await recallProject(), app.getPath('userData'))
-      const args = probeArgs({ ...run, persona: PERSONA, orchestrator: ORCHESTRATOR_PROMPT })
+    const project = await recallProject()
+    if (inFlight !== null && inFlight.project === project) return inFlight.answer
+    const answer = (async () => {
+      const workspace = await workspaceDir(project, app.getPath('userData'))
+      let added: string[] = []
+      try {
+        added = await librarySessionArgs(workspace)
+      } catch (cause: unknown) {
+        console.error('[library] could not lay out', workspace, cause)
+      }
+      const args = [
+        ...probeArgs({ ...run, persona: PERSONA, orchestrator: ORCHESTRATOR_PROMPT }),
+        ...added,
+      ]
       const env = agentEnv(process.env, await loginPath())
       return readInit(await claudeBin(), args, workspace, env)
     })().catch(() => null)
-    const found = await inFlight
-    inFlight = null
+    const mine = { project, answer }
+    inFlight = mine
+    const found = await answer
+    if (inFlight === mine) inFlight = null
     return found
   })
 

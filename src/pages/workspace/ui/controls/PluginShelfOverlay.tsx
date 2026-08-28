@@ -12,7 +12,7 @@ export function PluginShelfOverlay({
   wires: ReturnType<typeof useConnectors>
   project: string | null
 }) {
-  const [tab, setTab] = useState('installed')
+  const [tab, setTab] = useState('have')
 
   if (!shelf.open) return null
 
@@ -25,7 +25,7 @@ export function PluginShelfOverlay({
       onConnector={wires.act}
       catalog={shelf.catalog}
       marketplaces={shelf.marketplaces}
-      loading={tab === 'connectors' ? wires.loading : shelf.loading}
+      loading={tab === 'browse' ? shelf.browsing : shelf.loading || wires.loading}
       browsing={shelf.browsing}
       onTab={(value) => {
         setTab(value)
@@ -34,15 +34,12 @@ export function PluginShelfOverlay({
       onAct={shelf.act}
       busy={shelf.busy ?? wires.busy}
       onReload={() => {
-        if (tab === 'connectors') {
-          wires.reload()
-          return
-        }
         if (tab === 'browse') {
           shelf.browse(true)
           return
         }
         shelf.reload()
+        wires.reload()
       }}
       project={project}
       onClose={shelf.hide}

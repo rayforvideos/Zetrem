@@ -9,6 +9,11 @@ on:
         default: false
   push:
     tags: ['v*']
+  # Every change headed for master is built, launched and smoked on both
+  # platforms first: a crash that only Windows shows is caught here, not by
+  # the people who install the release.
+  pull_request:
+    branches: [master]
 
 concurrency:
   group: platforms-${{ github.workflow }}-${{ github.ref }}
@@ -25,7 +30,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [macos-latest, windows-latest]
-        node: ['20.19', '22.19']
+        node: ['22.19', '24.11']
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -76,7 +81,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
         with:
-          node-version: '20.19'
+          node-version: '22.19'
           cache: npm
       - run: npm ci
       - name: Install the CLI the way a person would
@@ -108,7 +113,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
         with:
-          node-version: '20.19'
+          node-version: '22.19'
           cache: npm
       - run: npm ci
       - name: Package
@@ -148,7 +153,9 @@ jobs:
 
       # The Windows runner has no display, but Electron draws to nothing without
       # complaint, so launching for real still proves asar integrity took.
-      - name: Prove the packaged app opens
+      # Staying alive is not enough: a window that failed to load its page
+      # stays open on a trouble page, so main has to say what it is showing.
+      - name: Prove the packaged app opens and shows its page
         shell: bash
         run: |
           if [ "${{ matrix.os }}" = "windows-latest" ]; then
@@ -159,14 +166,28 @@ jobs:
           "$bin" > opened.log 2>&1 &
           pid=$!
           sleep 20
-          if kill -0 "$pid" 2>/dev/null; then
-            echo "alive after 20s"
-            kill "$pid" || true
-          else
+          if ! kill -0 "$pid" 2>/dev/null; then
             echo "::error::the packaged app exited on its own"
             cat opened.log
             exit 1
           fi
+          kill "$pid" || true
+          if grep -qE '\[window\] The window could not load|\[renderer\] crashed' opened.log; then
+            echo "::error::the packaged app opened on its trouble page"
+            cat opened.log
+            exit 1
+          fi
+          if grep -qE '\[renderer\].*(the screen crashed|TypeError|ReferenceError)' opened.log; then
+            echo "::error::the packaged app drew its crash screen"
+            cat opened.log
+            exit 1
+          fi
+          if ! grep -q '^\[window\] showing ' opened.log; then
+            echo "::error::the packaged app never said it was showing its page"
+            cat opened.log
+            exit 1
+          fi
+          grep '^\[window\] showing ' opened.log
 
       - name: Prove the macOS build is signed, notarised and would open
         if: matrix.os == 'macos-latest' && env.SIGNED == 'true'
@@ -229,7 +250,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
         with:
-          node-version: '20.19'
+          node-version: '22.19'
           cache: npm
       - run: npm ci
       - run: npm run build

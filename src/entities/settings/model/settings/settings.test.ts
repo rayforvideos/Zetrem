@@ -10,10 +10,27 @@ describe('readSettings: reading back what was chosen', () => {
     expect(DEFAULT_SETTINGS.permissionMode).toBe('ask')
   })
 
+  it('keeps a chosen effort and falls back to default for one the CLI does not take', () => {
+    expect(readSettings({ effort: 'max' }).effort).toBe('max')
+    expect(readSettings({ effort: 'ultra' }).effort).toBe('default')
+  })
+
+  it('remembers the star ask, and reads a spoiled one as never asked', () => {
+    expect(readSettings({ starAskedAtMs: 1000, starred: true })).toMatchObject({
+      starAskedAtMs: 1000,
+      starred: true,
+    })
+    expect(readSettings({ starAskedAtMs: 'soon' })).toMatchObject({
+      starAskedAtMs: null,
+      starred: false,
+    })
+  })
+
   it('brings a saved value back as it was', () => {
     const saved = {
       permissionMode: 'bypass',
       model: 'haiku',
+      effort: 'high',
       setupDone: true,
       onboarded: true,
       hintsSeen: ['hire-first'],
@@ -29,6 +46,8 @@ describe('readSettings: reading back what was chosen', () => {
       refusedModels: ['fable'],
       userName: 'Ray',
       userFace: 'ghost',
+      starAskedAtMs: 1000,
+      starred: true,
     }
     expect(readSettings(saved)).toEqual({ ...saved, wasStockOn: null })
   })

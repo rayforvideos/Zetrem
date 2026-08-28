@@ -29,9 +29,3 @@ export async function openProject(id: string): Promise<Project | null> {
 export async function forgetProject(id: string): Promise<void> {
   return window.desk.forgetProject(id)
 }
-
-export async function repathProject(id: string): Promise<Project | null> {
-  const path = await window.desk.pickProjectDir()
-  if (path === null) return null
-  return toProject(await window.desk.repathProject(id, path))
-}

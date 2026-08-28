@@ -46,6 +46,9 @@ function bar(props: Partial<Parameters<typeof TeamSidebar>[0]> = {}): string {
       width={SIDEBAR.width}
       onResize={() => {}}
       onResizeEnd={() => {}}
+      onOpenLibrary={() => {}}
+      libraryOpen={false}
+      libraryUnseen={false}
       {...props}
     />,
   )
@@ -264,6 +267,29 @@ describe('carrying a chat onto another to make a place for both', () => {
 
   it('keeps the menu as the way that needs no dragging', () => {
     expect(withChats([chat('one')])).toContain('More for one')
+  })
+})
+
+describe('the sidebar ends with a way into the library', () => {
+  it('ends with a row that opens the library', () => {
+    const out = bar()
+    expect(out).toContain('data-library-row')
+    expect(out).toContain('Library')
+  })
+
+  it('lights the row with a dot only once a note has been filed unseen', () => {
+    expect(bar()).not.toContain('data-library-unseen')
+    const lit = bar({ libraryUnseen: true })
+    const at = lit.indexOf('data-library-row')
+    expect(lit.slice(at)).toContain('data-library-unseen')
+    expect(lit.slice(at)).toContain('size-1.5')
+  })
+
+  it('marks that row as where you are while the library is open', () => {
+    const out = bar({ libraryOpen: true })
+    const at = out.indexOf('data-library-row')
+    expect(at).toBeGreaterThan(-1)
+    expect(out.slice(at)).toContain('aria-current="true"')
   })
 })
 

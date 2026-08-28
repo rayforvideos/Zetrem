@@ -1,9 +1,10 @@
 import { t } from '@lingui/core/macro'
-import type { Cell } from './format.types'
+import type { Gauge, Wired } from './format.types'
 
 import { isOutdated } from '@/entities/agent-session'
 import type { StatusState } from '@/entities/agent-session'
 import type { Connector } from '@/entities/connector'
+import { formatTokens } from '@/shared/lib/units/units'
 
 const CONTEXT_WARN = 0.85
 
@@ -11,8 +12,6 @@ export function contextPercent(context: { used: number; window: number | null })
   if (!context.window || context.window <= 0) return null
   return Math.round((context.used / context.window) * 100)
 }
-
-type Wired = { connected: number; needsAuth: number; total: number }
 
 export function reachable(status: StatusState, connectors: Connector[]): Map<string, string> {
   const state = new Map<string, string>()
@@ -37,40 +36,52 @@ function wiredOf(status: StatusState, connectors: Connector[]): Wired | null {
   }
 }
 
-export function cells(status: StatusState, connectors: Connector[] = [], checked = true): Cell[] {
-  const out: Cell[] = []
-
+function chatGauge(status: StatusState): Gauge | null {
+  const { used } = status.context
+  if (used === 0) return null
   const percent = contextPercent(status.context)
-  if (percent !== null && percent >= CONTEXT_WARN * 100) {
-    out.push({
-      key: 'context',
-      text: t`Context ${100 - percent}% left, compacting soon`,
-      warn: true,
-    })
+  const warn = percent !== null && percent >= CONTEXT_WARN * 100
+  return {
+    key: 'chat',
+    label: warn ? t`compacting soon` : t`this chat`,
+    value: percent === null ? formatTokens(used) : `${percent}%`,
+    percent,
+    warn,
+    hint: null,
   }
+}
 
+function mcpGauge(wired: Wired): Gauge {
+  const n = wired.needsAuth
+  return {
+    key: 'mcp',
+    label: 'MCP',
+    value: `${wired.connected}/${wired.total}`,
+    percent: wired.total > 0 ? Math.round((wired.connected / wired.total) * 100) : null,
+    warn: n > 0,
+    hint: n > 0 ? t`${n} need auth` : null,
+  }
+}
+
+function updateGauge(update: StatusState['update']): Gauge | null {
+  if (!update?.current || !isOutdated(update.current, update.latest)) return null
+  return {
+    key: 'update',
+    label: t`Update CLI`,
+    value: '',
+    percent: null,
+    warn: true,
+    hint: `${update.current} → ${update.latest ?? ''}`,
+  }
+}
+
+export function gauges(status: StatusState, connectors: Connector[] = [], checked = true): Gauge[] {
+  const out: Gauge[] = []
+  const chat = chatGauge(status)
+  if (chat) out.push(chat)
   const wired = checked ? wiredOf(status, connectors) : null
-  if (wired !== null) {
-    out.push({
-      key: 'mcp',
-      text:
-        wired.needsAuth > 0
-          ? t`MCP ${wired.connected}/${wired.total} · ${wired.needsAuth} need auth`
-          : `MCP ${wired.connected}/${wired.total}`,
-      warn: wired.needsAuth > 0,
-    })
-  }
-
-  const update = status.update
-  if (update?.current) {
-    const stale = isOutdated(update.current, update.latest)
-    const latest = update.latest ?? ''
-    out.push({
-      key: 'update',
-      text: stale ? t`CLI ${update.current} → ${latest} available` : `CLI ${update.current}`,
-      warn: stale,
-    })
-  }
-
+  if (wired !== null) out.push(mcpGauge(wired))
+  const update = updateGauge(status.update)
+  if (update) out.push(update)
   return out
 }

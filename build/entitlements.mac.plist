@@ -3,13 +3,47 @@
 <plist version="1.0">
   <dict>
     <!--
-      The one thing Electron needs from the hardened runtime: V8 writes machine
-      code at run time, and this lets it do so through MAP_JIT and nothing wider.
-      Nothing else is asked for. The app loads no native module and no dylib
-      signed by anybody else, sets no DYLD variable, and talks to no other app
-      by Apple Events; the CLI it runs is a separate process, not a library.
+      Two kinds of key live here, and they do different things.
+
+      allow-jit is the one runtime exception Electron needs: V8 writes machine
+      code at run time, and this lets it do so through MAP_JIT and nothing
+      wider. The other exceptions in electron-builder's template (unsigned
+      executable memory, DYLD variables, library validation) are left out; each
+      loosens only this binary, and the CLI Zetrem runs is a separate
+      executable under its own signature, so none of them would reach it.
+
+      The rest are resource-access entitlements, and they grant nothing by
+      themselves. macOS charges what a child process does to the app that
+      spawned it (the "responsible process"), so when an agent Zetrem started
+      sends an Apple event, opens the camera or reads Contacts, it is Zetrem
+      that macOS asks the person about. Under the hardened runtime that
+      question is only asked when the matching entitlement is here; without
+      it the request is refused with no dialog. The person still decides, and
+      System Settings still records the answer under Zetrem.
+
+      Bluetooth and USB are documented by Apple for sandboxed apps; they are
+      listed so nothing an agent might reach for is left to fail silently.
     -->
     <key>com.apple.security.cs.allow-jit</key>
+    <true/>
+
+    <key>com.apple.security.automation.apple-events</key>
+    <true/>
+    <key>com.apple.security.device.audio-input</key>
+    <true/>
+    <key>com.apple.security.device.camera</key>
+    <true/>
+    <key>com.apple.security.device.bluetooth</key>
+    <true/>
+    <key>com.apple.security.device.usb</key>
+    <true/>
+    <key>com.apple.security.personal-information.location</key>
+    <true/>
+    <key>com.apple.security.personal-information.addressbook</key>
+    <true/>
+    <key>com.apple.security.personal-information.calendars</key>
+    <true/>
+    <key>com.apple.security.personal-information.photos-library</key>
     <true/>
   </dict>
 </plist>

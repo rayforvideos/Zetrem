@@ -8,6 +8,9 @@ import {
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from '@/shared/ui/dropdown-menu'
 import { InputGroupButton } from '@/shared/ui/input-group'
@@ -69,14 +72,20 @@ export function ChoicePicker({
       >
         <DropdownMenuLabel className="text-xs text-muted-foreground">{label}</DropdownMenuLabel>
         <DropdownMenuGroup>{items({ options, selected, onSelect })}</DropdownMenuGroup>
-        {sub !== undefined && (
+        {sub !== undefined && subCurrent !== undefined && (
           <>
             <DropdownMenuSeparator />
-            <DropdownMenuLabel className="flex items-center gap-1.5 text-xs text-muted-foreground [&_svg]:size-3.5">
-              {sub.icon}
-              {sub.label}
-            </DropdownMenuLabel>
-            <DropdownMenuGroup data-sub-options>{items(sub)}</DropdownMenuGroup>
+            {/* One row that says the current level; the levels themselves open beside it. */}
+            <DropdownMenuSub>
+              <DropdownMenuSubTrigger data-sub-trigger className="gap-2 [&_svg]:size-3.5">
+                {sub.icon}
+                <span className="text-muted-foreground">{sub.label}</span>
+                <span className="ml-auto text-sm">{read(subCurrent.label)}</span>
+              </DropdownMenuSubTrigger>
+              <DropdownMenuSubContent data-sub-options className="w-60">
+                {items(sub)}
+              </DropdownMenuSubContent>
+            </DropdownMenuSub>
           </>
         )}
         {note !== null && (

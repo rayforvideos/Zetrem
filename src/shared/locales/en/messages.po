@@ -296,6 +296,10 @@ msgstr "38% · 4h 12m left"
 msgid "5-hour"
 msgstr "5-hour"
 
+#: src/widgets/star-ask/lib/star-toast/star-toast.ts:12
+msgid "A GitHub star helps others find it, and keeps us going."
+msgstr "A GitHub star helps others find it, and keeps us going."
+
 #: src/entities/connector/lib/refusal-why/refusal-why.ts:12
 msgid "A name cannot start with a dash"
 msgstr "A name cannot start with a dash"
@@ -500,7 +504,7 @@ msgstr "Cart totals and rounding"
 msgid "Change"
 msgstr "Change"
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:404
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:429
 msgid "Change account, project, and permissions"
 msgstr "Change account, project, and permissions"
 
@@ -1013,6 +1017,10 @@ msgstr "Installed for this folder. Anyone who opens it gets them."
 msgid "Installing Claude Code…"
 msgstr "Installing Claude Code…"
 
+#: src/widgets/star-ask/lib/star-toast/star-toast.ts:11
+msgid "Is Zetrem earning its keep?"
+msgstr "Is Zetrem earning its keep?"
+
 #: src/entities/claude-cli/api/turn/turn.ts:106
 msgid "it could not be loaded"
 msgstr "it could not be loaded"
@@ -1124,7 +1132,7 @@ msgstr "Message your team"
 msgid "Model"
 msgstr "Model"
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:340
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:365
 msgid "Model changed. The running session keeps its model."
 msgstr "Model changed. The running session keeps its model."
 
@@ -1241,6 +1249,10 @@ msgstr "Not available this session. Unlock it in Settings."
 msgid "Not known yet"
 msgstr "Not known yet"
 
+#: src/widgets/star-ask/lib/star-toast/star-toast.ts:21
+msgid "Not now"
+msgstr "Not now"
+
 #: src/widgets/setup/ui/PluginShelf/InstalledTab.tsx:38
 msgid "Nothing installed yet."
 msgstr "Nothing installed yet."
@@ -1319,7 +1331,7 @@ msgstr "Permission"
 msgid "Permissions"
 msgstr "Permissions"
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:336
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:361
 msgid "Permissions changed. The running session follows the old ones."
 msgstr "Permissions changed. The running session follows the old ones."
 
@@ -1634,7 +1646,7 @@ msgstr "Set a few things and your agents get to work!"
 msgid "Set for everyone on your account. They cannot be removed or turned off here."
 msgstr "Set for everyone on your account. They cannot be removed or turned off here."
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:406
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:431
 msgid "Settings"
 msgstr "Settings"
 
@@ -1735,6 +1747,10 @@ msgstr "Something went wrong while it was working"
 #: src/widgets/setup/ui/PluginShelf/BrowseTab.tsx:78
 msgid "Sources"
 msgstr "Sources"
+
+#: src/widgets/star-ask/lib/star-toast/star-toast.ts:15
+msgid "Star it"
+msgstr "Star it"
 
 #: src/widgets/setup/ui/SetupPane/SetupPane.tsx:27
 #: src/widgets/setup/ui/SetupPane/SetupPane.tsx:204

@@ -10,6 +10,17 @@ describe('readSettings: reading back what was chosen', () => {
     expect(DEFAULT_SETTINGS.permissionMode).toBe('ask')
   })
 
+  it('remembers the star ask, and reads a spoiled one as never asked', () => {
+    expect(readSettings({ starAskedAtMs: 1000, starred: true })).toMatchObject({
+      starAskedAtMs: 1000,
+      starred: true,
+    })
+    expect(readSettings({ starAskedAtMs: 'soon' })).toMatchObject({
+      starAskedAtMs: null,
+      starred: false,
+    })
+  })
+
   it('brings a saved value back as it was', () => {
     const saved = {
       permissionMode: 'bypass',
@@ -29,6 +40,8 @@ describe('readSettings: reading back what was chosen', () => {
       refusedModels: ['fable'],
       userName: 'Ray',
       userFace: 'ghost',
+      starAskedAtMs: 1000,
+      starred: true,
     }
     expect(readSettings(saved)).toEqual({ ...saved, wasStockOn: null })
   })

@@ -28,6 +28,8 @@ export const DEFAULT_SETTINGS: Settings = {
   wasStockOn: null,
   sidebarOpen: true,
   sidebarWidth: SIDEBAR.width,
+  starAskedAtMs: null,
+  starred: false,
 }
 
 const MODE_IDS: PermissionMode[] = ['ask', 'acceptEdits', 'bypass']
@@ -77,5 +79,10 @@ export function readSettings(saved: unknown): Settings {
     enterSends: source.enterSends !== false,
     sidebarOpen: source.sidebarOpen !== false,
     sidebarWidth: sidebarWidth(source.sidebarWidth),
+    starAskedAtMs:
+      typeof source.starAskedAtMs === 'number' && Number.isFinite(source.starAskedAtMs)
+        ? source.starAskedAtMs
+        : null,
+    starred: source.starred === true,
   }
 }

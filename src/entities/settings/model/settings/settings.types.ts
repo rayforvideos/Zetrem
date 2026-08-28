@@ -25,4 +25,7 @@ export type Settings = {
   notify: boolean
   sidebarOpen: boolean
   sidebarWidth: number
+  // The GitHub star ask: when it was last shown (null: never), and whether it was taken up.
+  starAskedAtMs: number | null
+  starred: boolean
 }

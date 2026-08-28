@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react'
 import { hintDue, hintSeen } from '@/entities/settings'
 import { CrewProvider } from '@/entities/teammate'
 import { withSessionAuth } from '@/entities/connector'
@@ -10,6 +11,8 @@ import {
 } from '@/shared/graphics/Wordmark/Wordmark'
 import { AgentReport } from '@/widgets/agent-report'
 import { awayOf, spokeAtMs, Composer, ConversationPane, RestartNote } from '@/widgets/conversation'
+import { askForStar, starDue } from '@/widgets/star-ask'
+import { layerOver } from '@/shared/lib/modal/modal'
 import { SetupPane } from '@/widgets/setup'
 import { TeamSidebar } from '@/widgets/team-sidebar'
 import { LibraryPane } from '@/widgets/library'
@@ -85,6 +88,28 @@ export function WorkspaceScreen() {
     yourName,
   } = useWorkspace()
   const library = useLibraryNotes(libraryOpen, conv.status !== 'working', project?.path ?? null)
+
+  // The GitHub star ask: a toast as a reply lands, a few chats in, and again
+  // a week later until the star is given. The moment it shows is remembered,
+  // so letting it pass counts as "not now".
+  const wasWorking = useRef(false)
+  useEffect(() => {
+    // A finished turn leaves the session waiting, or done once it has exited.
+    const settled = wasWorking.current && conv.status !== 'working'
+    wasWorking.current = conv.status === 'working'
+    if (!settled) return
+    const due = starDue({
+      chats: chat.chats.length,
+      settled: true,
+      starred: settings.starred,
+      askedAtMs: settings.starAskedAtMs,
+      nowMs: Date.now(),
+      layered: layerOver(document),
+    })
+    if (!due) return
+    update({ starAskedAtMs: Date.now() })
+    askForStar({ star: () => update({ starred: true }) })
+  }, [conv.status, chat.chats.length, settings.starred, settings.starAskedAtMs, update])
   const libraryAccess = useLibraryAccess(project?.path ?? null, live)
 
   function pickTeammate(id: string | null): void {

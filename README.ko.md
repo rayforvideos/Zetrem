@@ -26,7 +26,7 @@ Claude Code CLI 가 그대로 처리한다.</p>
   </strong>
 </p>
 
-<img src="docs/media/demo.webp" alt="Zetrem 한 번의 실행: 팀원을 만들고, 버그 하나를 셋에게 동시에 맡기고, 편집을 승인하고, 각자 무엇을 했는지 읽고, 답을 라이브러리에 담는다" width="820" />
+<img src="docs/media/hero.png" alt="Zetrem: 팀원 셋이 버그 하나를 동시에 맡아 각자의 타일에서 일하는 화면" width="820" />
 
 </div>
 

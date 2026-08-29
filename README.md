@@ -26,7 +26,7 @@ The Claude Code CLI does the work itself, unchanged.</p>
   </strong>
 </p>
 
-<img src="docs/media/demo.webp" alt="Zetrem in one run: hire a teammate, hand a bug to three of them at once, approve an edit, read what each one did, file the answer to the library" width="820" />
+<img src="docs/media/hero.png" alt="Zetrem: three teammates working on one bug at once, each in their own tile" width="820" />
 
 </div>
 

@@ -157,7 +157,7 @@ export function Composer({
           className="max-h-40 min-h-11 py-2.5 text-base"
           autoFocus
         />
-        <InputGroupAddon align="block-end" className="gap-1.5 px-1.5 pb-1.5">
+        <InputGroupAddon align="block-end" className="@container/composer gap-1.5 px-1.5 pb-1.5">
           <InputGroupButton
             type="button"
             size="icon-sm"
@@ -214,15 +214,18 @@ export function Composer({
                 : null
             }
           />
-          <div className="ml-auto flex items-center gap-2">
-            {enterSends ? (
-              <Kbd>Enter</Kbd>
-            ) : (
-              <KbdGroup>
-                <Kbd>{modifierKey()}</Kbd>
+          <div className="ml-auto flex shrink-0 items-center gap-2">
+            {/* The key hint is a nicety; on a narrow pane it would collide with the button. */}
+            <span className="hidden @[30rem]/composer:contents">
+              {enterSends ? (
                 <Kbd>Enter</Kbd>
-              </KbdGroup>
-            )}
+              ) : (
+                <KbdGroup>
+                  <Kbd>{modifierKey()}</Kbd>
+                  <Kbd>Enter</Kbd>
+                </KbdGroup>
+              )}
+            </span>
             {busy ? (
               <InputGroupButton
                 size="icon-sm"

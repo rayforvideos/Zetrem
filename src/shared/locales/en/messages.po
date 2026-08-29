@@ -1659,7 +1659,7 @@ msgstr "Searching"
 msgid "See what they did"
 msgstr "See what they did"
 
-#: src/widgets/conversation/ui/Composer/Composer.tsx:242
+#: src/widgets/conversation/ui/Composer/Composer.tsx:245
 msgid "Send"
 msgstr "Send"
 
@@ -1819,7 +1819,7 @@ msgstr "Still signed in. Sign out did not take effect."
 msgid "Stock rules"
 msgstr "Stock rules"
 
-#: src/widgets/conversation/ui/Composer/Composer.tsx:231
+#: src/widgets/conversation/ui/Composer/Composer.tsx:234
 msgid "Stop"
 msgstr "Stop"
 

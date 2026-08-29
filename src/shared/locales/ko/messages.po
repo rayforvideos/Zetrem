@@ -1659,7 +1659,7 @@ msgstr "찾는 중"
 msgid "See what they did"
 msgstr "무엇을 했는지 보기"
 
-#: src/widgets/conversation/ui/Composer/Composer.tsx:242
+#: src/widgets/conversation/ui/Composer/Composer.tsx:245
 msgid "Send"
 msgstr "보내기"
 
@@ -1819,7 +1819,7 @@ msgstr "아직 로그인 상태입니다. 로그아웃이 되지 않았습니다
 msgid "Stock rules"
 msgstr "재고 규칙"
 
-#: src/widgets/conversation/ui/Composer/Composer.tsx:231
+#: src/widgets/conversation/ui/Composer/Composer.tsx:234
 msgid "Stop"
 msgstr "멈추기"
 

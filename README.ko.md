@@ -1,8 +1,9 @@
 <div align="center">
 
-<img src="docs/media/hero.png" alt="Zetrem: 팀원 셋이 한 질문을 나눠 맡은 화면" width="820" />
-
-<h1>Zetrem 1.0 베타</h1>
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/media/wordmark-dark.png">
+  <img src="docs/media/wordmark-light.png" alt="Zetrem" width="340">
+</picture>
 
 <p>Claude Code 에이전트 팀을 화면에서 다루는 데스크톱 앱. 이름을 붙인 팀원에게
 일을 맡기고, 각자 무엇을 하는지 보고, 승인이 필요할 때 답한다. 실제 작업은
@@ -24,6 +25,8 @@ Claude Code CLI 가 그대로 처리한다.</p>
     <a href="README.md">English</a>
   </strong>
 </p>
+
+<img src="docs/media/demo.webp" alt="Zetrem 한 번의 실행: 팀원을 만들고, 버그 하나를 셋에게 동시에 맡기고, 편집을 승인하고, 각자 무엇을 했는지 읽고, 답을 라이브러리에 담는다" width="820" />
 
 </div>
 
@@ -103,10 +106,6 @@ npm run dev
 ---
 
 ## 팀원 만들기
-
-<div align="center">
-<img src="docs/media/teammate.png" alt="팀원 만들기: 이름, 언제 부를지, 지시문 작성 화면" width="740" />
-</div>
 
 이름, 언제 부를지, 지시문 세 가지를 적으면 팀원이 만들어진다. 오케스트레이터는
 '언제 부를지'를 읽고 누구에게 맡길지 정한다. 팀원은 프로젝트가 아니라 사용자

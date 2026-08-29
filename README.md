@@ -1,8 +1,9 @@
 <div align="center">
 
-<img src="docs/media/hero.png" alt="Zetrem: three teammates working on one question" width="820" />
-
-<h1>Zetrem 1.0 beta</h1>
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/media/wordmark-dark.png">
+  <img src="docs/media/wordmark-light.png" alt="Zetrem" width="340">
+</picture>
 
 <p>A desktop app for running a team of Claude Code agents. Hand work to named
 teammates, see what each of them is doing, and answer when one needs approval.
@@ -24,6 +25,8 @@ The Claude Code CLI does the work itself, unchanged.</p>
     <a href="README.ko.md">한국어</a>
   </strong>
 </p>
+
+<img src="docs/media/demo.webp" alt="Zetrem in one run: hire a teammate, hand a bug to three of them at once, approve an edit, read what each one did, file the answer to the library" width="820" />
 
 </div>
 
@@ -104,10 +107,6 @@ When you hand over a job, this is what happens:
 ---
 
 ## Making a teammate
-
-<div align="center">
-<img src="docs/media/teammate.png" alt="Writing a teammate: a name, when to call them, and their standing brief" width="740" />
-</div>
 
 A teammate is three things: a name, when to call them, and their standing
 instructions. The orchestrator reads the middle one to decide who gets a job.

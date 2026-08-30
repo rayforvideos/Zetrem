@@ -13,7 +13,9 @@ const fake = vi.hoisted(() => ({
   loggedIn: false,
   stop: { goes: true, calls: 0, latched: [] as boolean[] },
   changes: 0,
+  killed: [] as number[],
   handlers: new Map<string, (event: unknown, ...args: unknown[]) => unknown>(),
+  listeners: new Map<string, (event: unknown, ...args: unknown[]) => unknown>(),
 }))
 
 vi.mock('node:child_process', async () => {
@@ -51,10 +53,17 @@ vi.mock('../../ipc/ipc', () => ({
   handle: (channel: string, listener: (event: unknown, ...args: unknown[]) => unknown) => {
     fake.handlers.set(channel, listener)
   },
+  on: (channel: string, listener: (event: unknown, ...args: unknown[]) => unknown) => {
+    fake.listeners.set(channel, listener)
+  },
   push: () => undefined,
 }))
 
-vi.mock('../../spawn/kill-tree/kill-tree', () => ({ killTree: () => undefined }))
+vi.mock('../../spawn/kill-tree/kill-tree', () => ({
+  killTree: (pid: number) => {
+    fake.killed.push(pid)
+  },
+}))
 
 vi.mock('../../spawn/run-settled/run-settled', () => ({
   trackChild: () => undefined,
@@ -82,6 +91,12 @@ const { accountWorkInFlight, duringAccountWork } = await import(
 const { registerAuth, runLogin } = await import('./auth')
 registerAuth()
 
+function cancelLogin(): void {
+  const listener = fake.listeners.get('auth:cancel-login')
+  if (listener === undefined) throw new Error('nothing listens on auth:cancel-login')
+  listener({})
+}
+
 function logout(): Promise<Outcome<AuthStatus>> {
   const listener = fake.handlers.get('auth:logout')
   if (listener === undefined) throw new Error('nothing listens on auth:logout')
@@ -94,6 +109,7 @@ beforeEach(() => {
   fake.stop.calls = 0
   fake.stop.goes = true
   fake.stop.latched.length = 0
+  fake.killed.length = 0
   fake.loggedIn = false
 })
 
@@ -108,6 +124,37 @@ describe('the login an account operation runs itself', () => {
     })
 
     expect(fake.spawns[0]?.args.slice(-2)).toEqual(['auth', 'login'])
+  })
+})
+
+describe('a login the person gave up waiting for', () => {
+  it('kills the child that is running, so the operation gets its turn back', async () => {
+    const sender = {} as never
+    const login = runLogin(sender)
+    await vi.waitFor(() => expect(fake.spawns).toHaveLength(1))
+    const pid = fake.spawns[0]?.child.pid
+
+    cancelLogin()
+    await login
+
+    expect(fake.killed).toEqual([pid])
+  })
+
+  it('does nothing at all when no login is running', () => {
+    expect(() => cancelLogin()).not.toThrow()
+    expect(fake.killed).toEqual([])
+  })
+
+  it('is done with the child, so a later cancel kills no one', async () => {
+    const sender = {} as never
+    const login = runLogin(sender)
+    await vi.waitFor(() => expect(fake.spawns).toHaveLength(1))
+    fake.spawns[0]?.child.emit('close', 0)
+    await login
+
+    cancelLogin()
+
+    expect(fake.killed).toEqual([])
   })
 })
 

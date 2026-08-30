@@ -23,6 +23,7 @@ type Auth = {
   switchAccount(id: string): void
   reauthAccount(id: string): void
   removeAccount(id: string): void
+  cancelLogin(): void
   logout(): void
   installing: boolean
   install(): void
@@ -138,6 +139,12 @@ export function useAuth(): Auth {
     run('remove', { id }, () => window.desk.removeAccount(id), t`Could not remove the account.`)
   }
 
+  // The child is killed and the operation waiting on it fails the way a login
+  // nobody finished always has, so there is nothing here to answer or undo.
+  function cancelLogin(): void {
+    window.desk.cancelLogin()
+  }
+
   function logout(): void {
     setBusy('signout')
     setBusyOn({ id: null })
@@ -206,6 +213,7 @@ export function useAuth(): Auth {
     switchAccount,
     reauthAccount,
     removeAccount,
+    cancelLogin,
     logout,
     installing,
     install,

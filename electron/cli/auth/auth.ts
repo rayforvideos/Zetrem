@@ -8,7 +8,7 @@ import type { Outcome } from '@/shared/lib/outcome/outcome.types'
 import { claudeBin, loginPath } from '../login-path/login-path'
 import { accountWork } from '../accounts/account-guard/account-guard'
 import { authFailureOf, authStatusOf } from './auth-status/auth-status'
-import { handle, push } from '../../ipc/ipc'
+import { handle, on, push } from '../../ipc/ipc'
 import { killTree } from '../../spawn/kill-tree/kill-tree'
 import { trackChild, untrackChild } from '../../spawn/run-settled/run-settled'
 import { launchFor } from '../../spawn/spawn-claude/spawn-claude'
@@ -35,6 +35,8 @@ export async function readAuthStatus(): Promise<AuthStatus> {
 
 export function registerAuth(): void {
   handle('auth:status', () => readAuthStatus())
+
+  on('auth:cancel-login', () => cancelLogin())
 
   // Signing out writes the credentials every account is filed from, so it goes
   // the way every other account change goes: alone, with the children stopped
@@ -71,6 +73,15 @@ export function registerAuth(): void {
   })
 }
 
+// An account operation runs alone and a login is the one thing inside it that
+// waits on a person, so there is at most one child to reach: this is how the
+// cancel finds it. Nothing running is nothing to do.
+let stopCurrentLogin: (() => void) | null = null
+
+function cancelLogin(): void {
+  stopCurrentLogin?.()
+}
+
 export async function runLogin(sender: WebContents): Promise<void> {
   const env = agentEnv(process.env, await loginPath())
   const bin = await claudeBin()
@@ -89,14 +100,20 @@ export async function runLogin(sender: WebContents): Promise<void> {
       if (settled) return
       settled = true
       clearTimeout(timer)
+      stopCurrentLogin = null
       if (child.pid !== undefined) untrackChild(child.pid)
       resolve()
     }
-    const timer = setTimeout(() => {
+    // The browser page can hang for as long as it likes; the child is killed
+    // here rather than waited on, so runLogin answers and the operation around
+    // it takes its ordinary did-not-sign-in path.
+    const halt = (): void => {
       if (child.pid !== undefined) killTree(child.pid)
       else child.kill()
       stop()
-    }, LOGIN_TIMEOUT_MS)
+    }
+    stopCurrentLogin = halt
+    const timer = setTimeout(halt, LOGIN_TIMEOUT_MS)
     const relay = (chunk: string): void => push(sender, 'auth:progress', chunk)
     child.stdout.on('data', relay)
     child.stderr.on('data', relay)

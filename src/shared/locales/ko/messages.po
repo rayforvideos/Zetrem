@@ -312,11 +312,11 @@ msgstr "실행 중인 세션은 이 팀원을 부를 수 없습니다. 세션을
 msgid "A running session keeps the old brief until it is restarted"
 msgstr "실행 중인 세션은 다시 시작하기 전까지 이전 지침을 씁니다"
 
-#: src/pages/workspace/model/account/useAuth.ts:154
+#: src/pages/workspace/model/account/useAuth.ts:161
 msgid "A session is still running, so you were not signed out. Stop it and try again."
 msgstr "세션이 아직 실행 중이라 로그아웃하지 않았습니다. 세션을 멈춘 뒤 다시 시도해 주세요."
 
-#: src/pages/workspace/model/account/useAuth.ts:102
+#: src/pages/workspace/model/account/useAuth.ts:103
 msgid "A session is still running, so your account was not changed. Stop it and try again."
 msgstr "세션이 아직 실행 중이라 계정을 바꾸지 않았습니다. 세션을 멈춘 뒤 다시 시도해 주세요."
 
@@ -348,11 +348,11 @@ msgstr "라이브러리란"
 msgid "Account"
 msgstr "계정"
 
-#: src/widgets/setup/ui/AccountField/AccountField.tsx:170
+#: src/widgets/setup/ui/AccountField/AccountField.tsx:175
 msgid "Accounts"
 msgstr "계정"
 
-#: src/widgets/setup/ui/AccountField/AccountField.tsx:321
+#: src/widgets/setup/ui/AccountField/AccountField.tsx:346
 msgid "Active"
 msgstr "활성"
 
@@ -369,7 +369,7 @@ msgstr "마켓플레이스 추가"
 msgid "Add a marketplace to bring in skills and agents"
 msgstr "마켓플레이스를 추가하면 스킬과 에이전트를 가져올 수 있습니다"
 
-#: src/widgets/setup/ui/AccountField/AccountField.tsx:187
+#: src/widgets/setup/ui/AccountField/AccountField.tsx:193
 msgid "Add account"
 msgstr "계정 추가"
 
@@ -516,6 +516,10 @@ msgstr "연결 안 됨"
 msgid "Cancel"
 msgstr "취소"
 
+#: src/widgets/setup/ui/AccountField/AccountField.tsx:295
+msgid "Cancel sign-in"
+msgstr "로그인 취소"
+
 #: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:32
 msgid "Cart totals and rounding"
 msgstr "장바구니 합계와 반올림"
@@ -524,7 +528,7 @@ msgstr "장바구니 합계와 반올림"
 msgid "Change"
 msgstr "바꾸기"
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:435
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:436
 msgid "Change account, project, and permissions"
 msgstr "계정과 프로젝트, 권한을 바꿉니다"
 
@@ -532,7 +536,7 @@ msgstr "계정과 프로젝트, 권한을 바꿉니다"
 msgid "Character"
 msgstr "캐릭터"
 
-#: src/widgets/setup/ui/AccountField/AccountField.tsx:146
+#: src/widgets/setup/ui/AccountField/AccountField.tsx:150
 msgid "Check again"
 msgstr "다시 확인"
 
@@ -562,7 +566,7 @@ msgstr "묻지 않고 실행해도 되는 범위를 정하고, 남은 사용량�
 msgid "Claude Code"
 msgstr ""
 
-#: src/widgets/setup/ui/AccountField/AccountField.tsx:149
+#: src/widgets/setup/ui/AccountField/AccountField.tsx:153
 msgid "Claude Code did not say whether you are signed in."
 msgstr "Claude Code가 로그인 상태를 알려주지 않았습니다."
 
@@ -634,7 +638,7 @@ msgstr "커넥터"
 msgid "Context"
 msgstr "컨텍스트"
 
-#: src/widgets/setup/ui/AccountField/AccountField.tsx:267
+#: src/widgets/setup/ui/AccountField/AccountField.tsx:275
 msgid "Continue"
 msgstr "계속"
 
@@ -664,7 +668,7 @@ msgstr "대화를 폴더에 넣지 못했습니다"
 msgid "Could not forget that chat"
 msgstr "그 대화를 지우지 못했습니다"
 
-#: src/pages/workspace/model/account/useAuth.ts:188
+#: src/pages/workspace/model/account/useAuth.ts:195
 msgid "Could not install Claude Code"
 msgstr "Claude Code를 설치하지 못했습니다"
 
@@ -729,7 +733,7 @@ msgstr "마켓플레이스를 읽지 못했습니다"
 msgid "Could not read your settings"
 msgstr "설정을 읽지 못했습니다"
 
-#: src/pages/workspace/model/account/useAuth.ts:62
+#: src/pages/workspace/model/account/useAuth.ts:63
 msgid "Could not read your sign-in"
 msgstr "로그인 상태를 읽지 못했습니다"
 
@@ -737,7 +741,7 @@ msgstr "로그인 상태를 읽지 못했습니다"
 msgid "Could not remove that project"
 msgstr "프로젝트를 지우지 못했습니다"
 
-#: src/pages/workspace/model/account/useAuth.ts:138
+#: src/pages/workspace/model/account/useAuth.ts:139
 msgid "Could not remove the account."
 msgstr "계정을 제거하지 못했습니다."
 
@@ -766,7 +770,7 @@ msgstr "Claude Code를 실행하지 못했습니다: {said}"
 msgid "Could not start the update"
 msgstr "업데이트를 시작하지 못했습니다"
 
-#: src/pages/workspace/model/account/useAuth.ts:132
+#: src/pages/workspace/model/account/useAuth.ts:133
 msgid "Could not switch accounts."
 msgstr "계정을 전환하지 못했습니다."
 
@@ -1048,7 +1052,7 @@ msgstr "높음"
 msgid "Hire"
 msgstr "채용"
 
-#: src/widgets/setup/ui/AccountField/AccountField.tsx:242
+#: src/widgets/setup/ui/AccountField/AccountField.tsx:250
 msgid "If the browser did not open, <0>open this link</0>."
 msgstr "브라우저가 열리지 않았다면 <0>이 링크를 여세요</0>."
 
@@ -1130,7 +1134,7 @@ msgstr "폴더에 넣기"
 msgid "Keep the name under {NAME_MAX} characters"
 msgstr "이름은 {NAME_MAX}자 이내로 지어 주세요"
 
-#: src/widgets/setup/ui/AccountField/AccountField.tsx:264
+#: src/widgets/setup/ui/AccountField/AccountField.tsx:272
 msgid "Keep working"
 msgstr "계속 작업"
 
@@ -1211,7 +1215,7 @@ msgstr "팀에게 말하기"
 msgid "Model"
 msgstr "모델"
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:371
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:372
 msgid "Model changed. The running session keeps its model."
 msgstr "모델을 바꿨습니다. 실행 중인 세션은 기존 모델을 유지합니다."
 
@@ -1410,7 +1414,7 @@ msgstr "권한"
 msgid "Permissions"
 msgstr "권한"
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:367
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:368
 msgid "Permissions changed. The running session follows the old ones."
 msgstr "권한을 바꿨습니다. 실행 중인 세션은 기존 권한을 따릅니다."
 
@@ -1471,7 +1475,7 @@ msgstr "실행"
 msgid "Rate limited"
 msgstr "요청이 너무 잦습니다"
 
-#: src/widgets/setup/ui/AccountField/AccountField.tsx:208
+#: src/widgets/setup/ui/AccountField/AccountField.tsx:216
 msgid "Re-authenticate"
 msgstr "재인증"
 
@@ -1541,7 +1545,7 @@ msgstr "다시 읽기"
 msgid "Reload the app"
 msgstr "앱 다시 불러오기"
 
-#: src/widgets/setup/ui/AccountField/AccountField.tsx:214
+#: src/widgets/setup/ui/AccountField/AccountField.tsx:222
 #: src/widgets/setup/ui/PluginShelf/ConnectorsTab.tsx:112
 #: src/widgets/setup/ui/PluginShelf/InstalledTab.tsx:80
 #: src/widgets/setup/ui/PluginShelf/SourcesTab.tsx:29
@@ -1738,7 +1742,7 @@ msgstr "몇 가지만 정하면 바로 일을 시작합니다"
 msgid "Set for everyone on your account. They cannot be removed or turned off here."
 msgstr "계정 전체에 설정된 것입니다. 여기서는 지우거나 끌 수 없습니다."
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:437
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:438
 msgid "Settings"
 msgstr "설정"
 
@@ -1782,7 +1786,7 @@ msgstr "Anthropic 계정으로 로그인하세요"
 msgid "Sign in was refused"
 msgstr "로그인이 거절됐습니다"
 
-#: src/widgets/setup/ui/AccountField/AccountField.tsx:163
+#: src/widgets/setup/ui/AccountField/AccountField.tsx:167
 msgid "Sign in with Anthropic"
 msgstr "Anthropic 계정으로 로그인"
 
@@ -1790,11 +1794,11 @@ msgstr "Anthropic 계정으로 로그인"
 msgid "Sign out"
 msgstr "로그아웃"
 
-#: src/pages/workspace/model/account/useAuth.ts:153
+#: src/pages/workspace/model/account/useAuth.ts:160
 msgid "Sign out did not take effect."
 msgstr "로그아웃이 되지 않았습니다."
 
-#: src/widgets/setup/ui/AccountField/AccountField.tsx:233
+#: src/widgets/setup/ui/AccountField/AccountField.tsx:241
 msgid "Sign out of Claude Code"
 msgstr "Claude Code에서 로그아웃"
 
@@ -1802,8 +1806,8 @@ msgstr "Claude Code에서 로그아웃"
 msgid "Sign out of Claude Code everywhere?"
 msgstr "이 컴퓨터의 Claude Code를 전부 로그아웃할까요?"
 
-#: src/pages/workspace/model/account/useAuth.ts:129
-#: src/pages/workspace/model/account/useAuth.ts:135
+#: src/pages/workspace/model/account/useAuth.ts:130
+#: src/pages/workspace/model/account/useAuth.ts:136
 msgid "Sign-in did not finish."
 msgstr "로그인이 끝나지 않았습니다."
 
@@ -1823,7 +1827,7 @@ msgstr "로그인됨, 이름은 아직 확인되지 않음"
 msgid "Signed out of"
 msgstr "로그아웃했습니다:"
 
-#: src/widgets/setup/ui/AccountField/AccountField.tsx:163
+#: src/widgets/setup/ui/AccountField/AccountField.tsx:167
 msgid "Signing in through your browser…"
 msgstr "브라우저에서 로그인하는 중…"
 
@@ -1864,7 +1868,7 @@ msgstr "새 대화를 시작합니다"
 msgid "Starting"
 msgstr "시작하는 중"
 
-#: src/pages/workspace/model/account/useAuth.ts:161
+#: src/pages/workspace/model/account/useAuth.ts:168
 msgid "Still signed in. Sign out did not take effect."
 msgstr "아직 로그인 상태입니다. 로그아웃이 되지 않았습니다."
 
@@ -2144,11 +2148,11 @@ msgstr "이 대화 {size}"
 msgid "This chat is not being saved"
 msgstr "이 대화는 저장되지 않습니다"
 
-#: src/widgets/setup/ui/AccountField/AccountField.tsx:172
+#: src/widgets/setup/ui/AccountField/AccountField.tsx:177
 msgid "This computer's accounts are listed here. New ones are added here."
 msgstr "이 컴퓨터의 계정이 여기에 보입니다. 새 계정도 여기에 추가됩니다."
 
-#: src/widgets/setup/ui/AccountField/AccountField.tsx:204
+#: src/widgets/setup/ui/AccountField/AccountField.tsx:212
 msgid "This device"
 msgstr "이 기기"
 

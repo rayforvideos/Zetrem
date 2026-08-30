@@ -24,6 +24,7 @@ export type DeskBridge = {
   authStatus: Invoke<'auth:status'>
   login: Invoke<'auth:login'>
   logout: Invoke<'auth:logout'>
+  cancelLogin: Send<'auth:cancel-login'>
   onAuthProgress: Listen<'auth:progress'>
 
   listAccounts: Invoke<'accounts:list'>

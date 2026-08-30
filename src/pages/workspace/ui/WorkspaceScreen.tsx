@@ -234,6 +234,7 @@ export function WorkspaceScreen() {
                     onReauth: (id) => swap(() => auth.reauthAccount(id)),
                     onRemove: (id) => swap(() => auth.removeAccount(id)),
                     onSignOut: () => swap(auth.logout),
+                    onCancelLogin: auth.cancelLogin,
                   }}
                   you={{
                     name: settings.userName,

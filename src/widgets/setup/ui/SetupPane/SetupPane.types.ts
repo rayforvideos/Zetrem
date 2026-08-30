@@ -17,6 +17,7 @@ export type Account = {
   onReauth(id: string): void
   onRemove(id: string): void
   onSignOut(): void
+  onCancelLogin(): void
   onInstall(): void
   onRecheck(): void
 }

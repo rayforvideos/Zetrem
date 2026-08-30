@@ -140,6 +140,9 @@ export type Sends = {
   'agent:send': (id: string, text: string, files?: Attached[]) => void
   'agent:stop': (id: string) => void
   'agent:permission': (id: string, requestId: string, result: unknown) => void
+  // Nothing to answer: the login child is killed and the operation waiting on
+  // it takes its own did-not-sign-in path from there.
+  'auth:cancel-login': () => void
   'nudge:show': (title: string, body: string) => void
 }
 

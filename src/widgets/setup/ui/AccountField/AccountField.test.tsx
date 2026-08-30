@@ -22,6 +22,7 @@ const base: Account = {
   onSignOut: () => {},
   onInstall: () => {},
   onRecheck: () => {},
+  onCancelLogin: () => {},
 }
 
 function rowOf(out: string, id: string): string {
@@ -83,6 +84,33 @@ describe('AccountField with accounts', () => {
     })
     expect(out).toContain('Sign in with Anthropic')
     expect(out).not.toContain('Re-authenticate')
+  })
+  it('offers a way out of a browser login that is not coming back', () => {
+    const adding = render({ ...base, auth: signedIn, accounts, busy: 'add', busyOn: null })
+    expect(adding).toContain('data-account-cancel-login')
+    expect(adding).toContain('Cancel sign-in')
+
+    // A re-auth waits on the same browser page, so it gets the same way out.
+    const reauthing = render({
+      ...base,
+      auth: signedIn,
+      accounts,
+      busy: 'reauth',
+      busyOn: { id: 'a2' },
+    })
+    expect(reauthing).toContain('data-account-cancel-login')
+  })
+  it('offers no way out when nothing is waiting on a browser', () => {
+    expect(render({ ...base, auth: signedIn, accounts })).not.toContain('data-account-cancel-login')
+    // A switch touches no browser: there is nothing there to cancel.
+    const switching = render({
+      ...base,
+      auth: signedIn,
+      accounts,
+      busy: 'switch',
+      busyOn: { id: 'a1' },
+    })
+    expect(switching).not.toContain('data-account-cancel-login')
   })
   it('shows the error where the hint would be', () => {
     const out = render({ ...base, auth: signedIn, accounts, error: 'Could not switch accounts.' })

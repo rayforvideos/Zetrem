@@ -1,4 +1,4 @@
-import { Plus, RefreshCw, Trash2 } from 'lucide-react'
+import { Plus, RefreshCw, Trash2, X } from 'lucide-react'
 import { useState } from 'react'
 import { i18n } from '@lingui/core'
 import { t } from '@lingui/core/macro'
@@ -127,6 +127,10 @@ export function AccountField({ account }: { account: Account }) {
   const here: AccountHere = accounts?.here ?? { kind: 'signed-out' }
   const signedIn = auth?.state === 'signed-in'
   const bare = rows.length === 0 && !signedIn
+  // The two operations that wait on a browser page, and the only ones a person
+  // can be left watching with nothing to do: the page can hang, and until now
+  // the only way out was the five-minute deadline.
+  const signingIn = busy === 'add' || busy === 'reauth'
 
   return (
     <Field>
@@ -162,6 +166,7 @@ export function AccountField({ account }: { account: Account }) {
             {busy === 'add' && <Spinner data-icon="inline-start" />}
             {busy === 'add' ? t`Signing in through your browser…` : t`Sign in with Anthropic`}
           </Button>
+          {signingIn && <CancelLogin onClick={account.onCancelLogin} />}
         </div>
       ) : (
         <>
@@ -172,20 +177,23 @@ export function AccountField({ account }: { account: Account }) {
                 {t`This computer's accounts are listed here. New ones are added here.`}
               </span>
             </div>
-            <Button
-              size="sm"
-              variant="outline"
-              onClick={() => act({ kind: 'add' })}
-              disabled={busy !== null}
-              className="rounded-lg"
-            >
-              {busy === 'add' ? (
-                <Spinner data-icon="inline-start" />
-              ) : (
-                <Plus data-icon="inline-start" />
-              )}
-              {t`Add account`}
-            </Button>
+            <div className="flex flex-none items-center gap-1">
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={() => act({ kind: 'add' })}
+                disabled={busy !== null}
+                className="rounded-lg"
+              >
+                {busy === 'add' ? (
+                  <Spinner data-icon="inline-start" />
+                ) : (
+                  <Plus data-icon="inline-start" />
+                )}
+                {t`Add account`}
+              </Button>
+              {signingIn && <CancelLogin onClick={account.onCancelLogin} />}
+            </div>
           </div>
 
           <div className="flex flex-col gap-2">
@@ -269,6 +277,23 @@ export function AccountField({ account }: { account: Account }) {
         </AlertDialogContent>
       </AlertDialog>
     </Field>
+  )
+}
+
+// Beside the busy add button rather than on the row a re-auth is running on:
+// there is one browser login at a time, so there is one cancel.
+function CancelLogin({ onClick }: { onClick(): void }) {
+  return (
+    <Button
+      variant="ghost"
+      size="sm"
+      onClick={onClick}
+      data-account-cancel-login
+      className="h-7 rounded-lg px-2 text-xs text-muted-foreground"
+    >
+      <X data-icon="inline-start" />
+      {t`Cancel sign-in`}
+    </Button>
   )
 }
 

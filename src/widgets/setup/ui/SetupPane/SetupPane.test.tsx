@@ -57,6 +57,7 @@ function pane(over: Partial<Flat> = {}): string {
           onReauth: () => {},
           onRemove: () => {},
           onSignOut: () => {},
+          onCancelLogin: () => {},
           onInstall: () => {},
           onRecheck: () => {},
         }}

@@ -9,6 +9,7 @@ const ROOT = process.cwd()
 const MAY_THROW = [
   join('electron', 'ipc', 'ipc.ts'),
   join('electron', 'agents', 'agent-store', 'agent-store.ts'),
+  join('electron', 'store', 'accounts-store', 'accounts-store.ts'),
 ]
 
 async function sources(dir: string): Promise<string[]> {

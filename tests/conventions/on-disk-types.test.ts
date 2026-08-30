@@ -27,7 +27,9 @@ const WRITERS: Record<string, string> = {
   'electron/store/project-memory/project-memory.ts': ON_DISK[4]!,
   'electron/store/login-path-store/login-path-store.ts': ON_DISK[5]!,
   'electron/agents/agent-store/agent-store.ts': '',
+  'electron/store/accounts-store/accounts-store.ts': '',
   'electron/library/library-access/library-access.ts': ON_DISK[7]!,
+  'electron/cli/credentials/credentials.ts': '',
 }
 
 // readdir hands back names with the platform's separator and the lists above are
@@ -51,14 +53,14 @@ describe('what is written to disk is marked and listed', () => {
     expect(marked.sort(), `a type marked "${MARK}" belongs in ON_DISK`).toEqual([...ON_DISK].sort())
   })
 
-  it('has every saveFile() caller named as a writer of a listed shape', async () => {
+  it('has every save-file caller named as a writer of a listed shape', async () => {
     const writers: string[] = []
     for (const file of await sources('electron')) {
       const text = await readFile(join(ROOT, file), 'utf8')
       if (file.endsWith('save-file/save-file.ts')) continue
-      if (/(?<![.\w])saveFile\(/.test(text)) writers.push(file)
+      if (/(?<![.\w])save(File|SecretFile)\(/.test(text)) writers.push(file)
     }
-    expect(writers.sort(), 'a module writing under userData is listed in WRITERS').toEqual(
+    expect(writers.sort(), 'a module that saves through save-file is listed in WRITERS').toEqual(
       Object.keys(WRITERS).sort(),
     )
   })

@@ -14,7 +14,7 @@ const fake = vi.hoisted(() => ({
   userData: '',
   appPath: '/apps/Zetrem/Contents/Resources/app.asar',
   encryption: { available: true },
-  login: { hold: null as (() => void) | null, throws: false },
+  login: { hold: null as (() => void) | null, throws: false, asked: [] as (string | null)[] },
   auth: { state: 'signed-out' } as AuthStatus,
   held: { credentials: null, oauthAccount: null } as CredentialSnapshot,
   unreadable: false,
@@ -41,10 +41,12 @@ vi.mock('../../../ipc/ipc', () => ({
 
 vi.mock('../../auth/auth', () => ({
   readAuthStatus: async () => fake.auth,
-  runLogin: () =>
-    fake.login.throws
+  runLogin: (_sender: unknown, email: string | null) => {
+    fake.login.asked.push(email)
+    return fake.login.throws
       ? Promise.reject(new Error('the browser never came back'))
-      : new Promise<void>((resolve) => (fake.login.hold = resolve)),
+      : new Promise<void>((resolve) => (fake.login.hold = resolve))
+  },
 }))
 
 vi.mock('../../credentials/credentials', () => ({
@@ -360,6 +362,45 @@ describe('an operation that asks for the stop twice', () => {
 
     expect(done.ok).toBe(true)
     expect(fake.stop.calls).toBe(before + 1)
+    fake.auth = SIGNED_OUT
+    fake.held = NOTHING_HELD
+  })
+})
+
+describe('the account the login page is told to ask for', () => {
+  async function signedIn(email: string, bytes: string): Promise<Outcome<AccountList>> {
+    fake.auth = { state: 'signed-in', email, orgName: null }
+    const adding = call('accounts:add')
+    await vi.waitFor(() => expect(fake.login.hold).not.toBeNull())
+    fake.held = {
+      credentials: bytes,
+      oauthAccount: { accountUuid: email, emailAddress: email },
+    }
+    fake.login.hold?.()
+    fake.login.hold = null
+    return (await adding) as Outcome<AccountList>
+  }
+
+  it('is nobody on an add and the row itself on a re-auth', async () => {
+    fake.login.asked.length = 0
+    const email = 'prefill@un7qi3.co'
+    const added = await signedIn(email, `{"claudeAiOauth":{"who":"${email}"}}`)
+    expect(added.ok).toBe(true)
+    // Nobody: which account an add will sign in as is the browser's to say.
+    expect(fake.login.asked).toEqual([null])
+
+    const id = added.ok && added.value.here.kind === 'row' ? added.value.here.id : null
+    const asking = call('accounts:reauth', id)
+    await vi.waitFor(() => expect(fake.login.hold).not.toBeNull())
+    fake.held = {
+      credentials: `{"claudeAiOauth":{"who":"${email}","again":true}}`,
+      oauthAccount: { accountUuid: email, emailAddress: email },
+    }
+    fake.login.hold?.()
+    fake.login.hold = null
+    expect(((await asking) as Outcome<AccountList>).ok).toBe(true)
+    expect(fake.login.asked).toEqual([null, email])
+
     fake.auth = SIGNED_OUT
     fake.held = NOTHING_HELD
   })

@@ -9,7 +9,9 @@ export type AccountsDeps = {
   // would not answer is not a machine with nothing on it.
   read(): Promise<Outcome<CredentialSnapshot>>
   write(snapshot: CredentialSnapshot): Promise<void>
-  login(): Promise<void>
+  // The account the login page should open on, or nobody when there is no
+  // saying yet which account this login will turn out to be.
+  login(email: string | null): Promise<void>
   // Every claude this app spawned, told to stop and seen to go. Asked only by
   // an operation that is about to write credentials, and only once.
   stop(): Promise<boolean>

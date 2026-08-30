@@ -46,7 +46,7 @@ function depsFor(sender: WebContents, stop: StopChildren): AccountsDeps {
     ...hereDeps(),
     stop,
     write: (snapshot) => writeSnapshot(io, snapshot),
-    login: () => runLogin(sender),
+    login: (email) => runLogin(sender, email),
     status: readAuthStatus,
     wait: waitMs,
     now: Date.now,

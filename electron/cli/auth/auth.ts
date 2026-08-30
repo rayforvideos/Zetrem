@@ -82,11 +82,20 @@ function cancelLogin(): void {
   stopCurrentLogin?.()
 }
 
-export async function runLogin(sender: WebContents): Promise<void> {
+// The login page opens on whichever account the browser last saw, and getting
+// off it means the page's own account switcher, which is the part that hangs.
+// Naming the account here pre-fills the page instead, so a renewal never has
+// to go near it. An add names nobody: which account it will be is the
+// person's to say in the browser.
+function loginArgs(email: string | null): string[] {
+  return email === null ? ['auth', 'login'] : ['auth', 'login', '--email', email]
+}
+
+export async function runLogin(sender: WebContents, email: string | null = null): Promise<void> {
   const env = agentEnv(process.env, await loginPath())
   const bin = await claudeBin()
   await new Promise<void>((resolve) => {
-    const launch = launchFor(bin, ['auth', 'login'])
+    const launch = launchFor(bin, loginArgs(email))
     const child = spawn(launch.command, launch.args, {
       env,
       stdio: ['ignore', 'pipe', 'pipe'],

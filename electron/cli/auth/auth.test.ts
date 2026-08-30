@@ -127,6 +127,27 @@ describe('the login an account operation runs itself', () => {
   })
 })
 
+describe('the login page, which opens on whichever account the browser last saw', () => {
+  async function loginAs(email: string | null): Promise<string[]> {
+    const login = runLogin({} as never, email)
+    await vi.waitFor(() => expect(fake.spawns).toHaveLength(1))
+    fake.spawns[0]?.child.emit('close', 0)
+    await login
+    return fake.spawns[0]?.args ?? []
+  }
+
+  it('is told which account to ask for, so a re-auth need not touch the switcher', async () => {
+    const args = await loginAs('ray@un7qi3.co')
+    expect(args.slice(-4)).toEqual(['auth', 'login', '--email', 'ray@un7qi3.co'])
+  })
+
+  it('names nobody for a new account, there being nobody yet to name', async () => {
+    const args = await loginAs(null)
+    expect(args.slice(-2)).toEqual(['auth', 'login'])
+    expect(args).not.toContain('--email')
+  })
+})
+
 describe('a login the person gave up waiting for', () => {
   it('kills the child that is running, so the operation gets its turn back', async () => {
     const sender = {} as never

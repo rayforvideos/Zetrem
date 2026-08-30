@@ -347,7 +347,7 @@ export async function addAccount(deps: AccountsDeps): Promise<Outcome<AccountLis
   const wasActive = index.activeId
   const before = await keepCurrent(deps, index)
   if (!before.ok) return before
-  await deps.login()
+  await deps.login(null)
   return capture(deps, index, before.value.held, wasActive, null)
 }
 
@@ -408,7 +408,10 @@ export async function reauthAccount(deps: AccountsDeps, id: string): Promise<Out
   if (!before.ok) return before
   const wasActive = index.activeId
   const refreshing = rowFor(index, id) ?? null
-  await deps.login()
+  // A row still waiting for its name has none to steer the page with, and the
+  // person picks the account there as they would for an add.
+  const asking = refreshing !== null && refreshing.email.length > 0 ? refreshing.email : null
+  await deps.login(asking)
   return capture(deps, index, before.value, wasActive, refreshing)
 }
 

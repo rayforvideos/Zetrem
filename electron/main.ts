@@ -6,6 +6,7 @@ import { chromeNow, followScheme, wearTheme } from './shell/app-theme/app-theme'
 import { registerAttachments } from './shell/attachments/attachments'
 import { registerAgentDefs } from './agents/agent-defs/agent-defs'
 import { registerAuth } from './cli/auth/auth'
+import { registerAccounts } from './cli/accounts/register-accounts/register-accounts'
 import { registerCliInstall } from './cli/cli-install/cli-install'
 import { registerCliVersion } from './cli/cli-version/cli-version'
 import { registerNudge } from './host/nudge/nudge'
@@ -43,6 +44,11 @@ const inspectPort = isPackagedRun()
   ? null
   : (process.env.ZT_INSPECT ?? (process.env.ELECTRON_RENDERER_URL ? '0' : null))
 if (inspectPort !== null) app.commandLine.appendSwitch('remote-debugging-port', inspectPort)
+
+// Dev binaries are rebuilt and re-signed on every run, so the login keychain
+// would prompt for the password on every account operation. A packaged build
+// keeps the real keychain-backed key untouched.
+if (!isPackagedRun()) app.commandLine.appendSwitch('use-mock-keychain')
 
 function wearTheName(): void {
   app.setAboutPanelOptions({
@@ -217,6 +223,7 @@ if (!primary) {
   registerAgentHost()
   registerAttachments()
   registerAuth()
+  registerAccounts()
   registerAgentDefs()
   registerCliVersion()
   registerCliInstall()

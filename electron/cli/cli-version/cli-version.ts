@@ -27,6 +27,7 @@ function probe(command: string, args: string[], path: string): Promise<string | 
     timeout: { ms: PROBE_TIMEOUT_MS, answers: () => null },
     exit: (_code, text) => text,
     error: () => null,
+    refused: () => null,
   })
 }
 
@@ -87,6 +88,9 @@ export function registerCliVersion(): void {
       },
       exit: (_code, text) => ({ output: text.trim().slice(-2000) }),
       error: () => ({ output: 'claude command not found' }),
+      // Nothing ran and nothing was said, which is what an update that printed
+      // nothing already looks like from here.
+      refused: () => ({ output: '' }),
     })
   })
 }

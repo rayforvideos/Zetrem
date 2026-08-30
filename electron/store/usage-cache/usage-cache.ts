@@ -11,9 +11,13 @@ export function stillWorthShowing(kept: Kept | null, nowMs: number): boolean {
 
 export function readKept(text: string): Kept | null {
   try {
-    const held = JSON.parse(text) as { report?: unknown; atMs?: unknown }
+    const held = JSON.parse(text) as { report?: unknown; atMs?: unknown; who?: unknown }
     if (typeof held.report !== 'string' || typeof held.atMs !== 'number') return null
-    return { report: held.report, atMs: held.atMs }
+    return {
+      report: held.report,
+      atMs: held.atMs,
+      who: typeof held.who === 'string' ? held.who : null,
+    }
   } catch {
     return null
   }

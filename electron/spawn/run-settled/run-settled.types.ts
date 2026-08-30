@@ -12,6 +12,11 @@ export type RunSettled<T> = {
   line?: (line: string) => T | undefined
   exit: (code: number | null, text: string) => T
   error: (cause: Error) => T
+  // What the caller hands back when an account operation began before the spawn
+  // could happen. Asked for rather than assumed: every caller already has a way
+  // of saying it learned nothing, and only the caller knows what that is.
+  refused: () => T
   spawned?: (pid: number) => void
+  // Told when the process has closed, which may be long after the answer.
   settled?: (pid: number) => void
 }

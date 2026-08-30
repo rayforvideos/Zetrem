@@ -6,6 +6,7 @@ import type { AuthStatus } from '@/entities/auth'
 import { lost, won } from '@/shared/lib/outcome/outcome'
 import type { Outcome } from '@/shared/lib/outcome/outcome.types'
 import { claudeBin, loginPath } from '../login-path/login-path'
+import { accountWork } from '../accounts/account-guard/account-guard'
 import { authFailureOf, authStatusOf } from './auth-status/auth-status'
 import { handle, push } from '../../ipc/ipc'
 import { killTree } from '../../spawn/kill-tree/kill-tree'
@@ -35,60 +36,73 @@ export async function readAuthStatus(): Promise<AuthStatus> {
 export function registerAuth(): void {
   handle('auth:status', () => readAuthStatus())
 
-  handle('auth:logout', async (): Promise<Outcome<AuthStatus>> => {
-    const env = agentEnv(process.env, await loginPath())
-    let failure: string | null = null
-    try {
-      const launch = launchFor(await claudeBin(), ['auth', 'logout'])
-      await execFileAsync(launch.command, launch.args, {
-        env,
-        timeout: LOGOUT_TIMEOUT_MS,
-        windowsHide: true,
-      })
-    } catch (cause) {
-      const error = cause as { stderr?: string; message?: string }
-      failure = (error.stderr || error.message || 'claude auth logout failed').trim()
-    }
-    const status = await readAuthStatus()
-    if (status.state === 'signed-in' && failure !== null) return lost('cli', failure)
-    return won(status)
-  })
+  // Signing out writes the credentials every account is filed from, so it goes
+  // the way every other account change goes: alone, with the children stopped
+  // and the latch held, and the one signal raised when it took.
+  handle(
+    'auth:logout',
+    (): Promise<Outcome<AuthStatus>> =>
+      accountWork('auth:logout', async (stop) => {
+        if (!(await stop()))
+          return lost<AuthStatus>('timeout', 'a Claude Code process would not stop')
+        const env = agentEnv(process.env, await loginPath())
+        let failure: string | null = null
+        try {
+          const launch = launchFor(await claudeBin(), ['auth', 'logout'])
+          await execFileAsync(launch.command, launch.args, {
+            env,
+            timeout: LOGOUT_TIMEOUT_MS,
+            windowsHide: true,
+          })
+        } catch (cause) {
+          const error = cause as { stderr?: string; message?: string }
+          failure = (error.stderr || error.message || 'claude auth logout failed').trim()
+        }
+        const status = await readAuthStatus()
+        if (status.state === 'signed-in' && failure !== null)
+          return lost<AuthStatus>('cli', failure)
+        return won(status)
+      }),
+  )
 
   handle('auth:login', async (event): Promise<AuthStatus> => {
-    const sender: WebContents = event.sender
-    const env = agentEnv(process.env, await loginPath())
-    const bin = await claudeBin()
-    await new Promise<void>((resolve) => {
-      const launch = launchFor(bin, ['auth', 'login'])
-      const child = spawn(launch.command, launch.args, {
-        env,
-        stdio: ['ignore', 'pipe', 'pipe'],
-        windowsHide: true,
-      })
-      child.stdout.setEncoding('utf8')
-      child.stderr.setEncoding('utf8')
-      if (child.pid !== undefined) trackChild(child.pid)
-      let settled = false
-      const stop = (): void => {
-        if (settled) return
-        settled = true
-        clearTimeout(timer)
-        if (child.pid !== undefined) untrackChild(child.pid)
-        resolve()
-      }
-      const timer = setTimeout(() => {
-        if (child.pid !== undefined) killTree(child.pid)
-        else child.kill()
-        stop()
-      }, LOGIN_TIMEOUT_MS)
-      const relay = (chunk: string): void => push(sender, 'auth:progress', chunk)
-      child.stdout.on('data', relay)
-      child.stderr.on('data', relay)
-      // 'close' rather than 'exit': stdio has flushed by then, so the last
-      // progress line reaches the renderer before the status check answers.
-      child.on('close', stop)
-      child.on('error', stop)
-    })
+    await runLogin(event.sender)
     return readAuthStatus()
+  })
+}
+
+export async function runLogin(sender: WebContents): Promise<void> {
+  const env = agentEnv(process.env, await loginPath())
+  const bin = await claudeBin()
+  await new Promise<void>((resolve) => {
+    const launch = launchFor(bin, ['auth', 'login'])
+    const child = spawn(launch.command, launch.args, {
+      env,
+      stdio: ['ignore', 'pipe', 'pipe'],
+      windowsHide: true,
+    })
+    child.stdout.setEncoding('utf8')
+    child.stderr.setEncoding('utf8')
+    if (child.pid !== undefined) trackChild(child.pid)
+    let settled = false
+    const stop = (): void => {
+      if (settled) return
+      settled = true
+      clearTimeout(timer)
+      if (child.pid !== undefined) untrackChild(child.pid)
+      resolve()
+    }
+    const timer = setTimeout(() => {
+      if (child.pid !== undefined) killTree(child.pid)
+      else child.kill()
+      stop()
+    }, LOGIN_TIMEOUT_MS)
+    const relay = (chunk: string): void => push(sender, 'auth:progress', chunk)
+    child.stdout.on('data', relay)
+    child.stderr.on('data', relay)
+    // 'close' rather than 'exit': stdio has flushed by then, so the last
+    // progress line reaches the renderer before the status check answers.
+    child.on('close', stop)
+    child.on('error', stop)
   })
 }

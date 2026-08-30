@@ -53,6 +53,12 @@ const desk: DeskBridge = {
   logout: invoke('auth:logout'),
   onAuthProgress: listen('auth:progress'),
 
+  listAccounts: invoke('accounts:list'),
+  addAccount: invoke('accounts:add'),
+  switchAccount: invoke('accounts:switch'),
+  reauthAccount: invoke('accounts:reauth'),
+  removeAccount: invoke('accounts:remove'),
+
   listAgentDefs: invoke('agents:list'),
   writeAgentDef: invoke('agents:write'),
   removeAgentDef: invoke('agents:remove'),

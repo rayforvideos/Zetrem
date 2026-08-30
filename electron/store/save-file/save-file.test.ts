@@ -1,8 +1,8 @@
-import { mkdtemp, readFile, readdir, writeFile, utimes } from 'node:fs/promises'
+import { mkdtemp, readFile, readdir, stat, writeFile, utimes } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { beforeEach, describe, expect, it } from 'vitest'
-import { partnerOf, saveFile } from './save-file'
+import { partnerOf, saveFile, saveSecretFile } from './save-file'
 
 let dir = ''
 
@@ -63,5 +63,27 @@ describe('saveFile: a file is never left half written', () => {
     await Promise.all([saveFile(path, 'first'), saveFile(path, 'second')])
     expect(['first', 'second']).toContain(await readFile(path, 'utf8'))
     expect(await readdir(dir)).toEqual(['settings.json'])
+  })
+})
+
+describe('saveSecretFile: a secret is written whole and read by nobody else', () => {
+  it('writes the bytes it was given and leaves nothing behind', async () => {
+    const path = join(dir, 'slot.bin')
+    await saveSecretFile(path, Buffer.from([0, 1, 2, 250]))
+    expect([...(await readFile(path))]).toEqual([0, 1, 2, 250])
+    expect(await readdir(dir)).toEqual(['slot.bin'])
+  })
+
+  it('gives the file the mode it must keep', async () => {
+    const path = join(dir, 'slot.bin')
+    await saveSecretFile(path, Buffer.from('x'))
+    if (process.platform !== 'win32') expect((await stat(path)).mode & 0o777).toBe(0o600)
+  })
+
+  it('does not touch the old secret when the new one cannot be written', async () => {
+    const path = join(dir, 'slot.bin')
+    await saveSecretFile(path, Buffer.from('the good one'))
+    await expect(saveSecretFile(join(dir, 'nowhere', 'x.bin'), Buffer.from('y'))).rejects.toThrow()
+    expect(await readFile(path, 'utf8')).toBe('the good one')
   })
 })

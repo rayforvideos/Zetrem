@@ -15,8 +15,10 @@ type Spawn = { command: string; args: string[]; options: Record<string, unknown>
 const boundary = vi.hoisted(() => ({
   spawns: [] as Spawn[],
   killed: [] as number[],
+  killedSync: [] as number[],
   plainKills: 0,
   nextPid: 900 as number | undefined,
+  buried: new Set<number>(),
 }))
 
 vi.mock('node:child_process', async () => {
@@ -39,11 +41,23 @@ vi.mock('node:child_process', async () => {
   }
 })
 
-vi.mock('../kill-tree/kill-tree', () => ({
-  killTree: (pid: number) => boundary.killed.push(pid),
+vi.mock('../pid-alive/pid-alive', () => ({
+  pidAlive: (pid: number) => !boundary.buried.has(pid),
 }))
 
-import { killTrackedChildren, runSettled, trackChild, untrackChild } from './run-settled'
+vi.mock('../kill-tree/kill-tree', () => ({
+  killTree: (pid: number) => boundary.killed.push(pid),
+  killTreeSync: (pid: number) => boundary.killedSync.push(pid),
+}))
+
+import { duringAccountWork } from '../account-work/account-work'
+import {
+  killTrackedChildren,
+  runSettled,
+  stopTrackedChildren,
+  trackChild,
+  untrackChild,
+} from './run-settled'
 
 function childAt(at: number): FakeChild {
   const spawn = boundary.spawns[at]
@@ -63,13 +77,16 @@ const plain = {
   timeout: { ms: 5000, answers: () => 'gave up' },
   exit: (code: number | null, text: string) => `${String(code)}:${text}`,
   error: (cause: Error) => `broke:${cause.message}`,
+  refused: () => 'not now',
 }
 
 beforeEach(() => {
   boundary.spawns.length = 0
   boundary.killed.length = 0
+  boundary.killedSync.length = 0
   boundary.plainKills = 0
   boundary.nextPid = 900
+  boundary.buried.clear()
 })
 
 afterEach(() => {
@@ -268,6 +285,88 @@ describe('what is left running after the answer is in hand', () => {
   })
 })
 
+describe('stopping the one-shot children before the account underneath them moves', () => {
+  it('does not answer until the last tracked run has settled', async () => {
+    trackChild(11)
+    trackChild(12)
+    let answered = false
+    const stopped = stopTrackedChildren(5000).then((gone) => {
+      answered = true
+      return gone
+    })
+
+    untrackChild(11)
+    await Promise.resolve()
+    await Promise.resolve()
+    expect(answered).toBe(false)
+    expect(boundary.killed).toEqual([11, 12])
+
+    untrackChild(12)
+    expect(await stopped).toBe(true)
+  })
+
+  it('says the children are gone when nothing was tracked', async () => {
+    expect(await stopTrackedChildren(5000)).toBe(true)
+  })
+
+  it('lets the operation through for a pid the process table no longer knows', async () => {
+    trackChild(11)
+    boundary.buried.add(11)
+
+    // Its 'close' never came and never will: a grandchild inherited the stdio.
+    // Refusing every account change from here to quit is not an answer.
+    expect(await stopTrackedChildren(1000)).toBe(true)
+    expect(boundary.killed).toEqual([])
+  })
+
+  it('says so, and leaves it running, when one will not go', async () => {
+    vi.useFakeTimers()
+    try {
+      trackChild(11)
+      const stopped = stopTrackedChildren(1000)
+      await vi.advanceTimersByTimeAsync(1000)
+
+      expect(await stopped).toBe(false)
+      // Asked, not killed: the account change is refused instead, and whoever
+      // was in the middle of a turn still has it.
+      expect(boundary.killed).toEqual([11])
+      expect(boundary.killedSync).toEqual([])
+    } finally {
+      vi.useRealTimers()
+    }
+  })
+})
+
+describe('a run whose answer is in hand while its process is not yet gone', () => {
+  it('is still counted as running, and the wait holds until it closes', async () => {
+    const run = runSettled<string | null>({
+      ...plain,
+      killOnSettle: true,
+      timeout: { ms: 5000, answers: () => null },
+      line: (line) => (line.startsWith('init') ? line : undefined),
+      exit: () => null,
+      error: () => null,
+      spawned: trackChild,
+      settled: untrackChild,
+    })
+    const child = childAt(0)
+    child.stdout.emit('data', 'init\n')
+    expect(await run).toBe('init')
+
+    let answered = false
+    const stopped = stopTrackedChildren(5000).then((gone) => {
+      answered = true
+      return gone
+    })
+    await Promise.resolve()
+    await Promise.resolve()
+    expect(answered).toBe(false)
+
+    child.emit('close', 0)
+    expect(await stopped).toBe(true)
+  })
+})
+
 describe('the children that outlive the window they were started from', () => {
   it('kills what is still tracked, and only that', () => {
     trackChild(11)
@@ -286,5 +385,25 @@ describe('the children that outlive the window they were started from', () => {
     killTrackedChildren()
 
     expect(boundary.killed).toEqual([11])
+  })
+})
+
+describe('an account operation that begins while a caller is getting ready to run', () => {
+  it('stops the spawn, because the latch is asked again beside the spawn itself', async () => {
+    let letGo = (): void => undefined
+    const operation = duringAccountWork(
+      () =>
+        new Promise<void>((release) => {
+          letGo = release
+        }),
+    )
+    // The caller asked the latch when it was down and then awaited the binary,
+    // the PATH and the project; by now an account operation holds it.
+    const answered = runSettled(plain)
+    letGo()
+    await operation
+
+    expect(await answered).toBe('not now')
+    expect(boundary.spawns).toEqual([])
   })
 })

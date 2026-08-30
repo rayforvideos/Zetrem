@@ -1,6 +1,13 @@
 import { afterEach, describe, expect, it } from 'vitest'
 import { i18n } from '@lingui/core'
-import { signOutHint, signOutTitle, signOutWarning } from './sign-out-warning'
+import {
+  reauthTitle,
+  reauthWarning,
+  removeTitle,
+  removeWarning,
+  signOutTitle,
+  signOutWarning,
+} from './sign-out-warning'
 
 describe('signing out is machine wide, and the words have to say so', () => {
   it('warns that it reaches past this app, since it clears the CLI credential', () => {
@@ -21,15 +28,48 @@ describe('signing out is machine wide, and the words have to say so', () => {
     expect(signOutTitle().endsWith('?')).toBe(true)
   })
 
-  it('says the reach in the quiet hint too, before anyone reaches for the button', () => {
-    expect(signOutHint(false)).toContain('every Claude Code on this computer')
-    expect(signOutHint(true)).toContain('every other Claude Code on this computer')
+  it('never promises that signing back in is only about picking an account', () => {
+    expect(signOutWarning(true)).not.toContain('different Anthropic account')
+  })
+})
+
+describe('removing an account names what it actually does, not a generic switch', () => {
+  it('asks before doing it', () => {
+    expect(removeTitle().endsWith('?')).toBe(true)
   })
 
-  it('never promises that signing back in is only about picking an account', () => {
-    for (const said of [signOutHint(true), signOutHint(false), signOutWarning(true)]) {
-      expect(said).not.toContain('different Anthropic account')
-    }
+  it('says the credential is forgotten, whether or not the account is active', () => {
+    expect(removeWarning(false)).toContain('forgets the saved credentials')
+    expect(removeWarning(true)).toContain('forgets the saved credentials')
+  })
+
+  it('says nothing about a default or a running session for an inactive account', () => {
+    const said = removeWarning(false)
+    expect(said).not.toContain('system default')
+    expect(said).not.toContain('session running here stops')
+  })
+
+  it('says the machine stays signed in with no active account when the active one is removed', () => {
+    const said = removeWarning(true)
+    expect(said).toContain('stays signed in')
+    // Removal touches nothing on the machine, so it must not threaten the session.
+    expect(said).not.toContain('system default')
+    expect(said).not.toContain('session running here stops')
+  })
+})
+
+describe('re-authenticating says a browser tab is about to open', () => {
+  it('asks before doing it', () => {
+    expect(reauthTitle().endsWith('?')).toBe(true)
+  })
+
+  it('names the browser sign-in', () => {
+    expect(reauthWarning(false)).toContain('sign in again')
+  })
+
+  it('adds the running session to the warning when one is live', () => {
+    expect(reauthWarning(true)).toContain('session running here stops')
+    expect(reauthWarning(false)).not.toContain('session running here stops')
   })
 })
 
@@ -49,8 +89,11 @@ describe('the warning speaks whichever language the app is speaking', () => {
     expect(signOutWarning(true)).toContain('세션도 멈춥니다')
   })
 
-  it('keeps the quiet hint in Korean too', () => {
+  it('translates remove and re-authenticate too', () => {
     i18n.activate('ko')
-    expect(signOutHint(false)).toContain('전부 로그아웃')
+    expect(removeTitle()).toContain('제거')
+    expect(removeWarning(true)).toContain('로그인된 상태')
+    expect(reauthTitle()).toContain('로그인')
+    expect(reauthWarning(true)).toContain('세션은 멈춥니다')
   })
 })

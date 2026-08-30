@@ -26,6 +26,12 @@ export type DeskBridge = {
   logout: Invoke<'auth:logout'>
   onAuthProgress: Listen<'auth:progress'>
 
+  listAccounts: Invoke<'accounts:list'>
+  addAccount: Invoke<'accounts:add'>
+  switchAccount: Invoke<'accounts:switch'>
+  reauthAccount: Invoke<'accounts:reauth'>
+  removeAccount: Invoke<'accounts:remove'>
+
   listAgentDefs: Invoke<'agents:list'>
   writeAgentDef: Invoke<'agents:write'>
   removeAgentDef: Invoke<'agents:remove'>

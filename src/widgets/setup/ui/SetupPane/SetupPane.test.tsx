@@ -45,13 +45,17 @@ function pane(over: Partial<Flat> = {}): string {
       <SetupPane
         account={{
           auth: flat.auth,
+          accounts: null,
+          busy: null,
+          busyOn: null,
           error: flat.authError,
           note: flat.loginNote,
-          signingIn: false,
-          signingOut: false,
           sessionLive: flat.sessionLive,
           installing: flat.installing,
-          onSignIn: () => {},
+          onAdd: () => {},
+          onSwitch: () => {},
+          onReauth: () => {},
+          onRemove: () => {},
           onSignOut: () => {},
           onInstall: () => {},
           onRecheck: () => {},
@@ -122,7 +126,7 @@ describe('the settings split into tabs on the left', () => {
 describe('SetupPane: everything to settle before starting, on one screen', () => {
   it('shows everything there is to settle', () => {
     const html = pane()
-    for (const label of ['Account', 'Project', 'Permissions', 'Model', 'Plugins']) {
+    for (const label of ['Claude', 'Project', 'Permissions', 'Model', 'Plugins']) {
       expect(html, `${label} is missing`).toContain(label)
     }
   })
@@ -148,18 +152,17 @@ describe('SetupPane: everything to settle before starting, on one screen', () =>
     const html = pane({
       auth: { state: 'signed-in', email: 'sam@example.com', orgName: null },
     })
-    expect(html).toContain('sam@example.com')
     expect(html).toContain('Sign out')
   })
 
-  it('warns that signing out cuts a running session', () => {
+  it('always offers to sign out, whether or not a session is live (the confirm dialog carries the warning; see sign-out-warning.test.ts)', () => {
     const live = pane({
       auth: { state: 'signed-in', email: 'sam@example.com', orgName: null },
       sessionLive: true,
     })
-    expect(live).toContain('stops the running session')
+    expect(live).toContain('Sign out')
     const idle = pane({ auth: { state: 'signed-in', email: 'sam@example.com', orgName: null } })
-    expect(idle).not.toContain('stops the running session')
+    expect(idle).toContain('Sign out')
   })
 
   it('leaves a failed sign-out on screen rather than quietly pretending', () => {

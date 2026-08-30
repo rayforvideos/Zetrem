@@ -4,6 +4,8 @@ import { shortName, tidyName } from '@/entities/connector'
 import { outcomeLine, useAsk } from '@/shared/lib/ask/ask'
 import { saidOrWhy } from '@/entities/connector'
 import { t } from '@lingui/core/macro'
+import { connectorsDue } from './connectors-due/connectors-due'
+import type { ConnectorsAskedFor } from './connectors-due/connectors-due.types'
 
 type Connectors = {
   connectors: Connector[]
@@ -31,15 +33,19 @@ function said(verb: ConnectorVerb, target: string): string {
 
 const ADDING = 'adding'
 
-export function useConnectors(wanted: boolean, project: string | null): Connectors {
+export function useConnectors(
+  wanted: boolean,
+  project: string | null,
+  account: number,
+): Connectors {
   const [connectors, setConnectors] = useState<Connector[]>([])
   const [loading, setLoading] = useState(false)
   const [checked, setChecked] = useState(false)
-  const asked = useRef(false)
+  const asked = useRef<ConnectorsAskedFor | null>(null)
   const { busy, note, say, ask } = useAsk()
 
   function reload(): void {
-    asked.current = true
+    asked.current = { project, account }
     setLoading(true)
     void ask('list', t`Could not read your connectors`, () => window.desk.listConnectors())
       .then((found) => {
@@ -50,16 +56,10 @@ export function useConnectors(wanted: boolean, project: string | null): Connecto
       .finally(() => setLoading(false))
   }
 
-  // Connectors are read in the project's folder, so another project means
-  // another answer.
   useEffect(() => {
-    asked.current = false
-  }, [project])
-
-  useEffect(() => {
-    if (!wanted || asked.current) return
+    if (!connectorsDue(wanted, asked.current, { project, account })) return
     reload()
-  }, [wanted, project])
+  }, [wanted, project, account])
 
   function act(verb: ConnectorVerb, target: string): void {
     void ask(target, t`Could not reach ${shortName(target)}`, () =>

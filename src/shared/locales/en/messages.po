@@ -165,11 +165,11 @@ msgstr "{n}m ago"
 msgid "{name} can be called this session"
 msgstr "{name} can be called this session"
 
-#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:260
+#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:265
 msgid "{name} is off. The running session keeps them until it ends."
 msgstr "{name} is off. The running session keeps them until it ends."
 
-#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:259
+#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:264
 msgid "{name} is on. The running session cannot call them yet."
 msgstr "{name} is on. The running session cannot call them yet."
 
@@ -312,6 +312,14 @@ msgstr "A running session cannot call them. Restart it, or they join the next on
 msgid "A running session keeps the old brief until it is restarted"
 msgstr "A running session keeps the old brief until it is restarted"
 
+#: src/pages/workspace/model/account/useAuth.ts:154
+msgid "A session is still running, so you were not signed out. Stop it and try again."
+msgstr "A session is still running, so you were not signed out. Stop it and try again."
+
+#: src/pages/workspace/model/account/useAuth.ts:102
+msgid "A session is still running, so your account was not changed. Stop it and try again."
+msgstr "A session is still running, so your account was not changed. Stop it and try again."
+
 #: src/entities/agent-session/model/nudge/nudge.ts:18
 msgid "A session stopped with an error."
 msgstr "A session stopped with an error."
@@ -336,9 +344,17 @@ msgstr "A tool"
 msgid "About the library"
 msgstr "About the library"
 
-#: src/widgets/setup/ui/AccountField/AccountField.tsx:29
+#: src/widgets/setup/ui/AccountField/AccountField.tsx:101
 msgid "Account"
 msgstr "Account"
+
+#: src/widgets/setup/ui/AccountField/AccountField.tsx:170
+msgid "Accounts"
+msgstr "Accounts"
+
+#: src/widgets/setup/ui/AccountField/AccountField.tsx:321
+msgid "Active"
+msgstr "Active"
 
 #: src/widgets/setup/ui/AddConnector/AddConnector.tsx:95
 #: src/widgets/setup/ui/PluginShelf/SourcesTab.tsx:61
@@ -352,6 +368,10 @@ msgstr "Add a marketplace"
 #: src/pages/workspace/model/team/workspace-config/workspace-config.ts:41
 msgid "Add a marketplace to bring in skills and agents"
 msgstr "Add a marketplace to bring in skills and agents"
+
+#: src/widgets/setup/ui/AccountField/AccountField.tsx:187
+msgid "Add account"
+msgstr "Add account"
 
 #: src/widgets/setup/ui/PluginShelf/PluginShelf.tsx:87
 msgid "Add more"
@@ -504,7 +524,7 @@ msgstr "Cart totals and rounding"
 msgid "Change"
 msgstr "Change"
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:433
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:435
 msgid "Change account, project, and permissions"
 msgstr "Change account, project, and permissions"
 
@@ -512,7 +532,7 @@ msgstr "Change account, project, and permissions"
 msgid "Character"
 msgstr "Character"
 
-#: src/widgets/setup/ui/AccountField/AccountField.tsx:111
+#: src/widgets/setup/ui/AccountField/AccountField.tsx:146
 msgid "Check again"
 msgstr "Check again"
 
@@ -542,9 +562,14 @@ msgstr "Choose what can run without asking, check your remaining limits along th
 msgid "Claude Code"
 msgstr "Claude Code"
 
-#: src/widgets/setup/ui/AccountField/AccountField.tsx:114
+#: src/widgets/setup/ui/AccountField/AccountField.tsx:149
 msgid "Claude Code did not say whether you are signed in."
 msgstr "Claude Code did not say whether you are signed in."
+
+#. placeholder {0}: identityLine(here)
+#: src/widgets/setup/ui/AccountField/AccountField.tsx:59
+msgid "Claude Code reports {0}"
+msgstr "Claude Code reports {0}"
 
 #: src/entities/claude-cli/lib/exit-line/exit-line.ts:11
 msgid "Claude Code stopped without a word (exit {code}). Your next message starts a new session."
@@ -609,6 +634,10 @@ msgstr "Connectors"
 msgid "Context"
 msgstr "Context"
 
+#: src/widgets/setup/ui/AccountField/AccountField.tsx:267
+msgid "Continue"
+msgstr "Continue"
+
 #: src/pages/workspace/model/session/agent-events/agent-events.ts:158
 msgid "Conversation compacted here"
 msgstr "Conversation compacted here"
@@ -635,7 +664,7 @@ msgstr "Could not file that chat"
 msgid "Could not forget that chat"
 msgstr "Could not forget that chat"
 
-#: src/pages/workspace/model/account/useAuth.ts:114
+#: src/pages/workspace/model/account/useAuth.ts:188
 msgid "Could not install Claude Code"
 msgstr "Could not install Claude Code"
 
@@ -647,8 +676,8 @@ msgstr "Could not list your saved chats"
 msgid "Could not open that chat"
 msgstr "Could not open that chat"
 
-#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:195
-#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:206
+#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:200
+#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:211
 msgid "Could not open that folder"
 msgstr "Could not open that folder"
 
@@ -688,7 +717,7 @@ msgstr "Could not read what you attached"
 msgid "Could not read what you pasted"
 msgstr "Could not read what you pasted"
 
-#: src/pages/workspace/model/extensions/useConnectors.ts:44
+#: src/pages/workspace/model/extensions/useConnectors.ts:50
 msgid "Could not read your connectors"
 msgstr "Could not read your connectors"
 
@@ -700,19 +729,23 @@ msgstr "Could not read your marketplaces"
 msgid "Could not read your settings"
 msgstr "Could not read your settings"
 
-#: src/pages/workspace/model/account/useAuth.ts:49
+#: src/pages/workspace/model/account/useAuth.ts:62
 msgid "Could not read your sign-in"
 msgstr "Could not read your sign-in"
 
-#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:226
+#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:231
 msgid "Could not remove that project"
 msgstr "Could not remove that project"
+
+#: src/pages/workspace/model/account/useAuth.ts:138
+msgid "Could not remove the account."
+msgstr "Could not remove the account."
 
 #: src/pages/workspace/model/chat/useTranscript.ts:279
 msgid "Could not rename that chat"
 msgstr "Could not rename that chat"
 
-#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:73
+#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:75
 msgid "Could not reopen your last project"
 msgstr "Could not reopen your last project"
 
@@ -732,6 +765,10 @@ msgstr "Could not start Claude Code: {said}"
 #: src/pages/workspace/model/session/useCliUpdate.ts:38
 msgid "Could not start the update"
 msgstr "Could not start the update"
+
+#: src/pages/workspace/model/account/useAuth.ts:132
+msgid "Could not switch accounts."
+msgstr "Could not switch accounts."
 
 #: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:343
 msgid "Create"
@@ -918,7 +955,7 @@ msgstr "Find a chat"
 msgid "Find why checkout drops the last item"
 msgstr "Find why checkout drops the last item"
 
-#: src/pages/workspace/model/extensions/useConnectors.ts:27
+#: src/pages/workspace/model/extensions/useConnectors.ts:29
 msgid "Finish signing in to {name} in the browser. The next session picks it up."
 msgstr "Finish signing in to {name} in the browser. The next session picks it up."
 
@@ -999,7 +1036,7 @@ msgstr "Hard problems. Much slower"
 msgid "Held up"
 msgstr "Held up"
 
-#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:143
+#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:148
 msgid "Hide team sidebar"
 msgstr "Hide team sidebar"
 
@@ -1011,7 +1048,7 @@ msgstr "High"
 msgid "Hire"
 msgstr "Hire"
 
-#: src/widgets/setup/ui/AccountField/AccountField.tsx:120
+#: src/widgets/setup/ui/AccountField/AccountField.tsx:242
 msgid "If the browser did not open, <0>open this link</0>."
 msgstr "If the browser did not open, <0>open this link</0>."
 
@@ -1031,7 +1068,7 @@ msgstr "Included in a plugin. To remove one, turn its plugin off."
 msgid "Install"
 msgstr "Install"
 
-#: src/widgets/setup/ui/AccountField/AccountField.tsx:39
+#: src/widgets/setup/ui/AccountField/AccountField.tsx:110
 msgid "Install Claude Code"
 msgstr "Install Claude Code"
 
@@ -1039,7 +1076,7 @@ msgstr "Install Claude Code"
 msgid "Installed for this folder. Anyone who opens it gets them."
 msgstr "Installed for this folder. Anyone who opens it gets them."
 
-#: src/widgets/setup/ui/AccountField/AccountField.tsx:39
+#: src/widgets/setup/ui/AccountField/AccountField.tsx:110
 msgid "Installing Claude Code…"
 msgstr "Installing Claude Code…"
 
@@ -1092,6 +1129,10 @@ msgstr "Keep in"
 #: src/entities/connector/lib/refusal-why/refusal-why.ts:10
 msgid "Keep the name under {NAME_MAX} characters"
 msgstr "Keep the name under {NAME_MAX} characters"
+
+#: src/widgets/setup/ui/AccountField/AccountField.tsx:264
+msgid "Keep working"
+msgstr "Keep working"
 
 #: src/widgets/setup/ui/SetupPane/SetupPane.tsx:108
 msgid "Language"
@@ -1170,7 +1211,7 @@ msgstr "Message your team"
 msgid "Model"
 msgstr "Model"
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:369
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:371
 msgid "Model changed. The running session keeps its model."
 msgstr "Model changed. The running session keeps its model."
 
@@ -1369,7 +1410,7 @@ msgstr "Permission"
 msgid "Permissions"
 msgstr "Permissions"
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:365
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:367
 msgid "Permissions changed. The running session follows the old ones."
 msgstr "Permissions changed. The running session follows the old ones."
 
@@ -1429,6 +1470,10 @@ msgstr "Ran"
 #: src/entities/claude-cli/lib/failure/failure.ts:75
 msgid "Rate limited"
 msgstr "Rate limited"
+
+#: src/widgets/setup/ui/AccountField/AccountField.tsx:208
+msgid "Re-authenticate"
+msgstr "Re-authenticate"
 
 #: src/widgets/conversation/ui/ConversationPane/Approval.tsx:111
 msgid "Reach out to the web?"
@@ -1496,6 +1541,7 @@ msgstr "Reload"
 msgid "Reload the app"
 msgstr "Reload the app"
 
+#: src/widgets/setup/ui/AccountField/AccountField.tsx:214
 #: src/widgets/setup/ui/PluginShelf/ConnectorsTab.tsx:112
 #: src/widgets/setup/ui/PluginShelf/InstalledTab.tsx:80
 #: src/widgets/setup/ui/PluginShelf/SourcesTab.tsx:29
@@ -1526,7 +1572,11 @@ msgstr "Remove from team"
 msgid "Remove project"
 msgstr "Remove project"
 
-#: src/pages/workspace/model/extensions/useConnectors.ts:29
+#: src/widgets/setup/lib/sign-out-warning/sign-out-warning.ts:24
+msgid "Remove this account from Zetrem?"
+msgstr "Remove this account from Zetrem?"
+
+#: src/pages/workspace/model/extensions/useConnectors.ts:31
 msgid "Removed"
 msgstr "Removed"
 
@@ -1688,7 +1738,7 @@ msgstr "Set a few things and your agents get to work!"
 msgid "Set for everyone on your account. They cannot be removed or turned off here."
 msgstr "Set for everyone on your account. They cannot be removed or turned off here."
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:435
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:437
 msgid "Settings"
 msgstr "Settings"
 
@@ -1704,13 +1754,17 @@ msgstr "share unknown"
 msgid "Shift+Enter starts a new line. Off, sending takes the modifier key with Enter."
 msgstr "Shift+Enter starts a new line. Off, sending takes the modifier key with Enter."
 
-#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:143
+#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:148
 msgid "Show team sidebar"
 msgstr "Show team sidebar"
 
 #: src/widgets/setup/ui/PluginShelf/ConnectorsTab.tsx:91
 msgid "Sign in"
 msgstr "Sign in"
+
+#: src/widgets/setup/lib/sign-out-warning/sign-out-warning.ts:33
+msgid "Sign in again for this account?"
+msgstr "Sign in again for this account?"
 
 #: src/widgets/setup/lib/start-blocker/start-blocker.ts:6
 msgid "Sign in and choose a project folder"
@@ -1728,47 +1782,50 @@ msgstr "Sign in to your Anthropic account"
 msgid "Sign in was refused"
 msgstr "Sign in was refused"
 
-#: src/widgets/setup/ui/AccountField/AccountField.tsx:101
+#: src/widgets/setup/ui/AccountField/AccountField.tsx:163
 msgid "Sign in with Anthropic"
 msgstr "Sign in with Anthropic"
 
-#: src/widgets/setup/ui/AccountField/AccountField.tsx:69
-#: src/widgets/setup/ui/AccountField/AccountField.tsx:81
 #: src/widgets/setup/ui/PluginShelf/ConnectorsTab.tsx:86
 msgid "Sign out"
 msgstr "Sign out"
 
-#: src/pages/workspace/model/account/useAuth.ts:89
+#: src/pages/workspace/model/account/useAuth.ts:153
 msgid "Sign out did not take effect."
 msgstr "Sign out did not take effect."
+
+#: src/widgets/setup/ui/AccountField/AccountField.tsx:233
+msgid "Sign out of Claude Code"
+msgstr "Sign out of Claude Code"
 
 #: src/widgets/setup/lib/sign-out-warning/sign-out-warning.ts:4
 msgid "Sign out of Claude Code everywhere?"
 msgstr "Sign out of Claude Code everywhere?"
 
+#: src/pages/workspace/model/account/useAuth.ts:129
+#: src/pages/workspace/model/account/useAuth.ts:135
+msgid "Sign-in did not finish."
+msgstr "Sign-in did not finish."
+
 #: src/entities/connector/lib/groups/groups.ts:14
 msgid "Signed in and out here. To remove one, go to claude.ai."
 msgstr "Signed in and out here. To remove one, go to claude.ai."
 
-#: src/pages/workspace/model/extensions/useConnectors.ts:28
+#: src/widgets/setup/ui/AccountField/AccountField.tsx:60
+msgid "Signed in outside Zetrem."
+msgstr "Signed in outside Zetrem."
+
+#: src/widgets/setup/ui/AccountField/AccountField.tsx:65
+msgid "Signed in, name not known yet"
+msgstr "Signed in, name not known yet"
+
+#: src/pages/workspace/model/extensions/useConnectors.ts:30
 msgid "Signed out of"
 msgstr "Signed out of"
 
-#: src/widgets/setup/ui/AccountField/AccountField.tsx:101
+#: src/widgets/setup/ui/AccountField/AccountField.tsx:163
 msgid "Signing in through your browser…"
 msgstr "Signing in through your browser…"
-
-#: src/widgets/setup/lib/sign-out-warning/sign-out-warning.ts:15
-msgid "Signing out stops the running session, and every other Claude Code on this computer."
-msgstr "Signing out stops the running session, and every other Claude Code on this computer."
-
-#: src/widgets/setup/ui/AccountField/AccountField.tsx:69
-msgid "Signing out…"
-msgstr "Signing out…"
-
-#: src/widgets/setup/lib/sign-out-warning/sign-out-warning.ts:16
-msgid "Signs out every Claude Code on this computer, not just Zetrem."
-msgstr "Signs out every Claude Code on this computer, not just Zetrem."
 
 #: src/widgets/welcome/ui/WelcomePane/WelcomePane.tsx:97
 msgid "Skip"
@@ -1807,11 +1864,7 @@ msgstr "Start a conversation from scratch"
 msgid "Starting"
 msgstr "Starting"
 
-#: src/widgets/setup/ui/AccountField/AccountField.tsx:80
-msgid "Stay signed in"
-msgstr "Stay signed in"
-
-#: src/pages/workspace/model/account/useAuth.ts:94
+#: src/pages/workspace/model/account/useAuth.ts:161
 msgid "Still signed in. Sign out did not take effect."
 msgstr "Still signed in. Sign out did not take effect."
 
@@ -1853,6 +1906,10 @@ msgstr "Stopped: {subtype}"
 #: src/entities/claude-cli/lib/failure/failure.ts:29
 msgid "Stopped: something went wrong"
 msgstr "Stopped: something went wrong"
+
+#: src/widgets/setup/lib/sign-out-warning/sign-out-warning.ts:14
+msgid "Switch the Claude Code login on this computer?"
+msgstr "Switch the Claude Code login on this computer?"
 
 #: src/widgets/setup/lib/tongues/tongues.ts:5
 msgid "System"
@@ -1919,7 +1976,7 @@ msgstr "That note is in another project now; open it there to remove it."
 msgid "That was not allowed"
 msgstr "That was not allowed"
 
-#: src/widgets/setup/ui/AccountField/AccountField.tsx:42
+#: src/widgets/setup/ui/AccountField/AccountField.tsx:113
 msgid "The <0>claude</0> command was not found. Zetrem can install it for you."
 msgstr "The <0>claude</0> command was not found. Zetrem can install it for you."
 
@@ -2063,6 +2120,14 @@ msgstr "Thinks longer. Slower and pricier"
 msgid "This always applies. Write it the way you would explain the job to a person."
 msgstr "This always applies. Write it the way you would explain the job to a person."
 
+#: src/widgets/setup/lib/sign-out-warning/sign-out-warning.ts:20
+msgid "This changes which account the Claude Code CLI uses everywhere on this computer."
+msgstr "This changes which account the Claude Code CLI uses everywhere on this computer."
+
+#: src/widgets/setup/lib/sign-out-warning/sign-out-warning.ts:19
+msgid "This changes which account the Claude Code CLI uses everywhere on this computer. The session running here stops."
+msgstr "This changes which account the Claude Code CLI uses everywhere on this computer. The session running here stops."
+
 #: src/widgets/status-bar/lib/format/format.ts:46
 msgid "this chat"
 msgstr "this chat"
@@ -2079,9 +2144,25 @@ msgstr "this chat {size}"
 msgid "This chat is not being saved"
 msgstr "This chat is not being saved"
 
+#: src/widgets/setup/ui/AccountField/AccountField.tsx:172
+msgid "This computer's accounts are listed here. New ones are added here."
+msgstr "This computer's accounts are listed here. New ones are added here."
+
+#: src/widgets/setup/ui/AccountField/AccountField.tsx:204
+msgid "This device"
+msgstr "This device"
+
 #: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:119
 msgid "This is everything they know when they start."
 msgstr "This is everything they know when they start."
+
+#: src/widgets/setup/lib/sign-out-warning/sign-out-warning.ts:39
+msgid "This opens the browser to sign in again for this account."
+msgstr "This opens the browser to sign in again for this account."
+
+#: src/widgets/setup/lib/sign-out-warning/sign-out-warning.ts:38
+msgid "This opens the browser to sign in again for this account. The session running here stops."
+msgstr "This opens the browser to sign in again for this account. The session running here stops."
 
 #: src/entities/plugin/lib/groups/groups.ts:11
 #: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:19
@@ -2320,7 +2401,7 @@ msgstr "You already have a connector by that name"
 msgid "You decide what runs"
 msgstr "You decide what runs"
 
-#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:238
+#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:243
 msgid "You left before the reply finished, so it stops here."
 msgstr "You left before the reply finished, so it stops here."
 
@@ -2394,10 +2475,22 @@ msgstr "Zetrem {version} is ready"
 msgid "Zetrem cannot do that"
 msgstr "Zetrem cannot do that"
 
+#: src/pages/workspace/model/account/account-trouble/account-trouble.ts:13
+msgid "Zetrem could not read the Claude Code sign-in kept on this computer, so nothing was changed. Unlock your keychain and allow Zetrem to read it, then try again."
+msgstr "Zetrem could not read the Claude Code sign-in kept on this computer, so nothing was changed. Unlock your keychain and allow Zetrem to read it, then try again."
+
 #: src/entities/connector/lib/refusal-why/refusal-why.ts:26
 #: src/shared/lib/ask/ask.ts:23
 msgid "Zetrem did not understand that request"
 msgstr "Zetrem did not understand that request"
+
+#: src/widgets/setup/lib/sign-out-warning/sign-out-warning.ts:28
+msgid "Zetrem forgets the saved credentials for this account."
+msgstr "Zetrem forgets the saved credentials for this account."
+
+#: src/widgets/setup/lib/sign-out-warning/sign-out-warning.ts:29
+msgid "Zetrem forgets the saved credentials for this account. This computer stays signed in to it, but no account here is active until you add or switch."
+msgstr "Zetrem forgets the saved credentials for this account. This computer stays signed in to it, but no account here is active until you add or switch."
 
 #: src/widgets/setup/ui/YouField/YouField.tsx:61
 msgid "Zetrem greets you by this name, and your face marks the work in flight."
@@ -2407,6 +2500,10 @@ msgstr "Zetrem greets you by this name, and your face marks the work in flight."
 msgid "Zetrem hit a problem"
 msgstr "Zetrem hit a problem"
 
+#: src/shared/lib/ask/ask.ts:33
+msgid "Zetrem is changing your account. Try again in a moment."
+msgstr "Zetrem is changing your account. Try again in a moment."
+
 #: src/entities/agent-session/model/nudge/nudge.ts:21
 msgid "Zetrem is done"
 msgstr "Zetrem is done"
@@ -2414,3 +2511,7 @@ msgstr "Zetrem is done"
 #: src/entities/agent-session/model/nudge/nudge.ts:10
 msgid "Zetrem needs you"
 msgstr "Zetrem needs you"
+
+#: src/pages/workspace/model/account/account-trouble/account-trouble.ts:11
+msgid "Zetrem put that account on this computer, but Claude Code did not report it as signed in. Nothing was changed."
+msgstr "Zetrem put that account on this computer, but Claude Code did not report it as signed in. Nothing was changed."

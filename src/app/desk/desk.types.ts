@@ -17,6 +17,7 @@ import type { Outcome } from '@/shared/lib/outcome/outcome.types'
 import type { ExitReason } from '@/entities/claude-cli/lib/exit-line/exit-line.types'
 import type { Attached } from '@/entities/attachment/lib/attachment/attachment.types'
 import type { AuthStatus } from '@/entities/auth/model/auth'
+import type { AccountList } from '@/entities/auth/model/accounts'
 import type {
   Connector,
   ConnectorVerb,
@@ -37,6 +38,13 @@ type AgentHostEvent =
   | { id: string; kind: 'line'; line: string }
   | { id: string; kind: 'workspace'; cwd: string }
   | { id: string; kind: 'exit'; code: number | null; reason: ExitReason | null }
+
+// A usage reading kept on disk, with the account it was taken for: the
+// renderer shows it only to that account.
+export type KeptUsage = {
+  report: string
+  who: string | null
+}
 
 type CliVersions = {
   installed: string | null
@@ -59,11 +67,17 @@ export type Invokes = {
 
   'session:probe': (config: Omit<RunConfig, 'persona'>) => string | null
   'session:usage': () => string | null
-  'usage:kept': () => string | null
+  'usage:kept': () => KeptUsage | null
 
   'auth:status': () => AuthStatus
   'auth:login': () => AuthStatus
   'auth:logout': () => Outcome<AuthStatus>
+
+  'accounts:list': () => AccountList
+  'accounts:add': () => Outcome<AccountList>
+  'accounts:switch': (id: string) => Outcome<AccountList>
+  'accounts:reauth': (id: string) => Outcome<AccountList>
+  'accounts:remove': (id: string) => Outcome<AccountList>
 
   'agents:list': () => AgentDef[]
   'agents:write': (draft: AgentDefDraft) => string

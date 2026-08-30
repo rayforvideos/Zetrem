@@ -1,17 +1,21 @@
 import type { ModelChoice, PermissionMode, EffortChoice } from '@/entities/claude-cli'
-import type { AuthStatus } from '@/entities/auth'
+import type { AccountBusy, AccountBusyOn, AccountList, AuthStatus } from '@/entities/auth'
 import type { Failure } from '@/shared/lib/failure/failure.types'
 import type { FaceId } from '@/entities/user'
 
 export type Account = {
   auth: AuthStatus | null
+  accounts: AccountList | null
+  busy: AccountBusy
+  busyOn: AccountBusyOn
   error: string | null
   note: string
-  signingIn: boolean
-  signingOut: boolean
   sessionLive: boolean
   installing: boolean
-  onSignIn(): void
+  onAdd(): void
+  onSwitch(id: string): void
+  onReauth(id: string): void
+  onRemove(id: string): void
   onSignOut(): void
   onInstall(): void
   onRecheck(): void

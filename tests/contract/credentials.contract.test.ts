@@ -94,7 +94,10 @@ describe('credentials read and write against the real platform', () => {
 
   it('reads back nothing kept on a fresh config dir', async () => {
     const io = probeIo(join(configDir, 'empty'))
-    expect(await readSnapshot(io)).toEqual({ credentials: null, oauthAccount: null })
+    expect(await readSnapshot(io)).toEqual({
+      ok: true,
+      value: { credentials: null, oauthAccount: null },
+    })
   })
 
   it('writes a snapshot and reads it back byte-identical', async () => {
@@ -104,7 +107,7 @@ describe('credentials read and write against the real platform', () => {
       oauthAccount: { accountUuid: 'contract-uuid-1', emailAddress: 'contract1@example.com' },
     }
     await writeSnapshot(io, snapshot)
-    expect(await readSnapshot(io)).toEqual(snapshot)
+    expect(await readSnapshot(io)).toEqual({ ok: true, value: snapshot })
   })
 
   it('a second write replaces the first rather than erroring or keeping the old value', async () => {
@@ -118,7 +121,7 @@ describe('credentials read and write against the real platform', () => {
       oauthAccount: { accountUuid: 'contract-uuid-b' },
     }
     await writeSnapshot(io, second)
-    expect(await readSnapshot(io)).toEqual(second)
+    expect(await readSnapshot(io)).toEqual({ ok: true, value: second })
   })
 
   it.skipIf(!isDarwin)(
@@ -142,10 +145,16 @@ describe('credentials read and write against the real platform', () => {
       oauthAccount: { accountUuid: 'contract-uuid-c' },
     })
     await writeSnapshot(io, { credentials: null, oauthAccount: null })
-    expect(await readSnapshot(io)).toEqual({ credentials: null, oauthAccount: null })
+    expect(await readSnapshot(io)).toEqual({
+      ok: true,
+      value: { credentials: null, oauthAccount: null },
+    })
     // Run it again: nothing left to remove, and it must still not error.
     await writeSnapshot(io, { credentials: null, oauthAccount: null })
-    expect(await readSnapshot(io)).toEqual({ credentials: null, oauthAccount: null })
+    expect(await readSnapshot(io)).toEqual({
+      ok: true,
+      value: { credentials: null, oauthAccount: null },
+    })
   })
 
   it('preserves every other key of an existing .claude.json and only replaces oauthAccount', async () => {

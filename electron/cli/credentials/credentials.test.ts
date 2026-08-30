@@ -1,7 +1,14 @@
+import { join } from 'node:path'
 import { describe, expect, it } from 'vitest'
 import type { Outcome } from '@/shared/lib/outcome/outcome.types'
 import { readSnapshot, writeSnapshot, KEYCHAIN_SERVICE } from './credentials'
 import type { CredentialIo, CredentialSnapshot } from './credentials.types'
+
+const HOME = '/home/me'
+const DIR = join(HOME, '.claude')
+const LABEL = join(HOME, '.claude.json')
+const TOKENS = join(DIR, '.credentials.json')
+const STRAY = join(DIR, '.claude.json')
 
 type Call = { command: string; args: string[]; stdin: string | undefined }
 
@@ -14,8 +21,8 @@ function fakeIo(
   return {
     platform,
     user: 'me',
-    configDir: '/home/me/.claude',
-    labelPath: '/home/me/.claude.json',
+    configDir: DIR,
+    labelPath: LABEL,
     files,
     calls,
     async exec(command, args, stdin) {
@@ -83,7 +90,7 @@ function held(read: Outcome<CredentialSnapshot>): CredentialSnapshot {
 
 describe('readSnapshot', () => {
   it('on macOS prefers the keychain item and reads oauthAccount from .claude.json', async () => {
-    const io = fakeIo('darwin', { '/home/me/.claude.json': CLAUDE_JSON }, { value: CREDS })
+    const io = fakeIo('darwin', { [LABEL]: CLAUDE_JSON }, { value: CREDS })
     expect(await readSnapshot(io)).toEqual({
       ok: true,
       value: { credentials: CREDS, oauthAccount: { accountUuid: 'u1' } },
@@ -94,11 +101,11 @@ describe('readSnapshot', () => {
     })
   })
   it('on macOS falls back to .credentials.json when the keychain has nothing', async () => {
-    const io = fakeIo('darwin', { '/home/me/.claude/.credentials.json': CREDS }, { value: null })
+    const io = fakeIo('darwin', { [TOKENS]: CREDS }, { value: null })
     expect(held(await readSnapshot(io)).credentials).toBe(CREDS)
   })
   it('elsewhere reads only the file and never calls security', async () => {
-    const io = fakeIo('win32', { '/home/me/.claude/.credentials.json': CREDS }, { value: 'x' })
+    const io = fakeIo('win32', { [TOKENS]: CREDS }, { value: 'x' })
     expect(held(await readSnapshot(io)).credentials).toBe(CREDS)
     expect(io.calls).toEqual([])
   })
@@ -106,8 +113,8 @@ describe('readSnapshot', () => {
     const io = fakeIo(
       'darwin',
       {
-        '/home/me/.claude.json': CLAUDE_JSON,
-        '/home/me/.claude/.claude.json': JSON.stringify({ oauthAccount: { accountUuid: 'stray' } }),
+        [LABEL]: CLAUDE_JSON,
+        [STRAY]: JSON.stringify({ oauthAccount: { accountUuid: 'stray' } }),
       },
       { value: CREDS },
     )
@@ -125,7 +132,7 @@ describe('readSnapshot', () => {
     // one claude left behind. Answering with the file is answering wrongly.
     const io = fakeIo(
       'darwin',
-      { '/home/me/.claude/.credentials.json': '{"claudeAiOauth":{"accessToken":"stale"}}' },
+      { [TOKENS]: '{"claudeAiOauth":{"accessToken":"stale"}}' },
       { value: CREDS, unreadable: 'User interaction is not allowed.' },
     )
     const read = await readSnapshot(io)
@@ -140,16 +147,16 @@ describe('writeSnapshot', () => {
     const io = fakeIo(
       'darwin',
       {
-        '/home/me/.claude.json': CLAUDE_JSON,
-        '/home/me/.claude/.credentials.json': 'stale',
+        [LABEL]: CLAUDE_JSON,
+        [TOKENS]: 'stale',
       },
       keychain,
     )
     await writeSnapshot(io, { credentials: CREDS, oauthAccount: { accountUuid: 'u2' } })
     expect(keychain.value).toBe(CREDS)
     // A file beside the item is a plainer second copy, and an old one is read first.
-    expect('/home/me/.claude/.credentials.json' in io.files).toBe(false)
-    expect(JSON.parse(getOrThrow(io.files['/home/me/.claude.json']))).toEqual({
+    expect(TOKENS in io.files).toBe(false)
+    expect(JSON.parse(getOrThrow(io.files[LABEL]))).toEqual({
       theme: 'dark',
       oauthAccount: { accountUuid: 'u2' },
     })
@@ -177,14 +184,14 @@ describe('writeSnapshot', () => {
     const io = fakeIo('darwin', {}, keychain)
     await writeSnapshot(io, { credentials: CREDS, oauthAccount: null })
     expect(keychain.value).toBeNull()
-    expect(io.files['/home/me/.claude/.credentials.json']).toBe(CREDS)
+    expect(io.files[TOKENS]).toBe(CREDS)
   })
   it('elsewhere writes only the files', async () => {
     const io = fakeIo('linux', {}, { value: null })
     await writeSnapshot(io, { credentials: CREDS, oauthAccount: { accountUuid: 'u2' } })
     expect(io.calls).toEqual([])
-    expect(io.files['/home/me/.claude/.credentials.json']).toBe(CREDS)
-    expect(JSON.parse(getOrThrow(io.files['/home/me/.claude.json']))).toEqual({
+    expect(io.files[TOKENS]).toBe(CREDS)
+    expect(JSON.parse(getOrThrow(io.files[LABEL]))).toEqual({
       oauthAccount: { accountUuid: 'u2' },
     })
   })
@@ -194,16 +201,16 @@ describe('writeSnapshot', () => {
     // whoever was signed in before.
     const io = fakeIo('linux', {}, { value: null })
     await writeSnapshot(io, { credentials: CREDS, oauthAccount: { accountUuid: 'u2' } })
-    expect('/home/me/.claude/.claude.json' in io.files).toBe(false)
-    expect('/home/me/.claude.json' in io.files).toBe(true)
+    expect(STRAY in io.files).toBe(false)
+    expect(LABEL in io.files).toBe(true)
   })
   it('a signed-out snapshot removes the item, the file and the key, tolerating absence', async () => {
     const keychain = { value: null as string | null }
-    const io = fakeIo('darwin', { '/home/me/.claude.json': CLAUDE_JSON }, keychain)
+    const io = fakeIo('darwin', { [LABEL]: CLAUDE_JSON }, keychain)
     await writeSnapshot(io, { credentials: null, oauthAccount: null })
     expect(keychain.value).toBeNull()
-    expect('/home/me/.claude/.credentials.json' in io.files).toBe(false)
-    expect(JSON.parse(getOrThrow(io.files['/home/me/.claude.json']))).toEqual({
+    expect(TOKENS in io.files).toBe(false)
+    expect(JSON.parse(getOrThrow(io.files[LABEL]))).toEqual({
       theme: 'dark',
     })
   })

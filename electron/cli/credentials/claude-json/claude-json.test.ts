@@ -1,24 +1,29 @@
+import { join } from 'node:path'
 import { describe, expect, it } from 'vitest'
 import { configDirOf, labelPathOf, oauthAccountOf, rowOf, withOauthAccount } from './claude-json'
 
 describe('configDirOf', () => {
   it('honours CLAUDE_CONFIG_DIR and falls back to ~/.claude', () => {
     expect(configDirOf({ CLAUDE_CONFIG_DIR: '/x/cfg' }, '/home/me')).toBe('/x/cfg')
-    expect(configDirOf({ CLAUDE_CONFIG_DIR: '' }, '/home/me')).toBe('/home/me/.claude')
-    expect(configDirOf({}, '/home/me')).toBe('/home/me/.claude')
+    expect(configDirOf({ CLAUDE_CONFIG_DIR: '' }, '/home/me')).toBe(join('/home/me', '.claude'))
+    expect(configDirOf({}, '/home/me')).toBe(join('/home/me', '.claude'))
   })
 })
 
 describe('labelPathOf', () => {
   it('is ~/.claude.json in the home root, not inside ~/.claude, when nothing is set', () => {
-    expect(labelPathOf({}, '/home/me')).toBe('/home/me/.claude.json')
-    expect(labelPathOf({ CLAUDE_CONFIG_DIR: '' }, '/home/me')).toBe('/home/me/.claude.json')
+    expect(labelPathOf({}, '/home/me')).toBe(join('/home/me', '.claude.json'))
+    expect(labelPathOf({ CLAUDE_CONFIG_DIR: '' }, '/home/me')).toBe(
+      join('/home/me', '.claude.json'),
+    )
   })
   it('moves into CLAUDE_CONFIG_DIR when that is set, where the CLI then keeps it', () => {
-    expect(labelPathOf({ CLAUDE_CONFIG_DIR: '/x/cfg' }, '/home/me')).toBe('/x/cfg/.claude.json')
+    expect(labelPathOf({ CLAUDE_CONFIG_DIR: '/x/cfg' }, '/home/me')).toBe(
+      join('/x/cfg', '.claude.json'),
+    )
   })
   it('is never the config dir’s own .claude.json while nothing is set', () => {
-    expect(labelPathOf({}, '/home/me')).not.toBe(`${configDirOf({}, '/home/me')}/.claude.json`)
+    expect(labelPathOf({}, '/home/me')).not.toBe(join(configDirOf({}, '/home/me'), '.claude.json'))
   })
 })
 

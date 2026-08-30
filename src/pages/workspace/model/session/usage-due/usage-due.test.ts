@@ -23,3 +23,15 @@ describe('dueForUsage: when to ask the CLI what is left', () => {
     expect(dueForUsage(2_000_000, 1_000_000, 'tick')).toBe(false)
   })
 })
+
+describe('dueForUsage: an account change', () => {
+  it('asks at once, however fresh the reading on screen is', () => {
+    const now = 1_000_000
+    expect(dueForUsage(now, now, 'account')).toBe(true)
+    expect(dueForUsage(now - 1000, now, 'account')).toBe(true)
+  })
+
+  it('asks even if the clock walked backwards, since the numbers are not ours', () => {
+    expect(dueForUsage(2_000_000, 1_000_000, 'account')).toBe(true)
+  })
+})

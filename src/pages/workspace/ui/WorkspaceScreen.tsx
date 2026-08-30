@@ -220,18 +220,21 @@ export function WorkspaceScreen() {
                 <SetupPane
                   account={{
                     auth: auth.auth,
+                    accounts: auth.accounts,
+                    busy: auth.busy,
+                    busyOn: auth.busyOn,
                     error: auth.authError,
                     note: auth.loginNote,
-                    signingIn: auth.loggingIn,
-                    signingOut: auth.loggingOut,
                     sessionLive: live,
                     installing: auth.installing,
-                    onSignIn: auth.login,
                     onInstall: auth.install,
                     onRecheck: auth.recheck,
-                    onSignOut: () => {
-                      swap(auth.logout)
-                    },
+                    onAdd: () => swap(auth.addAccount),
+                    onSwitch: (id) => swap(() => auth.switchAccount(id)),
+                    onReauth: (id) => swap(() => auth.reauthAccount(id)),
+                    onRemove: (id) => swap(() => auth.removeAccount(id)),
+                    onSignOut: () => swap(auth.logout),
+                    onCancelLogin: auth.cancelLogin,
                   }}
                   you={{
                     name: settings.userName,

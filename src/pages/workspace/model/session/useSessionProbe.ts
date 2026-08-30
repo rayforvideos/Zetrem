@@ -1,22 +1,18 @@
 import { useEffect, useRef } from 'react'
+import type { AccountList } from '@/entities/auth'
 import type { RunConfig } from '@/entities/claude-cli'
-import { statusStore } from '@/entities/agent-session'
-import { learnKeptUsage, learnSession, learnUsage } from './session-probe/session-probe'
-import { dueForUsage } from './usage-due/usage-due'
+import { learnKeptUsage, learnSession } from './session-probe/session-probe'
+import { readUsage, readUsageAfter } from './usage-read/usage-read'
+import { emailOf, keptForMe } from './usage-owner/usage-owner'
 
 const TICK_MS = 60_000
-
-function readUsage(): void {
-  void window.desk
-    .sessionUsage()
-    .then(learnUsage)
-    .catch(() => learnUsage(null))
-}
 
 export function useSessionProbe(
   config: Omit<RunConfig, 'persona'>,
   wanted: boolean,
   project: string | null,
+  accounts: AccountList | null,
+  account: number,
   awake = false,
   busy = false,
 ): void {
@@ -26,17 +22,20 @@ export function useSessionProbe(
     held.current = config
   })
 
+  const mine = emailOf(accounts)
   useEffect(() => {
     if (!wanted) return
     void window.desk
       .keptUsage()
-      .then(learnKeptUsage)
+      .then((kept) => learnKeptUsage(keptForMe(kept?.report ?? null, kept?.who ?? null, mine)))
       .catch(() => undefined)
     readUsage()
-  }, [wanted])
+  }, [wanted, mine])
 
   // The probe runs claude in the project, so a first launch asks before one is
-  // picked and learns nothing of that project's own agents.
+  // picked and learns nothing of that project's own agents. An account change
+  // is the same kind of event: the CLI's session, its agents, its connectors
+  // and its model all belonged to the account that has gone.
   useEffect(() => {
     if (!wanted) return
     // Empty-handed on purpose: a session is handed our teammates and reports one
@@ -45,14 +44,11 @@ export function useSessionProbe(
       .probeSession({ ...held.current, people: [], lock: null })
       .then(learnSession)
       .catch(() => undefined)
-  }, [wanted, project])
+  }, [wanted, project, account])
 
   useEffect(() => {
     if (!awake) return undefined
-    const tick = (): void => {
-      if (!dueForUsage(statusStore.get().usageAtMs, Date.now(), 'tick')) return
-      readUsage()
-    }
+    const tick = (): void => readUsageAfter('tick')
     const timer = setInterval(tick, TICK_MS)
     window.addEventListener('focus', tick)
     return () => {
@@ -66,7 +62,6 @@ export function useSessionProbe(
     const ended = wasBusy.current && !busy
     wasBusy.current = busy
     if (!awake || !ended) return
-    if (!dueForUsage(statusStore.get().usageAtMs, Date.now(), 'turn')) return
-    readUsage()
+    readUsageAfter('turn')
   }, [busy, awake])
 }

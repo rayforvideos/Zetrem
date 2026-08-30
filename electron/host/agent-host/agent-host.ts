@@ -13,6 +13,8 @@ import { librarySessionArgs } from '../../library/library'
 import { handle, on, push } from '../../ipc/ipc'
 import { lineReader } from '../../spawn/line-reader/line-reader'
 import { killTree, killTreeSync } from '../../spawn/kill-tree/kill-tree'
+import { goneWatch } from '../../spawn/gone/gone'
+import { accountWorkInFlight } from '../../spawn/account-work/account-work'
 import { errorTail } from '../../spawn/error-tail/error-tail'
 import { tell } from '../tell/tell'
 import { runConfigOf } from '../run-config-guard/run-config-guard'
@@ -24,9 +26,14 @@ import type { PendingSend } from '../pending-sends/pending-sends.types'
 const agents = new Map<string, ChildProcessWithoutNullStreams | 'starting'>()
 const waiting = new Map<string, PendingSend[]>()
 // Children told to stop and not yet gone. SIGTERM is asked first; one that is
-// still here after the grace period is killed, and so is one alive at quit.
+// still here after the grace period is killed where the stop was a stop for its
+// own sake, and one alive at quit is killed too.
 const dying = new Set<ChildProcessWithoutNullStreams>()
+// The grace period a stop for its own sake is counting, kept per child so that
+// a later stop can start counting for one an earlier stop only asked.
+const hardStops = new Map<ChildProcessWithoutNullStreams, ReturnType<typeof setTimeout>>()
 const STOP_GRACE_MS = 5000
+const quiet = goneWatch()
 
 type Picture = { mediaType: string | null; data: string | null }
 
@@ -63,23 +70,58 @@ export function killAllAgents(): void {
   for (const child of dying) {
     if (child.pid !== undefined) killTreeSync(child.pid)
   }
+  for (const timer of hardStops.values()) clearTimeout(timer)
+  hardStops.clear()
   agents.clear()
   dying.clear()
   waiting.clear()
 }
 
-function stopChild(child: ChildProcessWithoutNullStreams): void {
-  if (child.pid === undefined || dying.has(child)) return
-  dying.add(child)
+// `escalate` is what tells a stop asked for its own sake from one asked so that
+// something else can happen: an account change that a session refuses to make
+// way for is refused itself, and the turn goes on living rather than being
+// killed for a change that then did not happen.
+function stopChild(child: ChildProcessWithoutNullStreams, escalate: boolean): void {
+  if (child.pid === undefined) return
   const { pid } = child
+  if (!dying.has(child)) {
+    dying.add(child)
+    child.once('close', () => {
+      clearTimeout(hardStops.get(child))
+      hardStops.delete(child)
+      dying.delete(child)
+      quiet.note(dying.size === 0)
+    })
+  }
   killTree(pid)
-  const timer = setTimeout(() => {
-    if (dying.has(child)) killTreeSync(pid)
-  }, STOP_GRACE_MS)
-  child.once('close', () => {
-    clearTimeout(timer)
-    dying.delete(child)
-  })
+  if (!escalate || hardStops.has(child)) return
+  hardStops.set(
+    child,
+    setTimeout(() => {
+      if (dying.has(child)) killTreeSync(pid)
+    }, STOP_GRACE_MS),
+  )
+}
+
+// Every session this app spawned, told to stop and then waited for. A live
+// claude refreshes its own OAuth tokens into the credentials all the accounts
+// share, so one that outlives an account change writes the account that just
+// left over the one that just arrived. The answer says whether they really
+// went: the caller has nothing safe to do with a child that is still there,
+// and one still there is left running rather than killed for nothing.
+// A child that stays keeps its id: it is still the session writing into that
+// pane, so the stop the refusal asks the person for has to find it there, and
+// its own close is what finally lets the next account operation through.
+export async function stopAllAgents(waitMs: number): Promise<boolean> {
+  for (const [id, agent] of [...agents]) {
+    if (agent === 'starting') {
+      agents.delete(id)
+      dropSends(waiting, id)
+      continue
+    }
+    stopChild(agent, false)
+  }
+  return quiet.within(dying.size === 0, waitMs)
 }
 
 export function registerAgentHost(): void {
@@ -94,6 +136,9 @@ export function registerAgentHost(): void {
       if (typeof id !== 'string' || typeof prompt !== 'string') return fail(null)
       if (agents.has(id)) return
       if (!/^[A-Za-z0-9-]+$/.test(id)) return fail(null)
+      // The credentials this session would run on are being moved; the pane
+      // shows the same exit it shows for any session that could not start.
+      if (accountWorkInFlight()) return fail(startTrouble('an account change is in progress'))
       const run = runConfigOf(config)
       if (run === null) return fail(startTrouble('the run settings were not usable'))
 
@@ -141,7 +186,7 @@ export function registerAgentHost(): void {
       let dropped = false
       child.stdout.on('data', (chunk: string) => {
         if (sender.isDestroyed()) {
-          if (!dropped) stopChild(child)
+          if (!dropped) stopChild(child, true)
           dropped = true
           return
         }
@@ -196,6 +241,6 @@ export function registerAgentHost(): void {
     const agent = agents.get(id)
     agents.delete(id)
     dropSends(waiting, id)
-    if (agent && agent !== 'starting') stopChild(agent)
+    if (agent && agent !== 'starting') stopChild(agent, true)
   })
 }

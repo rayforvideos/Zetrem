@@ -29,6 +29,8 @@ function whyLine(why: Why): string {
       return why.said.length > 0 ? why.said : t`That was not allowed`
     case 'cli':
       return lastLine(why.said)
+    case 'busy':
+      return t`Zetrem is changing your account. Try again in a moment.`
   }
 }
 

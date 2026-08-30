@@ -105,8 +105,20 @@ export const statusStore = {
     if (state.usage !== 'unread') return
     emit({ ...state, usage: 'unreadable' })
   },
+  // The limits go with the account. When it changes the screen says it does
+  // not know yet, rather than holding the last account's numbers up as this
+  // account's until a fresh reading lands.
+  usageForgotten(): void {
+    emit({ ...state, usage: 'unread', usageAtMs: null, limits: [] })
+  },
   usageKept(): void {
     emit({ ...state, usage: 'kept' })
+  },
+  // The session on hand is the CLI's, and the CLI's session belongs to the
+  // account that started it: after a change, what it says about the agents,
+  // the connectors and the model is somebody else's.
+  forgetSession(): void {
+    emit({ ...state, session: null, probed: false })
   },
   learnProbe(session: StatusState['session']): void {
     emit({ ...state, session, probed: true })

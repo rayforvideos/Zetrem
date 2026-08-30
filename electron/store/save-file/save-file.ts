@@ -29,16 +29,30 @@ async function renameWithPatience(from: string, to: string): Promise<void> {
   }
 }
 
-export async function saveFile(path: string, text: string): Promise<void> {
+async function throughPartner(
+  path: string,
+  data: string | Buffer,
+  mode: number | undefined,
+): Promise<void> {
   const partner = partnerOf(path)
   try {
-    await writeFile(partner, text, 'utf8')
+    await writeFile(partner, data, mode === undefined ? 'utf8' : { encoding: 'utf8', mode })
     await renameWithPatience(partner, path)
   } catch (cause: unknown) {
     await unlink(partner).catch(() => undefined)
     throw cause
   }
   await sweepLeftovers(path)
+}
+
+export async function saveFile(path: string, text: string): Promise<void> {
+  await throughPartner(path, text, undefined)
+}
+
+// Credentials and the slots that keep them: the partner is created with the
+// mode the finished file must have, and the rename carries it over.
+export async function saveSecretFile(path: string, data: string | Buffer): Promise<void> {
+  await throughPartner(path, data, 0o600)
 }
 
 const LEFTOVER_AGE_MS = 60_000

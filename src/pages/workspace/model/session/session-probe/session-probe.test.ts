@@ -39,6 +39,17 @@ describe('learnSession: taking the session in without anyone speaking', () => {
     expect(statusStore.get().session).toBe(live)
   })
 
+  it('learns again once the account changed and the session was forgotten', () => {
+    learnSession(INIT)
+    const other = statusStore.get().session
+    statusStore.forgetSession()
+
+    learnSession(JSON.stringify({ ...JSON.parse(INIT), session_id: 'mine', tools: ['Write'] }))
+
+    expect(statusStore.get().session).not.toBe(other)
+    expect(statusStore.get().session?.tools).toEqual(['Write'])
+  })
+
   it('shrugs off a line that is not an init', () => {
     learnSession('{"type":"result","subtype":"success"}')
     expect(statusStore.get().session).toBeNull()

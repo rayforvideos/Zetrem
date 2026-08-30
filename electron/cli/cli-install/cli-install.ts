@@ -45,6 +45,7 @@ export function registerCliInstall(): void {
       },
       exit: (_code, text) => text,
       error: (cause) => cause.message,
+      refused: () => '',
     })
     // The PATH was read before the binary existed; read the world again.
     resetLoginPath()

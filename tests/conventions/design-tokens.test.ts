@@ -85,6 +85,7 @@ describe('the one colour that is not a face', () => {
       if (file.text.includes('text-claude') || file.text.includes('bg-claude')) worn.push(file.path)
     }
     expect(worn, 'a brand colour is for naming that brand, nothing else').toEqual([
+      join('src', 'widgets', 'setup', 'ui', 'AccountField', 'AccountField.tsx'),
       join('src', 'widgets', 'status-bar', 'ui', 'UsageBar', 'UsageBar.tsx'),
     ])
   })

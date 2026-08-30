@@ -199,7 +199,11 @@ async function releaseStart(started: unknown): Promise<void> {
 const of = (one: Renderer, kind: string): Message[] =>
   one.heard.filter((message) => message.kind === kind)
 
-let host: { registerAgentHost: () => void; killAllAgents: () => void }
+let host: {
+  registerAgentHost: () => void
+  killAllAgents: () => void
+  stopAllAgents: (waitMs: number) => Promise<boolean>
+}
 
 beforeEach(async () => {
   boundary.channels.clear()
@@ -371,6 +375,117 @@ describe('a stop that the child ignores', () => {
   })
 })
 
+describe('stopping every session before the account underneath them moves', () => {
+  it('does not answer until the child has really closed', async () => {
+    const one = renderer()
+    await startAgent(one, 'a1', 'hello')
+    let answered = false
+    const stopped = host.stopAllAgents(5000).then((gone) => {
+      answered = true
+      return gone
+    })
+
+    await Promise.resolve()
+    await Promise.resolve()
+    expect(answered).toBe(false)
+    expect(boundary.killed).toEqual([childAt(0).pid])
+
+    childAt(0).emit('close', 0)
+    expect(await stopped).toBe(true)
+  })
+
+  it('waits for the last of them, not the first', async () => {
+    const one = renderer()
+    await startAgent(one, 'a1', 'hello')
+    await startAgent(one, 'a2', 'hello')
+    let answered = false
+    const stopped = host.stopAllAgents(5000).then((gone) => {
+      answered = true
+      return gone
+    })
+
+    childAt(0).emit('close', 0)
+    await Promise.resolve()
+    await Promise.resolve()
+    expect(answered).toBe(false)
+
+    childAt(1).emit('close', 0)
+    expect(await stopped).toBe(true)
+  })
+
+  it('says the children are gone when there were none', async () => {
+    expect(await host.stopAllAgents(5000)).toBe(true)
+  })
+
+  it('says so, and leaves the turn alive, when one will not close', async () => {
+    vi.useFakeTimers()
+    try {
+      const one = renderer()
+      await startAgent(one, 'a1', 'hello')
+      const stopped = host.stopAllAgents(1000)
+      await vi.advanceTimersByTimeAsync(1000)
+
+      expect(await stopped).toBe(false)
+      expect(boundary.killed).toEqual([childAt(0).pid])
+
+      // Not even after the grace period an ordinary stop would kill at: the
+      // account change is refused instead, so there is nothing to make way for.
+      await vi.advanceTimersByTimeAsync(10_000)
+      expect(boundary.killedSync).toEqual([])
+    } finally {
+      vi.useRealTimers()
+    }
+  })
+
+  it('leaves the refused session where the person can still stop it, and stops it', async () => {
+    vi.useFakeTimers()
+    try {
+      const one = renderer()
+      await startAgent(one, 'a1', 'hello')
+      const child = childAt(0)
+      const stopped = host.stopAllAgents(1000)
+      await vi.advanceTimersByTimeAsync(1000)
+      expect(await stopped).toBe(false)
+
+      // The pane's answer to a refused change is "stop it and try again", so
+      // that stop has to reach the child the change left running, and this one
+      // is a stop for its own sake: it escalates where the change would not.
+      fire('agent:stop', one, 'a1')
+      expect(boundary.killed).toEqual([child.pid, child.pid])
+      await vi.advanceTimersByTimeAsync(5000)
+      expect(boundary.killedSync).toEqual([child.pid])
+
+      child.emit('close', 0)
+      expect(await host.stopAllAgents(1000)).toBe(true)
+    } finally {
+      vi.useRealTimers()
+    }
+  })
+
+  it('leaves it holding its id, since it is still the session writing to the pane', async () => {
+    const one = renderer()
+    await startAgent(one, 'a1', 'hello')
+    const child = childAt(0)
+
+    expect(await host.stopAllAgents(50)).toBe(false)
+
+    fire('agent:send', one, 'a1', 'still there')
+    expect(child.stdin.written[1]).toContain('still there')
+  })
+
+  it('forgets a child that was still starting, so it never reaches a spawn', async () => {
+    const one = renderer()
+    boundary.holdLogin = true
+    const started = fire('agent:start', one, 'a1', 'hello', config, [])
+    await untilParked()
+
+    expect(await host.stopAllAgents(5000)).toBe(true)
+    await releaseStart(started)
+
+    expect(boundary.spawns).toHaveLength(0)
+  })
+})
+
 describe('text typed while the agent is starting', () => {
   it('waits for the stdin and follows the opening prompt in the order it was typed', async () => {
     const one = renderer()
@@ -470,6 +585,31 @@ describe('quitting the app', () => {
     fire('agent:send', one, 'a1', 'after the lights went out')
 
     expect(childAt(0).stdin.written).toHaveLength(1)
+  })
+})
+
+describe('a start asked for while the account underneath it is moving', () => {
+  it('spawns nothing and tells the pane the session could not start', async () => {
+    const { duringAccountWork } = await import('../../spawn/account-work/account-work')
+    const one = renderer()
+
+    await duringAccountWork(() => startAgent(one, 'a1', 'hello'))
+
+    expect(boundary.spawns).toHaveLength(0)
+    expect(of(one, 'exit')).toEqual([
+      {
+        id: 'a1',
+        kind: 'exit',
+        code: -1,
+        reason: { code: 'start-failed', said: 'an account change is in progress' },
+      },
+    ])
+  })
+
+  it('starts again once the operation has let go', async () => {
+    const one = renderer()
+    await startAgent(one, 'a1', 'hello')
+    expect(boundary.spawns).toHaveLength(1)
   })
 })
 

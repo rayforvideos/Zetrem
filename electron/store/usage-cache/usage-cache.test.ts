@@ -3,11 +3,11 @@ import { USAGE_KEEP_MS, readKept, stillWorthShowing } from './usage-cache'
 
 describe('stillWorthShowing: whether a saved reading is worth putting up first', () => {
   it('shows a reading taken moments ago, since the windows it counts are hours long', () => {
-    expect(stillWorthShowing({ report: 'x', atMs: 1000 }, 60_000)).toBe(true)
+    expect(stillWorthShowing({ report: 'x', atMs: 1000, who: 'a@b.c' }, 60_000)).toBe(true)
   })
 
   it('drops a reading old enough that its window may have rolled over', () => {
-    expect(stillWorthShowing({ report: 'x', atMs: 0 }, USAGE_KEEP_MS)).toBe(false)
+    expect(stillWorthShowing({ report: 'x', atMs: 0, who: 'a@b.c' }, USAGE_KEEP_MS)).toBe(false)
   })
 
   it('has nothing to show before anything has ever been read', () => {
@@ -15,19 +15,36 @@ describe('stillWorthShowing: whether a saved reading is worth putting up first',
   })
 
   it('does not put up an empty reading, which would read as no limits at all', () => {
-    expect(stillWorthShowing({ report: '   ', atMs: 1000 }, 2000)).toBe(false)
+    expect(stillWorthShowing({ report: '   ', atMs: 1000, who: null }, 2000)).toBe(false)
   })
 
   it('distrusts a reading stamped in the future, which means the clock moved', () => {
-    expect(stillWorthShowing({ report: 'x', atMs: 9000 }, 1000)).toBe(false)
+    expect(stillWorthShowing({ report: 'x', atMs: 9000, who: null }, 1000)).toBe(false)
   })
 })
 
 describe('readKept: taking the saved reading back off disk', () => {
-  it('reads back what was written', () => {
+  it('reads back what was written, down to the account it was read for', () => {
+    expect(readKept('{"report":"5-hour 20%","atMs":42,"who":"ray@un7qi3.co"}')).toEqual({
+      report: '5-hour 20%',
+      atMs: 42,
+      who: 'ray@un7qi3.co',
+    })
+  })
+
+  it('names nobody for a file written before the reading was stamped', () => {
     expect(readKept('{"report":"5-hour 20%","atMs":42}')).toEqual({
       report: '5-hour 20%',
       atMs: 42,
+      who: null,
+    })
+  })
+
+  it('names nobody when the stamp is not an email the app can compare', () => {
+    expect(readKept('{"report":"x","atMs":42,"who":7}')).toEqual({
+      report: 'x',
+      atMs: 42,
+      who: null,
     })
   })
 

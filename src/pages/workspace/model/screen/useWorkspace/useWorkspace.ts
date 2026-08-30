@@ -15,6 +15,7 @@ import { sessionLive, stirring } from '../../session/live/live'
 import { useAgent } from '../../session/useAgent'
 import { conversation } from '../../chat/conversation/conversation'
 import { useAgentDefs } from '../../team/useAgentDefs'
+import { useAccountChanges } from '../../account/useAccountChanges'
 import { useAuth } from '../../account/useAuth'
 import { useAppUpdate } from '../../session/useAppUpdate/useAppUpdate'
 import { useLearnedSettings } from '../../settings/useLearnedSettings'
@@ -67,6 +68,7 @@ export function useWorkspace() {
 
   useSay(settings.tongue, !loading)
   const auth = useAuth()
+  const accountAt = useAccountChanges(settings, update)
   useAppUpdate()
   const deck = useDeck()
   const viewport = useViewport()
@@ -101,11 +103,14 @@ export function useWorkspace() {
   const wires = useConnectors(
     shelf.open || drawerOpen || gate === 'conversation',
     project?.id ?? null,
+    accountAt,
   )
   useSessionProbe(
     runConfig,
     gate !== 'holding' && status.session === null,
     project?.path ?? null,
+    auth.accounts,
+    accountAt,
     gate !== 'holding',
     conv.status === 'working',
   )

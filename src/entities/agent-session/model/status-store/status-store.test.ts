@@ -241,6 +241,51 @@ describe('usage: whether the limits on hand are fresh or only kept from before',
     statusStore.usageUnreadable()
     expect(statusStore.get().usage).toBe('kept')
   })
+
+  it('drops the limits outright when they stop being this account’s', () => {
+    statusStore.apply({
+      type: 'limit',
+      limit: {
+        kind: 'five_hour',
+        utilization: 0.2,
+        resetsAtMs: 1787173200000,
+        overage: false,
+        status: 'allowed',
+      },
+    })
+    statusStore.usageRead(1_700_000_000_000)
+    statusStore.usageForgotten()
+    expect(statusStore.get().limits).toEqual([])
+    expect(statusStore.get().usage).toBe('unread')
+    expect(statusStore.get().usageAtMs).toBeNull()
+  })
+
+  it('lets a failed read after forgetting say so, rather than reading as no limits', () => {
+    statusStore.usageForgotten()
+    statusStore.usageUnreadable()
+    expect(statusStore.get().usage).toBe('unreadable')
+  })
+})
+
+describe('forgetSession: the session on hand belonged to one account', () => {
+  it('drops what the probe learned, so the next probe is believed', () => {
+    statusStore.learnProbe(session)
+    expect(statusStore.get().probed).toBe(true)
+
+    statusStore.forgetSession()
+
+    expect(statusStore.get().session).toBeNull()
+    expect(statusStore.get().probed).toBe(false)
+  })
+
+  it('leaves what the account did not decide, so the turn on screen survives', () => {
+    statusStore.apply({ type: 'metrics', metrics: metrics(0.4) })
+    statusStore.apply({ type: 'session', session })
+
+    statusStore.forgetSession()
+
+    expect(statusStore.get().cost.usd).toBeCloseTo(0.4, 5)
+  })
 })
 
 describe('restoreChat: reopening a chat brings its totals back', () => {

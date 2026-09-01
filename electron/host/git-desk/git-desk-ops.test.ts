@@ -34,7 +34,9 @@ function fakeGit(replies: Record<string, Partial<GitReply>>, calls: Call[] = [])
 describe('gitStatus', () => {
   it('parses what git said into the struct', async () => {
     const deps = fakeGit({
-      'status --porcelain=v2 --branch': { stdout: '# branch.head main\n? a.txt\n' },
+      'status --porcelain=v2 --branch --untracked-files=all': {
+        stdout: '# branch.head main\n? a.txt\n',
+      },
     })
     const got = await gitStatus(deps)
     expect(got).toEqual({
@@ -51,7 +53,10 @@ describe('gitStatus', () => {
 
   it('says no-repo when git refuses the folder', async () => {
     const deps = fakeGit({
-      'status --porcelain=v2 --branch': { code: 128, stderr: 'fatal: not a git repository' },
+      'status --porcelain=v2 --branch --untracked-files=all': {
+        code: 128,
+        stderr: 'fatal: not a git repository',
+      },
     })
     const got = await gitStatus(deps)
     expect(got.ok).toBe(false)
@@ -119,7 +124,7 @@ describe('gitPush and gitPull', () => {
     const calls: Call[] = []
     const deps = fakeGit(
       {
-        'status --porcelain=v2 --branch': {
+        'status --porcelain=v2 --branch --untracked-files=all': {
           stdout: '# branch.head main\n# branch.upstream origin/main\n',
         },
       },
@@ -132,7 +137,11 @@ describe('gitPush and gitPull', () => {
   it('sets the upstream on a branch that has none', async () => {
     const calls: Call[] = []
     const deps = fakeGit(
-      { 'status --porcelain=v2 --branch': { stdout: '# branch.head spike/x\n' } },
+      {
+        'status --porcelain=v2 --branch --untracked-files=all': {
+          stdout: '# branch.head spike/x\n',
+        },
+      },
       calls,
     )
     await gitPush(deps)
@@ -193,8 +202,8 @@ describe('gitBranches and gitLog', () => {
 describe('gitGraph, gitShow and gitShowDiff', () => {
   it('reads the whole-graph log through the parser', async () => {
     const deps = fakeGit({
-      'log --all --topo-order -n 300 --format=%H%x09%h%x09%P%x09%D%x09%an%x09%at%x09%s': {
-        stdout: 'aaaa\ta1\t\tHEAD -> main\tRay\t1756400000\tfirst\n',
+      'log --all --topo-order -n 300 --format=%H%x09%h%x09%P%x09%D%x09%an%x09%ae%x09%at%x09%s': {
+        stdout: 'aaaa\ta1\t\tHEAD -> main\tRay\tray@x.co\t1756400000\tfirst\n',
       },
     })
     const got = await gitGraph(deps)
@@ -203,7 +212,7 @@ describe('gitGraph, gitShow and gitShowDiff', () => {
 
   it('reads an unborn repo as an empty graph', async () => {
     const deps = fakeGit({
-      'log --all --topo-order -n 300 --format=%H%x09%h%x09%P%x09%D%x09%an%x09%at%x09%s': {
+      'log --all --topo-order -n 300 --format=%H%x09%h%x09%P%x09%D%x09%an%x09%ae%x09%at%x09%s': {
         code: 128,
         stderr: 'no commits yet',
       },
@@ -227,5 +236,89 @@ describe('gitGraph, gitShow and gitShowDiff', () => {
     const deps = fakeGit({ 'show --format= abc1234 -- src/app.ts': { stdout: '+x\n' } }, calls)
     expect(await gitShowDiff(deps, 'abc1234', 'src/app.ts')).toEqual({ ok: true, value: '+x\n' })
     expect((await gitShowDiff(deps, 'abc1234', '--all')).ok).toBe(false)
+  })
+})
+
+describe('gitDiff: the edges of what a diff can be', () => {
+  it('says binary for an untracked file that is not text', async () => {
+    const deps = { ...fakeGit({}), read: () => Promise.resolve('PNG\u0000\u0000binary') }
+    const got = await gitDiff(deps, 'logo.png', 'untracked')
+    expect(got).toEqual({ ok: false, why: { code: 'unsupported', said: 'binary' } })
+  })
+
+  it('says large for an untracked file too big to draw', async () => {
+    const deps = { ...fakeGit({}), read: () => Promise.resolve('x'.repeat(1_000_001)) }
+    const got = await gitDiff(deps, 'big.txt', 'untracked')
+    expect(got).toEqual({ ok: false, why: { code: 'unsupported', said: 'large' } })
+  })
+
+  it('falls back to the tracked sides when an untracked hint cannot be read', async () => {
+    const deps = {
+      ...fakeGit({ 'diff -- was-untracked.ts': { stdout: '+now tracked\n' } }),
+      read: () => Promise.resolve<string | null>(null),
+    }
+    const got = await gitDiff(deps, 'was-untracked.ts', 'untracked')
+    expect(got).toEqual({ ok: true, value: '+now tracked\n' })
+  })
+
+  it('tries the other side when the hinted side has nothing', async () => {
+    const deps = {
+      ...fakeGit({ 'diff --cached -- staged.ts': { stdout: '+already staged\n' } }),
+      read: () => Promise.resolve<string | null>(null),
+    }
+    const got = await gitDiff(deps, 'staged.ts', 'unstaged')
+    expect(got).toEqual({ ok: true, value: '+already staged\n' })
+  })
+
+  it('draws a file the status has not caught up with from the disk', async () => {
+    const deps = fakeGit({ 'ls-files --error-unmatch -- fresh.txt': { code: 1 } })
+    const got = await gitDiff(deps, 'fresh.txt', 'unstaged')
+    expect(got).toEqual({ ok: true, value: '+line one\n+line two\n' })
+  })
+
+  it('answers empty when no side differs and the disk cannot be read', async () => {
+    const deps = { ...fakeGit({}), read: () => Promise.resolve<string | null>(null) }
+    const got = await gitDiff(deps, 'same.ts', 'unstaged')
+    expect(got).toEqual({ ok: true, value: '' })
+  })
+
+  it('says large for a tracked diff too big to draw', async () => {
+    const deps = fakeGit({ 'diff -- huge.ts': { stdout: `+${'x'.repeat(1_000_001)}` } })
+    const got = await gitDiff(deps, 'huge.ts', 'unstaged')
+    expect(got).toEqual({ ok: false, why: { code: 'unsupported', said: 'large' } })
+  })
+})
+
+describe('gitStatus: untracked files come one by one, never as a folder', () => {
+  it('asks git to expand untracked folders into files', async () => {
+    const calls: Call[] = []
+    await gitStatus(fakeGit({}, calls))
+    expect(calls).toEqual([['status', '--porcelain=v2', '--branch', '--untracked-files=all']])
+  })
+})
+
+describe('what a failed act says', () => {
+  it('hands back what git printed, from stdout when stderr is silent', async () => {
+    const deps = fakeGit({
+      'commit -m test': {
+        code: 1,
+        stdout: 'nothing added to commit but untracked files present\n',
+        stderr: '',
+      },
+    })
+    const got = await gitCommit(deps, 'test')
+    expect(!got.ok && got.why.said).toContain('nothing added to commit')
+  })
+
+  it('sees through the runner substituting its own line for a silent stderr', async () => {
+    const deps = fakeGit({
+      'commit -m test': {
+        code: 1,
+        stdout: 'nothing added to commit but untracked files present\n',
+        stderr: 'Command failed: git -c core.quotepath=false commit -m test',
+      },
+    })
+    const got = await gitCommit(deps, 'test')
+    expect(!got.ok && got.why.said).toContain('nothing added to commit')
   })
 })

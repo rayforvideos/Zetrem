@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import { t } from '@lingui/core/macro'
+import { toast } from 'sonner'
 import type {
   GitBranch,
   GitFile,
@@ -8,9 +9,12 @@ import type {
   ShownFile,
 } from '@/entities/git/model/repo'
 import type { Outcome } from '@/shared/lib/outcome/outcome.types'
+import { lastLine } from '@/shared/lib/ask/ask'
 import { sideOf } from '../lib/side/side'
 
-type Diff = { path: string; text: string }
+// A diff view is opened even when the reading failed: the trouble shows in
+// the pane where the code would be, never as a stray line elsewhere.
+type Diff = { path: string; text: string; trouble: null | 'binary' | 'large' | 'failed' }
 
 // What the right panel talks about: the working tree, or one commit.
 type Pick = { kind: 'wip' } | { kind: 'commit'; sha: string }
@@ -33,7 +37,6 @@ type GitDesk = {
   message: string
   setMessage(next: string): void
   busy: boolean
-  said: string
   refresh(): void
   showDiff(file: GitFile): void
   showCommitDiff(file: ShownFile): void
@@ -61,7 +64,6 @@ export function useGitDesk(project: string | null): GitDesk {
   const [diff, setDiff] = useState<Diff | null>(null)
   const [message, setMessage] = useState('')
   const [busy, setBusy] = useState(false)
-  const [said, setSaid] = useState('')
 
   const readStatus = useCallback((): void => {
     void window.desk
@@ -97,7 +99,6 @@ export function useGitDesk(project: string | null): GitDesk {
     setOpen(false)
     setDiff(null)
     setMessage('')
-    setSaid('')
     setPick({ kind: 'wip' })
     setGraph([])
     setReady(false)
@@ -126,7 +127,6 @@ export function useGitDesk(project: string | null): GitDesk {
   }, [pick])
 
   function toggle(): void {
-    setSaid('')
     setOpen((was) => !was)
   }
 
@@ -135,16 +135,24 @@ export function useGitDesk(project: string | null): GitDesk {
     setDiff(null)
   }
 
-  // One act at a time: run it, say what went wrong, and re-read the repo.
+  // One act at a time: run it, toast what went wrong, and re-read the repo.
   function act(run: () => Promise<Outcome<null>>, then?: () => void): void {
     setBusy(true)
-    setSaid('')
     void run()
       .catch(() => null)
       .then((got) => {
         setBusy(false)
         if (got === null || !got.ok) {
-          setSaid(got !== null && got.why.code === 'cli' ? got.why.said : t`Git could not do that`)
+          const why = got === null ? null : got.why
+          toast.error(
+            why?.said === 'branch-name'
+              ? t`That branch name will not do.`
+              : why?.code === 'cli' && /nothing (added )?to commit|no changes added/.test(why.said)
+                ? t`Nothing is staged to commit.`
+                : why?.code === 'cli' && why.said.length > 0
+                  ? lastLine(why.said)
+                  : t`Git could not do that`,
+          )
           return
         }
         then?.()
@@ -157,10 +165,15 @@ export function useGitDesk(project: string | null): GitDesk {
       .catch(() => null)
       .then((got) => {
         if (got === null || !got.ok) {
-          setSaid(t`Could not read that diff`)
+          const why = got === null ? null : got.why.said
+          setDiff({
+            path,
+            text: '',
+            trouble: why === 'binary' || why === 'large' ? why : 'failed',
+          })
           return
         }
-        setDiff({ path, text: got.value })
+        setDiff({ path, text: got.value, trouble: null })
       })
   }
 
@@ -187,7 +200,6 @@ export function useGitDesk(project: string | null): GitDesk {
     message,
     setMessage,
     busy,
-    said,
     refresh: readAround,
     showDiff: (file) => tell(window.desk.gitDiff(file.path, sideOf(file)), file.path),
     showCommitDiff: (file) => {

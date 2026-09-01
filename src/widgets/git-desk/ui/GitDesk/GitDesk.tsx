@@ -12,12 +12,17 @@ import {
   GitBranch,
   Plus,
   RefreshCw,
+  SquareArrowRight,
+  SquareAsterisk,
+  SquareDot,
+  SquareMinus,
+  SquarePlus,
   X,
 } from 'lucide-react'
 import type { GitFile, GitStat, ShownFile } from '@/entities/git/model/repo'
 import { CHROME_TOP } from '@/shared/config/theme'
 import { cn } from '@/shared/lib/cn'
-import { diffHunks } from '@/shared/lib/hunks/hunks'
+import { diffHunks } from '@/shared/lib/diff/hunks/hunks'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -50,10 +55,29 @@ function laneX(lane: number): number {
   return lane * LANE_W + LANE_W / 2 + 2
 }
 
-// The node is drawn the GitKraken way: a ring in the lane's color with the
-// author's initial inside standing in for an avatar.
-function RowLines({ row, initial, wip }: { row: LaneRow; initial: string; wip: boolean }) {
+// GitHub answers an avatar for any email it knows, and a neutral identicon
+// for one it does not - never somebody else's face.
+function avatarUrl(email: string): string | null {
+  if (email.length === 0 || !email.includes('@')) return null
+  return `https://avatars.githubusercontent.com/u/e?email=${encodeURIComponent(email)}&s=36`
+}
+
+// The node is drawn the GitKraken way: a ring in the lane's color holding the
+// author's GitHub avatar, or their initial while offline or unknowable.
+function RowLines({
+  row,
+  initial,
+  email,
+  wip,
+}: {
+  row: LaneRow
+  initial: string
+  email: string
+  wip: boolean
+}) {
   const x = laneX(row.lane)
+  const [broken, setBroken] = useState(false)
+  const face = wip || broken ? null : avatarUrl(email)
   return (
     <svg
       width={row.width * LANE_W + 4}
@@ -116,7 +140,7 @@ function RowLines({ row, initial, wip }: { row: LaneRow; initial: string; wip: b
         strokeWidth="2.5"
         strokeDasharray={wip ? '3 3' : undefined}
       />
-      {!wip && (
+      {!wip && face === null && (
         <text
           x={x}
           y={MID + 3.5}
@@ -127,6 +151,22 @@ function RowLines({ row, initial, wip }: { row: LaneRow; initial: string; wip: b
         >
           {initial}
         </text>
+      )}
+      {face !== null && (
+        <>
+          <clipPath id={`face-${row.sha}`}>
+            <circle cx={x} cy={MID} r={DOT_R - 1.5} />
+          </clipPath>
+          <image
+            href={face}
+            x={x - (DOT_R - 1.5)}
+            y={MID - (DOT_R - 1.5)}
+            width={(DOT_R - 1.5) * 2}
+            height={(DOT_R - 1.5) * 2}
+            clipPath={`url(#face-${row.sha})`}
+            onError={() => setBroken(true)}
+          />
+        </>
       )}
     </svg>
   )
@@ -175,6 +215,28 @@ function whenLabel(at: number): string {
   ).format(at)
 }
 
+// The change marks GitHub Desktop wears: a green plus for what is new, a
+// gold dot for what changed, a red minus for what left, a blue arrow for
+// what moved. The letter survives as the tooltip.
+function SignMark({ sign }: { sign: string }) {
+  const drawn =
+    sign === 'A' || sign === '?'
+      ? { Icon: SquarePlus, color: 'var(--added)', name: t`Added` }
+      : sign === 'M'
+        ? { Icon: SquareDot, color: 'var(--kind-feedback)', name: t`Modified` }
+        : sign === 'D'
+          ? { Icon: SquareMinus, color: 'var(--removed)', name: t`Deleted` }
+          : sign === 'R' || sign === 'C'
+            ? { Icon: SquareArrowRight, color: 'var(--kind-project)', name: t`Renamed` }
+            : { Icon: SquareAsterisk, color: 'var(--muted-foreground)', name: sign }
+  const { Icon } = drawn
+  return (
+    <span title={drawn.name} className="flex-none" style={{ color: drawn.color }}>
+      <Icon className="size-3.5" />
+    </span>
+  )
+}
+
 function FileRow({
   path,
   sign,
@@ -202,7 +264,7 @@ function FileRow({
         )}
       >
         <span className="min-w-0 flex-1 truncate text-left font-mono text-xs">{path}</span>
-        <span className="flex-none font-mono text-muted-foreground text-xs">{sign}</span>
+        <SignMark sign={sign} />
       </Button>
     </li>
   )
@@ -384,9 +446,6 @@ export function GitDesk({ project }: { project: string | null }) {
               </Button>
               <span className="flex-1" />
               {git.busy && <Spinner className="size-3.5" />}
-              {git.said.length > 0 && (
-                <span className="max-w-96 truncate font-mono text-removed text-xs">{git.said}</span>
-              )}
               <Button
                 variant="ghost"
                 size="xs"
@@ -456,50 +515,70 @@ export function GitDesk({ project }: { project: string | null }) {
                         {git.diff.path}
                       </span>
                     </div>
-                    <div
-                      data-selectable
-                      className="zt-scroll min-h-0 flex-1 overflow-auto rounded-lg border border-border bg-card py-1 font-mono text-xs leading-relaxed"
-                    >
-                      {diffHunks(git.diff.text).map((hunk, at) => (
-                        <div key={hunk.header.length > 0 ? hunk.header : `hunk-${at * 2}`}>
-                          {hunk.header.length > 0 && (
-                            <div className="w-max min-w-full select-none border-border/60 border-y bg-muted/40 px-3 py-1 text-muted-foreground">
-                              {hunk.header}
-                            </div>
-                          )}
-                          {hunk.lines.map((row) => (
-                            <div
-                              key={`${row.oldNo ?? ''}:${row.newNo ?? ''}`}
-                              className={cn(
-                                'flex w-max min-w-full',
-                                row.kind === 'added' && 'bg-added-surface',
-                                row.kind === 'removed' && 'bg-removed-surface',
-                              )}
-                            >
-                              <span className="w-10 flex-none select-none pr-2 text-right text-muted-foreground">
-                                {row.oldNo}
-                              </span>
-                              <span className="w-10 flex-none select-none pr-2 text-right text-muted-foreground">
-                                {row.newNo}
-                              </span>
-                              <span
+                    {git.diff.trouble !== null ? (
+                      <div className="flex min-h-0 flex-1 items-center justify-center rounded-lg border border-border bg-card">
+                        <p className="text-muted-foreground text-sm" data-git-diff-trouble>
+                          {git.diff.trouble === 'binary'
+                            ? t`A binary file has no diff to show.`
+                            : git.diff.trouble === 'large'
+                              ? t`This diff is too large to show here.`
+                              : t`Could not read that diff`}
+                        </p>
+                      </div>
+                    ) : (
+                      <div
+                        data-selectable
+                        className="zt-scroll min-h-0 flex-1 overflow-auto rounded-lg border border-border bg-card py-1 font-mono text-xs leading-relaxed"
+                      >
+                        {diffHunks(git.diff.text).map((hunk, at) => (
+                          <div key={hunk.header.length > 0 ? hunk.header : `hunk-${at * 2}`}>
+                            {hunk.header.length > 0 && (
+                              <div className="w-max min-w-full select-none border-border/60 border-y bg-muted/40 px-3 py-1 text-muted-foreground">
+                                {hunk.header}
+                              </div>
+                            )}
+                            {hunk.lines.map((row) => (
+                              <div
+                                key={`${row.oldNo ?? ''}:${row.newNo ?? ''}`}
                                 className={cn(
-                                  'w-5 flex-none select-none text-center',
-                                  row.kind === 'added' && 'text-added',
-                                  row.kind === 'removed' && 'text-removed',
+                                  'flex w-max min-w-full',
+                                  row.kind === 'added' && 'bg-added-surface',
+                                  row.kind === 'removed' && 'bg-removed-surface',
                                 )}
                               >
-                                {row.kind === 'added' ? '+' : row.kind === 'removed' ? '-' : ''}
-                              </span>
-                              <span className="flex-1 whitespace-pre pr-3">{row.text}</span>
-                            </div>
-                          ))}
-                        </div>
-                      ))}
-                      {git.diff.text.length === 0 && (
-                        <p className="px-3 py-1 text-muted-foreground">{t`Nothing differs on this side.`}</p>
-                      )}
-                    </div>
+                                <span className="w-10 flex-none select-none pr-2 text-right text-muted-foreground">
+                                  {row.oldNo}
+                                </span>
+                                <span className="w-10 flex-none select-none pr-2 text-right text-muted-foreground">
+                                  {row.newNo}
+                                </span>
+                                <span
+                                  className={cn(
+                                    'w-5 flex-none select-none text-center',
+                                    row.kind === 'added' && 'text-added',
+                                    row.kind === 'removed' && 'text-removed',
+                                  )}
+                                >
+                                  {row.kind === 'added' ? '+' : row.kind === 'removed' ? '-' : ''}
+                                </span>
+                                <span className="flex-1 whitespace-pre pr-3">{row.text}</span>
+                              </div>
+                            ))}
+                          </div>
+                        ))}
+                        {git.diff.text.length === 0 ? (
+                          <p className="px-3 py-1 text-muted-foreground">{t`Nothing differs on this side.`}</p>
+                        ) : (
+                          diffHunks(git.diff.text).length === 0 && (
+                            // A binary or submodule change has no lines; what git
+                            // said about it is the whole story.
+                            <p className="whitespace-pre-wrap px-3 py-1 text-muted-foreground">
+                              {git.diff.text.trim()}
+                            </p>
+                          )
+                        )}
+                      </div>
+                    )}
                   </div>
                 ) : (
                   <div className="flex min-w-0 flex-1 flex-col">
@@ -592,6 +671,7 @@ export function GitDesk({ project }: { project: string | null }) {
                                 <RowLines
                                   row={row}
                                   wip={wip}
+                                  email={wip ? '' : commit.email}
                                   initial={wip ? '' : (commit.author[0]?.toUpperCase() ?? '·')}
                                 />
                                 {wip ? (
@@ -684,7 +764,11 @@ export function GitDesk({ project }: { project: string | null }) {
                       <Button
                         variant="outline"
                         size="xs"
-                        disabled={git.busy || git.message.trim().length === 0}
+                        disabled={
+                          git.busy ||
+                          git.message.trim().length === 0 ||
+                          git.status?.files.some((file) => file.staged) !== true
+                        }
                         onClick={git.commit}
                         className="flex-none self-start rounded-lg"
                         data-git-commit

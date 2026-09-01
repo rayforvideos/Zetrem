@@ -16,6 +16,31 @@ import { runGit } from '../worktree-review/worktree-review'
 import type { GitReply } from '../worktree-review/worktree-review.types'
 import type { DiffSide, GitDeps } from './git-desk.types'
 
+// Git C-quotes a path holding bytes it distrusts ("scratch-\\355...\"): the
+// live runs turn quoting off, but a stray config or control byte can still
+// hand one over, and the octal escapes decode back to UTF-8 here.
+function plainPath(path: string): string {
+  if (!path.startsWith('"') || !path.endsWith('"')) return path
+  const inner = path.slice(1, -1)
+  const bytes: number[] = []
+  for (let at = 0; at < inner.length; at++) {
+    const char = inner[at] as string
+    if (char !== '\\') {
+      bytes.push(char.charCodeAt(0))
+      continue
+    }
+    const next = inner[at + 1] ?? ''
+    if (/[0-7]/.test(next)) {
+      bytes.push(Number.parseInt(inner.slice(at + 1, at + 4), 8))
+      at += 3
+    } else {
+      bytes.push(({ n: 10, t: 9, r: 13 } as Record<string, number>)[next] ?? next.charCodeAt(0))
+      at += 1
+    }
+  }
+  return new TextDecoder().decode(new Uint8Array(bytes))
+}
+
 // `git status --porcelain=v2 --branch` writes header lines starting with #,
 // then one line per entry: `1` ordinary, `2` rename (path first, origin after
 // a tab), `u` unmerged, `?` untracked. The XY pair holds the staged letter
@@ -31,7 +56,12 @@ export function statusOf(porcelain: string): GitStatus {
       status.ahead = Number(apart?.[1] ?? 0)
       status.behind = Number(apart?.[2] ?? 0)
     } else if (line.startsWith('? ')) {
-      status.files.push({ path: line.slice(2), staged: false, unstaged: true, sign: '?' })
+      status.files.push({
+        path: plainPath(line.slice(2)),
+        staged: false,
+        unstaged: true,
+        sign: '?',
+      })
     } else if (line.startsWith('1 ') || line.startsWith('2 ')) {
       const [, xy = '..'] = line.split(' ')
       const staged = xy[0] !== '.'
@@ -40,7 +70,7 @@ export function statusOf(porcelain: string): GitStatus {
         .split(' ')
         .slice(line.startsWith('1 ') ? 8 : 9)
         .join(' ')
-      const path = line.startsWith('2 ') ? (tail.split('\t')[0] ?? tail) : tail
+      const path = plainPath(line.startsWith('2 ') ? (tail.split('\t')[0] ?? tail) : tail)
       const sign = staged ? (xy[0] ?? 'M') : (xy[1] ?? 'M')
       status.files.push({ path, staged, unstaged, sign })
     }
@@ -72,15 +102,16 @@ export function logOf(out: string): GitCommitLine[] {
     })
 }
 
-// The graph log line: sha, short, parents, refs, author, seconds, subject,
-// tab-separated with %x09 so only the subject can hold a tab of its own.
+// The graph log line: sha, short, parents, refs, author, email, seconds,
+// subject, tab-separated with %x09 so only the subject can hold a tab.
 export function graphOf(out: string): GraphCommit[] {
   const commits: GraphCommit[] = []
   for (const line of out.split('\n')) {
     const parts = line.split('\t')
-    if (parts.length < 7) continue
-    const [sha = '', short = '', parents = '', decorate = '', author = '', when = ''] = parts
-    const subject = parts.slice(6).join('\t')
+    if (parts.length < 8) continue
+    const [sha = '', short = '', parents = '', decorate = '', author = '', email = '', when = ''] =
+      parts
+    const subject = parts.slice(7).join('\t')
     let head = false
     const refs: string[] = []
     for (const said of decorate.split(', ').filter((one) => one.length > 0)) {
@@ -98,6 +129,7 @@ export function graphOf(out: string): GraphCommit[] {
       refs,
       head,
       author,
+      email,
       at: Number(when) * 1000,
       subject,
       stat: { files: 0, adds: 0, dels: 0 },
@@ -160,7 +192,13 @@ function tamePath(path: string): boolean {
 const BRANCH_NAME = /^[A-Za-z0-9][A-Za-z0-9._/-]*$/
 
 function cliTrouble<T>(reply: GitReply): Outcome<T> {
-  const said = reply.stderr.trim()
+  // The runner substitutes its own "Command failed" line for a silent
+  // stderr; git's actual account of a refusal often sits on stdout.
+  const flat = reply.stderr.trim()
+  const said =
+    (flat.startsWith('Command failed:') || flat.length === 0) && reply.stdout.trim().length > 0
+      ? reply.stdout.trim()
+      : flat
   return said.includes('not a git repository')
     ? lost<T>('refused', 'no-repo')
     : lost<T>('cli', said)
@@ -179,7 +217,13 @@ async function ran(deps: GitDeps, cwd: string, args: string[]): Promise<Outcome<
 export async function gitStatus(deps: GitDeps): Promise<Outcome<GitStatus>> {
   const at = await whereabouts(deps)
   if (!at.ok) return at
-  const said = await ran(deps, at.value, ['status', '--porcelain=v2', '--branch'])
+  const said = await ran(deps, at.value, [
+    'status',
+    '--porcelain=v2',
+    '--branch',
+    // Folders never stand in for their files: a folder has no diff to show.
+    '--untracked-files=all',
+  ])
   return said.ok ? won(statusOf(said.value)) : said
 }
 
@@ -198,6 +242,10 @@ export async function gitLog(deps: GitDeps): Promise<Outcome<GitCommitLine[]>> {
   return said.ok ? won(logOf(said.value)) : won([])
 }
 
+// The side is only a hint: the status it came from can be moments stale, so
+// an empty answer tries the other side, and a file git does not know at all
+// is drawn from the disk. The pane never says "nothing" while something is
+// there to show.
 export async function gitDiff(
   deps: GitDeps,
   path: string,
@@ -206,15 +254,42 @@ export async function gitDiff(
   if (!tamePath(path)) return lost('refused', 'path')
   const at = await whereabouts(deps)
   if (!at.ok) return at
-  if (side === 'untracked') {
+
+  const fromDisk = async (): Promise<Outcome<string> | null> => {
     const body = await deps.read(join(at.value, path))
-    if (body === null) return lost('failed', 'gone')
+    if (body === null) return null
+    if (body.includes('\u0000')) return lost('unsupported', 'binary')
+    if (body.length > DIFF_MAX) return lost('unsupported', 'large')
     const lines = body.split('\n')
     if (lines.at(-1) === '') lines.pop()
     return won(lines.map((line) => `+${line}\n`).join(''))
   }
-  const args = side === 'staged' ? ['diff', '--cached', '--', path] : ['diff', '--', path]
-  return ran(deps, at.value, args)
+
+  if (side === 'untracked') {
+    const drawn = await fromDisk()
+    if (drawn !== null) return drawn
+  }
+
+  const unstaged = ['diff', '--', path]
+  const staged = ['diff', '--cached', '--', path]
+  for (const args of side === 'staged' ? [staged, unstaged] : [unstaged, staged]) {
+    const said = await ran(deps, at.value, args)
+    if (!said.ok) return said
+    if (said.value.length > DIFF_MAX) return lost('unsupported', 'large')
+    if (said.value.length > 0) return said
+  }
+
+  if (side !== 'untracked') {
+    // Neither side differs: a file the status has not caught up with yet is
+    // still worth drawing whole; a genuinely unchanged file reads from git,
+    // not the disk, so only the unknown one lands here with content.
+    const tracked = await deps.git(['ls-files', '--error-unmatch', '--', path], at.value)
+    if (tracked.code !== 0) {
+      const drawn = await fromDisk()
+      if (drawn !== null) return drawn
+    }
+  }
+  return won('')
 }
 
 export async function gitStage(deps: GitDeps, path: string): Promise<Outcome<null>> {
@@ -267,6 +342,9 @@ export async function gitPush(deps: GitDeps): Promise<Outcome<null>> {
 
 const SHA = /^[0-9a-f]{4,40}$/
 
+// Past a megabyte the renderer draws for seconds; the pane says so instead.
+const DIFF_MAX = 1_000_000
+
 export async function gitGraph(deps: GitDeps): Promise<Outcome<GraphCommit[]>> {
   const at = await whereabouts(deps)
   if (!at.ok) return at
@@ -276,7 +354,7 @@ export async function gitGraph(deps: GitDeps): Promise<Outcome<GraphCommit[]>> {
     '--topo-order',
     '-n',
     '300',
-    '--format=%H%x09%h%x09%P%x09%D%x09%an%x09%at%x09%s',
+    '--format=%H%x09%h%x09%P%x09%D%x09%an%x09%ae%x09%at%x09%s',
   ])
   // A repo with no commit yet has no graph, and that is an empty list.
   if (!said.ok) return won([])
@@ -317,7 +395,9 @@ export async function gitShowDiff(
   if (!tamePath(path)) return lost('refused', 'path')
   const at = await whereabouts(deps)
   if (!at.ok) return at
-  return ran(deps, at.value, ['show', '--format=', sha, '--', path])
+  const said = await ran(deps, at.value, ['show', '--format=', sha, '--', path])
+  if (said.ok && said.value.length > DIFF_MAX) return lost('unsupported', 'large')
+  return said
 }
 
 export async function gitPull(deps: GitDeps): Promise<Outcome<null>> {
@@ -329,7 +409,8 @@ export async function gitPull(deps: GitDeps): Promise<Outcome<null>> {
 
 const liveDeps: GitDeps = {
   here: recallProject,
-  git: runGit,
+  // Paths come back as the bytes on disk, not C-quoted octal.
+  git: (args, cwd) => runGit(['-c', 'core.quotepath=false', ...args], cwd),
   read: (path) => readFile(path, 'utf8').catch(() => null),
 }
 

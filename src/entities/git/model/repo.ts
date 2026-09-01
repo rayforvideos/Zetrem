@@ -24,6 +24,7 @@ export type GraphCommit = {
   refs: string[]
   head: boolean
   author: string
+  email: string
   at: number
   subject: string
   stat: GitStat

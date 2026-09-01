@@ -14,7 +14,8 @@ function contentSecurityPolicy(): Plugin {
         "default-src 'none'",
         dev ? "script-src 'self' 'unsafe-inline'" : "script-src 'self'",
         "style-src 'self' 'unsafe-inline'",
-        "img-src 'self' data:",
+        // Commit avatars in the git view come from GitHub, keyed by email.
+        "img-src 'self' data: https://avatars.githubusercontent.com",
         "font-src 'self'",
         dev ? "connect-src 'self' ws:" : "connect-src 'self'",
         "object-src 'none'",

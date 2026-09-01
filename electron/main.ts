@@ -191,7 +191,8 @@ const POLICY = [
   "default-src 'self'",
   "script-src 'self'",
   "style-src 'self' 'unsafe-inline'",
-  "img-src 'self' data: blob:",
+  // The one remote host: commit avatars for the git view, keyed by email.
+  "img-src 'self' data: blob: https://avatars.githubusercontent.com",
   "font-src 'self' data:",
   "media-src 'self' blob:",
   "connect-src 'self'",

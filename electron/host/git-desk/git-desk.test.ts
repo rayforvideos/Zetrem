@@ -75,10 +75,10 @@ describe('logOf: recent commits, one line each', () => {
 
 describe('graphOf: the log with parents and refs, one commit a line', () => {
   const LOG = [
-    'aaaa\ta1\tbbbb cccc\tHEAD -> main, origin/main, tag: v1.0\tRay\t1756700000\tmerge the spike',
-    'bbbb\tb1\tdddd\t\tRay\t1756600000\tfix: a thing',
-    'cccc\tc1\tdddd\tspike/x\tKim\t1756500000\ttry: a spike',
-    'dddd\td1\t\t\tRay\t1756400000\tfirst',
+    'aaaa\ta1\tbbbb cccc\tHEAD -> main, origin/main, tag: v1.0\tRay\tray@x.co\t1756700000\tmerge the spike',
+    'bbbb\tb1\tdddd\t\tRay\tray@x.co\t1756600000\tfix: a thing',
+    'cccc\tc1\tdddd\tspike/x\tKim\tkim@x.co\t1756500000\ttry: a spike',
+    'dddd\td1\t\t\tRay\tray@x.co\t1756400000\tfirst',
     '',
   ].join('\n')
 
@@ -90,6 +90,7 @@ describe('graphOf: the log with parents and refs, one commit a line', () => {
       short: 'a1',
       parents: ['bbbb', 'cccc'],
       author: 'Ray',
+      email: 'ray@x.co',
       at: 1_756_700_000_000,
       subject: 'merge the spike',
     })
@@ -104,7 +105,7 @@ describe('graphOf: the log with parents and refs, one commit a line', () => {
   })
 
   it('keeps a subject holding a tab whole', () => {
-    const one = graphOf('aaaa\ta1\t\t\tRay\t1756400000\ta\tb\n')
+    const one = graphOf('aaaa\ta1\t\t\tRay\tray@x.co\t1756400000\ta\tb\n')
     expect(one[0]?.subject).toBe('a\tb')
   })
 })
@@ -139,5 +140,12 @@ describe('statsOf: how much each commit changed, keyed by sha', () => {
       bbbb: { files: 1, adds: 0, dels: 2 },
       cccc: { files: 0, adds: 0, dels: 0 },
     })
+  })
+})
+
+describe('statusOf: a path git C-quoted still comes out readable', () => {
+  it('unquotes the octal escapes an old quotepath setting leaves', () => {
+    const status = statusOf('# branch.head main\n? "scratch-\\355\\225\\234.txt"\n')
+    expect(status.files[0]?.path).toBe('scratch-\ud55c.txt')
   })
 })

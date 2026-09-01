@@ -119,6 +119,17 @@ describe('beginSession: the slate the next run starts on', () => {
     expect(sessionStore.get()).toEqual([])
   })
 
+  it('clears a chore the dead session never got to finish', () => {
+    // A killed CLI takes its background commands with it, but never sends
+    // task_updated. The relaunch path skips closeSession, so the new session
+    // must not inherit a banner ticking over a process that no longer exists.
+    conversation.startChore('chore-1', 'Run coverage and i18n catalog check')
+
+    beginSession({ resumed: true, asks: [], sends: new Map(), childIds: new Set() })
+
+    expect(conversation.get().chores).toEqual([])
+  })
+
   it('starts working with no trouble showing', () => {
     conversation.setTrouble(true)
 

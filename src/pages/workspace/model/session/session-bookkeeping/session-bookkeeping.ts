@@ -28,4 +28,8 @@ export function beginSession({ resumed, asks, sends, childIds }: SessionBegin): 
   asks.length = 0
   conversation.setStatus('working')
   conversation.setTrouble(false)
+  // A background command dies with the CLI that ran it. When the last exit
+  // skipped closeSession (the relaunch path does), its banner is still here,
+  // timing a process that no longer exists.
+  conversation.clearChores()
 }

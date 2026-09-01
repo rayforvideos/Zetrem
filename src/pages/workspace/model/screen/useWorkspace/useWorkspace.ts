@@ -154,7 +154,7 @@ export function useWorkspace() {
   useEffect(() => {
     if (!drawerOpen) return
     const onKey = (event: KeyboardEvent): void => {
-      if (event.key !== 'Escape' || layerOver(document)) return
+      if (event.key !== 'Escape' || event.defaultPrevented || layerOver(document)) return
       setDrawerOpen(false)
     }
     window.addEventListener('keydown', onKey)

@@ -69,7 +69,6 @@ export type DeskBridge = {
   readMemory: Invoke<'memory:read'>
   writeMemory: Invoke<'memory:write'>
   removeMemory: Invoke<'memory:remove'>
-  translateMemory: Invoke<'memory:translate'>
   openNotifySettings: Send<'nudge:settings'>
 
   latestCliVersion: Invoke<'cli:latest'>

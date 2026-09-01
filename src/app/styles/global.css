@@ -29,6 +29,17 @@
   --removed: oklch(0.48 0.17 20);
   --removed-surface: oklch(0.93 0.035 20);
 
+  /* One family for the memory kinds: a shared lightness and chroma, only the
+     hue tells them apart, and none lands on added, removed, or Claude. */
+  --kind-feedback: oklch(0.48 0.1 85);
+  --kind-feedback-surface: oklch(0.93 0.045 85);
+  --kind-project: oklch(0.48 0.1 245);
+  --kind-project-surface: oklch(0.93 0.045 245);
+  --kind-user: oklch(0.48 0.1 190);
+  --kind-user-surface: oklch(0.93 0.045 190);
+  --kind-reference: oklch(0.48 0.1 310);
+  --kind-reference-surface: oklch(0.93 0.045 310);
+
   /* Claude's brand colour: the same in both schemes, so dark does not override it. */
   --claude: #d97757;
 
@@ -78,6 +89,15 @@
     --removed: oklch(0.72 0.17 20);
     --removed-surface: oklch(0.28 0.08 20);
 
+    --kind-feedback: oklch(0.8 0.1 85);
+    --kind-feedback-surface: oklch(0.28 0.05 85);
+    --kind-project: oklch(0.78 0.1 245);
+    --kind-project-surface: oklch(0.28 0.05 245);
+    --kind-user: oklch(0.78 0.1 190);
+    --kind-user-surface: oklch(0.28 0.05 190);
+    --kind-reference: oklch(0.78 0.1 310);
+    --kind-reference-surface: oklch(0.28 0.05 310);
+
     --border: oklch(0.24 0 0);
     --input: oklch(0.24 0 0);
 
@@ -110,6 +130,14 @@
   --color-added-surface: var(--added-surface);
   --color-removed: var(--removed);
   --color-removed-surface: var(--removed-surface);
+  --color-kind-feedback: var(--kind-feedback);
+  --color-kind-feedback-surface: var(--kind-feedback-surface);
+  --color-kind-project: var(--kind-project);
+  --color-kind-project-surface: var(--kind-project-surface);
+  --color-kind-user: var(--kind-user);
+  --color-kind-user-surface: var(--kind-user-surface);
+  --color-kind-reference: var(--kind-reference);
+  --color-kind-reference-surface: var(--kind-reference-surface);
   --color-claude: var(--claude);
   --color-border: var(--border);
   --color-input: var(--input);

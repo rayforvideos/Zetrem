@@ -1,4 +1,4 @@
-import { mkdtemp, mkdir, readFile, writeFile } from 'node:fs/promises'
+import { mkdtemp, mkdir, readFile, utimes, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { beforeEach, describe, expect, it } from 'vitest'
@@ -77,13 +77,21 @@ describe('over a real folder', () => {
     deps = { projectsDir: projects, here: () => Promise.resolve('/work/proj') }
   })
 
-  it('lists the notes with their frontmatter, never the index', async () => {
+  it('lists the notes with their frontmatter and mtime, never the index', async () => {
+    await utimes(join(dir, 'one.md'), new Date(1000), new Date(1_756_700_000_000))
+    await utimes(join(dir, 'two.md'), new Date(1000), new Date(1_756_600_000_000))
     const listed = await listMemory(deps)
     expect(listed).toEqual({
       ok: true,
       value: [
-        { id: 'one.md', name: 'one-fact', description: 'the first', kind: 'project' },
-        { id: 'two.md', name: 'two', description: '', kind: '' },
+        {
+          id: 'one.md',
+          name: 'one-fact',
+          description: 'the first',
+          kind: 'project',
+          updated: 1_756_700_000_000,
+        },
+        { id: 'two.md', name: 'two', description: '', kind: '', updated: 1_756_600_000_000 },
       ],
     })
   })

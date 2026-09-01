@@ -101,7 +101,6 @@ const desk: DeskBridge = {
   readMemory: invoke('memory:read'),
   writeMemory: invoke('memory:write'),
   removeMemory: invoke('memory:remove'),
-  translateMemory: invoke('memory:translate'),
   openNotifySettings: send('nudge:settings'),
 
   latestCliVersion: invoke('cli:latest'),

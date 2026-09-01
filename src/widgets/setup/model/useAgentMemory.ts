@@ -1,15 +1,11 @@
 import { useEffect, useState } from 'react'
-import { i18n } from '@lingui/core'
 import { t } from '@lingui/core/macro'
 import type { MemoryEntry, MemoryNote } from '@/entities/agent-memory/model/note'
-
-type Rendering = { description: string; body: string }
 
 type Memory = {
   entries: MemoryEntry[] | null
   openId: string | null
   note: MemoryNote | null
-  translated: Rendering | null
   busy: boolean
   said: string
   open(id: string): void
@@ -18,9 +14,6 @@ type Memory = {
   editDescription(description: string): void
   save(): void
   remove(): void
-  translate(): void
-  showOriginal(): void
-  translating: boolean
 }
 
 // The agent keeps its own memory as files; this pane lets the person audit
@@ -31,9 +24,6 @@ export function useAgentMemory(active: boolean): Memory {
   const [note, setNote] = useState<MemoryNote | null>(null)
   const [busy, setBusy] = useState(false)
   const [said, setSaid] = useState('')
-  const [translated, setTranslated] = useState<Rendering | null>(null)
-  const [translating, setTranslating] = useState(false)
-  const [kept, setKept] = useState(new Map<string, Rendering>())
 
   useEffect(() => {
     if (!active) {
@@ -84,7 +74,6 @@ export function useAgentMemory(active: boolean): Memory {
         }
         setOpenId(id)
         setNote(read.value)
-        setTranslated(null)
       })
   }
 
@@ -92,7 +81,6 @@ export function useAgentMemory(active: boolean): Memory {
     setOpenId(null)
     setNote(null)
     setSaid('')
-    setTranslated(null)
   }
 
   function editBody(body: string): void {
@@ -137,41 +125,10 @@ export function useAgentMemory(active: boolean): Memory {
       })
   }
 
-  function translate(): void {
-    if (openId === null) return
-    const remembered = kept.get(openId)
-    if (remembered !== undefined) {
-      setTranslated(remembered)
-      return
-    }
-    setBusy(true)
-    setTranslating(true)
-    setSaid('')
-    const id = openId
-    void window.desk
-      .translateMemory(id, i18n.locale)
-      .catch(() => null)
-      .then((got) => {
-        setBusy(false)
-        setTranslating(false)
-        if (got === null || !got.ok) {
-          setSaid(t`Could not translate that memory`)
-          return
-        }
-        setKept((held) => new Map(held).set(id, got.value))
-        setTranslated(got.value)
-      })
-  }
-
-  function showOriginal(): void {
-    setTranslated(null)
-  }
-
   return {
     entries,
     openId,
     note,
-    translated,
     busy,
     said,
     open,
@@ -180,8 +137,5 @@ export function useAgentMemory(active: boolean): Memory {
     editDescription,
     save,
     remove,
-    translate,
-    showOriginal,
-    translating,
   }
 }

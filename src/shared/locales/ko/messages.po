@@ -78,8 +78,8 @@ msgstr "{0} 남음"
 msgid "{0} limit{share} resets {when}{overage}"
 msgstr "{0} 한도{share} {when} 초기화{overage}"
 
-#. placeholder {0}: memory.entries.length
-#: src/widgets/setup/ui/MemoryField/MemoryField.tsx:158
+#. placeholder {0}: entries.length
+#: src/widgets/setup/ui/MemoryField/MemoryField.tsx:181
 msgid "{0} memories about this project. Each one is loaded into every new session."
 msgstr "이 프로젝트에 대한 메모 {0}개. 하나하나가 새 세션마다 로드됩니다."
 
@@ -137,6 +137,10 @@ msgstr "{base}. 앞선 대화는 요약으로 남습니다."
 #: src/entities/claude-cli/api/aside/aside.ts:23
 msgid "{from} declined this, so {to} took it"
 msgstr "{from}이(가) 거절해서 {to}이(가) 대신 처리했습니다"
+
+#: src/widgets/setup/ui/MemoryField/MemoryField.tsx:66
+msgid "{gap} days ago"
+msgstr "{gap}일 전"
 
 #: src/widgets/conversation/lib/limits/limits.ts:10
 msgid "{held, plural, one {# line} other {# lines}}"
@@ -353,7 +357,7 @@ msgstr "어떤 도구"
 msgid "About the library"
 msgstr "라이브러리란"
 
-#: src/widgets/setup/ui/MemoryField/MemoryField.tsx:26
+#: src/widgets/setup/ui/MemoryField/MemoryField.tsx:29
 msgid "About you"
 msgstr "사용자"
 
@@ -406,7 +410,7 @@ msgstr "첫 팀원을 만들어 보세요"
 msgid "Added {name}. Sign in if it asks."
 msgstr "{name} 추가했습니다. 로그인이 필요하면 로그인하세요."
 
-#: src/widgets/setup/ui/MemoryField/MemoryField.tsx:155
+#: src/widgets/setup/ui/MemoryField/MemoryField.tsx:178
 msgid "Agent memory"
 msgstr "에이전트 메모리"
 
@@ -425,6 +429,10 @@ msgstr "에이전트가 라이브러리를 검색하고 알게 된 것을 기록
 #: src/widgets/conversation/ui/Composer/Composer.tsx:187
 msgid "Agents work without the library. Click to turn it on."
 msgstr "에이전트가 라이브러리 없이 일해요. 누르면 켜져요."
+
+#: src/widgets/setup/ui/MemoryField/MemoryField.tsx:201
+msgid "All"
+msgstr "전체"
 
 #. placeholder {0}: n(reached)
 #: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:144
@@ -499,7 +507,7 @@ msgstr "자동 편집"
 msgid "Awaiting approval"
 msgstr "승인 대기"
 
-#: src/widgets/setup/ui/MemoryField/MemoryField.tsx:58
+#: src/widgets/setup/ui/MemoryField/MemoryField.tsx:103
 #: src/widgets/welcome/ui/WelcomePane/WelcomePane.tsx:128
 msgid "Back"
 msgstr "이전"
@@ -519,6 +527,10 @@ msgstr "결제가 거절됐습니다"
 #: src/pages/workspace/model/extensions/useConnectors.ts:95
 msgid "Brought over what Claude Desktop had."
 msgstr "Claude Desktop에 있던 것을 가져왔습니다."
+
+#: src/widgets/setup/ui/MemoryField/MemoryField.tsx:218
+msgid "By name"
+msgstr "이름순"
 
 #: src/widgets/setup/ui/PluginShelf/ConnectorsTab.tsx:32
 msgid "Can't connect"
@@ -717,11 +729,11 @@ msgstr "그 대화를 이어받지 못했습니다. 새로 시작합니다."
 msgid "Could not reach {0}"
 msgstr "{0}에 연결하지 못했습니다"
 
-#: src/widgets/setup/model/useAgentMemory.ts:81
+#: src/widgets/setup/model/useAgentMemory.ts:71
 msgid "Could not read that memory"
 msgstr "그 메모리를 읽지 못했어요"
 
-#: src/widgets/setup/model/useAgentMemory.ts:54
+#: src/widgets/setup/model/useAgentMemory.ts:44
 msgid "Could not read the memory folder"
 msgstr "메모리 폴더를 읽지 못했어요"
 
@@ -763,7 +775,7 @@ msgstr "설정을 읽지 못했습니다"
 msgid "Could not read your sign-in"
 msgstr "로그인 상태를 읽지 못했습니다"
 
-#: src/widgets/setup/model/useAgentMemory.ts:132
+#: src/widgets/setup/model/useAgentMemory.ts:120
 msgid "Could not remove that memory"
 msgstr "그 메모리를 지우지 못했어요"
 
@@ -783,7 +795,7 @@ msgstr "대화 이름을 바꾸지 못했습니다"
 msgid "Could not reopen your last project"
 msgstr "마지막 프로젝트를 다시 열지 못했습니다"
 
-#: src/widgets/setup/model/useAgentMemory.ts:115
+#: src/widgets/setup/model/useAgentMemory.ts:103
 msgid "Could not save that memory"
 msgstr "그 메모리를 저장하지 못했어요"
 
@@ -807,10 +819,6 @@ msgstr "업데이트를 시작하지 못했습니다"
 #: src/pages/workspace/model/account/useAuth.ts:133
 msgid "Could not switch accounts."
 msgstr "계정을 전환하지 못했습니다."
-
-#: src/widgets/setup/model/useAgentMemory.ts:158
-msgid "Could not translate that memory"
-msgstr "번역하지 못했어요"
 
 #: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:343
 msgid "Create"
@@ -861,7 +869,7 @@ msgstr "“{0}” 노트를 삭제할까요?"
 msgid "Deny"
 msgstr "거부"
 
-#: src/widgets/setup/ui/MemoryField/MemoryField.tsx:69
+#: src/widgets/setup/ui/MemoryField/MemoryField.tsx:112
 msgid "Description"
 msgstr "설명"
 
@@ -975,7 +983,7 @@ msgstr "실패"
 msgid "Fast and cheap. Good for quick questions"
 msgstr "빠르고 저렴합니다. 간단한 질문에 좋습니다"
 
-#: src/widgets/setup/ui/MemoryField/MemoryField.tsx:25
+#: src/widgets/setup/ui/MemoryField/MemoryField.tsx:28
 msgid "Feedback"
 msgstr "피드백"
 
@@ -1040,12 +1048,12 @@ msgstr "계정 설정을 따릅니다"
 msgid "Follows your Claude Code setting"
 msgstr "Claude Code 설정을 따릅니다"
 
-#: src/widgets/setup/ui/MemoryField/MemoryField.tsx:121
-#: src/widgets/setup/ui/MemoryField/MemoryField.tsx:143
+#: src/widgets/setup/ui/MemoryField/MemoryField.tsx:139
+#: src/widgets/setup/ui/MemoryField/MemoryField.tsx:161
 msgid "Forget"
 msgstr "지우기"
 
-#: src/widgets/setup/ui/MemoryField/MemoryField.tsx:130
+#: src/widgets/setup/ui/MemoryField/MemoryField.tsx:148
 msgid "Forget this memory?"
 msgstr "이 메모리를 지울까요?"
 
@@ -1195,7 +1203,7 @@ msgid "Keep in"
 msgstr "폴더에 넣기"
 
 #: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:230
-#: src/widgets/setup/ui/MemoryField/MemoryField.tsx:136
+#: src/widgets/setup/ui/MemoryField/MemoryField.tsx:154
 msgid "Keep it"
 msgstr "그대로 두기"
 
@@ -1273,7 +1281,7 @@ msgstr "보통"
 msgid "Memory"
 msgstr "메모리"
 
-#: src/widgets/setup/ui/MemoryField/MemoryField.tsx:76
+#: src/widgets/setup/ui/MemoryField/MemoryField.tsx:119
 msgid "Memory body"
 msgstr "메모리 본문"
 
@@ -1434,7 +1442,7 @@ msgstr "“{needle}”에 맞는 것이 없습니다."
 msgid "Nothing of this work is left to find: {0}"
 msgstr "이 작업은 찾을 수 있는 것이 남아 있지 않습니다: {0}"
 
-#: src/widgets/setup/ui/MemoryField/MemoryField.tsx:163
+#: src/widgets/setup/ui/MemoryField/MemoryField.tsx:186
 msgid "Nothing remembered for this project yet."
 msgstr "이 프로젝트에 저장된 메모리가 아직 없어요."
 
@@ -1467,7 +1475,7 @@ msgstr "초과분 사용 중"
 msgid "On your own"
 msgstr "혼자 일하는 중"
 
-#: src/widgets/setup/ui/MemoryField/MemoryField.tsx:68
+#: src/widgets/setup/ui/MemoryField/MemoryField.tsx:111
 msgid "One line the agent reads to decide whether this matters"
 msgstr "에이전트가 이 메모가 필요한지 판단할 때 읽는 한 줄이에요"
 
@@ -1553,7 +1561,7 @@ msgstr "지난 30일"
 msgid "Previous 7 days"
 msgstr "지난 7일"
 
-#: src/widgets/setup/ui/MemoryField/MemoryField.tsx:24
+#: src/widgets/setup/ui/MemoryField/MemoryField.tsx:27
 #: src/widgets/setup/ui/ProjectField/ProjectField.tsx:9
 msgid "Project"
 msgstr "프로젝트"
@@ -1624,11 +1632,15 @@ msgstr "Claude Code가 기본으로 제공하는 에이전트를 읽는 중입�
 msgid "Recent"
 msgstr "최근"
 
+#: src/widgets/setup/ui/MemoryField/MemoryField.tsx:218
+msgid "Recent first"
+msgstr "최근순"
+
 #: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:131
 msgid "Recheck"
 msgstr "다시 확인"
 
-#: src/widgets/setup/ui/MemoryField/MemoryField.tsx:27
+#: src/widgets/setup/ui/MemoryField/MemoryField.tsx:30
 msgid "Reference"
 msgstr "참조"
 
@@ -1759,12 +1771,12 @@ msgstr "실행하는 중"
 msgid "Same as the session"
 msgstr "세션과 같게"
 
-#: src/widgets/setup/ui/MemoryField/MemoryField.tsx:97
+#: src/widgets/setup/ui/MemoryField/MemoryField.tsx:130
 #: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:343
 msgid "Save"
 msgstr "저장"
 
-#: src/widgets/setup/model/useAgentMemory.ts:118
+#: src/widgets/setup/model/useAgentMemory.ts:106
 msgid "Saved"
 msgstr "저장했어요"
 
@@ -1867,17 +1879,9 @@ msgstr "사용량 알 수 없음"
 msgid "Shift+Enter starts a new line. Off, sending takes the modifier key with Enter."
 msgstr "Shift+Enter로 줄을 바꿉니다. 끄면 보조키+Enter로 보냅니다."
 
-#: src/widgets/setup/ui/MemoryField/MemoryField.tsx:112
-msgid "Show original"
-msgstr "원문 보기"
-
 #: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:148
 msgid "Show team sidebar"
 msgstr "팀 사이드바 펼치기"
-
-#: src/widgets/setup/ui/MemoryField/MemoryField.tsx:111
-msgid "Show translated"
-msgstr "번역 보기"
 
 #: src/widgets/setup/ui/PluginShelf/ConnectorsTab.tsx:91
 msgid "Sign in"
@@ -2134,7 +2138,7 @@ msgstr "일은 CLI가 하고, Zetrem은 그걸 보여줍니다. 무엇을 시켰
 msgid "The empty folder is removed from the library."
 msgstr "빈 폴더가 라이브러리에서 지워집니다."
 
-#: src/widgets/setup/ui/MemoryField/MemoryField.tsx:132
+#: src/widgets/setup/ui/MemoryField/MemoryField.tsx:150
 msgid "The file is deleted and its line leaves the index the agents load. This cannot be undone."
 msgstr "파일이 삭제되고 에이전트가 로드하는 색인에서도 빠집니다. 되돌릴 수 없어요."
 
@@ -2354,6 +2358,7 @@ msgstr "{addressee}에게"
 msgid "To library"
 msgstr "라이브러리에"
 
+#: src/widgets/setup/ui/MemoryField/MemoryField.tsx:64
 #: src/widgets/team-sidebar/lib/chat-groups/chat-groups.ts:9
 msgid "Today"
 msgstr "오늘"
@@ -2369,10 +2374,6 @@ msgstr "도구"
 #: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:173
 msgid "Tools"
 msgstr "도구"
-
-#: src/widgets/setup/ui/MemoryField/MemoryField.tsx:109
-msgid "Translating…"
-msgstr "번역 중…"
 
 #: src/entities/teammate/ui/StockList/StockList.tsx:31
 msgid "Turn on to let the team call {name}"
@@ -2457,7 +2458,7 @@ msgstr "주간 초과분"
 msgid "What should they work on?"
 msgstr "무슨 일을 맡길까요?"
 
-#: src/widgets/setup/ui/MemoryField/MemoryField.tsx:159
+#: src/widgets/setup/ui/MemoryField/MemoryField.tsx:182
 msgid "What the agents write down about this project shows up here, and is loaded into every new session."
 msgstr "에이전트가 이 프로젝트에 대해 기록한 내용이 여기에 보이고, 새 세션마다 로드됩니다."
 
@@ -2549,6 +2550,7 @@ msgstr "쓰는 중"
 msgid "yesterday"
 msgstr "어제"
 
+#: src/widgets/setup/ui/MemoryField/MemoryField.tsx:65
 #: src/widgets/team-sidebar/lib/chat-groups/chat-groups.ts:10
 msgid "Yesterday"
 msgstr "어제"

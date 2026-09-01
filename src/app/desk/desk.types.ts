@@ -151,7 +151,6 @@ export type Invokes = {
   'memory:read': (id: string) => Outcome<MemoryNote>
   'memory:write': (id: string, body: string, description: string) => Outcome<null>
   'memory:remove': (id: string) => Outcome<null>
-  'memory:translate': (id: string, tongue: string) => Outcome<{ description: string; body: string }>
 
   'updater:state': () => string | null
   'updater:restart': () => void

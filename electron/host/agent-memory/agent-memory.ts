@@ -1,4 +1,4 @@
-import { readFile, readdir, rm, writeFile } from 'node:fs/promises'
+import { readFile, readdir, rm, stat, writeFile } from 'node:fs/promises'
 import { homedir } from 'node:os'
 import { join } from 'node:path'
 import type { MemoryEntry, MemoryNote } from '@/entities/agent-memory/model/note'
@@ -7,7 +7,6 @@ import type { Outcome } from '@/shared/lib/outcome/outcome.types'
 import { handle } from '../../ipc/ipc'
 import { recallProject } from '../../store/project-memory/project-memory'
 import type { MemoryDeps } from './agent-memory.types'
-import { runTranslatePrompt, translateNote } from './memory-translate/memory-translate'
 
 // Claude Code names a project's folder by its absolute path with every
 // character outside [A-Za-z0-9-] turned into a dash, one for one (measured
@@ -102,14 +101,20 @@ export async function listMemory(deps: MemoryDeps): Promise<Outcome<MemoryEntry[
   const names = await readdir(dir.value).catch(() => [] as string[])
   const out: MemoryEntry[] = []
   for (const name of names.filter(isNoteId).sort()) {
-    const body = await readFile(join(dir.value, name), 'utf8').catch(() => null)
+    const path = join(dir.value, name)
+    const body = await readFile(path, 'utf8').catch(() => null)
     if (body === null) continue
     const front = frontOf(body)
+    const updated = await stat(path).then(
+      (found) => found.mtimeMs,
+      () => 0,
+    )
     out.push({
       id: name,
       name: front.name.length > 0 ? front.name : name.replace(/\.md$/, ''),
       description: front.description,
       kind: front.kind,
+      updated,
     })
   }
   return won(out)
@@ -177,9 +182,4 @@ export function registerAgentMemory(): void {
     writeMemory(deps, id, body, description),
   )
   handle('memory:remove', (_event, id) => removeMemory(deps, id))
-  handle('memory:translate', async (_event, id, tongue) => {
-    const read = await readMemory(deps, id)
-    if (!read.ok) return read
-    return translateNote(read.value, tongue, runTranslatePrompt)
-  })
 }

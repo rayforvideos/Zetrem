@@ -5,6 +5,8 @@ export type MemoryEntry = {
   name: string
   description: string
   kind: string
+  // Last write to the file, in epoch milliseconds.
+  updated: number
 }
 
 // A note opened for editing: the frontmatter stays behind the curtain, so

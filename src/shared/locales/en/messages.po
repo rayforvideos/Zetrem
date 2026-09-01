@@ -78,8 +78,8 @@ msgstr "{0} left"
 msgid "{0} limit{share} resets {when}{overage}"
 msgstr "{0} limit{share} resets {when}{overage}"
 
-#. placeholder {0}: memory.entries.length
-#: src/widgets/setup/ui/MemoryField/MemoryField.tsx:158
+#. placeholder {0}: entries.length
+#: src/widgets/setup/ui/MemoryField/MemoryField.tsx:181
 msgid "{0} memories about this project. Each one is loaded into every new session."
 msgstr "{0} memories about this project. Each one is loaded into every new session."
 
@@ -137,6 +137,10 @@ msgstr "{base}. Earlier turns live on as a summary."
 #: src/entities/claude-cli/api/aside/aside.ts:23
 msgid "{from} declined this, so {to} took it"
 msgstr "{from} declined this, so {to} took it"
+
+#: src/widgets/setup/ui/MemoryField/MemoryField.tsx:66
+msgid "{gap} days ago"
+msgstr "{gap} days ago"
 
 #: src/widgets/conversation/lib/limits/limits.ts:10
 msgid "{held, plural, one {# line} other {# lines}}"
@@ -353,7 +357,7 @@ msgstr "A tool"
 msgid "About the library"
 msgstr "About the library"
 
-#: src/widgets/setup/ui/MemoryField/MemoryField.tsx:26
+#: src/widgets/setup/ui/MemoryField/MemoryField.tsx:29
 msgid "About you"
 msgstr "About you"
 
@@ -406,7 +410,7 @@ msgstr "Add your first teammate"
 msgid "Added {name}. Sign in if it asks."
 msgstr "Added {name}. Sign in if it asks."
 
-#: src/widgets/setup/ui/MemoryField/MemoryField.tsx:155
+#: src/widgets/setup/ui/MemoryField/MemoryField.tsx:178
 msgid "Agent memory"
 msgstr "Agent memory"
 
@@ -425,6 +429,10 @@ msgstr "Agents search the library and file what they learn. Click to turn it off
 #: src/widgets/conversation/ui/Composer/Composer.tsx:187
 msgid "Agents work without the library. Click to turn it on."
 msgstr "Agents work without the library. Click to turn it on."
+
+#: src/widgets/setup/ui/MemoryField/MemoryField.tsx:201
+msgid "All"
+msgstr "All"
 
 #. placeholder {0}: n(reached)
 #: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:144
@@ -499,7 +507,7 @@ msgstr "Auto-edit"
 msgid "Awaiting approval"
 msgstr "Awaiting approval"
 
-#: src/widgets/setup/ui/MemoryField/MemoryField.tsx:58
+#: src/widgets/setup/ui/MemoryField/MemoryField.tsx:103
 #: src/widgets/welcome/ui/WelcomePane/WelcomePane.tsx:128
 msgid "Back"
 msgstr "Back"
@@ -519,6 +527,10 @@ msgstr "Billing refused the request"
 #: src/pages/workspace/model/extensions/useConnectors.ts:95
 msgid "Brought over what Claude Desktop had."
 msgstr "Brought over what Claude Desktop had."
+
+#: src/widgets/setup/ui/MemoryField/MemoryField.tsx:218
+msgid "By name"
+msgstr "By name"
 
 #: src/widgets/setup/ui/PluginShelf/ConnectorsTab.tsx:32
 msgid "Can't connect"
@@ -717,11 +729,11 @@ msgstr "Could not pick that conversation back up. Starting a new one."
 msgid "Could not reach {0}"
 msgstr "Could not reach {0}"
 
-#: src/widgets/setup/model/useAgentMemory.ts:81
+#: src/widgets/setup/model/useAgentMemory.ts:71
 msgid "Could not read that memory"
 msgstr "Could not read that memory"
 
-#: src/widgets/setup/model/useAgentMemory.ts:54
+#: src/widgets/setup/model/useAgentMemory.ts:44
 msgid "Could not read the memory folder"
 msgstr "Could not read the memory folder"
 
@@ -763,7 +775,7 @@ msgstr "Could not read your settings"
 msgid "Could not read your sign-in"
 msgstr "Could not read your sign-in"
 
-#: src/widgets/setup/model/useAgentMemory.ts:132
+#: src/widgets/setup/model/useAgentMemory.ts:120
 msgid "Could not remove that memory"
 msgstr "Could not remove that memory"
 
@@ -783,7 +795,7 @@ msgstr "Could not rename that chat"
 msgid "Could not reopen your last project"
 msgstr "Could not reopen your last project"
 
-#: src/widgets/setup/model/useAgentMemory.ts:115
+#: src/widgets/setup/model/useAgentMemory.ts:103
 msgid "Could not save that memory"
 msgstr "Could not save that memory"
 
@@ -807,10 +819,6 @@ msgstr "Could not start the update"
 #: src/pages/workspace/model/account/useAuth.ts:133
 msgid "Could not switch accounts."
 msgstr "Could not switch accounts."
-
-#: src/widgets/setup/model/useAgentMemory.ts:158
-msgid "Could not translate that memory"
-msgstr "Could not translate that memory"
 
 #: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:343
 msgid "Create"
@@ -861,7 +869,7 @@ msgstr "Delete the note “{0}”?"
 msgid "Deny"
 msgstr "Deny"
 
-#: src/widgets/setup/ui/MemoryField/MemoryField.tsx:69
+#: src/widgets/setup/ui/MemoryField/MemoryField.tsx:112
 msgid "Description"
 msgstr "Description"
 
@@ -975,7 +983,7 @@ msgstr "Failed"
 msgid "Fast and cheap. Good for quick questions"
 msgstr "Fast and cheap. Good for quick questions"
 
-#: src/widgets/setup/ui/MemoryField/MemoryField.tsx:25
+#: src/widgets/setup/ui/MemoryField/MemoryField.tsx:28
 msgid "Feedback"
 msgstr "Feedback"
 
@@ -1040,12 +1048,12 @@ msgstr "Follows your account setting"
 msgid "Follows your Claude Code setting"
 msgstr "Follows your Claude Code setting"
 
-#: src/widgets/setup/ui/MemoryField/MemoryField.tsx:121
-#: src/widgets/setup/ui/MemoryField/MemoryField.tsx:143
+#: src/widgets/setup/ui/MemoryField/MemoryField.tsx:139
+#: src/widgets/setup/ui/MemoryField/MemoryField.tsx:161
 msgid "Forget"
 msgstr "Forget"
 
-#: src/widgets/setup/ui/MemoryField/MemoryField.tsx:130
+#: src/widgets/setup/ui/MemoryField/MemoryField.tsx:148
 msgid "Forget this memory?"
 msgstr "Forget this memory?"
 
@@ -1195,7 +1203,7 @@ msgid "Keep in"
 msgstr "Keep in"
 
 #: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:230
-#: src/widgets/setup/ui/MemoryField/MemoryField.tsx:136
+#: src/widgets/setup/ui/MemoryField/MemoryField.tsx:154
 msgid "Keep it"
 msgstr "Keep it"
 
@@ -1273,7 +1281,7 @@ msgstr "Medium"
 msgid "Memory"
 msgstr "Memory"
 
-#: src/widgets/setup/ui/MemoryField/MemoryField.tsx:76
+#: src/widgets/setup/ui/MemoryField/MemoryField.tsx:119
 msgid "Memory body"
 msgstr "Memory body"
 
@@ -1434,7 +1442,7 @@ msgstr "Nothing matches “{needle}”."
 msgid "Nothing of this work is left to find: {0}"
 msgstr "Nothing of this work is left to find: {0}"
 
-#: src/widgets/setup/ui/MemoryField/MemoryField.tsx:163
+#: src/widgets/setup/ui/MemoryField/MemoryField.tsx:186
 msgid "Nothing remembered for this project yet."
 msgstr "Nothing remembered for this project yet."
 
@@ -1467,7 +1475,7 @@ msgstr "on overage"
 msgid "On your own"
 msgstr "On your own"
 
-#: src/widgets/setup/ui/MemoryField/MemoryField.tsx:68
+#: src/widgets/setup/ui/MemoryField/MemoryField.tsx:111
 msgid "One line the agent reads to decide whether this matters"
 msgstr "One line the agent reads to decide whether this matters"
 
@@ -1553,7 +1561,7 @@ msgstr "Previous 30 days"
 msgid "Previous 7 days"
 msgstr "Previous 7 days"
 
-#: src/widgets/setup/ui/MemoryField/MemoryField.tsx:24
+#: src/widgets/setup/ui/MemoryField/MemoryField.tsx:27
 #: src/widgets/setup/ui/ProjectField/ProjectField.tsx:9
 msgid "Project"
 msgstr "Project"
@@ -1624,11 +1632,15 @@ msgstr "Reading which agents Claude Code brings. They will be listed here."
 msgid "Recent"
 msgstr "Recent"
 
+#: src/widgets/setup/ui/MemoryField/MemoryField.tsx:218
+msgid "Recent first"
+msgstr "Recent first"
+
 #: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:131
 msgid "Recheck"
 msgstr "Recheck"
 
-#: src/widgets/setup/ui/MemoryField/MemoryField.tsx:27
+#: src/widgets/setup/ui/MemoryField/MemoryField.tsx:30
 msgid "Reference"
 msgstr "Reference"
 
@@ -1759,12 +1771,12 @@ msgstr "Running"
 msgid "Same as the session"
 msgstr "Same as the session"
 
-#: src/widgets/setup/ui/MemoryField/MemoryField.tsx:97
+#: src/widgets/setup/ui/MemoryField/MemoryField.tsx:130
 #: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:343
 msgid "Save"
 msgstr "Save"
 
-#: src/widgets/setup/model/useAgentMemory.ts:118
+#: src/widgets/setup/model/useAgentMemory.ts:106
 msgid "Saved"
 msgstr "Saved"
 
@@ -1867,17 +1879,9 @@ msgstr "share unknown"
 msgid "Shift+Enter starts a new line. Off, sending takes the modifier key with Enter."
 msgstr "Shift+Enter starts a new line. Off, sending takes the modifier key with Enter."
 
-#: src/widgets/setup/ui/MemoryField/MemoryField.tsx:112
-msgid "Show original"
-msgstr "Show original"
-
 #: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:148
 msgid "Show team sidebar"
 msgstr "Show team sidebar"
-
-#: src/widgets/setup/ui/MemoryField/MemoryField.tsx:111
-msgid "Show translated"
-msgstr "Show translated"
 
 #: src/widgets/setup/ui/PluginShelf/ConnectorsTab.tsx:91
 msgid "Sign in"
@@ -2134,7 +2138,7 @@ msgstr "The CLI does the work. Zetrem shows it as it happens: what you asked for
 msgid "The empty folder is removed from the library."
 msgstr "The empty folder is removed from the library."
 
-#: src/widgets/setup/ui/MemoryField/MemoryField.tsx:132
+#: src/widgets/setup/ui/MemoryField/MemoryField.tsx:150
 msgid "The file is deleted and its line leaves the index the agents load. This cannot be undone."
 msgstr "The file is deleted and its line leaves the index the agents load. This cannot be undone."
 
@@ -2354,6 +2358,7 @@ msgstr "To {addressee}"
 msgid "To library"
 msgstr "To library"
 
+#: src/widgets/setup/ui/MemoryField/MemoryField.tsx:64
 #: src/widgets/team-sidebar/lib/chat-groups/chat-groups.ts:9
 msgid "Today"
 msgstr "Today"
@@ -2369,10 +2374,6 @@ msgstr "tool"
 #: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:173
 msgid "Tools"
 msgstr "Tools"
-
-#: src/widgets/setup/ui/MemoryField/MemoryField.tsx:109
-msgid "Translating…"
-msgstr "Translating…"
 
 #: src/entities/teammate/ui/StockList/StockList.tsx:31
 msgid "Turn on to let the team call {name}"
@@ -2457,7 +2458,7 @@ msgstr "Weekly overage"
 msgid "What should they work on?"
 msgstr "What should they work on?"
 
-#: src/widgets/setup/ui/MemoryField/MemoryField.tsx:159
+#: src/widgets/setup/ui/MemoryField/MemoryField.tsx:182
 msgid "What the agents write down about this project shows up here, and is loaded into every new session."
 msgstr "What the agents write down about this project shows up here, and is loaded into every new session."
 
@@ -2549,6 +2550,7 @@ msgstr "Writing"
 msgid "yesterday"
 msgstr "yesterday"
 
+#: src/widgets/setup/ui/MemoryField/MemoryField.tsx:65
 #: src/widgets/team-sidebar/lib/chat-groups/chat-groups.ts:10
 msgid "Yesterday"
 msgstr "Yesterday"

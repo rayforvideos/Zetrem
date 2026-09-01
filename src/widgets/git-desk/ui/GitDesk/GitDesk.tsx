@@ -17,8 +17,7 @@ import {
 import type { GitFile, GitStat, ShownFile } from '@/entities/git/model/repo'
 import { CHROME_TOP } from '@/shared/config/theme'
 import { cn } from '@/shared/lib/cn'
-import { diffRows } from '@/shared/lib/diff/diff'
-import type { DiffTone } from '@/shared/lib/diff/diff.types'
+import { diffHunks } from '@/shared/lib/hunks/hunks'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -37,13 +36,6 @@ import { Textarea } from '@/shared/ui/textarea'
 import { laneRows } from '../../lib/graph/graph'
 import type { LaneRow } from '../../lib/graph/graph.types'
 import { useGitDesk } from '../../model/useGitDesk'
-
-const TONE: Record<DiffTone, string> = {
-  added: 'text-added',
-  removed: 'text-removed',
-  meta: 'text-muted-foreground',
-  plain: '',
-}
 
 const ROW_H = 36
 const LANE_W = 18
@@ -187,11 +179,13 @@ function FileRow({
   path,
   sign,
   lead,
+  active = false,
   onShow,
 }: {
   path: string
   sign: string
   lead?: ReactNode
+  active?: boolean
   onShow(): void
 }) {
   return (
@@ -201,7 +195,11 @@ function FileRow({
         variant="ghost"
         size="xs"
         onClick={onShow}
-        className="h-auto min-w-0 flex-1 justify-start gap-2 rounded-lg px-1.5 py-1 font-normal"
+        aria-pressed={active}
+        className={cn(
+          'h-auto min-w-0 flex-1 justify-start gap-2 rounded-lg px-1.5 py-1 font-normal',
+          active && 'bg-accent',
+        )}
       >
         <span className="min-w-0 flex-1 truncate text-left font-mono text-xs">{path}</span>
         <span className="flex-none font-mono text-muted-foreground text-xs">{sign}</span>
@@ -440,181 +438,216 @@ export function GitDesk({ project }: { project: string | null }) {
               <p className="p-6 text-muted-foreground text-sm">{t`This project is not a git repository.`}</p>
             ) : (
               <div className="flex min-h-0 flex-1">
-                <div className="flex min-w-0 flex-1 flex-col">
-                  <div className="flex flex-none items-center gap-3 border-border border-b px-4 py-1.5">
-                    <span className={cn(REFS_COL, 'text-right')}>
-                      <ColumnHead>{t`Branch / tag`}</ColumnHead>
-                    </span>
-                    <span
-                      className="flex-none"
-                      style={{ width: (rows[0]?.row.width ?? 1) * LANE_W + 4 }}
+                {git.diff !== null ? (
+                  // The code takes the whole main area: a 380px side panel cuts
+                  // every line of source; the file list stays on the right.
+                  <div className="flex min-w-0 flex-1 flex-col gap-3 p-4" data-git-diff>
+                    <div className="flex flex-none items-center gap-2">
+                      <Button
+                        variant="outline"
+                        size="xs"
+                        onClick={git.closeDiff}
+                        className="rounded-lg"
+                      >
+                        <ArrowLeft />
+                        {t`Back`}
+                      </Button>
+                      <span className="min-w-0 flex-1 truncate font-mono text-xs">
+                        {git.diff.path}
+                      </span>
+                    </div>
+                    <div
+                      data-selectable
+                      className="zt-scroll min-h-0 flex-1 overflow-auto rounded-lg border border-border bg-card py-1 font-mono text-xs leading-relaxed"
                     >
-                      <ColumnHead>{t`Graph`}</ColumnHead>
-                    </span>
-                    <span className="min-w-16 flex-1">
-                      <ColumnHead>{t`Commit message`}</ColumnHead>
-                    </span>
-                    <span className={CHANGES_COL}>
-                      <ColumnHead>{t`Changes`}</ColumnHead>
-                    </span>
-                    <span className={AUTHOR_COL}>
-                      <ColumnHead>{t`Author`}</ColumnHead>
-                    </span>
-                    <span className={SHA_COL}>
-                      <ColumnHead>{t`Commit`}</ColumnHead>
-                    </span>
-                    <span className={WHEN_COL} />
-                  </div>
-                  {!git.ready ? (
-                    <ul className="flex-1 animate-pulse py-1" data-git-loading>
-                      {['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n'].map(
-                        (slot, at) => (
-                          <li
-                            key={slot}
-                            className="flex items-center gap-3 px-4"
-                            style={{ height: ROW_H }}
-                          >
-                            <span className={REFS_COL} />
-                            <span className="size-4 flex-none rounded-full bg-muted" />
-                            <span
-                              className="h-3 rounded bg-muted"
-                              style={{ width: `${30 + ((at * 23) % 45)}%` }}
-                            />
-                          </li>
-                        ),
-                      )}
-                    </ul>
-                  ) : rows.length === 0 ? (
-                    <p className="p-6 text-muted-foreground text-sm">
-                      {t`No commits here yet. The graph starts with the first one.`}
-                    </p>
-                  ) : (
-                    <ul className="zt-scroll min-w-0 flex-1 overflow-y-auto py-1" data-git-graph>
-                      {rows.map(({ row, commit }) => {
-                        const wip = commit === null
-                        const chosen = wip ? git.pick.kind === 'wip' : picked === commit.sha
-                        const spare = wip ? [] : commit.refs
-                        return (
-                          <li key={row.sha}>
-                            <Button
-                              variant="ghost"
-                              size="bare"
-                              onClick={() => (wip ? git.pickWip() : git.pickCommit(commit.sha))}
-                              aria-pressed={chosen}
+                      {diffHunks(git.diff.text).map((hunk, at) => (
+                        <div key={hunk.header.length > 0 ? hunk.header : `hunk-${at * 2}`}>
+                          {hunk.header.length > 0 && (
+                            <div className="w-max min-w-full select-none border-border/60 border-y bg-muted/40 px-3 py-1 text-muted-foreground">
+                              {hunk.header}
+                            </div>
+                          )}
+                          {hunk.lines.map((row) => (
+                            <div
+                              key={`${row.oldNo ?? ''}:${row.newNo ?? ''}`}
                               className={cn(
-                                'flex w-full items-center gap-3 rounded-none px-4 font-normal',
-                                chosen && 'bg-accent',
+                                'flex w-max min-w-full',
+                                row.kind === 'added' && 'bg-added-surface',
+                                row.kind === 'removed' && 'bg-removed-surface',
                               )}
-                              style={{ height: ROW_H }}
-                              data-git-row={row.sha}
                             >
+                              <span className="w-10 flex-none select-none pr-2 text-right text-muted-foreground">
+                                {row.oldNo}
+                              </span>
+                              <span className="w-10 flex-none select-none pr-2 text-right text-muted-foreground">
+                                {row.newNo}
+                              </span>
                               <span
                                 className={cn(
-                                  REFS_COL,
-                                  'flex items-center justify-end gap-1 overflow-hidden',
+                                  'w-5 flex-none select-none text-center',
+                                  row.kind === 'added' && 'text-added',
+                                  row.kind === 'removed' && 'text-removed',
                                 )}
                               >
-                                {spare.slice(0, 2).map((name) => (
-                                  <RefPill key={name} name={name} lane={row.lane} />
-                                ))}
-                                {spare.length > 2 && (
-                                  <span
-                                    className="flex-none rounded-md px-1.5 py-0.5 font-medium font-mono text-xs text-background leading-none"
-                                    style={{ backgroundColor: laneColor(row.lane) }}
-                                    title={spare.slice(2).join(', ')}
-                                  >
-                                    +{spare.length - 2}
-                                  </span>
-                                )}
+                                {row.kind === 'added' ? '+' : row.kind === 'removed' ? '-' : ''}
                               </span>
-                              <RowLines
-                                row={row}
-                                wip={wip}
-                                initial={wip ? '' : (commit.author[0]?.toUpperCase() ?? '·')}
+                              <span className="flex-1 whitespace-pre pr-3">{row.text}</span>
+                            </div>
+                          ))}
+                        </div>
+                      ))}
+                      {git.diff.text.length === 0 && (
+                        <p className="px-3 py-1 text-muted-foreground">{t`Nothing differs on this side.`}</p>
+                      )}
+                    </div>
+                  </div>
+                ) : (
+                  <div className="flex min-w-0 flex-1 flex-col">
+                    <div className="flex flex-none items-center gap-3 border-border border-b px-4 py-1.5">
+                      <span className={cn(REFS_COL, 'text-right')}>
+                        <ColumnHead>{t`Branch / tag`}</ColumnHead>
+                      </span>
+                      <span
+                        className="flex-none"
+                        style={{ width: (rows[0]?.row.width ?? 1) * LANE_W + 4 }}
+                      >
+                        <ColumnHead>{t`Graph`}</ColumnHead>
+                      </span>
+                      <span className="min-w-16 flex-1">
+                        <ColumnHead>{t`Commit message`}</ColumnHead>
+                      </span>
+                      <span className={CHANGES_COL}>
+                        <ColumnHead>{t`Changes`}</ColumnHead>
+                      </span>
+                      <span className={AUTHOR_COL}>
+                        <ColumnHead>{t`Author`}</ColumnHead>
+                      </span>
+                      <span className={SHA_COL}>
+                        <ColumnHead>{t`Commit`}</ColumnHead>
+                      </span>
+                      <span className={WHEN_COL} />
+                    </div>
+                    {!git.ready ? (
+                      <ul className="flex-1 animate-pulse py-1" data-git-loading>
+                        {['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n'].map(
+                          (slot, at) => (
+                            <li
+                              key={slot}
+                              className="flex items-center gap-3 px-4"
+                              style={{ height: ROW_H }}
+                            >
+                              <span className={REFS_COL} />
+                              <span className="size-4 flex-none rounded-full bg-muted" />
+                              <span
+                                className="h-3 rounded bg-muted"
+                                style={{ width: `${30 + ((at * 23) % 45)}%` }}
                               />
-                              {wip ? (
-                                <span className="min-w-0 flex-1 truncate text-left text-muted-foreground text-sm italic">
-                                  {t`Uncommitted changes`}
-                                  {git.status !== null && ` · ${git.status.files.length}`}
+                            </li>
+                          ),
+                        )}
+                      </ul>
+                    ) : rows.length === 0 ? (
+                      <p className="p-6 text-muted-foreground text-sm">
+                        {t`No commits here yet. The graph starts with the first one.`}
+                      </p>
+                    ) : (
+                      <ul className="zt-scroll min-w-0 flex-1 overflow-y-auto py-1" data-git-graph>
+                        {rows.map(({ row, commit }) => {
+                          const wip = commit === null
+                          const chosen = wip ? git.pick.kind === 'wip' : picked === commit.sha
+                          const spare = wip ? [] : commit.refs
+                          return (
+                            <li key={row.sha}>
+                              <Button
+                                variant="ghost"
+                                size="bare"
+                                onClick={() => (wip ? git.pickWip() : git.pickCommit(commit.sha))}
+                                aria-pressed={chosen}
+                                className={cn(
+                                  'flex w-full items-center gap-3 rounded-none px-4 font-normal',
+                                  chosen && 'bg-accent',
+                                )}
+                                style={{ height: ROW_H }}
+                                data-git-row={row.sha}
+                              >
+                                <span
+                                  className={cn(
+                                    REFS_COL,
+                                    'flex items-center justify-end gap-1 overflow-hidden',
+                                  )}
+                                >
+                                  {spare.slice(0, 2).map((name) => (
+                                    <RefPill key={name} name={name} lane={row.lane} />
+                                  ))}
+                                  {spare.length > 2 && (
+                                    <span
+                                      className="flex-none rounded-md px-1.5 py-0.5 font-medium font-mono text-xs text-background leading-none"
+                                      style={{ backgroundColor: laneColor(row.lane) }}
+                                      title={spare.slice(2).join(', ')}
+                                    >
+                                      +{spare.length - 2}
+                                    </span>
+                                  )}
                                 </span>
-                              ) : (
-                                <>
-                                  <span
-                                    className="min-w-16 flex-1 truncate text-left text-sm"
-                                    title={commit.subject}
-                                  >
-                                    {commit.subject}
+                                <RowLines
+                                  row={row}
+                                  wip={wip}
+                                  initial={wip ? '' : (commit.author[0]?.toUpperCase() ?? '·')}
+                                />
+                                {wip ? (
+                                  <span className="min-w-0 flex-1 truncate text-left text-muted-foreground text-sm italic">
+                                    {t`Uncommitted changes`}
+                                    {git.status !== null && ` · ${git.status.files.length}`}
                                   </span>
-                                  <span className={CHANGES_COL}>
-                                    <ChangeBar stat={commit.stat} />
-                                  </span>
-                                  <span
-                                    className={cn(
-                                      AUTHOR_COL,
-                                      'truncate text-left text-muted-foreground text-xs',
-                                    )}
-                                    title={commit.author}
-                                  >
-                                    {commit.author}
-                                  </span>
-                                  <span
-                                    className={cn(
-                                      SHA_COL,
-                                      'text-left font-mono text-muted-foreground text-xs',
-                                    )}
-                                  >
-                                    {commit.short}
-                                  </span>
-                                  <span
-                                    className={cn(
-                                      WHEN_COL,
-                                      'text-right text-muted-foreground text-xs tabular-nums',
-                                    )}
-                                  >
-                                    {whenLabel(commit.at)}
-                                  </span>
-                                </>
-                              )}
-                            </Button>
-                          </li>
-                        )
-                      })}
-                    </ul>
-                  )}
-                </div>
+                                ) : (
+                                  <>
+                                    <span
+                                      className="min-w-16 flex-1 truncate text-left text-sm"
+                                      title={commit.subject}
+                                    >
+                                      {commit.subject}
+                                    </span>
+                                    <span className={CHANGES_COL}>
+                                      <ChangeBar stat={commit.stat} />
+                                    </span>
+                                    <span
+                                      className={cn(
+                                        AUTHOR_COL,
+                                        'truncate text-left text-muted-foreground text-xs',
+                                      )}
+                                      title={commit.author}
+                                    >
+                                      {commit.author}
+                                    </span>
+                                    <span
+                                      className={cn(
+                                        SHA_COL,
+                                        'text-left font-mono text-muted-foreground text-xs',
+                                      )}
+                                    >
+                                      {commit.short}
+                                    </span>
+                                    <span
+                                      className={cn(
+                                        WHEN_COL,
+                                        'text-right text-muted-foreground text-xs tabular-nums',
+                                      )}
+                                    >
+                                      {whenLabel(commit.at)}
+                                    </span>
+                                  </>
+                                )}
+                              </Button>
+                            </li>
+                          )
+                        })}
+                      </ul>
+                    )}
+                  </div>
+                )}
 
                 <div className="flex w-80 flex-none flex-col gap-3 border-border border-l p-4 xl:w-96">
-                  {git.diff !== null ? (
-                    <>
-                      <div className="flex flex-none items-center gap-2">
-                        <Button
-                          variant="outline"
-                          size="xs"
-                          onClick={git.closeDiff}
-                          className="rounded-lg"
-                        >
-                          <ArrowLeft />
-                          {t`Back`}
-                        </Button>
-                        <span className="min-w-0 flex-1 truncate font-mono text-xs">
-                          {git.diff.path}
-                        </span>
-                      </div>
-                      <pre
-                        data-selectable
-                        className="zt-scroll min-h-0 flex-1 overflow-auto rounded-lg border border-border bg-card p-3 font-mono text-xs"
-                      >
-                        {diffRows(git.diff.text).map((line) => (
-                          <span key={line.key} className={cn('block', TONE[line.tone])}>
-                            {line.text}
-                          </span>
-                        ))}
-                        {git.diff.text.length === 0 && (
-                          <span className="text-muted-foreground">{t`Nothing differs on this side.`}</span>
-                        )}
-                      </pre>
-                    </>
-                  ) : git.pick.kind === 'wip' ? (
+                  {git.pick.kind === 'wip' ? (
                     <>
                       <h3 className="flex-none text-muted-foreground text-xs tracking-[0.08em]">
                         {t`Changes`}
@@ -628,6 +661,7 @@ export function GitDesk({ project }: { project: string | null }) {
                               key={file.path}
                               path={file.path}
                               sign={file.sign}
+                              active={git.diff?.path === file.path}
                               lead={
                                 <StageMark
                                   file={file}
@@ -688,6 +722,7 @@ export function GitDesk({ project }: { project: string | null }) {
                             key={file.path}
                             path={file.path}
                             sign={file.sign}
+                            active={git.diff?.path === file.path}
                             onShow={() => git.showCommitDiff(file)}
                           />
                         ))}

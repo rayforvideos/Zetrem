@@ -494,7 +494,7 @@ msgstr "Attach"
 msgid "Attach a file"
 msgstr "Attach a file"
 
-#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:461
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:523
 msgid "Author"
 msgstr "Author"
 
@@ -511,7 +511,7 @@ msgstr "Auto-edit"
 msgid "Awaiting approval"
 msgstr "Awaiting approval"
 
-#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:597
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:453
 #: src/widgets/setup/ui/MemoryField/MemoryField.tsx:103
 #: src/widgets/welcome/ui/WelcomePane/WelcomePane.tsx:128
 msgid "Back"
@@ -529,11 +529,11 @@ msgstr "Big job? Split it. They like company."
 msgid "Billing refused the request"
 msgstr "Billing refused the request"
 
-#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:446
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:508
 msgid "Branch / tag"
 msgstr "Branch / tag"
 
-#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:332
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:330
 msgid "Branches, changes, commits"
 msgstr "Branches, changes, commits"
 
@@ -575,8 +575,8 @@ msgstr "Change"
 msgid "Change account, project, and permissions"
 msgstr "Change account, project, and permissions"
 
-#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:458
-#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:620
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:520
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:653
 msgid "Changes"
 msgstr "Changes"
 
@@ -637,7 +637,7 @@ msgid "Clear"
 msgstr "Clear"
 
 #: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:115
-#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:432
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:430
 msgid "Close"
 msgstr "Close"
 
@@ -654,17 +654,17 @@ msgstr "Close report"
 msgid "Close this tile. The run stays in the sidebar."
 msgstr "Close this tile. The run stays in the sidebar."
 
-#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:464
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:526
 msgid "Commit"
 msgstr "Commit"
 
-#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:455
-#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:646
-#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:647
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:517
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:680
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:681
 msgid "Commit message"
 msgstr "Commit message"
 
-#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:658
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:692
 msgid "Commit staged files"
 msgstr "Commit staged files"
 
@@ -857,7 +857,7 @@ msgstr "Could not start the update"
 msgid "Could not switch accounts."
 msgstr "Could not switch accounts."
 
-#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:385
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:383
 #: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:343
 msgid "Create"
 msgstr "Create"
@@ -1042,7 +1042,7 @@ msgstr "Filed by an agent"
 msgid "Filed to the library · {0}"
 msgstr "Filed to the library · {0}"
 
-#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:683
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:717
 msgid "Files in this commit"
 msgstr "Files in this commit"
 
@@ -1145,7 +1145,7 @@ msgstr "Give them a name, say when to call them, and write their instructions. T
 msgid "Give them a task"
 msgstr "Give them a task"
 
-#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:452
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:514
 msgid "Graph"
 msgstr "Graph"
 
@@ -1402,8 +1402,8 @@ msgstr "Never mind"
 msgid "New"
 msgstr "New"
 
-#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:370
-#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:371
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:368
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:369
 msgid "New branch name"
 msgstr "New branch name"
 
@@ -1444,7 +1444,7 @@ msgstr "No account limits reported"
 msgid "No chat by that name"
 msgstr "No chat by that name"
 
-#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:489
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:551
 msgid "No commits here yet. The graph starts with the first one."
 msgstr "No commits here yet. The graph starts with the first one."
 
@@ -1480,11 +1480,11 @@ msgstr "Not known yet"
 msgid "Not now"
 msgstr "Not now"
 
-#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:613
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:500
 msgid "Nothing differs on this side."
 msgstr "Nothing differs on this side."
 
-#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:623
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:656
 msgid "Nothing has changed."
 msgstr "Nothing has changed."
 
@@ -1633,11 +1633,11 @@ msgstr "Previous 7 days"
 msgid "Project"
 msgstr "Project"
 
-#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:400
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:398
 msgid "Pull"
 msgstr "Pull"
 
-#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:413
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:411
 msgid "Push"
 msgstr "Push"
 
@@ -1719,7 +1719,7 @@ msgstr "Recheck"
 msgid "Reference"
 msgstr "Reference"
 
-#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:423
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:421
 #: src/widgets/setup/ui/PluginShelf/SourcesTab.tsx:27
 msgid "Refresh"
 msgstr "Refresh"
@@ -2049,7 +2049,7 @@ msgid "Sources"
 msgstr "Sources"
 
 #. placeholder {0}: file.path
-#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:230
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:228
 msgid "Stage {0}"
 msgstr "Stage {0}"
 
@@ -2070,7 +2070,7 @@ msgstr "Start a conversation from scratch"
 msgid "Starting"
 msgstr "Starting"
 
-#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:714
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:749
 msgid "Stay here"
 msgstr "Stay here"
 
@@ -2117,7 +2117,7 @@ msgstr "Stopped: {subtype}"
 msgid "Stopped: something went wrong"
 msgstr "Stopped: something went wrong"
 
-#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:721
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:756
 msgid "Switch branch"
 msgstr "Switch branch"
 
@@ -2126,7 +2126,7 @@ msgid "Switch the Claude Code login on this computer?"
 msgstr "Switch the Claude Code login on this computer?"
 
 #. placeholder {0}: switching ?? ''
-#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:708
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:743
 msgid "Switch to {0}?"
 msgstr "Switch to {0}?"
 
@@ -2321,7 +2321,7 @@ msgstr "The session is closing: {why}"
 msgid "The team is warm and waiting, {you}."
 msgstr "The team is warm and waiting, {you}."
 
-#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:710
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:745
 msgid "The working tree changes to that branch's files. Uncommitted changes come along if they do not collide."
 msgstr "The working tree changes to that branch's files. Uncommitted changes come along if they do not collide."
 
@@ -2400,7 +2400,7 @@ msgstr "This opens the browser to sign in again for this account. The session ru
 msgid "This project"
 msgstr "This project"
 
-#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:440
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:438
 msgid "This project is not a git repository."
 msgstr "This project is not a git repository."
 
@@ -2481,7 +2481,7 @@ msgstr "Tools"
 msgid "Turn on to let the team call {name}"
 msgstr "Turn on to let the team call {name}"
 
-#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:537
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:599
 msgid "Uncommitted changes"
 msgstr "Uncommitted changes"
 

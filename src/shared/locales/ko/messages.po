@@ -494,7 +494,7 @@ msgstr "첨부"
 msgid "Attach a file"
 msgstr "파일 첨부"
 
-#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:461
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:523
 msgid "Author"
 msgstr "작성자"
 
@@ -511,7 +511,7 @@ msgstr "자동 편집"
 msgid "Awaiting approval"
 msgstr "승인 대기"
 
-#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:597
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:453
 #: src/widgets/setup/ui/MemoryField/MemoryField.tsx:103
 #: src/widgets/welcome/ui/WelcomePane/WelcomePane.tsx:128
 msgid "Back"
@@ -529,11 +529,11 @@ msgstr "일이 크면 나눠서 맡기세요. 여럿이 붙는 걸 좋아합니�
 msgid "Billing refused the request"
 msgstr "결제가 거절됐습니다"
 
-#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:446
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:508
 msgid "Branch / tag"
 msgstr "브랜치 / 태그"
 
-#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:332
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:330
 msgid "Branches, changes, commits"
 msgstr "브랜치, 변경, 커밋"
 
@@ -575,8 +575,8 @@ msgstr "바꾸기"
 msgid "Change account, project, and permissions"
 msgstr "계정과 프로젝트, 권한을 바꿉니다"
 
-#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:458
-#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:620
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:520
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:653
 msgid "Changes"
 msgstr "변경"
 
@@ -637,7 +637,7 @@ msgid "Clear"
 msgstr "지우기"
 
 #: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:115
-#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:432
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:430
 msgid "Close"
 msgstr "닫기"
 
@@ -654,17 +654,17 @@ msgstr "보고서 닫기"
 msgid "Close this tile. The run stays in the sidebar."
 msgstr "이 타일을 닫습니다. 기록은 사이드바에 남습니다."
 
-#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:464
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:526
 msgid "Commit"
 msgstr "커밋"
 
-#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:455
-#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:646
-#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:647
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:517
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:680
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:681
 msgid "Commit message"
 msgstr "커밋 메시지"
 
-#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:658
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:692
 msgid "Commit staged files"
 msgstr "선택한 파일 커밋"
 
@@ -857,7 +857,7 @@ msgstr "업데이트를 시작하지 못했습니다"
 msgid "Could not switch accounts."
 msgstr "계정을 전환하지 못했습니다."
 
-#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:385
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:383
 #: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:343
 msgid "Create"
 msgstr "만들기"
@@ -1042,7 +1042,7 @@ msgstr "에이전트가 남김"
 msgid "Filed to the library · {0}"
 msgstr "라이브러리에 저장됨 · {0}"
 
-#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:683
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:717
 msgid "Files in this commit"
 msgstr "이 커밋의 파일"
 
@@ -1145,7 +1145,7 @@ msgstr "이름을 정하고, 언제 부를지 적고, 지침을 씁니다. 오�
 msgid "Give them a task"
 msgstr "일을 맡기기"
 
-#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:452
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:514
 msgid "Graph"
 msgstr "그래프"
 
@@ -1402,8 +1402,8 @@ msgstr "그만두기"
 msgid "New"
 msgstr "새로 만들기"
 
-#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:370
-#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:371
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:368
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:369
 msgid "New branch name"
 msgstr "새 브랜치 이름"
 
@@ -1444,7 +1444,7 @@ msgstr "계정 한도 정보가 없습니다"
 msgid "No chat by that name"
 msgstr "그런 이름의 대화가 없습니다"
 
-#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:489
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:551
 msgid "No commits here yet. The graph starts with the first one."
 msgstr "아직 커밋이 없습니다. 첫 커밋과 함께 그래프가 시작됩니다."
 
@@ -1480,11 +1480,11 @@ msgstr "아직 모릅니다"
 msgid "Not now"
 msgstr "나중에"
 
-#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:613
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:500
 msgid "Nothing differs on this side."
 msgstr "이 쪽에는 다른 내용이 없습니다."
 
-#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:623
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:656
 msgid "Nothing has changed."
 msgstr "바뀐 것이 없습니다."
 
@@ -1633,11 +1633,11 @@ msgstr "지난 7일"
 msgid "Project"
 msgstr "프로젝트"
 
-#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:400
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:398
 msgid "Pull"
 msgstr "풀"
 
-#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:413
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:411
 msgid "Push"
 msgstr "푸시"
 
@@ -1719,7 +1719,7 @@ msgstr "다시 확인"
 msgid "Reference"
 msgstr "참조"
 
-#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:423
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:421
 #: src/widgets/setup/ui/PluginShelf/SourcesTab.tsx:27
 msgid "Refresh"
 msgstr "새로 고침"
@@ -2049,7 +2049,7 @@ msgid "Sources"
 msgstr "마켓플레이스"
 
 #. placeholder {0}: file.path
-#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:230
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:228
 msgid "Stage {0}"
 msgstr "{0} 스테이지"
 
@@ -2070,7 +2070,7 @@ msgstr "새 대화를 시작합니다"
 msgid "Starting"
 msgstr "시작하는 중"
 
-#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:714
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:749
 msgid "Stay here"
 msgstr "여기 있기"
 
@@ -2117,7 +2117,7 @@ msgstr "멈췄습니다: {subtype}"
 msgid "Stopped: something went wrong"
 msgstr "멈췄습니다: 무언가 잘못됐습니다"
 
-#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:721
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:756
 msgid "Switch branch"
 msgstr "브랜치 전환"
 
@@ -2126,7 +2126,7 @@ msgid "Switch the Claude Code login on this computer?"
 msgstr "이 컴퓨터의 Claude Code 로그인을 바꿀까요?"
 
 #. placeholder {0}: switching ?? ''
-#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:708
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:743
 msgid "Switch to {0}?"
 msgstr "{0}(으)로 전환할까요?"
 
@@ -2321,7 +2321,7 @@ msgstr "세션을 닫는 중입니다: {why}"
 msgid "The team is warm and waiting, {you}."
 msgstr "{you}, 팀은 몸 다 풀고 기다리는 중입니다."
 
-#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:710
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:745
 msgid "The working tree changes to that branch's files. Uncommitted changes come along if they do not collide."
 msgstr "작업 트리가 그 브랜치의 파일로 바뀝니다. 커밋 전 변경사항은 충돌하지 않으면 함께 옮겨집니다."
 
@@ -2400,7 +2400,7 @@ msgstr "브라우저를 열어 이 계정으로 다시 로그인합니다. 여�
 msgid "This project"
 msgstr "이 프로젝트"
 
-#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:440
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:438
 msgid "This project is not a git repository."
 msgstr "이 프로젝트는 git 저장소가 아닙니다."
 
@@ -2481,7 +2481,7 @@ msgstr "도구"
 msgid "Turn on to let the team call {name}"
 msgstr "켜면 팀이 {name}을(를) 부를 수 있습니다"
 
-#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:537
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:599
 msgid "Uncommitted changes"
 msgstr "커밋 전 변경사항"
 

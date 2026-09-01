@@ -16,6 +16,7 @@ const ON_DISK = [
   'electron/cli/login-path/login-path.types.ts',
   'src/entities/library/lib/frontmatter/frontmatter.types.ts',
   'electron/library/library-access/library-access.ts',
+  'electron/library/library-db/library-db.types.ts',
 ]
 
 const WRITERS: Record<string, string> = {

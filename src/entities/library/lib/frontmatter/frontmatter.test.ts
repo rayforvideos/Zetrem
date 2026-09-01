@@ -1,56 +1,41 @@
 import { describe, expect, it } from 'vitest'
-import { parseNote, serializeNote } from './frontmatter'
-import type { NoteMeta } from './frontmatter.types'
+import { parseNote } from './frontmatter'
 
-const META: NoteMeta = {
-  title: '서브에이전트 호출 구조',
-  created: '2026-08-28T01:12:03.000Z',
-  updated: '2026-08-28T01:40:11.000Z',
-  tags: ['cli', 'probe'],
-  source: '',
-  rest: {},
+function headed(lines: string[]): string {
+  return ['---', ...lines, '---', 'First paragraph.', '', 'Second.', ''].join('\n')
 }
 
-describe('a note is frontmatter and a body', () => {
-  it('writes a source line only when someone other than a person left the note', () => {
-    const meta = { title: 'a', created: '', updated: '', tags: [], source: 'agent', rest: {} }
-    expect(serializeNote(meta, 'x')).toContain('source: agent')
-    expect(serializeNote({ ...meta, source: '' }, 'x')).not.toContain('source')
-    expect(parseNote(serializeNote(meta, 'x')).meta?.source).toBe('agent')
-  })
-
-  it('reads back what it wrote', () => {
-    const text = serializeNote(META, 'First paragraph.\n\nSecond.')
-    expect(parseNote(text)).toEqual({ meta: META, body: 'First paragraph.\n\nSecond.' })
-  })
-
-  it('writes the head in a fixed order, and no tags line for none', () => {
-    expect(serializeNote({ ...META, tags: [] }, 'Body')).toBe(
-      [
-        '---',
-        'title: 서브에이전트 호출 구조',
-        'created: 2026-08-28T01:12:03.000Z',
-        'updated: 2026-08-28T01:40:11.000Z',
-        '---',
-        'Body',
-        '',
-      ].join('\n'),
-    )
-  })
-
-  it('keeps a title that would read as YAML syntax intact', () => {
-    const meta = { ...META, title: 'a: b # not a comment [x]' }
-    expect(parseNote(serializeNote(meta, '')).meta?.title).toBe('a: b # not a comment [x]')
-  })
-
-  it('keeps keys it does not know and writes them back', () => {
-    const text = ['---', 'title: T', 'author: ray', 'mood: calm', '---', 'x', ''].join('\n')
-    const parsed = parseNote(text)
-    expect(parsed.meta?.rest).toEqual({ author: 'ray', mood: 'calm' })
-    expect(parseNote(serializeNote(parsed.meta as NoteMeta, 'x')).meta?.rest).toEqual({
-      author: 'ray',
-      mood: 'calm',
+describe('a note an earlier version wrote as a file', () => {
+  it('reads the head and the body under it', () => {
+    const text = headed([
+      'title: 서브에이전트 호출 구조',
+      'created: 2026-08-28T01:12:03.000Z',
+      'updated: 2026-08-28T01:40:11.000Z',
+      'tags: [cli, probe]',
+      'source: agent',
+    ])
+    expect(parseNote(text)).toEqual({
+      meta: {
+        title: '서브에이전트 호출 구조',
+        created: '2026-08-28T01:12:03.000Z',
+        updated: '2026-08-28T01:40:11.000Z',
+        tags: ['cli', 'probe'],
+        source: 'agent',
+      },
+      body: 'First paragraph.\n\nSecond.',
     })
+  })
+
+  it('unwraps a title that was quoted because it would read as YAML syntax', () => {
+    const text = headed(['title: "a: b # not a comment [x]"'])
+    expect(parseNote(text).meta?.title).toBe('a: b # not a comment [x]')
+    expect(parseNote(headed(["title: 'it''s here'"])).meta?.title).toBe("it's here")
+  })
+
+  it('passes over a key it does not know', () => {
+    const parsed = parseNote(['---', 'title: T', 'author: ray', '---', 'x', ''].join('\n'))
+    expect(parsed.meta).toEqual({ title: 'T', created: '', updated: '', tags: [], source: '' })
+    expect(parsed.body).toBe('x')
   })
 
   it('treats a file with no head as a body only', () => {
@@ -59,29 +44,19 @@ describe('a note is frontmatter and a body', () => {
   })
 
   it('does not mistake a rule inside the body for a head', () => {
-    const text = 'Intro\n---\nnot: meta\n---\n'
-    expect(parseNote(text).meta).toBeNull()
+    expect(parseNote('Intro\n---\nnot: meta\n---\n').meta).toBeNull()
   })
 
   it('falls back for a head with unusable values', () => {
-    const text = ['---', 'title: T', 'tags: nope', '---', 'b'].join('\n')
-    const parsed = parseNote(text)
+    const parsed = parseNote(['---', 'title: T', 'tags: nope', '---', 'b'].join('\n'))
     expect(parsed.meta?.tags).toEqual([])
     expect(parsed.meta?.created).toBe('')
     expect(parsed.body).toBe('b')
   })
 
   it('accepts a head that ends the file with no body', () => {
-    const text = ['---', 'title: T', '---'].join('\n')
-    expect(parseNote(text)).toEqual({
-      meta: {
-        ...META,
-        title: 'T',
-        created: '',
-        updated: '',
-        tags: [],
-        source: '',
-      },
+    expect(parseNote(['---', 'title: T', '---'].join('\n'))).toEqual({
+      meta: { title: 'T', created: '', updated: '', tags: [], source: '' },
       body: '',
     })
   })

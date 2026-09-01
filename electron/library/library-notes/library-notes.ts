@@ -1,27 +1,8 @@
-import { createHash } from 'node:crypto'
-import {
-  lstat,
-  mkdir,
-  readFile,
-  readdir,
-  realpath,
-  rename,
-  rm,
-  rmdir,
-  stat,
-  writeFile,
-} from 'node:fs/promises'
-import { join, resolve, sep } from 'node:path'
-import type { NoteMeta } from '@/entities/library/lib/frontmatter/frontmatter.types'
-import { parseNote, serializeNote } from '@/entities/library/lib/frontmatter/frontmatter'
+import type { DatabaseSync } from 'node:sqlite'
 import { summaryOf, titleFrom } from '@/entities/library/lib/summary/summary'
-import type {
-  LibraryFolder,
-  LibraryListing,
-  LibraryNote,
-  LibraryNoteSummary,
-} from '@/entities/library/model/note'
-import type { IndexedNote } from '../library-index/library-index.types'
+import type { LibraryListing, LibraryNote } from '@/entities/library/model/note'
+import type { FolderRow, NoteRow } from '../library-db/library-db.types'
+import { dropNote, headOf, noteOf, putNote, replaceNote } from '../library-db/library-db'
 import type { NotePatch } from './library-notes.types'
 
 const FOLDER_MAX = 60
@@ -49,7 +30,7 @@ function isTitle(title: unknown): title is string {
     SEGMENT.test(title) &&
     !title.includes('..') &&
     !title.startsWith('.') &&
-    // 'x.' would become the file 'x..md', which no id can ever name again.
+    // A note is still named as a file would be, and 'x.' would end 'x..md'.
     !title.endsWith('.')
   )
 }
@@ -58,6 +39,9 @@ function isFileName(file: string): boolean {
   return SEGMENT.test(file) && file.endsWith('.md') && file.length > 3 && !file.startsWith('.')
 }
 
+// An id keeps the shape a file had: 'one.md', or 'folder/one.md'. Nothing on
+// disk answers to it any more, but every note written before this version has
+// one, and a person reading a search result knows what it means.
 export function isNoteId(id: unknown): id is string {
   if (typeof id !== 'string' || id.includes('..') || id.includes('\\')) return false
   const at = id.indexOf('/')
@@ -74,329 +58,178 @@ function idOf(folder: string, title: string): string {
   return folder.length === 0 ? `${title}.md` : `${folder}/${title}.md`
 }
 
-async function inside(root: string, id: string): Promise<string | null> {
-  try {
-    const ground = await realpath(root)
-    const path = await realpath(resolve(root, id))
-    return path.startsWith(ground + sep) ? path : null
-  } catch {
-    return null
-  }
+function rowOf(db: DatabaseSync, id: string): NoteRow | null {
+  return (db.prepare('SELECT * FROM notes WHERE id = ?').get(id) as NoteRow | undefined) ?? null
 }
 
-async function isDir(path: string): Promise<boolean> {
-  try {
-    return (await lstat(path)).isDirectory()
-  } catch {
-    return false
-  }
+function hasFolder(db: DatabaseSync, name: string): boolean {
+  return db.prepare('SELECT name FROM folders WHERE name = ?').get(name) !== undefined
 }
 
-async function sameFile(a: string, b: string): Promise<boolean> {
-  try {
-    const [one, two] = await Promise.all([stat(a), stat(b)])
-    return one.ino === two.ino && one.dev === two.dev
-  } catch {
-    return false
-  }
+function taken(db: DatabaseSync, id: string): boolean {
+  return db.prepare('SELECT id FROM notes WHERE id = ?').get(id) !== undefined
 }
 
-async function taken(path: string): Promise<boolean> {
-  try {
-    await lstat(path)
-    return true
-  } catch {
-    return false
-  }
+export function listNotes(db: DatabaseSync): LibraryListing {
+  const folders = (db.prepare('SELECT name FROM folders').all() as FolderRow[])
+    .map((row) => ({ name: row.name }))
+    .sort((a, b) => a.name.localeCompare(b.name))
+  const rows = db.prepare('SELECT * FROM notes ORDER BY updated_at_ms DESC, id ASC').all()
+  return { folders, notes: (rows as NoteRow[]).map(headOf) }
 }
 
-// Where a new file for this id would go, or null when its folder is not a real
-// folder inside the library (a symlink out counts as not inside).
-async function target(root: string, id: string): Promise<string | null> {
-  const { folder, file } = split(id)
-  if (!SEGMENT.test(file)) return null
-  try {
-    const ground = await realpath(root)
-    const parent = await realpath(resolve(root, folder.length === 0 ? '.' : folder))
-    if (parent !== ground && !parent.startsWith(ground + sep)) return null
-    return join(parent, file)
-  } catch {
-    return null
-  }
-}
-
-export async function listFolders(root: string): Promise<LibraryFolder[]> {
-  let names: string[]
-  try {
-    names = await readdir(root)
-  } catch {
-    return []
-  }
-  const dirs: string[] = []
-  for (const name of names) {
-    if (!isFolderName(name)) continue
-    if (await isDir(join(root, name))) dirs.push(name)
-  }
-  return dirs.sort((a, b) => a.localeCompare(b)).map((name) => ({ name }))
-}
-
-function stamp(iso: string, fallbackMs: number): number {
-  const ms = Date.parse(iso)
-  return Number.isNaN(ms) ? Math.round(fallbackMs) : ms
-}
-
-function metaOf(text: string, file: string): { meta: NoteMeta; body: string } {
-  const parsed = parseNote(text)
-  const title = file.slice(0, -'.md'.length)
-  if (parsed.meta === null) {
-    return {
-      meta: {
-        title,
-        created: '',
-        updated: '',
-        tags: [],
-        source: '',
-        rest: {},
-      },
-      body: parsed.body,
-    }
-  }
-  return {
-    meta: { ...parsed.meta, title: parsed.meta.title.length > 0 ? parsed.meta.title : title },
-    body: parsed.body,
-  }
-}
-
-async function load(root: string, id: string): Promise<(LibraryNote & { text: string }) | null> {
-  const path = await inside(root, id)
-  if (path === null) return null
-  const { folder, file } = split(id)
-  try {
-    const [info, text] = await Promise.all([stat(path), readFile(path, 'utf8')])
-    const { meta, body } = metaOf(text, file)
-    return {
-      id,
-      folder,
-      title: meta.title,
-      summary: summaryOf(body),
-      tags: meta.tags,
-      source: meta.source,
-      createdAtMs: stamp(meta.created, info.birthtimeMs || info.mtimeMs),
-      updatedAtMs: stamp(meta.updated, info.mtimeMs),
-      body,
-      text,
-    }
-  } catch {
-    return null
-  }
-}
-
-function summarised(note: LibraryNote): LibraryNoteSummary {
-  const { body: _body, ...head } = note
-  return head
-}
-
-async function idsIn(root: string): Promise<string[]> {
-  let names: string[]
-  try {
-    names = await readdir(root)
-  } catch {
-    return []
-  }
-  const ids = names.filter((name) => isNoteId(name))
-  for (const { name: folder } of await listFolders(root)) {
-    const inner = await readdir(join(root, folder)).catch(() => [] as string[])
-    ids.push(...inner.map((name) => `${folder}/${name}`).filter((id) => isNoteId(id)))
-  }
-  return ids
-}
-
-async function loadAll(root: string): Promise<(LibraryNote & { text: string })[]> {
-  const loaded = await Promise.all((await idsIn(root)).map((id) => load(root, id)))
-  return loaded
-    .filter((one): one is LibraryNote & { text: string } => one !== null)
-    .sort((a, b) => b.updatedAtMs - a.updatedAtMs)
-}
-
-export async function listNotes(root: string): Promise<LibraryListing> {
-  const [folders, notes] = await Promise.all([listFolders(root), loadAll(root)])
-  return { folders, notes: notes.map(summarised) }
-}
-
-// Everything the index needs, with a hash so an unchanged file costs it nothing.
-export async function notesForIndex(root: string): Promise<IndexedNote[]> {
-  return (await loadAll(root)).map(({ text, ...note }) => ({
-    ...note,
-    hash: createHash('sha1').update(text).digest('hex'),
-  }))
-}
-
-export async function readNote(root: string, id: unknown): Promise<LibraryNote | null> {
+export function readNote(db: DatabaseSync, id: unknown): LibraryNote | null {
   if (!isNoteId(id)) return null
-  const loaded = await load(root, id)
-  if (loaded === null) return null
-  const { text: _text, ...note } = loaded
+  const row = rowOf(db, id)
+  return row === null ? null : noteOf(row)
+}
+
+function keep(db: DatabaseSync, note: LibraryNote): LibraryNote {
+  putNote(db, note)
   return note
 }
 
-async function put(root: string, id: string, text: string): Promise<LibraryNote | null> {
-  const path = await target(root, id)
-  if (path === null) return null
-  if ((await inside(root, id)) === null && (await taken(path))) return null
-  try {
-    await writeFile(path, text, 'utf8')
-  } catch {
-    return null
-  }
-  return readNote(root, id)
-}
-
 // The body changes, the head keeps when the note began, and only `updated` moves.
-export async function writeNote(
-  root: string,
+export function writeNote(
+  db: DatabaseSync,
   id: unknown,
   body: unknown,
   patch: NotePatch = {},
   nowMs: number = Date.now(),
-): Promise<LibraryNote | null> {
+): LibraryNote | null {
   if (!isNoteId(id) || typeof body !== 'string') return null
   const { folder, file } = split(id)
-  if (folder.length > 0 && !(await isDir(join(root, folder)))) return null
-  const existing = await load(root, id)
-  const head = existing === null ? metaOf('', file).meta : metaOf(existing.text, file).meta
-  const meta: NoteMeta = {
-    ...head,
-    title: patch.title ?? head.title,
-    tags: patch.tags ?? head.tags,
-    source: patch.source ?? head.source,
-    created: head.created.length > 0 ? head.created : new Date(nowMs).toISOString(),
-    updated: new Date(nowMs).toISOString(),
-  }
-  return put(root, id, serializeNote(meta, body))
+  if (folder.length > 0 && !hasFolder(db, folder)) return null
+  const was = rowOf(db, id)
+  const head = was === null ? null : noteOf(was)
+  return keep(db, {
+    id,
+    folder,
+    title: patch.title ?? head?.title ?? file.slice(0, -'.md'.length),
+    summary: summaryOf(body),
+    tags: patch.tags ?? head?.tags ?? [],
+    source: patch.source ?? head?.source ?? '',
+    createdAtMs: head?.createdAtMs ?? nowMs,
+    updatedAtMs: nowMs,
+    body,
+  })
 }
 
-async function freeTitle(root: string, folder: string, title: string): Promise<string> {
+function freeTitle(db: DatabaseSync, folder: string, title: string): string {
   let candidate = title
-  for (let n = 2; await taken(join(root, folder, `${candidate}.md`)); n += 1) {
-    candidate = `${title} ${n}`
-  }
+  for (let n = 2; taken(db, idOf(folder, candidate)); n += 1) candidate = `${title} ${n}`
   return candidate
 }
 
-async function begin(
-  root: string,
+function begin(
+  db: DatabaseSync,
   folder: string,
   title: string,
   body: string,
   nowMs: number,
-): Promise<LibraryNote | null> {
-  if (folder.length > 0 && !(await isDir(join(root, folder)))) return null
-  const name = await freeTitle(root, folder, title)
-  const at = new Date(nowMs).toISOString()
-  const meta: NoteMeta = {
+): LibraryNote | null {
+  if (folder.length > 0 && !hasFolder(db, folder)) return null
+  const name = freeTitle(db, folder, title)
+  // Nothing may be written under an id that cannot be read back: a note only
+  // its own writer can name is a note nobody can open or remove.
+  if (!isNoteId(idOf(folder, name))) return null
+  return keep(db, {
+    id: idOf(folder, name),
+    folder,
     title: name,
-    created: at,
-    updated: at,
+    summary: summaryOf(body),
     tags: [],
     source: '',
-    rest: {},
-  }
-  return put(root, idOf(folder, name), serializeNote(meta, body))
+    createdAtMs: nowMs,
+    updatedAtMs: nowMs,
+    body,
+  })
 }
 
-export async function createNote(
-  root: string,
+export function createNote(
+  db: DatabaseSync,
   folder: unknown,
   title: unknown,
   nowMs: number = Date.now(),
-): Promise<LibraryNote | null> {
+): LibraryNote | null {
   const where = folder === null || folder === '' ? '' : folder
   if ((where !== '' && !isFolderName(where)) || !isTitle(title)) return null
-  return begin(root, where, title, '', nowMs)
+  return begin(db, where, title, '', nowMs)
+}
+
+// Words become a title the library can name a note by. An answer that opens
+// with '.env' or ends in a full stop still has to land somewhere openable.
+function named(text: string): string {
+  const plain = titleFrom(text)
+    .replace(/\.+/g, '.')
+    .replace(/^[.\s]+/, '')
+    .replace(/[.\s]+$/, '')
+  return isTitle(plain) ? plain : 'Untitled'
 }
 
 // The bolt on an answer: the answer becomes a note at the root, titled from
 // its own words.
-export async function fileNote(
-  root: string,
+export function fileNote(
+  db: DatabaseSync,
   text: unknown,
   nowMs: number = Date.now(),
-): Promise<LibraryNote | null> {
+): LibraryNote | null {
   if (typeof text !== 'string' || text.trim().length === 0) return null
-  return begin(root, '', titleFrom(text), text.trim(), nowMs)
+  return begin(db, '', named(text), text.trim(), nowMs)
 }
 
-export async function renameNote(
-  root: string,
+export function renameNote(
+  db: DatabaseSync,
   id: unknown,
   title: unknown,
   nowMs: number = Date.now(),
-): Promise<LibraryNote | null> {
+): LibraryNote | null {
   if (!isNoteId(id) || !isTitle(title)) return null
-  const existing = await load(root, id)
-  if (existing === null) return null
-  const { folder, file } = split(id)
-  const next = idOf(folder, title)
-  if (next !== id) {
-    const to = await target(root, next)
-    if (to === null) return null
-    // A name already there blocks the rename, unless it is this very file seen
-    // through a case-insensitive disk: then only the case is changing.
-    if ((await taken(to)) && !(await sameFile(join(root, id), to))) return null
-    try {
-      await rename(join(root, id), to)
-    } catch {
-      return null
-    }
-  }
-  const { meta, body } = metaOf(existing.text, file)
-  return put(
-    root,
-    next,
-    serializeNote({ ...meta, title, updated: new Date(nowMs).toISOString() }, body),
-  )
+  const row = rowOf(db, id)
+  if (row === null) return null
+  const was = noteOf(row)
+  const next = idOf(was.folder, title)
+  if (next !== id && taken(db, next)) return null
+  const moved = { ...was, id: next, title, updatedAtMs: nowMs }
+  replaceNote(db, id, moved)
+  return moved
 }
 
-export async function removeNote(root: string, id: unknown): Promise<void> {
-  if (!isNoteId(id)) return
-  const path = await inside(root, id)
-  if (path === null) return
-  await rm(path, { force: true }).catch(() => undefined)
+export function removeNote(db: DatabaseSync, id: unknown): void {
+  if (isNoteId(id)) dropNote(db, id)
 }
 
-export async function addFolder(root: string, name: unknown): Promise<LibraryListing> {
-  if (isFolderName(name) && !(await isDir(join(root, name)))) {
-    await mkdir(join(root, name)).catch(() => undefined)
-  }
-  return listNotes(root)
-}
-
-export async function renameFolder(
-  root: string,
-  name: unknown,
-  next: unknown,
-): Promise<LibraryListing> {
-  if (isFolderName(name) && isFolderName(next) && name !== next) {
-    const from = join(root, name)
-    const to = join(root, next)
-    if ((await isDir(from)) && !(await taken(to))) {
-      await rename(from, to).catch(() => undefined)
-    }
-  }
-  return listNotes(root)
-}
-
-export async function removeFolder(root: string, name: unknown): Promise<LibraryListing> {
+export function addFolder(db: DatabaseSync, name: unknown): LibraryListing {
   if (isFolderName(name)) {
-    const path = join(root, name)
-    if (await isDir(path)) {
-      const all = await readdir(path).catch(() => ['?'])
-      const left = all.filter((one) => !one.startsWith('.'))
-      if (left.length === 0) {
-        for (const dot of all) await rm(join(path, dot), { force: true }).catch(() => undefined)
-        await rmdir(path).catch(() => undefined)
+    db.prepare('INSERT INTO folders (name) VALUES (?) ON CONFLICT (name) DO NOTHING').run(name)
+  }
+  return listNotes(db)
+}
+
+export function renameFolder(db: DatabaseSync, name: unknown, next: unknown): LibraryListing {
+  if (isFolderName(name) && isFolderName(next) && name !== next && !hasFolder(db, next)) {
+    const rows = db.prepare('SELECT * FROM notes WHERE folder = ?').all(name) as NoteRow[]
+    db.exec('BEGIN')
+    try {
+      db.prepare('UPDATE folders SET name = ? WHERE name = ?').run(next, name)
+      for (const row of rows) {
+        const was = noteOf(row)
+        replaceNote(db, was.id, { ...was, folder: next, id: `${next}/${split(was.id).file}` })
       }
+      db.exec('COMMIT')
+    } catch (cause: unknown) {
+      db.exec('ROLLBACK')
+      throw cause
     }
   }
-  return listNotes(root)
+  return listNotes(db)
+}
+
+// A folder with notes still in it stays: emptying it is the person's to do.
+export function removeFolder(db: DatabaseSync, name: unknown): LibraryListing {
+  if (isFolderName(name)) {
+    const held = db.prepare('SELECT id FROM notes WHERE folder = ? LIMIT 1').get(name)
+    if (held === undefined) db.prepare('DELETE FROM folders WHERE name = ?').run(name)
+  }
+  return listNotes(db)
 }

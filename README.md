@@ -122,7 +122,7 @@ to read first. Both are passed to the session.
 
 | | |
 |---|---|
-| **Library** | Notes each project keeps, under its own `.zetrem/library`. Agents search it before they say they do not know and file what they learn; "To library" under an answer files that answer. A switch in the composer decides, per project, whether sessions get it. |
+| **Library** | Notes each project keeps, held by the app and never written into the project folder. Agents search it before they say they do not know and file what they learn; "To library" under an answer files that answer. A switch in the composer decides, per project, whether sessions get it. |
 | **Teammates** | Created in the app, stored per user. Callable from any project, each with its own model, tools and reading list. |
 | **Built-in agents** | The agents Claude Code provides. Each can be switched off. |
 | **Permission modes** | Ask first · Auto-edit (edits files, asks before commands) · Allow all. |
@@ -188,9 +188,10 @@ updates. All other traffic is the CLI you installed, using your account.
 
 Conversations, teammates and settings are files in the app's data directory;
 a removed conversation goes to a `trash/` folder there, never unlinked. A
-project's library is Markdown files inside the project itself, under
-`.zetrem/library`, so it travels with the folder. Each library is served to
-sessions by a local MCP server on `127.0.0.1` with a per-launch token.
+project's library is one SQLite file in that same directory, under `library/`,
+named after the project folder, so nothing of the app's is left in the project
+itself. Each library is served to sessions by a local MCP server on `127.0.0.1`
+with a per-launch token.
 Signing in and out is handled by the CLI, so signing out here signs out every
 Claude Code on the computer.
 

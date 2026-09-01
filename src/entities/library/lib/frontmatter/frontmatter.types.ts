@@ -1,4 +1,6 @@
-// On disk: the head of every note in a library, read back by later versions.
+// On disk: the head of a note in a library an earlier version kept as markdown
+// files inside the project. Nothing writes these files any more; they are read
+// once, when such a library is taken into the app.
 export type NoteMeta = {
   title: string
   created: string
@@ -7,8 +9,6 @@ export type NoteMeta = {
   // Who left the note: 'agent' when a session wrote it through its tool, '' when
   // a person did, or the file predates this key.
   source: string
-  // Keys this version does not know, written back as they were read.
-  rest: Record<string, string>
 }
 
 export type ParsedNote = {

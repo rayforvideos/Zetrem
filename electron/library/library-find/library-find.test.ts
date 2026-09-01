@@ -39,6 +39,7 @@ describe('search', () => {
       tags: ['회의'],
     })
     put({ id: 'joined.md', title: 'Joined', body: '붙어있는한국어문장입니다' })
+    put({ id: 'rule.md', title: '메모', body: '작업시 유의사항을 먼저 읽는다' })
   }
 
   it('finds words in the title, body, and tags', () => {
@@ -64,9 +65,30 @@ describe('search', () => {
     expect(hit).not.toHaveProperty('body')
   })
 
-  it('prefix-matches the last word', () => {
+  it('prefix-matches every word, not only the last', () => {
     seeded()
     expect(searchNotes(db, 'autu').map((hit) => hit.id)).toEqual(['plan.md'])
+    expect(searchNotes(db, 'des lam').map((hit) => hit.id)).toEqual(['notes.md'])
+  })
+
+  // Korean glues particles onto the word, so a note that says 작업시 carries no
+  // token 작업 at all. Only a prefix on every word reaches it.
+  it('reaches a Korean word that the note wrote with a particle attached', () => {
+    seeded()
+    expect(searchNotes(db, '작업 유의사항').map((hit) => hit.id)).toEqual(['rule.md'])
+  })
+
+  it('falls back to any of the words when no note has them all', () => {
+    seeded()
+    expect(searchNotes(db, '작업 유의사항 규칙').map((hit) => hit.id)).toEqual(['rule.md'])
+    const wide = searchNotes(db, 'lamp autumn').map((hit) => hit.id)
+    expect([...wide].sort()).toEqual(['notes.md', 'plan.md'])
+  })
+
+  it('prefers the notes that have every word, and never falls back on one word', () => {
+    seeded()
+    expect(searchNotes(db, 'desk lamp').map((hit) => hit.id)).toEqual(['notes.md'])
+    expect(searchNotes(db, '한국어').map((hit) => hit.id)).toEqual([])
   })
 
   it('finds Korean words that stand between spaces, by whole word or prefix', () => {
@@ -88,8 +110,15 @@ describe('search', () => {
     expect(searchNotes(db, '')).toEqual([])
     expect(searchNotes(db, '   ')).toEqual([])
     expect(searchNotes(db, '"(')).toEqual([])
-    expect(searchNotes(db, 'NOT AND OR')).toEqual([])
     expect(searchNotes(db, 'desk*  "lamp')).toEqual(searchNotes(db, 'desk lamp'))
+  })
+
+  // FTS5's own words are quoted into plain words, so 'NOT' is only ever a
+  // person's prefix of Notes, never an operator turned on the query.
+  it('reads the operator words as words', () => {
+    seeded()
+    expect(searchNotes(db, 'NOT AND OR').map((hit) => hit.id)).toEqual(['notes.md'])
+    expect(searchNotes(db, 'desk NOT lamp').map((hit) => hit.id)).toEqual(['notes.md'])
   })
 })
 
@@ -116,9 +145,11 @@ describe('backlinks', () => {
 })
 
 describe('helpers', () => {
-  it('quotes every word and prefixes the last', () => {
-    expect(ftsQuery('  one  two ')).toBe('"one" AND "two"*')
-    expect(ftsQuery('say "hi"')).toBe('"say" AND """hi"""*')
+  it('quotes and prefixes every word, joined as asked', () => {
+    expect(ftsQuery('  one  two ')).toBe('"one"* AND "two"*')
+    expect(ftsQuery('  one  two ', 'OR')).toBe('"one"* OR "two"*')
+    expect(ftsQuery('say "hi"')).toBe('"say"* AND """hi"""*')
     expect(ftsQuery('  ')).toBeNull()
+    expect(ftsQuery('  ', 'OR')).toBeNull()
   })
 })

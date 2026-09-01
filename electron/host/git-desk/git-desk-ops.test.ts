@@ -5,7 +5,14 @@ import {
   gitCommit,
   gitDiff,
   gitGraph,
+  gitImage,
   gitLog,
+  gitMerge,
+  gitMergeAbort,
+  gitStashApply,
+  gitStashDrop,
+  gitStashList,
+  gitStashPush,
   gitPull,
   gitPush,
   gitShow,
@@ -28,6 +35,7 @@ function fakeGit(replies: Record<string, Partial<GitReply>>, calls: Call[] = [])
       return Promise.resolve({ code: 0, stdout: '', stderr: '', ...found })
     },
     read: () => Promise.resolve('line one\nline two\n'),
+    blob: () => Promise.resolve(Buffer.from('PNGDATA')),
   }
 }
 
@@ -202,9 +210,10 @@ describe('gitBranches and gitLog', () => {
 describe('gitGraph, gitShow and gitShowDiff', () => {
   it('reads the whole-graph log through the parser', async () => {
     const deps = fakeGit({
-      'log --all --topo-order -n 300 --format=%H%x09%h%x09%P%x09%D%x09%an%x09%ae%x09%at%x09%s': {
-        stdout: 'aaaa\ta1\t\tHEAD -> main\tRay\tray@x.co\t1756400000\tfirst\n',
-      },
+      'log --branches --remotes --tags --topo-order -n 300 --format=%H%x09%h%x09%P%x09%D%x09%an%x09%ae%x09%at%x09%s':
+        {
+          stdout: 'aaaa\ta1\t\tHEAD -> main\tRay\tray@x.co\t1756400000\tfirst\n',
+        },
     })
     const got = await gitGraph(deps)
     expect(got.ok && got.value[0]).toMatchObject({ sha: 'aaaa', head: true, refs: ['main'] })
@@ -212,10 +221,11 @@ describe('gitGraph, gitShow and gitShowDiff', () => {
 
   it('reads an unborn repo as an empty graph', async () => {
     const deps = fakeGit({
-      'log --all --topo-order -n 300 --format=%H%x09%h%x09%P%x09%D%x09%an%x09%ae%x09%at%x09%s': {
-        code: 128,
-        stderr: 'no commits yet',
-      },
+      'log --branches --remotes --tags --topo-order -n 300 --format=%H%x09%h%x09%P%x09%D%x09%an%x09%ae%x09%at%x09%s':
+        {
+          code: 128,
+          stderr: 'no commits yet',
+        },
     })
     expect(await gitGraph(deps)).toEqual({ ok: true, value: [] })
   })
@@ -320,5 +330,88 @@ describe('what a failed act says', () => {
     })
     const got = await gitCommit(deps, 'test')
     expect(!got.ok && got.why.said).toContain('nothing added to commit')
+  })
+})
+
+describe('gitMerge', () => {
+  it('merges the named branch without opening an editor', async () => {
+    const calls: Call[] = []
+    await gitMerge(fakeGit({}, calls), 'spike/x')
+    expect(calls).toEqual([['merge', '--no-edit', 'spike/x']])
+  })
+
+  it('refuses a name git would read as a flag', async () => {
+    const calls: Call[] = []
+    expect((await gitMerge(fakeGit({}, calls), '-abort')).ok).toBe(false)
+    expect(calls).toEqual([])
+  })
+
+  it('backs out of a conflicted merge on request', async () => {
+    const calls: Call[] = []
+    await gitMergeAbort(fakeGit({}, calls))
+    expect(calls).toEqual([['merge', '--abort']])
+  })
+})
+
+describe('the stash, kept apart from history', () => {
+  it('lists entries as ref and subject', async () => {
+    const deps = fakeGit({
+      'stash list --format=%gd%x09%s': {
+        stdout: 'stash@{0}\tWIP on main: 1234 things\nstash@{1}\tkept aside\n',
+      },
+    })
+    expect(await gitStashList(deps)).toEqual({
+      ok: true,
+      value: [
+        { ref: 'stash@{0}', subject: 'WIP on main: 1234 things' },
+        { ref: 'stash@{1}', subject: 'kept aside' },
+      ],
+    })
+  })
+
+  it('pushes the working tree away, untracked files included', async () => {
+    const calls: Call[] = []
+    await gitStashPush(fakeGit({}, calls))
+    expect(calls).toEqual([['stash', 'push', '--include-untracked']])
+  })
+
+  it('applies and drops one entry by its ref, refusing anything else', async () => {
+    const calls: Call[] = []
+    const deps = fakeGit({}, calls)
+    await gitStashApply(deps, 'stash@{1}')
+    await gitStashDrop(deps, 'stash@{0}')
+    expect(calls).toEqual([
+      ['stash', 'apply', 'stash@{1}'],
+      ['stash', 'drop', 'stash@{0}'],
+    ])
+    expect((await gitStashApply(deps, 'HEAD~1')).ok).toBe(false)
+    expect((await gitStashDrop(deps, '--all')).ok).toBe(false)
+  })
+})
+
+describe('gitImage: a picture instead of a byte diff', () => {
+  it('reads the working copy as a data URI with its mime', async () => {
+    const got = await gitImage(fakeGit({}), 'logo.png', '')
+    expect(got).toEqual({
+      ok: true,
+      value: `data:image/png;base64,${Buffer.from('PNGDATA').toString('base64')}`,
+    })
+  })
+
+  it('reads a committed version through git, naming the blob', async () => {
+    const deps = fakeGit({})
+    const got = await gitImage(deps, 'art/logo.svg', 'abc1234')
+    expect(got.ok && got.value.startsWith('data:image/svg+xml;base64,')).toBe(true)
+  })
+
+  it('refuses a ref that is not a sha, HEAD, or a first parent of one', async () => {
+    expect((await gitImage(fakeGit({}), 'a.png', 'main;rm')).ok).toBe(false)
+    expect((await gitImage(fakeGit({}), 'a.png', 'HEAD')).ok).toBe(true)
+    expect((await gitImage(fakeGit({}), 'a.png', 'abc1234^')).ok).toBe(true)
+  })
+
+  it('says gone when there is nothing to read', async () => {
+    const deps = { ...fakeGit({}), blob: () => Promise.resolve<Buffer | null>(null) }
+    expect((await gitImage(deps, 'a.png', '')).ok).toBe(false)
   })
 })

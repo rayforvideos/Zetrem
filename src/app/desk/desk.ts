@@ -73,6 +73,13 @@ export type DeskBridge = {
   gitUnstage: Invoke<'git:unstage'>
   gitCommit: Invoke<'git:commit'>
   gitSwitch: Invoke<'git:switch'>
+  gitMerge: Invoke<'git:merge'>
+  gitStashList: Invoke<'git:stash-list'>
+  gitStashPush: Invoke<'git:stash-push'>
+  gitStashApply: Invoke<'git:stash-apply'>
+  gitStashDrop: Invoke<'git:stash-drop'>
+  gitImage: Invoke<'git:image'>
+  gitMergeAbort: Invoke<'git:merge-abort'>
   gitPush: Invoke<'git:push'>
   gitPull: Invoke<'git:pull'>
   gitGraph: Invoke<'git:graph'>
@@ -98,6 +105,7 @@ export type DeskBridge = {
   searchLibrary: Invoke<'library:search'>
   libraryBacklinks: Invoke<'library:backlinks'>
   onLibraryChanged: Listen<'library:changed'>
+  onGitChanged: Listen<'git:changed'>
   addLibraryFolder: Invoke<'library:folder-add'>
   renameLibraryFolder: Invoke<'library:folder-rename'>
   removeLibraryFolder: Invoke<'library:folder-remove'>

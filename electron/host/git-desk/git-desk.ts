@@ -1,8 +1,15 @@
+import { execFile } from 'node:child_process'
+import { promisify } from 'node:util'
+import { watch } from 'node:fs'
+import type { FSWatcher } from 'node:fs'
 import { readFile } from 'node:fs/promises'
+import { join as joinPath } from 'node:path'
+import { BrowserWindow } from 'electron'
 import { isAbsolute, join, normalize } from 'node:path'
 import type {
   GitBranch,
   GitCommitLine,
+  GitStash,
   GitStat,
   GitStatus,
   GraphCommit,
@@ -10,11 +17,13 @@ import type {
 } from '@/entities/git/model/repo'
 import { lost, won } from '@/shared/lib/outcome/outcome'
 import type { Outcome } from '@/shared/lib/outcome/outcome.types'
-import { handle } from '../../ipc/ipc'
+import { handle, push } from '../../ipc/ipc'
 import { recallProject } from '../../store/project-memory/project-memory'
 import { runGit } from '../worktree-review/worktree-review'
 import type { GitReply } from '../worktree-review/worktree-review.types'
 import type { DiffSide, GitDeps } from './git-desk.types'
+
+const execFileAsync = promisify(execFile)
 
 // Git C-quotes a path holding bytes it distrusts ("scratch-\\355...\"): the
 // live runs turn quoting off, but a stray config or control byte can still
@@ -62,6 +71,10 @@ export function statusOf(porcelain: string): GitStatus {
         unstaged: true,
         sign: '?',
       })
+    } else if (line.startsWith('u ')) {
+      // An unmerged entry: both sides changed it and the merge stopped there.
+      const path = plainPath(line.split(' ').slice(10).join(' '))
+      status.files.push({ path, staged: false, unstaged: true, sign: 'U' })
     } else if (line.startsWith('1 ') || line.startsWith('2 ')) {
       const [, xy = '..'] = line.split(' ')
       const staged = xy[0] !== '.'
@@ -350,7 +363,11 @@ export async function gitGraph(deps: GitDeps): Promise<Outcome<GraphCommit[]>> {
   if (!at.ok) return at
   const said = await ran(deps, at.value, [
     'log',
-    '--all',
+    // Branches, remotes and tags only: the stash is not history, and its
+    // synthetic merge commits made the graph read as if it were.
+    '--branches',
+    '--remotes',
+    '--tags',
     '--topo-order',
     '-n',
     '300',
@@ -361,7 +378,9 @@ export async function gitGraph(deps: GitDeps): Promise<Outcome<GraphCommit[]>> {
   const commits = graphOf(said.value)
   const counted = await ran(deps, at.value, [
     'log',
-    '--all',
+    '--branches',
+    '--remotes',
+    '--tags',
     '--topo-order',
     '-n',
     '300',
@@ -400,6 +419,89 @@ export async function gitShowDiff(
   return said
 }
 
+export async function gitMerge(deps: GitDeps, branch: string): Promise<Outcome<null>> {
+  if (!BRANCH_NAME.test(branch)) return lost('refused', 'branch-name')
+  const at = await whereabouts(deps)
+  if (!at.ok) return at
+  const said = await ran(deps, at.value, ['merge', '--no-edit', branch])
+  return said.ok ? won(null) : said
+}
+
+export async function gitMergeAbort(deps: GitDeps): Promise<Outcome<null>> {
+  const at = await whereabouts(deps)
+  if (!at.ok) return at
+  const said = await ran(deps, at.value, ['merge', '--abort'])
+  return said.ok ? won(null) : said
+}
+
+const STASH_REF = /^stash@\{\d+\}$/
+
+export async function gitStashList(deps: GitDeps): Promise<Outcome<GitStash[]>> {
+  const at = await whereabouts(deps)
+  if (!at.ok) return at
+  const said = await ran(deps, at.value, ['stash', 'list', '--format=%gd%x09%s'])
+  if (!said.ok) return won([])
+  return won(
+    said.value
+      .split('\n')
+      .filter((line) => line.includes('\t'))
+      .map((line) => {
+        const cut = line.indexOf('\t')
+        return { ref: line.slice(0, cut), subject: line.slice(cut + 1) }
+      }),
+  )
+}
+
+export async function gitStashPush(deps: GitDeps): Promise<Outcome<null>> {
+  const at = await whereabouts(deps)
+  if (!at.ok) return at
+  const said = await ran(deps, at.value, ['stash', 'push', '--include-untracked'])
+  return said.ok ? won(null) : said
+}
+
+export async function gitStashApply(deps: GitDeps, ref: string): Promise<Outcome<null>> {
+  if (!STASH_REF.test(ref)) return lost('refused', 'stash-ref')
+  const at = await whereabouts(deps)
+  if (!at.ok) return at
+  const said = await ran(deps, at.value, ['stash', 'apply', ref])
+  return said.ok ? won(null) : said
+}
+
+export async function gitStashDrop(deps: GitDeps, ref: string): Promise<Outcome<null>> {
+  if (!STASH_REF.test(ref)) return lost('refused', 'stash-ref')
+  const at = await whereabouts(deps)
+  if (!at.ok) return at
+  const said = await ran(deps, at.value, ['stash', 'drop', ref])
+  return said.ok ? won(null) : said
+}
+
+const IMAGE_REF = /^(|HEAD|[0-9a-f]{4,40}\^?)$/
+const IMAGE_MAX = 8 * 1024 * 1024
+
+const MIME: Record<string, string> = {
+  png: 'image/png',
+  jpg: 'image/jpeg',
+  jpeg: 'image/jpeg',
+  gif: 'image/gif',
+  webp: 'image/webp',
+  svg: 'image/svg+xml',
+  ico: 'image/x-icon',
+  bmp: 'image/bmp',
+}
+
+export async function gitImage(deps: GitDeps, path: string, ref: string): Promise<Outcome<string>> {
+  if (!tamePath(path)) return lost('refused', 'path')
+  if (!IMAGE_REF.test(ref)) return lost('refused', 'ref')
+  const mime = MIME[path.split('.').at(-1)?.toLowerCase() ?? '']
+  if (mime === undefined) return lost('refused', 'not-an-image')
+  const at = await whereabouts(deps)
+  if (!at.ok) return at
+  const bytes = await deps.blob(path, ref, at.value)
+  if (bytes === null) return lost('failed', 'gone')
+  if (bytes.length > IMAGE_MAX) return lost('unsupported', 'large')
+  return won(`data:${mime};base64,${bytes.toString('base64')}`)
+}
+
 export async function gitPull(deps: GitDeps): Promise<Outcome<null>> {
   const at = await whereabouts(deps)
   if (!at.ok) return at
@@ -407,15 +509,61 @@ export async function gitPull(deps: GitDeps): Promise<Outcome<null>> {
   return said.ok ? won(null) : said
 }
 
+// The panel is told when anything under .git moves - a commit from a shell,
+// an agent, a branch switch - so what it shows is never minutes old. The
+// watcher follows the open project; a folder without .git simply has none.
+let watching: { root: string; watcher: FSWatcher } | null = null
+let tellSoon: NodeJS.Timeout | null = null
+
+function followGit(root: string): void {
+  if (watching?.root === root) return
+  watching?.watcher.close()
+  watching = null
+  try {
+    const watcher = watch(joinPath(root, '.git'), { recursive: true }, () => {
+      if (tellSoon !== null) clearTimeout(tellSoon)
+      tellSoon = setTimeout(() => {
+        for (const win of BrowserWindow.getAllWindows()) {
+          push(win.webContents, 'git:changed', null)
+        }
+      }, 300)
+    })
+    watching = { root, watcher }
+  } catch {
+    // No .git to follow; the next status read tries again.
+  }
+}
+
 const liveDeps: GitDeps = {
   here: recallProject,
-  // Paths come back as the bytes on disk, not C-quoted octal.
-  git: (args, cwd) => runGit(['-c', 'core.quotepath=false', ...args], cwd),
+  // quotepath off: paths come back as the bytes on disk, not C-quoted octal.
+  // no-optional-locks: a background read must not rewrite the index, or the
+  // .git watcher would hear our own reading and spin.
+  git: (args, cwd) => runGit(['-c', 'core.quotepath=false', '--no-optional-locks', ...args], cwd),
   read: (path) => readFile(path, 'utf8').catch(() => null),
+  blob: async (path, ref, cwd) => {
+    if (ref === '') return readFile(joinPath(cwd, path)).catch(() => null)
+    // Through execFile with a buffer, since the shared runner narrates utf8.
+    try {
+      const { stdout } = await execFileAsync('git', ['show', `${ref}:${path}`], {
+        cwd,
+        encoding: 'buffer',
+        maxBuffer: IMAGE_MAX + 1024,
+        windowsHide: true,
+      })
+      return stdout
+    } catch {
+      return null
+    }
+  },
 }
 
 export function registerGitDesk(): void {
-  handle('git:status', () => gitStatus(liveDeps))
+  handle('git:status', async () => {
+    const here = await recallProject()
+    if (here !== null) followGit(here)
+    return gitStatus(liveDeps)
+  })
   handle('git:branches', () => gitBranches(liveDeps))
   handle('git:log', () => gitLog(liveDeps))
   handle('git:diff', (_event, path, side) => gitDiff(liveDeps, path, side))
@@ -425,6 +573,13 @@ export function registerGitDesk(): void {
   handle('git:switch', (_event, branch, create) => gitSwitch(liveDeps, branch, create))
   handle('git:push', () => gitPush(liveDeps))
   handle('git:pull', () => gitPull(liveDeps))
+  handle('git:merge', (_event, branch) => gitMerge(liveDeps, branch))
+  handle('git:stash-list', () => gitStashList(liveDeps))
+  handle('git:stash-push', () => gitStashPush(liveDeps))
+  handle('git:stash-apply', (_event, ref) => gitStashApply(liveDeps, ref))
+  handle('git:stash-drop', (_event, ref) => gitStashDrop(liveDeps, ref))
+  handle('git:image', (_event, path, ref) => gitImage(liveDeps, path, ref))
+  handle('git:merge-abort', () => gitMergeAbort(liveDeps))
   handle('git:graph', () => gitGraph(liveDeps))
   handle('git:show', (_event, sha) => gitShow(liveDeps, sha))
   handle('git:show-diff', (_event, sha, path) => gitShowDiff(liveDeps, sha, path))

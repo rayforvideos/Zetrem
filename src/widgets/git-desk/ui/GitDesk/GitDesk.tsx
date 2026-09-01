@@ -6,10 +6,12 @@ import { t } from '@lingui/core/macro'
 import {
   ArrowDown,
   ArrowLeft,
+  Archive,
   ArrowUp,
   Circle,
   CircleCheck,
   GitBranch,
+  GitMerge,
   Plus,
   RefreshCw,
   SquareArrowRight,
@@ -228,7 +230,9 @@ function SignMark({ sign }: { sign: string }) {
           ? { Icon: SquareMinus, color: 'var(--removed)', name: t`Deleted` }
           : sign === 'R' || sign === 'C'
             ? { Icon: SquareArrowRight, color: 'var(--kind-project)', name: t`Renamed` }
-            : { Icon: SquareAsterisk, color: 'var(--muted-foreground)', name: sign }
+            : sign === 'U'
+              ? { Icon: SquareAsterisk, color: 'var(--destructive)', name: t`Conflicted` }
+              : { Icon: SquareAsterisk, color: 'var(--muted-foreground)', name: sign }
   const { Icon } = drawn
   return (
     <span title={drawn.name} className="flex-none" style={{ color: drawn.color }}>
@@ -326,6 +330,9 @@ export function GitDesk({ project }: { project: string | null }) {
   // A branch picked in the selector waits behind a confirmation: switching
   // rewrites the working tree, too much for one unnoticed click.
   const [switching, setSwitching] = useState<string | null>(null)
+  const [merging, setMerging] = useState(false)
+  const [mergeFrom, setMergeFrom] = useState<string | null>(null)
+  const [droppingStash, setDroppingStash] = useState<string | null>(null)
 
   const { open, diff, close, closeDiff } = git
   useEffect(() => {
@@ -444,6 +451,20 @@ export function GitDesk({ project }: { project: string | null }) {
                 <Plus />
                 {t`Create`}
               </Button>
+              <Button
+                variant="ghost"
+                size="xs"
+                disabled={git.busy || git.branches.length < 2}
+                onClick={() => {
+                  setMergeFrom(null)
+                  setMerging(true)
+                }}
+                className="rounded-lg text-muted-foreground"
+                data-git-merge
+              >
+                <GitMerge />
+                {t`Merge`}
+              </Button>
               <span className="flex-1" />
               {git.busy && <Spinner className="size-3.5" />}
               <Button
@@ -515,7 +536,40 @@ export function GitDesk({ project }: { project: string | null }) {
                         {git.diff.path}
                       </span>
                     </div>
-                    {git.diff.trouble !== null ? (
+                    {git.diff.image !== null ? (
+                      <div
+                        className="zt-scroll flex min-h-0 flex-1 items-start justify-center gap-6 overflow-auto rounded-lg border border-border bg-card p-6"
+                        data-git-image
+                      >
+                        {git.diff.image.before !== null && (
+                          <figure className="flex min-w-0 flex-col items-center gap-2">
+                            <img
+                              src={git.diff.image.before}
+                              alt={t`Before`}
+                              className="max-h-[60vh] rounded-md border border-removed/40"
+                            />
+                            <figcaption className="text-muted-foreground text-xs">
+                              {t`Before`}
+                            </figcaption>
+                          </figure>
+                        )}
+                        {git.diff.image.after !== null && (
+                          <figure className="flex min-w-0 flex-col items-center gap-2">
+                            <img
+                              src={git.diff.image.after}
+                              alt={t`After`}
+                              className="max-h-[60vh] rounded-md border border-added/40"
+                            />
+                            <figcaption className="text-muted-foreground text-xs">
+                              {t`After`}
+                            </figcaption>
+                          </figure>
+                        )}
+                        {git.diff.image.before === null && git.diff.image.after === null && (
+                          <p className="text-muted-foreground text-sm">{t`Could not read that image.`}</p>
+                        )}
+                      </div>
+                    ) : git.diff.trouble !== null ? (
                       <div className="flex min-h-0 flex-1 items-center justify-center rounded-lg border border-border bg-card">
                         <p className="text-muted-foreground text-sm" data-git-diff-trouble>
                           {git.diff.trouble === 'binary'
@@ -644,6 +698,9 @@ export function GitDesk({ project }: { project: string | null }) {
                                 aria-pressed={chosen}
                                 className={cn(
                                   'flex w-full items-center gap-3 rounded-none px-4 font-normal',
+                                  // Not yet a commit: the row wears a dashed
+                                  // seam so it cannot pass for history.
+                                  wip && 'border-y border-dashed border-border bg-muted/20',
                                   chosen && 'bg-accent',
                                 )}
                                 style={{ height: ROW_H }}
@@ -775,6 +832,63 @@ export function GitDesk({ project }: { project: string | null }) {
                       >
                         {t`Commit staged files`}
                       </Button>
+                      <div className="flex flex-none flex-col gap-1.5 border-border border-t pt-3">
+                        <div className="flex items-center justify-between">
+                          <h3 className="text-muted-foreground text-xs tracking-[0.08em]">
+                            {t`Stash`}
+                          </h3>
+                          <Button
+                            variant="ghost"
+                            size="xs"
+                            disabled={git.busy || git.status?.files.length === 0}
+                            onClick={git.stashPush}
+                            className="rounded-lg text-muted-foreground"
+                            data-git-stash-push
+                          >
+                            <Archive />
+                            {t`Stash changes`}
+                          </Button>
+                        </div>
+                        {git.stashes.length === 0 ? (
+                          <p className="text-muted-foreground text-xs">{t`Nothing stashed.`}</p>
+                        ) : (
+                          <ul className="flex max-h-32 flex-col overflow-y-auto" data-git-stashes>
+                            {git.stashes.map((held) => (
+                              <li
+                                key={held.ref}
+                                className="flex items-center gap-1"
+                                data-git-stash={held.ref}
+                              >
+                                <span
+                                  className="min-w-0 flex-1 truncate text-muted-foreground text-xs"
+                                  title={held.subject}
+                                >
+                                  {held.subject}
+                                </span>
+                                <Button
+                                  variant="ghost"
+                                  size="xs"
+                                  disabled={git.busy}
+                                  onClick={() => git.stashApply(held.ref)}
+                                  className="flex-none rounded-lg text-muted-foreground"
+                                >
+                                  {t`Apply`}
+                                </Button>
+                                <Button
+                                  variant="ghost"
+                                  size="icon-xs"
+                                  disabled={git.busy}
+                                  onClick={() => setDroppingStash(held.ref)}
+                                  aria-label={t`Drop this stash`}
+                                  className="flex-none rounded-lg text-muted-foreground"
+                                >
+                                  <X />
+                                </Button>
+                              </li>
+                            ))}
+                          </ul>
+                        )}
+                      </div>
                     </>
                   ) : (
                     <>
@@ -816,6 +930,68 @@ export function GitDesk({ project }: { project: string | null }) {
                 </div>
               </div>
             )}
+            <AlertDialog
+              open={droppingStash !== null}
+              onOpenChange={(kept) => {
+                if (!kept) setDroppingStash(null)
+              }}
+            >
+              <AlertDialogContent data-git-stash-confirm>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>{t`Drop this stash?`}</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    {t`What it holds is gone for good. Applying it first keeps the work.`}
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>{t`Keep it`}</AlertDialogCancel>
+                  <AlertDialogAction
+                    onClick={() => {
+                      if (droppingStash !== null) git.stashDrop(droppingStash)
+                      setDroppingStash(null)
+                    }}
+                  >
+                    {t`Drop`}
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+            <AlertDialog open={merging} onOpenChange={setMerging}>
+              <AlertDialogContent data-git-merge-confirm>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>{t`Merge a branch into ${branchName}`}</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    {t`The picked branch's commits join this one. If the sides collide, the conflicted files stay in the list to resolve or abort.`}
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <Select value={mergeFrom ?? ''} onValueChange={setMergeFrom}>
+                  <SelectTrigger size="sm" className="w-full" data-git-merge-pick>
+                    <SelectValue placeholder={t`Pick a branch`} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {git.branches
+                      .filter((one) => !one.current)
+                      .map((one) => (
+                        <SelectItem key={one.name} value={one.name}>
+                          {one.name}
+                        </SelectItem>
+                      ))}
+                  </SelectContent>
+                </Select>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>{t`Not now`}</AlertDialogCancel>
+                  <AlertDialogAction
+                    disabled={mergeFrom === null}
+                    onClick={() => {
+                      if (mergeFrom !== null) git.merge(mergeFrom)
+                      setMerging(false)
+                    }}
+                  >
+                    {t`Merge`}
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
             <AlertDialog
               open={switching !== null}
               onOpenChange={(kept) => {

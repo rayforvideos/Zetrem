@@ -149,3 +149,13 @@ describe('statusOf: a path git C-quoted still comes out readable', () => {
     expect(status.files[0]?.path).toBe('scratch-\ud55c.txt')
   })
 })
+
+describe('statusOf: a conflicted path stands out', () => {
+  it('reads an unmerged entry with its own sign', () => {
+    const line = 'u UU N... 100644 100644 100644 100644 aaaa bbbb cccc src/clash.ts'
+    const status = statusOf(`# branch.head main\n${line}\n`)
+    expect(status.files).toEqual([
+      { path: 'src/clash.ts', staged: false, unstaged: true, sign: 'U' },
+    ])
+  })
+})

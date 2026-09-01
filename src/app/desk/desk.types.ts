@@ -11,6 +11,7 @@ import type { MemoryEntry, MemoryNote } from '@/entities/agent-memory/model/note
 import type {
   GitBranch,
   GitCommitLine,
+  GitStash,
   GitStatus,
   GraphCommit,
   ShownFile,
@@ -160,6 +161,13 @@ export type Invokes = {
   'git:unstage': (path: string) => Outcome<null>
   'git:commit': (message: string) => Outcome<null>
   'git:switch': (branch: string, create: boolean) => Outcome<null>
+  'git:merge': (branch: string) => Outcome<null>
+  'git:stash-list': () => Outcome<GitStash[]>
+  'git:stash-push': () => Outcome<null>
+  'git:stash-apply': (ref: string) => Outcome<null>
+  'git:stash-drop': (ref: string) => Outcome<null>
+  'git:image': (path: string, ref: string) => Outcome<string>
+  'git:merge-abort': () => Outcome<null>
   'git:push': () => Outcome<null>
   'git:pull': () => Outcome<null>
   'git:graph': () => Outcome<GraphCommit[]>
@@ -193,6 +201,7 @@ export type Pushes = {
   'auth:progress': string
   'updater:ready': string
   'library:changed': null
+  'git:changed': null
 }
 
 export type InvokeChannel = keyof Invokes

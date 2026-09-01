@@ -35,3 +35,6 @@ export type ShownFile = { path: string; sign: string }
 
 // How much one commit changed, for the graph's changes column.
 export type GitStat = { files: number; adds: number; dels: number }
+
+// One stash entry: the ref names it for apply and drop.
+export type GitStash = { ref: string; subject: string }

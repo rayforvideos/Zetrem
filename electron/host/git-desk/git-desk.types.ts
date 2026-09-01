@@ -9,4 +9,7 @@ export type GitDeps = {
   git(args: string[], cwd: string): Promise<GitReply>
   // Reads one file of the project, for drawing an untracked file as a diff.
   read(path: string): Promise<string | null>
+  // Reads bytes: the working copy of a path when ref is empty, or the blob a
+  // ref holds, for showing an image instead of a byte diff.
+  blob(path: string, ref: string, cwd: string): Promise<Buffer | null>
 }

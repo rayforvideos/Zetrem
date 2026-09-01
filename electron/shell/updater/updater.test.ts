@@ -202,7 +202,12 @@ describe('a packaged launch', () => {
     updater.registerUpdater()
     await settle()
 
-    expect(boundary.bound).toEqual(['update-downloaded'])
+    expect(boundary.bound).toEqual([
+      'error',
+      'update-available',
+      'update-not-available',
+      'update-downloaded',
+    ])
     expect(boundary.handled).toEqual(['updater:state', 'updater:restart'])
     await vi.advanceTimersByTimeAsync(10 * 1000)
     expect(boundary.checks).toBe(1)

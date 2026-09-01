@@ -3,6 +3,7 @@ import { app, BrowserWindow } from 'electron'
 // default import survives in the packaged ESM main.
 import updater from 'electron-updater'
 import { handle, push } from '../../ipc/ipc'
+import { logLine } from '../app-log/app-log'
 import { isPackagedRun } from '../packaged/packaged'
 
 const { autoUpdater } = updater
@@ -31,7 +32,17 @@ export function registerUpdater(): void {
   autoUpdater.allowPrerelease = true
   autoUpdater.allowDowngrade = false
 
+  autoUpdater.on('error', (cause) => {
+    logLine('updater', `trouble: ${cause instanceof Error ? cause.message : String(cause)}`)
+  })
+  autoUpdater.on('update-available', (info) => {
+    logLine('updater', `found ${info.version}, downloading`)
+  })
+  autoUpdater.on('update-not-available', (info) => {
+    logLine('updater', `nothing newer than ${info.version}`)
+  })
   autoUpdater.on('update-downloaded', (info) => {
+    logLine('updater', `downloaded ${info.version}`)
     readyVersion = info.version
     for (const win of BrowserWindow.getAllWindows()) {
       push(win.webContents, 'updater:ready', info.version)

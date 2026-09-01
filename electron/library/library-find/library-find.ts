@@ -6,16 +6,26 @@ import type { HitRow } from './library-find.types'
 
 const DEFAULT_LIMIT = 20
 
-export function ftsQuery(query: string): string | null {
+// Every word gets a prefix, not only the last. Korean glues its particles onto
+// the end of a word, so a note holds no bare token for an exact match to find
+// and the search misses it; the prefix also carries a word half typed.
+export function ftsQuery(query: string, join: 'AND' | 'OR' = 'AND'): string | null {
   const words = query.split(/\s+/).filter((word) => word.length > 0)
   if (words.length === 0) return null
-  const quoted = words.map((word) => `"${word.replace(/"/g, '""')}"`)
-  quoted[quoted.length - 1] += '*'
-  return quoted.join(' AND ')
+  return words.map((word) => `"${word.replace(/"/g, '""')}"*`).join(` ${join} `)
 }
 
 export function searchNotes(db: DatabaseSync, query: string, limit = DEFAULT_LIMIT): LibraryHit[] {
-  const match = ftsQuery(query)
+  const words = query.split(/\s+/).filter((word) => word.length > 0)
+  const hits = matching(db, ftsQuery(query), limit)
+  // Notes holding every word come first. Only when there are none does a phrase
+  // of several words fall back to the notes holding any of them, so that a
+  // question worded a little wide still lands somewhere.
+  if (hits.length > 0 || words.length < 2) return hits
+  return matching(db, ftsQuery(query, 'OR'), limit)
+}
+
+function matching(db: DatabaseSync, match: string | null, limit: number): LibraryHit[] {
   if (match === null) return []
   try {
     const rows = db

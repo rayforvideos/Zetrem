@@ -12,7 +12,7 @@ export function trimmedLog(text: string, cap: number = LOG_MAX): string {
   return at < 0 ? half : half.slice(at + 1)
 }
 
-export function appLogPath(): string {
+function appLogPath(): string {
   return join(app.getPath('userData'), 'zetrem-log.txt')
 }
 

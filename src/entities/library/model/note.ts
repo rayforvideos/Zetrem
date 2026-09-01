@@ -1,5 +1,5 @@
 export type LibraryNoteSummary = {
-  // The path under the library root: 'foo.md', or 'folder/foo.md'.
+  // Names the note in its library: 'foo.md', or 'folder/foo.md'.
   id: string
   // '' when the note sits at the root.
   folder: string

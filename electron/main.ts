@@ -26,7 +26,7 @@ import {
 } from './store/transcript-store/transcript-store'
 import { registerUpdater } from './shell/updater/updater'
 import { registerProjects } from './projects/projects'
-import { closeLibraryMcp, registerLibrary, stopFollowing } from './library/library'
+import { closeLibraries, closeLibraryMcp, registerLibrary } from './library/library'
 import { collapseCategories } from './projects/collapse/collapse'
 import { handle } from './ipc/ipc'
 import { reloadAsk } from './shell/reload-keys/reload-keys'
@@ -293,10 +293,12 @@ if (!primary) {
   let settledForQuit = false
   app.on('before-quit', (event) => {
     dropChildren()
-    stopFollowing()
     if (settledForQuit) return
     event.preventDefault()
+    // The libraries are closed after the servers that reach into them, or a
+    // tool call landing on the way out would open one nobody will close.
     Promise.allSettled([settleTranscripts(), closeLibraryMcp()]).then(() => {
+      closeLibraries()
       settledForQuit = true
       app.quit()
     })

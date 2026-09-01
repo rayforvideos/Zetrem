@@ -47,7 +47,7 @@ const TOOLS: ToolDef[] = [
   {
     name: 'library_read',
     description:
-      'Read one library note in full by its id (the path a search or recent result gave you). Use it when a snippet is not enough.',
+      'Read one library note in full by its id (the id a search or recent result gave you). Use it when a snippet is not enough.',
     inputSchema: {
       type: 'object',
       properties: { id: { type: 'string', description: 'Note id, e.g. "analysis/auth.md".' } },
@@ -62,7 +62,7 @@ const TOOLS: ToolDef[] = [
     inputSchema: {
       type: 'object',
       properties: {
-        title: { type: 'string', description: 'Short title, also the file name.' },
+        title: { type: 'string', description: 'Short title, which also names the note.' },
         body: { type: 'string', description: 'Markdown body. Put the conclusion first.' },
         tags: { type: 'array', items: { type: 'string' } },
         folder: {

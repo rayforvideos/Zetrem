@@ -6,6 +6,7 @@ import type {
 } from '@/entities/agent-def/api/frontmatter/frontmatter.types'
 import type { RunConfig } from '@/entities/claude-cli/api/run-config/run-config.types'
 import type { Settings } from '@/entities/settings/model/settings/settings.types'
+import type { NotifyState } from '@/entities/settings/model/notify/notify'
 import type { Project } from '@/entities/project/model/project'
 import type {
   LibraryHit,
@@ -143,6 +144,8 @@ export type Invokes = {
   'worktree:diff': (agentId: string) => Outcome<WorktreeDiff>
   'worktree:rollback': (agentId: string) => Outcome<WorktreeRollback>
 
+  'nudge:state': () => NotifyState
+
   'updater:state': () => string | null
   'updater:restart': () => void
 }
@@ -155,6 +158,7 @@ export type Sends = {
   // it takes its own did-not-sign-in path from there.
   'auth:cancel-login': () => void
   'nudge:show': (title: string, body: string) => void
+  'nudge:settings': () => void
 }
 
 export type Pushes = {

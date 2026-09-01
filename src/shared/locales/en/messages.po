@@ -397,7 +397,7 @@ msgstr "Add your first teammate"
 msgid "Added {name}. Sign in if it asks."
 msgstr "Added {name}. Sign in if it asks."
 
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:169
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:171
 msgid "Agents"
 msgstr "Agents"
 
@@ -512,7 +512,7 @@ msgstr "Can't connect"
 
 #: src/widgets/library/ui/NoteList/NoteList.tsx:273
 #: src/widgets/library/ui/NoteReader/NoteReader.tsx:193
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:206
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:208
 #: src/widgets/team-sidebar/ui/ChatList/ChatRow.tsx:226
 #: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:340
 #: src/widgets/team-sidebar/ui/MemberMenu/MemberMenu.tsx:66
@@ -846,7 +846,7 @@ msgstr "Don't ask again this session"
 #: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:40
 #: src/widgets/library/ui/NoteReader/NoteReader.tsx:95
 #: src/widgets/setup/ui/PluginShelf/PluginShelf.tsx:129
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:210
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:212
 #: src/widgets/tile-deck/lib/state-word/state-word.ts:10
 msgid "Done"
 msgstr "Done"
@@ -890,7 +890,7 @@ msgid "Edits files freely, asks before running commands"
 msgstr "Edits files freely, asks before running commands"
 
 #: src/widgets/conversation/ui/Composer/Composer.tsx:206
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:158
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:160
 msgid "Effort"
 msgstr "Effort"
 
@@ -915,7 +915,7 @@ msgstr "Everything it has. Slowest and priciest"
 msgid "Everything the session has"
 msgstr "Everything the session has"
 
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:30
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:31
 msgid "Extensions"
 msgstr "Extensions"
 
@@ -1011,7 +1011,7 @@ msgstr "from an earlier reading"
 msgid "From plugins"
 msgstr "From plugins"
 
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:28
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:29
 msgid "General"
 msgstr "General"
 
@@ -1155,7 +1155,7 @@ msgstr "Keep the name under {NAME_MAX} characters"
 msgid "Keep working"
 msgstr "Keep working"
 
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:108
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:110
 msgid "Language"
 msgstr "Language"
 
@@ -1197,7 +1197,7 @@ msgstr "Linked from"
 msgid "Low"
 msgstr "Low"
 
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:182
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:184
 msgid "Manage"
 msgstr "Manage"
 
@@ -1226,7 +1226,7 @@ msgid "Message your team"
 msgstr "Message your team"
 
 #: src/widgets/conversation/ui/Composer/Composer.tsx:203
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:152
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:154
 #: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:107
 #: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:154
 msgid "Model"
@@ -1382,10 +1382,14 @@ msgstr "Nothing written yet."
 msgid "Nothing yet"
 msgstr "Nothing yet"
 
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:129
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:138
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:131
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:140
 msgid "Notifications"
 msgstr "Notifications"
+
+#: src/widgets/setup/model/useNotifyGate.ts:24
+msgid "Notifications are off at the system level. Allow Zetrem in the system settings that just opened."
+msgstr "Notifications are off at the system level. Allow Zetrem in the system settings that just opened."
 
 #: src/widgets/team-sidebar/lib/chat-groups/chat-groups.ts:28
 msgid "Older"
@@ -1432,7 +1436,7 @@ msgid "Permission"
 msgstr "Permission"
 
 #: src/widgets/conversation/ui/Composer/Composer.tsx:176
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:146
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:148
 msgid "Permissions"
 msgstr "Permissions"
 
@@ -1461,7 +1465,7 @@ msgid "Plugin"
 msgstr "Plugin"
 
 #: src/widgets/setup/ui/PluginShelf/InstalledTab.tsx:37
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:178
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:180
 msgid "Plugins"
 msgstr "Plugins"
 
@@ -1744,12 +1748,12 @@ msgstr "See what they did"
 msgid "Send"
 msgstr "Send"
 
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:115
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:124
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:117
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:126
 msgid "Send with Enter"
 msgstr "Send with Enter"
 
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:29
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:30
 msgid "Session"
 msgstr "Session"
 
@@ -1761,7 +1765,7 @@ msgstr "Session details"
 msgid "Session stopped. The next message starts a new one with your team as it is now."
 msgstr "Session stopped. The next message starts a new one with your team as it is now."
 
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:67
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:69
 msgid "Set a few things and your agents get to work!"
 msgstr "Set a few things and your agents get to work!"
 
@@ -1773,7 +1777,7 @@ msgstr "Set for everyone on your account. They cannot be removed or turned off h
 msgid "Settings"
 msgstr "Settings"
 
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:72
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:74
 msgid "Settings sections"
 msgstr "Settings sections"
 
@@ -1781,7 +1785,7 @@ msgstr "Settings sections"
 msgid "share unknown"
 msgstr "share unknown"
 
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:117
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:119
 msgid "Shift+Enter starts a new line. Off, sending takes the modifier key with Enter."
 msgstr "Shift+Enter starts a new line. Off, sending takes the modifier key with Enter."
 
@@ -1882,8 +1886,8 @@ msgstr "Sources"
 msgid "Star it"
 msgstr "Star it"
 
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:27
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:210
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:28
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:212
 msgid "Start"
 msgstr "Start"
 
@@ -1975,7 +1979,7 @@ msgstr "Team board width"
 msgid "Teammates are reusable"
 msgstr "Teammates are reusable"
 
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:131
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:133
 msgid "Tells you when the work is done or something needs your say-so, and only while Zetrem is behind another window."
 msgstr "Tells you when the work is done or something needs your say-so, and only while Zetrem is behind another window."
 
@@ -2015,7 +2019,7 @@ msgstr "The <0>claude</0> command was not found. Zetrem can install it for you."
 msgid "The address has to be http or https"
 msgstr "The address has to be http or https"
 
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:171
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:173
 msgid "The agents Claude Code brings. Each can be switched off."
 msgstr "The agents Claude Code brings. Each can be switched off."
 

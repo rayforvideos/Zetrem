@@ -84,5 +84,8 @@
   "homepage": "https://github.com/rayforvideos/Zetrem",
   "bugs": {
     "url": "https://github.com/rayforvideos/Zetrem/issues"
+  },
+  "optionalDependencies": {
+    "node-mac-permissions": "github:codebytere/node-mac-permissions#7bdd039cc5bb0dd9c81540df4340b0c4bdb3be37"
   }
 }

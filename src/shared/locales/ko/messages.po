@@ -397,7 +397,7 @@ msgstr "첫 팀원을 만들어 보세요"
 msgid "Added {name}. Sign in if it asks."
 msgstr "{name} 추가했습니다. 로그인이 필요하면 로그인하세요."
 
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:169
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:171
 msgid "Agents"
 msgstr "에이전트"
 
@@ -512,7 +512,7 @@ msgstr "연결 안 됨"
 
 #: src/widgets/library/ui/NoteList/NoteList.tsx:273
 #: src/widgets/library/ui/NoteReader/NoteReader.tsx:193
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:206
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:208
 #: src/widgets/team-sidebar/ui/ChatList/ChatRow.tsx:226
 #: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:340
 #: src/widgets/team-sidebar/ui/MemberMenu/MemberMenu.tsx:66
@@ -846,7 +846,7 @@ msgstr "이번 세션에서는 다시 묻지 않기"
 #: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:40
 #: src/widgets/library/ui/NoteReader/NoteReader.tsx:95
 #: src/widgets/setup/ui/PluginShelf/PluginShelf.tsx:129
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:210
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:212
 #: src/widgets/tile-deck/lib/state-word/state-word.ts:10
 msgid "Done"
 msgstr "완료"
@@ -890,7 +890,7 @@ msgid "Edits files freely, asks before running commands"
 msgstr "파일은 알아서 고치고, 명령을 실행할 때만 묻습니다"
 
 #: src/widgets/conversation/ui/Composer/Composer.tsx:206
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:158
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:160
 msgid "Effort"
 msgstr "노력"
 
@@ -915,7 +915,7 @@ msgstr "가진 것을 다 씁니다. 가장 느리고 가장 비쌉니다"
 msgid "Everything the session has"
 msgstr "이 세션이 가진 전부"
 
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:30
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:31
 msgid "Extensions"
 msgstr "확장"
 
@@ -1011,7 +1011,7 @@ msgstr "이전에 읽어둔 값"
 msgid "From plugins"
 msgstr "플러그인에서"
 
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:28
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:29
 msgid "General"
 msgstr "일반"
 
@@ -1155,7 +1155,7 @@ msgstr "이름은 {NAME_MAX}자 이내로 지어 주세요"
 msgid "Keep working"
 msgstr "계속 작업"
 
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:108
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:110
 msgid "Language"
 msgstr "언어"
 
@@ -1197,7 +1197,7 @@ msgstr "이 노트를 가리키는 노트"
 msgid "Low"
 msgstr "낮음"
 
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:182
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:184
 msgid "Manage"
 msgstr "관리"
 
@@ -1226,7 +1226,7 @@ msgid "Message your team"
 msgstr "팀에게 말하기"
 
 #: src/widgets/conversation/ui/Composer/Composer.tsx:203
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:152
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:154
 #: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:107
 #: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:154
 msgid "Model"
@@ -1382,10 +1382,14 @@ msgstr "아직 쓴 것이 없습니다."
 msgid "Nothing yet"
 msgstr "아직 없음"
 
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:129
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:138
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:131
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:140
 msgid "Notifications"
 msgstr "알림"
+
+#: src/widgets/setup/model/useNotifyGate.ts:24
+msgid "Notifications are off at the system level. Allow Zetrem in the system settings that just opened."
+msgstr "시스템에서 알림이 꺼져 있어요. 방금 열린 시스템 설정에서 Zetrem을 허용해 주세요."
 
 #: src/widgets/team-sidebar/lib/chat-groups/chat-groups.ts:28
 msgid "Older"
@@ -1432,7 +1436,7 @@ msgid "Permission"
 msgstr "권한"
 
 #: src/widgets/conversation/ui/Composer/Composer.tsx:176
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:146
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:148
 msgid "Permissions"
 msgstr "권한"
 
@@ -1461,7 +1465,7 @@ msgid "Plugin"
 msgstr "플러그인"
 
 #: src/widgets/setup/ui/PluginShelf/InstalledTab.tsx:37
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:178
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:180
 msgid "Plugins"
 msgstr "플러그인"
 
@@ -1744,12 +1748,12 @@ msgstr "무엇을 했는지 보기"
 msgid "Send"
 msgstr "보내기"
 
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:115
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:124
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:117
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:126
 msgid "Send with Enter"
 msgstr "Enter로 전송"
 
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:29
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:30
 msgid "Session"
 msgstr "세션"
 
@@ -1761,7 +1765,7 @@ msgstr "세션 상세"
 msgid "Session stopped. The next message starts a new one with your team as it is now."
 msgstr "세션을 멈췄습니다. 다음 메시지부터 지금 팀 구성으로 새로 시작합니다."
 
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:67
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:69
 msgid "Set a few things and your agents get to work!"
 msgstr "몇 가지만 정하면 바로 일을 시작합니다"
 
@@ -1773,7 +1777,7 @@ msgstr "계정 전체에 설정된 것입니다. 여기서는 지우거나 끌 �
 msgid "Settings"
 msgstr "설정"
 
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:72
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:74
 msgid "Settings sections"
 msgstr "설정 구역"
 
@@ -1781,7 +1785,7 @@ msgstr "설정 구역"
 msgid "share unknown"
 msgstr "사용량 알 수 없음"
 
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:117
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:119
 msgid "Shift+Enter starts a new line. Off, sending takes the modifier key with Enter."
 msgstr "Shift+Enter로 줄을 바꿉니다. 끄면 보조키+Enter로 보냅니다."
 
@@ -1882,8 +1886,8 @@ msgstr "마켓플레이스"
 msgid "Star it"
 msgstr "스타 주기"
 
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:27
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:210
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:28
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:212
 msgid "Start"
 msgstr "시작"
 
@@ -1975,7 +1979,7 @@ msgstr "팀 보드 너비"
 msgid "Teammates are reusable"
 msgstr "팀원은 한 번 만들면 계속 씁니다"
 
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:131
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:133
 msgid "Tells you when the work is done or something needs your say-so, and only while Zetrem is behind another window."
 msgstr "일이 끝났거나 승인이 필요할 때 알려줍니다. Zetrem이 다른 창에 가려져 있을 때만 알립니다."
 
@@ -2015,7 +2019,7 @@ msgstr "<0>claude</0> 명령을 찾지 못했습니다. Zetrem이 대신 설치�
 msgid "The address has to be http or https"
 msgstr "주소는 http나 https여야 합니다"
 
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:171
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:173
 msgid "The agents Claude Code brings. Each can be switched off."
 msgstr "Claude Code가 기본으로 제공하는 에이전트입니다. 하나씩 끌 수 있습니다."
 

@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { startBlocker } from '../../lib/start-blocker/start-blocker'
+import { useNotifyGate } from '../../model/useNotifyGate'
 import { tongueChoices } from '../../lib/tongues/tongues'
 import { EFFORTS, MODELS, PERMISSION_MODES } from '@/entities/settings'
 import type { Settings } from '@/entities/settings'
@@ -43,6 +44,7 @@ export function SetupPane({
   const { reopened, onCancel } = actions
   const [tab, setTab] = useState<SetupTab>('start')
   const blocker = startBlocker(actions.signedIn, actions.hasProject)
+  const notifyGate = useNotifyGate(defaults.onNotify)
   const canStart = blocker === null
 
   useEffect(() => {
@@ -134,7 +136,7 @@ export function SetupPane({
                     <Switch
                       id="notify"
                       checked={defaults.notify}
-                      onCheckedChange={defaults.onNotify}
+                      onCheckedChange={notifyGate.set}
                       aria-label={t`Notifications`}
                     />
                   </Field>

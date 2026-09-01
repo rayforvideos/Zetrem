@@ -36,6 +36,8 @@ export default defineConfig({
     build: {
       rollupOptions: {
         input: { index: resolve('electron/main.ts') },
+        // A native module cannot be bundled; it ships in node_modules instead.
+        external: ['node-mac-permissions'],
       },
     },
   },

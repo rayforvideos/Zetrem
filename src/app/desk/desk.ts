@@ -64,6 +64,8 @@ export type DeskBridge = {
   forgetTranscript: Invoke<'transcript:forget'>
 
   nudge: Send<'nudge:show'>
+  nudgeState: Invoke<'nudge:state'>
+  openNotifySettings: Send<'nudge:settings'>
 
   latestCliVersion: Invoke<'cli:latest'>
   runCliUpdate: Invoke<'cli:update'>

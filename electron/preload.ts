@@ -96,6 +96,8 @@ const desk: DeskBridge = {
   forgetTranscript: invoke('transcript:forget'),
 
   nudge: send('nudge:show'),
+  nudgeState: invoke('nudge:state'),
+  openNotifySettings: send('nudge:settings'),
 
   latestCliVersion: invoke('cli:latest'),
   runCliUpdate: invoke('cli:update'),

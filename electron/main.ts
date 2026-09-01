@@ -29,6 +29,7 @@ import { registerProjects } from './projects/projects'
 import { closeLibraryMcp, registerLibrary, stopFollowing } from './library/library'
 import { collapseCategories } from './projects/collapse/collapse'
 import { handle } from './ipc/ipc'
+import { reloadAsk } from './shell/reload-keys/reload-keys'
 import { loadTroubleLine, troublePage } from './shell/window-trouble/window-trouble'
 import { isPackagedRun } from './shell/packaged/packaged'
 
@@ -102,6 +103,18 @@ function createWindow(): void {
   })
 
   followScheme(win)
+
+  // Windows and Linux run without a menu, which silently takes the reload
+  // accelerators with it; the chords are read off the wire instead.
+  if (!isMac) {
+    win.webContents.on('before-input-event', (event, input) => {
+      const kind = reloadAsk(input)
+      if (kind === null) return
+      event.preventDefault()
+      if (kind === 'hard') win.webContents.reloadIgnoringCache()
+      else win.webContents.reload()
+    })
+  }
 
   win.once('ready-to-show', () => win.show())
 

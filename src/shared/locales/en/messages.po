@@ -68,6 +68,11 @@ msgstr "{0, plural, one {# step} other {# steps}}"
 msgid "{0} chosen"
 msgstr "{0} chosen"
 
+#. placeholder {0}: got.version ?? ''
+#: src/widgets/status-bar/model/useAppUpdateCheck.ts:24
+msgid "{0} is ready. Restart to install."
+msgstr "{0} is ready. Restart to install."
+
 #. placeholder {0}: untilLabel(left)
 #: src/widgets/status-bar/lib/strip/strip.ts:26
 msgid "{0} left"
@@ -85,7 +90,7 @@ msgstr "{0} memories about this project. Each one is loaded into every new sessi
 
 #. placeholder {0}: n(reached)
 #. placeholder {1}: n(wired.length)
-#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:145
+#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:147
 msgid "{0} of {1} connected"
 msgstr "{0} of {1} connected"
 
@@ -313,6 +318,10 @@ msgstr "A binary file has no diff to show."
 msgid "A commit undoing that merge is on the tree now."
 msgstr "A commit undoing that merge is on the tree now."
 
+#: src/widgets/status-bar/model/useAppUpdateCheck.ts:26
+msgid "A dev run does not update itself."
+msgstr "A dev run does not update itself."
+
 #: src/entities/connector/lib/refusal-why/refusal-why.ts:12
 msgid "A name cannot start with a dash"
 msgstr "A name cannot start with a dash"
@@ -452,7 +461,7 @@ msgid "All"
 msgstr "All"
 
 #. placeholder {0}: n(reached)
-#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:144
+#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:146
 msgid "All {0} connected"
 msgstr "All {0} connected"
 
@@ -614,8 +623,13 @@ msgstr "Character"
 msgid "Check again"
 msgstr "Check again"
 
-#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:131
-#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:142
+#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:164
+msgid "Check for updates"
+msgstr "Check for updates"
+
+#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:133
+#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:144
+#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:164
 msgid "Checking…"
 msgstr "Checking…"
 
@@ -710,7 +724,7 @@ msgstr "Conflicted"
 msgid "Connected"
 msgstr "Connected"
 
-#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:180
+#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:195
 msgid "Connecting"
 msgstr "Connecting"
 
@@ -723,11 +737,11 @@ msgid "Connector name"
 msgstr "Connector name"
 
 #: src/widgets/setup/ui/PluginShelf/ConnectorsTab.tsx:55
-#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:122
+#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:124
 msgid "Connectors"
 msgstr "Connectors"
 
-#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:112
+#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:114
 msgid "Context"
 msgstr "Context"
 
@@ -751,6 +765,10 @@ msgstr "Could not add {name}"
 #: src/pages/workspace/model/extensions/useConnectors.ts:90
 msgid "Could not bring over Claude Desktop"
 msgstr "Could not bring over Claude Desktop"
+
+#: src/widgets/status-bar/model/useAppUpdateCheck.ts:29
+msgid "Could not check for updates."
+msgstr "Could not check for updates."
 
 #: src/pages/workspace/model/chat/useTranscript.ts:286
 #: src/pages/workspace/model/chat/useTranscript.ts:302
@@ -973,6 +991,11 @@ msgstr "Don't ask again this session"
 msgid "Done"
 msgstr "Done"
 
+#. placeholder {0}: got.version ?? ''
+#: src/widgets/status-bar/model/useAppUpdateCheck.ts:22
+msgid "Downloading {0}. A card appears when it is ready."
+msgstr "Downloading {0}. A card appears when it is ready."
+
 #: src/widgets/team-sidebar/ui/SidebarGrip/SidebarGrip.tsx:64
 msgid "Drag to resize, double-click to reset"
 msgstr "Drag to resize, double-click to reset"
@@ -1063,7 +1086,7 @@ msgstr "Face"
 msgid "failed"
 msgstr "failed"
 
-#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:184
+#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:199
 msgid "Failed"
 msgstr "Failed"
 
@@ -1113,7 +1136,7 @@ msgstr "Find why checkout drops the last item"
 msgid "Finish signing in to {name} in the browser. The next session picks it up."
 msgstr "Finish signing in to {name} in the browser. The next session picks it up."
 
-#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:106
+#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:108
 msgid "Folder"
 msgstr "Folder"
 
@@ -1414,7 +1437,7 @@ msgstr "Message your team"
 
 #: src/widgets/conversation/ui/Composer/Composer.tsx:203
 #: src/widgets/setup/ui/SetupPane/SetupPane.tsx:156
-#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:107
+#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:109
 #: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:154
 msgid "Model"
 msgstr "Model"
@@ -1455,7 +1478,7 @@ msgstr "Name"
 msgid "Name the folder for these two chats"
 msgstr "Name the folder for these two chats"
 
-#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:178
+#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:193
 msgid "Needs auth"
 msgstr "Needs auth"
 
@@ -1660,7 +1683,7 @@ msgstr "owner/repo, a URL, or a folder"
 msgid "Paste the server address"
 msgstr "Paste the server address"
 
-#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:109
+#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:111
 msgid "Permission"
 msgstr "Permission"
 
@@ -1809,7 +1832,7 @@ msgstr "Recent"
 msgid "Recent first"
 msgstr "Recent first"
 
-#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:131
+#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:133
 msgid "Recheck"
 msgstr "Recheck"
 
@@ -2513,6 +2536,10 @@ msgstr "This diff is too large to show here."
 msgid "This is everything they know when they start."
 msgstr "This is everything they know when they start."
 
+#: src/widgets/status-bar/model/useAppUpdateCheck.ts:20
+msgid "This is the newest build."
+msgstr "This is the newest build."
+
 #: src/widgets/setup/lib/sign-out-warning/sign-out-warning.ts:39
 msgid "This opens the browser to sign in again for this account."
 msgstr "This opens the browser to sign in again for this account."
@@ -2530,7 +2557,7 @@ msgstr "This project"
 msgid "This project is not a git repository."
 msgstr "This project is not a git repository."
 
-#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:96
+#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:98
 msgid "This session"
 msgstr "This session"
 
@@ -2624,12 +2651,12 @@ msgid "Undo the work of this teammate that was already merged?"
 msgstr "Undo the work of this teammate that was already merged?"
 
 #: src/widgets/setup/ui/PluginShelf/ConnectorsTab.tsx:33
-#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:186
+#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:201
 msgid "Unknown"
 msgstr "Unknown"
 
 #: src/widgets/setup/ui/PluginShelf/InstalledTab.tsx:73
-#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:163
+#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:178
 msgid "Update"
 msgstr "Update"
 
@@ -2637,7 +2664,7 @@ msgstr "Update"
 msgid "Update CLI"
 msgstr "Update CLI"
 
-#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:163
+#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:178
 msgid "Updating…"
 msgstr "Updating…"
 
@@ -2649,7 +2676,7 @@ msgstr "Use https, or http only for a server on this machine"
 msgid "Very high"
 msgstr "Very high"
 
-#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:182
+#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:197
 msgid "Waiting for approval"
 msgstr "Waiting for approval"
 

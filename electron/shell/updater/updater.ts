@@ -22,6 +22,26 @@ export function registerUpdater(): void {
   handle('updater:restart', () => {
     autoUpdater.quitAndInstall()
   })
+  // Checking by hand answers right away with where things stand; a download
+  // that starts here still announces itself through updater:ready when done.
+  handle('updater:check', async () => {
+    if (!isPackagedRun()) return { state: 'dev' as const }
+    if (readyVersion !== null) return { state: 'ready' as const, version: readyVersion }
+    try {
+      const found = await autoUpdater.checkForUpdates()
+      if (found === null) return { state: 'dev' as const }
+      if (found.downloadPromise !== null && found.downloadPromise !== undefined) {
+        logLine('updater', `asked by hand: found ${found.updateInfo.version}, downloading`)
+        return { state: 'downloading' as const, version: found.updateInfo.version }
+      }
+      logLine('updater', 'asked by hand: nothing newer')
+      return { state: 'latest' as const }
+    } catch (cause: unknown) {
+      const said = cause instanceof Error ? cause.message : String(cause)
+      logLine('updater', `asked by hand, trouble: ${said}`)
+      return { state: 'trouble' as const, said }
+    }
+  })
 
   // electron-updater reads app-update.yml, which only a packaged build has.
   if (!isPackagedRun()) return

@@ -149,6 +149,7 @@ const desk: DeskBridge = {
 
   updaterState: invoke('updater:state'),
   updaterRestart: invoke('updater:restart'),
+  updaterCheck: invoke('updater:check'),
   onUpdaterReady: listen('updater:ready'),
 }
 

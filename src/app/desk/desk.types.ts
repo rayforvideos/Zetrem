@@ -44,6 +44,14 @@ import type {
   PluginVerb,
 } from '@/entities/plugin/api/catalog/catalog.types'
 
+// Where a hand-asked update check landed: still a dev run, the newest
+// already, a download on its way, a build sitting ready, or trouble.
+type UpdaterCheck = {
+  state: 'dev' | 'latest' | 'downloading' | 'ready' | 'trouble'
+  version?: string
+  said?: string
+}
+
 type AgentHostEvent =
   | { id: string; kind: 'line'; line: string }
   | { id: string; kind: 'workspace'; cwd: string }
@@ -183,6 +191,7 @@ export type Invokes = {
 
   'updater:state': () => string | null
   'updater:restart': () => void
+  'updater:check': () => UpdaterCheck
 }
 
 export type Sends = {

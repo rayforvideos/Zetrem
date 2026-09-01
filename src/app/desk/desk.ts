@@ -117,6 +117,7 @@ export type DeskBridge = {
 
   updaterState: Invoke<'updater:state'>
   updaterRestart: Invoke<'updater:restart'>
+  updaterCheck: Invoke<'updater:check'>
   onUpdaterReady: Listen<'updater:ready'>
 }
 

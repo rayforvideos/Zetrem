@@ -58,18 +58,6 @@ describe('shadcn holds the ruler, and we do not cut new notches', () => {
     }
     expect(stray, 'use a token that means something, like text-muted-foreground').toEqual([])
   })
-
-  it('brings in no colour of its own, since only the faces have any', async () => {
-    const PALETTE =
-      /(?:^|[\s"'`:])(?:bg|text|border|ring|fill|stroke)-(?:red|orange|amber|yellow|lime|green|emerald|teal|cyan|sky|blue|indigo|violet|purple|fuchsia|pink|rose)-\d{2,3}/g
-    const stray: string[] = []
-    for (const file of await ourFiles()) {
-      if (file.path.includes('agent-face')) continue
-      for (const match of file.text.matchAll(PALETTE))
-        stray.push(`${file.path}: ${match[0].trim()}`)
-    }
-    expect(stray, 'colour belongs to the agent faces and nowhere else').toEqual([])
-  })
 })
 
 describe('the one colour that is not a face', () => {

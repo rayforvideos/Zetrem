@@ -64,6 +64,32 @@ export type DeskBridge = {
   forgetTranscript: Invoke<'transcript:forget'>
 
   nudge: Send<'nudge:show'>
+  nudgeState: Invoke<'nudge:state'>
+  gitStatus: Invoke<'git:status'>
+  gitBranches: Invoke<'git:branches'>
+  gitLog: Invoke<'git:log'>
+  gitDiff: Invoke<'git:diff'>
+  gitStage: Invoke<'git:stage'>
+  gitUnstage: Invoke<'git:unstage'>
+  gitCommit: Invoke<'git:commit'>
+  gitSwitch: Invoke<'git:switch'>
+  gitMerge: Invoke<'git:merge'>
+  gitStashList: Invoke<'git:stash-list'>
+  gitStashPush: Invoke<'git:stash-push'>
+  gitStashApply: Invoke<'git:stash-apply'>
+  gitStashDrop: Invoke<'git:stash-drop'>
+  gitImage: Invoke<'git:image'>
+  gitMergeAbort: Invoke<'git:merge-abort'>
+  gitPush: Invoke<'git:push'>
+  gitPull: Invoke<'git:pull'>
+  gitGraph: Invoke<'git:graph'>
+  gitShow: Invoke<'git:show'>
+  gitShowDiff: Invoke<'git:show-diff'>
+  listMemory: Invoke<'memory:list'>
+  readMemory: Invoke<'memory:read'>
+  writeMemory: Invoke<'memory:write'>
+  removeMemory: Invoke<'memory:remove'>
+  openNotifySettings: Send<'nudge:settings'>
 
   latestCliVersion: Invoke<'cli:latest'>
   runCliUpdate: Invoke<'cli:update'>
@@ -79,14 +105,19 @@ export type DeskBridge = {
   searchLibrary: Invoke<'library:search'>
   libraryBacklinks: Invoke<'library:backlinks'>
   onLibraryChanged: Listen<'library:changed'>
+  onGitChanged: Listen<'git:changed'>
   addLibraryFolder: Invoke<'library:folder-add'>
   renameLibraryFolder: Invoke<'library:folder-rename'>
   removeLibraryFolder: Invoke<'library:folder-remove'>
   libraryOpenToAgents: Invoke<'library:agents'>
   setLibraryOpenToAgents: Invoke<'library:agents-set'>
 
+  worktreeDiff: Invoke<'worktree:diff'>
+  worktreeRollback: Invoke<'worktree:rollback'>
+
   updaterState: Invoke<'updater:state'>
   updaterRestart: Invoke<'updater:restart'>
+  updaterCheck: Invoke<'updater:check'>
   onUpdaterReady: Listen<'updater:ready'>
 }
 

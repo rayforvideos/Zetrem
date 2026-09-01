@@ -46,7 +46,14 @@ module.exports = {
   directories: {
     output: 'release',
   },
-  files: ['out/**', 'package.json'],
+  files: [
+    'out/**',
+    'package.json',
+    'node_modules/node-mac-permissions/**',
+    'node_modules/bindings/**',
+    'node_modules/file-uri-to-path/**',
+  ],
+  asarUnpack: ['**/*.node'],
   electronFuses: {
     runAsNode: false,
     enableNodeOptionsEnvironmentVariable: false,

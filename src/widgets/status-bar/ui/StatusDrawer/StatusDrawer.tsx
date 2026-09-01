@@ -5,6 +5,7 @@ import { Button } from '@/shared/ui/button'
 import { shortName } from '@/entities/connector'
 import type { Connector } from '@/entities/connector'
 import { useScrollState } from '@/shared/lib/scroll-state/useScrollState'
+import { useAppUpdateCheck } from '../../model/useAppUpdateCheck'
 import { reachable } from '../../lib/format/format'
 import { i18n } from '@lingui/core'
 import { t } from '@lingui/core/macro'
@@ -80,6 +81,7 @@ export function StatusDrawer({
   updating,
 }: StatusDrawerProps) {
   const [body] = useScrollState<HTMLDivElement>()
+  const appUpdate = useAppUpdateCheck()
   const { session, context, cost, update } = statusState
 
   const stale = isOutdated(update?.current ?? null, update?.latest ?? null)
@@ -150,6 +152,19 @@ export function StatusDrawer({
         {(appVersion !== null || update?.current) && (
           <div className="flex flex-wrap items-center gap-x-2 gap-y-1.5 px-1 font-mono text-xs text-muted-foreground">
             {appVersion !== null && <span>Zetrem {appVersion}</span>}
+            {appVersion !== null && (
+              <Button
+                size="sm"
+                variant="ghost"
+                onClick={appUpdate.ask}
+                disabled={appUpdate.asking}
+                className="h-6 px-2 text-muted-foreground text-xs"
+                data-app-update-check
+              >
+                {appUpdate.asking ? t`Checking…` : t`Check for updates`}
+              </Button>
+            )}
+            {appUpdate.note !== null && <span data-app-update-note>{appUpdate.note}</span>}
             {appVersion !== null && update?.current && <span aria-hidden>·</span>}
             {update?.current && (
               <span>

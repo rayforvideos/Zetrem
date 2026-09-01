@@ -626,6 +626,22 @@ describe('parseClaudeLine: thinking, and what tools gave back', () => {
     })
   })
 
+  it('carries the agent id a finished Agent call reports, which names its branch', () => {
+    const events = parseClaudeLine(
+      JSON.stringify({
+        type: 'user',
+        message: {
+          content: [{ tool_use_id: 'toolu_a', type: 'tool_result', content: 'done' }],
+        },
+        tool_use_result: { agentId: 'a879059595fc11096', outputFile: '/tmp/out.md' },
+      }),
+    )
+    expect(events.find((one) => one.type === 'toolResult')).toMatchObject({
+      toolUseId: 'toolu_a',
+      agentId: 'a879059595fc11096',
+    })
+  })
+
   it('marks a failed tool as failed, because swallowing it makes the screen lie', () => {
     const events = parseClaudeLine(
       JSON.stringify({

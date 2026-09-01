@@ -128,6 +128,7 @@ export function fromToolResult(event: Record<string, unknown>): TurnEvent[] {
   const content = (event.message as Record<string, unknown> | undefined)?.content
   if (!Array.isArray(content)) return []
   const detail = event.tool_use_result as Record<string, unknown> | undefined
+  const agentId = str(detail?.agentId)
   const out: TurnEvent[] = []
   for (const block of blocksIn(content)) {
     if (block.type !== 'tool_result' || typeof block.tool_use_id !== 'string') continue
@@ -138,6 +139,7 @@ export function fromToolResult(event: Record<string, unknown>): TurnEvent[] {
       stderr: str(detail?.stderr),
       isError: block.is_error === true,
       interrupted: detail?.interrupted === true,
+      ...(agentId.length === 0 ? {} : { agentId }),
     })
   }
   return out

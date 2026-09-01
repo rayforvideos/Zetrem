@@ -103,6 +103,16 @@ while (Date.now() < until) {
 
 if (seen.crashed) stop(1, `smoke: the screen crashed:\n${seen.text.trim().slice(0, 1200)}`)
 if (!seen.screen) stop(1, 'smoke: the window opened but never reached a screen')
+
+// The git bridge must answer even with no project open: a refusal is fine,
+// silence or a throw means the host module did not survive this platform.
+const probe = await ask(++tick, 'Runtime.evaluate', {
+  expression: `window.desk.gitStatus().then((got) => JSON.stringify(got)).catch((err) => 'threw: ' + err)`,
+  awaitPromise: true,
+  returnByValue: true,
+})
+const gitSaid = probe?.result?.value ?? ''
+if (!gitSaid.includes('"ok"')) stop(1, `smoke: the git bridge did not answer: ${gitSaid}`)
 if (/\[renderer\]/.test(said) && /error|crash|TypeError|ReferenceError/i.test(said)) {
   stop(1, 'smoke: the renderer logged an error while opening')
 }

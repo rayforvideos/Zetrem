@@ -53,6 +53,7 @@ describe('what is meant to be read can be selected, and nothing else', () => {
       'AgentReport.tsx',
       'Approval.tsx',
       'ConversationPane.tsx',
+      'GitDesk.tsx',
       'NoteReader.tsx',
       'StatusDrawer.tsx',
       'ToolDetail.tsx',

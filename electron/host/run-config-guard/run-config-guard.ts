@@ -32,7 +32,10 @@ function isLock(value: unknown): value is RosterLock | null {
 }
 
 // Every value here comes off the wire and becomes a CLI argument: 'bypass' is
-// the word that turns into --dangerously-skip-permissions.
+// the word that turns into --dangerously-skip-permissions. Only what is named
+// below survives, which is how `isolated` stays main's to decide: the worktree
+// fence is the lock on the shared tree, and a renderer that could ask for it
+// could ask for none.
 export function runConfigOf(value: unknown): Omit<RunConfig, 'persona'> | null {
   const raw = value as Partial<RunConfig> | null
   if (raw === null || typeof raw !== 'object') return null

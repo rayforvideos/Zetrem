@@ -4,7 +4,7 @@ import { mkdirSync } from 'node:fs'
 import { app } from 'electron'
 import { agentEnv } from '../../spawn/shell-env/shell-env'
 import { agentArgs } from '@/entities/claude-cli/api/run-config/run-config'
-import { ORCHESTRATOR_PROMPT, PERSONA } from '@/entities/teammate/model/orchestrator/orchestrator'
+import { PERSONA, orchestratorPrompt } from '@/entities/teammate/model/orchestrator/orchestrator'
 import { claudeBin, loginPath } from '../../cli/login-path/login-path'
 import { exitReason, startTrouble } from '../../spawn/exit-reason/exit-reason'
 import type { ExitReason } from '@/entities/claude-cli/lib/exit-line/exit-line.types'
@@ -20,6 +20,7 @@ import { tell } from '../tell/tell'
 import { runConfigOf } from '../run-config-guard/run-config-guard'
 import { launchFor } from '../../spawn/spawn-claude/spawn-claude'
 import { scratchWorkspace } from '../../shell/workspace-dir/workspace-dir'
+import { isGitWorkspace } from '../../shell/git-workspace/git-workspace'
 import { dropSends, holdSend, releaseSends } from '../pending-sends/pending-sends'
 import type { PendingSend } from '../pending-sends/pending-sends.types'
 
@@ -155,8 +156,16 @@ export function registerAgentHost(): void {
         } catch (cause: unknown) {
           console.error('[library] could not lay out', workspace, cause)
         }
+        // Whether a teammate can be fenced into a worktree is the workspace's
+        // to answer, so it is answered here and never taken from the renderer.
+        const isolated = isGitWorkspace(workspace)
         const launch = launchFor(await claudeBin(), [
-          ...agentArgs({ ...run, persona: PERSONA, orchestrator: ORCHESTRATOR_PROMPT }),
+          ...agentArgs({
+            ...run,
+            persona: PERSONA,
+            orchestrator: orchestratorPrompt(isolated),
+            isolated,
+          }),
           ...added,
         ])
         const env = agentEnv(process.env, await loginPath())

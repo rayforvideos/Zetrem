@@ -2,6 +2,10 @@ import type { RunConfig } from './run-config.types'
 
 import { agentsArgs } from '@/entities/claude-cli/api/roster-lock/roster-lock'
 
+// A subagent worktree branches from the repository's default branch by default,
+// and the work the person is looking at sits on their HEAD instead.
+const WORKTREE_FROM_HEAD = '{"worktree":{"baseRef":"head"}}'
+
 export function agentArgs(config: RunConfig): string[] {
   const args = [
     '-p',
@@ -17,7 +21,11 @@ export function agentArgs(config: RunConfig): string[] {
 
   if (config.resume) args.push('--resume', config.resume)
 
-  args.push(...agentsArgs(config.people, config.lock, config.orchestrator ?? config.persona))
+  const isolated = config.isolated === true
+  args.push(
+    ...agentsArgs(config.people, config.lock, config.orchestrator ?? config.persona, isolated),
+  )
+  if (isolated) args.push('--settings', WORKTREE_FROM_HEAD)
 
   if (config.model !== 'default') args.push('--model', config.model)
   if (config.effort !== 'default') args.push('--effort', config.effort)

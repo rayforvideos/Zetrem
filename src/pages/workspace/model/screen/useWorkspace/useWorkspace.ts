@@ -1,8 +1,7 @@
 import { useEffect, useRef, useState, useSyncExternalStore } from 'react'
 import { allowedStock, roster, offStock, stockAgents } from '@/entities/teammate'
 import { withRefused, withoutRefused } from '@/entities/claude-cli'
-import { forgetProject, openProject, pickProject, projectStore } from '@/entities/project'
-import type { Project } from '@/entities/project'
+import { projectStore } from '@/entities/project'
 import { GRID_PAD } from '@/shared/config/theme'
 import { useFailure } from '@/shared/lib/failure/failure'
 import { addressKey, team } from '@/widgets/team-sidebar'
@@ -23,6 +22,7 @@ import { useFocus } from '../useFocus'
 import { usePlugins } from '../../extensions/usePlugins'
 import { useProjectMemory } from '../../project/useProjectMemory'
 import { useProjects } from '../../project/useProjects'
+import { useProjectSwitch } from '../../project/useProjectSwitch/useProjectSwitch'
 import { useSessionProbe } from '../../session/useSessionProbe'
 import { useAuthoredAgents } from '../../team/useAuthoredAgents'
 import { useNudge } from '../../session/useNudge'
@@ -38,6 +38,9 @@ import { useOffsetWidth } from '@/pages/workspace/model/screen/offset-width/useO
 import { lockOf, peopleOf } from '../../team/workspace-config/workspace-config'
 import { t } from '@lingui/core/macro'
 
+// The workspace's composition root: every hook that must live for the whole
+// window is wired here once, and what comes back is grouped by domain so a
+// screen part takes only the group it draws.
 export function useWorkspace() {
   const { settings, loading, failure: settingsFailure, update } = useSettings()
   const project = useSyncExternalStore(projectStore.subscribe, projectStore.get, projectStore.get)
@@ -79,7 +82,6 @@ export function useWorkspace() {
   const focus = useFocus()
 
   const signedIn = auth.auth?.state === 'signed-in'
-  const hasProject = project?.path != null
   const yourName = tidyUserName(settings.userName)
   const deckSidebarW = sidebar.span + GRID_PAD * 2
 
@@ -89,7 +91,7 @@ export function useWorkspace() {
     projectKnown,
     chatKnown: chat.ready,
     loggedIn: signedIn,
-    hasProject,
+    hasProject: project?.path != null,
     setupDone: settings.setupDone,
     onboarded: settings.onboarded,
     settingsOpen: panel.open,
@@ -154,7 +156,7 @@ export function useWorkspace() {
   useEffect(() => {
     if (!drawerOpen) return
     const onKey = (event: KeyboardEvent): void => {
-      if (event.key !== 'Escape' || layerOver(document)) return
+      if (event.key !== 'Escape' || event.defaultPrevented || layerOver(document)) return
       setDrawerOpen(false)
     }
     window.addEventListener('keydown', onKey)
@@ -186,50 +188,18 @@ export function useWorkspace() {
     return () => window.removeEventListener('keydown', onKey)
   }, [gate])
 
-  function adoptProject(picked: Project | null): void {
-    // Two projects may share one folder, so identity is the id, not the path.
-    if (!picked || picked.id === project?.id) return
-    // The running agent is rooted in the old folder; left alive it would keep
-    // streaming turns into the new project's transcript.
-    agent.reset()
-    focus.clearAll()
-    projectStore.set(picked)
-  }
-
-  function handlePickProject(): void {
-    pickProject().then(adoptProject).catch(reportProject(t`Could not open that folder`))
-  }
-
-  // Two quick clicks: only the last one decides what the screen shows.
-  const opening = useRef(0)
-  function handleOpenProject(id: string): void {
-    const ticket = ++opening.current
-    openProject(id)
-      .then((picked) => {
-        if (opening.current === ticket) adoptProject(picked)
-      })
-      .catch(reportProject(t`Could not open that folder`))
-  }
-
-  function handleForgetProject(id: string): void {
-    const current = project !== null && project.id === id
-    // The agent is rooted in the folder being forgotten: it goes first, not
-    // after the round-trips, or it streams on into whatever comes next.
-    if (current) {
+  const projects = useProjectSwitch({
+    project,
+    allProjects,
+    refreshProjects,
+    report: reportProject,
+    dropSession: () => {
+      // The running agent is rooted in the old folder; left alive it would
+      // keep streaming turns into the new project's transcript.
       agent.reset()
       focus.clearAll()
-    }
-    forgetProject(id)
-      .then(async () => {
-        if (current) {
-          const next = allProjects.filter((one) => one.id !== id)[0]
-          const opened = next === undefined ? null : await openProject(next.id)
-          projectStore.set(opened)
-        }
-        refreshProjects()
-      })
-      .catch(reportProject(t`Could not remove that project`))
-  }
+    },
+  })
 
   function reload(patch: Partial<typeof settings>, said: string): void {
     update(patch)
@@ -246,14 +216,6 @@ export function useWorkspace() {
     go()
   }
 
-  function openLibrary(): void {
-    setLibraryOpen(true)
-  }
-
-  function leaveLibrary(): void {
-    setLibraryOpen(false)
-  }
-
   const agentToggles = {
     stock,
     on: allowedStock(stock, settings.stockOff),
@@ -267,59 +229,58 @@ export function useWorkspace() {
   }
 
   return {
-    agent,
-    agentToggles,
-    allProjects,
-    atWork,
-    attach,
-    attachSidebar,
-    auth,
-    chat,
-    children,
-    conv,
-    deck,
-    deckSidebarW,
-    defs,
-    drafts,
-    drawerOpen,
-    edit,
-    focus,
-    gate,
-    handleForgetProject,
-    handleOpenProject,
-    handlePickProject,
-    hasProject,
-    held,
-    hire,
-    leaveLibrary,
-    live,
-    nowMs,
-    openAgent,
-    openLibrary,
-    panel,
-    pendingRestart,
-    project,
-    projectFailure,
-    release,
-    reload,
-    setDrawerOpen,
-    setPendingRestart,
-    settings,
-    settingsFailure,
-    settleNote,
-    shelf,
-    sidebar,
-    sidebarBoxW,
-    sidebarLabel,
-    signedIn,
-    status,
-    swap,
-    teamMembers,
-    teamNote,
-    update,
-    libraryOpen,
-    viewport,
-    wires,
-    yourName,
+    prefs: { settings, update, reload, failure: settingsFailure },
+    account: { auth, signedIn, swap },
+    projects: {
+      current: project,
+      all: allProjects,
+      ...projects,
+      failure: projectFailure,
+    },
+    chatting: {
+      agent,
+      chat,
+      conv,
+      children,
+      status,
+      held,
+      live,
+      atWork,
+      nowMs,
+      attach,
+      focus,
+      openAgent,
+      pendingRestart,
+      setPendingRestart,
+    },
+    team: {
+      defs,
+      drafts,
+      hire,
+      edit,
+      release,
+      note: teamNote,
+      settleNote,
+      members: teamMembers,
+      toggles: agentToggles,
+      yourName,
+    },
+    layout: {
+      gate,
+      deck,
+      viewport,
+      sidebar,
+      sidebarLabel,
+      attachSidebar,
+      sidebarBoxW,
+      deckSidebarW,
+      drawerOpen,
+      setDrawerOpen,
+      panel,
+      libraryOpen,
+      openLibrary: () => setLibraryOpen(true),
+      leaveLibrary: () => setLibraryOpen(false),
+    },
+    extensions: { shelf, wires },
   }
 }

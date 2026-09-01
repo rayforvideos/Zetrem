@@ -2,15 +2,36 @@ import type { AgentSession, SessionStatus } from '@/entities/agent-session'
 import { useScrollState } from '@/shared/lib/scroll-state/useScrollState'
 import { shapeOfLine, tally } from '@/entities/tool'
 import { AgentSprite, personaOf } from '@/entities/teammate'
+import { cn } from '@/shared/lib/cn'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/shared/ui/alert-dialog'
 import { Button } from '@/shared/ui/button'
 import { ToolIcon } from '@/entities/tool'
 import { Markdown } from '@/shared/markdown/Markdown/Markdown'
 import { leadOf } from '../../lib/lead/lead'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { runsOf, stepTo } from '../../lib/runs/runs'
+import { rollbackTitle, rollbackWarning } from '../../lib/review/review'
+import type { DiffTone } from '../../lib/review/review.types'
+import { useWorktreeReview } from '../../model/useWorktreeReview'
 import { i18n } from '@lingui/core'
 import { msg, t } from '@lingui/core/macro'
 import type { MessageDescriptor } from '@lingui/core'
+
+const TONE: Record<DiffTone, string> = {
+  added: 'text-added',
+  removed: 'text-removed',
+  meta: 'text-muted-foreground',
+  plain: '',
+}
 
 const STATE: Record<SessionStatus, MessageDescriptor> = {
   working: msg`Working`,
@@ -37,6 +58,7 @@ export function AgentReport({ session, sessions, nowMs, onClose, onPick }: Agent
   const counted = tally(session.stream.map((call) => call.line))
   const ranMs = (session.endedAtMs ?? nowMs) - session.startedAtMs
   const lead = leadOf(session.headline, session.transcript)
+  const review = useWorktreeReview(session.agentId)
 
   return (
     <div
@@ -155,6 +177,61 @@ export function AgentReport({ session, sessions, nowMs, onClose, onPick }: Agent
           )
         })}
       </div>
+
+      {session.agentId !== undefined && (
+        <div data-worktree-review className="flex flex-col gap-2 pt-2">
+          <span className="mb-1 text-xs tracking-[0.08em] text-muted-foreground">{t`What they changed`}</span>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="xs"
+              disabled={review.busy}
+              onClick={review.show}
+              className="rounded-lg"
+            >
+              {t`Diff`}
+            </Button>
+            <Button
+              variant="ghost"
+              size="xs"
+              disabled={review.busy}
+              onClick={review.ask}
+              className="rounded-lg text-muted-foreground"
+            >
+              {t`Roll back`}
+            </Button>
+          </div>
+          {review.note.length > 0 && (
+            <span className="text-xs text-muted-foreground">{review.note}</span>
+          )}
+          {review.rows !== null && review.rows.length > 0 && (
+            <pre className="zt-scroll max-h-80 overflow-auto rounded-lg border border-border bg-card p-3 font-mono text-xs">
+              {review.rows.map((row) => (
+                <span key={row.key} className={cn('block', TONE[row.tone])}>
+                  {row.text.length === 0 ? ' ' : row.text}
+                </span>
+              ))}
+            </pre>
+          )}
+        </div>
+      )}
+
+      <AlertDialog open={review.confirming} onOpenChange={(open) => !open && review.cancel()}>
+        <AlertDialogContent data-worktree-confirm>
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              {review.landed !== null && rollbackTitle(review.landed)}
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              {review.landed !== null && rollbackWarning(review.landed)}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>{t`Keep it`}</AlertDialogCancel>
+            <AlertDialogAction onClick={review.rollback}>{t`Roll back`}</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   )
 }

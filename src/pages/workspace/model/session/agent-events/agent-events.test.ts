@@ -1401,3 +1401,48 @@ describe('the orchestrator speaking to a teammate', () => {
     expect(sessionStore.get().map((s) => s.id)).toEqual(['a99'])
   })
 })
+
+describe('where an isolated teammate left its work', () => {
+  function open(refs: AgentEventRefs): void {
+    applyAgentEvent(
+      {
+        type: 'childOpen',
+        toolUseId: 'toolu_w',
+        label: 'Sums',
+        subagentType: 'general-purpose',
+        prompt: '2+2?',
+        background: false,
+      },
+      refs,
+    )
+  }
+
+  function done(refs: AgentEventRefs, agentId?: string): void {
+    applyAgentEvent(
+      {
+        type: 'toolResult',
+        toolUseId: 'toolu_w',
+        stdout: 'done',
+        stderr: '',
+        isError: false,
+        interrupted: false,
+        ...(agentId === undefined ? {} : { agentId }),
+      },
+      refs,
+    )
+  }
+
+  it('stamps the tile with the agent id its branch is named after', () => {
+    const refs = fakeRefs()
+    open(refs)
+    done(refs, 'a879059595fc11096')
+    expect(sessionStore.find('toolu_w')?.agentId).toBe('a879059595fc11096')
+  })
+
+  it('leaves a tile unstamped when the runtime named no agent, as for a plain tool', () => {
+    const refs = fakeRefs()
+    open(refs)
+    done(refs)
+    expect(sessionStore.find('toolu_w')?.agentId).toBeUndefined()
+  })
+})

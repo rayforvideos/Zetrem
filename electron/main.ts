@@ -9,6 +9,7 @@ import { registerAuth } from './cli/auth/auth'
 import { registerAccounts } from './cli/accounts/register-accounts/register-accounts'
 import { registerCliInstall } from './cli/cli-install/cli-install'
 import { registerCliVersion } from './cli/cli-version/cli-version'
+import { registerAgentMemory } from './host/agent-memory/agent-memory'
 import { registerNudge } from './host/nudge/nudge'
 import { registerPlugins } from './catalog/plugins/plugins'
 import { loadSettings, registerSettingsStore } from './store/settings-store/settings-store'
@@ -17,6 +18,8 @@ import { rememberLoginPath } from './cli/login-path/login-path'
 import { registerConnectors } from './catalog/connectors/connectors'
 import { killTrackedChildren } from './spawn/run-settled/run-settled'
 import { killAllProbes, registerSessionProbe } from './host/session-probe/session-probe'
+import { registerGitDesk } from './host/git-desk/git-desk'
+import { registerWorktreeReview } from './host/worktree-review/worktree-review'
 import {
   registerTranscriptStore,
   settleTranscripts,
@@ -26,6 +29,7 @@ import { registerProjects } from './projects/projects'
 import { closeLibraryMcp, registerLibrary, stopFollowing } from './library/library'
 import { collapseCategories } from './projects/collapse/collapse'
 import { handle } from './ipc/ipc'
+import { reloadAsk } from './shell/reload-keys/reload-keys'
 import { loadTroubleLine, troublePage } from './shell/window-trouble/window-trouble'
 import { isPackagedRun } from './shell/packaged/packaged'
 
@@ -99,6 +103,18 @@ function createWindow(): void {
   })
 
   followScheme(win)
+
+  // Windows and Linux run without a menu, which silently takes the reload
+  // accelerators with it; the chords are read off the wire instead.
+  if (!isMac) {
+    win.webContents.on('before-input-event', (event, input) => {
+      const kind = reloadAsk(input)
+      if (kind === null) return
+      event.preventDefault()
+      if (kind === 'hard') win.webContents.reloadIgnoringCache()
+      else win.webContents.reload()
+    })
+  }
 
   win.once('ready-to-show', () => win.show())
 
@@ -188,7 +204,8 @@ const POLICY = [
   "default-src 'self'",
   "script-src 'self'",
   "style-src 'self' 'unsafe-inline'",
-  "img-src 'self' data: blob:",
+  // The one remote host: commit avatars for the git view, keyed by email.
+  "img-src 'self' data: blob: https://avatars.githubusercontent.com",
   "font-src 'self' data:",
   "media-src 'self' blob:",
   "connect-src 'self'",
@@ -230,11 +247,14 @@ if (!primary) {
   registerSettingsStore()
   registerConnectors()
   registerSessionProbe()
+  registerWorktreeReview()
+  registerGitDesk()
   registerTranscriptStore()
   registerPlugins()
   registerProjects()
   registerLibrary()
   registerNudge()
+  registerAgentMemory()
   registerUpdater()
   handle('app:version', () => app.getVersion())
 

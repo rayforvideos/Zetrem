@@ -6,6 +6,16 @@ import type {
 } from '@/entities/agent-def/api/frontmatter/frontmatter.types'
 import type { RunConfig } from '@/entities/claude-cli/api/run-config/run-config.types'
 import type { Settings } from '@/entities/settings/model/settings/settings.types'
+import type { NotifyState } from '@/entities/settings/model/notify/notify'
+import type { MemoryEntry, MemoryNote } from '@/entities/agent-memory/model/note'
+import type {
+  GitBranch,
+  GitCommitLine,
+  GitStash,
+  GitStatus,
+  GraphCommit,
+  ShownFile,
+} from '@/entities/git/model/repo'
 import type { Project } from '@/entities/project/model/project'
 import type {
   LibraryHit,
@@ -34,6 +44,14 @@ import type {
   PluginVerb,
 } from '@/entities/plugin/api/catalog/catalog.types'
 
+// Where a hand-asked update check landed: still a dev run, the newest
+// already, a download on its way, a build sitting ready, or trouble.
+type UpdaterCheck = {
+  state: 'dev' | 'latest' | 'downloading' | 'ready' | 'trouble'
+  version?: string
+  said?: string
+}
+
 type AgentHostEvent =
   | { id: string; kind: 'line'; line: string }
   | { id: string; kind: 'workspace'; cwd: string }
@@ -45,6 +63,14 @@ export type KeptUsage = {
   report: string
   who: string | null
 }
+
+// Where an isolated teammate's work stands: still on its own branch, or
+// already merged into the working tree by the orchestrator.
+export type WorktreeDiff = { state: 'branch' | 'merged'; diff: string }
+
+// Dropping takes an unmerged branch away; reverting undoes a merged one with
+// a new commit, leaving the history it wrote in place.
+export type WorktreeRollback = { state: 'dropped' | 'reverted' }
 
 type CliVersions = {
   installed: string | null
@@ -132,8 +158,40 @@ export type Invokes = {
   'library:agents': () => boolean
   'library:agents-set': (open: boolean) => boolean
 
+  'worktree:diff': (agentId: string) => Outcome<WorktreeDiff>
+  'worktree:rollback': (agentId: string) => Outcome<WorktreeRollback>
+
+  'git:status': () => Outcome<GitStatus>
+  'git:branches': () => Outcome<GitBranch[]>
+  'git:log': () => Outcome<GitCommitLine[]>
+  'git:diff': (path: string, side: 'staged' | 'unstaged' | 'untracked') => Outcome<string>
+  'git:stage': (path: string) => Outcome<null>
+  'git:unstage': (path: string) => Outcome<null>
+  'git:commit': (message: string) => Outcome<null>
+  'git:switch': (branch: string, create: boolean) => Outcome<null>
+  'git:merge': (branch: string) => Outcome<string>
+  'git:stash-list': () => Outcome<GitStash[]>
+  'git:stash-push': () => Outcome<null>
+  'git:stash-apply': (ref: string) => Outcome<null>
+  'git:stash-drop': (ref: string) => Outcome<null>
+  'git:image': (path: string, ref: string) => Outcome<string>
+  'git:merge-abort': () => Outcome<null>
+  'git:push': () => Outcome<string>
+  'git:pull': () => Outcome<string>
+  'git:graph': () => Outcome<GraphCommit[]>
+  'git:show': (sha: string) => Outcome<ShownFile[]>
+  'git:show-diff': (sha: string, path: string) => Outcome<string>
+
+  'nudge:state': () => NotifyState
+
+  'memory:list': () => Outcome<MemoryEntry[]>
+  'memory:read': (id: string) => Outcome<MemoryNote>
+  'memory:write': (id: string, body: string, description: string) => Outcome<null>
+  'memory:remove': (id: string) => Outcome<null>
+
   'updater:state': () => string | null
   'updater:restart': () => void
+  'updater:check': () => UpdaterCheck
 }
 
 export type Sends = {
@@ -144,6 +202,7 @@ export type Sends = {
   // it takes its own did-not-sign-in path from there.
   'auth:cancel-login': () => void
   'nudge:show': (title: string, body: string) => void
+  'nudge:settings': () => void
 }
 
 export type Pushes = {
@@ -151,6 +210,7 @@ export type Pushes = {
   'auth:progress': string
   'updater:ready': string
   'library:changed': null
+  'git:changed': null
 }
 
 export type InvokeChannel = keyof Invokes

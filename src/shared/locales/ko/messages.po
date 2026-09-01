@@ -13,11 +13,11 @@ msgstr ""
 "Language-Team: \n"
 "Plural-Forms: \n"
 
-#: src/pages/workspace/model/session/agent-events/agent-events.ts:149
+#: src/pages/workspace/model/session/agent-events/agent-events.ts:153
 msgid " · on overage"
 msgstr " · 초과분 사용 중"
 
-#: src/pages/workspace/model/session/agent-events/agent-events.ts:147
+#: src/pages/workspace/model/session/agent-events/agent-events.ts:151
 msgid " {pct}% used,"
 msgstr " {pct}% 사용,"
 
@@ -68,19 +68,29 @@ msgstr "{0, plural, other {#단계}}"
 msgid "{0} chosen"
 msgstr "{0}개 선택됨"
 
+#. placeholder {0}: got.version ?? ''
+#: src/widgets/status-bar/model/useAppUpdateCheck.ts:24
+msgid "{0} is ready. Restart to install."
+msgstr "{0} 설치 준비가 끝났습니다. 재시작하면 적용됩니다."
+
 #. placeholder {0}: untilLabel(left)
 #: src/widgets/status-bar/lib/strip/strip.ts:26
 msgid "{0} left"
 msgstr "{0} 남음"
 
 #. placeholder {0}: limitKindLabel(limit.kind)
-#: src/pages/workspace/model/session/agent-events/agent-events.ts:150
+#: src/pages/workspace/model/session/agent-events/agent-events.ts:154
 msgid "{0} limit{share} resets {when}{overage}"
 msgstr "{0} 한도{share} {when} 초기화{overage}"
 
+#. placeholder {0}: entries.length
+#: src/widgets/setup/ui/MemoryField/MemoryField.tsx:181
+msgid "{0} memories about this project. Each one is loaded into every new session."
+msgstr "이 프로젝트에 대한 메모 {0}개. 하나하나가 새 세션마다 로드됩니다."
+
 #. placeholder {0}: n(reached)
 #. placeholder {1}: n(wired.length)
-#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:145
+#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:147
 msgid "{0} of {1} connected"
 msgstr "{1}개 중 {0}개 연결됨"
 
@@ -125,13 +135,17 @@ msgstr "{0}분 전"
 msgid "{back} teammates"
 msgstr "팀원 {back}명"
 
-#: src/pages/workspace/model/session/agent-events/agent-events.ts:160
+#: src/pages/workspace/model/session/agent-events/agent-events.ts:164
 msgid "{base}. Earlier turns live on as a summary."
 msgstr "{base}. 앞선 대화는 요약으로 남습니다."
 
 #: src/entities/claude-cli/api/aside/aside.ts:23
 msgid "{from} declined this, so {to} took it"
 msgstr "{from}이(가) 거절해서 {to}이(가) 대신 처리했습니다"
+
+#: src/widgets/setup/ui/MemoryField/MemoryField.tsx:66
+msgid "{gap} days ago"
+msgstr "{gap}일 전"
 
 #: src/widgets/conversation/lib/limits/limits.ts:10
 msgid "{held, plural, one {# line} other {# lines}}"
@@ -165,11 +179,11 @@ msgstr "{n}분 전"
 msgid "{name} can be called this session"
 msgstr "{name}은(는) 이번 세션에서 부를 수 있습니다"
 
-#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:265
+#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:227
 msgid "{name} is off. The running session keeps them until it ends."
 msgstr "{name}을(를) 껐습니다. 실행 중인 세션은 끝날 때까지 그대로 데리고 있습니다."
 
-#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:264
+#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:226
 msgid "{name} is on. The running session cannot call them yet."
 msgstr "{name}을(를) 켰습니다. 실행 중인 세션은 아직 부를 수 없습니다."
 
@@ -296,6 +310,18 @@ msgstr "38% · 4시간 12분 남음"
 msgid "5-hour"
 msgstr "5시간"
 
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:583
+msgid "A binary file has no diff to show."
+msgstr "바이너리 파일이라 보여줄 diff가 없습니다."
+
+#: src/widgets/agent-report/lib/review/review.ts:22
+msgid "A commit undoing that merge is on the tree now."
+msgstr "그 병합을 되돌리는 커밋이 트리에 올라갔습니다."
+
+#: src/widgets/status-bar/model/useAppUpdateCheck.ts:26
+msgid "A dev run does not update itself."
+msgstr "개발 실행은 스스로 업데이트하지 않습니다."
+
 #: src/entities/connector/lib/refusal-why/refusal-why.ts:12
 msgid "A name cannot start with a dash"
 msgstr "이름은 하이픈으로 시작할 수 없습니다"
@@ -340,9 +366,17 @@ msgstr "팀원 한 명"
 msgid "A tool"
 msgstr "어떤 도구"
 
+#: src/widgets/git-desk/model/useGitDesk.ts:345
+msgid "Abort merge"
+msgstr "머지 되돌리기"
+
 #: src/widgets/library/ui/LibraryPane/LibraryPane.tsx:32
 msgid "About the library"
 msgstr "라이브러리란"
+
+#: src/widgets/setup/ui/MemoryField/MemoryField.tsx:29
+msgid "About you"
+msgstr "사용자"
 
 #: src/widgets/setup/ui/AccountField/AccountField.tsx:101
 msgid "Account"
@@ -389,11 +423,24 @@ msgstr "팀원 추가"
 msgid "Add your first teammate"
 msgstr "첫 팀원을 만들어 보세요"
 
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:226
+msgid "Added"
+msgstr "추가됨"
+
 #: src/pages/workspace/model/extensions/useConnectors.ts:84
 msgid "Added {name}. Sign in if it asks."
 msgstr "{name} 추가했습니다. 로그인이 필요하면 로그인하세요."
 
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:169
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:567
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:571
+msgid "After"
+msgstr "이후"
+
+#: src/widgets/setup/ui/MemoryField/MemoryField.tsx:178
+msgid "Agent memory"
+msgstr "에이전트 메모리"
+
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:178
 msgid "Agents"
 msgstr "에이전트"
 
@@ -409,8 +456,12 @@ msgstr "에이전트가 라이브러리를 검색하고 알게 된 것을 기록
 msgid "Agents work without the library. Click to turn it on."
 msgstr "에이전트가 라이브러리 없이 일해요. 누르면 켜져요."
 
+#: src/widgets/setup/ui/MemoryField/MemoryField.tsx:201
+msgid "All"
+msgstr "전체"
+
 #. placeholder {0}: n(reached)
-#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:144
+#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:146
 msgid "All {0} connected"
 msgstr "{0}개 모두 연결됨"
 
@@ -440,9 +491,13 @@ msgid "any moment"
 msgstr "곧"
 
 #. placeholder {0}: turn.metrics.apiErrorStatus
-#: src/pages/workspace/model/session/agent-events/agent-events.ts:112
+#: src/pages/workspace/model/session/agent-events/agent-events.ts:116
 msgid "API error {0}"
 msgstr "API 오류 {0}"
+
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:882
+msgid "Apply"
+msgstr "적용"
 
 #: src/entities/settings/config/choices/choices.ts:11
 #: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:47
@@ -469,7 +524,11 @@ msgstr "첨부"
 msgid "Attach a file"
 msgstr "파일 첨부"
 
-#: src/pages/workspace/model/session/agent-events/agent-events.ts:167
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:663
+msgid "Author"
+msgstr "작성자"
+
+#: src/pages/workspace/model/session/agent-events/agent-events.ts:171
 msgid "auto"
 msgstr "자동"
 
@@ -482,6 +541,8 @@ msgstr "자동 편집"
 msgid "Awaiting approval"
 msgstr "승인 대기"
 
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:540
+#: src/widgets/setup/ui/MemoryField/MemoryField.tsx:103
 #: src/widgets/welcome/ui/WelcomePane/WelcomePane.tsx:128
 msgid "Back"
 msgstr "이전"
@@ -489,6 +550,11 @@ msgstr "이전"
 #: src/entities/settings/config/choices/choices.ts:28
 msgid "Balanced for most tasks"
 msgstr "대부분의 일에 무난합니다"
+
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:555
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:559
+msgid "Before"
+msgstr "이전"
 
 #: src/widgets/conversation/lib/greetings/greetings.ts:11
 msgid "Big job? Split it. They like company."
@@ -498,9 +564,21 @@ msgstr "일이 크면 나눠서 맡기세요. 여럿이 붙는 걸 좋아합니�
 msgid "Billing refused the request"
 msgstr "결제가 거절됐습니다"
 
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:648
+msgid "Branch / tag"
+msgstr "브랜치 / 태그"
+
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:399
+msgid "Branches, changes, commits"
+msgstr "브랜치, 변경, 커밋"
+
 #: src/pages/workspace/model/extensions/useConnectors.ts:95
 msgid "Brought over what Claude Desktop had."
 msgstr "Claude Desktop에 있던 것을 가져왔습니다."
+
+#: src/widgets/setup/ui/MemoryField/MemoryField.tsx:218
+msgid "By name"
+msgstr "이름순"
 
 #: src/widgets/setup/ui/PluginShelf/ConnectorsTab.tsx:32
 msgid "Can't connect"
@@ -508,7 +586,7 @@ msgstr "연결 안 됨"
 
 #: src/widgets/library/ui/NoteList/NoteList.tsx:273
 #: src/widgets/library/ui/NoteReader/NoteReader.tsx:193
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:206
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:215
 #: src/widgets/team-sidebar/ui/ChatList/ChatRow.tsx:226
 #: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:340
 #: src/widgets/team-sidebar/ui/MemberMenu/MemberMenu.tsx:66
@@ -528,9 +606,14 @@ msgstr "장바구니 합계와 반올림"
 msgid "Change"
 msgstr "바꾸기"
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:436
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:131
 msgid "Change account, project, and permissions"
 msgstr "계정과 프로젝트, 권한을 바꿉니다"
+
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:660
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:797
+msgid "Changes"
+msgstr "변경"
 
 #: src/widgets/team-sidebar/ui/CharacterPicker/CharacterPicker.tsx:19
 msgid "Character"
@@ -540,8 +623,13 @@ msgstr "캐릭터"
 msgid "Check again"
 msgstr "다시 확인"
 
-#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:131
-#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:142
+#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:164
+msgid "Check for updates"
+msgstr "업데이트 확인"
+
+#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:133
+#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:144
+#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:164
 msgid "Checking…"
 msgstr "확인하는 중…"
 
@@ -588,7 +676,8 @@ msgstr "Claude Code에 화면을 붙였습니다"
 msgid "Clear"
 msgstr "지우기"
 
-#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:93
+#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:115
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:510
 msgid "Close"
 msgstr "닫기"
 
@@ -597,13 +686,27 @@ msgstr "닫기"
 msgid "Close {0}"
 msgstr "{0} 닫기"
 
-#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:92
+#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:114
 msgid "Close report"
 msgstr "보고서 닫기"
 
 #: src/widgets/tile-deck/ui/layers/Headline/Headline.tsx:41
 msgid "Close this tile. The run stays in the sidebar."
 msgstr "이 타일을 닫습니다. 기록은 사이드바에 남습니다."
+
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:666
+msgid "Commit"
+msgstr "커밋"
+
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:657
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:824
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:825
+msgid "Commit message"
+msgstr "커밋 메시지"
+
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:840
+msgid "Commit staged files"
+msgstr "선택한 파일 커밋"
 
 #: src/widgets/status-bar/lib/format/format.ts:46
 msgid "compacting soon"
@@ -613,11 +716,15 @@ msgstr "곧 압축"
 msgid "Complex work. Slower and pricier"
 msgstr "복잡한 일에 좋습니다. 느리고 비쌉니다"
 
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:234
+msgid "Conflicted"
+msgstr "충돌"
+
 #: src/widgets/setup/ui/PluginShelf/ConnectorsTab.tsx:29
 msgid "Connected"
 msgstr "연결됨"
 
-#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:180
+#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:195
 msgid "Connecting"
 msgstr "연결하는 중"
 
@@ -630,11 +737,11 @@ msgid "Connector name"
 msgstr "커넥터 이름"
 
 #: src/widgets/setup/ui/PluginShelf/ConnectorsTab.tsx:55
-#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:122
+#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:124
 msgid "Connectors"
 msgstr "커넥터"
 
-#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:112
+#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:114
 msgid "Context"
 msgstr "컨텍스트"
 
@@ -642,7 +749,7 @@ msgstr "컨텍스트"
 msgid "Continue"
 msgstr "계속"
 
-#: src/pages/workspace/model/session/agent-events/agent-events.ts:158
+#: src/pages/workspace/model/session/agent-events/agent-events.ts:162
 msgid "Conversation compacted here"
 msgstr "여기서 대화가 압축됐습니다"
 
@@ -658,6 +765,10 @@ msgstr "{name}을(를) 추가하지 못했습니다"
 #: src/pages/workspace/model/extensions/useConnectors.ts:90
 msgid "Could not bring over Claude Desktop"
 msgstr "Claude Desktop에서 가져오지 못했습니다"
+
+#: src/widgets/status-bar/model/useAppUpdateCheck.ts:29
+msgid "Could not check for updates."
+msgstr "업데이트를 확인하지 못했습니다."
 
 #: src/pages/workspace/model/chat/useTranscript.ts:286
 #: src/pages/workspace/model/chat/useTranscript.ts:302
@@ -680,8 +791,8 @@ msgstr "저장된 대화 목록을 읽지 못했습니다"
 msgid "Could not open that chat"
 msgstr "그 대화를 열지 못했습니다"
 
-#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:200
-#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:211
+#: src/pages/workspace/model/project/useProjectSwitch/useProjectSwitch.ts:21
+#: src/pages/workspace/model/project/useProjectSwitch/useProjectSwitch.ts:32
 msgid "Could not open that folder"
 msgstr "그 폴더를 열지 못했습니다"
 
@@ -698,6 +809,22 @@ msgstr "그 대화를 이어받지 못했습니다. 새로 시작합니다."
 #: src/pages/workspace/model/extensions/useConnectors.ts:65
 msgid "Could not reach {0}"
 msgstr "{0}에 연결하지 못했습니다"
+
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:586
+msgid "Could not read that diff"
+msgstr "diff를 읽지 못했습니다"
+
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:576
+msgid "Could not read that image."
+msgstr "이미지를 읽지 못했습니다."
+
+#: src/widgets/setup/model/useAgentMemory.ts:71
+msgid "Could not read that memory"
+msgstr "그 메모리를 읽지 못했어요"
+
+#: src/widgets/setup/model/useAgentMemory.ts:44
+msgid "Could not read the memory folder"
+msgstr "메모리 폴더를 읽지 못했어요"
 
 #: src/pages/workspace/model/extensions/usePlugins.ts:48
 msgid "Could not read the plugin shelf"
@@ -737,7 +864,11 @@ msgstr "설정을 읽지 못했습니다"
 msgid "Could not read your sign-in"
 msgstr "로그인 상태를 읽지 못했습니다"
 
-#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:231
+#: src/widgets/setup/model/useAgentMemory.ts:120
+msgid "Could not remove that memory"
+msgstr "그 메모리를 지우지 못했어요"
+
+#: src/pages/workspace/model/project/useProjectSwitch/useProjectSwitch.ts:49
 msgid "Could not remove that project"
 msgstr "프로젝트를 지우지 못했습니다"
 
@@ -749,9 +880,13 @@ msgstr "계정을 제거하지 못했습니다."
 msgid "Could not rename that chat"
 msgstr "대화 이름을 바꾸지 못했습니다"
 
-#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:75
+#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:78
 msgid "Could not reopen your last project"
 msgstr "마지막 프로젝트를 다시 열지 못했습니다"
+
+#: src/widgets/setup/model/useAgentMemory.ts:103
+msgid "Could not save that memory"
+msgstr "그 메모리를 저장하지 못했어요"
 
 #: src/pages/workspace/model/settings/useSettings.ts:30
 #: src/pages/workspace/model/settings/useSettings.ts:54
@@ -774,6 +909,7 @@ msgstr "업데이트를 시작하지 못했습니다"
 msgid "Could not switch accounts."
 msgstr "계정을 전환하지 못했습니다."
 
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:452
 #: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:343
 msgid "Create"
 msgstr "만들기"
@@ -819,9 +955,21 @@ msgstr "“{asking}” 폴더를 삭제할까요?"
 msgid "Delete the note “{0}”?"
 msgstr "“{0}” 노트를 삭제할까요?"
 
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:230
+msgid "Deleted"
+msgstr "삭제됨"
+
 #: src/widgets/conversation/ui/ConversationPane/Approval.tsx:84
 msgid "Deny"
 msgstr "거부"
+
+#: src/widgets/setup/ui/MemoryField/MemoryField.tsx:112
+msgid "Description"
+msgstr "설명"
+
+#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:192
+msgid "Diff"
+msgstr "변경 내용"
 
 #: src/shared/parts/FirstHint/FirstHint.tsx:29
 msgid "Dismiss this tip"
@@ -835,23 +983,40 @@ msgstr "이 팀원이 먼저 읽을 문서입니다. 길어도 열기 전까지�
 msgid "Don't ask again this session"
 msgstr "이번 세션에서는 다시 묻지 않기"
 
-#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:19
+#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:40
 #: src/widgets/library/ui/NoteReader/NoteReader.tsx:95
 #: src/widgets/setup/ui/PluginShelf/PluginShelf.tsx:129
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:210
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:219
 #: src/widgets/tile-deck/lib/state-word/state-word.ts:10
 msgid "Done"
 msgstr "완료"
+
+#. placeholder {0}: got.version ?? ''
+#: src/widgets/status-bar/model/useAppUpdateCheck.ts:22
+msgid "Downloading {0}. A card appears when it is ready."
+msgstr "{0} 다운로드 중입니다. 준비되면 카드가 뜹니다."
 
 #: src/widgets/team-sidebar/ui/SidebarGrip/SidebarGrip.tsx:64
 msgid "Drag to resize, double-click to reset"
 msgstr "끌어서 크기 조절, 더블클릭하면 원래대로"
 
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:961
+msgid "Drop"
+msgstr "버리기"
+
 #: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:271
 msgid "Drop a document here, or click to pick one."
 msgstr "문서를 여기로 끌어다 놓거나, 눌러서 고르세요."
 
-#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:74
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:889
+msgid "Drop this stash"
+msgstr "이 스태시 버리기"
+
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:948
+msgid "Drop this stash?"
+msgstr "이 스태시를 버릴까요?"
+
+#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:96
 msgid "Earlier run"
 msgstr "이전 실행"
 
@@ -869,7 +1034,7 @@ msgstr "{0} 수정"
 msgid "Edit this file?"
 msgstr "이 파일을 고칠까요?"
 
-#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:103
+#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:125
 msgid "Edited"
 msgstr "수정"
 
@@ -882,7 +1047,7 @@ msgid "Edits files freely, asks before running commands"
 msgstr "파일은 알아서 고치고, 명령을 실행할 때만 묻습니다"
 
 #: src/widgets/conversation/ui/Composer/Composer.tsx:206
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:158
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:162
 msgid "Effort"
 msgstr "노력"
 
@@ -907,7 +1072,7 @@ msgstr "가진 것을 다 씁니다. 가장 느리고 가장 비쌉니다"
 msgid "Everything the session has"
 msgstr "이 세션이 가진 전부"
 
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:30
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:33
 msgid "Extensions"
 msgstr "확장"
 
@@ -916,18 +1081,22 @@ msgstr "확장"
 msgid "Face"
 msgstr "얼굴"
 
-#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:148
+#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:170
 #: src/widgets/tile-deck/ui/layers/CallLog/CallLog.tsx:77
 msgid "failed"
 msgstr "실패"
 
-#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:184
+#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:199
 msgid "Failed"
 msgstr "실패"
 
 #: src/entities/settings/config/choices/choices.ts:29
 msgid "Fast and cheap. Good for quick questions"
 msgstr "빠르고 저렴합니다. 간단한 질문에 좋습니다"
+
+#: src/widgets/setup/ui/MemoryField/MemoryField.tsx:28
+msgid "Feedback"
+msgstr "피드백"
 
 #: src/entities/tool/lib/tool-verb/tool-verb.ts:24
 msgid "Fetching"
@@ -946,6 +1115,10 @@ msgstr "에이전트가 남김"
 msgid "Filed to the library · {0}"
 msgstr "라이브러리에 저장됨 · {0}"
 
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:922
+msgid "Files in this commit"
+msgstr "이 커밋의 파일"
+
 #: src/widgets/welcome/lib/slides/slides.ts:27
 msgid "Files read, commands run, edits made. Each one shows up as it happens, not as a summary afterwards."
 msgstr "읽은 파일, 실행한 명령, 고친 내용이 그때그때 올라옵니다. 끝나고 요약만 보여주지 않습니다."
@@ -963,7 +1136,7 @@ msgstr "결제 단계에서 마지막 항목이 빠지는 이유를 찾아줘"
 msgid "Finish signing in to {name} in the browser. The next session picks it up."
 msgstr "브라우저에서 {name} 로그인을 마치세요. 다음 세션부터 적용됩니다."
 
-#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:106
+#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:108
 msgid "Folder"
 msgstr "폴더"
 
@@ -990,6 +1163,15 @@ msgstr "계정 설정을 따릅니다"
 msgid "Follows your Claude Code setting"
 msgstr "Claude Code 설정을 따릅니다"
 
+#: src/widgets/setup/ui/MemoryField/MemoryField.tsx:139
+#: src/widgets/setup/ui/MemoryField/MemoryField.tsx:161
+msgid "Forget"
+msgstr "지우기"
+
+#: src/widgets/setup/ui/MemoryField/MemoryField.tsx:148
+msgid "Forget this memory?"
+msgstr "이 메모리를 지울까요?"
+
 #. placeholder {0}: entry.from
 #: src/widgets/tile-deck/ui/layers/Transcript/Transcript.tsx:46
 msgid "from {0}"
@@ -1003,13 +1185,27 @@ msgstr "이전에 읽어둔 값"
 msgid "From plugins"
 msgstr "플러그인에서"
 
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:28
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:30
 msgid "General"
 msgstr "일반"
 
 #: src/widgets/welcome/ui/WelcomePane/WelcomePane.tsx:134
 msgid "Get started"
 msgstr "시작하기"
+
+#: src/widgets/git-desk/model/useGitDesk.ts:198
+#: src/widgets/git-desk/model/useGitDesk.ts:351
+msgid "Git could not do that"
+msgstr "git이 해내지 못했습니다"
+
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:521
+msgid "Git is not answering here."
+msgstr "git이 응답하지 않습니다."
+
+#. placeholder {0}: why.said
+#: src/widgets/agent-report/lib/review/review.ts:37
+msgid "Git said: {0}"
+msgstr "Git이 이렇게 답했습니다: {0}"
 
 #: src/entities/connector/lib/refusal-why/refusal-why.ts:8
 msgid "Give it a name"
@@ -1027,6 +1223,10 @@ msgstr "이름을 정하고, 언제 부를지 적고, 지침을 씁니다. 오�
 msgid "Give them a task"
 msgstr "일을 맡기기"
 
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:654
+msgid "Graph"
+msgstr "그래프"
+
 #: src/entities/tool/lib/tool-verb/tool-verb.ts:26
 #: src/widgets/conversation/lib/working/working.ts:62
 msgid "Handing off"
@@ -1040,7 +1240,7 @@ msgstr "어려운 문제용. 훨씬 느립니다"
 msgid "Held up"
 msgstr "멈춰 있음"
 
-#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:148
+#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:150
 msgid "Hide team sidebar"
 msgstr "팀 사이드바 접기"
 
@@ -1130,6 +1330,12 @@ msgstr "이어서 말하세요"
 msgid "Keep in"
 msgstr "폴더에 넣기"
 
+#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:230
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:954
+#: src/widgets/setup/ui/MemoryField/MemoryField.tsx:154
+msgid "Keep it"
+msgstr "그대로 두기"
+
 #: src/entities/connector/lib/refusal-why/refusal-why.ts:10
 msgid "Keep the name under {NAME_MAX} characters"
 msgstr "이름은 {NAME_MAX}자 이내로 지어 주세요"
@@ -1138,7 +1344,7 @@ msgstr "이름은 {NAME_MAX}자 이내로 지어 주세요"
 msgid "Keep working"
 msgstr "계속 작업"
 
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:108
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:112
 msgid "Language"
 msgstr "언어"
 
@@ -1146,7 +1352,7 @@ msgstr "언어"
 msgid "Later"
 msgstr "나중에"
 
-#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:85
+#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:107
 msgid "Later run"
 msgstr "다음 실행"
 
@@ -1180,11 +1386,11 @@ msgstr "이 노트를 가리키는 노트"
 msgid "Low"
 msgstr "낮음"
 
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:182
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:191
 msgid "Manage"
 msgstr "관리"
 
-#: src/pages/workspace/model/session/agent-events/agent-events.ts:168
+#: src/pages/workspace/model/session/agent-events/agent-events.ts:172
 msgid "manual"
 msgstr "수동"
 
@@ -1200,6 +1406,27 @@ msgstr "MCP 서버"
 msgid "Medium"
 msgstr "보통"
 
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:32
+msgid "Memory"
+msgstr "메모리"
+
+#: src/widgets/setup/ui/MemoryField/MemoryField.tsx:119
+msgid "Memory body"
+msgstr "메모리 본문"
+
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:466
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:997
+msgid "Merge"
+msgstr "머지"
+
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:969
+msgid "Merge a branch into {branchName}"
+msgstr "{branchName}(으)로 브랜치 머지"
+
+#: src/widgets/git-desk/model/useGitDesk.ts:335
+msgid "Merged {branch}."
+msgstr "{branch}을(를) 머지했습니다."
+
 #: src/widgets/conversation/ui/Composer/Composer.tsx:148
 msgid "Message for {addressee}"
 msgstr "{addressee}에게 보낼 말"
@@ -1209,15 +1436,19 @@ msgid "Message your team"
 msgstr "팀에게 말하기"
 
 #: src/widgets/conversation/ui/Composer/Composer.tsx:203
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:152
-#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:107
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:156
+#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:109
 #: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:154
 msgid "Model"
 msgstr "모델"
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:372
+#: src/pages/workspace/ui/gates/ConversationGate.tsx:83
 msgid "Model changed. The running session keeps its model."
 msgstr "모델을 바꿨습니다. 실행 중인 세션은 기존 모델을 유지합니다."
+
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:228
+msgid "Modified"
+msgstr "수정됨"
 
 #. placeholder {0}: current.name
 #. placeholder {0}: folder.name
@@ -1247,7 +1478,7 @@ msgstr "이름"
 msgid "Name the folder for these two chats"
 msgstr "두 대화를 담을 폴더 이름"
 
-#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:178
+#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:193
 msgid "Needs auth"
 msgstr "로그인 필요"
 
@@ -1266,6 +1497,11 @@ msgstr "그만두기"
 #: src/widgets/library/ui/LibraryPane/LibraryPane.tsx:56
 msgid "New"
 msgstr "새로 만들기"
+
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:437
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:438
+msgid "New branch name"
+msgstr "새 브랜치 이름"
 
 #: src/widgets/team-sidebar/lib/named/named.ts:4
 #: src/widgets/team-sidebar/ui/ChatList/ChatList.tsx:78
@@ -1304,6 +1540,10 @@ msgstr "계정 한도 정보가 없습니다"
 msgid "No chat by that name"
 msgstr "그런 이름의 대화가 없습니다"
 
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:691
+msgid "No commits here yet. The graph starts with the first one."
+msgstr "아직 커밋이 없습니다. 첫 커밋과 함께 그래프가 시작됩니다."
+
 #: src/widgets/setup/ui/PluginShelf/ConnectorsTab.tsx:58
 msgid "No connectors yet. Add one below, or bring over what Claude Desktop already has."
 msgstr "아직 커넥터가 없습니다. 아래에서 추가하거나 Claude Desktop에 있는 것을 가져오세요."
@@ -1332,13 +1572,26 @@ msgstr "이번 세션에서는 쓸 수 없습니다. 설정에서 켜세요."
 msgid "Not known yet"
 msgstr "아직 모릅니다"
 
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:989
 #: src/widgets/star-ask/ui/StarCard/StarCard.tsx:22
 msgid "Not now"
 msgstr "나중에"
 
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:631
+msgid "Nothing differs on this side."
+msgstr "이 쪽에는 다른 내용이 없습니다."
+
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:800
+msgid "Nothing has changed."
+msgstr "바뀐 것이 없습니다."
+
 #: src/widgets/setup/ui/PluginShelf/InstalledTab.tsx:38
 msgid "Nothing installed yet."
 msgstr "아직 설치한 것이 없습니다."
+
+#: src/widgets/git-desk/model/useGitDesk.ts:195
+msgid "Nothing is staged to commit."
+msgstr "스테이지된 파일이 없습니다."
 
 #: src/widgets/setup/ui/PluginShelf/BrowseTab.tsx:52
 msgid "Nothing left to add. Every plugin your sources offer is installed."
@@ -1352,18 +1605,39 @@ msgstr "맞는 노트가 없습니다"
 msgid "Nothing matches “{needle}”."
 msgstr "“{needle}”에 맞는 것이 없습니다."
 
+#. placeholder {0}: why.said
+#: src/widgets/agent-report/lib/review/review.ts:38
+msgid "Nothing of this work is left to find: {0}"
+msgstr "이 작업은 찾을 수 있는 것이 남아 있지 않습니다: {0}"
+
+#: src/widgets/setup/ui/MemoryField/MemoryField.tsx:186
+msgid "Nothing remembered for this project yet."
+msgstr "이 프로젝트에 저장된 메모리가 아직 없어요."
+
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:860
+msgid "Nothing stashed."
+msgstr "넣어둔 스태시가 없습니다."
+
+#: src/widgets/git-desk/model/useGitDesk.ts:334
+msgid "Nothing to merge: already up to date."
+msgstr "머지할 것이 없습니다: 이미 최신입니다."
+
 #: src/widgets/tile-deck/ui/CrewBoard/CrewBoard.tsx:116
 msgid "Nothing written yet."
 msgstr "아직 쓴 것이 없습니다."
 
-#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:136
+#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:158
 msgid "Nothing yet"
 msgstr "아직 없음"
 
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:129
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:138
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:133
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:142
 msgid "Notifications"
 msgstr "알림"
+
+#: src/widgets/setup/model/useNotifyGate.ts:24
+msgid "Notifications are off at the system level. Allow Zetrem in the system settings that just opened."
+msgstr "시스템에서 알림이 꺼져 있어요. 방금 열린 시스템 설정에서 Zetrem을 허용해 주세요."
 
 #: src/widgets/team-sidebar/lib/chat-groups/chat-groups.ts:28
 msgid "Older"
@@ -1376,6 +1650,10 @@ msgstr "초과분 사용 중"
 #: src/widgets/tile-deck/lib/leading/leading.ts:9
 msgid "On your own"
 msgstr "혼자 일하는 중"
+
+#: src/widgets/setup/ui/MemoryField/MemoryField.tsx:111
+msgid "One line the agent reads to decide whether this matters"
+msgstr "에이전트가 이 메모가 필요한지 판단할 때 읽는 한 줄이에요"
 
 #: src/widgets/conversation/lib/greetings/greetings.ts:14
 msgid "One of you writes, one of you checks. Deal?"
@@ -1405,18 +1683,22 @@ msgstr "owner/repo, 주소, 또는 폴더"
 msgid "Paste the server address"
 msgstr "서버 주소를 붙여넣으세요"
 
-#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:109
+#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:111
 msgid "Permission"
 msgstr "권한"
 
 #: src/widgets/conversation/ui/Composer/Composer.tsx:176
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:146
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:150
 msgid "Permissions"
 msgstr "권한"
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:368
+#: src/pages/workspace/ui/gates/ConversationGate.tsx:79
 msgid "Permissions changed. The running session follows the old ones."
 msgstr "권한을 바꿨습니다. 실행 중인 세션은 기존 권한을 따릅니다."
+
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:976
+msgid "Pick a branch"
+msgstr "브랜치 선택"
 
 #: src/widgets/library/ui/LibraryPane/LibraryPane.tsx:129
 msgid "Pick a note"
@@ -1439,7 +1721,7 @@ msgid "Plugin"
 msgstr "플러그인"
 
 #: src/widgets/setup/ui/PluginShelf/InstalledTab.tsx:37
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:178
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:187
 msgid "Plugins"
 msgstr "플러그인"
 
@@ -1459,15 +1741,32 @@ msgstr "지난 30일"
 msgid "Previous 7 days"
 msgstr "지난 7일"
 
+#: src/widgets/setup/ui/MemoryField/MemoryField.tsx:27
 #: src/widgets/setup/ui/ProjectField/ProjectField.tsx:9
 msgid "Project"
 msgstr "프로젝트"
+
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:478
+msgid "Pull"
+msgstr "풀"
+
+#: src/widgets/git-desk/model/useGitDesk.ts:318
+msgid "Pulled."
+msgstr "당겨왔습니다."
+
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:491
+msgid "Push"
+msgstr "푸시"
+
+#: src/widgets/git-desk/model/useGitDesk.ts:313
+msgid "Pushed."
+msgstr "푸시했습니다."
 
 #: src/entities/settings/config/choices/choices.ts:35
 msgid "Quick answers. Least thinking, cheapest"
 msgstr "빠른 답. 가장 적게 생각하고 가장 저렴합니다"
 
-#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:104
+#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:126
 msgid "Ran"
 msgstr "실행"
 
@@ -1483,7 +1782,7 @@ msgstr "재인증"
 msgid "Reach out to the web?"
 msgstr "웹에 접속할까요?"
 
-#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:102
+#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:124
 msgid "Read"
 msgstr "읽음"
 
@@ -1529,10 +1828,19 @@ msgstr "Claude Code가 기본으로 제공하는 에이전트를 읽는 중입�
 msgid "Recent"
 msgstr "최근"
 
-#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:131
+#: src/widgets/setup/ui/MemoryField/MemoryField.tsx:218
+msgid "Recent first"
+msgstr "최근순"
+
+#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:133
 msgid "Recheck"
 msgstr "다시 확인"
 
+#: src/widgets/setup/ui/MemoryField/MemoryField.tsx:30
+msgid "Reference"
+msgstr "참조"
+
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:501
 #: src/widgets/setup/ui/PluginShelf/SourcesTab.tsx:27
 msgid "Refresh"
 msgstr "새로 고침"
@@ -1599,7 +1907,11 @@ msgstr "대화 이름 바꾸기"
 msgid "Rename folder"
 msgstr "폴더 이름 바꾸기"
 
-#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:18
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:232
+msgid "Renamed"
+msgstr "이름이 바뀜"
+
+#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:39
 #: src/widgets/team-sidebar/lib/row-state/row-state.ts:9
 #: src/widgets/tile-deck/lib/state-word/state-word.ts:9
 msgid "Reported back"
@@ -1636,9 +1948,14 @@ msgstr "검토 담당"
 msgid "Reviews a change before it ships"
 msgstr "배포 전에 변경을 검토합니다"
 
+#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:201
+#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:231
+msgid "Roll back"
+msgstr "되돌리기"
+
 #. placeholder {0}: at + 1
 #. placeholder {1}: runs.length
-#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:79
+#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:101
 msgid "run {0} of {1}"
 msgstr "{1}회 중 {0}번째"
 
@@ -1655,9 +1972,14 @@ msgstr "실행하는 중"
 msgid "Same as the session"
 msgstr "세션과 같게"
 
+#: src/widgets/setup/ui/MemoryField/MemoryField.tsx:130
 #: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:343
 msgid "Save"
 msgstr "저장"
+
+#: src/widgets/setup/model/useAgentMemory.ts:106
+msgid "Saved"
+msgstr "저장했어요"
 
 #. placeholder {0}: sinceOf(savedAtMs ?? nowMs, nowMs)
 #: src/widgets/library/ui/NoteReader/NoteReader.tsx:147
@@ -1701,7 +2023,7 @@ msgstr "라이브러리 검색"
 msgid "Search tools"
 msgstr "도구 검색"
 
-#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:105
+#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:127
 msgid "Searched"
 msgstr "검색"
 
@@ -1717,12 +2039,12 @@ msgstr "무엇을 했는지 보기"
 msgid "Send"
 msgstr "보내기"
 
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:115
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:124
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:119
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:128
 msgid "Send with Enter"
 msgstr "Enter로 전송"
 
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:29
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:31
 msgid "Session"
 msgstr "세션"
 
@@ -1734,7 +2056,7 @@ msgstr "세션 상세"
 msgid "Session stopped. The next message starts a new one with your team as it is now."
 msgstr "세션을 멈췄습니다. 다음 메시지부터 지금 팀 구성으로 새로 시작합니다."
 
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:67
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:71
 msgid "Set a few things and your agents get to work!"
 msgstr "몇 가지만 정하면 바로 일을 시작합니다"
 
@@ -1742,11 +2064,11 @@ msgstr "몇 가지만 정하면 바로 일을 시작합니다"
 msgid "Set for everyone on your account. They cannot be removed or turned off here."
 msgstr "계정 전체에 설정된 것입니다. 여기서는 지우거나 끌 수 없습니다."
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:438
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:133
 msgid "Settings"
 msgstr "설정"
 
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:72
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:76
 msgid "Settings sections"
 msgstr "설정 구역"
 
@@ -1754,11 +2076,11 @@ msgstr "설정 구역"
 msgid "share unknown"
 msgstr "사용량 알 수 없음"
 
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:117
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:121
 msgid "Shift+Enter starts a new line. Off, sending takes the modifier key with Enter."
 msgstr "Shift+Enter로 줄을 바꿉니다. 끄면 보조키+Enter로 보냅니다."
 
-#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:148
+#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:150
 msgid "Show team sidebar"
 msgstr "팀 사이드바 펼치기"
 
@@ -1851,12 +2173,17 @@ msgstr "일하던 중에 무언가 잘못됐습니다"
 msgid "Sources"
 msgstr "마켓플레이스"
 
+#. placeholder {0}: file.path
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:294
+msgid "Stage {0}"
+msgstr "{0} 스테이지"
+
 #: src/widgets/star-ask/ui/StarCard/StarCard.tsx:21
 msgid "Star it"
 msgstr "스타 주기"
 
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:27
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:210
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:29
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:219
 msgid "Start"
 msgstr "시작"
 
@@ -1867,6 +2194,18 @@ msgstr "새 대화를 시작합니다"
 #: src/widgets/conversation/lib/working/working.ts:13
 msgid "Starting"
 msgstr "시작하는 중"
+
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:845
+msgid "Stash"
+msgstr "스태시"
+
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:856
+msgid "Stash changes"
+msgstr "스태시에 넣기"
+
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:1016
+msgid "Stay here"
+msgstr "여기 있기"
 
 #: src/pages/workspace/model/account/useAuth.ts:168
 msgid "Still signed in. Sign out did not take effect."
@@ -1911,9 +2250,18 @@ msgstr "멈췄습니다: {subtype}"
 msgid "Stopped: something went wrong"
 msgstr "멈췄습니다: 무언가 잘못됐습니다"
 
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:1023
+msgid "Switch branch"
+msgstr "브랜치 전환"
+
 #: src/widgets/setup/lib/sign-out-warning/sign-out-warning.ts:14
 msgid "Switch the Claude Code login on this computer?"
 msgstr "이 컴퓨터의 Claude Code 로그인을 바꿀까요?"
+
+#. placeholder {0}: switching ?? ''
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:1010
+msgid "Switch to {0}?"
+msgstr "{0}(으)로 전환할까요?"
 
 #: src/widgets/setup/lib/tongues/tongues.ts:5
 msgid "System"
@@ -1948,9 +2296,13 @@ msgstr "팀 보드 너비"
 msgid "Teammates are reusable"
 msgstr "팀원은 한 번 만들면 계속 씁니다"
 
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:131
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:135
 msgid "Tells you when the work is done or something needs your say-so, and only while Zetrem is behind another window."
 msgstr "일이 끝났거나 승인이 필요할 때 알려줍니다. Zetrem이 다른 창에 가려져 있을 때만 알립니다."
+
+#: src/widgets/git-desk/model/useGitDesk.ts:193
+msgid "That branch name will not do."
+msgstr "그 이름으로는 브랜치를 만들 수 없습니다."
 
 #: src/shared/lib/ask/ask.ts:8
 msgid "That did not work"
@@ -1988,7 +2340,7 @@ msgstr "<0>claude</0> 명령을 찾지 못했습니다. Zetrem이 대신 설치�
 msgid "The address has to be http or https"
 msgstr "주소는 http나 https여야 합니다"
 
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:171
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:180
 msgid "The agents Claude Code brings. Each can be switched off."
 msgstr "Claude Code가 기본으로 제공하는 에이전트입니다. 하나씩 끌 수 있습니다."
 
@@ -2000,6 +2352,10 @@ msgstr "답변을 라이브러리에 저장하지 못했습니다"
 #: src/entities/claude-cli/lib/failure/failure.ts:89
 msgid "The answer hit the output limit"
 msgstr "답이 출력 한도에 걸렸습니다"
+
+#: src/widgets/agent-report/lib/review/review.ts:21
+msgid "The branch and its worktree are gone."
+msgstr "브랜치와 그 워크트리를 지웠습니다."
 
 #: src/entities/claude-cli/lib/exit-line/exit-line.ts:6
 msgid "The claude command was not found. Install the Claude Code CLI, then try again."
@@ -2013,6 +2369,10 @@ msgstr "일은 CLI가 하고, Zetrem은 그걸 보여줍니다. 무엇을 시켰
 msgid "The empty folder is removed from the library."
 msgstr "빈 폴더가 라이브러리에서 지워집니다."
 
+#: src/widgets/setup/ui/MemoryField/MemoryField.tsx:150
+msgid "The file is deleted and its line leaves the index the agents load. This cannot be undone."
+msgstr "파일이 삭제되고 에이전트가 로드하는 색인에서도 빠집니다. 되돌릴 수 없어요."
+
 #: src/entities/settings/config/choices/choices.ts:25
 msgid "The hardest problems. Slowest and priciest of these"
 msgstr "가장 어려운 문제용. 이 중 가장 느리고 가장 비쌉니다"
@@ -2024,6 +2384,10 @@ msgstr "어떤 일을 맡길지"
 #: src/widgets/setup/ui/PluginShelf/BrowseTab.tsx:80
 msgid "The marketplaces the plugins above come from."
 msgstr "위 플러그인을 제공하는 마켓플레이스입니다."
+
+#: src/widgets/git-desk/model/useGitDesk.ts:343
+msgid "The merge hit conflicts. Resolve them and commit, or abort."
+msgstr "머지에서 충돌이 났습니다. 해결 후 커밋하거나 되돌리세요."
 
 #: src/entities/claude-cli/api/aside/aside.ts:31
 msgid "The model"
@@ -2049,6 +2413,10 @@ msgstr "오케스트레이터"
 #: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:187
 msgid "The orchestrator reads this to pick who gets the job."
 msgstr "오케스트레이터가 이 줄을 읽고 누구에게 맡길지 정합니다."
+
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:971
+msgid "The picked branch's commits join this one. If the sides collide, the conflicted files stay in the list to resolve or abort."
+msgstr "고른 브랜치의 커밋이 이 브랜치에 합쳐집니다. 양쪽이 충돌하면 충돌 파일이 목록에 남아 해결하거나 되돌릴 수 있습니다."
 
 #: src/widgets/team-sidebar/ui/ProjectSwitcher/ProjectSwitcher.tsx:141
 msgid "The project leaves this list. The folder and everything in it stay on disk."
@@ -2097,6 +2465,10 @@ msgstr "세션을 닫는 중입니다: {why}"
 #: src/widgets/conversation/lib/greetings/greetings.ts:10
 msgid "The team is warm and waiting, {you}."
 msgstr "{you}, 팀은 몸 다 풀고 기다리는 중입니다."
+
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:1012
+msgid "The working tree changes to that branch's files. Uncommitted changes come along if they do not collide."
+msgstr "작업 트리가 그 브랜치의 파일로 바뀝니다. 커밋 전 변경사항은 충돌하지 않으면 함께 옮겨집니다."
 
 #: src/widgets/team-sidebar/ui/MemberMenu/MemberMenu.tsx:62
 msgid "Their file is deleted and they leave the roster. A session already running keeps them until it ends. This cannot be undone."
@@ -2156,9 +2528,17 @@ msgstr "이 컴퓨터의 계정이 여기에 보입니다. 새 계정도 여기�
 msgid "This device"
 msgstr "이 기기"
 
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:585
+msgid "This diff is too large to show here."
+msgstr "diff가 너무 커서 여기서는 보여줄 수 없습니다."
+
 #: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:119
 msgid "This is everything they know when they start."
 msgstr "여기 적은 내용이 이 팀원이 시작할 때 아는 전부입니다."
+
+#: src/widgets/status-bar/model/useAppUpdateCheck.ts:20
+msgid "This is the newest build."
+msgstr "지금이 최신 버전입니다."
 
 #: src/widgets/setup/lib/sign-out-warning/sign-out-warning.ts:39
 msgid "This opens the browser to sign in again for this account."
@@ -2173,7 +2553,11 @@ msgstr "브라우저를 열어 이 계정으로 다시 로그인합니다. 여�
 msgid "This project"
 msgstr "이 프로젝트"
 
-#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:96
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:518
+msgid "This project is not a git repository."
+msgstr "이 프로젝트는 git 저장소가 아닙니다."
+
+#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:98
 msgid "This session"
 msgstr "이번 세션"
 
@@ -2185,9 +2569,25 @@ msgstr "Claude Code CLI 자체를 로그아웃합니다. 이 컴퓨터에서 CLI
 msgid "This signs out the Claude Code CLI itself, so every terminal, editor and app using it on this computer is signed out too. The session running here stops."
 msgstr "Claude Code CLI 자체를 로그아웃합니다. 이 컴퓨터에서 CLI를 쓰는 터미널과 편집기와 앱이 모두 함께 로그아웃됩니다. 여기서 실행 중인 세션도 멈춥니다."
 
-#: src/pages/workspace/model/session/agent-events/agent-events.ts:175
+#: src/widgets/agent-report/lib/review/review.ts:26
+msgid "This teammate changed no files."
+msgstr "이 팀원은 파일을 하나도 바꾸지 않았습니다."
+
+#: src/widgets/agent-report/lib/review/review.ts:36
+msgid "This teammate has no branch Zetrem can look up."
+msgstr "Zetrem이 찾아볼 수 있는 브랜치가 이 팀원에게 없습니다."
+
+#: src/pages/workspace/model/session/agent-events/agent-events.ts:179
 msgid "This turn: {out} out · {seconds}s"
 msgstr "이번 턴: {out} 출력 · {seconds}초"
+
+#: src/widgets/agent-report/lib/review/review.ts:16
+msgid "This work is already in the working tree. Zetrem adds a commit that undoes the merge, so the history stays and the files go back to what they were."
+msgstr "이 작업은 이미 작업 트리에 들어와 있습니다. Zetrem이 병합을 되돌리는 커밋을 더하므로, 기록은 그대로 남고 파일만 이전 상태로 돌아갑니다."
+
+#: src/widgets/agent-report/lib/review/review.ts:15
+msgid "This work never reached the working tree. Zetrem deletes the branch it is on and the worktree it was written in, and nothing of it can be brought back."
+msgstr "이 작업은 작업 트리에 닿은 적이 없습니다. Zetrem이 그 작업이 놓인 브랜치와 작업에 쓰인 워크트리를 지우며, 지운 뒤에는 무엇도 되살릴 수 없습니다."
 
 #: src/widgets/conversation/ui/ConversationPane/Thinking.tsx:20
 msgid "Thought · {paragraphs} paragraphs"
@@ -2196,6 +2596,10 @@ msgstr "생각 · {paragraphs}단락"
 #: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:87
 msgid "Three teammates are on it: the checkout flow, the cart totals and the stock rules. I'll put their reports together into one answer."
 msgstr "팀원 셋이 붙었습니다. 결제 흐름, 장바구니 합계, 재고 규칙을 각각 봅니다. 결과가 오면 하나로 정리해 드리겠습니다."
+
+#: src/widgets/agent-report/lib/review/review.ts:9
+msgid "Throw this teammate's work away?"
+msgstr "이 팀원의 작업을 버릴까요?"
 
 #: src/widgets/library/ui/NoteEditor/NoteEditor.tsx:62
 msgid "Title"
@@ -2209,6 +2613,7 @@ msgstr "{addressee}에게"
 msgid "To library"
 msgstr "라이브러리에"
 
+#: src/widgets/setup/ui/MemoryField/MemoryField.tsx:64
 #: src/widgets/team-sidebar/lib/chat-groups/chat-groups.ts:9
 msgid "Today"
 msgstr "오늘"
@@ -2229,6 +2634,10 @@ msgstr "도구"
 msgid "Turn on to let the team call {name}"
 msgstr "켜면 팀이 {name}을(를) 부를 수 있습니다"
 
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:743
+msgid "Uncommitted changes"
+msgstr "커밋 전 변경사항"
+
 #: src/shared/lib/datetime/datetime.ts:22
 msgid "under a minute"
 msgstr "1분 이내"
@@ -2237,13 +2646,17 @@ msgstr "1분 이내"
 msgid "Undo"
 msgstr "되돌리기"
 
+#: src/widgets/agent-report/lib/review/review.ts:10
+msgid "Undo the work of this teammate that was already merged?"
+msgstr "이미 합쳐진 이 팀원의 작업을 되돌릴까요?"
+
 #: src/widgets/setup/ui/PluginShelf/ConnectorsTab.tsx:33
-#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:186
+#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:201
 msgid "Unknown"
 msgstr "알 수 없음"
 
 #: src/widgets/setup/ui/PluginShelf/InstalledTab.tsx:73
-#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:163
+#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:178
 msgid "Update"
 msgstr "업데이트"
 
@@ -2251,7 +2664,7 @@ msgstr "업데이트"
 msgid "Update CLI"
 msgstr "CLI 업데이트"
 
-#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:163
+#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:178
 msgid "Updating…"
 msgstr "업데이트하는 중…"
 
@@ -2263,7 +2676,7 @@ msgstr "https를 쓰세요. http는 이 컴퓨터의 서버일 때만 됩니다"
 msgid "Very high"
 msgstr "매우 높음"
 
-#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:182
+#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:197
 msgid "Waiting for approval"
 msgstr "승인 대기 중"
 
@@ -2278,7 +2691,7 @@ msgstr "승인을 기다리는 중입니다"
 msgid "Waiting on"
 msgstr "기다리는 중"
 
-#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:17
+#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:38
 #: src/widgets/team-sidebar/lib/row-state/row-state.ts:8
 msgid "Waiting on you"
 msgstr "응답을 기다리는 중"
@@ -2300,9 +2713,17 @@ msgstr "주간 {rest}"
 msgid "Weekly overage"
 msgstr "주간 초과분"
 
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:950
+msgid "What it holds is gone for good. Applying it first keeps the work."
+msgstr "담긴 내용이 완전히 사라집니다. 먼저 적용하면 작업은 남습니다."
+
 #: src/widgets/conversation/ui/Composer/Composer.tsx:153
 msgid "What should they work on?"
 msgstr "무슨 일을 맡길까요?"
+
+#: src/widgets/setup/ui/MemoryField/MemoryField.tsx:182
+msgid "What the agents write down about this project shows up here, and is loaded into every new session."
+msgstr "에이전트가 이 프로젝트에 대해 기록한 내용이 여기에 보이고, 새 세션마다 로드됩니다."
 
 #: src/widgets/library/ui/LibraryPane/LibraryPane.tsx:39
 msgid "What the library is"
@@ -2312,7 +2733,11 @@ msgstr "라이브러리란"
 msgid "What the session brings"
 msgstr "이 세션의 플러그인과 커넥터"
 
-#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:134
+#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:183
+msgid "What they changed"
+msgstr "무엇을 바꿨는지"
+
+#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:156
 #: src/widgets/tile-deck/ui/AgentTile/AgentTile.tsx:84
 #: src/widgets/tile-deck/ui/CrewBoard/CrewBoard.tsx:120
 #: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:142
@@ -2323,7 +2748,7 @@ msgstr "무엇을 했는지"
 msgid "What they do, how to go about it, and what to hand back."
 msgstr "무슨 일을 어떤 방식으로 하고, 무엇을 돌려줄지 적으세요."
 
-#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:118
+#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:140
 msgid "What they said"
 msgstr "무엇이라 했는지"
 
@@ -2349,7 +2774,7 @@ msgid "Why the last item drops"
 msgstr "마지막 항목이 사라지는 이유"
 
 #: src/entities/tool/lib/tool-verb/tool-verb.ts:30
-#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:16
+#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:37
 #: src/widgets/conversation/lib/working/working.ts:87
 #: src/widgets/tile-deck/lib/state-word/state-word.ts:7
 msgid "Working"
@@ -2388,6 +2813,7 @@ msgstr "쓰는 중"
 msgid "yesterday"
 msgstr "어제"
 
+#: src/widgets/setup/ui/MemoryField/MemoryField.tsx:65
 #: src/widgets/team-sidebar/lib/chat-groups/chat-groups.ts:10
 msgid "Yesterday"
 msgstr "어제"
@@ -2405,7 +2831,7 @@ msgstr "같은 이름의 커넥터가 이미 있습니다"
 msgid "You decide what runs"
 msgstr "무엇을 실행할지 직접 정합니다"
 
-#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:243
+#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:213
 msgid "You left before the reply finished, so it stops here."
 msgstr "답변이 끝나기 전에 자리를 떠나서, 여기서 멈췄어요."
 
@@ -2478,6 +2904,10 @@ msgstr "Zetrem {version} 준비 완료"
 #: src/shared/lib/ask/ask.ts:25
 msgid "Zetrem cannot do that"
 msgstr "Zetrem이 할 수 없는 작업입니다"
+
+#: src/widgets/agent-report/lib/review/review.ts:32
+msgid "Zetrem could not ask Git about this work."
+msgstr "Zetrem이 이 작업에 대해 Git에 물어보지 못했습니다."
 
 #: src/pages/workspace/model/account/account-trouble/account-trouble.ts:13
 msgid "Zetrem could not read the Claude Code sign-in kept on this computer, so nothing was changed. Unlock your keychain and allow Zetrem to read it, then try again."

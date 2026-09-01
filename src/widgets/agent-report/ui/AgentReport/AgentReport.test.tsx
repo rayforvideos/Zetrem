@@ -74,3 +74,22 @@ describe('AgentReport: what has come of it so far', () => {
     expect(report({ stream: [], transcript: [] })).toContain('Nothing yet')
   })
 })
+
+describe('AgentReport: the work a fenced-off teammate left behind', () => {
+  it('offers to show it and to take it back, once the branch it is on is known', () => {
+    const html = report({ agentId: 'a879059595fc11096' })
+    expect(html).toContain('data-worktree-review')
+    expect(html).toContain('Diff')
+    expect(html).toContain('Roll back')
+  })
+
+  it('offers neither for a teammate that wrote in the tree everyone shares', () => {
+    const html = report()
+    expect(html).not.toContain('data-worktree-review')
+    expect(html).not.toContain('Roll back')
+  })
+
+  it('asks before taking anything back, so nothing is undone on one press', () => {
+    expect(report({ agentId: 'a879059595fc11096' })).not.toContain('data-worktree-confirm')
+  })
+})

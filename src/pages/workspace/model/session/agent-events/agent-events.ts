@@ -1,11 +1,12 @@
 import type { AgentEventRefs } from './agent-events.types'
 
-import { statusStore } from '@/entities/agent-session'
+import { sessionStore, statusStore } from '@/entities/agent-session'
 import type { ClaudeTurnEvent, RateLimit, ResultMetrics, StatusEvent } from '@/entities/claude-cli'
 import { formatResetTime } from '@/shared/lib/datetime/datetime'
 import { formatTokens, limitKindLabel } from '@/shared/lib/units/units'
 import { advancePermission } from '../../chat/conversation/advance-permission'
 import { conversation } from '../../chat/conversation/conversation'
+import { agentIdIn } from './agent-id/agent-id'
 import { stirred } from './stirred/stirred'
 import {
   SEND_TOOL,
@@ -92,7 +93,9 @@ function announce(turn: ClaudeTurnEvent, refs: AgentEventRefs): void {
       conversation.settleDraft()
       conversation.setStatus('waiting')
       return
-    case 'toolResult':
+    case 'toolResult': {
+      const isolated = agentIdIn(turn)
+      if (isolated !== null) sessionStore.patch(isolated.toolUseId, { agentId: isolated.agentId })
       wakeResumed(turn.toolUseId, turn.stdout, refs)
       conversation.toolResult(turn.toolUseId, {
         stdout: turn.stdout,
@@ -101,6 +104,7 @@ function announce(turn: ClaudeTurnEvent, refs: AgentEventRefs): void {
         interrupted: turn.interrupted,
       })
       return
+    }
     case 'limit':
       if (turn.limit.status !== 'allowed') conversation.system(limitLine(turn.limit))
       return

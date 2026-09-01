@@ -154,7 +154,11 @@ describe('a development launch', () => {
 
     await register()
 
-    expect([...boundary.channels.keys()]).toEqual(['updater:state', 'updater:restart'])
+    expect([...boundary.channels.keys()]).toEqual([
+      'updater:state',
+      'updater:restart',
+      'updater:check',
+    ])
     expect(boundary.listeners.size).toBe(0)
     expect(boundary.checks).toBe(0)
   })
@@ -202,8 +206,13 @@ describe('a packaged launch', () => {
     updater.registerUpdater()
     await settle()
 
-    expect(boundary.bound).toEqual(['update-downloaded'])
-    expect(boundary.handled).toEqual(['updater:state', 'updater:restart'])
+    expect(boundary.bound).toEqual([
+      'error',
+      'update-available',
+      'update-not-available',
+      'update-downloaded',
+    ])
+    expect(boundary.handled).toEqual(['updater:state', 'updater:restart', 'updater:check'])
     await vi.advanceTimersByTimeAsync(10 * 1000)
     expect(boundary.checks).toBe(1)
 

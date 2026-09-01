@@ -18,6 +18,7 @@ import { rememberLoginPath } from './cli/login-path/login-path'
 import { registerConnectors } from './catalog/connectors/connectors'
 import { killTrackedChildren } from './spawn/run-settled/run-settled'
 import { killAllProbes, registerSessionProbe } from './host/session-probe/session-probe'
+import { registerGitDesk } from './host/git-desk/git-desk'
 import { registerWorktreeReview } from './host/worktree-review/worktree-review'
 import {
   registerTranscriptStore,
@@ -233,6 +234,7 @@ if (!primary) {
   registerConnectors()
   registerSessionProbe()
   registerWorktreeReview()
+  registerGitDesk()
   registerTranscriptStore()
   registerPlugins()
   registerProjects()

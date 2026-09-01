@@ -65,6 +65,19 @@ export type DeskBridge = {
 
   nudge: Send<'nudge:show'>
   nudgeState: Invoke<'nudge:state'>
+  gitStatus: Invoke<'git:status'>
+  gitBranches: Invoke<'git:branches'>
+  gitLog: Invoke<'git:log'>
+  gitDiff: Invoke<'git:diff'>
+  gitStage: Invoke<'git:stage'>
+  gitUnstage: Invoke<'git:unstage'>
+  gitCommit: Invoke<'git:commit'>
+  gitSwitch: Invoke<'git:switch'>
+  gitPush: Invoke<'git:push'>
+  gitPull: Invoke<'git:pull'>
+  gitGraph: Invoke<'git:graph'>
+  gitShow: Invoke<'git:show'>
+  gitShowDiff: Invoke<'git:show-diff'>
   listMemory: Invoke<'memory:list'>
   readMemory: Invoke<'memory:read'>
   writeMemory: Invoke<'memory:write'>

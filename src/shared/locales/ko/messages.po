@@ -305,7 +305,7 @@ msgstr "38% · 4시간 12분 남음"
 msgid "5-hour"
 msgstr "5시간"
 
-#: src/widgets/agent-report/lib/review/review.ts:36
+#: src/widgets/agent-report/lib/review/review.ts:22
 msgid "A commit undoing that merge is on the tree now."
 msgstr "그 병합을 되돌리는 커밋이 트리에 올라갔습니다."
 
@@ -494,6 +494,10 @@ msgstr "첨부"
 msgid "Attach a file"
 msgstr "파일 첨부"
 
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:461
+msgid "Author"
+msgstr "작성자"
+
 #: src/pages/workspace/model/session/agent-events/agent-events.ts:171
 msgid "auto"
 msgstr "자동"
@@ -507,6 +511,7 @@ msgstr "자동 편집"
 msgid "Awaiting approval"
 msgstr "승인 대기"
 
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:597
 #: src/widgets/setup/ui/MemoryField/MemoryField.tsx:103
 #: src/widgets/welcome/ui/WelcomePane/WelcomePane.tsx:128
 msgid "Back"
@@ -523,6 +528,14 @@ msgstr "일이 크면 나눠서 맡기세요. 여럿이 붙는 걸 좋아합니�
 #: src/entities/claude-cli/lib/failure/failure.ts:83
 msgid "Billing refused the request"
 msgstr "결제가 거절됐습니다"
+
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:446
+msgid "Branch / tag"
+msgstr "브랜치 / 태그"
+
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:332
+msgid "Branches, changes, commits"
+msgstr "브랜치, 변경, 커밋"
 
 #: src/pages/workspace/model/extensions/useConnectors.ts:95
 msgid "Brought over what Claude Desktop had."
@@ -558,9 +571,14 @@ msgstr "장바구니 합계와 반올림"
 msgid "Change"
 msgstr "바꾸기"
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:436
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:438
 msgid "Change account, project, and permissions"
 msgstr "계정과 프로젝트, 권한을 바꿉니다"
+
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:458
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:620
+msgid "Changes"
+msgstr "변경"
 
 #: src/widgets/team-sidebar/ui/CharacterPicker/CharacterPicker.tsx:19
 msgid "Character"
@@ -619,6 +637,7 @@ msgid "Clear"
 msgstr "지우기"
 
 #: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:115
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:432
 msgid "Close"
 msgstr "닫기"
 
@@ -634,6 +653,20 @@ msgstr "보고서 닫기"
 #: src/widgets/tile-deck/ui/layers/Headline/Headline.tsx:41
 msgid "Close this tile. The run stays in the sidebar."
 msgstr "이 타일을 닫습니다. 기록은 사이드바에 남습니다."
+
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:464
+msgid "Commit"
+msgstr "커밋"
+
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:455
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:646
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:647
+msgid "Commit message"
+msgstr "커밋 메시지"
+
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:658
+msgid "Commit staged files"
+msgstr "선택한 파일 커밋"
 
 #: src/widgets/status-bar/lib/format/format.ts:46
 msgid "compacting soon"
@@ -729,6 +762,10 @@ msgstr "그 대화를 이어받지 못했습니다. 새로 시작합니다."
 msgid "Could not reach {0}"
 msgstr "{0}에 연결하지 못했습니다"
 
+#: src/widgets/git-desk/model/useGitDesk.ts:160
+msgid "Could not read that diff"
+msgstr "diff를 읽지 못했습니다"
+
 #: src/widgets/setup/model/useAgentMemory.ts:71
 msgid "Could not read that memory"
 msgstr "그 메모리를 읽지 못했어요"
@@ -820,6 +857,7 @@ msgstr "업데이트를 시작하지 못했습니다"
 msgid "Could not switch accounts."
 msgstr "계정을 전환하지 못했습니다."
 
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:385
 #: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:343
 msgid "Create"
 msgstr "만들기"
@@ -1004,6 +1042,10 @@ msgstr "에이전트가 남김"
 msgid "Filed to the library · {0}"
 msgstr "라이브러리에 저장됨 · {0}"
 
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:683
+msgid "Files in this commit"
+msgstr "이 커밋의 파일"
+
 #: src/widgets/welcome/lib/slides/slides.ts:27
 msgid "Files read, commands run, edits made. Each one shows up as it happens, not as a summary afterwards."
 msgstr "읽은 파일, 실행한 명령, 고친 내용이 그때그때 올라옵니다. 끝나고 요약만 보여주지 않습니다."
@@ -1078,8 +1120,12 @@ msgstr "일반"
 msgid "Get started"
 msgstr "시작하기"
 
+#: src/widgets/git-desk/model/useGitDesk.ts:147
+msgid "Git could not do that"
+msgstr "git이 해내지 못했습니다"
+
 #. placeholder {0}: why.said
-#: src/widgets/agent-report/lib/review/review.ts:51
+#: src/widgets/agent-report/lib/review/review.ts:37
 msgid "Git said: {0}"
 msgstr "Git이 이렇게 답했습니다: {0}"
 
@@ -1098,6 +1144,10 @@ msgstr "이름을 정하고, 언제 부를지 적고, 지침을 씁니다. 오�
 #: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:175
 msgid "Give them a task"
 msgstr "일을 맡기기"
+
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:452
+msgid "Graph"
+msgstr "그래프"
 
 #: src/entities/tool/lib/tool-verb/tool-verb.ts:26
 #: src/widgets/conversation/lib/working/working.ts:62
@@ -1300,7 +1350,7 @@ msgstr "팀에게 말하기"
 msgid "Model"
 msgstr "모델"
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:372
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:373
 msgid "Model changed. The running session keeps its model."
 msgstr "모델을 바꿨습니다. 실행 중인 세션은 기존 모델을 유지합니다."
 
@@ -1352,6 +1402,11 @@ msgstr "그만두기"
 msgid "New"
 msgstr "새로 만들기"
 
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:370
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:371
+msgid "New branch name"
+msgstr "새 브랜치 이름"
+
 #: src/widgets/team-sidebar/lib/named/named.ts:4
 #: src/widgets/team-sidebar/ui/ChatList/ChatList.tsx:78
 msgid "New chat"
@@ -1389,6 +1444,10 @@ msgstr "계정 한도 정보가 없습니다"
 msgid "No chat by that name"
 msgstr "그런 이름의 대화가 없습니다"
 
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:489
+msgid "No commits here yet. The graph starts with the first one."
+msgstr "아직 커밋이 없습니다. 첫 커밋과 함께 그래프가 시작됩니다."
+
 #: src/widgets/setup/ui/PluginShelf/ConnectorsTab.tsx:58
 msgid "No connectors yet. Add one below, or bring over what Claude Desktop already has."
 msgstr "아직 커넥터가 없습니다. 아래에서 추가하거나 Claude Desktop에 있는 것을 가져오세요."
@@ -1421,6 +1480,14 @@ msgstr "아직 모릅니다"
 msgid "Not now"
 msgstr "나중에"
 
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:613
+msgid "Nothing differs on this side."
+msgstr "이 쪽에는 다른 내용이 없습니다."
+
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:623
+msgid "Nothing has changed."
+msgstr "바뀐 것이 없습니다."
+
 #: src/widgets/setup/ui/PluginShelf/InstalledTab.tsx:38
 msgid "Nothing installed yet."
 msgstr "아직 설치한 것이 없습니다."
@@ -1438,7 +1505,7 @@ msgid "Nothing matches “{needle}”."
 msgstr "“{needle}”에 맞는 것이 없습니다."
 
 #. placeholder {0}: why.said
-#: src/widgets/agent-report/lib/review/review.ts:52
+#: src/widgets/agent-report/lib/review/review.ts:38
 msgid "Nothing of this work is left to find: {0}"
 msgstr "이 작업은 찾을 수 있는 것이 남아 있지 않습니다: {0}"
 
@@ -1516,7 +1583,7 @@ msgstr "권한"
 msgid "Permissions"
 msgstr "권한"
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:368
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:369
 msgid "Permissions changed. The running session follows the old ones."
 msgstr "권한을 바꿨습니다. 실행 중인 세션은 기존 권한을 따릅니다."
 
@@ -1565,6 +1632,14 @@ msgstr "지난 7일"
 #: src/widgets/setup/ui/ProjectField/ProjectField.tsx:9
 msgid "Project"
 msgstr "프로젝트"
+
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:400
+msgid "Pull"
+msgstr "풀"
+
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:413
+msgid "Push"
+msgstr "푸시"
 
 #: src/entities/settings/config/choices/choices.ts:35
 msgid "Quick answers. Least thinking, cheapest"
@@ -1644,6 +1719,7 @@ msgstr "다시 확인"
 msgid "Reference"
 msgstr "참조"
 
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:423
 #: src/widgets/setup/ui/PluginShelf/SourcesTab.tsx:27
 msgid "Refresh"
 msgstr "새로 고침"
@@ -1863,7 +1939,7 @@ msgstr "몇 가지만 정하면 바로 일을 시작합니다"
 msgid "Set for everyone on your account. They cannot be removed or turned off here."
 msgstr "계정 전체에 설정된 것입니다. 여기서는 지우거나 끌 수 없습니다."
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:438
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:440
 msgid "Settings"
 msgstr "설정"
 
@@ -1972,6 +2048,11 @@ msgstr "일하던 중에 무언가 잘못됐습니다"
 msgid "Sources"
 msgstr "마켓플레이스"
 
+#. placeholder {0}: file.path
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:230
+msgid "Stage {0}"
+msgstr "{0} 스테이지"
+
 #: src/widgets/star-ask/ui/StarCard/StarCard.tsx:21
 msgid "Star it"
 msgstr "스타 주기"
@@ -1988,6 +2069,10 @@ msgstr "새 대화를 시작합니다"
 #: src/widgets/conversation/lib/working/working.ts:13
 msgid "Starting"
 msgstr "시작하는 중"
+
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:714
+msgid "Stay here"
+msgstr "여기 있기"
 
 #: src/pages/workspace/model/account/useAuth.ts:168
 msgid "Still signed in. Sign out did not take effect."
@@ -2032,9 +2117,18 @@ msgstr "멈췄습니다: {subtype}"
 msgid "Stopped: something went wrong"
 msgstr "멈췄습니다: 무언가 잘못됐습니다"
 
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:721
+msgid "Switch branch"
+msgstr "브랜치 전환"
+
 #: src/widgets/setup/lib/sign-out-warning/sign-out-warning.ts:14
 msgid "Switch the Claude Code login on this computer?"
 msgstr "이 컴퓨터의 Claude Code 로그인을 바꿀까요?"
+
+#. placeholder {0}: switching ?? ''
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:708
+msgid "Switch to {0}?"
+msgstr "{0}(으)로 전환할까요?"
 
 #: src/widgets/setup/lib/tongues/tongues.ts:5
 msgid "System"
@@ -2122,7 +2216,7 @@ msgstr "답변을 라이브러리에 저장하지 못했습니다"
 msgid "The answer hit the output limit"
 msgstr "답이 출력 한도에 걸렸습니다"
 
-#: src/widgets/agent-report/lib/review/review.ts:35
+#: src/widgets/agent-report/lib/review/review.ts:21
 msgid "The branch and its worktree are gone."
 msgstr "브랜치와 그 워크트리를 지웠습니다."
 
@@ -2227,6 +2321,10 @@ msgstr "세션을 닫는 중입니다: {why}"
 msgid "The team is warm and waiting, {you}."
 msgstr "{you}, 팀은 몸 다 풀고 기다리는 중입니다."
 
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:710
+msgid "The working tree changes to that branch's files. Uncommitted changes come along if they do not collide."
+msgstr "작업 트리가 그 브랜치의 파일로 바뀝니다. 커밋 전 변경사항은 충돌하지 않으면 함께 옮겨집니다."
+
 #: src/widgets/team-sidebar/ui/MemberMenu/MemberMenu.tsx:62
 msgid "Their file is deleted and they leave the roster. A session already running keeps them until it ends. This cannot be undone."
 msgstr "파일이 지워지고 명단에서 빠집니다. 이미 실행 중인 세션은 끝날 때까지 그대로 씁니다. 되돌릴 수 없습니다."
@@ -2302,6 +2400,10 @@ msgstr "브라우저를 열어 이 계정으로 다시 로그인합니다. 여�
 msgid "This project"
 msgstr "이 프로젝트"
 
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:440
+msgid "This project is not a git repository."
+msgstr "이 프로젝트는 git 저장소가 아닙니다."
+
 #: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:96
 msgid "This session"
 msgstr "이번 세션"
@@ -2314,11 +2416,11 @@ msgstr "Claude Code CLI 자체를 로그아웃합니다. 이 컴퓨터에서 CLI
 msgid "This signs out the Claude Code CLI itself, so every terminal, editor and app using it on this computer is signed out too. The session running here stops."
 msgstr "Claude Code CLI 자체를 로그아웃합니다. 이 컴퓨터에서 CLI를 쓰는 터미널과 편집기와 앱이 모두 함께 로그아웃됩니다. 여기서 실행 중인 세션도 멈춥니다."
 
-#: src/widgets/agent-report/lib/review/review.ts:40
+#: src/widgets/agent-report/lib/review/review.ts:26
 msgid "This teammate changed no files."
 msgstr "이 팀원은 파일을 하나도 바꾸지 않았습니다."
 
-#: src/widgets/agent-report/lib/review/review.ts:50
+#: src/widgets/agent-report/lib/review/review.ts:36
 msgid "This teammate has no branch Zetrem can look up."
 msgstr "Zetrem이 찾아볼 수 있는 브랜치가 이 팀원에게 없습니다."
 
@@ -2326,11 +2428,11 @@ msgstr "Zetrem이 찾아볼 수 있는 브랜치가 이 팀원에게 없습니�
 msgid "This turn: {out} out · {seconds}s"
 msgstr "이번 턴: {out} 출력 · {seconds}초"
 
-#: src/widgets/agent-report/lib/review/review.ts:30
+#: src/widgets/agent-report/lib/review/review.ts:16
 msgid "This work is already in the working tree. Zetrem adds a commit that undoes the merge, so the history stays and the files go back to what they were."
 msgstr "이 작업은 이미 작업 트리에 들어와 있습니다. Zetrem이 병합을 되돌리는 커밋을 더하므로, 기록은 그대로 남고 파일만 이전 상태로 돌아갑니다."
 
-#: src/widgets/agent-report/lib/review/review.ts:29
+#: src/widgets/agent-report/lib/review/review.ts:15
 msgid "This work never reached the working tree. Zetrem deletes the branch it is on and the worktree it was written in, and nothing of it can be brought back."
 msgstr "이 작업은 작업 트리에 닿은 적이 없습니다. Zetrem이 그 작업이 놓인 브랜치와 작업에 쓰인 워크트리를 지우며, 지운 뒤에는 무엇도 되살릴 수 없습니다."
 
@@ -2342,7 +2444,7 @@ msgstr "생각 · {paragraphs}단락"
 msgid "Three teammates are on it: the checkout flow, the cart totals and the stock rules. I'll put their reports together into one answer."
 msgstr "팀원 셋이 붙었습니다. 결제 흐름, 장바구니 합계, 재고 규칙을 각각 봅니다. 결과가 오면 하나로 정리해 드리겠습니다."
 
-#: src/widgets/agent-report/lib/review/review.ts:23
+#: src/widgets/agent-report/lib/review/review.ts:9
 msgid "Throw this teammate's work away?"
 msgstr "이 팀원의 작업을 버릴까요?"
 
@@ -2379,6 +2481,10 @@ msgstr "도구"
 msgid "Turn on to let the team call {name}"
 msgstr "켜면 팀이 {name}을(를) 부를 수 있습니다"
 
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:537
+msgid "Uncommitted changes"
+msgstr "커밋 전 변경사항"
+
 #: src/shared/lib/datetime/datetime.ts:22
 msgid "under a minute"
 msgstr "1분 이내"
@@ -2387,7 +2493,7 @@ msgstr "1분 이내"
 msgid "Undo"
 msgstr "되돌리기"
 
-#: src/widgets/agent-report/lib/review/review.ts:24
+#: src/widgets/agent-report/lib/review/review.ts:10
 msgid "Undo the work of this teammate that was already merged?"
 msgstr "이미 합쳐진 이 팀원의 작업을 되돌릴까요?"
 
@@ -2642,7 +2748,7 @@ msgstr "Zetrem {version} 준비 완료"
 msgid "Zetrem cannot do that"
 msgstr "Zetrem이 할 수 없는 작업입니다"
 
-#: src/widgets/agent-report/lib/review/review.ts:46
+#: src/widgets/agent-report/lib/review/review.ts:32
 msgid "Zetrem could not ask Git about this work."
 msgstr "Zetrem이 이 작업에 대해 Git에 물어보지 못했습니다."
 

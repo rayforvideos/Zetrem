@@ -4,6 +4,4 @@ export type Landed = 'branch' | 'merged'
 
 export type Undone = 'dropped' | 'reverted'
 
-export type DiffTone = 'added' | 'removed' | 'meta' | 'plain'
-
-export type DiffRow = { key: string; text: string; tone: DiffTone }
+export type { DiffRow, DiffTone } from '@/shared/lib/diff/diff.types'

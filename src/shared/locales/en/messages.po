@@ -305,7 +305,7 @@ msgstr "38% · 4h 12m left"
 msgid "5-hour"
 msgstr "5-hour"
 
-#: src/widgets/agent-report/lib/review/review.ts:36
+#: src/widgets/agent-report/lib/review/review.ts:22
 msgid "A commit undoing that merge is on the tree now."
 msgstr "A commit undoing that merge is on the tree now."
 
@@ -494,6 +494,10 @@ msgstr "Attach"
 msgid "Attach a file"
 msgstr "Attach a file"
 
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:461
+msgid "Author"
+msgstr "Author"
+
 #: src/pages/workspace/model/session/agent-events/agent-events.ts:171
 msgid "auto"
 msgstr "auto"
@@ -507,6 +511,7 @@ msgstr "Auto-edit"
 msgid "Awaiting approval"
 msgstr "Awaiting approval"
 
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:597
 #: src/widgets/setup/ui/MemoryField/MemoryField.tsx:103
 #: src/widgets/welcome/ui/WelcomePane/WelcomePane.tsx:128
 msgid "Back"
@@ -523,6 +528,14 @@ msgstr "Big job? Split it. They like company."
 #: src/entities/claude-cli/lib/failure/failure.ts:83
 msgid "Billing refused the request"
 msgstr "Billing refused the request"
+
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:446
+msgid "Branch / tag"
+msgstr "Branch / tag"
+
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:332
+msgid "Branches, changes, commits"
+msgstr "Branches, changes, commits"
 
 #: src/pages/workspace/model/extensions/useConnectors.ts:95
 msgid "Brought over what Claude Desktop had."
@@ -558,9 +571,14 @@ msgstr "Cart totals and rounding"
 msgid "Change"
 msgstr "Change"
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:436
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:438
 msgid "Change account, project, and permissions"
 msgstr "Change account, project, and permissions"
+
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:458
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:620
+msgid "Changes"
+msgstr "Changes"
 
 #: src/widgets/team-sidebar/ui/CharacterPicker/CharacterPicker.tsx:19
 msgid "Character"
@@ -619,6 +637,7 @@ msgid "Clear"
 msgstr "Clear"
 
 #: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:115
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:432
 msgid "Close"
 msgstr "Close"
 
@@ -634,6 +653,20 @@ msgstr "Close report"
 #: src/widgets/tile-deck/ui/layers/Headline/Headline.tsx:41
 msgid "Close this tile. The run stays in the sidebar."
 msgstr "Close this tile. The run stays in the sidebar."
+
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:464
+msgid "Commit"
+msgstr "Commit"
+
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:455
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:646
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:647
+msgid "Commit message"
+msgstr "Commit message"
+
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:658
+msgid "Commit staged files"
+msgstr "Commit staged files"
 
 #: src/widgets/status-bar/lib/format/format.ts:46
 msgid "compacting soon"
@@ -729,6 +762,10 @@ msgstr "Could not pick that conversation back up. Starting a new one."
 msgid "Could not reach {0}"
 msgstr "Could not reach {0}"
 
+#: src/widgets/git-desk/model/useGitDesk.ts:160
+msgid "Could not read that diff"
+msgstr "Could not read that diff"
+
 #: src/widgets/setup/model/useAgentMemory.ts:71
 msgid "Could not read that memory"
 msgstr "Could not read that memory"
@@ -820,6 +857,7 @@ msgstr "Could not start the update"
 msgid "Could not switch accounts."
 msgstr "Could not switch accounts."
 
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:385
 #: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:343
 msgid "Create"
 msgstr "Create"
@@ -1004,6 +1042,10 @@ msgstr "Filed by an agent"
 msgid "Filed to the library · {0}"
 msgstr "Filed to the library · {0}"
 
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:683
+msgid "Files in this commit"
+msgstr "Files in this commit"
+
 #: src/widgets/welcome/lib/slides/slides.ts:27
 msgid "Files read, commands run, edits made. Each one shows up as it happens, not as a summary afterwards."
 msgstr "Files read, commands run, edits made. Each one shows up as it happens, not as a summary afterwards."
@@ -1078,8 +1120,12 @@ msgstr "General"
 msgid "Get started"
 msgstr "Get started"
 
+#: src/widgets/git-desk/model/useGitDesk.ts:147
+msgid "Git could not do that"
+msgstr "Git could not do that"
+
 #. placeholder {0}: why.said
-#: src/widgets/agent-report/lib/review/review.ts:51
+#: src/widgets/agent-report/lib/review/review.ts:37
 msgid "Git said: {0}"
 msgstr "Git said: {0}"
 
@@ -1098,6 +1144,10 @@ msgstr "Give them a name, say when to call them, and write their instructions. T
 #: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:175
 msgid "Give them a task"
 msgstr "Give them a task"
+
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:452
+msgid "Graph"
+msgstr "Graph"
 
 #: src/entities/tool/lib/tool-verb/tool-verb.ts:26
 #: src/widgets/conversation/lib/working/working.ts:62
@@ -1300,7 +1350,7 @@ msgstr "Message your team"
 msgid "Model"
 msgstr "Model"
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:372
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:373
 msgid "Model changed. The running session keeps its model."
 msgstr "Model changed. The running session keeps its model."
 
@@ -1352,6 +1402,11 @@ msgstr "Never mind"
 msgid "New"
 msgstr "New"
 
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:370
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:371
+msgid "New branch name"
+msgstr "New branch name"
+
 #: src/widgets/team-sidebar/lib/named/named.ts:4
 #: src/widgets/team-sidebar/ui/ChatList/ChatList.tsx:78
 msgid "New chat"
@@ -1389,6 +1444,10 @@ msgstr "No account limits reported"
 msgid "No chat by that name"
 msgstr "No chat by that name"
 
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:489
+msgid "No commits here yet. The graph starts with the first one."
+msgstr "No commits here yet. The graph starts with the first one."
+
 #: src/widgets/setup/ui/PluginShelf/ConnectorsTab.tsx:58
 msgid "No connectors yet. Add one below, or bring over what Claude Desktop already has."
 msgstr "No connectors yet. Add one below, or bring over what Claude Desktop already has."
@@ -1421,6 +1480,14 @@ msgstr "Not known yet"
 msgid "Not now"
 msgstr "Not now"
 
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:613
+msgid "Nothing differs on this side."
+msgstr "Nothing differs on this side."
+
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:623
+msgid "Nothing has changed."
+msgstr "Nothing has changed."
+
 #: src/widgets/setup/ui/PluginShelf/InstalledTab.tsx:38
 msgid "Nothing installed yet."
 msgstr "Nothing installed yet."
@@ -1438,7 +1505,7 @@ msgid "Nothing matches “{needle}”."
 msgstr "Nothing matches “{needle}”."
 
 #. placeholder {0}: why.said
-#: src/widgets/agent-report/lib/review/review.ts:52
+#: src/widgets/agent-report/lib/review/review.ts:38
 msgid "Nothing of this work is left to find: {0}"
 msgstr "Nothing of this work is left to find: {0}"
 
@@ -1516,7 +1583,7 @@ msgstr "Permission"
 msgid "Permissions"
 msgstr "Permissions"
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:368
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:369
 msgid "Permissions changed. The running session follows the old ones."
 msgstr "Permissions changed. The running session follows the old ones."
 
@@ -1565,6 +1632,14 @@ msgstr "Previous 7 days"
 #: src/widgets/setup/ui/ProjectField/ProjectField.tsx:9
 msgid "Project"
 msgstr "Project"
+
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:400
+msgid "Pull"
+msgstr "Pull"
+
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:413
+msgid "Push"
+msgstr "Push"
 
 #: src/entities/settings/config/choices/choices.ts:35
 msgid "Quick answers. Least thinking, cheapest"
@@ -1644,6 +1719,7 @@ msgstr "Recheck"
 msgid "Reference"
 msgstr "Reference"
 
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:423
 #: src/widgets/setup/ui/PluginShelf/SourcesTab.tsx:27
 msgid "Refresh"
 msgstr "Refresh"
@@ -1863,7 +1939,7 @@ msgstr "Set a few things and your agents get to work!"
 msgid "Set for everyone on your account. They cannot be removed or turned off here."
 msgstr "Set for everyone on your account. They cannot be removed or turned off here."
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:438
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:440
 msgid "Settings"
 msgstr "Settings"
 
@@ -1972,6 +2048,11 @@ msgstr "Something went wrong while it was working"
 msgid "Sources"
 msgstr "Sources"
 
+#. placeholder {0}: file.path
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:230
+msgid "Stage {0}"
+msgstr "Stage {0}"
+
 #: src/widgets/star-ask/ui/StarCard/StarCard.tsx:21
 msgid "Star it"
 msgstr "Star it"
@@ -1988,6 +2069,10 @@ msgstr "Start a conversation from scratch"
 #: src/widgets/conversation/lib/working/working.ts:13
 msgid "Starting"
 msgstr "Starting"
+
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:714
+msgid "Stay here"
+msgstr "Stay here"
 
 #: src/pages/workspace/model/account/useAuth.ts:168
 msgid "Still signed in. Sign out did not take effect."
@@ -2032,9 +2117,18 @@ msgstr "Stopped: {subtype}"
 msgid "Stopped: something went wrong"
 msgstr "Stopped: something went wrong"
 
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:721
+msgid "Switch branch"
+msgstr "Switch branch"
+
 #: src/widgets/setup/lib/sign-out-warning/sign-out-warning.ts:14
 msgid "Switch the Claude Code login on this computer?"
 msgstr "Switch the Claude Code login on this computer?"
+
+#. placeholder {0}: switching ?? ''
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:708
+msgid "Switch to {0}?"
+msgstr "Switch to {0}?"
 
 #: src/widgets/setup/lib/tongues/tongues.ts:5
 msgid "System"
@@ -2122,7 +2216,7 @@ msgstr "The answer could not be filed"
 msgid "The answer hit the output limit"
 msgstr "The answer hit the output limit"
 
-#: src/widgets/agent-report/lib/review/review.ts:35
+#: src/widgets/agent-report/lib/review/review.ts:21
 msgid "The branch and its worktree are gone."
 msgstr "The branch and its worktree are gone."
 
@@ -2227,6 +2321,10 @@ msgstr "The session is closing: {why}"
 msgid "The team is warm and waiting, {you}."
 msgstr "The team is warm and waiting, {you}."
 
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:710
+msgid "The working tree changes to that branch's files. Uncommitted changes come along if they do not collide."
+msgstr "The working tree changes to that branch's files. Uncommitted changes come along if they do not collide."
+
 #: src/widgets/team-sidebar/ui/MemberMenu/MemberMenu.tsx:62
 msgid "Their file is deleted and they leave the roster. A session already running keeps them until it ends. This cannot be undone."
 msgstr "Their file is deleted and they leave the roster. A session already running keeps them until it ends. This cannot be undone."
@@ -2302,6 +2400,10 @@ msgstr "This opens the browser to sign in again for this account. The session ru
 msgid "This project"
 msgstr "This project"
 
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:440
+msgid "This project is not a git repository."
+msgstr "This project is not a git repository."
+
 #: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:96
 msgid "This session"
 msgstr "This session"
@@ -2314,11 +2416,11 @@ msgstr "This signs out the Claude Code CLI itself, so every terminal, editor and
 msgid "This signs out the Claude Code CLI itself, so every terminal, editor and app using it on this computer is signed out too. The session running here stops."
 msgstr "This signs out the Claude Code CLI itself, so every terminal, editor and app using it on this computer is signed out too. The session running here stops."
 
-#: src/widgets/agent-report/lib/review/review.ts:40
+#: src/widgets/agent-report/lib/review/review.ts:26
 msgid "This teammate changed no files."
 msgstr "This teammate changed no files."
 
-#: src/widgets/agent-report/lib/review/review.ts:50
+#: src/widgets/agent-report/lib/review/review.ts:36
 msgid "This teammate has no branch Zetrem can look up."
 msgstr "This teammate has no branch Zetrem can look up."
 
@@ -2326,11 +2428,11 @@ msgstr "This teammate has no branch Zetrem can look up."
 msgid "This turn: {out} out · {seconds}s"
 msgstr "This turn: {out} out · {seconds}s"
 
-#: src/widgets/agent-report/lib/review/review.ts:30
+#: src/widgets/agent-report/lib/review/review.ts:16
 msgid "This work is already in the working tree. Zetrem adds a commit that undoes the merge, so the history stays and the files go back to what they were."
 msgstr "This work is already in the working tree. Zetrem adds a commit that undoes the merge, so the history stays and the files go back to what they were."
 
-#: src/widgets/agent-report/lib/review/review.ts:29
+#: src/widgets/agent-report/lib/review/review.ts:15
 msgid "This work never reached the working tree. Zetrem deletes the branch it is on and the worktree it was written in, and nothing of it can be brought back."
 msgstr "This work never reached the working tree. Zetrem deletes the branch it is on and the worktree it was written in, and nothing of it can be brought back."
 
@@ -2342,7 +2444,7 @@ msgstr "Thought · {paragraphs} paragraphs"
 msgid "Three teammates are on it: the checkout flow, the cart totals and the stock rules. I'll put their reports together into one answer."
 msgstr "Three teammates are on it: the checkout flow, the cart totals and the stock rules. I'll put their reports together into one answer."
 
-#: src/widgets/agent-report/lib/review/review.ts:23
+#: src/widgets/agent-report/lib/review/review.ts:9
 msgid "Throw this teammate's work away?"
 msgstr "Throw this teammate's work away?"
 
@@ -2379,6 +2481,10 @@ msgstr "Tools"
 msgid "Turn on to let the team call {name}"
 msgstr "Turn on to let the team call {name}"
 
+#: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:537
+msgid "Uncommitted changes"
+msgstr "Uncommitted changes"
+
 #: src/shared/lib/datetime/datetime.ts:22
 msgid "under a minute"
 msgstr "under a minute"
@@ -2387,7 +2493,7 @@ msgstr "under a minute"
 msgid "Undo"
 msgstr "Undo"
 
-#: src/widgets/agent-report/lib/review/review.ts:24
+#: src/widgets/agent-report/lib/review/review.ts:10
 msgid "Undo the work of this teammate that was already merged?"
 msgstr "Undo the work of this teammate that was already merged?"
 
@@ -2642,7 +2748,7 @@ msgstr "Zetrem {version} is ready"
 msgid "Zetrem cannot do that"
 msgstr "Zetrem cannot do that"
 
-#: src/widgets/agent-report/lib/review/review.ts:46
+#: src/widgets/agent-report/lib/review/review.ts:32
 msgid "Zetrem could not ask Git about this work."
 msgstr "Zetrem could not ask Git about this work."
 

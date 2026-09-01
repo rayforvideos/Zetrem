@@ -8,6 +8,13 @@ import type { RunConfig } from '@/entities/claude-cli/api/run-config/run-config.
 import type { Settings } from '@/entities/settings/model/settings/settings.types'
 import type { NotifyState } from '@/entities/settings/model/notify/notify'
 import type { MemoryEntry, MemoryNote } from '@/entities/agent-memory/model/note'
+import type {
+  GitBranch,
+  GitCommitLine,
+  GitStatus,
+  GraphCommit,
+  ShownFile,
+} from '@/entities/git/model/repo'
 import type { Project } from '@/entities/project/model/project'
 import type {
   LibraryHit,
@@ -144,6 +151,20 @@ export type Invokes = {
 
   'worktree:diff': (agentId: string) => Outcome<WorktreeDiff>
   'worktree:rollback': (agentId: string) => Outcome<WorktreeRollback>
+
+  'git:status': () => Outcome<GitStatus>
+  'git:branches': () => Outcome<GitBranch[]>
+  'git:log': () => Outcome<GitCommitLine[]>
+  'git:diff': (path: string, side: 'staged' | 'unstaged' | 'untracked') => Outcome<string>
+  'git:stage': (path: string) => Outcome<null>
+  'git:unstage': (path: string) => Outcome<null>
+  'git:commit': (message: string) => Outcome<null>
+  'git:switch': (branch: string, create: boolean) => Outcome<null>
+  'git:push': () => Outcome<null>
+  'git:pull': () => Outcome<null>
+  'git:graph': () => Outcome<GraphCommit[]>
+  'git:show': (sha: string) => Outcome<ShownFile[]>
+  'git:show-diff': (sha: string, path: string) => Outcome<string>
 
   'nudge:state': () => NotifyState
 

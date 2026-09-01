@@ -19,6 +19,7 @@ import { LibraryPane } from '@/widgets/library'
 import { WelcomePane } from '@/widgets/welcome'
 import { TileDeck } from '@/widgets/tile-deck'
 import { MOTION } from '@/shared/config/motion/motion'
+import { GitDesk } from '@/widgets/git-desk'
 import { Titlebar } from '@/widgets/titlebar'
 import { tuckedBy } from '../model/screen/tuck/tuck'
 import { crewOf, pluginSummary } from '../model/team/workspace-config/workspace-config'
@@ -427,6 +428,7 @@ export function WorkspaceScreen() {
           )
         }
       >
+        {settings.setupDone && <GitDesk project={project?.path ?? null} />}
         {settings.setupDone && (
           <Button
             variant="quiet"

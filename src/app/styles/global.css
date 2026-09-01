@@ -40,6 +40,16 @@
   --kind-reference: oklch(0.48 0.1 310);
   --kind-reference-surface: oklch(0.93 0.045 310);
 
+  /* The commit graph's lanes: one hue a lane, cycling past eight. */
+  --lane-0: oklch(0.55 0.13 245);
+  --lane-1: oklch(0.55 0.13 85);
+  --lane-2: oklch(0.55 0.13 150);
+  --lane-3: oklch(0.55 0.13 310);
+  --lane-4: oklch(0.55 0.13 25);
+  --lane-5: oklch(0.55 0.13 190);
+  --lane-6: oklch(0.55 0.13 270);
+  --lane-7: oklch(0.55 0.13 55);
+
   /* Claude's brand colour: the same in both schemes, so dark does not override it. */
   --claude: #d97757;
 
@@ -97,6 +107,15 @@
     --kind-user-surface: oklch(0.28 0.05 190);
     --kind-reference: oklch(0.78 0.1 310);
     --kind-reference-surface: oklch(0.28 0.05 310);
+
+    --lane-0: oklch(0.72 0.13 245);
+    --lane-1: oklch(0.72 0.13 85);
+    --lane-2: oklch(0.72 0.13 150);
+    --lane-3: oklch(0.72 0.13 310);
+    --lane-4: oklch(0.72 0.13 25);
+    --lane-5: oklch(0.72 0.13 190);
+    --lane-6: oklch(0.72 0.13 270);
+    --lane-7: oklch(0.72 0.13 55);
 
     --border: oklch(0.24 0 0);
     --input: oklch(0.24 0 0);

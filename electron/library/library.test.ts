@@ -40,14 +40,22 @@ import { closeLibraries, closeLibraryMcp, librarySessionArgs, registerLibrary } 
 let workspace = ''
 let userData = ''
 
+// The app resolves a workspace with fsPromises.realpath, which carries the
+// semantics of realpath.native: on Windows it expands 8.3 short names, where
+// the plain realpathSync leaves them be. The tests must resolve the same way,
+// or they hash a different path and watch a different file.
+function resolved(where: string): string {
+  return realpathSync.native(where)
+}
+
 // No project is picked in these tests, so the screen works in the scratch
 // workspace the app keeps for exactly that.
 function scratch(): string {
-  return realpathSync(join(userData, 'agent-workspace'))
+  return resolved(join(userData, 'agent-workspace'))
 }
 
 function fileFor(where: string): string {
-  return libraryDbFile(userData, realpathSync(where))
+  return libraryDbFile(userData, resolved(where))
 }
 
 function held(where: string): LibraryListing {

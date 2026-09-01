@@ -121,12 +121,7 @@ vi.mock('../../library/library', () => ({
   librarySessionArgs: async (workspace: string) => {
     if (boundary.libraryFails) throw new Error('read-only disk')
     boundary.laid.push(workspace)
-    return [
-      '--add-dir',
-      `${workspace}/.zetrem/library`,
-      '--mcp-config',
-      '/data/Zetrem/library-mcp.json',
-    ]
+    return ['--mcp-config', '{"mcpServers":{"library":{}}}']
   },
 }))
 
@@ -287,29 +282,23 @@ describe('what the child says reaches the renderer, and its death is told once',
 })
 
 describe('the library every session is handed', () => {
-  it('hands every session its workspace library as an added directory and an MCP server', async () => {
+  it('hands every session the MCP server that serves its workspace library', async () => {
     const one = renderer()
     await startAgent(one, 'a1', 'hello')
     const spawn = boundary.spawns[0]
     if (spawn === undefined) throw new Error('nothing was spawned')
-    const workspace = boundary.laid[0]
-    if (workspace === undefined) throw new Error('no library was laid out')
-    expect(spawn.args.slice(-4)).toEqual([
-      '--add-dir',
-      `${workspace}/.zetrem/library`,
-      '--mcp-config',
-      '/data/Zetrem/library-mcp.json',
-    ])
+    expect(boundary.laid[0]).toBeDefined()
+    expect(spawn.args.slice(-2)).toEqual(['--mcp-config', '{"mcpServers":{"library":{}}}'])
     expect(boundary.laid).toHaveLength(1)
   })
 
-  it('still starts the session when the library cannot be laid out, just without it', async () => {
+  it('still starts the session when the library cannot be opened, just without it', async () => {
     boundary.libraryFails = true
     const one = renderer()
     await startAgent(one, 'a3', 'hello')
     const spawn = boundary.spawns[0]
     if (spawn === undefined) throw new Error('nothing was spawned')
-    expect(spawn.args).not.toContain('--add-dir')
+    expect(spawn.args).not.toContain('--mcp-config')
   })
 })
 

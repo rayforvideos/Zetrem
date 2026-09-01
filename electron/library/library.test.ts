@@ -1,160 +1,194 @@
-import { mkdtempSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs'
+import { existsSync, mkdirSync, mkdtempSync, realpathSync, rmSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import type { LibraryListing, LibraryNote } from '@/entities/library/model/note'
+
+const boundary = vi.hoisted(() => ({
+  userData: '',
+  handlers: new Map<string, (event: unknown, ...args: unknown[]) => unknown>(),
+  told: 0,
+}))
 
 vi.mock('electron', () => ({
-  app: { getPath: () => process.env.ZT_TEST_USERDATA ?? '' },
-  BrowserWindow: { getAllWindows: () => [] },
+  app: { getPath: () => boundary.userData },
+  BrowserWindow: { getAllWindows: () => [{ webContents: {} }] },
 }))
-vi.mock('../ipc/ipc', () => ({ handle: () => undefined, push: () => undefined }))
+vi.mock('../ipc/ipc', () => ({
+  handle: (channel: string, fn: (event: unknown, ...args: unknown[]) => unknown) => {
+    boundary.handlers.set(channel, fn)
+  },
+  push: () => {
+    boundary.told += 1
+  },
+}))
 vi.mock('../store/project-memory/project-memory', () => ({ recallProject: async () => null }))
 
-import {
-  closeLibraryMcp,
-  ensureLibrary,
-  stopFollowing,
-  libraryRootFor,
-  librarySessionArgs,
-} from './library'
+import { libraryDbFile, openLibraryDb } from './library-db/library-db'
+import { listNotes } from './library-notes/library-notes'
+import { closeLibraries, closeLibraryMcp, librarySessionArgs, registerLibrary } from './library'
 
 let workspace = ''
 let userData = ''
 
+// No project is picked in these tests, so the screen works in the scratch
+// workspace the app keeps for exactly that.
+function scratch(): string {
+  return realpathSync(join(userData, 'agent-workspace'))
+}
+
+function fileFor(where: string): string {
+  return libraryDbFile(userData, realpathSync(where))
+}
+
+function held(where: string): LibraryListing {
+  const db = openLibraryDb(fileFor(where), where)
+  try {
+    return listNotes(db)
+  } finally {
+    db.close()
+  }
+}
+
+async function ask<T>(channel: string, ...args: unknown[]): Promise<T> {
+  const handler = boundary.handlers.get(channel)
+  if (handler === undefined) throw new Error(`nothing handles ${channel}`)
+  return (await handler({}, ...args)) as T
+}
+
+function call(library: { url: string; headers: { Authorization: string } }, body: unknown) {
+  return fetch(library.url, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Accept: 'application/json, text/event-stream',
+      Authorization: library.headers.Authorization,
+    },
+    body: JSON.stringify(body),
+  })
+}
+
+function serverIn(args: string[]): {
+  type: string
+  url: string
+  headers: { Authorization: string }
+} {
+  return JSON.parse(args[1] as string).mcpServers.library
+}
+
 beforeEach(() => {
   workspace = mkdtempSync(join(tmpdir(), 'zetrem-ws-'))
   userData = mkdtempSync(join(tmpdir(), 'zetrem-ud-'))
-  process.env.ZT_TEST_USERDATA = userData
+  boundary.userData = userData
+  boundary.told = 0
+  boundary.handlers.clear()
+  registerLibrary()
 })
 
 afterEach(async () => {
   await closeLibraryMcp()
-  stopFollowing()
+  closeLibraries()
   rmSync(workspace, { recursive: true, force: true })
   rmSync(userData, { recursive: true, force: true })
 })
 
-describe('where the library lives', () => {
-  it('sits inside the workspace, so it moves with the project', () => {
-    expect(libraryRootFor('/w/proj')).toBe(join('/w/proj', '.zetrem', 'library'))
+describe('where a library is kept', () => {
+  it('holds the notes in the app, under a file named after the project', async () => {
+    await librarySessionArgs(workspace)
+    expect(existsSync(fileFor(workspace))).toBe(true)
+    expect(existsSync(join(workspace, '.zetrem'))).toBe(false)
+  })
+
+  it('sweeps away the derived index an earlier version kept beside it', async () => {
+    const stale = join(userData, 'library-index')
+    mkdirSync(stale, { recursive: true })
+    writeFileSync(join(stale, 'abc.sqlite'), 'stale')
+    await librarySessionArgs(workspace)
+    expect(existsSync(stale)).toBe(false)
+  })
+
+  it('keeps a file it cannot read aside rather than throwing the work away', async () => {
+    await librarySessionArgs(workspace)
+    closeLibraries()
+    writeFileSync(fileFor(workspace), 'not a database')
+    await librarySessionArgs(workspace)
+    expect(existsSync(`${fileFor(workspace)}.broken`)).toBe(true)
+    expect(held(workspace).notes).toEqual([])
   })
 })
 
-describe('laying the skeleton', () => {
-  it('creates the root and writes no file of its own into the project', async () => {
-    const root = libraryRootFor(workspace)
-    await ensureLibrary(root)
-    expect(readdirSync(root)).toEqual([])
-  })
-
-  it('sweeps away the CLAUDE.md and the marker an earlier version wrote there', async () => {
-    const root = libraryRootFor(workspace)
-    await ensureLibrary(root)
-    writeFileSync(join(root, 'CLAUDE.md'), '# 라이브러리\n')
-    writeFileSync(join(root, '.zetrem'), '')
-    await ensureLibrary(root)
-    expect(readdirSync(root)).toEqual([])
+describe('a library the project kept as files', () => {
+  it('is taken into the app the first time it is opened, and the folder goes', async () => {
+    const root = join(workspace, '.zetrem', 'library')
+    mkdirSync(join(root, 'plans'), { recursive: true })
+    writeFileSync(
+      join(root, 'plans', 'auth.md'),
+      '---\ntitle: Auth\ntags: [chosen]\n---\nWe went with sessions.\n',
+    )
+    await librarySessionArgs(workspace)
+    const listing = held(workspace)
+    expect(listing.folders).toEqual([{ name: 'plans' }])
+    expect(listing.notes.map((one) => one.id)).toEqual(['plans/auth.md'])
+    expect(existsSync(join(workspace, '.zetrem'))).toBe(false)
   })
 })
 
 describe('what a session is handed', () => {
-  it('adds the library as a directory and an MCP config that points at a live server', async () => {
+  it('adds an MCP config that points at a live server, and no directory', async () => {
     const args = await librarySessionArgs(workspace)
-    expect(args.slice(0, 2)).toEqual(['--add-dir', libraryRootFor(workspace)])
-    expect(args[2]).toBe('--mcp-config')
-    const config = JSON.parse(args[3] as string)
-    const library = config.mcpServers.library
+    expect(args).toHaveLength(2)
+    expect(args[0]).toBe('--mcp-config')
+    const library = serverIn(args)
     expect(library.type).toBe('http')
     expect(library.headers.Authorization).toMatch(/^Bearer /)
-    const reply = await fetch(library.url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Accept: 'application/json, text/event-stream',
-        Authorization: library.headers.Authorization,
-      },
-      body: JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'tools/list' }),
-    })
+    const reply = await call(library, { jsonrpc: '2.0', id: 1, method: 'tools/list' })
     const body = (await reply.json()) as { result: { tools: { name: string }[] } }
     expect(body.result.tools.map((one) => one.name)).toContain('library_search')
-    const hello = await fetch(library.url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Accept: 'application/json, text/event-stream',
-        Authorization: library.headers.Authorization,
-      },
-      body: JSON.stringify({ jsonrpc: '2.0', id: 2, method: 'initialize', params: {} }),
-    })
+    const hello = await call(library, { jsonrpc: '2.0', id: 2, method: 'initialize', params: {} })
     const said = (await hello.json()) as { result: { instructions: string } }
     expect(said.result.instructions).toContain('library_search')
   })
 
-  it("marks a note written through the tool as the agent's, and a person's as their own", async () => {
-    const args = await librarySessionArgs(workspace)
-    const config = JSON.parse(args[3] as string)
-    const library = config.mcpServers.library
-    await fetch(library.url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Accept: 'application/json, text/event-stream',
-        Authorization: library.headers.Authorization,
+  it('writes an agent note through the tool, into this workspace, and says so', async () => {
+    const library = serverIn(await librarySessionArgs(workspace))
+    const reply = await call(library, {
+      jsonrpc: '2.0',
+      id: 2,
+      method: 'tools/call',
+      params: {
+        name: 'library_write',
+        arguments: { title: 'From the agent', body: 'It learned this.', tags: ['probe'] },
       },
-      body: JSON.stringify({
-        jsonrpc: '2.0',
-        id: 1,
-        method: 'tools/call',
-        params: { name: 'library_write', arguments: { title: 'by agent', body: 'x' } },
-      }),
     })
-    const { createNote, listNotes } = await import('./library-notes/library-notes')
-    await createNote(libraryRootFor(workspace), '', 'by hand')
-    const { notes } = await listNotes(libraryRootFor(workspace))
-    expect(notes.find((one) => one.title === 'by agent')?.source).toBe('agent')
-    expect(notes.find((one) => one.title === 'by hand')?.source).toBe('')
+    const body = (await reply.json()) as { result: { isError?: boolean } }
+    expect(body.result.isError).toBeUndefined()
+    const [note] = held(workspace).notes
+    expect(note).toMatchObject({ id: 'From the agent.md', tags: ['probe'], source: 'agent' })
+    expect(boundary.told).toBeGreaterThan(0)
   })
 
-  it('writes an agent note through the tool, into this workspace', async () => {
-    const args = await librarySessionArgs(workspace)
-    const library = JSON.parse(args[3] as string).mcpServers.library
-    const reply = await fetch(library.url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Accept: 'application/json, text/event-stream',
-        Authorization: library.headers.Authorization,
-      },
-      body: JSON.stringify({
-        jsonrpc: '2.0',
-        id: 2,
-        method: 'tools/call',
-        params: {
-          name: 'library_write',
-          arguments: { title: 'From the agent', body: 'It learned this.', tags: ['probe'] },
-        },
-      }),
+  it('finds through the tool what the screen wrote, since both work in one library', async () => {
+    const created = await ask<LibraryNote | null>('library:create', null, 'Auth choice')
+    await ask('library:write', created?.id, 'We went with sessions.')
+    const library = serverIn(await librarySessionArgs(scratch()))
+    const reply = await call(library, {
+      jsonrpc: '2.0',
+      id: 1,
+      method: 'tools/call',
+      params: { name: 'library_search', arguments: { query: 'sessions' } },
     })
-    const body = (await reply.json()) as {
-      result: { isError?: boolean; content: { text: string }[] }
-    }
+    const body = (await reply.json()) as { result: { isError?: true; content: { text: string }[] } }
     expect(body.result.isError).toBeUndefined()
-    const written = readFileSync(join(libraryRootFor(workspace), 'From the agent.md'), 'utf8')
-    expect(written).toMatch(/^tags: \[probe\]$/m)
-    expect(written).toContain('It learned this.')
+    const hits = JSON.parse(body.result.content[0]?.text ?? '[]') as { id: string }[]
+    expect(hits.map((hit) => hit.id)).toEqual(['Auth choice.md'])
   })
 
   it('closes the server of a library no session will reach again', async () => {
     const other = mkdtempSync(join(tmpdir(), 'zetrem-ws-'))
     try {
-      const first = JSON.parse((await librarySessionArgs(workspace))[3] as string).mcpServers
-        .library
+      const first = serverIn(await librarySessionArgs(workspace))
       await librarySessionArgs(other)
-      const reply = await fetch(first.url, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', Authorization: first.headers.Authorization },
-        body: JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'ping' }),
-      }).catch(() => null)
+      const reply = await call(first, { jsonrpc: '2.0', id: 1, method: 'ping' }).catch(() => null)
       expect(reply).toBeNull()
     } finally {
       rmSync(other, { recursive: true, force: true })
@@ -164,48 +198,68 @@ describe('what a session is handed', () => {
   it('starts one server for the whole app and reuses it', async () => {
     const first = await librarySessionArgs(workspace)
     const second = await librarySessionArgs(workspace)
-    expect(second[3]).toBe(first[3])
+    expect(second[1]).toBe(first[1])
   })
 })
 
-describe('the search index', () => {
-  it('rebuilds itself when the file on disk is not a database', async () => {
-    const { createNote } = await import('./library-notes/library-notes')
-    const root = libraryRootFor(workspace)
-    await ensureLibrary(root)
-    await createNote(root, '', 'Auth choice')
-    const args = await librarySessionArgs(workspace)
-    const library = JSON.parse(args[3] as string).mcpServers.library
-    const ask = () =>
-      fetch(library.url, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Accept: 'application/json, text/event-stream',
-          Authorization: library.headers.Authorization,
-        },
-        body: JSON.stringify({
-          jsonrpc: '2.0',
-          id: 1,
-          method: 'tools/call',
-          params: { name: 'library_search', arguments: { query: 'auth' } },
-        }),
-      }).then((reply) => reply.json() as Promise<{ result: { isError?: true } }>)
-    expect((await ask()).result.isError).toBeUndefined()
+describe('what the screen asks for', () => {
+  it('creates, writes, reads and lists a note in the workspace library', async () => {
+    const made = await ask<LibraryNote | null>('library:create', null, 'Idea')
+    expect(made).toMatchObject({ id: 'Idea.md', title: 'Idea', source: '' })
+    await ask('library:write', 'Idea.md', 'The body.', { tags: ['t'] })
+    const listing = await ask<LibraryListing>('library:list')
+    expect(listing.notes).toEqual([
+      expect.objectContaining({ id: 'Idea.md', tags: ['t'], summary: 'The body.' }),
+    ])
+    expect(await ask<LibraryNote | null>('library:read', 'Idea.md')).toMatchObject({
+      body: 'The body.',
+    })
+    expect(held(scratch()).notes.map((one) => one.id)).toEqual(['Idea.md'])
+  })
 
-    stopFollowing()
-    const dir = join(userData, 'library-index')
-    for (const name of readdirSync(dir)) writeFileSync(join(dir, name), 'not a database')
-    expect((await ask()).result.isError).toBeUndefined()
+  it('searches, follows a link back, and files an answer', async () => {
+    await ask('library:create', null, 'Target')
+    const from = await ask<LibraryNote | null>('library:create', null, 'Source')
+    await ask('library:write', from?.id, 'see [[Target]] for the reason')
+    expect((await ask<{ id: string }[]>('library:search', 'reason')).map((one) => one.id)).toEqual([
+      'Source.md',
+    ])
+    expect(
+      (await ask<{ id: string }[]>('library:backlinks', 'Target.md')).map((one) => one.id),
+    ).toEqual(['Source.md'])
+    const filed = await ask<LibraryNote | null>('library:file', '## Found\n\nThe probe runs empty.')
+    expect(filed).toMatchObject({ id: 'Found.md', summary: 'The probe runs empty.' })
+  })
+
+  it('adds, renames and removes a folder, and removes a note', async () => {
+    expect((await ask<LibraryListing>('library:folder-add', 'plans')).folders).toEqual([
+      { name: 'plans' },
+    ])
+    await ask('library:create', 'plans', 'Idea')
+    const moved = await ask<LibraryListing>('library:folder-rename', 'plans', 'ideas')
+    expect(moved.notes.map((one) => one.id)).toEqual(['ideas/Idea.md'])
+    await ask('library:remove', 'ideas/Idea.md')
+    expect((await ask<LibraryListing>('library:folder-remove', 'ideas')).folders).toEqual([])
+    expect((await ask<LibraryListing>('library:list')).notes).toEqual([])
+  })
+
+  it('renames a note and keeps the switch that says who may read the library', async () => {
+    await ask('library:create', null, 'One')
+    expect(await ask<LibraryNote | null>('library:rename', 'One.md', 'Uno')).toMatchObject({
+      id: 'Uno.md',
+    })
+    expect(await ask<boolean>('library:agents')).toBe(true)
+    expect(await ask<boolean>('library:agents-set', false)).toBe(false)
+    expect(await ask<boolean>('library:agents')).toBe(false)
   })
 })
 
 describe('when a project has closed its library to agents', () => {
-  it('hands the session nothing, so the agent never sees the folder or the tools', async () => {
+  it('hands the session nothing, so the agent gets no tools at all', async () => {
     const { setLibraryOpenToAgents } = await import('./library-access/library-access')
     await setLibraryOpenToAgents(workspace, false)
     expect(await librarySessionArgs(workspace)).toEqual([])
     await setLibraryOpenToAgents(workspace, true)
-    expect((await librarySessionArgs(workspace)).length).toBe(4)
+    expect(await librarySessionArgs(workspace)).toHaveLength(2)
   })
 })

@@ -1,25 +1,13 @@
-import {
-  existsSync,
-  mkdirSync,
-  mkdtempSync,
-  readFileSync,
-  rmSync,
-  symlinkSync,
-  utimesSync,
-  writeFileSync,
-} from 'node:fs'
-import { tmpdir } from 'node:os'
-import { join } from 'node:path'
+import type { DatabaseSync } from 'node:sqlite'
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
+import { openLibraryDb } from '../library-db/library-db'
 import {
   addFolder,
   createNote,
   fileNote,
   isFolderName,
   isNoteId,
-  listFolders,
   listNotes,
-  notesForIndex,
   readNote,
   removeFolder,
   removeNote,
@@ -28,40 +16,26 @@ import {
   writeNote,
 } from './library-notes'
 
-let root = ''
-let outside = ''
+let db: DatabaseSync
 const NOW = Date.parse('2026-08-28T03:00:00.000Z')
-
-function headed(title: string, body: string, extra = ''): string {
-  return `---\ntitle: ${title}\ncreated: 2026-08-01T00:00:00.000Z\nupdated: 2026-08-02T00:00:00.000Z\n${extra}---\n${body}\n`
-}
-
-function file(id: string, text: string, atMs = NOW): void {
-  const at = id.lastIndexOf('/')
-  if (at !== -1) mkdirSync(join(root, id.slice(0, at)), { recursive: true })
-  const path = join(root, id)
-  writeFileSync(path, text)
-  utimesSync(path, atMs / 1000, atMs / 1000)
-}
+const BEFORE = Date.parse('2026-08-01T00:00:00.000Z')
 
 beforeEach(() => {
-  root = mkdtempSync(join(tmpdir(), 'zetrem-library-notes-'))
-  outside = mkdtempSync(join(tmpdir(), 'zetrem-library-outside-'))
+  db = openLibraryDb(':memory:', '/w/proj')
 })
 
 afterEach(() => {
-  rmSync(root, { recursive: true, force: true })
-  rmSync(outside, { recursive: true, force: true })
+  db.close()
 })
 
 describe('what counts as a note id', () => {
-  it('is a markdown file at the root or one folder down', () => {
+  it('is a note at the root or one folder down', () => {
     expect(isNoteId('배송API-비교.md')).toBe(true)
     expect(isNoteId('분석/배송API-비교.md')).toBe(true)
     expect(isNoteId('a/b/c.md')).toBe(false)
   })
 
-  it('refuses anything that could leave the library or hide', () => {
+  it('refuses anything that could climb out or hide', () => {
     expect(isNoteId('.hidden.md')).toBe(false)
     expect(isNoteId('../x.md')).toBe(false)
     expect(isNoteId('a/../x.md')).toBe(false)
@@ -77,151 +51,132 @@ describe('what counts as a note id', () => {
 })
 
 describe('listing and reading', () => {
-  it('reads the head of each note and lists newest first, guide and marker unseen', async () => {
-    file('one.md', headed('One', 'First para.\n\nMore', 'tags: [a, b]\n'))
-    file('deep/two.md', headed('Two', 'Second.'))
-    const listing = await listNotes(root)
+  it('lists newest first, with the head of each note and no body', () => {
+    addFolder(db, 'deep')
+    writeNote(db, 'one.md', 'First para.\n\nMore', { title: 'One', tags: ['a', 'b'] }, BEFORE)
+    writeNote(db, 'deep/two.md', 'Second.', { title: 'Two' }, NOW)
+    const listing = listNotes(db)
     expect(listing.folders).toEqual([{ name: 'deep' }])
-    expect(listing.notes.map((one) => one.id)).toEqual(['one.md', 'deep/two.md'])
-    const one = listing.notes[0]
-    expect(one).toMatchObject({
+    expect(listing.notes.map((one) => one.id)).toEqual(['deep/two.md', 'one.md'])
+    expect(listing.notes[1]).toMatchObject({
       folder: '',
       title: 'One',
       summary: 'First para.',
       tags: ['a', 'b'],
-      createdAtMs: Date.parse('2026-08-01T00:00:00.000Z'),
-      updatedAtMs: Date.parse('2026-08-02T00:00:00.000Z'),
+      createdAtMs: BEFORE,
+      updatedAtMs: BEFORE,
     })
-    expect(one).not.toHaveProperty('body')
-    const read = await readNote(root, 'one.md')
-    expect(read?.body).toBe('First para.\n\nMore')
+    expect(listing.notes[1]).not.toHaveProperty('body')
+    expect(readNote(db, 'one.md')?.body).toBe('First para.\n\nMore')
   })
 
-  it('takes a plain file with no head as a note named by its file', async () => {
-    file('plain.md', 'Just words here.\n', NOW - 5000)
-    const note = await readNote(root, 'plain.md')
-    expect(note).toMatchObject({
-      title: 'plain',
-      tags: [],
-      summary: 'Just words here.',
-      updatedAtMs: NOW - 5000,
-    })
+  it('answers null for an id that is not a note, and for one nothing wrote', () => {
+    expect(readNote(db, 'nothing.md')).toBeNull()
+    expect(readNote(db, '../x.md')).toBeNull()
+    expect(readNote(db, 42)).toBeNull()
   })
 
-  it('answers null for an id that is not a note and never follows a symlink out', async () => {
-    writeFileSync(join(outside, 'x.md'), headed('X', 'x'))
-    symlinkSync(join(outside, 'x.md'), join(root, 'link.md'))
-    expect(await readNote(root, 'link.md')).toBeNull()
-    expect(await readNote(root, '../x.md')).toBeNull()
-    expect((await listNotes(root)).notes).toEqual([])
-  })
-
-  it('lists nothing when the library is not there yet', async () => {
-    expect(await listNotes(join(root, 'nope'))).toEqual({ folders: [], notes: [] })
-    expect(await listFolders(join(root, 'nope'))).toEqual([])
-  })
-
-  it('hands the index every note with a hash of the file as written', async () => {
-    file('one.md', headed('One', 'a'))
-    const [note] = await notesForIndex(root)
-    expect(note?.hash).toMatch(/^[0-9a-f]{40}$/)
-    expect(note?.body).toBe('a')
-    const again = await notesForIndex(root)
-    expect(again[0]?.hash).toBe(note?.hash)
+  it('lists nothing in a library nobody has written to', () => {
+    expect(listNotes(db)).toEqual({ folders: [], notes: [] })
   })
 })
 
 describe('writing', () => {
-  it('writes a body under a fresh head, and keeps when it began', async () => {
-    file('one.md', headed('One', 'old'))
-    const note = await writeNote(root, 'one.md', 'new body', {}, NOW)
-    expect(note?.body).toBe('new body')
-    expect(note?.createdAtMs).toBe(Date.parse('2026-08-01T00:00:00.000Z'))
-    expect(note?.updatedAtMs).toBe(NOW)
-    expect(readFileSync(join(root, 'one.md'), 'utf8')).toMatch(/^---\ntitle: One\n/)
+  it('writes a body under a fresh head, and keeps when the note began', () => {
+    createNote(db, '', 'One', BEFORE)
+    const note = writeNote(db, 'One.md', 'new body', {}, NOW)
+    expect(note).toMatchObject({
+      id: 'One.md',
+      title: 'One',
+      body: 'new body',
+      createdAtMs: BEFORE,
+      updatedAtMs: NOW,
+    })
   })
 
-  it('takes a title and tags with the body', async () => {
-    file('one.md', headed('One', 'x'))
-    const note = await writeNote(root, 'one.md', 'x', { title: 'Renamed', tags: ['t'] }, NOW)
-    expect(note).toMatchObject({ id: 'one.md', title: 'Renamed', tags: ['t'] })
+  it('takes a title and tags with the body, leaving the id alone', () => {
+    createNote(db, '', 'One', BEFORE)
+    const note = writeNote(db, 'One.md', 'x', { title: 'Renamed', tags: ['t'] }, NOW)
+    expect(note).toMatchObject({ id: 'One.md', title: 'Renamed', tags: ['t'] })
   })
 
-  it('refuses a folder that is not there', async () => {
-    expect(await writeNote(root, 'ghost/x.md', 'x')).toBeNull()
+  it('refuses a folder that is not there', () => {
+    expect(writeNote(db, 'ghost/x.md', 'x')).toBeNull()
+    expect(writeNote(db, 'one.md', 42 as unknown as string)).toBeNull()
   })
 
-  it('creates an empty note at the root or in a folder, numbering a collision', async () => {
-    const one = await createNote(root, null, 'Idea', NOW)
+  it('creates an empty note at the root or in a folder, numbering a collision', () => {
+    const one = createNote(db, null, 'Idea', NOW)
     expect(one).toMatchObject({ id: 'Idea.md', title: 'Idea', body: '' })
-    const two = await createNote(root, '', 'Idea', NOW)
-    expect(two?.id).toBe('Idea 2.md')
-    mkdirSync(join(root, 'plans'))
-    expect((await createNote(root, 'plans', 'Idea', NOW))?.id).toBe('plans/Idea.md')
-    expect(await createNote(root, 'nowhere', 'Idea')).toBeNull()
-    expect(await createNote(root, null, '../x')).toBeNull()
+    expect(createNote(db, '', 'Idea', NOW)?.id).toBe('Idea 2.md')
+    addFolder(db, 'plans')
+    expect(createNote(db, 'plans', 'Idea', NOW)?.id).toBe('plans/Idea.md')
+    expect(createNote(db, 'nowhere', 'Idea')).toBeNull()
+    expect(createNote(db, null, '../x')).toBeNull()
   })
 
-  it('files an answer as a note titled from its words', async () => {
-    const note = await fileNote(root, '## What we found\n\nThe probe runs empty.', NOW)
+  it('files an answer as a note titled from its words', () => {
+    const note = fileNote(db, '## What we found\n\nThe probe runs empty.', NOW)
     expect(note).toMatchObject({
       id: 'What we found.md',
       title: 'What we found',
       summary: 'The probe runs empty.',
       createdAtMs: NOW,
     })
-    expect(await fileNote(root, '   ')).toBeNull()
+    expect(fileNote(db, '   ')).toBeNull()
   })
 
-  it('writes nothing through a symlink standing for a folder outside', async () => {
-    symlinkSync(outside, join(root, 'away'))
-    expect(await writeNote(root, 'away/x.md', 'x')).toBeNull()
-    expect(existsSync(join(outside, 'x.md'))).toBe(false)
+  it('marks who wrote the note, and keeps that mark on a later write', () => {
+    createNote(db, '', 'From a session', NOW)
+    expect(writeNote(db, 'From a session.md', 'x', { source: 'agent' }, NOW)?.source).toBe('agent')
+    expect(writeNote(db, 'From a session.md', 'y', {}, NOW)?.source).toBe('agent')
+    expect(createNote(db, '', 'By hand', NOW)?.source).toBe('')
   })
 
-  it('refuses a title that ends in a period, and allows a case-only rename', async () => {
-    file('one.md', headed('One', 'x'))
-    expect(await renameNote(root, 'one.md', 'etc.', NOW)).toBeNull()
-    expect(existsSync(join(root, 'one.md'))).toBe(true)
-    const renamed = await renameNote(root, 'one.md', 'ONE', NOW)
-    expect(renamed?.id).toBe('ONE.md')
-    // Another file that merely matches by case is still a collision.
-    file('alpha.md', headed('Alpha', 'a'))
-    file('beta.md', headed('Beta', 'b'))
-    expect(await renameNote(root, 'alpha.md', 'beta', NOW)).toBeNull()
+  it('refuses a title that ends in a period, and allows a case-only rename', () => {
+    createNote(db, '', 'one', NOW)
+    expect(renameNote(db, 'one.md', 'etc.', NOW)).toBeNull()
+    expect(readNote(db, 'one.md')).not.toBeNull()
+    expect(renameNote(db, 'one.md', 'ONE', NOW)?.id).toBe('ONE.md')
+    expect(readNote(db, 'one.md')).toBeNull()
   })
 
-  it('renames a note in place, updating its head, and refuses a taken name', async () => {
-    file('one.md', headed('One', 'x'))
-    file('two.md', headed('Two', 'y'))
-    const moved = await renameNote(root, 'one.md', 'Uno', NOW)
+  it('renames a note in place, updating its head, and refuses a taken name', () => {
+    createNote(db, '', 'One', BEFORE)
+    createNote(db, '', 'Two', BEFORE)
+    const moved = renameNote(db, 'One.md', 'Uno', NOW)
     expect(moved).toMatchObject({ id: 'Uno.md', title: 'Uno', updatedAtMs: NOW })
-    expect(existsSync(join(root, 'one.md'))).toBe(false)
-    expect(await renameNote(root, 'Uno.md', 'two')).toBeNull()
+    expect(readNote(db, 'One.md')).toBeNull()
+    expect(renameNote(db, 'Uno.md', 'Two')).toBeNull()
   })
 
-  it('removes only a real note id', async () => {
-    file('one.md', headed('One', 'x'))
-    await removeNote(root, 'one.md')
-    expect(existsSync(join(root, 'one.md'))).toBe(false)
+  it('removes only a real note id', () => {
+    createNote(db, '', 'One', NOW)
+    removeNote(db, '../One.md')
+    expect(readNote(db, 'One.md')).not.toBeNull()
+    removeNote(db, 'One.md')
+    expect(readNote(db, 'One.md')).toBeNull()
   })
 })
 
 describe('folders', () => {
-  it('adds, renames and removes a folder, moving its notes with it', async () => {
-    await addFolder(root, 'plans')
-    file('plans/a.md', headed('A', 'a'))
-    const renamed = await renameFolder(root, 'plans', 'ideas')
+  it('adds, renames and removes a folder, moving its notes with it', () => {
+    addFolder(db, 'plans')
+    writeNote(db, 'plans/a.md', 'a', { title: 'A' }, NOW)
+    const renamed = renameFolder(db, 'plans', 'ideas')
+    expect(renamed.folders).toEqual([{ name: 'ideas' }])
     expect(renamed.notes.map((one) => one.id)).toEqual(['ideas/a.md'])
-    await removeNote(root, 'ideas/a.md')
-    writeFileSync(join(root, 'ideas', '.DS_Store'), '')
-    const gone = await removeFolder(root, 'ideas')
-    expect(gone.folders).toEqual([])
+    expect(readNote(db, 'ideas/a.md')).toMatchObject({ folder: 'ideas', title: 'A' })
+    expect(removeFolder(db, 'ideas').folders).toEqual([{ name: 'ideas' }])
+    removeNote(db, 'ideas/a.md')
+    expect(removeFolder(db, 'ideas').folders).toEqual([])
   })
 
-  it('refuses a folder named like the marker, or one that exists', async () => {
-    expect((await addFolder(root, '.zetrem')).folders).toEqual([])
-    await addFolder(root, 'a')
-    expect((await addFolder(root, 'a')).folders).toEqual([{ name: 'a' }])
+  it('refuses a folder named like a hidden one, or one that is already there', () => {
+    expect(addFolder(db, '.zetrem').folders).toEqual([])
+    addFolder(db, 'a')
+    expect(addFolder(db, 'a').folders).toEqual([{ name: 'a' }])
+    addFolder(db, 'b')
+    expect(renameFolder(db, 'a', 'b').folders).toEqual([{ name: 'a' }, { name: 'b' }])
   })
 })

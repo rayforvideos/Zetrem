@@ -113,7 +113,7 @@ describe('the settings split into tabs on the left', () => {
 
   it('keeps the other sections mounted but hidden, so a typed name survives a tab switch', () => {
     const html = pane()
-    expect(html.match(/<section[^>]* hidden=""/g)).toHaveLength(3)
+    expect(html.match(/<section[^>]* hidden=""/g)).toHaveLength(4)
     expect(html).toContain('Notifications')
   })
 

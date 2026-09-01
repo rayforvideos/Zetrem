@@ -70,7 +70,7 @@ type You = {
   onFace(next: FaceId): void
 }
 
-export type SetupTab = 'start' | 'general' | 'session' | 'extensions'
+export type SetupTab = 'start' | 'general' | 'session' | 'memory' | 'extensions'
 
 export type SetupPaneProps = {
   account: Account

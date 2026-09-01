@@ -19,6 +19,7 @@ import { AccountField } from '../AccountField/AccountField'
 import { StockList } from '@/entities/teammate'
 import { YouField } from '../YouField/YouField'
 import { ChoiceField } from '../ChoiceField/ChoiceField'
+import { MemoryField } from '../MemoryField/MemoryField'
 import { ProjectField } from '../ProjectField/ProjectField'
 import type { SetupPaneProps, SetupTab } from './SetupPane.types'
 
@@ -28,6 +29,7 @@ const TABS: { id: SetupTab; label: MessageDescriptor }[] = [
   { id: 'start', label: msg`Start` },
   { id: 'general', label: msg`General` },
   { id: 'session', label: msg`Session` },
+  { id: 'memory', label: msg`Memory` },
   { id: 'extensions', label: msg`Extensions` },
 ]
 
@@ -162,6 +164,11 @@ export function SetupPane({
                     chosen={defaults.effort}
                     onChoose={(id) => defaults.onEffort(id as EffortChoice)}
                   />
+                </FieldGroup>
+              </section>
+              <section hidden={tab !== 'memory'} className="zt-rise">
+                <FieldGroup className="gap-5">
+                  <MemoryField active={tab === 'memory'} />
                 </FieldGroup>
               </section>
               <section hidden={tab !== 'extensions'} className="zt-rise">

@@ -9,6 +9,7 @@ import { registerAuth } from './cli/auth/auth'
 import { registerAccounts } from './cli/accounts/register-accounts/register-accounts'
 import { registerCliInstall } from './cli/cli-install/cli-install'
 import { registerCliVersion } from './cli/cli-version/cli-version'
+import { registerAgentMemory } from './host/agent-memory/agent-memory'
 import { registerNudge } from './host/nudge/nudge'
 import { registerPlugins } from './catalog/plugins/plugins'
 import { loadSettings, registerSettingsStore } from './store/settings-store/settings-store'
@@ -237,6 +238,7 @@ if (!primary) {
   registerProjects()
   registerLibrary()
   registerNudge()
+  registerAgentMemory()
   registerUpdater()
   handle('app:version', () => app.getVersion())
 

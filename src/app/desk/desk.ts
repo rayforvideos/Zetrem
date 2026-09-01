@@ -65,6 +65,11 @@ export type DeskBridge = {
 
   nudge: Send<'nudge:show'>
   nudgeState: Invoke<'nudge:state'>
+  listMemory: Invoke<'memory:list'>
+  readMemory: Invoke<'memory:read'>
+  writeMemory: Invoke<'memory:write'>
+  removeMemory: Invoke<'memory:remove'>
+  translateMemory: Invoke<'memory:translate'>
   openNotifySettings: Send<'nudge:settings'>
 
   latestCliVersion: Invoke<'cli:latest'>

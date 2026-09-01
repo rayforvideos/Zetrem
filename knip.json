@@ -6,16 +6,7 @@
     "electron-builder.config.cjs",
     "**/*.test.{ts,tsx}"
   ],
-  "project": [
-    "src/**/*.{ts,tsx,css}",
-    "electron/**/*.ts",
-    "scripts/**/*.mjs"
-  ],
-  "ignore": [
-    "src/shared/ui/**"
-  ],
-  "ignoreDependencies": [
-    "shadcn",
-    "babel-plugin-react-compiler"
-  ]
+  "project": ["src/**/*.{ts,tsx,css}", "electron/**/*.ts", "scripts/**/*.mjs"],
+  "ignore": ["src/shared/ui/**"],
+  "ignoreDependencies": ["shadcn", "babel-plugin-react-compiler"]
 }

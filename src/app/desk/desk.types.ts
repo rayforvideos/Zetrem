@@ -7,6 +7,7 @@ import type {
 import type { RunConfig } from '@/entities/claude-cli/api/run-config/run-config.types'
 import type { Settings } from '@/entities/settings/model/settings/settings.types'
 import type { NotifyState } from '@/entities/settings/model/notify/notify'
+import type { MemoryEntry, MemoryNote } from '@/entities/agent-memory/model/note'
 import type { Project } from '@/entities/project/model/project'
 import type {
   LibraryHit,
@@ -145,6 +146,12 @@ export type Invokes = {
   'worktree:rollback': (agentId: string) => Outcome<WorktreeRollback>
 
   'nudge:state': () => NotifyState
+
+  'memory:list': () => Outcome<MemoryEntry[]>
+  'memory:read': (id: string) => Outcome<MemoryNote>
+  'memory:write': (id: string, body: string, description: string) => Outcome<null>
+  'memory:remove': (id: string) => Outcome<null>
+  'memory:translate': (id: string, tongue: string) => Outcome<{ description: string; body: string }>
 
   'updater:state': () => string | null
   'updater:restart': () => void

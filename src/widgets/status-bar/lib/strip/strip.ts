@@ -32,9 +32,17 @@ function leftLabel(limit: StatusState['limits'][number], nowMs: number): string 
   return null
 }
 
+// An overage-included limit is the CLI saying the plan already covers what was
+// spent past a limit. That is a note about the bill, not a share of anything
+// this strip has a meter for, so it stays out rather than arriving as a bare
+// tag nobody asked for.
+function drawn(limit: StatusState['limits'][number]): boolean {
+  return !limit.kind.includes('overage_included')
+}
+
 export function marksOfStatus(status: StatusState, nowMs = Date.now()): Mark[] {
   const stale = status.usage === 'kept' ? ` · ${t`from an earlier reading`}` : ''
-  return status.limits.map((limit) => {
+  return status.limits.filter(drawn).map((limit) => {
     const percent = limit.utilization === null ? null : Math.round(limit.utilization * 100)
     const share = percent === null ? t`share unknown` : t`${percent}% used`
     return {
@@ -60,7 +68,7 @@ export function chatLine(status: StatusState): string | null {
 }
 
 export function quietLine(status: StatusState): string | null {
-  if (status.limits.length > 0 || chatLine(status) !== null) return null
+  if (status.limits.some(drawn) || chatLine(status) !== null) return null
   if (status.usage === 'unread') return t`Reading usage…`
   if (status.usage === 'unreadable') return t`Could not read usage`
   return t`No account limits reported`

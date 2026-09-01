@@ -105,6 +105,24 @@ describe('UsageBar: one strip at the foot of the window', () => {
     })
     expect(html(limited)).toContain('26%')
   })
+
+  it('draws no meter for a limit whose overage the plan already covers', () => {
+    const covered = html(
+      state({
+        limits: [
+          {
+            kind: 'seven_day_overage_included',
+            utilization: 0.26,
+            status: 'allowed',
+            resetsAtMs: 0,
+            overage: false,
+          },
+        ],
+      }),
+    )
+    expect(covered).not.toContain('Overage Included')
+    expect(covered).not.toContain('data-usage-mark')
+  })
 })
 
 describe('the limits say when they come back, not only how full they are', () => {

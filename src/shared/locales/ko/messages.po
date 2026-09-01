@@ -13,11 +13,11 @@ msgstr ""
 "Language-Team: \n"
 "Plural-Forms: \n"
 
-#: src/pages/workspace/model/session/agent-events/agent-events.ts:149
+#: src/pages/workspace/model/session/agent-events/agent-events.ts:153
 msgid " · on overage"
 msgstr " · 초과분 사용 중"
 
-#: src/pages/workspace/model/session/agent-events/agent-events.ts:147
+#: src/pages/workspace/model/session/agent-events/agent-events.ts:151
 msgid " {pct}% used,"
 msgstr " {pct}% 사용,"
 
@@ -74,7 +74,7 @@ msgid "{0} left"
 msgstr "{0} 남음"
 
 #. placeholder {0}: limitKindLabel(limit.kind)
-#: src/pages/workspace/model/session/agent-events/agent-events.ts:150
+#: src/pages/workspace/model/session/agent-events/agent-events.ts:154
 msgid "{0} limit{share} resets {when}{overage}"
 msgstr "{0} 한도{share} {when} 초기화{overage}"
 
@@ -125,7 +125,7 @@ msgstr "{0}분 전"
 msgid "{back} teammates"
 msgstr "팀원 {back}명"
 
-#: src/pages/workspace/model/session/agent-events/agent-events.ts:160
+#: src/pages/workspace/model/session/agent-events/agent-events.ts:164
 msgid "{base}. Earlier turns live on as a summary."
 msgstr "{base}. 앞선 대화는 요약으로 남습니다."
 
@@ -296,6 +296,10 @@ msgstr "38% · 4시간 12분 남음"
 msgid "5-hour"
 msgstr "5시간"
 
+#: src/widgets/agent-report/lib/review/review.ts:36
+msgid "A commit undoing that merge is on the tree now."
+msgstr "그 병합을 되돌리는 커밋이 트리에 올라갔습니다."
+
 #: src/entities/connector/lib/refusal-why/refusal-why.ts:12
 msgid "A name cannot start with a dash"
 msgstr "이름은 하이픈으로 시작할 수 없습니다"
@@ -440,7 +444,7 @@ msgid "any moment"
 msgstr "곧"
 
 #. placeholder {0}: turn.metrics.apiErrorStatus
-#: src/pages/workspace/model/session/agent-events/agent-events.ts:112
+#: src/pages/workspace/model/session/agent-events/agent-events.ts:116
 msgid "API error {0}"
 msgstr "API 오류 {0}"
 
@@ -469,7 +473,7 @@ msgstr "첨부"
 msgid "Attach a file"
 msgstr "파일 첨부"
 
-#: src/pages/workspace/model/session/agent-events/agent-events.ts:167
+#: src/pages/workspace/model/session/agent-events/agent-events.ts:171
 msgid "auto"
 msgstr "자동"
 
@@ -588,7 +592,7 @@ msgstr "Claude Code에 화면을 붙였습니다"
 msgid "Clear"
 msgstr "지우기"
 
-#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:93
+#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:115
 msgid "Close"
 msgstr "닫기"
 
@@ -597,7 +601,7 @@ msgstr "닫기"
 msgid "Close {0}"
 msgstr "{0} 닫기"
 
-#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:92
+#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:114
 msgid "Close report"
 msgstr "보고서 닫기"
 
@@ -642,7 +646,7 @@ msgstr "컨텍스트"
 msgid "Continue"
 msgstr "계속"
 
-#: src/pages/workspace/model/session/agent-events/agent-events.ts:158
+#: src/pages/workspace/model/session/agent-events/agent-events.ts:162
 msgid "Conversation compacted here"
 msgstr "여기서 대화가 압축됐습니다"
 
@@ -823,6 +827,10 @@ msgstr "“{0}” 노트를 삭제할까요?"
 msgid "Deny"
 msgstr "거부"
 
+#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:192
+msgid "Diff"
+msgstr "변경 내용"
+
 #: src/shared/parts/FirstHint/FirstHint.tsx:29
 msgid "Dismiss this tip"
 msgstr "이 안내 닫기"
@@ -835,7 +843,7 @@ msgstr "이 팀원이 먼저 읽을 문서입니다. 길어도 열기 전까지�
 msgid "Don't ask again this session"
 msgstr "이번 세션에서는 다시 묻지 않기"
 
-#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:19
+#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:40
 #: src/widgets/library/ui/NoteReader/NoteReader.tsx:95
 #: src/widgets/setup/ui/PluginShelf/PluginShelf.tsx:129
 #: src/widgets/setup/ui/SetupPane/SetupPane.tsx:210
@@ -851,7 +859,7 @@ msgstr "끌어서 크기 조절, 더블클릭하면 원래대로"
 msgid "Drop a document here, or click to pick one."
 msgstr "문서를 여기로 끌어다 놓거나, 눌러서 고르세요."
 
-#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:74
+#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:96
 msgid "Earlier run"
 msgstr "이전 실행"
 
@@ -869,7 +877,7 @@ msgstr "{0} 수정"
 msgid "Edit this file?"
 msgstr "이 파일을 고칠까요?"
 
-#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:103
+#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:125
 msgid "Edited"
 msgstr "수정"
 
@@ -916,7 +924,7 @@ msgstr "확장"
 msgid "Face"
 msgstr "얼굴"
 
-#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:148
+#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:170
 #: src/widgets/tile-deck/ui/layers/CallLog/CallLog.tsx:77
 msgid "failed"
 msgstr "실패"
@@ -1010,6 +1018,11 @@ msgstr "일반"
 #: src/widgets/welcome/ui/WelcomePane/WelcomePane.tsx:134
 msgid "Get started"
 msgstr "시작하기"
+
+#. placeholder {0}: why.said
+#: src/widgets/agent-report/lib/review/review.ts:51
+msgid "Git said: {0}"
+msgstr "Git이 이렇게 답했습니다: {0}"
 
 #: src/entities/connector/lib/refusal-why/refusal-why.ts:8
 msgid "Give it a name"
@@ -1130,6 +1143,10 @@ msgstr "이어서 말하세요"
 msgid "Keep in"
 msgstr "폴더에 넣기"
 
+#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:230
+msgid "Keep it"
+msgstr "그대로 두기"
+
 #: src/entities/connector/lib/refusal-why/refusal-why.ts:10
 msgid "Keep the name under {NAME_MAX} characters"
 msgstr "이름은 {NAME_MAX}자 이내로 지어 주세요"
@@ -1146,7 +1163,7 @@ msgstr "언어"
 msgid "Later"
 msgstr "나중에"
 
-#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:85
+#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:107
 msgid "Later run"
 msgstr "다음 실행"
 
@@ -1184,7 +1201,7 @@ msgstr "낮음"
 msgid "Manage"
 msgstr "관리"
 
-#: src/pages/workspace/model/session/agent-events/agent-events.ts:168
+#: src/pages/workspace/model/session/agent-events/agent-events.ts:172
 msgid "manual"
 msgstr "수동"
 
@@ -1352,11 +1369,16 @@ msgstr "맞는 노트가 없습니다"
 msgid "Nothing matches “{needle}”."
 msgstr "“{needle}”에 맞는 것이 없습니다."
 
+#. placeholder {0}: why.said
+#: src/widgets/agent-report/lib/review/review.ts:52
+msgid "Nothing of this work is left to find: {0}"
+msgstr "이 작업은 찾을 수 있는 것이 남아 있지 않습니다: {0}"
+
 #: src/widgets/tile-deck/ui/CrewBoard/CrewBoard.tsx:116
 msgid "Nothing written yet."
 msgstr "아직 쓴 것이 없습니다."
 
-#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:136
+#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:158
 msgid "Nothing yet"
 msgstr "아직 없음"
 
@@ -1467,7 +1489,7 @@ msgstr "프로젝트"
 msgid "Quick answers. Least thinking, cheapest"
 msgstr "빠른 답. 가장 적게 생각하고 가장 저렴합니다"
 
-#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:104
+#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:126
 msgid "Ran"
 msgstr "실행"
 
@@ -1483,7 +1505,7 @@ msgstr "재인증"
 msgid "Reach out to the web?"
 msgstr "웹에 접속할까요?"
 
-#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:102
+#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:124
 msgid "Read"
 msgstr "읽음"
 
@@ -1599,7 +1621,7 @@ msgstr "대화 이름 바꾸기"
 msgid "Rename folder"
 msgstr "폴더 이름 바꾸기"
 
-#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:18
+#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:39
 #: src/widgets/team-sidebar/lib/row-state/row-state.ts:9
 #: src/widgets/tile-deck/lib/state-word/state-word.ts:9
 msgid "Reported back"
@@ -1636,9 +1658,14 @@ msgstr "검토 담당"
 msgid "Reviews a change before it ships"
 msgstr "배포 전에 변경을 검토합니다"
 
+#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:201
+#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:231
+msgid "Roll back"
+msgstr "되돌리기"
+
 #. placeholder {0}: at + 1
 #. placeholder {1}: runs.length
-#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:79
+#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:101
 msgid "run {0} of {1}"
 msgstr "{1}회 중 {0}번째"
 
@@ -1701,7 +1728,7 @@ msgstr "라이브러리 검색"
 msgid "Search tools"
 msgstr "도구 검색"
 
-#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:105
+#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:127
 msgid "Searched"
 msgstr "검색"
 
@@ -2001,6 +2028,10 @@ msgstr "답변을 라이브러리에 저장하지 못했습니다"
 msgid "The answer hit the output limit"
 msgstr "답이 출력 한도에 걸렸습니다"
 
+#: src/widgets/agent-report/lib/review/review.ts:35
+msgid "The branch and its worktree are gone."
+msgstr "브랜치와 그 워크트리를 지웠습니다."
+
 #: src/entities/claude-cli/lib/exit-line/exit-line.ts:6
 msgid "The claude command was not found. Install the Claude Code CLI, then try again."
 msgstr "claude 명령을 찾지 못했습니다. Claude Code CLI를 설치한 뒤 다시 시도하세요."
@@ -2185,9 +2216,25 @@ msgstr "Claude Code CLI 자체를 로그아웃합니다. 이 컴퓨터에서 CLI
 msgid "This signs out the Claude Code CLI itself, so every terminal, editor and app using it on this computer is signed out too. The session running here stops."
 msgstr "Claude Code CLI 자체를 로그아웃합니다. 이 컴퓨터에서 CLI를 쓰는 터미널과 편집기와 앱이 모두 함께 로그아웃됩니다. 여기서 실행 중인 세션도 멈춥니다."
 
-#: src/pages/workspace/model/session/agent-events/agent-events.ts:175
+#: src/widgets/agent-report/lib/review/review.ts:40
+msgid "This teammate changed no files."
+msgstr "이 팀원은 파일을 하나도 바꾸지 않았습니다."
+
+#: src/widgets/agent-report/lib/review/review.ts:50
+msgid "This teammate has no branch Zetrem can look up."
+msgstr "Zetrem이 찾아볼 수 있는 브랜치가 이 팀원에게 없습니다."
+
+#: src/pages/workspace/model/session/agent-events/agent-events.ts:179
 msgid "This turn: {out} out · {seconds}s"
 msgstr "이번 턴: {out} 출력 · {seconds}초"
+
+#: src/widgets/agent-report/lib/review/review.ts:30
+msgid "This work is already in the working tree. Zetrem adds a commit that undoes the merge, so the history stays and the files go back to what they were."
+msgstr "이 작업은 이미 작업 트리에 들어와 있습니다. Zetrem이 병합을 되돌리는 커밋을 더하므로, 기록은 그대로 남고 파일만 이전 상태로 돌아갑니다."
+
+#: src/widgets/agent-report/lib/review/review.ts:29
+msgid "This work never reached the working tree. Zetrem deletes the branch it is on and the worktree it was written in, and nothing of it can be brought back."
+msgstr "이 작업은 작업 트리에 닿은 적이 없습니다. Zetrem이 그 작업이 놓인 브랜치와 작업에 쓰인 워크트리를 지우며, 지운 뒤에는 무엇도 되살릴 수 없습니다."
 
 #: src/widgets/conversation/ui/ConversationPane/Thinking.tsx:20
 msgid "Thought · {paragraphs} paragraphs"
@@ -2196,6 +2243,10 @@ msgstr "생각 · {paragraphs}단락"
 #: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:87
 msgid "Three teammates are on it: the checkout flow, the cart totals and the stock rules. I'll put their reports together into one answer."
 msgstr "팀원 셋이 붙었습니다. 결제 흐름, 장바구니 합계, 재고 규칙을 각각 봅니다. 결과가 오면 하나로 정리해 드리겠습니다."
+
+#: src/widgets/agent-report/lib/review/review.ts:23
+msgid "Throw this teammate's work away?"
+msgstr "이 팀원의 작업을 버릴까요?"
 
 #: src/widgets/library/ui/NoteEditor/NoteEditor.tsx:62
 msgid "Title"
@@ -2236,6 +2287,10 @@ msgstr "1분 이내"
 #: src/pages/workspace/model/library/useLibraryNotes.ts:269
 msgid "Undo"
 msgstr "되돌리기"
+
+#: src/widgets/agent-report/lib/review/review.ts:24
+msgid "Undo the work of this teammate that was already merged?"
+msgstr "이미 합쳐진 이 팀원의 작업을 되돌릴까요?"
 
 #: src/widgets/setup/ui/PluginShelf/ConnectorsTab.tsx:33
 #: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:186
@@ -2278,7 +2333,7 @@ msgstr "승인을 기다리는 중입니다"
 msgid "Waiting on"
 msgstr "기다리는 중"
 
-#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:17
+#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:38
 #: src/widgets/team-sidebar/lib/row-state/row-state.ts:8
 msgid "Waiting on you"
 msgstr "응답을 기다리는 중"
@@ -2312,7 +2367,11 @@ msgstr "라이브러리란"
 msgid "What the session brings"
 msgstr "이 세션의 플러그인과 커넥터"
 
-#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:134
+#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:183
+msgid "What they changed"
+msgstr "무엇을 바꿨는지"
+
+#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:156
 #: src/widgets/tile-deck/ui/AgentTile/AgentTile.tsx:84
 #: src/widgets/tile-deck/ui/CrewBoard/CrewBoard.tsx:120
 #: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:142
@@ -2323,7 +2382,7 @@ msgstr "무엇을 했는지"
 msgid "What they do, how to go about it, and what to hand back."
 msgstr "무슨 일을 어떤 방식으로 하고, 무엇을 돌려줄지 적으세요."
 
-#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:118
+#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:140
 msgid "What they said"
 msgstr "무엇이라 했는지"
 
@@ -2349,7 +2408,7 @@ msgid "Why the last item drops"
 msgstr "마지막 항목이 사라지는 이유"
 
 #: src/entities/tool/lib/tool-verb/tool-verb.ts:30
-#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:16
+#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:37
 #: src/widgets/conversation/lib/working/working.ts:87
 #: src/widgets/tile-deck/lib/state-word/state-word.ts:7
 msgid "Working"
@@ -2478,6 +2537,10 @@ msgstr "Zetrem {version} 준비 완료"
 #: src/shared/lib/ask/ask.ts:25
 msgid "Zetrem cannot do that"
 msgstr "Zetrem이 할 수 없는 작업입니다"
+
+#: src/widgets/agent-report/lib/review/review.ts:46
+msgid "Zetrem could not ask Git about this work."
+msgstr "Zetrem이 이 작업에 대해 Git에 물어보지 못했습니다."
 
 #: src/pages/workspace/model/account/account-trouble/account-trouble.ts:13
 msgid "Zetrem could not read the Claude Code sign-in kept on this computer, so nothing was changed. Unlock your keychain and allow Zetrem to read it, then try again."

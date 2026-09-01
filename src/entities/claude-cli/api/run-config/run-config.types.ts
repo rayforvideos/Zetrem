@@ -15,4 +15,5 @@ export type RunConfig = {
   resume?: string | null
   people: Person[]
   lock: RosterLock | null
+  isolated?: boolean
 }

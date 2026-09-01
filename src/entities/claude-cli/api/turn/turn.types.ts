@@ -15,5 +15,7 @@ export type TurnEvent =
       stderr: string
       isError: boolean
       interrupted: boolean
+      // The runtime's id for a subagent that ran isolated, said only here.
+      agentId?: string
     }
   | Extract<ChildTurnEvent, { type: 'childOpen' }>

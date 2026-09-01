@@ -46,6 +46,14 @@ export type KeptUsage = {
   who: string | null
 }
 
+// Where an isolated teammate's work stands: still on its own branch, or
+// already merged into the working tree by the orchestrator.
+export type WorktreeDiff = { state: 'branch' | 'merged'; diff: string }
+
+// Dropping takes an unmerged branch away; reverting undoes a merged one with
+// a new commit, leaving the history it wrote in place.
+export type WorktreeRollback = { state: 'dropped' | 'reverted' }
+
 type CliVersions = {
   installed: string | null
   latest: string | null
@@ -131,6 +139,9 @@ export type Invokes = {
   // Whether new sessions in this project get the library as a folder and tools.
   'library:agents': () => boolean
   'library:agents-set': (open: boolean) => boolean
+
+  'worktree:diff': (agentId: string) => Outcome<WorktreeDiff>
+  'worktree:rollback': (agentId: string) => Outcome<WorktreeRollback>
 
   'updater:state': () => string | null
   'updater:restart': () => void

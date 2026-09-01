@@ -3,7 +3,7 @@ import { app } from 'electron'
 import { agentEnv } from '../../spawn/shell-env/shell-env'
 import { probeArgs } from '@/entities/claude-cli/api/run-config/run-config'
 import { runConfigOf } from '../run-config-guard/run-config-guard'
-import { ORCHESTRATOR_PROMPT, PERSONA } from '@/entities/teammate/model/orchestrator/orchestrator'
+import { PERSONA, orchestratorPrompt } from '@/entities/teammate/model/orchestrator/orchestrator'
 import { claudeBin, loginPath } from '../../cli/login-path/login-path'
 import { recallProject } from '../../store/project-memory/project-memory'
 import { librarySessionArgs } from '../../library/library'
@@ -14,6 +14,7 @@ import { accountChanges } from '../../cli/accounts/account-change/account-change
 import { accountHereNow } from '../../cli/accounts/register-accounts/register-accounts'
 import type { KeptUsage } from '@/app/desk/desk.types'
 import { workspaceDir } from '../../shell/workspace-dir/workspace-dir'
+import { isGitWorkspace } from '../../shell/git-workspace/git-workspace'
 import { handle } from '../../ipc/ipc'
 import { killTreeSync } from '../../spawn/kill-tree/kill-tree'
 import { accountWorkInFlight } from '../../spawn/account-work/account-work'
@@ -132,8 +133,14 @@ export function registerSessionProbe(): void {
       } catch (cause: unknown) {
         console.error('[library] could not lay out', workspace, cause)
       }
+      const isolated = isGitWorkspace(workspace)
       const args = [
-        ...probeArgs({ ...run, persona: PERSONA, orchestrator: ORCHESTRATOR_PROMPT }),
+        ...probeArgs({
+          ...run,
+          persona: PERSONA,
+          orchestrator: orchestratorPrompt(isolated),
+          isolated,
+        }),
         ...added,
       ]
       const env = agentEnv(process.env, await loginPath())

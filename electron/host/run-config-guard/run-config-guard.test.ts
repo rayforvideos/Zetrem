@@ -56,6 +56,14 @@ describe('runConfigOf', () => {
     })
   })
 
+  it('never takes the worktree fence off the wire, since main alone decides it', () => {
+    expect(
+      runConfigOf({ ...sound, isolated: true }),
+      'a renderer that could ask for isolation could also ask for none',
+    ).not.toHaveProperty('isolated')
+    expect(runConfigOf({ ...sound, isolated: 'yes' })).not.toBeNull()
+  })
+
   it('refuses what is not an object at all', () => {
     expect(runConfigOf(null)).toBeNull()
     expect(runConfigOf('bypass')).toBeNull()

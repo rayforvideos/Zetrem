@@ -85,6 +85,9 @@ export type DeskBridge = {
   libraryOpenToAgents: Invoke<'library:agents'>
   setLibraryOpenToAgents: Invoke<'library:agents-set'>
 
+  worktreeDiff: Invoke<'worktree:diff'>
+  worktreeRollback: Invoke<'worktree:rollback'>
+
   updaterState: Invoke<'updater:state'>
   updaterRestart: Invoke<'updater:restart'>
   onUpdaterReady: Listen<'updater:ready'>

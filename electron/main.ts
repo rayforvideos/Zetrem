@@ -17,6 +17,7 @@ import { rememberLoginPath } from './cli/login-path/login-path'
 import { registerConnectors } from './catalog/connectors/connectors'
 import { killTrackedChildren } from './spawn/run-settled/run-settled'
 import { killAllProbes, registerSessionProbe } from './host/session-probe/session-probe'
+import { registerWorktreeReview } from './host/worktree-review/worktree-review'
 import {
   registerTranscriptStore,
   settleTranscripts,
@@ -230,6 +231,7 @@ if (!primary) {
   registerSettingsStore()
   registerConnectors()
   registerSessionProbe()
+  registerWorktreeReview()
   registerTranscriptStore()
   registerPlugins()
   registerProjects()

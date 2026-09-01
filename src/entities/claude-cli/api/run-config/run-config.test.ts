@@ -169,3 +169,41 @@ describe('probeArgs: asking what the session would be, without starting one', ()
     expect(probeArgs({ ...base, resume: 'abc-123' })).not.toContain('--resume')
   })
 })
+
+describe('a teammate is given a working tree of its own where git can hold one', () => {
+  const base = {
+    permissionMode: 'ask' as const,
+    model: 'default' as const,
+    effort: 'default' as const,
+    persona: '말투',
+    people: [{ name: 'scout', description: '찾는다', prompt: '찾아라', model: null, tools: [] }],
+    lock: { blockedAgents: [] },
+  }
+
+  it('branches those trees from the HEAD the person is looking at', () => {
+    const args = agentArgs({ ...base, isolated: true })
+    expect(args[args.indexOf('--settings') + 1]).toBe('{"worktree":{"baseRef":"head"}}')
+  })
+
+  it('writes the fence onto every teammate definition, not onto the orchestrator', () => {
+    const args = agentArgs({ ...base, isolated: true })
+    const spec = JSON.parse(args[args.indexOf('--agents') + 1] as string)
+    expect(spec.scout).toHaveProperty('isolation', 'worktree')
+    expect(spec.zetrem).not.toHaveProperty('isolation')
+  })
+
+  it('asks for nothing where there is no repository to branch from', () => {
+    const off = agentArgs({ ...base, isolated: false })
+    expect(off).not.toContain('--settings')
+    expect(JSON.parse(off[off.indexOf('--agents') + 1] as string).scout).not.toHaveProperty(
+      'isolation',
+    )
+    expect(agentArgs(base), 'unsaid is the same as not a repository').not.toContain('--settings')
+  })
+
+  it('probes in the shape the real session runs in, fence and all', () => {
+    const args = probeArgs({ ...base, isolated: true })
+    expect(args[args.indexOf('--settings') + 1]).toBe('{"worktree":{"baseRef":"head"}}')
+    expect(probeArgs(base)).not.toContain('--settings')
+  })
+})

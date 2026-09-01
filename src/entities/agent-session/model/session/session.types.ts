@@ -29,6 +29,9 @@ export type AgentSession = {
   endedAtMs?: number
   waitingSinceMs?: number
   permission?: PermissionAsk | null
+  // Set for a teammate the runtime fenced into a worktree of its own: its work
+  // is on branch worktree-agent-<agentId>, so the report can show and undo it.
+  agentId?: string
 }
 
 export type Call = {

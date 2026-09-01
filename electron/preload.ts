@@ -117,6 +117,9 @@ const desk: DeskBridge = {
   libraryOpenToAgents: invoke('library:agents'),
   setLibraryOpenToAgents: invoke('library:agents-set'),
 
+  worktreeDiff: invoke('worktree:diff'),
+  worktreeRollback: invoke('worktree:rollback'),
+
   updaterState: invoke('updater:state'),
   updaterRestart: invoke('updater:restart'),
   onUpdaterReady: listen('updater:ready'),

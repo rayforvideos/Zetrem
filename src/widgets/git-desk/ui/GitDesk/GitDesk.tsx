@@ -64,8 +64,8 @@ function avatarUrl(email: string): string | null {
   return `https://avatars.githubusercontent.com/u/e?email=${encodeURIComponent(email)}&s=36`
 }
 
-// The node is drawn the GitKraken way: a ring in the lane's color holding the
-// author's GitHub avatar, or their initial while offline or unknowable.
+// A commit node: a ring in the lane's color holding the author's avatar,
+// or their initial while offline or unknowable.
 function RowLines({
   row,
   initial,
@@ -174,7 +174,7 @@ function RowLines({
   )
 }
 
-// A solid GitKraken-style label pill: lane color ground, ground-colored text.
+// A solid ref label pill: lane color ground, ground-colored text.
 function RefPill({ name, lane }: { name: string; lane: number }) {
   return (
     <span
@@ -187,8 +187,8 @@ function RefPill({ name, lane }: { name: string; lane: number }) {
   )
 }
 
-// GitKraken's changes cell: a file count and a green/red bar sized to how
-// much came and went, on a square-root scale so one huge commit does not
+// The changes cell: a file count and a green/red bar sized to how much
+// came and went, on a square-root scale so one huge commit does not
 // flatten every other bar.
 function ChangeBar({ stat }: { stat: GitStat }) {
   if (stat.files === 0) return null
@@ -217,9 +217,9 @@ function whenLabel(at: number): string {
   ).format(at)
 }
 
-// The change marks GitHub Desktop wears: a green plus for what is new, a
-// gold dot for what changed, a red minus for what left, a blue arrow for
-// what moved. The letter survives as the tooltip.
+// One colored mark per change kind: a green plus for what is new, a gold
+// dot for what changed, a red minus for what left, a blue arrow for what
+// moved. The letter survives as the tooltip.
 function SignMark({ sign }: { sign: string }) {
   const drawn =
     sign === 'A' || sign === '?'

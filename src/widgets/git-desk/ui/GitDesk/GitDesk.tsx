@@ -516,6 +516,13 @@ export function GitDesk({ project }: { project: string | null }) {
 
             {git.noRepo ? (
               <p className="p-6 text-muted-foreground text-sm">{t`This project is not a git repository.`}</p>
+            ) : git.sick !== null ? (
+              <div className="flex flex-col gap-1 p-6">
+                <p className="text-sm">{t`Git is not answering here.`}</p>
+                <p className="font-mono text-muted-foreground text-xs" data-git-sick>
+                  {git.sick}
+                </p>
+              </div>
             ) : (
               <div className="flex min-h-0 flex-1">
                 {git.diff !== null ? (

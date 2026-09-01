@@ -36,6 +36,8 @@ type GitDesk = {
   close(): void
   status: GitStatus | null
   noRepo: boolean
+  // Git itself would not answer (missing, broken repo): what it said.
+  sick: string | null
   branches: GitBranch[]
   stashes: GitStash[]
   graph: GraphCommit[]
@@ -70,6 +72,7 @@ export function useGitDesk(project: string | null): GitDesk {
   const [open, setOpen] = useState(false)
   const [status, setStatus] = useState<GitStatus | null>(null)
   const [noRepo, setNoRepo] = useState(false)
+  const [sick, setSick] = useState<string | null>(null)
   const [branches, setBranches] = useState<GitBranch[]>([])
   const [stashes, setStashes] = useState<GitStash[]>([])
   const [graph, setGraph] = useState<GraphCommit[]>([])
@@ -87,10 +90,13 @@ export function useGitDesk(project: string | null): GitDesk {
       .then((got) => {
         if (got === null || !got.ok) {
           setStatus(null)
-          setNoRepo(got !== null && got.why.said === 'no-repo')
+          const refusedRepo = got !== null && got.why.said === 'no-repo'
+          setNoRepo(refusedRepo)
+          setSick(refusedRepo || got === null ? null : lastLine(got.why.said))
           return
         }
         setNoRepo(false)
+        setSick(null)
         setStatus(got.value)
       })
   }, [])
@@ -223,6 +229,7 @@ export function useGitDesk(project: string | null): GitDesk {
     close,
     status,
     noRepo,
+    sick,
     branches,
     stashes,
     graph,

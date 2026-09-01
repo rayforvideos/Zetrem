@@ -357,7 +357,7 @@ msgstr "a teammate"
 msgid "A tool"
 msgstr "A tool"
 
-#: src/widgets/git-desk/model/useGitDesk.ts:330
+#: src/widgets/git-desk/model/useGitDesk.ts:345
 msgid "Abort merge"
 msgstr "Abort merge"
 
@@ -1171,7 +1171,7 @@ msgid "Get started"
 msgstr "Get started"
 
 #: src/widgets/git-desk/model/useGitDesk.ts:198
-#: src/widgets/git-desk/model/useGitDesk.ts:336
+#: src/widgets/git-desk/model/useGitDesk.ts:351
 msgid "Git could not do that"
 msgstr "Git could not do that"
 
@@ -1400,6 +1400,10 @@ msgstr "Merge"
 msgid "Merge a branch into {branchName}"
 msgstr "Merge a branch into {branchName}"
 
+#: src/widgets/git-desk/model/useGitDesk.ts:335
+msgid "Merged {branch}."
+msgstr "Merged {branch}."
+
 #: src/widgets/conversation/ui/Composer/Composer.tsx:148
 msgid "Message for {addressee}"
 msgstr "Message for {addressee}"
@@ -1591,6 +1595,10 @@ msgstr "Nothing remembered for this project yet."
 msgid "Nothing stashed."
 msgstr "Nothing stashed."
 
+#: src/widgets/git-desk/model/useGitDesk.ts:334
+msgid "Nothing to merge: already up to date."
+msgstr "Nothing to merge: already up to date."
+
 #: src/widgets/tile-deck/ui/CrewBoard/CrewBoard.tsx:116
 msgid "Nothing written yet."
 msgstr "Nothing written yet."
@@ -1719,9 +1727,17 @@ msgstr "Project"
 msgid "Pull"
 msgstr "Pull"
 
+#: src/widgets/git-desk/model/useGitDesk.ts:318
+msgid "Pulled."
+msgstr "Pulled."
+
 #: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:491
 msgid "Push"
 msgstr "Push"
+
+#: src/widgets/git-desk/model/useGitDesk.ts:313
+msgid "Pushed."
+msgstr "Pushed."
 
 #: src/entities/settings/config/choices/choices.ts:35
 msgid "Quick answers. Least thinking, cheapest"
@@ -2346,7 +2362,7 @@ msgstr "The kind of work they should get"
 msgid "The marketplaces the plugins above come from."
 msgstr "The marketplaces the plugins above come from."
 
-#: src/widgets/git-desk/model/useGitDesk.ts:328
+#: src/widgets/git-desk/model/useGitDesk.ts:343
 msgid "The merge hit conflicts. Resolve them and commit, or abort."
 msgstr "The merge hit conflicts. Resolve them and commit, or abort."
 

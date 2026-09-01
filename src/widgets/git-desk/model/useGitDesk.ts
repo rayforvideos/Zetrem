@@ -180,7 +180,7 @@ export function useGitDesk(project: string | null): GitDesk {
   }
 
   // One act at a time: run it, toast what went wrong, and re-read the repo.
-  function act(run: () => Promise<Outcome<null>>, then?: () => void): void {
+  function act(run: () => Promise<Outcome<unknown>>, then?: () => void): void {
     setBusy(true)
     void run()
       .catch(() => null)
@@ -307,8 +307,16 @@ export function useGitDesk(project: string | null): GitDesk {
         () => window.desk.gitSwitch(name, true),
         () => setDiff(null),
       ),
-    push: () => act(() => window.desk.gitPush()),
-    pull: () => act(() => window.desk.gitPull()),
+    push: () =>
+      act(
+        () => window.desk.gitPush(),
+        () => toast.success(t`Pushed.`),
+      ),
+    pull: () =>
+      act(
+        () => window.desk.gitPull(),
+        () => toast.success(t`Pulled.`),
+      ),
     stashPush: () => act(() => window.desk.gitStashPush()),
     stashApply: (ref) => act(() => window.desk.gitStashApply(ref)),
     stashDrop: (ref) => act(() => window.desk.gitStashDrop(ref)),
@@ -320,7 +328,14 @@ export function useGitDesk(project: string | null): GitDesk {
         .then((got) => {
           setBusy(false)
           readAround()
-          if (got?.ok) return
+          if (got?.ok) {
+            toast.success(
+              /Already up to date/i.test(got.value)
+                ? t`Nothing to merge: already up to date.`
+                : t`Merged ${branch}.`,
+            )
+            return
+          }
           const said = got !== null && got.why.code === 'cli' ? got.why.said : ''
           if (/CONFLICT|Automatic merge failed/i.test(said)) {
             // The conflicted files now stand in the list; the merge can be

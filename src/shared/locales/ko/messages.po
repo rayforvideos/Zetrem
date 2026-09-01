@@ -357,7 +357,7 @@ msgstr "팀원 한 명"
 msgid "A tool"
 msgstr "어떤 도구"
 
-#: src/widgets/git-desk/model/useGitDesk.ts:330
+#: src/widgets/git-desk/model/useGitDesk.ts:345
 msgid "Abort merge"
 msgstr "머지 되돌리기"
 
@@ -1171,7 +1171,7 @@ msgid "Get started"
 msgstr "시작하기"
 
 #: src/widgets/git-desk/model/useGitDesk.ts:198
-#: src/widgets/git-desk/model/useGitDesk.ts:336
+#: src/widgets/git-desk/model/useGitDesk.ts:351
 msgid "Git could not do that"
 msgstr "git이 해내지 못했습니다"
 
@@ -1400,6 +1400,10 @@ msgstr "머지"
 msgid "Merge a branch into {branchName}"
 msgstr "{branchName}(으)로 브랜치 머지"
 
+#: src/widgets/git-desk/model/useGitDesk.ts:335
+msgid "Merged {branch}."
+msgstr "{branch}을(를) 머지했습니다."
+
 #: src/widgets/conversation/ui/Composer/Composer.tsx:148
 msgid "Message for {addressee}"
 msgstr "{addressee}에게 보낼 말"
@@ -1591,6 +1595,10 @@ msgstr "이 프로젝트에 저장된 메모리가 아직 없어요."
 msgid "Nothing stashed."
 msgstr "넣어둔 스태시가 없습니다."
 
+#: src/widgets/git-desk/model/useGitDesk.ts:334
+msgid "Nothing to merge: already up to date."
+msgstr "머지할 것이 없습니다: 이미 최신입니다."
+
 #: src/widgets/tile-deck/ui/CrewBoard/CrewBoard.tsx:116
 msgid "Nothing written yet."
 msgstr "아직 쓴 것이 없습니다."
@@ -1719,9 +1727,17 @@ msgstr "프로젝트"
 msgid "Pull"
 msgstr "풀"
 
+#: src/widgets/git-desk/model/useGitDesk.ts:318
+msgid "Pulled."
+msgstr "당겨왔습니다."
+
 #: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:491
 msgid "Push"
 msgstr "푸시"
+
+#: src/widgets/git-desk/model/useGitDesk.ts:313
+msgid "Pushed."
+msgstr "푸시했습니다."
 
 #: src/entities/settings/config/choices/choices.ts:35
 msgid "Quick answers. Least thinking, cheapest"
@@ -2346,7 +2362,7 @@ msgstr "어떤 일을 맡길지"
 msgid "The marketplaces the plugins above come from."
 msgstr "위 플러그인을 제공하는 마켓플레이스입니다."
 
-#: src/widgets/git-desk/model/useGitDesk.ts:328
+#: src/widgets/git-desk/model/useGitDesk.ts:343
 msgid "The merge hit conflicts. Resolve them and commit, or abort."
 msgstr "머지에서 충돌이 났습니다. 해결 후 커밋하거나 되돌리세요."
 

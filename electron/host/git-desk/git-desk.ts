@@ -342,15 +342,14 @@ export async function gitSwitch(
   return said.ok ? won(null) : said
 }
 
-export async function gitPush(deps: GitDeps): Promise<Outcome<null>> {
+export async function gitPush(deps: GitDeps): Promise<Outcome<string>> {
   const status = await gitStatus(deps)
   if (!status.ok) return status
   const at = await whereabouts(deps)
   if (!at.ok) return at
   const args =
     status.value.upstream === null ? ['push', '-u', 'origin', status.value.branch] : ['push']
-  const said = await ran(deps, at.value, args)
-  return said.ok ? won(null) : said
+  return ran(deps, at.value, args)
 }
 
 const SHA = /^[0-9a-f]{4,40}$/
@@ -419,12 +418,11 @@ export async function gitShowDiff(
   return said
 }
 
-export async function gitMerge(deps: GitDeps, branch: string): Promise<Outcome<null>> {
+export async function gitMerge(deps: GitDeps, branch: string): Promise<Outcome<string>> {
   if (!BRANCH_NAME.test(branch)) return lost('refused', 'branch-name')
   const at = await whereabouts(deps)
   if (!at.ok) return at
-  const said = await ran(deps, at.value, ['merge', '--no-edit', branch])
-  return said.ok ? won(null) : said
+  return ran(deps, at.value, ['merge', '--no-edit', branch])
 }
 
 export async function gitMergeAbort(deps: GitDeps): Promise<Outcome<null>> {
@@ -502,11 +500,10 @@ export async function gitImage(deps: GitDeps, path: string, ref: string): Promis
   return won(`data:${mime};base64,${bytes.toString('base64')}`)
 }
 
-export async function gitPull(deps: GitDeps): Promise<Outcome<null>> {
+export async function gitPull(deps: GitDeps): Promise<Outcome<string>> {
   const at = await whereabouts(deps)
   if (!at.ok) return at
-  const said = await ran(deps, at.value, ['pull', '--ff-only'])
-  return said.ok ? won(null) : said
+  return ran(deps, at.value, ['pull', '--ff-only'])
 }
 
 // The panel is told when anything under .git moves - a commit from a shell,

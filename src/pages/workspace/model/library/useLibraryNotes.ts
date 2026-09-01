@@ -115,7 +115,7 @@ export function useLibraryNotes(active: boolean, idle: boolean, project: string 
   }, [notes])
 
   // Leaving the screen or switching projects: nothing from before carries over.
-  // Another project's library is another folder, so the open note, the search
+  // Another project's library is another library, so the open note, the search
   // and any edit in flight belong to the one being left.
   useEffect(() => {
     onScreen.current = active
@@ -145,7 +145,7 @@ export function useLibraryNotes(active: boolean, idle: boolean, project: string 
     return () => window.removeEventListener('beforeunload', leave)
   }, [flush])
 
-  // Agents write files while the screen is open; main says when they do.
+  // Agents write notes while the screen is open; main says when they do.
   useEffect(() => {
     return window.desk.onLibraryChanged(() => {
       if (onScreen.current && !writing.current) relist()
@@ -211,7 +211,7 @@ export function useLibraryNotes(active: boolean, idle: boolean, project: string 
       .catch(() => false)
   }
 
-  // What the file should say now: the text being typed, or the note as read.
+  // What the note should say now: the text being typed, or the note as read.
   function bodyOf(id: string): string {
     if (typed.current?.id === id) return typed.current.body
     return open?.id === id ? open.body : ''
@@ -317,7 +317,7 @@ export function useLibraryNotes(active: boolean, idle: boolean, project: string 
       timer.current = null
     }
     waiting.current = null
-    // A write already on its way would recreate the file after the remove.
+    // A write already on its way would write the note back after the remove.
     void inFlight.current
       .then(() => window.desk.removeLibraryNote(id))
       .then(() => {

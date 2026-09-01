@@ -26,7 +26,7 @@ import {
 } from './store/transcript-store/transcript-store'
 import { registerUpdater } from './shell/updater/updater'
 import { registerProjects } from './projects/projects'
-import { closeLibraryMcp, registerLibrary, stopFollowing } from './library/library'
+import { closeLibraries, closeLibraryMcp, registerLibrary } from './library/library'
 import { collapseCategories } from './projects/collapse/collapse'
 import { handle } from './ipc/ipc'
 import { reloadAsk } from './shell/reload-keys/reload-keys'
@@ -36,6 +36,12 @@ import { isPackagedRun } from './shell/packaged/packaged'
 const isMac = process.platform === 'darwin'
 
 app.setName('Zetrem')
+
+// The single-instance lock lives in userData, which dev and packaged builds
+// share. Pointing a dev run at its own folder lets it live beside the
+// installed app instead of quitting at the lock.
+if (!isPackagedRun() && process.env.ZT_USER_DATA) app.setPath('userData', process.env.ZT_USER_DATA)
+
 if (!isMac) Menu.setApplicationMenu(null)
 
 function dropChildren(): void {
@@ -293,10 +299,12 @@ if (!primary) {
   let settledForQuit = false
   app.on('before-quit', (event) => {
     dropChildren()
-    stopFollowing()
     if (settledForQuit) return
     event.preventDefault()
+    // The libraries are closed after the servers that reach into them, or a
+    // tool call landing on the way out would open one nobody will close.
     Promise.allSettled([settleTranscripts(), closeLibraryMcp()]).then(() => {
+      closeLibraries()
       settledForQuit = true
       app.quit()
     })

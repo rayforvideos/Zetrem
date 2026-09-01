@@ -1,15 +1,14 @@
-import { createHash } from 'node:crypto'
-import { watch } from 'node:fs'
-import type { FSWatcher } from 'node:fs'
-import { mkdir, realpath, rm } from 'node:fs/promises'
-import { join } from 'node:path'
+import { mkdir, realpath, rename, rm } from 'node:fs/promises'
+import { dirname, join } from 'node:path'
+import type { DatabaseSync } from 'node:sqlite'
 import { BrowserWindow, app } from 'electron'
 import { handle, push } from '../ipc/ipc'
 import { workspaceDir } from '../shell/workspace-dir/workspace-dir'
 import { recallProject } from '../store/project-memory/project-memory'
 import { libraryOpenToAgents, setLibraryOpenToAgents } from './library-access/library-access'
-import { openLibraryIndex } from './library-index/library-index'
-import type { LibraryIndex } from './library-index/library-index.types'
+import { libraryDbFile, openLibraryDb } from './library-db/library-db'
+import { backlinksTo, recentNotes, searchNotes } from './library-find/library-find'
+import { importOldNotes } from './library-import/library-import'
 import { mcpConfigFor, startLibraryMcp } from './library-mcp/library-mcp'
 import type { LibraryMcp, LibraryTools } from './library-mcp/library-mcp.types'
 import {
@@ -18,7 +17,6 @@ import {
   fileNote,
   isFolderName,
   listNotes,
-  notesForIndex,
   readNote,
   removeFolder,
   removeNote,
@@ -27,171 +25,155 @@ import {
   writeNote,
 } from './library-notes/library-notes'
 
-const OLD_FILES = ['CLAUDE.md', '.zetrem']
-const SETTLE_MS = 300
+// Earlier versions kept a derived search index and a written MCP config of
+// their own beside the app's files. Neither is written any more.
+const OLD_DIRS = ['library-index', 'library-mcp']
 
-// The library travels with the work: a project's own folder, or the scratch
-// workspace when no project is picked.
-export function libraryRootFor(workspace: string): string {
-  return join(workspace, '.zetrem', 'library')
-}
-
-// Earlier versions put files of their own into the folder: the agent's
-// instructions and an empty marker. Neither is written any more, so both go.
-async function sweepOldFiles(root: string): Promise<void> {
-  await Promise.all(
-    OLD_FILES.map((name) => rm(join(root, name), { force: true }).catch(() => undefined)),
-  )
-  await rm(join(app.getPath('userData'), 'library-mcp'), { recursive: true, force: true }).catch(
-    () => undefined,
-  )
-}
-
-export async function ensureLibrary(root: string): Promise<void> {
-  await mkdir(root, { recursive: true })
-  await sweepOldFiles(root)
-}
-
-async function currentRoot(): Promise<string> {
-  const workspace = await workspaceDir(await recallProject(), app.getPath('userData'))
-  const root = libraryRootFor(workspace)
-  await ensureLibrary(root)
-  return root
-}
-
-// One derived index per library, named by where the library really is.
-async function indexKey(root: string): Promise<string> {
-  const real = await realpath(root).catch(() => root)
-  return createHash('sha1').update(real).digest('hex').slice(0, 16)
-}
-
-const indexes = new Map<string, LibraryIndex>()
-const opening = new Map<string, Promise<LibraryIndex>>()
-const watchers = new Map<string, FSWatcher>()
+const libraries = new Map<string, DatabaseSync>()
+const opening = new Map<string, Promise<DatabaseSync>>()
 
 function tellRenderers(): void {
   for (const win of BrowserWindow.getAllWindows()) push(win.webContents, 'library:changed', null)
 }
 
-// The index is derived, so one that will not open is thrown away and rebuilt
-// from the notes rather than left to fail every search from then on.
-async function openIndex(key: string): Promise<LibraryIndex> {
-  const dir = join(app.getPath('userData'), 'library-index')
-  await mkdir(dir, { recursive: true })
-  const file = join(dir, `${key}.sqlite`)
-  try {
-    return openLibraryIndex(file)
-  } catch (cause: unknown) {
-    console.error('[library] index unreadable, rebuilding', file, cause)
-    await Promise.all(
-      [file, `${file}-wal`, `${file}-shm`].map((one) =>
-        rm(one, { force: true }).catch(() => undefined),
+// Nothing happened when nothing was written, so the windows are left alone.
+function told<T>(value: T): T {
+  if (value !== null) tellRenderers()
+  return value
+}
+
+async function sweepOldFiles(): Promise<void> {
+  await Promise.all(
+    OLD_DIRS.map((name) =>
+      rm(join(app.getPath('userData'), name), { recursive: true, force: true }).catch(
+        () => undefined,
       ),
-    )
-    return openLibraryIndex(file)
+    ),
+  )
+}
+
+// The notes are in the file, so one that will not open is kept rather than
+// deleted: a person can hand it to something that reads SQLite, and the app
+// carries on with a library that opens. Each keepsake is dated, so a second
+// accident never writes over the first.
+async function keepAside(file: string, atMs: number): Promise<void> {
+  for (const part of ['', '-wal', '-shm']) {
+    await rename(`${file}${part}`, `${file}.broken-${atMs}${part}`).catch(() => undefined)
   }
 }
 
-async function indexFor(root: string): Promise<LibraryIndex> {
-  const key = await indexKey(root)
-  let index = indexes.get(key)
-  if (index === undefined) {
-    // Two callers arriving together must not open the file twice.
-    let pending = opening.get(key)
-    if (pending === undefined) {
-      pending = openIndex(key).then((opened) => {
-        indexes.set(key, opened)
-        return opened
-      })
-      opening.set(key, pending)
-      pending.finally(() => opening.delete(key)).catch(() => undefined)
-    }
-    index = await pending
-  }
-  index.sync(await notesForIndex(root))
-  return index
+// SQLITE_CORRUPT and SQLITE_NOTADB: the bytes are not a database. Anything
+// else, a disk that is full or a file another program is holding, is a reason
+// to fail and be asked again, not to start the library over empty.
+const NOT_A_DATABASE = new Set([11, 26])
+
+function isRubble(cause: unknown): boolean {
+  const code = (cause as { errcode?: unknown } | null)?.errcode
+  return typeof code === 'number' && NOT_A_DATABASE.has(code)
 }
 
-// The agent writes files, the person writes files, git pulls files: the
-// screen and the index learn about all of them the same way.
-function follow(root: string): void {
-  if (watchers.has(root)) return
-  let timer: ReturnType<typeof setTimeout> | null = null
+async function lay(file: string, workspace: string): Promise<DatabaseSync> {
+  await mkdir(dirname(file), { recursive: true })
+  let db: DatabaseSync
   try {
-    const watcher = watch(root, { recursive: true }, () => {
-      if (timer !== null) clearTimeout(timer)
-      timer = setTimeout(() => {
-        timer = null
-        void indexFor(root).then(tellRenderers, () => undefined)
-      }, SETTLE_MS)
-    })
-    watcher.on('error', () => {
-      watcher.close()
-      watchers.delete(root)
-    })
-    watchers.set(root, watcher)
-  } catch {
-    // A file system that cannot be watched still gets read on every open.
+    db = openLibraryDb(file, workspace)
+  } catch (cause: unknown) {
+    if (!isRubble(cause)) throw cause
+    console.error('[library] the file is not a database, kept it aside', file, cause)
+    await keepAside(file, Date.now())
+    db = openLibraryDb(file, workspace)
   }
+  await importOldNotes(db, workspace).catch((cause: unknown) => {
+    console.error('[library] could not take in the notes the project kept as files', cause)
+  })
+  await sweepOldFiles()
+  return db
 }
 
-export function stopFollowing(): void {
-  for (const watcher of watchers.values()) watcher.close()
-  watchers.clear()
-  for (const index of indexes.values()) index.close()
-  indexes.clear()
+async function fileFor(workspace: string): Promise<{ file: string; real: string }> {
+  const real = await realpath(workspace).catch(() => workspace)
+  return { file: libraryDbFile(app.getPath('userData'), real), real }
 }
 
-// One server per library, so a tool call from a session lands in that
-// session's workspace whatever project the screen is showing.
+async function dbAt(file: string, real: string): Promise<DatabaseSync> {
+  const open = libraries.get(file)
+  if (open !== undefined) return open
+  // Two callers arriving together must not open the file twice.
+  let pending = opening.get(file)
+  if (pending === undefined) {
+    pending = lay(file, real).then((db) => {
+      libraries.set(file, db)
+      return db
+    })
+    opening.set(file, pending)
+    pending.finally(() => opening.delete(file)).catch(() => undefined)
+  }
+  return pending
+}
+
+async function dbFor(workspace: string): Promise<DatabaseSync> {
+  const { file, real } = await fileFor(workspace)
+  return dbAt(file, real)
+}
+
+export function closeLibraries(): void {
+  for (const db of libraries.values()) db.close()
+  libraries.clear()
+}
+
+// One server per library, so a tool call from a session lands in that session's
+// workspace whatever project the screen is showing.
 const servers = new Map<string, LibraryMcp>()
 
-function toolsFor(root: string): LibraryTools {
+function toolsFor(workspace: string): LibraryTools {
   return {
     async search(query, limit) {
-      return (await indexFor(root)).search(query, limit)
+      return searchNotes(await dbFor(workspace), query, limit)
     },
     async read(id) {
-      return readNote(root, id)
+      return readNote(await dbFor(workspace), id)
     },
     async write(input) {
       const folder = input.folder ?? ''
       if (folder.length > 0 && !isFolderName(folder)) return null
-      const started = await createNote(root, folder, input.title)
+      const db = await dbFor(workspace)
+      const started = createNote(db, folder, input.title)
       if (started === null) return null
-      return writeNote(root, started.id, input.body, { tags: input.tags ?? [], source: 'agent' })
+      return told(
+        writeNote(db, started.id, input.body, { tags: input.tags ?? [], source: 'agent' }),
+      )
     },
     async recent(limit) {
-      return (await indexFor(root)).recent(limit)
+      return recentNotes(await dbFor(workspace), limit)
     },
   }
 }
 
-async function serverFor(root: string): Promise<LibraryMcp> {
-  const running = servers.get(root)
+async function serverFor(file: string, workspace: string): Promise<LibraryMcp> {
+  const running = servers.get(file)
   if (running !== undefined) return running
-  const server = await startLibraryMcp(toolsFor(root))
-  servers.set(root, server)
+  const server = await startLibraryMcp(toolsFor(workspace))
+  servers.set(file, server)
   return server
 }
 
-// What a session is handed so its agent can read the library as files and
-// search it as a tool. Nothing, when the project has closed its library to
-// agents: then the agent neither sees the folder nor gets the tools.
+// What a session is handed so its agent can search and write the library. The
+// notes are the app's now, so nothing of the project is opened to it: the tools
+// are the whole of it. Nothing at all, when the project has closed its library
+// to agents.
 export async function librarySessionArgs(workspace: string): Promise<string[]> {
   if (!(await libraryOpenToAgents(workspace))) return []
-  const root = libraryRootFor(workspace)
-  await ensureLibrary(root)
-  follow(root)
-  // Sessions end when the project changes, so a server for another library
-  // has nobody left to serve.
-  await closeServersExcept(root)
+  const { file, real } = await fileFor(workspace)
+  await dbAt(file, real)
+  // Sessions end when the project changes, so a server for another library has
+  // nobody left to serve.
+  await closeServersExcept(file)
   // The CLI takes the MCP config as a JSON string, so nothing is written for it.
-  return ['--add-dir', root, '--mcp-config', mcpConfigFor(await serverFor(root))]
+  return ['--mcp-config', mcpConfigFor(await serverFor(file, workspace))]
 }
 
-async function closeServersExcept(root: string): Promise<void> {
-  const others = [...servers.entries()].filter(([held]) => held !== root)
+async function closeServersExcept(file: string): Promise<void> {
+  const others = [...servers.entries()].filter(([held]) => held !== file)
   for (const [held] of others) servers.delete(held)
   await Promise.all(others.map(([, server]) => server.close()))
 }
@@ -206,6 +188,10 @@ async function currentWorkspace(): Promise<string> {
   return workspaceDir(await recallProject(), app.getPath('userData'))
 }
 
+async function currentDb(): Promise<DatabaseSync> {
+  return dbFor(await currentWorkspace())
+}
+
 export function registerLibrary(): void {
   handle('library:agents', async () => libraryOpenToAgents(await currentWorkspace()))
   handle('library:agents-set', async (_event, open) => {
@@ -214,35 +200,35 @@ export function registerLibrary(): void {
     await setLibraryOpenToAgents(workspace, open)
     return libraryOpenToAgents(workspace)
   })
-  handle('library:list', async () => {
-    const root = await currentRoot()
-    follow(root)
-    void indexFor(root).catch(() => undefined)
-    return listNotes(root)
+  handle('library:list', async () => listNotes(await currentDb()))
+  handle('library:read', async (_event, id) => readNote(await currentDb(), id))
+  handle('library:remove', async (_event, id) => {
+    removeNote(await currentDb(), id)
+    tellRenderers()
   })
-  handle('library:read', async (_event, id) => readNote(await currentRoot(), id))
-  handle('library:remove', async (_event, id) => removeNote(await currentRoot(), id))
   handle('library:write', async (_event, id, body, patch) =>
-    writeNote(await currentRoot(), id, body, patch ?? {}),
+    told(writeNote(await currentDb(), id, body, patch ?? {})),
   )
   handle('library:create', async (_event, folder, title) =>
-    createNote(await currentRoot(), folder, title),
+    told(createNote(await currentDb(), folder, title)),
   )
-  handle('library:rename', async (_event, id, title) => renameNote(await currentRoot(), id, title))
-  handle('library:file', async (_event, text) => fileNote(await currentRoot(), text))
-  handle('library:search', async (_event, query) => {
-    const root = await currentRoot()
-    return (await indexFor(root)).search(query)
-  })
+  handle('library:rename', async (_event, id, title) =>
+    told(renameNote(await currentDb(), id, title)),
+  )
+  handle('library:file', async (_event, text) => told(fileNote(await currentDb(), text)))
+  handle('library:search', async (_event, query) =>
+    typeof query === 'string' ? searchNotes(await currentDb(), query) : [],
+  )
   handle('library:backlinks', async (_event, id) => {
-    const root = await currentRoot()
-    const note = await readNote(root, id)
-    if (note === null) return []
-    return (await indexFor(root)).backlinks(note.title)
+    const db = await currentDb()
+    const note = readNote(db, id)
+    return note === null ? [] : backlinksTo(db, note.title)
   })
-  handle('library:folder-add', async (_event, name) => addFolder(await currentRoot(), name))
+  handle('library:folder-add', async (_event, name) => told(addFolder(await currentDb(), name)))
   handle('library:folder-rename', async (_event, name, next) =>
-    renameFolder(await currentRoot(), name, next),
+    told(renameFolder(await currentDb(), name, next)),
   )
-  handle('library:folder-remove', async (_event, name) => removeFolder(await currentRoot(), name))
+  handle('library:folder-remove', async (_event, name) =>
+    told(removeFolder(await currentDb(), name)),
+  )
 }

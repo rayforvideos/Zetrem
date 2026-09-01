@@ -65,6 +65,26 @@ describe('marksOfStatus: every account limit, as a share used', () => {
     expect(mark!.warn).toBe(true)
   })
 
+  it('leaves out a limit that only says the plan already covers the overage', () => {
+    expect(marksOfStatus(state({ limits: [limit('seven_day_overage_included')] }))).toEqual([])
+    expect(marksOfStatus(state({ limits: [limit('overage_included')] }))).toEqual([])
+    expect(marksOfStatus(state({ limits: [limit('five_hour_overage_included')] }))).toEqual([])
+  })
+
+  it('still draws the overage limit itself, which is a share being spent', () => {
+    const [mark] = marksOfStatus(state({ limits: [limit('seven_day_overage')] }))
+    expect(mark!.label).toBe('Overage')
+  })
+
+  it('drops only the covered-overage note and keeps the limits either side of it', () => {
+    const marks = marksOfStatus(
+      state({
+        limits: [limit('five_hour'), limit('seven_day_overage_included'), limit('seven_day_fable')],
+      }),
+    )
+    expect(marks.map((mark) => mark.key)).toEqual(['five_hour', 'seven_day_fable'])
+  })
+
   it('admits when it was told no reset time, rather than inventing one', () => {
     expect(marksOfStatus(state({ limits: [limit('five_hour')] }))[0]!.hint).toContain(
       'not reported',
@@ -114,6 +134,12 @@ describe('quietLine: what to say while there is nothing to show', () => {
 
   it('stops explaining the moment there is a reading to show', () => {
     expect(quietLine(state({ usage: 'read', limits: [limit('five_hour')] }))).toBeNull()
+  })
+
+  it('keeps explaining when the only limit in hand is one the strip does not draw', () => {
+    expect(quietLine(state({ usage: 'read', limits: [limit('seven_day_overage_included')] }))).toBe(
+      'No account limits reported',
+    )
   })
 
   it('stops explaining for a chat reading alone, even with no account limits', () => {

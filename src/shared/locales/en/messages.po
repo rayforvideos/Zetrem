@@ -191,7 +191,7 @@ msgstr "{name} is on. The running session cannot call them yet."
 msgid "{name} is over {max}MB, so it cannot be sent as a picture. Point at it by path instead."
 msgstr "{name} is over {max}MB, so it cannot be sent as a picture. Point at it by path instead."
 
-#: src/widgets/status-bar/lib/strip/strip.ts:39
+#: src/widgets/status-bar/lib/strip/strip.ts:47
 msgid "{percent}% used"
 msgstr "{percent}% used"
 
@@ -830,7 +830,7 @@ msgstr "Could not read the memory folder"
 msgid "Could not read the plugin shelf"
 msgstr "Could not read the plugin shelf"
 
-#: src/widgets/status-bar/lib/strip/strip.ts:65
+#: src/widgets/status-bar/lib/strip/strip.ts:73
 msgid "Could not read usage"
 msgstr "Could not read usage"
 
@@ -1177,7 +1177,7 @@ msgstr "Forget this memory?"
 msgid "from {0}"
 msgstr "from {0}"
 
-#: src/widgets/status-bar/lib/strip/strip.ts:36
+#: src/widgets/status-bar/lib/strip/strip.ts:44
 msgid "from an earlier reading"
 msgstr "from an earlier reading"
 
@@ -1532,7 +1532,7 @@ msgstr "New teammate"
 msgid "Next"
 msgstr "Next"
 
-#: src/widgets/status-bar/lib/strip/strip.ts:66
+#: src/widgets/status-bar/lib/strip/strip.ts:74
 msgid "No account limits reported"
 msgstr "No account limits reported"
 
@@ -1811,7 +1811,7 @@ msgstr "Reading the catalog…"
 msgid "Reading the library…"
 msgstr "Reading the library…"
 
-#: src/widgets/status-bar/lib/strip/strip.ts:64
+#: src/widgets/status-bar/lib/strip/strip.ts:72
 msgid "Reading usage…"
 msgstr "Reading usage…"
 
@@ -2072,7 +2072,7 @@ msgstr "Settings"
 msgid "Settings sections"
 msgstr "Settings sections"
 
-#: src/widgets/status-bar/lib/strip/strip.ts:39
+#: src/widgets/status-bar/lib/strip/strip.ts:47
 msgid "share unknown"
 msgstr "share unknown"
 
@@ -2508,11 +2508,11 @@ msgstr "This changes which account the Claude Code CLI uses everywhere on this c
 msgid "this chat"
 msgstr "this chat"
 
-#: src/widgets/status-bar/lib/strip/strip.ts:59
+#: src/widgets/status-bar/lib/strip/strip.ts:67
 msgid "this chat {percent}%"
 msgstr "this chat {percent}%"
 
-#: src/widgets/status-bar/lib/strip/strip.ts:56
+#: src/widgets/status-bar/lib/strip/strip.ts:64
 msgid "this chat {size}"
 msgstr "this chat {size}"
 

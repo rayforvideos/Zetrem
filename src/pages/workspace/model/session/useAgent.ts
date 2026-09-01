@@ -183,6 +183,9 @@ export function useAgent(
     conversation.setStatus('done')
     conversation.setPermission(null)
     conversation.setTrouble(false)
+    // stopAgent kills the CLI and every background command it ran; the exit
+    // event finds hostId already null, so closeSession never clears these.
+    conversation.clearChores()
     if (id !== null) window.desk.stopAgent(id)
   }
 

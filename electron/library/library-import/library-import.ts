@@ -1,4 +1,4 @@
-import { readFile, readdir, rm, stat } from 'node:fs/promises'
+import { readFile, readdir, rm, rmdir, stat } from 'node:fs/promises'
 import { join } from 'node:path'
 import type { DatabaseSync } from 'node:sqlite'
 import { parseNote } from '@/entities/library/lib/frontmatter/frontmatter'
@@ -8,8 +8,9 @@ import { putNote } from '../library-db/library-db'
 import { isFolderName, isNoteId } from '../library-notes/library-notes'
 
 // Earlier versions kept the library as markdown files in the project, next to
-// a guide the app wrote for the agent. The guide was never a note.
-const OWN_FILES = ['CLAUDE.md']
+// a guide the app wrote for the agent. The guide was never a note, and neither
+// is what a file browser leaves lying about.
+const OWN_FILES = ['CLAUDE.md', '.DS_Store', 'Thumbs.db']
 
 function stamp(iso: string, fallbackMs: number): number {
   const ms = Date.parse(iso)
@@ -34,7 +35,8 @@ async function noteFrom(root: string, id: string, folder: string): Promise<Libra
       updatedAtMs: stamp(meta?.updated ?? '', info.mtimeMs),
       body,
     }
-  } catch {
+  } catch (cause: unknown) {
+    console.error('[library] could not read a note the project kept', path, cause)
     return null
   }
 }
@@ -53,9 +55,38 @@ async function idsIn(root: string, folders: string[]): Promise<{ id: string; fol
   return out
 }
 
+async function foldersIn(root: string, entries: string[]): Promise<string[]> {
+  const out: string[] = []
+  for (const name of entries) {
+    if (!isFolderName(name)) continue
+    const dir = await stat(join(root, name)).catch(() => null)
+    if (dir?.isDirectory() === true) out.push(name)
+  }
+  return out
+}
+
+// Only what the library now holds is taken off the disk, and the folders go
+// only once they stand empty. A file that could not be read, or that was never
+// a note, is left where the person can still see it.
+async function clear(root: string, workspace: string, done: string[]): Promise<void> {
+  const own = OWN_FILES.map((name) => join(root, name))
+  await Promise.all(
+    [...done, ...own].map((path) => rm(path, { force: true }).catch(() => undefined)),
+  )
+  const folders = await foldersIn(root, await readdir(root).catch(() => [] as string[]))
+  for (const folder of folders) {
+    await Promise.all(
+      OWN_FILES.map((name) => rm(join(root, folder, name), { force: true }).catch(() => undefined)),
+    )
+    await rmdir(join(root, folder)).catch(() => undefined)
+  }
+  await rmdir(root).catch(() => undefined)
+  await rmdir(join(workspace, '.zetrem')).catch(() => undefined)
+}
+
 // A library kept as files becomes a library kept in the app: the notes are read
-// once, and the folder the project carried goes with them. Anything the library
-// already holds under that id stays as it is.
+// once, and what the project carried is cleared away behind them. Anything the
+// library already holds under that id stays as it is.
 export async function importOldNotes(db: DatabaseSync, workspace: string): Promise<number> {
   const root = join(workspace, '.zetrem', 'library')
   let entries: string[]
@@ -64,16 +95,10 @@ export async function importOldNotes(db: DatabaseSync, workspace: string): Promi
   } catch {
     return 0
   }
-  const folders: string[] = []
-  for (const name of entries) {
-    if (!isFolderName(name)) continue
-    const dir = await stat(join(root, name)).catch(() => null)
-    if (dir?.isDirectory() === true) folders.push(name)
-  }
+  const folders = await foldersIn(root, entries)
   const found = await idsIn(root, folders)
-  const notes = (await Promise.all(found.map((one) => noteFrom(root, one.id, one.folder)))).filter(
-    (one): one is LibraryNote => one !== null,
-  )
+  const read = await Promise.all(found.map((one) => noteFrom(root, one.id, one.folder)))
+  const notes = read.filter((one): one is LibraryNote => one !== null)
 
   const held = db.prepare('SELECT id FROM notes WHERE id = ?')
   const folder = db.prepare('INSERT INTO folders (name) VALUES (?) ON CONFLICT (name) DO NOTHING')
@@ -91,6 +116,10 @@ export async function importOldNotes(db: DatabaseSync, workspace: string): Promi
     db.exec('ROLLBACK')
     throw cause
   }
-  await rm(join(workspace, '.zetrem'), { recursive: true, force: true })
+  await clear(
+    root,
+    workspace,
+    notes.map((note) => join(root, note.id)),
+  )
   return taken
 }

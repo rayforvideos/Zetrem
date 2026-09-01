@@ -126,6 +126,18 @@ describe('writing', () => {
     expect(fileNote(db, '   ')).toBeNull()
   })
 
+  it('files an answer whose own words would name a note nobody could open', () => {
+    const hidden = fileNote(db, '## .env 를 손대지 말 것\n\n키가 들어 있다.', NOW)
+    expect(hidden?.id).toBe('env 를 손대지 말 것.md')
+    expect(readNote(db, hidden?.id)).not.toBeNull()
+    const climbing = fileNote(db, '# a..b 정리\n\n둘을 나눴다.', NOW)
+    expect(climbing?.id).toBe('a.b 정리.md')
+    expect(readNote(db, climbing?.id)).not.toBeNull()
+    const nameless = fileNote(db, '...', NOW)
+    expect(nameless?.id).toBe('Untitled.md')
+    expect(readNote(db, nameless?.id)).not.toBeNull()
+  })
+
   it('marks who wrote the note, and keeps that mark on a later write', () => {
     createNote(db, '', 'From a session', NOW)
     expect(writeNote(db, 'From a session.md', 'x', { source: 'agent' }, NOW)?.source).toBe('agent')

@@ -88,6 +88,32 @@ describe('taking in a library that was kept as files', () => {
     expect(listNotes(db).notes).toEqual([])
   })
 
+  it('leaves behind what it could not take, rather than taking the folder away', async () => {
+    const root = join(workspace, '.zetrem', 'library')
+    old('one.md', headed('One', 'a'))
+    old('.hidden.md', headed('Hidden', 'x'))
+    old('notes.txt', 'plain text')
+    old('CLAUDE.md', '# 라이브러리\n')
+    expect(await importOldNotes(db, workspace)).toBe(1)
+    // What came across is gone, and the app own file with it; what did not is
+    // still the person's to look at.
+    expect(existsSync(join(root, 'one.md'))).toBe(false)
+    expect(existsSync(join(root, 'CLAUDE.md'))).toBe(false)
+    expect(existsSync(join(root, '.hidden.md'))).toBe(true)
+    expect(existsSync(join(root, 'notes.txt'))).toBe(true)
+  })
+
+  it('takes nothing twice, and gives up the folder once the rest is dealt with', async () => {
+    old('one.md', headed('One', 'a'))
+    old('notes.txt', 'plain text')
+    await importOldNotes(db, workspace)
+    expect(existsSync(join(workspace, '.zetrem'))).toBe(true)
+    rmSync(join(workspace, '.zetrem', 'library', 'notes.txt'))
+    expect(await importOldNotes(db, workspace)).toBe(0)
+    expect(existsSync(join(workspace, '.zetrem'))).toBe(false)
+    expect(listNotes(db).notes.map((one) => one.id)).toEqual(['one.md'])
+  })
+
   it('does nothing, and takes nothing away, when the project kept no library', async () => {
     mkdirSync(join(workspace, '.zetrem'), { recursive: true })
     writeFileSync(join(workspace, '.zetrem', 'other.json'), '{}')

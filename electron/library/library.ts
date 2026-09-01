@@ -36,8 +36,9 @@ function tellRenderers(): void {
   for (const win of BrowserWindow.getAllWindows()) push(win.webContents, 'library:changed', null)
 }
 
+// Nothing happened when nothing was written, so the windows are left alone.
 function told<T>(value: T): T {
-  tellRenderers()
+  if (value !== null) tellRenderers()
   return value
 }
 
@@ -53,14 +54,22 @@ async function sweepOldFiles(): Promise<void> {
 
 // The notes are in the file, so one that will not open is kept rather than
 // deleted: a person can hand it to something that reads SQLite, and the app
-// carries on with a library that opens.
-async function keepAside(file: string): Promise<void> {
+// carries on with a library that opens. Each keepsake is dated, so a second
+// accident never writes over the first.
+async function keepAside(file: string, atMs: number): Promise<void> {
   for (const part of ['', '-wal', '-shm']) {
-    const from = `${file}${part}`
-    const to = `${file}.broken${part}`
-    await rm(to, { force: true }).catch(() => undefined)
-    await rename(from, to).catch(() => undefined)
+    await rename(`${file}${part}`, `${file}.broken-${atMs}${part}`).catch(() => undefined)
   }
+}
+
+// SQLITE_CORRUPT and SQLITE_NOTADB: the bytes are not a database. Anything
+// else, a disk that is full or a file another program is holding, is a reason
+// to fail and be asked again, not to start the library over empty.
+const NOT_A_DATABASE = new Set([11, 26])
+
+function isRubble(cause: unknown): boolean {
+  const code = (cause as { errcode?: unknown } | null)?.errcode
+  return typeof code === 'number' && NOT_A_DATABASE.has(code)
 }
 
 async function lay(file: string, workspace: string): Promise<DatabaseSync> {
@@ -69,8 +78,9 @@ async function lay(file: string, workspace: string): Promise<DatabaseSync> {
   try {
     db = openLibraryDb(file, workspace)
   } catch (cause: unknown) {
-    console.error('[library] the file would not open, kept it aside', file, cause)
-    await keepAside(file)
+    if (!isRubble(cause)) throw cause
+    console.error('[library] the file is not a database, kept it aside', file, cause)
+    await keepAside(file, Date.now())
     db = openLibraryDb(file, workspace)
   }
   await importOldNotes(db, workspace).catch((cause: unknown) => {

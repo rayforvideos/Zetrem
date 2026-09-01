@@ -293,10 +293,12 @@ if (!primary) {
   let settledForQuit = false
   app.on('before-quit', (event) => {
     dropChildren()
-    closeLibraries()
     if (settledForQuit) return
     event.preventDefault()
+    // The libraries are closed after the servers that reach into them, or a
+    // tool call landing on the way out would open one nobody will close.
     Promise.allSettled([settleTranscripts(), closeLibraryMcp()]).then(() => {
+      closeLibraries()
       settledForQuit = true
       app.quit()
     })

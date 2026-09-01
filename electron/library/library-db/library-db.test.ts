@@ -4,7 +4,14 @@ import { join } from 'node:path'
 import { DatabaseSync } from 'node:sqlite'
 import { afterEach, describe, expect, it } from 'vitest'
 import type { LibraryNote } from '@/entities/library/model/note'
-import { dropNote, libraryDbFile, linkTargets, openLibraryDb, putNote } from './library-db'
+import {
+  dropNote,
+  libraryDbFile,
+  linkTargets,
+  openLibraryDb,
+  putNote,
+  replaceNote,
+} from './library-db'
 
 const open: DatabaseSync[] = []
 
@@ -116,6 +123,25 @@ describe('putting a note away', () => {
     putNote(one, note({ id: 'a.md', body: 'second' }))
     expect(one.prepare('SELECT count(*) AS n FROM notes').get()).toEqual({ n: 1 })
     expect(one.prepare('SELECT count(*) AS n FROM notes_fts').get()).toEqual({ n: 1 })
+  })
+
+  it('writes the note as one change, and joins a change already under way', () => {
+    const one = db()
+    one.exec('BEGIN')
+    putNote(one, note({ id: 'a.md', body: 'inside a change of its own' }))
+    replaceNote(one, 'a.md', note({ id: 'b.md', body: 'moved' }))
+    one.exec('ROLLBACK')
+    expect(one.prepare('SELECT count(*) AS n FROM notes').get()).toEqual({ n: 0 })
+    expect(one.isTransaction).toBe(false)
+  })
+
+  it('never leaves the old note behind when one takes the place of another', () => {
+    const one = db()
+    putNote(one, note({ id: 'a.md', body: 'first [[Elsewhere]]' }))
+    replaceNote(one, 'a.md', note({ id: 'b.md', body: 'second' }))
+    expect(one.prepare('SELECT id FROM notes').all()).toEqual([{ id: 'b.md' }])
+    expect(one.prepare('SELECT count(*) AS n FROM links').get()).toEqual({ n: 0 })
+    expect(one.prepare("SELECT id FROM notes_fts WHERE notes_fts MATCH 'first'").all()).toEqual([])
   })
 
   it('takes the note out of search and the links with it when it goes', () => {

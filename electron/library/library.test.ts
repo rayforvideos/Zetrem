@@ -1,4 +1,13 @@
-import { existsSync, mkdirSync, mkdtempSync, realpathSync, rmSync, writeFileSync } from 'node:fs'
+import {
+  existsSync,
+  mkdirSync,
+  mkdtempSync,
+  readFileSync,
+  readdirSync,
+  realpathSync,
+  rmSync,
+  writeFileSync,
+} from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
@@ -107,13 +116,27 @@ describe('where a library is kept', () => {
     expect(existsSync(stale)).toBe(false)
   })
 
-  it('keeps a file it cannot read aside rather than throwing the work away', async () => {
+  it('keeps a file that is not a database aside rather than throwing it away', async () => {
     await librarySessionArgs(workspace)
     closeLibraries()
     writeFileSync(fileFor(workspace), 'not a database')
     await librarySessionArgs(workspace)
-    expect(existsSync(`${fileFor(workspace)}.broken`)).toBe(true)
+    const kept = readdirSync(join(userData, 'library')).filter((name) => name.includes('.broken-'))
+    expect(kept).toHaveLength(1)
+    expect(readFileSync(join(userData, 'library', kept[0] as string), 'utf8')).toBe(
+      'not a database',
+    )
     expect(held(workspace).notes).toEqual([])
+  })
+
+  it('pushes nothing aside when the trouble is not the file itself', async () => {
+    // A directory standing where the file should be cannot be opened either,
+    // but nothing about it says the notes are rubble.
+    mkdirSync(fileFor(workspace), { recursive: true })
+    await expect(librarySessionArgs(workspace)).rejects.toThrow()
+    expect(readdirSync(join(userData, 'library')).some((name) => name.includes('.broken'))).toBe(
+      false,
+    )
   })
 })
 

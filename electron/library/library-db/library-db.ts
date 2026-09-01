@@ -61,15 +61,24 @@ export function libraryDbFile(userData: string, workspace: string): string {
   return join(userData, 'library', `${cut.length === 0 ? 'library' : cut}-${short}.sqlite`)
 }
 
-// The rows are the notes themselves, so a version that finds a stamp it does
-// not know leaves everything where it is: dropping a table here would throw
+function versionOf(db: DatabaseSync): string | null {
+  const row = db.prepare("SELECT value FROM meta WHERE key = 'schema_version'").get() as
+    | { value: string }
+    | undefined
+  return row?.value ?? null
+}
+
+// The rows are the notes themselves, so a file written by a version this one
+// does not know is left exactly as it is: dropping a table here would throw
 // away the work rather than a cache of it.
 function lay(db: DatabaseSync, workspace: string): void {
   db.exec(SCHEMA)
-  db.prepare(
-    `INSERT INTO meta (key, value) VALUES ('schema_version', ?)
-     ON CONFLICT (key) DO NOTHING`,
-  ).run(SCHEMA_VERSION)
+  const written = versionOf(db)
+  if (written === null) {
+    db.prepare("INSERT INTO meta (key, value) VALUES ('schema_version', ?)").run(SCHEMA_VERSION)
+  } else if (written !== SCHEMA_VERSION) {
+    console.warn(`[library] the file was written by schema ${written}, reading it as it is`)
+  }
   // Where the project was when the library was last opened, so a person whose
   // folder has moved can tell which file belonged to it.
   db.prepare(
@@ -82,6 +91,9 @@ export function openLibraryDb(file: string, workspace: string): DatabaseSync {
   const db = new DatabaseSync(file)
   try {
     db.exec('PRAGMA journal_mode = WAL')
+    // Something else reading the file, a backup tool or a person with a SQLite
+    // client, is a moment to wait through rather than a failure.
+    db.exec('PRAGMA busy_timeout = 5000')
     lay(db, workspace)
   } catch (cause: unknown) {
     // The handle is released before the error leaves: Windows will not let a
@@ -90,6 +102,24 @@ export function openLibraryDb(file: string, workspace: string): DatabaseSync {
     throw cause
   }
   return db
+}
+
+// A note is four statements across three tables, so it is written all at once
+// or not at all: a failure half way would leave the search index describing a
+// note that is not there. A caller already in a transaction keeps its own.
+function atLeastAtOnce(db: DatabaseSync, work: () => void): void {
+  if (db.isTransaction) {
+    work()
+    return
+  }
+  db.exec('BEGIN')
+  try {
+    work()
+    db.exec('COMMIT')
+  } catch (cause: unknown) {
+    db.exec('ROLLBACK')
+    throw cause
+  }
 }
 
 function tagsOf(raw: string): string[] {
@@ -121,32 +151,45 @@ export function headOf(row: NoteRow): LibraryNoteSummary {
 }
 
 export function dropNote(db: DatabaseSync, id: string): void {
-  db.prepare('DELETE FROM notes WHERE id = ?').run(id)
-  db.prepare('DELETE FROM links WHERE from_id = ?').run(id)
-  db.prepare('DELETE FROM notes_fts WHERE id = ?').run(id)
+  atLeastAtOnce(db, () => {
+    db.prepare('DELETE FROM notes WHERE id = ?').run(id)
+    db.prepare('DELETE FROM links WHERE from_id = ?').run(id)
+    db.prepare('DELETE FROM notes_fts WHERE id = ?').run(id)
+  })
 }
 
 export function putNote(db: DatabaseSync, note: LibraryNote): void {
-  dropNote(db, note.id)
-  db.prepare(
-    `INSERT INTO notes (id, folder, title, body, tags, source, created_at_ms, updated_at_ms)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-  ).run(
-    note.id,
-    note.folder,
-    note.title,
-    note.body,
-    JSON.stringify(note.tags),
-    note.source,
-    note.createdAtMs,
-    note.updatedAtMs,
-  )
-  const link = db.prepare('INSERT INTO links (from_id, to_title) VALUES (?, ?)')
-  for (const title of linkTargets(note.body)) link.run(note.id, title)
-  db.prepare('INSERT INTO notes_fts (id, title, body, tags) VALUES (?, ?, ?, ?)').run(
-    note.id,
-    note.title,
-    note.body,
-    note.tags.join(' '),
-  )
+  atLeastAtOnce(db, () => {
+    dropNote(db, note.id)
+    db.prepare(
+      `INSERT INTO notes (id, folder, title, body, tags, source, created_at_ms, updated_at_ms)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+    ).run(
+      note.id,
+      note.folder,
+      note.title,
+      note.body,
+      JSON.stringify(note.tags),
+      note.source,
+      note.createdAtMs,
+      note.updatedAtMs,
+    )
+    const link = db.prepare('INSERT INTO links (from_id, to_title) VALUES (?, ?)')
+    for (const title of linkTargets(note.body)) link.run(note.id, title)
+    db.prepare('INSERT INTO notes_fts (id, title, body, tags) VALUES (?, ?, ?, ?)').run(
+      note.id,
+      note.title,
+      note.body,
+      note.tags.join(' '),
+    )
+  })
+}
+
+// Moving a note is a delete and a write, and the two are one change: nothing
+// may leave the library holding neither.
+export function replaceNote(db: DatabaseSync, id: string, note: LibraryNote): void {
+  atLeastAtOnce(db, () => {
+    dropNote(db, id)
+    putNote(db, note)
+  })
 }

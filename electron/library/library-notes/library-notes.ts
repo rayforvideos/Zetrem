@@ -2,7 +2,7 @@ import type { DatabaseSync } from 'node:sqlite'
 import { summaryOf, titleFrom } from '@/entities/library/lib/summary/summary'
 import type { LibraryListing, LibraryNote } from '@/entities/library/model/note'
 import type { FolderRow, NoteRow } from '../library-db/library-db.types'
-import { dropNote, headOf, noteOf, putNote } from '../library-db/library-db'
+import { dropNote, headOf, noteOf, putNote, replaceNote } from '../library-db/library-db'
 import type { NotePatch } from './library-notes.types'
 
 const FOLDER_MAX = 60
@@ -130,6 +130,9 @@ function begin(
 ): LibraryNote | null {
   if (folder.length > 0 && !hasFolder(db, folder)) return null
   const name = freeTitle(db, folder, title)
+  // Nothing may be written under an id that cannot be read back: a note only
+  // its own writer can name is a note nobody can open or remove.
+  if (!isNoteId(idOf(folder, name))) return null
   return keep(db, {
     id: idOf(folder, name),
     folder,
@@ -154,6 +157,16 @@ export function createNote(
   return begin(db, where, title, '', nowMs)
 }
 
+// Words become a title the library can name a note by. An answer that opens
+// with '.env' or ends in a full stop still has to land somewhere openable.
+function named(text: string): string {
+  const plain = titleFrom(text)
+    .replace(/\.+/g, '.')
+    .replace(/^[.\s]+/, '')
+    .replace(/[.\s]+$/, '')
+  return isTitle(plain) ? plain : 'Untitled'
+}
+
 // The bolt on an answer: the answer becomes a note at the root, titled from
 // its own words.
 export function fileNote(
@@ -162,7 +175,7 @@ export function fileNote(
   nowMs: number = Date.now(),
 ): LibraryNote | null {
   if (typeof text !== 'string' || text.trim().length === 0) return null
-  return begin(db, '', titleFrom(text), text.trim(), nowMs)
+  return begin(db, '', named(text), text.trim(), nowMs)
 }
 
 export function renameNote(
@@ -177,8 +190,9 @@ export function renameNote(
   const was = noteOf(row)
   const next = idOf(was.folder, title)
   if (next !== id && taken(db, next)) return null
-  dropNote(db, id)
-  return keep(db, { ...was, id: next, title, updatedAtMs: nowMs })
+  const moved = { ...was, id: next, title, updatedAtMs: nowMs }
+  replaceNote(db, id, moved)
+  return moved
 }
 
 export function removeNote(db: DatabaseSync, id: unknown): void {
@@ -200,8 +214,7 @@ export function renameFolder(db: DatabaseSync, name: unknown, next: unknown): Li
       db.prepare('UPDATE folders SET name = ? WHERE name = ?').run(next, name)
       for (const row of rows) {
         const was = noteOf(row)
-        dropNote(db, was.id)
-        putNote(db, { ...was, folder: next, id: `${next}/${split(was.id).file}` })
+        replaceNote(db, was.id, { ...was, folder: next, id: `${next}/${split(was.id).file}` })
       }
       db.exec('COMMIT')
     } catch (cause: unknown) {

@@ -36,6 +36,12 @@ import { isPackagedRun } from './shell/packaged/packaged'
 const isMac = process.platform === 'darwin'
 
 app.setName('Zetrem')
+
+// The single-instance lock lives in userData, which dev and packaged builds
+// share. Pointing a dev run at its own folder lets it live beside the
+// installed app instead of quitting at the lock.
+if (!isPackagedRun() && process.env.ZT_USER_DATA) app.setPath('userData', process.env.ZT_USER_DATA)
+
 if (!isMac) Menu.setApplicationMenu(null)
 
 function dropChildren(): void {

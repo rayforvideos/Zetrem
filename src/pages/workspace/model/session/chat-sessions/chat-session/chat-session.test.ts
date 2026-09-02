@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import type { RunConfig } from '@/entities/claude-cli'
 import type { Transcript } from '@/entities/conversation'
+import { chatOfHost } from '../../host-chats/host-chats'
 import { createChatSession } from './chat-session'
 import type { ChatSessionDeps } from './chat-session.types'
 
@@ -83,6 +84,13 @@ describe('createChatSession: one chat, its own process and stores', () => {
     expect(session.running()).toBe(true)
     expect(session.stores.conversation.get().status).toBe('working')
     expect(session.live()).toBe('working')
+  })
+
+  it('remembers which chat the process it started belongs to', async () => {
+    const deps = fakeDeps()
+    const { id } = running(deps)
+    await Promise.resolve()
+    expect(chatOfHost(id)).toBe('c1')
   })
 
   it('applies lines addressed to it and ignores the rest', async () => {

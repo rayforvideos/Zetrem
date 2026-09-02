@@ -23,6 +23,7 @@ import type {
   LibraryNote,
   LibraryNoteSummary,
 } from '@/entities/library/model/note'
+import type { LibraryProposal } from '@/entities/library/model/proposal'
 import type { Outcome } from '@/shared/lib/outcome/outcome.types'
 import type { ExitReason } from '@/entities/claude-cli/lib/exit-line/exit-line.types'
 import type { Attached } from '@/entities/attachment/lib/attachment/attachment.types'
@@ -151,6 +152,10 @@ export type Invokes = {
   'library:file': (text: string) => LibraryNote | null
   'library:search': (query: string) => LibraryHit[]
   'library:backlinks': (id: string) => LibraryNoteSummary[]
+  // What agents have suggested and nobody has answered yet, oldest first.
+  'library:proposals': () => LibraryProposal[]
+  'library:proposal-accept': (id: string) => LibraryNote | null
+  'library:proposal-dismiss': (id: string) => void
   'library:folder-add': (name: string) => LibraryListing
   'library:folder-rename': (name: string, next: string) => LibraryListing
   'library:folder-remove': (name: string) => LibraryListing
@@ -210,6 +215,8 @@ export type Pushes = {
   'auth:progress': string
   'updater:ready': string
   'library:changed': null
+  // A suggestion arrived, or one was answered. The notes may not have moved.
+  'library:proposed': null
   'git:changed': null
 }
 

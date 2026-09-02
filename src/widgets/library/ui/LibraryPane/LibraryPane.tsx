@@ -10,6 +10,7 @@ import {
 } from '@/shared/ui/dropdown-menu'
 import { Popover, PopoverContent, PopoverTrigger } from '@/shared/ui/popover'
 import { NoteList } from '../NoteList/NoteList'
+import { ProposalList } from '../ProposalList/ProposalList'
 import { NoteReader } from '../NoteReader/NoteReader'
 import type { LibraryPaneProps } from './LibraryPane.types'
 
@@ -41,7 +42,7 @@ export function LibraryPane(props: LibraryPaneProps) {
           {t`What this project has learned, kept as notes so nobody has to work it out twice.`}
         </p>
         <p className="mt-2 text-muted-foreground">
-          {t`While the library button under the message box is on, agents search here and file what they find.`}
+          {t`While the library button under the message box is on, agents search here and suggest what they find.`}
         </p>
         <p className="mt-2 text-muted-foreground">
           {t`“To library” under an answer files it here. You can write here yourself.`}
@@ -68,6 +69,12 @@ export function LibraryPane(props: LibraryPaneProps) {
     <div data-library-pane className="relative z-[3] flex h-full gap-7">
       {sidebar}
       <div className="zt-rise flex w-full min-w-0 flex-1 flex-col px-6 py-6">
+        <ProposalList
+          proposals={props.proposals}
+          chatTitleOf={props.chatTitleOf}
+          onAccept={props.onAcceptProposal}
+          onDismiss={props.onDismissProposal}
+        />
         <div className="flex min-h-0 flex-1 gap-8">
           <div className="flex w-80 min-w-0 flex-none flex-col">
             <div className="flex h-7 flex-none items-center justify-between pb-4">
@@ -117,7 +124,7 @@ export function LibraryPane(props: LibraryPaneProps) {
                   <p className="text-sm leading-6 text-muted-foreground">
                     {t`“To library” under an answer files it here.`}
                     <br />
-                    {t`Agents file what they learn while the library button is on.`}
+                    {t`Agents suggest what they learn, and nothing lands here until you accept it.`}
                     <br />
                     {t`Or start with one of your own.`}
                   </p>

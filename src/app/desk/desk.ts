@@ -104,7 +104,11 @@ export type DeskBridge = {
   fileLibraryNote: Invoke<'library:file'>
   searchLibrary: Invoke<'library:search'>
   libraryBacklinks: Invoke<'library:backlinks'>
+  listLibraryProposals: Invoke<'library:proposals'>
+  acceptLibraryProposal: Invoke<'library:proposal-accept'>
+  dismissLibraryProposal: Invoke<'library:proposal-dismiss'>
   onLibraryChanged: Listen<'library:changed'>
+  onLibraryProposed: Listen<'library:proposed'>
   onGitChanged: Listen<'git:changed'>
   addLibraryFolder: Invoke<'library:folder-add'>
   renameLibraryFolder: Invoke<'library:folder-rename'>

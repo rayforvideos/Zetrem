@@ -1,5 +1,11 @@
 import type { ReactNode } from 'react'
-import type { LibraryFolder, LibraryHit, LibraryNote, LibraryNoteSummary } from '@/entities/library'
+import type {
+  LibraryFolder,
+  LibraryHit,
+  LibraryNote,
+  LibraryNoteSummary,
+  LibraryProposal,
+} from '@/entities/library'
 
 export type LibraryPaneProps = {
   folders: LibraryFolder[]
@@ -33,5 +39,10 @@ export type LibraryPaneProps = {
   onAddFolder(name: string): void
   onRenameFolder(name: string, next: string): void
   onRemoveFolder(name: string): void
+  // What agents have suggested and nobody has answered yet, oldest first.
+  proposals: LibraryProposal[]
+  chatTitleOf(session: string): string | null
+  onAcceptProposal(id: string): void
+  onDismissProposal(id: string): void
   sidebar: ReactNode
 }

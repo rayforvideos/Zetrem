@@ -153,7 +153,7 @@ export function registerAgentHost(): void {
         workspace = project ?? scratchWorkspace(app.getPath('userData'))
         let added: string[] = []
         try {
-          added = await librarySessionArgs(workspace)
+          added = await librarySessionArgs(workspace, id)
         } catch (cause: unknown) {
           console.error('[library] could not lay out', workspace, cause)
         }

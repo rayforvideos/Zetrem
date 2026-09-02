@@ -16,6 +16,7 @@ import { afterYouStopped } from '../../asked-to-stop/asked-to-stop'
 import { shouldRelaunch } from '../../relaunch/relaunch'
 import type { Attempt } from '../../relaunch/relaunch.types'
 import { beginSession, closeSession } from '../../session-bookkeeping/session-bookkeeping'
+import { rememberHostChat } from '../../host-chats/host-chats'
 import { attachAutosave } from './autosave/autosave'
 import type {
   AgentEvent,
@@ -98,6 +99,10 @@ export function createChatSession(
     hosts += 1
     const id = `agent-${Date.now()}-${hosts}`
     hostId = id
+    // The process is what a proposal names itself by, so the chat it belongs
+    // to is written down here, where the id is first handed out: a tool call
+    // that lands later can then be shown against the chat that ran it.
+    rememberHostChat(id, chatId)
     stopping = false
     attempt = { prompt: text, files, resumed: resume !== null, spoke: false }
     void deps

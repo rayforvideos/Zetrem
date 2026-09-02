@@ -3,17 +3,23 @@ import { MOTION } from '@/shared/config/motion/motion'
 import { TeamSidebar } from '@/widgets/team-sidebar'
 import { chatSwitch } from '../../model/chat/chat-switch/chat-switch'
 import { tuckedBy } from '../../model/screen/tuck/tuck'
-import type { LibraryNotes, Workspace } from '../../model/screen/useWorkspace/useWorkspace.types'
+import type {
+  LibraryNotes,
+  LibraryProposals,
+  Workspace,
+} from '../../model/screen/useWorkspace/useWorkspace.types'
 
 // The team sidebar with its tuck-away animation, wired to the workspace: the
 // one place the project list, the chat list, and the roster meet.
 export function WorkspaceSidebar({
   work,
   library,
+  proposals,
   onOpenProject,
 }: {
   work: Workspace
   library: LibraryNotes
+  proposals: LibraryProposals
   onOpenProject(id: string): void
 }) {
   const { chatting, layout, prefs, projects, team } = work
@@ -95,6 +101,7 @@ export function WorkspaceSidebar({
         onResizeEnd={layout.sidebar.commit}
         libraryOpen={layout.libraryOpen}
         libraryUnseen={library.unseen}
+        libraryPending={proposals.proposals.length}
         onOpenLibrary={layout.openLibrary}
       />
     </div>

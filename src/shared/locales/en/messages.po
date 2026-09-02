@@ -179,11 +179,11 @@ msgstr "{n}m ago"
 msgid "{name} can be called this session"
 msgstr "{name} can be called this session"
 
-#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:227
+#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:231
 msgid "{name} is off. The running session keeps them until it ends."
 msgstr "{name} is off. The running session keeps them until it ends."
 
-#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:226
+#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:230
 msgid "{name} is on. The running session cannot call them yet."
 msgstr "{name} is on. The running session cannot call them yet."
 
@@ -677,7 +677,7 @@ msgstr "Claude Code, with a screen"
 msgid "Clear"
 msgstr "Clear"
 
-#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:115
+#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:125
 #: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:510
 msgid "Close"
 msgstr "Close"
@@ -687,7 +687,7 @@ msgstr "Close"
 msgid "Close {0}"
 msgstr "Close {0}"
 
-#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:114
+#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:124
 msgid "Close report"
 msgstr "Close report"
 
@@ -881,7 +881,7 @@ msgstr "Could not remove the account."
 msgid "Could not rename that chat"
 msgstr "Could not rename that chat"
 
-#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:78
+#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:79
 msgid "Could not reopen your last project"
 msgstr "Could not reopen your last project"
 
@@ -968,7 +968,7 @@ msgstr "Deny"
 msgid "Description"
 msgstr "Description"
 
-#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:192
+#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:229
 msgid "Diff"
 msgstr "Diff"
 
@@ -1017,7 +1017,7 @@ msgstr "Drop this stash"
 msgid "Drop this stash?"
 msgstr "Drop this stash?"
 
-#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:96
+#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:106
 msgid "Earlier run"
 msgstr "Earlier run"
 
@@ -1035,7 +1035,7 @@ msgstr "Edit {0}"
 msgid "Edit this file?"
 msgstr "Edit this file?"
 
-#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:125
+#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:135
 msgid "Edited"
 msgstr "Edited"
 
@@ -1082,8 +1082,8 @@ msgstr "Extensions"
 msgid "Face"
 msgstr "Face"
 
-#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:170
-#: src/widgets/tile-deck/ui/layers/CallLog/CallLog.tsx:77
+#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:179
+#: src/widgets/tile-deck/ui/layers/CallLog/CallLog.tsx:109
 msgid "failed"
 msgstr "failed"
 
@@ -1241,7 +1241,7 @@ msgstr "Hard problems. Much slower"
 msgid "Held up"
 msgstr "Held up"
 
-#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:150
+#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:154
 msgid "Hide team sidebar"
 msgstr "Hide team sidebar"
 
@@ -1331,7 +1331,7 @@ msgstr "Keep going"
 msgid "Keep in"
 msgstr "Keep in"
 
-#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:230
+#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:267
 #: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:954
 #: src/widgets/setup/ui/MemoryField/MemoryField.tsx:154
 msgid "Keep it"
@@ -1353,7 +1353,7 @@ msgstr "Language"
 msgid "Later"
 msgstr "Later"
 
-#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:107
+#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:117
 msgid "Later run"
 msgstr "Later run"
 
@@ -1443,7 +1443,7 @@ msgstr "Message your team"
 msgid "Model"
 msgstr "Model"
 
-#: src/pages/workspace/ui/gates/ConversationGate.tsx:82
+#: src/pages/workspace/ui/gates/ConversationGate.tsx:86
 msgid "Model changed. The running session keeps its model."
 msgstr "Model changed. The running session keeps its model."
 
@@ -1627,7 +1627,7 @@ msgstr "Nothing to merge: already up to date."
 msgid "Nothing written yet."
 msgstr "Nothing written yet."
 
-#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:158
+#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:168
 msgid "Nothing yet"
 msgstr "Nothing yet"
 
@@ -1693,7 +1693,7 @@ msgstr "Permission"
 msgid "Permissions"
 msgstr "Permissions"
 
-#: src/pages/workspace/ui/gates/ConversationGate.tsx:78
+#: src/pages/workspace/ui/gates/ConversationGate.tsx:82
 msgid "Permissions changed. The running session follows the old ones."
 msgstr "Permissions changed. The running session follows the old ones."
 
@@ -1767,7 +1767,7 @@ msgstr "Pushed."
 msgid "Quick answers. Least thinking, cheapest"
 msgstr "Quick answers. Least thinking, cheapest"
 
-#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:126
+#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:136
 msgid "Ran"
 msgstr "Ran"
 
@@ -1783,7 +1783,7 @@ msgstr "Re-authenticate"
 msgid "Reach out to the web?"
 msgstr "Reach out to the web?"
 
-#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:124
+#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:134
 msgid "Read"
 msgstr "Read"
 
@@ -1957,14 +1957,14 @@ msgstr "Reviewer"
 msgid "Reviews a change before it ships"
 msgstr "Reviews a change before it ships"
 
-#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:201
-#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:231
+#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:238
+#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:268
 msgid "Roll back"
 msgstr "Roll back"
 
 #. placeholder {0}: at + 1
 #. placeholder {1}: runs.length
-#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:101
+#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:111
 msgid "run {0} of {1}"
 msgstr "run {0} of {1}"
 
@@ -2032,7 +2032,7 @@ msgstr "Search the library"
 msgid "Search tools"
 msgstr "Search tools"
 
-#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:127
+#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:137
 msgid "Searched"
 msgstr "Searched"
 
@@ -2089,7 +2089,7 @@ msgstr "share unknown"
 msgid "Shift+Enter starts a new line. Off, sending takes the modifier key with Enter."
 msgstr "Shift+Enter starts a new line. Off, sending takes the modifier key with Enter."
 
-#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:150
+#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:154
 msgid "Show team sidebar"
 msgstr "Show team sidebar"
 
@@ -2475,6 +2475,11 @@ msgstr "The working tree changes to that branch's files. Uncommitted changes com
 msgid "Their file is deleted and they leave the roster. A session already running keeps them until it ends. This cannot be undone."
 msgstr "Their file is deleted and they leave the roster. A session already running keeps them until it ends. This cannot be undone."
 
+#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:201
+#: src/widgets/tile-deck/ui/layers/Helpers/Helpers.tsx:19
+msgid "Their helpers"
+msgstr "Their helpers"
+
 #: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:226
 #: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:202
 msgid "Their instructions"
@@ -2734,12 +2739,12 @@ msgstr "What the library is"
 msgid "What the session brings"
 msgstr "What the session brings"
 
-#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:183
+#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:220
 msgid "What they changed"
 msgstr "What they changed"
 
-#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:156
-#: src/widgets/tile-deck/ui/AgentTile/AgentTile.tsx:84
+#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:166
+#: src/widgets/tile-deck/ui/AgentTile/AgentTile.tsx:89
 #: src/widgets/tile-deck/ui/CrewBoard/CrewBoard.tsx:120
 #: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:142
 msgid "What they did"
@@ -2749,7 +2754,7 @@ msgstr "What they did"
 msgid "What they do, how to go about it, and what to hand back."
 msgstr "What they do, how to go about it, and what to hand back."
 
-#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:140
+#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:150
 msgid "What they said"
 msgstr "What they said"
 
@@ -2832,7 +2837,7 @@ msgstr "You already have a connector by that name"
 msgid "You decide what runs"
 msgstr "You decide what runs"
 
-#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:213
+#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:217
 msgid "You left before the reply finished, so it stops here."
 msgstr "You left before the reply finished, so it stops here."
 

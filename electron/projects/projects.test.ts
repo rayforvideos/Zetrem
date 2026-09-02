@@ -141,6 +141,17 @@ describe('the projects a person can come back to', () => {
     expect(existsSync(path)).toBe(true)
   })
 
+  it('keeps the drawer when another project still stands on that folder', async () => {
+    const shop = dir('shop')
+    const blog = dir('blog')
+    const moved = await createProject(shop, 1000)
+    await createProject(blog, 2000)
+    keepTeammate(blog, 'ray.md')
+    await repathProject(moved?.id ?? '', blog)
+    await forgetProject(moved?.id ?? '')
+    expect(existsSync(join(teammates(blog), 'ray.md'))).toBe(true)
+  })
+
   it('takes two quick opens in turn, so the list and the working folder agree', async () => {
     const a = dir('shop')
     const b = dir('blog')

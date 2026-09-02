@@ -13,6 +13,7 @@ import {
   dropProjectAgents,
   moveProjectAgents,
 } from '../agents/project-agents-home/project-agents-home'
+import { projectKey } from '../store/project-key/project-key'
 import { queue } from '../store/queue/queue'
 import { saveFile } from '../store/save-file/save-file'
 import { handle } from '../ipc/ipc'
@@ -171,6 +172,12 @@ async function forgetProjectNow(id: string, nowMs: number): Promise<void> {
   // forgotten current must not go on being the agents' and library's home.
   if (memory.current === id && gone !== undefined) await forgetRememberedProject(gone.path)
   if (gone === undefined) return
+  // A repath can land two projects on one folder, and then they share a
+  // drawer: the one that stays keeps its people.
+  const shared = memory.projects.some(
+    (one) => one.id !== id && projectKey(one.path) === projectKey(gone.path),
+  )
+  if (shared) return
   // The people kept for this project alone are forgotten with it, so nothing
   // of it is left sitting in userData. As with a repath, the record is already
   // written: a folder that will not go is logged, not raised.

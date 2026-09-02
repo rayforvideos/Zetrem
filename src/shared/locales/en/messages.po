@@ -1623,7 +1623,7 @@ msgstr "Nothing stashed."
 msgid "Nothing to merge: already up to date."
 msgstr "Nothing to merge: already up to date."
 
-#: src/widgets/tile-deck/ui/CrewBoard/CrewBoard.tsx:123
+#: src/widgets/tile-deck/ui/CrewBoard/CrewBoard.tsx:135
 msgid "Nothing written yet."
 msgstr "Nothing written yet."
 
@@ -2745,7 +2745,7 @@ msgstr "What they changed"
 
 #: src/widgets/agent-report/ui/CallStream/CallStream.tsx:11
 #: src/widgets/tile-deck/ui/AgentTile/AgentTile.tsx:89
-#: src/widgets/tile-deck/ui/CrewBoard/CrewBoard.tsx:127
+#: src/widgets/tile-deck/ui/CrewBoard/CrewBoard.tsx:139
 #: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:142
 msgid "What they did"
 msgstr "What they did"
@@ -2825,7 +2825,7 @@ msgid "Yesterday"
 msgstr "Yesterday"
 
 #: src/widgets/setup/ui/YouField/YouField.tsx:22
-#: src/widgets/tile-deck/ui/CrewBoard/CrewBoard.tsx:68
+#: src/widgets/tile-deck/ui/CrewBoard/CrewBoard.tsx:79
 msgid "You"
 msgstr "You"
 

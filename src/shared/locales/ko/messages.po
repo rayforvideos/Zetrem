@@ -587,7 +587,7 @@ msgstr "연결 안 됨"
 #: src/widgets/library/ui/NoteList/NoteList.tsx:273
 #: src/widgets/library/ui/NoteReader/NoteReader.tsx:193
 #: src/widgets/setup/ui/SetupPane/SetupPane.tsx:215
-#: src/widgets/team-sidebar/ui/ChatList/ChatRow.tsx:226
+#: src/widgets/team-sidebar/ui/ChatList/ChatRow.tsx:240
 #: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:340
 #: src/widgets/team-sidebar/ui/MemberMenu/MemberMenu.tsx:66
 #: src/widgets/team-sidebar/ui/ProjectSwitcher/ProjectSwitcher.tsx:145
@@ -928,12 +928,12 @@ msgid "Delete"
 msgstr "삭제"
 
 #. placeholder {0}: named(chat.title)
-#: src/widgets/team-sidebar/ui/ChatList/ChatRow.tsx:220
+#: src/widgets/team-sidebar/ui/ChatList/ChatRow.tsx:234
 msgid "Delete “{0}”?"
 msgstr "“{0}” 대화를 삭제할까요?"
 
-#: src/widgets/team-sidebar/ui/ChatList/ChatRow.tsx:211
-#: src/widgets/team-sidebar/ui/ChatList/ChatRow.tsx:228
+#: src/widgets/team-sidebar/ui/ChatList/ChatRow.tsx:225
+#: src/widgets/team-sidebar/ui/ChatList/ChatRow.tsx:242
 msgid "Delete chat"
 msgstr "대화 삭제"
 
@@ -1123,8 +1123,8 @@ msgstr "이 커밋의 파일"
 msgid "Files read, commands run, edits made. Each one shows up as it happens, not as a summary afterwards."
 msgstr "읽은 파일, 실행한 명령, 고친 내용이 그때그때 올라옵니다. 끝나고 요약만 보여주지 않습니다."
 
-#: src/widgets/team-sidebar/ui/ChatList/ChatList.tsx:90
-#: src/widgets/team-sidebar/ui/ChatList/ChatList.tsx:91
+#: src/widgets/team-sidebar/ui/ChatList/ChatList.tsx:92
+#: src/widgets/team-sidebar/ui/ChatList/ChatList.tsx:93
 msgid "Find a chat"
 msgstr "대화 찾기"
 
@@ -1140,14 +1140,14 @@ msgstr "브라우저에서 {name} 로그인을 마치세요. 다음 세션부터
 msgid "Folder"
 msgstr "폴더"
 
-#: src/widgets/team-sidebar/ui/ChatList/ChatRow.tsx:65
+#: src/widgets/team-sidebar/ui/ChatList/ChatRow.tsx:68
 msgid "Folder for both"
 msgstr "둘을 담을 폴더"
 
 #: src/widgets/library/ui/NoteList/NoteList.tsx:129
 #: src/widgets/library/ui/NoteList/NoteList.tsx:130
-#: src/widgets/team-sidebar/ui/ChatList/ChatRow.tsx:83
-#: src/widgets/team-sidebar/ui/ChatList/ChatRow.tsx:84
+#: src/widgets/team-sidebar/ui/ChatList/ChatRow.tsx:86
+#: src/widgets/team-sidebar/ui/ChatList/ChatRow.tsx:87
 msgid "Folder name"
 msgstr "폴더 이름"
 
@@ -1326,7 +1326,7 @@ msgstr "방금"
 msgid "Keep going"
 msgstr "이어서 말하세요"
 
-#: src/widgets/team-sidebar/ui/ChatList/ChatRow.tsx:188
+#: src/widgets/team-sidebar/ui/ChatList/ChatRow.tsx:202
 msgid "Keep in"
 msgstr "폴더에 넣기"
 
@@ -1455,7 +1455,7 @@ msgstr "수정됨"
 #. placeholder {0}: named(chat.title)
 #: src/widgets/setup/ui/PluginShelf/ConnectorsTab.tsx:101
 #: src/widgets/setup/ui/PluginShelf/InstalledTab.tsx:65
-#: src/widgets/team-sidebar/ui/ChatList/ChatRow.tsx:179
+#: src/widgets/team-sidebar/ui/ChatList/ChatRow.tsx:193
 #: src/widgets/team-sidebar/ui/ChatList/FolderSection.tsx:121
 #: src/widgets/team-sidebar/ui/ProjectSwitcher/ProjectSwitcher.tsx:88
 msgid "More for {0}"
@@ -1474,7 +1474,7 @@ msgstr "{name} 폴더 메뉴"
 msgid "Name"
 msgstr "이름"
 
-#: src/widgets/team-sidebar/ui/ChatList/ChatRow.tsx:64
+#: src/widgets/team-sidebar/ui/ChatList/ChatRow.tsx:67
 msgid "Name the folder for these two chats"
 msgstr "두 대화를 담을 폴더 이름"
 
@@ -1504,7 +1504,7 @@ msgid "New branch name"
 msgstr "새 브랜치 이름"
 
 #: src/widgets/team-sidebar/lib/named/named.ts:4
-#: src/widgets/team-sidebar/ui/ChatList/ChatList.tsx:78
+#: src/widgets/team-sidebar/ui/ChatList/ChatList.tsx:80
 msgid "New chat"
 msgstr "새 대화"
 
@@ -1512,7 +1512,7 @@ msgstr "새 대화"
 msgid "New folder"
 msgstr "새 폴더"
 
-#: src/widgets/team-sidebar/ui/ChatList/ChatRow.tsx:199
+#: src/widgets/team-sidebar/ui/ChatList/ChatRow.tsx:213
 msgid "New folder…"
 msgstr "새 폴더…"
 
@@ -1536,7 +1536,7 @@ msgstr "다음"
 msgid "No account limits reported"
 msgstr "계정 한도 정보가 없습니다"
 
-#: src/widgets/team-sidebar/ui/ChatList/ChatList.tsx:116
+#: src/widgets/team-sidebar/ui/ChatList/ChatList.tsx:118
 msgid "No chat by that name"
 msgstr "그런 이름의 대화가 없습니다"
 
@@ -1893,12 +1893,12 @@ msgid "Removed"
 msgstr "삭제했습니다"
 
 #: src/widgets/library/ui/NoteList/NoteList.tsx:238
-#: src/widgets/team-sidebar/ui/ChatList/ChatRow.tsx:186
+#: src/widgets/team-sidebar/ui/ChatList/ChatRow.tsx:200
 #: src/widgets/team-sidebar/ui/ChatList/FolderSection.tsx:128
 msgid "Rename"
 msgstr "이름 바꾸기"
 
-#: src/widgets/team-sidebar/ui/ChatList/ChatRow.tsx:105
+#: src/widgets/team-sidebar/ui/ChatList/ChatRow.tsx:108
 msgid "Rename chat"
 msgstr "대화 이름 바꾸기"
 
@@ -2195,7 +2195,7 @@ msgstr "스타 주기"
 msgid "Start"
 msgstr "시작"
 
-#: src/widgets/team-sidebar/ui/ChatList/ChatList.tsx:75
+#: src/widgets/team-sidebar/ui/ChatList/ChatList.tsx:77
 msgid "Start a conversation from scratch"
 msgstr "새 대화를 시작합니다"
 
@@ -2214,6 +2214,10 @@ msgstr "스태시에 넣기"
 #: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:1016
 msgid "Stay here"
 msgstr "여기 있기"
+
+#: src/widgets/team-sidebar/lib/live-mark/live-mark.ts:4
+msgid "Still replying"
+msgstr "아직 답하는 중"
 
 #: src/pages/workspace/model/account/useAuth.ts:168
 msgid "Still signed in. Sign out did not take effect."
@@ -2280,7 +2284,7 @@ msgid "Take everything out"
 msgstr "전부 빼기"
 
 #. placeholder {0}: chat.folder
-#: src/widgets/team-sidebar/ui/ChatList/ChatRow.tsx:204
+#: src/widgets/team-sidebar/ui/ChatList/ChatRow.tsx:218
 msgid "Take out of {0}"
 msgstr "{0}에서 빼기"
 
@@ -2442,7 +2446,7 @@ msgstr "실행 중인 세션은 모델과 노력 수준을 그대로 씁니다. 
 msgid "The running session keeps the library. Agents stop seeing it from the next one."
 msgstr "지금 세션은 라이브러리를 그대로 봐요. 다음 세션부터 보지 않아요."
 
-#: src/widgets/team-sidebar/ui/ChatList/ChatRow.tsx:222
+#: src/widgets/team-sidebar/ui/ChatList/ChatRow.tsx:236
 msgid "The saved conversation is deleted. This cannot be undone."
 msgstr "저장된 대화가 삭제됩니다. 되돌릴 수 없습니다."
 
@@ -2679,6 +2683,10 @@ msgstr "승인 대기 중"
 #: src/entities/agent-session/model/nudge/nudge.ts:11
 msgid "Waiting for your approval"
 msgstr "승인을 기다리는 중입니다"
+
+#: src/widgets/team-sidebar/lib/live-mark/live-mark.ts:5
+msgid "Waiting for your permission"
+msgstr "허가를 기다리는 중"
 
 #: src/widgets/conversation/lib/away/away.ts:25
 #: src/widgets/conversation/lib/working/working.ts:56

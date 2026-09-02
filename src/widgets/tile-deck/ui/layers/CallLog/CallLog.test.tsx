@@ -63,11 +63,19 @@ describe('CallLog: every tool the agent reached for, and what came back', () => 
   })
 })
 
-const edit = { old_string: '옛 줄', new_string: '새 줄' }
+const edited: Partial<Call> = {
+  change: [
+    [
+      { kind: 'remove', text: '옛 줄' },
+      { kind: 'add', text: '새 줄' },
+    ],
+  ],
+  count: { added: 1, removed: 1 },
+}
 
 describe('CallLog: an edit shows as the change it made', () => {
   it('opens the change under the call in hand, with what it added and took away', () => {
-    const html = draw([call('e', 'Edit b.ts', { input: edit, endedAtMs: null })])
+    const html = draw([call('e', 'Edit b.ts', { ...edited, endedAtMs: null })])
     expect(html).toContain('data-change')
     expect(html).toContain('옛 줄')
     expect(html).toContain('새 줄')
@@ -77,22 +85,39 @@ describe('CallLog: an edit shows as the change it made', () => {
 
   it('leaves an earlier edit as a count alone, so only one change is ever open', () => {
     const html = draw([
-      call('e1', 'Edit a.ts', { input: edit }),
-      call('e2', 'Edit b.ts', { input: edit, endedAtMs: null }),
+      call('e1', 'Edit a.ts', edited),
+      call('e2', 'Edit b.ts', { ...edited, endedAtMs: null }),
     ])
     expect(count(html, 'data-change=')).toBe(1)
     expect(count(html, 'data-change-badge')).toBe(2)
   })
 
   it('opens the last change once the agent has stopped, since that is where it left off', () => {
-    const html = draw([call('r', 'Read a.ts'), call('e', 'Edit b.ts', { input: edit })], false)
+    const html = draw([call('r', 'Read a.ts'), call('e', 'Edit b.ts', edited)], false)
     expect(count(html, 'data-change=')).toBe(1)
     expect(html).toContain('새 줄')
   })
 
   it('says nothing about changes for a call that changed nothing', () => {
-    const html = draw([call('r', 'Read a.ts', { input: { file_path: 'a.ts' } })], false)
+    const html = draw([call('r', 'Read a.ts')], false)
     expect(html).not.toContain('data-change')
+  })
+
+  it('keeps the change open under the edit when a read follows it', () => {
+    const html = draw([call('e', 'Edit b.ts', edited), call('r', 'Read a.ts', { endedAtMs: null })])
+    expect(count(html, 'data-change=')).toBe(1)
+    expect(html).toContain('새 줄')
+    // The badge sits on the Edit row itself, and the diff opens right under it,
+    // above the read that came after.
+    expect(count(html, 'data-change-badge')).toBe(1)
+    expect(html.indexOf('data-change-badge')).toBeLessThan(html.indexOf('data-change='))
+    expect(html.indexOf('data-change=')).toBeLessThan(html.indexOf('a.ts'))
+  })
+
+  it('keeps the change open under the edit once the agent has stopped too', () => {
+    const html = draw([call('e', 'Edit b.ts', edited), call('r', 'Read a.ts')], false)
+    expect(count(html, 'data-change=')).toBe(1)
+    expect(html).toContain('새 줄')
   })
 })
 

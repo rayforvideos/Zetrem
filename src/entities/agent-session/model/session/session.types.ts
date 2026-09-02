@@ -1,3 +1,5 @@
+import type { ChangeCount, DiffLine } from '@/entities/tool/@x/agent-session'
+
 export type SessionStatus = 'working' | 'waiting' | 'reported' | 'done'
 
 type RunnerId = string
@@ -44,9 +46,13 @@ export type Call = {
   endedAtMs: number | null
   failed: boolean
   note: string
-  // The tool call's raw arguments, carried through so a diff view (or similar)
-  // can read them without re-parsing the summary line.
-  input?: unknown
+  // The edit this call made, already cut into diff groups when the call was
+  // stored. The raw arguments are not kept: a long file's contents would sit
+  // in the session for as long as the run lasts, and every reader wanted the
+  // same diff out of it anyway.
+  change?: DiffLine[][]
+  // What that change added and took away, counted alongside it.
+  count?: ChangeCount
 }
 
 export type TranscriptEntry = {

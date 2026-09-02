@@ -1,10 +1,9 @@
 import { Fragment, useCallback, useEffect, useRef } from 'react'
 import type { CSSProperties } from 'react'
 import type { Call } from '@/entities/agent-session'
-import type { ChangeCount, DiffLine } from '@/entities/tool'
-import { ToolIcon } from '@/entities/tool'
+import type { ChangeCount } from '@/entities/tool'
+import { ToolIcon, targetOf, verbOf } from '@/entities/tool'
 import { atEnd } from '@/shared/lib/scroll-state/scroll-state'
-import { changeBadge, changeLines, targetOf, toolNameOf, verbOf } from '@/entities/tool'
 import { shapeOfCall } from '../../../lib/now/now'
 import { fillOf } from '../../../lib/fill/fill'
 import { ChangeGlimpse, ChangeMark } from '../ChangeGlimpse/ChangeGlimpse'
@@ -13,22 +12,16 @@ import { t } from '@lingui/core/macro'
 
 type CallLogProps = { calls: Call[]; live: boolean; nowMs: number }
 
-function groupsOf(call: Call): DiffLine[][] {
-  return changeLines(toolNameOf(call.line), call.input)
-}
-
 export function CallLog({ calls, live, nowMs }: CallLogProps) {
   const scrollRef = useRef<HTMLDivElement>(null)
   const following = useRef(true)
   const lastIndex = calls.length - 1
-  // Read off the calls alone, so the clock ticking past does not send every
-  // edit in the log through the differ again.
-  const badges = calls.map((call) => changeBadge(groupsOf(call)))
-  // The call whose change is open: the one in hand while the teammate works,
-  // and otherwise the last thing it did.
-  const openCall = calls.at(-1) ?? null
-  const openGroups = openCall === null ? [] : groupsOf(openCall)
-  const openCount = badges.at(-1) ?? null
+  // The call whose change is open: the last one that actually changed
+  // something. A read or a shell command after an edit is not a new answer to
+  // "what is this teammate writing", so it must not take the diff away.
+  const openCall = calls.findLast((call) => (call.change ?? []).length > 0) ?? null
+  const openGroups = openCall?.change ?? []
+  const openCount = openCall?.count ?? null
   // The open diff makes the log taller, so the follow has to run again when it
   // grows, not only when another call arrives.
   const openHeight = openGroups.reduce((lines, group) => lines + group.length, 0)
@@ -65,23 +58,21 @@ export function CallLog({ calls, live, nowMs }: CallLogProps) {
     >
       {calls.map((call, index) => {
         const now = index === lastIndex
+        const open = openCall !== null && openCall.id === call.id
         if (now && live) {
           return (
             <Fragment key={call.id}>
               <NowStage call={call} live nowMs={nowMs} />
-              <ChangeGlimpse groups={openGroups} count={openCount ?? undefined} />
+              {open && <ChangeGlimpse groups={openGroups} count={openCount ?? undefined} />}
             </Fragment>
           )
         }
-        if (now) {
-          return (
-            <Fragment key={call.id}>
-              <Row call={call} lit count={openCount} />
-              <ChangeGlimpse groups={openGroups} />
-            </Fragment>
-          )
-        }
-        return <Row key={call.id} call={call} lit={false} count={badges[index] ?? null} />
+        return (
+          <Fragment key={call.id}>
+            <Row call={call} lit={now} count={call.count ?? null} />
+            {open && <ChangeGlimpse groups={openGroups} />}
+          </Fragment>
+        )
       })}
     </div>
   )

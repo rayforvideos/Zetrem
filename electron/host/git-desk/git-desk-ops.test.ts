@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import type { GitReply } from '../worktree-review/worktree-review.types'
+import type { GitReply } from '../../shell/git-run/git-run.types'
 import {
   gitBranches,
   gitCommit,

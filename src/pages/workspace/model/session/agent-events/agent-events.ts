@@ -1,11 +1,9 @@
 import type { AgentEventRefs } from './agent-events.types'
 
-import { sessionStore, statusStore } from '@/entities/agent-session'
 import type { ClaudeTurnEvent, RateLimit, ResultMetrics, StatusEvent } from '@/entities/claude-cli'
 import { formatResetTime } from '@/shared/lib/datetime/datetime'
 import { formatTokens, limitKindLabel } from '@/shared/lib/units/units'
 import { advancePermission } from '../../chat/conversation/advance-permission'
-import { conversation } from '../../chat/conversation/conversation'
 import { agentIdIn } from './agent-id/agent-id'
 import { stirred } from './stirred/stirred'
 import {
@@ -20,7 +18,8 @@ import {
 import { t } from '@lingui/core/macro'
 
 export function applyAgentEvent(turn: ClaudeTurnEvent, refs: AgentEventRefs): void {
-  if (isStatusEvent(turn)) statusStore.apply(turn)
+  if (turn.type === 'limit') refs.onLimit(turn.limit)
+  else if (isStatusEvent(turn)) refs.stores.status.apply(turn)
   announce(turn, refs)
 }
 
@@ -41,29 +40,31 @@ function isStatusEvent(turn: ClaudeTurnEvent): turn is StatusEvent {
 const BACKGROUND = 'local_bash'
 const OVER = ['completed', 'failed', 'killed']
 
-function chore(turn: ClaudeTurnEvent): boolean {
+function chore(turn: ClaudeTurnEvent, refs: AgentEventRefs): boolean {
+  const conversation = refs.stores.conversation
   if (turn.type === 'childStarted' && turn.taskType === BACKGROUND) {
-    if (adoptChildBash(turn.taskId, turn.toolUseId)) return true
+    if (adoptChildBash(refs, turn.taskId, turn.toolUseId)) return true
     conversation.startChore(turn.taskId, turn.description)
     return true
   }
   if (turn.type === 'childNotified') {
     conversation.endChore(turn.taskId)
-    releaseChildBash(turn.taskId)
+    releaseChildBash(refs, turn.taskId)
   }
   if (turn.type === 'childStateKnown' && OVER.includes(turn.state)) {
     conversation.endChore(turn.taskId)
-    releaseChildBash(turn.taskId)
+    releaseChildBash(refs, turn.taskId)
   }
   return false
 }
 
 function announce(turn: ClaudeTurnEvent, refs: AgentEventRefs): void {
-  if (chore(turn)) return
+  if (chore(turn, refs)) return
   if (isCrewEvent(turn)) {
     applyCrewEvent(turn, refs)
     return
   }
+  const conversation = refs.stores.conversation
   const held = conversation.get()
   if (stirred(turn, { status: held.status, asked: held.permission !== null })) {
     conversation.setStatus('working')
@@ -95,7 +96,9 @@ function announce(turn: ClaudeTurnEvent, refs: AgentEventRefs): void {
       return
     case 'toolResult': {
       const isolated = agentIdIn(turn)
-      if (isolated !== null) sessionStore.patch(isolated.toolUseId, { agentId: isolated.agentId })
+      if (isolated !== null) {
+        refs.stores.children.patch(isolated.toolUseId, { agentId: isolated.agentId })
+      }
       wakeResumed(turn.toolUseId, turn.stdout, refs)
       conversation.toolResult(turn.toolUseId, {
         stdout: turn.stdout,
@@ -156,10 +159,10 @@ function worthSaying(limit: RateLimit, told: Map<string, string>): boolean {
 function drop(requestId: string, refs: AgentEventRefs): void {
   const at = refs.asks.findIndex((ask) => ask.requestId === requestId)
   if (at === -1) return
-  const showing = conversation.get().permission?.requestId === requestId
+  const showing = refs.stores.conversation.get().permission?.requestId === requestId
   refs.asks.splice(at, 1)
   if (!showing) return
-  advancePermission(refs.asks)
+  advancePermission(refs.stores.conversation, refs.asks)
 }
 
 export function limitLine(limit: RateLimit): string {

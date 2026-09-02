@@ -5,7 +5,7 @@ import { parseClaudeLine, permissionAlwaysResult, permissionResult } from '@/ent
 import type { AgentSession, StatusState } from '@/entities/agent-session'
 import type { ModelChoice, RunConfig } from '@/entities/claude-cli'
 import { applyAgentEvent } from './agent-events/agent-events'
-import type { Sent } from './agent-events/agent-events.types'
+import { freshRefs } from './agent-events/refs/refs'
 import { advancePermission } from '../chat/conversation/advance-permission'
 import { conversation } from '../chat/conversation/conversation'
 import { sentOf, withPaths } from '@/entities/attachment'
@@ -46,15 +46,20 @@ export function useAgent(
   const [running, setRunning] = useState(false)
 
   const hostId = useRef<string | null>(null)
-  const asks = useRef<
-    { requestId: string; toolName: string; line: string; detail: string; input: unknown }[]
-  >([])
-  const childIds = useRef(new Set<string>())
-  const sends = useRef(new Map<string, Sent>())
-  const limits = useRef(new Map<string, string>())
   const attempt = useRef<Attempt | null>(null)
   const stopping = useRef(false)
   const refused = useRef(onModelRefused)
+  // The interim stores: the singletons stand in for a chat's own refs until
+  // Task 7 hands useAgent one built from a session instead of these.
+  const refs = useRef(
+    freshRefs(
+      { conversation, status: statusStore, children: sessionStore },
+      {
+        onModelRefused: (model) => refused.current(model),
+        onLimit: (limit) => statusStore.apply({ type: 'limit', limit }),
+      },
+    ),
+  )
 
   // Written after commit, not during render: a render React throws away must
   // not leave its config behind for launch() to hand the subprocess.
@@ -90,26 +95,14 @@ export function useAgent(
           launch(failed.prompt, null, failed.files)
           return
         }
-        closeSession({
-          reason: event.reason,
-          stopped,
-          asks: asks.current,
-          childIds: childIds.current,
-        })
+        closeSession(refs.current, { reason: event.reason, stopped })
         return
       }
       if (event.kind === 'workspace') return
       if (attempt.current !== null) attempt.current.spoke = true
 
-      const refs = {
-        asks: asks.current,
-        childIds: childIds.current,
-        sends: sends.current,
-        limits: limits.current,
-        onModelRefused: refused.current,
-      }
       for (const turn of parseClaudeLine(event.line)) {
-        applyAgentEvent(afterYouStopped(turn, stopping.current), refs)
+        applyAgentEvent(afterYouStopped(turn, stopping.current), refs.current)
       }
     })
     return () => {
@@ -127,13 +120,7 @@ export function useAgent(
   }, [])
 
   function launch(text: string, resume: string | null, files: Attached[] = []): void {
-    beginSession({
-      resumed: resume !== null,
-      asks: asks.current,
-      sends: sends.current,
-      childIds: childIds.current,
-      limits: limits.current,
-    })
+    beginSession(refs.current, resume !== null)
     const id = `agent-${Date.now()}`
     hostId.current = id
     stopping.current = false
@@ -179,10 +166,10 @@ export function useAgent(
     hostId.current = null
     setRunning(false)
     attempt.current = null
-    asks.current.length = 0
-    childIds.current.clear()
-    sends.current.clear()
-    limits.current.clear()
+    refs.current.asks.length = 0
+    refs.current.childIds.clear()
+    refs.current.sends.clear()
+    refs.current.limits.clear()
     sessionStore.clear()
     statusStore.reset()
     conversation.settleDraft()
@@ -197,8 +184,8 @@ export function useAgent(
 
   function decide(allow: boolean, always = false): void {
     const id = hostId.current
-    if (id === null || asks.current.length === 0) return
-    const current = asks.current.shift()!
+    if (id === null || refs.current.asks.length === 0) return
+    const current = refs.current.asks.shift()!
     window.desk.respondPermission(
       id,
       current.requestId,
@@ -206,7 +193,7 @@ export function useAgent(
         ? permissionAlwaysResult(current.toolName, current.input)
         : permissionResult(allow, current.input),
     )
-    advancePermission(asks.current)
+    advancePermission(conversation, refs.current.asks)
   }
 
   function stop(): void {

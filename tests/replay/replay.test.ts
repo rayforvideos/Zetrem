@@ -3,17 +3,15 @@ import { sessionStore, statusStore } from '@/entities/agent-session'
 import { parseClaudeLine } from '@/entities/claude-cli'
 import type { AgentEventRefs } from '@/pages/workspace/model/session/agent-events/agent-events.types'
 import { applyAgentEvent } from '@/pages/workspace/model/session/agent-events/agent-events'
+import { freshRefs } from '@/pages/workspace/model/session/agent-events/refs/refs'
 import { conversation } from '@/pages/workspace/model/chat/conversation/conversation'
 import captured from './live-subagent.json'
 
 function refs(): AgentEventRefs {
-  return {
-    asks: [],
-    childIds: new Set<string>(),
-    sends: new Map(),
-    limits: new Map<string, string>(),
-    onModelRefused: () => {},
-  }
+  return freshRefs(
+    { conversation, status: statusStore, children: sessionStore },
+    { onModelRefused: () => {}, onLimit: () => {} },
+  )
 }
 
 function replay(): AgentEventRefs {

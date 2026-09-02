@@ -160,10 +160,20 @@ export function registerAgentHost(): void {
         // Whether a teammate can be fenced into a worktree is the workspace's
         // to answer, so it is answered here and never taken from the renderer.
         const isolated = isGitWorkspace(workspace)
+        // Everyone who opted out writes into the shared tree instead of a
+        // branch, so the orchestrator is told their names and what that costs.
+        const sharedWriters = isolated
+          ? run.people.filter((person) => !person.isolated).map((person) => person.name)
+          : []
+        // A locked roster injects the generic helpers, which are always fenced,
+        // so a worktree appears even when nobody on the roster opted in.
+        const anyFenced =
+          isolated && (run.lock !== null || run.people.some((person) => person.isolated))
         // A teammate fenced into a worktree gets a fresh checkout with no
         // node_modules of its own; this links the main checkout's in, never
-        // blocking the spawn below on it.
-        if (isolated) {
+        // blocking the spawn below on it. Nothing fenced means no worktree
+        // folder to make, let alone follow.
+        if (anyFenced) {
           followWorktrees(workspace, worktreeLinkDeps).catch((cause: unknown) => {
             console.error('[worktree-links] could not follow', workspace, cause)
           })
@@ -172,7 +182,7 @@ export function registerAgentHost(): void {
           ...agentArgs({
             ...run,
             persona: PERSONA,
-            orchestrator: orchestratorPrompt(isolated),
+            orchestrator: orchestratorPrompt(isolated, sharedWriters),
             isolated,
           }),
           ...added,

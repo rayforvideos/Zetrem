@@ -23,6 +23,10 @@ function isPerson(value: unknown): value is Person {
     typeof one?.description === 'string' &&
     typeof one?.prompt === 'string' &&
     (one?.model === null || typeof one?.model === 'string') &&
+    // Whether this teammate wants a worktree is the roster's answer, not main's:
+    // main reads it to know who writes into the shared tree. A person that never
+    // said is refused rather than guessed at.
+    typeof one?.isolated === 'boolean' &&
     strings(one?.tools)
   )
 }

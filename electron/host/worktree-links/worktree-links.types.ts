@@ -1,4 +1,4 @@
-import type { GitReply } from '../worktree-review/worktree-review.types'
+import type { GitReply } from '../../shell/git-run/git-run.types'
 
 // A watcher this module can close later. fs.watch satisfies this directly.
 export type LinkWatcher = { close(): void }

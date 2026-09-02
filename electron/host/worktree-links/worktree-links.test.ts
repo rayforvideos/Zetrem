@@ -25,7 +25,11 @@ function git(repo: string, ...args: string[]): void {
   execFileSync('git', args, { cwd: repo })
 }
 
-async function repoWithNodeModules(tracked: boolean): Promise<string> {
+// How git sees the root's node_modules. Only 'ignored' is the folder a worktree
+// is missing and would want linked in; the other two are the caller's own files.
+type Standing = 'ignored' | 'tracked' | 'untracked'
+
+async function repoWithNodeModules(standing: Standing): Promise<string> {
   const dir = await tempDir()
   git(dir, 'init', '--initial-branch=main')
   git(dir, 'config', 'user.email', 'test@example.com')
@@ -33,9 +37,8 @@ async function repoWithNodeModules(tracked: boolean): Promise<string> {
   git(dir, 'config', 'commit.gpgsign', 'false')
   await mkdir(join(dir, 'node_modules'), { recursive: true })
   await writeFile(join(dir, 'node_modules', 'placeholder.txt'), 'x')
-  if (tracked) {
-    git(dir, 'add', 'node_modules')
-  } else {
+  if (standing === 'tracked') git(dir, 'add', 'node_modules')
+  if (standing === 'ignored') {
     await writeFile(join(dir, '.gitignore'), 'node_modules\n')
     git(dir, 'add', '.gitignore')
   }
@@ -43,6 +46,16 @@ async function repoWithNodeModules(tracked: boolean): Promise<string> {
   git(dir, 'add', 'a.txt')
   git(dir, 'commit', '-m', 'chore: first')
   return dir
+}
+
+// The debounced link runs off a real timer and then awaits real fs promises, so
+// there is no clock to advance: the link is waited for by looking for it.
+async function waitFor(seen: () => boolean): Promise<void> {
+  const until = Date.now() + 3000
+  while (!seen()) {
+    if (Date.now() > until) throw new Error('the link never appeared')
+    await new Promise((resolve) => setTimeout(resolve, 25))
+  }
 }
 
 // A real symlink/junction dep, so the "already linked" behaviour of the
@@ -92,7 +105,7 @@ function realDeps(overrides: Partial<LinkDeps> = {}): LinkDeps {
 
 describe('linkNodeModules', () => {
   it('links the main checkout node_modules into a fresh worktree', async () => {
-    const root = await repoWithNodeModules(false)
+    const root = await repoWithNodeModules('ignored')
     const worktree = await tempDir()
     const deps = realDeps()
 
@@ -103,7 +116,7 @@ describe('linkNodeModules', () => {
   })
 
   it('reports present when the worktree already has node_modules', async () => {
-    const root = await repoWithNodeModules(false)
+    const root = await repoWithNodeModules('ignored')
     const worktree = await tempDir()
     await mkdir(join(worktree, 'node_modules'))
     const deps = realDeps()
@@ -125,7 +138,7 @@ describe('linkNodeModules', () => {
   })
 
   it('skips when git tracks node_modules', async () => {
-    const root = await repoWithNodeModules(true)
+    const root = await repoWithNodeModules('tracked')
     const worktree = await tempDir()
     const deps = realDeps()
 
@@ -134,8 +147,38 @@ describe('linkNodeModules', () => {
     expect(said).toBe('skipped')
   })
 
+  it('skips node_modules that is merely untracked, since a worktree carries it over', async () => {
+    // Untracked and not ignored is a folder the checkout keeps for itself: a
+    // worktree of it is not missing anything, so there is nothing to link.
+    const root = await repoWithNodeModules('untracked')
+    const worktree = await tempDir()
+    const deps = realDeps()
+
+    const said = await linkNodeModules(root, worktree, deps)
+
+    expect(said).toBe('skipped')
+    expect(existsSync(join(worktree, 'node_modules'))).toBe(false)
+  })
+
+  it('asks git whether node_modules is ignored, not whether it is tracked', async () => {
+    const root = await repoWithNodeModules('ignored')
+    const worktree = await tempDir()
+    const asked: string[][] = []
+    const deps = realDeps({
+      git: async (args, cwd) => {
+        asked.push(args)
+        return realDeps().git(args, cwd)
+      },
+    })
+
+    await linkNodeModules(root, worktree, deps)
+
+    expect(asked.some((args) => args.includes('check-ignore'))).toBe(true)
+    expect(asked.some((args) => args.includes('--error-unmatch'))).toBe(false)
+  })
+
   it('reports failed and logs when the symlink call throws', async () => {
-    const root = await repoWithNodeModules(false)
+    const root = await repoWithNodeModules('ignored')
     const worktree = await tempDir()
     const log = vi.fn()
     const deps = realDeps({
@@ -158,7 +201,7 @@ describe('linkNodeModules', () => {
 
 describe('followWorktrees', () => {
   it('links every worktree dir that already exists at follow time', async () => {
-    const root = await repoWithNodeModules(false)
+    const root = await repoWithNodeModules('ignored')
     const worktreesDir = join(root, '.claude', 'worktrees')
     await mkdir(join(worktreesDir, 'agent-1'), { recursive: true })
     const deps = realDeps()
@@ -169,7 +212,7 @@ describe('followWorktrees', () => {
   })
 
   it('links a directory that appears later, once, even if the watch event fires twice', async () => {
-    const root = await repoWithNodeModules(false)
+    const root = await repoWithNodeModules('ignored')
     const worktreesDir = join(root, '.claude', 'worktrees')
     await mkdir(worktreesDir, { recursive: true })
 
@@ -194,16 +237,13 @@ describe('followWorktrees', () => {
     heard[0]?.('rename', 'agent-2')
     heard[0]?.('rename', 'agent-2')
 
-    // Real timers: the debounced callback awaits real fs promises, which a
-    // fake clock does not drive to completion.
-    await new Promise((resolve) => setTimeout(resolve, 260))
+    await waitFor(() => existsSync(join(worktreesDir, 'agent-2', 'node_modules')))
 
-    expect(existsSync(join(worktreesDir, 'agent-2', 'node_modules'))).toBe(true)
     expect(symlink).toHaveBeenCalledTimes(1)
   })
 
   it('does not create a second watcher for the same root', async () => {
-    const root = await repoWithNodeModules(false)
+    const root = await repoWithNodeModules('ignored')
     const watch = vi.fn(() => ({ close: vi.fn() }))
     const deps = realDeps({ watch })
 
@@ -213,9 +253,39 @@ describe('followWorktrees', () => {
     expect(watch).toHaveBeenCalledTimes(1)
   })
 
+  it('opens one watcher for two calls that land before either has finished', async () => {
+    // agent:start calls this without awaiting it, so two sessions for one
+    // project overlap: the slot has to be taken before the first await, or the
+    // first watcher is opened and then lost with nothing holding it.
+    const root = await repoWithNodeModules('ignored')
+    const watch = vi.fn(() => ({ close: vi.fn() }))
+    const deps = realDeps({ watch })
+
+    await Promise.all([followWorktrees(root, deps), followWorktrees(root, deps)])
+
+    expect(watch).toHaveBeenCalledTimes(1)
+  })
+
+  it('lets the next call try again when the watch could not be opened', async () => {
+    // Holding a root that ended up with no watcher would mean this project is
+    // never followed again for as long as it stays open.
+    const root = await repoWithNodeModules('ignored')
+    const log = vi.fn()
+    const watch = vi.fn(() => {
+      throw new Error('too many open files')
+    })
+
+    await followWorktrees(root, realDeps({ watch, log }))
+    const second = vi.fn(() => ({ close: vi.fn() }))
+    await followWorktrees(root, realDeps({ watch: second }))
+
+    expect(log).toHaveBeenCalled()
+    expect(second).toHaveBeenCalledTimes(1)
+  })
+
   it('closes the previous watcher when following a different root', async () => {
-    const rootA = await repoWithNodeModules(false)
-    const rootB = await repoWithNodeModules(false)
+    const rootA = await repoWithNodeModules('ignored')
+    const rootB = await repoWithNodeModules('ignored')
     const closeA = vi.fn()
     const watchA = vi.fn(() => ({ close: closeA }))
     const watchB = vi.fn(() => ({ close: vi.fn() }))
@@ -224,5 +294,28 @@ describe('followWorktrees', () => {
     await followWorktrees(rootB, realDeps({ watch: watchB }))
 
     expect(closeA).toHaveBeenCalledTimes(1)
+  })
+
+  it('leaves only the last root watched when a second root lands mid-flight', async () => {
+    const rootA = await repoWithNodeModules('ignored')
+    const rootB = await repoWithNodeModules('ignored')
+    const closeA = vi.fn()
+    const closeB = vi.fn()
+    const watchA = vi.fn(() => ({ close: closeA }))
+    const watchB = vi.fn(() => ({ close: closeB }))
+
+    const first = followWorktrees(rootA, realDeps({ watch: watchA }))
+    const second = followWorktrees(rootB, realDeps({ watch: watchB }))
+    await Promise.all([first, second])
+
+    // A watcher rootA opened after it lost the slot is one nothing can close
+    // later, so it has to be closed on the way out.
+    expect(watchA.mock.calls.length, 'rootA left a watcher behind').toBe(closeA.mock.calls.length)
+    expect(watchB).toHaveBeenCalledTimes(1)
+    expect(closeB).not.toHaveBeenCalled()
+
+    stopFollowingWorktrees()
+
+    expect(closeB).toHaveBeenCalledTimes(1)
   })
 })

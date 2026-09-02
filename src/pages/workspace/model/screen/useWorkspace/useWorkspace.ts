@@ -116,7 +116,8 @@ export function useWorkspace() {
     gate !== 'holding',
     conv.status === 'working',
   )
-  useNudge(settings.notify, conv.status, conv.permission, conv.trouble)
+  const atWork = stirring(conv.status, children)
+  useNudge(settings.notify, atWork, conv.permission, conv.trouble)
   useFleet(deck, children, nowMs, viewport, deckSidebarW)
 
   useLearnedSettings(status, settings, update)
@@ -146,7 +147,6 @@ export function useWorkspace() {
   }, [settings.wasStockOn, stock, update])
 
   const live = sessionLive(status, conv.status)
-  const atWork = stirring(conv.status, children)
   const sidebarLabel = sidebar.open ? t`Hide team sidebar` : t`Show team sidebar`
   const sessionId = status.session?.id ?? null
   useEffect(() => {

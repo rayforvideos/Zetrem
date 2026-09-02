@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react'
 import { nudgeFor } from '@/entities/agent-session'
-import type { PermissionAsk, SessionStatus } from '@/entities/agent-session'
+import type { PermissionAsk } from '@/entities/agent-session'
+import { settledNow } from './settle-nudge/settle-nudge'
 
 function watching(): boolean {
   return document.visibilityState === 'visible' && document.hasFocus()
@@ -8,17 +9,16 @@ function watching(): boolean {
 
 export function useNudge(
   wanted: boolean,
-  status: SessionStatus,
+  busy: boolean,
   permission: PermissionAsk | null,
   trouble: boolean,
 ): void {
-  const wasWorking = useRef(false)
+  const wasBusy = useRef(false)
   const askedFor = useRef<string | null>(null)
 
   useEffect(() => {
-    const working = status === 'working'
-    const settled = wasWorking.current && !working
-    wasWorking.current = working
+    const settled = settledNow(wasBusy.current, busy)
+    wasBusy.current = busy
     if (!settled) return
     const nudge = nudgeFor({
       wanted,
@@ -29,7 +29,7 @@ export function useNudge(
       trouble,
     })
     if (nudge !== null) window.desk.nudge(nudge.title, nudge.body)
-  }, [status, wanted, permission, trouble])
+  }, [busy, wanted, permission, trouble])
 
   useEffect(() => {
     if (permission === null) {

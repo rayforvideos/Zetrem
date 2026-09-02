@@ -107,7 +107,7 @@ msgid "{0} teammates"
 msgstr "{0} teammates"
 
 #. placeholder {0}: i18n._(ORIGIN[member.origin])
-#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:161
+#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:181
 msgid "{0}. Joins from the next session."
 msgstr "{0}. Joins from the next session."
 
@@ -419,11 +419,11 @@ msgstr "Add more"
 msgid "Add one by address"
 msgstr "Add one by address"
 
-#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:78
+#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:95
 msgid "Add teammate"
 msgstr "Add teammate"
 
-#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:83
+#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:100
 msgid "Add your first teammate"
 msgstr "Add your first teammate"
 
@@ -653,7 +653,7 @@ msgstr "Choose project"
 msgid "Choose what can run without asking, check your remaining limits along the bottom, and stop anything while it is running."
 msgstr "Choose what can run without asking, check your remaining limits along the bottom, and stop anything while it is running."
 
-#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:21
+#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:22
 #: src/widgets/team-sidebar/ui/TeamSidebar/TeamSidebar.tsx:68
 msgid "Claude Code"
 msgstr "Claude Code"
@@ -918,7 +918,7 @@ msgstr "Could not switch accounts."
 msgid "Create"
 msgstr "Create"
 
-#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:110
+#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:130
 msgid "Create a teammate and they'll show up here."
 msgstr "Create a teammate and they'll show up here."
 
@@ -1223,7 +1223,7 @@ msgstr "Give them a name"
 msgid "Give them a name, say when to call them, and write their instructions. The orchestrator goes by the \"when to call them\" line to pick who gets the job."
 msgstr "Give them a name, say when to call them, and write their instructions. The orchestrator goes by the \"when to call them\" line to pick who gets the job."
 
-#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:177
+#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:197
 msgid "Give them a task"
 msgstr "Give them a task"
 
@@ -1560,7 +1560,7 @@ msgstr "No handler registered"
 msgid "No notes yet"
 msgstr "No notes yet"
 
-#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:108
+#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:128
 msgid "No one here yet"
 msgstr "No one here yet"
 
@@ -1568,7 +1568,7 @@ msgstr "No one here yet"
 msgid "No tool by that name."
 msgstr "No tool by that name."
 
-#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:162
+#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:182
 msgid "Not available this session. Unlock it in Settings."
 msgstr "Not available this session. Unlock it in Settings."
 
@@ -1716,7 +1716,7 @@ msgstr "Pick a branch"
 msgid "Pick a note"
 msgstr "Pick a note"
 
-#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:70
+#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:87
 msgid "Pick a project first"
 msgstr "Pick a project first"
 
@@ -1927,7 +1927,7 @@ msgstr "Renamed"
 msgid "Replace the running session so the next message goes on with the change"
 msgstr "Replace the running session so the next message goes on with the change"
 
-#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:125
+#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:145
 msgid "Replace the running session so the next message goes on with them on the team"
 msgstr "Replace the running session so the next message goes on with them on the team"
 
@@ -1952,7 +1952,7 @@ msgid "Restart"
 msgstr "Restart"
 
 #: src/widgets/conversation/ui/RestartNote/RestartNote.tsx:17
-#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:128
+#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:148
 msgid "Restart session"
 msgstr "Restart session"
 
@@ -2055,7 +2055,7 @@ msgstr "Searched"
 msgid "Searching"
 msgstr "Searching"
 
-#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:177
+#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:197
 msgid "See what they did"
 msgstr "See what they did"
 
@@ -2099,6 +2099,10 @@ msgstr "Settings sections"
 #: src/widgets/status-bar/lib/strip/strip.ts:47
 msgid "share unknown"
 msgstr "share unknown"
+
+#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:112
+msgid "Shared"
+msgstr "Shared"
 
 #: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:195
 msgid "Shared across projects"
@@ -2569,7 +2573,7 @@ msgid "This opens the browser to sign in again for this account. The session run
 msgstr "This opens the browser to sign in again for this account. The session running here stops."
 
 #: src/entities/plugin/lib/groups/groups.ts:11
-#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:19
+#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:20
 msgid "This project"
 msgstr "This project"
 
@@ -2578,6 +2582,7 @@ msgid "This project is not a git repository."
 msgstr "This project is not a git repository."
 
 #: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:197
+#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:118
 msgid "This project only"
 msgstr "This project only"
 
@@ -2816,7 +2821,7 @@ msgstr "Write in markdown"
 msgid "Write the first note"
 msgstr "Write the first note"
 
-#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:84
+#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:101
 msgid "Write their instructions once and the orchestrator can call them in any project."
 msgstr "Write their instructions once and the orchestrator can call them in any project."
 
@@ -2867,7 +2872,7 @@ msgstr "You stopped this"
 msgid "You talk on the left"
 msgstr "You talk on the left"
 
-#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:20
+#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:21
 msgid "Your account"
 msgstr "Your account"
 

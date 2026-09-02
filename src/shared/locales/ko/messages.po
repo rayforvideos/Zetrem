@@ -107,7 +107,7 @@ msgid "{0} teammates"
 msgstr "팀원 {0}명"
 
 #. placeholder {0}: i18n._(ORIGIN[member.origin])
-#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:161
+#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:181
 msgid "{0}. Joins from the next session."
 msgstr "{0}. 다음 세션부터 함께합니다."
 
@@ -419,11 +419,11 @@ msgstr "둘러보기"
 msgid "Add one by address"
 msgstr "주소로 추가하기"
 
-#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:78
+#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:95
 msgid "Add teammate"
 msgstr "팀원 추가"
 
-#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:83
+#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:100
 msgid "Add your first teammate"
 msgstr "첫 팀원을 만들어 보세요"
 
@@ -653,7 +653,7 @@ msgstr "프로젝트 고르기"
 msgid "Choose what can run without asking, check your remaining limits along the bottom, and stop anything while it is running."
 msgstr "묻지 않고 실행해도 되는 범위를 정하고, 남은 사용량은 아래쪽에서 확인하고, 실행 중인 작업은 언제든 멈출 수 있습니다."
 
-#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:21
+#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:22
 #: src/widgets/team-sidebar/ui/TeamSidebar/TeamSidebar.tsx:68
 msgid "Claude Code"
 msgstr ""
@@ -918,7 +918,7 @@ msgstr "계정을 전환하지 못했습니다."
 msgid "Create"
 msgstr "만들기"
 
-#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:110
+#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:130
 msgid "Create a teammate and they'll show up here."
 msgstr "팀원을 만들면 여기에 나타납니다."
 
@@ -1223,7 +1223,7 @@ msgstr "이름을 지어주세요"
 msgid "Give them a name, say when to call them, and write their instructions. The orchestrator goes by the \"when to call them\" line to pick who gets the job."
 msgstr "이름을 정하고, 언제 부를지 적고, 지침을 씁니다. 오케스트레이터는 '언제 부를지' 줄을 보고 누구에게 맡길지 정합니다."
 
-#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:177
+#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:197
 msgid "Give them a task"
 msgstr "일을 맡기기"
 
@@ -1560,7 +1560,7 @@ msgstr "처리할 곳이 없습니다"
 msgid "No notes yet"
 msgstr "아직 노트가 없어요"
 
-#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:108
+#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:128
 msgid "No one here yet"
 msgstr "아직 아무도 없습니다"
 
@@ -1568,7 +1568,7 @@ msgstr "아직 아무도 없습니다"
 msgid "No tool by that name."
 msgstr "그런 이름의 도구가 없습니다."
 
-#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:162
+#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:182
 msgid "Not available this session. Unlock it in Settings."
 msgstr "이번 세션에서는 쓸 수 없습니다. 설정에서 켜세요."
 
@@ -1716,7 +1716,7 @@ msgstr "브랜치 선택"
 msgid "Pick a note"
 msgstr "노트를 고르세요"
 
-#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:70
+#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:87
 msgid "Pick a project first"
 msgstr "먼저 프로젝트를 고르세요"
 
@@ -1927,7 +1927,7 @@ msgstr "이름이 바뀜"
 msgid "Replace the running session so the next message goes on with the change"
 msgstr "실행 중인 세션을 새로 띄워, 다음 메시지부터 바뀐 설정으로 이어서 진행해요"
 
-#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:125
+#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:145
 msgid "Replace the running session so the next message goes on with them on the team"
 msgstr "실행 중인 세션을 새로 띄워, 다음 메시지부터 그들을 팀에 두고 이어서 진행해요"
 
@@ -1952,7 +1952,7 @@ msgid "Restart"
 msgstr "다시 시작"
 
 #: src/widgets/conversation/ui/RestartNote/RestartNote.tsx:17
-#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:128
+#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:148
 msgid "Restart session"
 msgstr "세션 다시 시작"
 
@@ -2055,7 +2055,7 @@ msgstr "검색"
 msgid "Searching"
 msgstr "찾는 중"
 
-#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:177
+#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:197
 msgid "See what they did"
 msgstr "무엇을 했는지 보기"
 
@@ -2099,6 +2099,10 @@ msgstr "설정 구역"
 #: src/widgets/status-bar/lib/strip/strip.ts:47
 msgid "share unknown"
 msgstr "사용량 알 수 없음"
+
+#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:112
+msgid "Shared"
+msgstr "공용"
 
 #: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:195
 msgid "Shared across projects"
@@ -2569,7 +2573,7 @@ msgid "This opens the browser to sign in again for this account. The session run
 msgstr "브라우저를 열어 이 계정으로 다시 로그인합니다. 여기서 실행 중인 세션은 멈춥니다."
 
 #: src/entities/plugin/lib/groups/groups.ts:11
-#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:19
+#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:20
 msgid "This project"
 msgstr "이 프로젝트"
 
@@ -2578,6 +2582,7 @@ msgid "This project is not a git repository."
 msgstr "이 프로젝트는 git 저장소가 아닙니다."
 
 #: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:197
+#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:118
 msgid "This project only"
 msgstr "이 프로젝트에서만"
 
@@ -2816,7 +2821,7 @@ msgstr "마크다운으로 적으세요"
 msgid "Write the first note"
 msgstr "첫 노트 쓰기"
 
-#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:84
+#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:101
 msgid "Write their instructions once and the orchestrator can call them in any project."
 msgstr "지침을 한 번 써두면 어느 프로젝트에서든 부를 수 있습니다."
 
@@ -2867,7 +2872,7 @@ msgstr "직접 멈췄습니다"
 msgid "You talk on the left"
 msgstr "왼쪽에서 대화합니다"
 
-#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:20
+#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:21
 msgid "Your account"
 msgstr "내 계정"
 

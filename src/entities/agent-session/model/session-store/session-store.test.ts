@@ -196,6 +196,23 @@ describe('sessionStore: closing the right call when an id comes round again', ()
   })
 })
 
+describe('sessionStore: a call keeps its raw input', () => {
+  it('stores the input given when the call opens', () => {
+    sessionStore.clear()
+    sessionStore.open(session('a'))
+    sessionStore.beginCall('a', { id: 'c1', line: 'Edit a.ts', input: { old_string: 'x' } })
+    expect(sessionStore.get()[0]?.stream[0]?.input).toEqual({ old_string: 'x' })
+  })
+
+  it('keeps the newer input when the same call is announced again', () => {
+    sessionStore.clear()
+    sessionStore.open(session('a'))
+    sessionStore.beginCall('a', { id: 'c1', line: 'Edit', input: { old_string: 'first' } })
+    sessionStore.beginCall('a', { id: 'c1', line: 'Edit a.ts', input: { old_string: 'second' } })
+    expect(sessionStore.get()[0]?.stream[0]?.input).toEqual({ old_string: 'second' })
+  })
+})
+
 describe('one call announced twice is one row, not two', () => {
   it('fills in the argument the first announcement did not have yet', () => {
     sessionStore.clear()

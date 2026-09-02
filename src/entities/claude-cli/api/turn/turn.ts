@@ -45,7 +45,7 @@ export function fromAssistant(event: Record<string, unknown>): TurnEvent[] {
   return out
 }
 
-function childLabel(block: Record<string, unknown>): string {
+export function childLabel(block: Record<string, unknown>): string {
   const input = block.input as Record<string, unknown> | undefined
   if (typeof input?.description === 'string' && input.description.length > 0)
     return input.description

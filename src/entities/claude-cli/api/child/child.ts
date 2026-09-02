@@ -1,6 +1,7 @@
 import type { ChildTurnEvent, Task } from './child.types'
 
 import { blocksIn, resultText, str, toolLine } from '../shared/shared'
+import { childLabel } from '../turn/turn'
 
 const TASK_STATES = ['pending', 'running', 'completed', 'failed', 'killed', 'paused'] as const
 
@@ -18,11 +19,24 @@ export function childSays(
     }
     if (block.type === 'tool_use' && typeof block.name === 'string') {
       const callId = typeof block.id === 'string' ? block.id : toolLine(block.name, block.input)
+      if ((block.name === 'Agent' || block.name === 'Task') && typeof block.id === 'string') {
+        const input = block.input as Record<string, unknown> | undefined
+        out.push({
+          type: 'childOpen',
+          toolUseId: block.id,
+          label: childLabel(block),
+          subagentType: typeof input?.subagent_type === 'string' ? input.subagent_type : '',
+          prompt: str(input?.prompt),
+          background: input?.run_in_background === true,
+          parentId: toolUseId,
+        })
+      }
       out.push({
         type: 'childStream',
         toolUseId,
         callId,
         line: toolLine(block.name, block.input),
+        input: block.input ?? null,
       })
       const sent = crewTalk(block)
       if (sent !== null) out.push({ type: 'childSent', toolUseId, callId, ...sent })

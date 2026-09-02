@@ -50,6 +50,7 @@ export function applyCrewEvent(turn: ClaudeTurnEvent, refs: AgentEventRefs): voi
         startedAtMs: Date.now(),
         detached: turn.background,
         ...(early === undefined ? {} : { taskId: early }),
+        ...(turn.parentId === undefined ? {} : { parentId: turn.parentId }),
       })
       return
     }
@@ -83,7 +84,11 @@ export function applyCrewEvent(turn: ClaudeTurnEvent, refs: AgentEventRefs): voi
     case 'childStream':
       if (!refs.childIds.has(turn.toolUseId) || closedForGood(turn.toolUseId)) return
       wake(turn.toolUseId)
-      sessionStore.beginCall(turn.toolUseId, { id: turn.callId, line: turn.line })
+      sessionStore.beginCall(turn.toolUseId, {
+        id: turn.callId,
+        line: turn.line,
+        input: turn.input,
+      })
       return
     case 'childSent': {
       if (!refs.childIds.has(turn.toolUseId)) return

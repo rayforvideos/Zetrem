@@ -13,6 +13,9 @@ import { CrewBoard } from '../CrewBoard/CrewBoard'
 
 type CrewSheetProps = {
   sessions: AgentSession[]
+  // A teammate's own subagents, keyed by the teammate's session id. Handed
+  // straight to CrewBoard, which is what actually renders an open teammate.
+  helpers?: Map<string, AgentSession[]>
   bar: Rect
   sheet: Rect
   nowMs: number
@@ -27,6 +30,7 @@ type CrewSheetProps = {
 
 export function CrewSheet({
   sessions,
+  helpers,
   bar,
   sheet,
   nowMs,
@@ -105,6 +109,7 @@ export function CrewSheet({
           <div className="zt-rise" style={riseStyle}>
             <CrewBoard
               sessions={sessions}
+              helpers={helpers}
               rect={{ x: 0, y: 0, w: sheet.w, h: sheet.h }}
               nowMs={nowMs}
               face={face}

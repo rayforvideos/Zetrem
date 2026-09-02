@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import type { SessionStatus, StatusState } from '@/entities/agent-session'
-import { sessionLive, stirring } from './live'
+import { anySessionLive, sessionLive, stirring } from './live'
 
 function status(session: StatusState['session']): StatusState {
   return {
@@ -63,5 +63,23 @@ describe('stirring: whether anyone is actually at work', () => {
 
   it('rests when every teammate has reported and stopped', () => {
     expect(stirring('waiting', [{ status: 'reported' }, { status: 'done' }])).toBe(false)
+  })
+})
+
+describe('anySessionLive: what an account change has to weigh', () => {
+  it('counts a reply running behind another chat, with this one idle', () => {
+    expect(anySessionLive(false, { other: 'working' })).toBe(true)
+  })
+
+  it('counts a background chat waiting on a permission', () => {
+    expect(anySessionLive(false, { other: 'asking' })).toBe(true)
+  })
+
+  it('still counts the chat on screen when nothing else is going', () => {
+    expect(anySessionLive(true, {})).toBe(true)
+  })
+
+  it('is nothing to warn about when every chat is idle', () => {
+    expect(anySessionLive(false, {})).toBe(false)
   })
 })

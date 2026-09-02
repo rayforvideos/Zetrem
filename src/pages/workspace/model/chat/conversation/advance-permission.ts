@@ -1,6 +1,7 @@
-import { conversation } from './conversation'
+import type { Conversation } from './conversation.types'
 
 export function advancePermission(
+  conversation: Conversation,
   asks: readonly { requestId: string; toolName: string; line: string; detail: string }[],
 ): void {
   const next = asks[0]

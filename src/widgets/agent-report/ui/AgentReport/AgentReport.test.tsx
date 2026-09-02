@@ -29,11 +29,12 @@ function session(overrides: Partial<AgentSession> = {}): AgentSession {
   }
 }
 
-function report(overrides: Partial<AgentSession> = {}): string {
+function report(overrides: Partial<AgentSession> = {}, helpers: AgentSession[] = []): string {
   return renderToStaticMarkup(
     <AgentReport
       session={session(overrides)}
       sessions={[session(overrides)]}
+      helpers={helpers}
       nowMs={61000}
       onClose={() => {}}
       onPick={() => {}}
@@ -91,5 +92,62 @@ describe('AgentReport: the work a fenced-off teammate left behind', () => {
 
   it('asks before taking anything back, so nothing is undone on one press', () => {
     expect(report({ agentId: 'a879059595fc11096' })).not.toContain('data-worktree-confirm')
+  })
+})
+
+describe('AgentReport: every edit shown whole', () => {
+  it('lays the written lines out under the call that wrote them', () => {
+    const wrote = call('c4', 'Write new.ts')
+    const html = report({
+      stream: [
+        {
+          ...wrote,
+          change: [
+            [
+              { kind: 'add', text: '첫 줄' },
+              { kind: 'add', text: '둘째 줄' },
+            ],
+          ],
+        },
+      ],
+    })
+    expect(html).toContain('data-change')
+    expect(html).toContain('첫 줄')
+    expect(html).toContain('둘째 줄')
+  })
+
+  it('leaves a call that changed nothing as a line of its own', () => {
+    expect(report()).not.toContain('data-change')
+  })
+})
+
+describe('AgentReport: the helpers the teammate called in', () => {
+  function helper(id: string, overrides: Partial<AgentSession> = {}): AgentSession {
+    return {
+      ...session(),
+      id,
+      label: '스타일 점검',
+      subagentType: 'Explore',
+      status: 'reported',
+      headline: '두 파일에서 같은 패턴을 찾았습니다',
+      stream: [],
+      transcript: [],
+      parentId: 's1',
+      ...overrides,
+    }
+  }
+
+  it('lists a helper with what it was for and what it came back with', () => {
+    const html = report({}, [helper('g1')])
+    expect(html).toContain('Their helpers')
+    expect(html).toContain('data-helper="g1"')
+    expect(html).toContain('Explore')
+    expect(html).toContain('스타일 점검')
+    expect(html).toContain('Reported back')
+    expect(html).toContain('두 파일에서 같은 패턴을 찾았습니다')
+  })
+
+  it('says nothing about helpers for a teammate that worked alone', () => {
+    expect(report()).not.toContain('Their helpers')
   })
 })

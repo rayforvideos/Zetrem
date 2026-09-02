@@ -4,6 +4,7 @@ export type ChatListProps = {
   chats: ChatSummary[]
   openId: string | null
   nowMs: number
+  live: Record<string, 'working' | 'asking'>
   onOpen(id: string): void
   onStart(): void
   onRemove(id: string): void
@@ -16,6 +17,7 @@ export type ChatListProps = {
 export type RowKit = {
   openId: string | null
   nowMs: number
+  live: Record<string, 'working' | 'asking'>
   names: string[]
   onOpen(id: string): void
   onRemove(id: string): void

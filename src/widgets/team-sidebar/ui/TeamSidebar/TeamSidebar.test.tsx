@@ -10,6 +10,7 @@ function bar(props: Partial<Parameters<typeof TeamSidebar>[0]> = {}): string {
       chats={{
         chats: [],
         openId: null,
+        live: {},
         onOpen: () => {},
         onStart: () => {},
         onRemove: () => {},
@@ -135,6 +136,7 @@ describe('chats gathered into folders, without hiding the rest', () => {
       chats: {
         chats: [chat('one', '출고'), chat('two', '출고')],
         openId: null,
+        live: {},
         onOpen: () => {},
         onStart: () => {},
         onRemove: () => {},
@@ -152,6 +154,7 @@ describe('chats gathered into folders, without hiding the rest', () => {
       chats: {
         chats: [chat('filed', '출고'), chat('loose', '')],
         openId: null,
+        live: {},
         onOpen: () => {},
         onStart: () => {},
         onRemove: () => {},
@@ -168,6 +171,7 @@ describe('chats gathered into folders, without hiding the rest', () => {
       chats: {
         chats: [chat('open', '출고')],
         openId: 'chat-open-a',
+        live: {},
         onOpen: () => {},
         onStart: () => {},
         onRemove: () => {},
@@ -184,6 +188,7 @@ describe('chats gathered into folders, without hiding the rest', () => {
       chats: {
         chats: [chat('a', ''), chat('b', '')],
         openId: null,
+        live: {},
         onOpen: () => {},
         onStart: () => {},
         onRemove: () => {},
@@ -209,6 +214,7 @@ describe('a way out when the folders stop helping', () => {
       chats: {
         chats,
         openId,
+        live: {},
         onOpen: () => {},
         onStart: () => {},
         onRemove: () => {},
@@ -252,6 +258,7 @@ describe('carrying a chat onto another to make a place for both', () => {
       chats: {
         chats,
         openId: null,
+        live: {},
         onOpen: () => {},
         onStart: () => {},
         onRemove: () => {},

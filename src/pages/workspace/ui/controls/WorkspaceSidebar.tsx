@@ -51,6 +51,7 @@ export function WorkspaceSidebar({
         chats={{
           chats: chat.chats,
           openId: layout.libraryOpen ? null : chat.openId,
+          live: chatting.working,
           // Coming back to the open chat (from the library) must not end its session.
           onOpen: (id) =>
             chatSwitch(id, chat.openId) === 'return' ? layout.leaveLibrary() : chat.open(id),

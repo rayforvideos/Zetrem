@@ -55,9 +55,15 @@ describe('runConfigOf', () => {
     expect(runConfigOf({ ...sound, people })?.people[0]).toHaveProperty('isolated', false)
   })
 
+  it('accepts a person without isolated and defaults to true', () => {
+    const half = [{ name: 'a', description: 'b', prompt: 'c', model: null, tools: [] }]
+    const result = runConfigOf({ ...sound, people: half })
+    expect(result).not.toBeNull()
+    expect(result?.people[0]).toHaveProperty('isolated', true)
+  })
+
   it('refuses a person whose worktree answer is not a boolean, since it decides a fence', () => {
     const half = [{ name: 'a', description: 'b', prompt: 'c', model: null, tools: [] }]
-    expect(runConfigOf({ ...sound, people: half })).toBeNull()
     expect(runConfigOf({ ...sound, people: [{ ...half[0], isolated: 'yes' }] })).toBeNull()
   })
 

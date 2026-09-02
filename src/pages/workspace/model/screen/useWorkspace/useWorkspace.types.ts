@@ -1,4 +1,5 @@
 import type { useLibraryNotes } from '../../library/useLibraryNotes'
+import type { useLibraryProposals } from '../../library/useLibraryProposals'
 import type { useWorkspace } from './useWorkspace'
 
 // The composition root's answer, one group per domain: a screen part takes
@@ -6,3 +7,5 @@ import type { useWorkspace } from './useWorkspace'
 export type Workspace = ReturnType<typeof useWorkspace>
 
 export type LibraryNotes = ReturnType<typeof useLibraryNotes>
+
+export type LibraryProposals = ReturnType<typeof useLibraryProposals>

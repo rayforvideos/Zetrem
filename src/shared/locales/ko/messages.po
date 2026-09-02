@@ -1552,7 +1552,7 @@ msgstr "아직 커밋이 없습니다. 첫 커밋과 함께 그래프가 시작�
 msgid "No connectors yet. Add one below, or bring over what Claude Desktop already has."
 msgstr "아직 커넥터가 없습니다. 아래에서 추가하거나 Claude Desktop에 있는 것을 가져오세요."
 
-#: src/pages/workspace/model/team/useAgentDefs.ts:103
+#: src/pages/workspace/model/team/useAgentDefs.ts:116
 msgid "No handler registered"
 msgstr "처리할 곳이 없습니다"
 
@@ -1663,7 +1663,7 @@ msgstr "에이전트가 이 메모가 필요한지 판단할 때 읽는 한 줄�
 msgid "One of you writes, one of you checks. Deal?"
 msgstr "한 명은 쓰고 한 명은 검토하고, 어때요?"
 
-#: src/pages/workspace/model/team/useAgentDefs.ts:98
+#: src/pages/workspace/model/team/useAgentDefs.ts:110
 msgid "Open a project before keeping someone for it."
 msgstr "프로젝트 전용 팀원을 두려면 먼저 프로젝트를 여세요."
 
@@ -1956,7 +1956,7 @@ msgstr "다시 시작"
 msgid "Restart session"
 msgstr "세션 다시 시작"
 
-#: src/pages/workspace/model/team/useAgentDefs.ts:104
+#: src/pages/workspace/model/team/useAgentDefs.ts:117
 msgid "Restart Zetrem. This version does not know about it yet."
 msgstr "Zetrem을 다시 시작하세요. 지금 버전은 아직 이 변경을 모릅니다."
 

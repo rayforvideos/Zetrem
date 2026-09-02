@@ -1552,7 +1552,7 @@ msgstr "No commits here yet. The graph starts with the first one."
 msgid "No connectors yet. Add one below, or bring over what Claude Desktop already has."
 msgstr "No connectors yet. Add one below, or bring over what Claude Desktop already has."
 
-#: src/pages/workspace/model/team/useAgentDefs.ts:103
+#: src/pages/workspace/model/team/useAgentDefs.ts:116
 msgid "No handler registered"
 msgstr "No handler registered"
 
@@ -1663,7 +1663,7 @@ msgstr "One line the agent reads to decide whether this matters"
 msgid "One of you writes, one of you checks. Deal?"
 msgstr "One of you writes, one of you checks. Deal?"
 
-#: src/pages/workspace/model/team/useAgentDefs.ts:98
+#: src/pages/workspace/model/team/useAgentDefs.ts:110
 msgid "Open a project before keeping someone for it."
 msgstr "Open a project before keeping someone for it."
 
@@ -1956,7 +1956,7 @@ msgstr "Restart"
 msgid "Restart session"
 msgstr "Restart session"
 
-#: src/pages/workspace/model/team/useAgentDefs.ts:104
+#: src/pages/workspace/model/team/useAgentDefs.ts:117
 msgid "Restart Zetrem. This version does not know about it yet."
 msgstr "Restart Zetrem. This version does not know about it yet."
 

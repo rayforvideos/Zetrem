@@ -1,11 +1,12 @@
 import { useCallback, useEffect, useRef } from 'react'
 import type { CSSProperties } from 'react'
 import type { Call } from '@/entities/agent-session'
-import { ToolIcon } from '@/entities/tool'
+import type { ChangeCount } from '@/entities/tool'
+import { ToolIcon, targetOf, verbOf } from '@/entities/tool'
 import { atEnd } from '@/shared/lib/scroll-state/scroll-state'
-import { targetOf, verbOf } from '@/entities/tool'
 import { shapeOfCall } from '../../../lib/now/now'
 import { fillOf } from '../../../lib/fill/fill'
+import { ChangeMark } from '../ChangeGlimpse/ChangeGlimpse'
 import { ICON_W, NowStage } from '../NowStage/NowStage'
 import { t } from '@lingui/core/macro'
 
@@ -51,13 +52,15 @@ export function CallLog({ calls, live, nowMs }: CallLogProps) {
         if (now && live) {
           return <NowStage key={call.id} call={call} live nowMs={nowMs} />
         }
-        return <Row key={call.id} call={call} lit={now} />
+        return <Row key={call.id} call={call} lit={now} count={call.count ?? null} />
       })}
     </div>
   )
 }
 
-function Row({ call, lit }: { call: Call; lit: boolean }) {
+// Exported so the left pane's Timeline can draw a call the same way the
+// right-hand log does, rather than keeping a second copy of this row.
+export function Row({ call, lit, count }: { call: Call; lit: boolean; count: ChangeCount | null }) {
   const shape = shapeOfCall(call.line)
   const target = shape.kind === 'plain' ? call.line : targetOf(shape)
   const fill = fillOf(call)
@@ -73,11 +76,14 @@ function Row({ call, lit }: { call: Call; lit: boolean }) {
       </span>
       <span style={verbStyle}>{verbOf(shape)}</span>
       <span style={targetStyle}>{target}</span>
-      {call.failed ? (
-        <span style={failedStyle}>{t`failed`}</span>
-      ) : (
-        call.note.length > 0 && <span style={noteStyle}>{call.note}</span>
-      )}
+      <span style={tailStyle}>
+        {count !== null && <ChangeMark count={count} />}
+        {call.failed ? (
+          <span style={failedStyle}>{t`failed`}</span>
+        ) : (
+          call.note.length > 0 && <span style={noteStyle}>{call.note}</span>
+        )}
+      </span>
     </div>
   )
 }
@@ -137,9 +143,16 @@ const targetStyle: CSSProperties = {
   overflow: 'hidden',
 }
 
-const noteStyle: CSSProperties = {
+const tailStyle: CSSProperties = {
   flex: '0 0 auto',
   marginLeft: 'auto',
+  display: 'flex',
+  alignItems: 'center',
+  gap: 6,
+}
+
+const noteStyle: CSSProperties = {
+  flex: '0 0 auto',
   paddingLeft: 6,
   opacity: 0.65,
   whiteSpace: 'nowrap',
@@ -147,7 +160,6 @@ const noteStyle: CSSProperties = {
 
 const failedStyle: CSSProperties = {
   flex: '0 0 auto',
-  marginLeft: 'auto',
   paddingLeft: 6,
   color: 'var(--color-removed)',
   whiteSpace: 'nowrap',

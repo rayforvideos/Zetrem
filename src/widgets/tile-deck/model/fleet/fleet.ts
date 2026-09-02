@@ -1,7 +1,10 @@
 import type { AgentSession } from '@/entities/agent-session'
+import { topLevel } from '@/entities/agent-session'
 
+// A subagent a teammate called in itself is shown folded into that teammate's
+// tile, so it never earns a tile — and never a seat in the deck — of its own.
 export function arrived(children: AgentSession[], placed: Set<string>): string[] {
-  return children
+  return topLevel(children)
     .filter((session) => session.status !== 'done' && !placed.has(session.id))
     .map((session) => session.id)
 }

@@ -1,9 +1,12 @@
 import { t } from '@lingui/core/macro'
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { conversation } from '../chat/conversation/conversation'
-import { statusStore } from '@/entities/agent-session'
+import { accountStatus } from '@/entities/agent-session'
+import type { Conversation } from '../chat/conversation/conversation.types'
 
-export function useCliUpdate(cliVersion: string | null): { updating: boolean; start(): void } {
+export function useCliUpdate(
+  cliVersion: string | null,
+  conversation: Conversation | null,
+): { updating: boolean; start(): void } {
   const [updating, setUpdating] = useState(false)
   const asked = useRef(false)
   const fallback = useRef<string | null>(null)
@@ -15,9 +18,9 @@ export function useCliUpdate(cliVersion: string | null): { updating: boolean; st
   const query = useCallback(async (): Promise<void> => {
     try {
       const { installed, latest, managedBy } = await window.desk.latestCliVersion()
-      statusStore.setUpdate({ current: installed ?? fallback.current, latest, managedBy })
+      accountStatus.setUpdate({ current: installed ?? fallback.current, latest, managedBy })
     } catch {
-      statusStore.setUpdate({ current: fallback.current, latest: null, managedBy: null })
+      accountStatus.setUpdate({ current: fallback.current, latest: null, managedBy: null })
     }
   }, [])
 
@@ -32,10 +35,10 @@ export function useCliUpdate(cliVersion: string | null): { updating: boolean; st
     window.desk
       .runCliUpdate()
       .then(({ output }) => {
-        conversation.system(output)
+        conversation?.system(output)
         void query()
       })
-      .catch(() => conversation.system(t`Could not start the update`))
+      .catch(() => conversation?.system(t`Could not start the update`))
       .finally(() => setUpdating(false))
   }
 

@@ -294,6 +294,12 @@ describe('the sidebar ends with a way into the library', () => {
     expect(bar()).not.toContain('data-library-pending')
   })
 
+  it('names the count for a screen reader too, not only the digit', () => {
+    const waiting = bar({ libraryPending: 2 })
+    expect(waiting).toContain('aria-label="2 suggestions waiting"')
+    expect(waiting).toContain('title="2 suggestions waiting"')
+  })
+
   it('marks that row as where you are while the library is open', () => {
     const out = bar({ libraryOpen: true })
     const at = out.indexOf('data-library-row')

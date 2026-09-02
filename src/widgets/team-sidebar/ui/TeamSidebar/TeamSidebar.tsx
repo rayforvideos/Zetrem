@@ -92,6 +92,9 @@ export function TeamSidebar({
           {libraryPending > 0 ? (
             <span
               data-library-pending
+              role="status"
+              aria-label={t`${libraryPending} suggestions waiting`}
+              title={t`${libraryPending} suggestions waiting`}
               className="flex-none rounded-full bg-current/15 px-1.5 text-xs tabular-nums"
             >
               {libraryPending}

@@ -1,11 +1,17 @@
-import type { LibraryHit, LibraryNote, LibraryNoteSummary } from '@/entities/library/model/note'
+import type {
+  LibraryHit,
+  LibraryNote,
+  LibraryNoteSummary,
+  LibraryProposal,
+} from '@/entities/library/model/note'
 
 export type LibraryWriteInput = { title: string; body: string; tags?: string[]; folder?: string }
 
 export type LibraryTools = {
   search(query: string, limit: number): Promise<LibraryHit[]>
   read(id: string): Promise<LibraryNote | null>
-  write(input: LibraryWriteInput): Promise<LibraryNote | null>
+  // A write only asks. What comes back is the ask, waiting for the person.
+  write(input: LibraryWriteInput): Promise<LibraryProposal | null>
   recent(limit: number): Promise<LibraryNoteSummary[]>
 }
 

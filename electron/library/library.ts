@@ -12,6 +12,12 @@ import { importOldNotes } from './library-import/library-import'
 import { mcpConfigFor, startLibraryMcp } from './library-mcp/library-mcp'
 import type { LibraryMcp, LibraryTools } from './library-mcp/library-mcp.types'
 import {
+  acceptProposal,
+  addProposal,
+  dismissProposal,
+  listProposals,
+} from './library-proposals/library-proposals'
+import {
   addFolder,
   createNote,
   fileNote,
@@ -34,6 +40,12 @@ const opening = new Map<string, Promise<DatabaseSync>>()
 
 function tellRenderers(): void {
   for (const win of BrowserWindow.getAllWindows()) push(win.webContents, 'library:changed', null)
+}
+
+// A suggestion is not a change to the library, so it gets a word of its own:
+// the card goes up, the notes stay as they were.
+function tellProposed(): void {
+  for (const win of BrowserWindow.getAllWindows()) push(win.webContents, 'library:proposed', null)
 }
 
 // Nothing happened when nothing was written, so the windows are left alone.
@@ -133,15 +145,14 @@ function toolsFor(workspace: string): LibraryTools {
     async read(id) {
       return readNote(await dbFor(workspace), id)
     },
+    // The library is the person's, so an agent's write only asks. The note is
+    // written when the person accepts, and not a moment before.
     async write(input) {
       const folder = input.folder ?? ''
       if (folder.length > 0 && !isFolderName(folder)) return null
-      const db = await dbFor(workspace)
-      const started = createNote(db, folder, input.title)
-      if (started === null) return null
-      return told(
-        writeNote(db, started.id, input.body, { tags: input.tags ?? [], source: 'agent' }),
-      )
+      const proposal = addProposal(await dbFor(workspace), { ...input, folder })
+      tellProposed()
+      return proposal
     },
     async recent(limit) {
       return recentNotes(await dbFor(workspace), limit)
@@ -223,6 +234,17 @@ export function registerLibrary(): void {
     const db = await currentDb()
     const note = readNote(db, id)
     return note === null ? [] : backlinksTo(db, note.title)
+  })
+  handle('library:proposals', async () => listProposals(await currentDb()))
+  handle('library:proposal-accept', async (_event, id) => {
+    const note = acceptProposal(await currentDb(), id)
+    if (note !== null) tellRenderers()
+    tellProposed()
+    return note
+  })
+  handle('library:proposal-dismiss', async (_event, id) => {
+    dismissProposal(await currentDb(), id)
+    tellProposed()
   })
   handle('library:folder-add', async (_event, name) => told(addFolder(await currentDb(), name)))
   handle('library:folder-rename', async (_event, name, next) =>

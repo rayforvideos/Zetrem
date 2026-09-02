@@ -5,6 +5,10 @@ import { summaryOf } from '@/entities/library/lib/summary/summary'
 import type { LibraryNote, LibraryNoteSummary } from '@/entities/library/model/note'
 import type { NoteRow } from './library-db.types'
 
+// The version an older build would refuse to understand. A table added here
+// costs nothing to a file written before it existed — `IF NOT EXISTS` lays it
+// on the next open, and an older build simply never looks — so an addition
+// leaves the number alone.
 const SCHEMA_VERSION = '1'
 const NAME_MAX = 40
 const HASH_CHARS = 8
@@ -30,6 +34,14 @@ const SCHEMA = `
     updated_at_ms INTEGER NOT NULL
   );
   CREATE INDEX IF NOT EXISTS notes_folder ON notes (folder);
+  CREATE TABLE IF NOT EXISTS proposals (
+    id TEXT PRIMARY KEY,
+    folder TEXT NOT NULL,
+    title TEXT NOT NULL,
+    body TEXT NOT NULL,
+    tags TEXT NOT NULL,
+    proposed_at_ms INTEGER NOT NULL
+  );
   CREATE TABLE IF NOT EXISTS links (from_id TEXT NOT NULL, to_title TEXT NOT NULL);
   CREATE INDEX IF NOT EXISTS links_to_title ON links (to_title);
   CREATE VIRTUAL TABLE IF NOT EXISTS notes_fts USING fts5 (id UNINDEXED, title, body, tags);
@@ -122,7 +134,7 @@ function atLeastAtOnce(db: DatabaseSync, work: () => void): void {
   }
 }
 
-function tagsOf(raw: string): string[] {
+export function tagsOf(raw: string): string[] {
   try {
     const parsed: unknown = JSON.parse(raw)
     return Array.isArray(parsed) ? parsed.filter((one) => typeof one === 'string') : []

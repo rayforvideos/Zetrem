@@ -17,12 +17,15 @@ export function useNudge(
   const askedFor = useRef<string | null>(null)
   // The timer reads these at fire time, not at schedule time, so a change
   // mid-grace (e.g. the orchestrator asks for permission) is honoured.
+  // Written after commit, not during render, as the other hooks here do.
   const wantedRef = useRef(wanted)
-  wantedRef.current = wanted
   const permissionRef = useRef(permission)
-  permissionRef.current = permission
   const troubleRef = useRef(trouble)
-  troubleRef.current = trouble
+  useEffect(() => {
+    wantedRef.current = wanted
+    permissionRef.current = permission
+    troubleRef.current = trouble
+  })
 
   useEffect(() => {
     const justSettled = wasBusy.current && !busy

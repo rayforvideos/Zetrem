@@ -136,19 +136,33 @@ describe('someone you hired can be edited or let go', () => {
   })
 })
 
-describe('a row says when someone belongs to this project alone', () => {
-  it('marks the project one, since the rest of the team follows you everywhere', () => {
-    expect(row(list({ members: [member({ origin: 'project' })] }))).toContain('This project')
+describe('the list splits into sections once someone belongs to this project alone', () => {
+  it('stays a single flat list, unchanged, when nobody is project-only', () => {
+    const html = list({ members: [member({ origin: 'user' })] })
+    expect(html).not.toContain('data-team-section')
   })
 
-  it('says nothing on a shared row, or the mark would mean nothing', () => {
-    expect(row(list({ members: [member({ origin: 'user' })] }))).not.toContain('This project')
+  it('opens a shared section and a project section, in that order, once one exists', () => {
+    const html = list({
+      members: [
+        member({ type: 'a', name: 'a', origin: 'user' }),
+        member({ type: 'b', name: 'b', origin: 'project' }),
+      ],
+    })
+    const sharedAt = html.indexOf('data-team-section="shared"')
+    const projectAt = html.indexOf('data-team-section="project"')
+    expect(sharedAt).toBeGreaterThan(-1)
+    expect(projectAt).toBeGreaterThan(sharedAt)
+    expect(html.slice(sharedAt, projectAt)).toContain('data-member="a"')
+    expect(html.slice(projectAt)).toContain('data-member="b"')
   })
 
-  it('keeps the mark quiet beside the name rather than starting a section', () => {
-    const html = row(list({ members: [member({ origin: 'project' })] }))
-    const at = html.indexOf('data-scope="project"')
-    expect(html.slice(at, html.indexOf('</span>', at))).toContain('text-muted-foreground')
+  it('names the sections quietly, the way the chat list names its groups', () => {
+    const html = list({
+      members: [member({ type: 'a', origin: 'user' }), member({ type: 'b', origin: 'project' })],
+    })
+    expect(html).toContain('Shared')
+    expect(html).toContain('This project only')
   })
 })
 

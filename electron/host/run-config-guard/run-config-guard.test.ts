@@ -7,7 +7,7 @@ const sound = {
   effort: 'default',
   persona: 'ignored here',
   resume: null,
-  people: [{ name: 'a', description: 'b', prompt: 'c', model: null, tools: [] }],
+  people: [{ name: 'a', description: 'b', prompt: 'c', model: null, tools: [], isolated: true }],
   lock: null,
 }
 
@@ -46,6 +46,25 @@ describe('runConfigOf', () => {
   it('refuses a resume that is not a session id string', () => {
     expect(runConfigOf({ ...sound, resume: 7 })).toBeNull()
     expect(runConfigOf({ ...sound, resume: undefined })?.resume).toBeNull()
+  })
+
+  it("keeps each person's own worktree answer, which main reads to brief the orchestrator", () => {
+    const people = [
+      { name: 'a', description: 'b', prompt: 'c', model: null, tools: [], isolated: false },
+    ]
+    expect(runConfigOf({ ...sound, people })?.people[0]).toHaveProperty('isolated', false)
+  })
+
+  it('accepts a person without isolated and defaults to true', () => {
+    const half = [{ name: 'a', description: 'b', prompt: 'c', model: null, tools: [] }]
+    const result = runConfigOf({ ...sound, people: half })
+    expect(result).not.toBeNull()
+    expect(result?.people[0]).toHaveProperty('isolated', true)
+  })
+
+  it('refuses a person whose worktree answer is not a boolean, since it decides a fence', () => {
+    const half = [{ name: 'a', description: 'b', prompt: 'c', model: null, tools: [] }]
+    expect(runConfigOf({ ...sound, people: [{ ...half[0], isolated: 'yes' }] })).toBeNull()
   })
 
   it('reads the roster and the lock by shape', () => {

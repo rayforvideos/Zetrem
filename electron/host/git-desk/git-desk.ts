@@ -19,8 +19,8 @@ import { lost, won } from '@/shared/lib/outcome/outcome'
 import type { Outcome } from '@/shared/lib/outcome/outcome.types'
 import { handle, push } from '../../ipc/ipc'
 import { recallProject } from '../../store/project-memory/project-memory'
-import { runGit } from '../worktree-review/worktree-review'
-import type { GitReply } from '../worktree-review/worktree-review.types'
+import { runGit } from '../../shell/git-run/git-run'
+import type { GitReply } from '../../shell/git-run/git-run.types'
 import type { DiffSide, GitDeps } from './git-desk.types'
 
 const execFileAsync = promisify(execFile)

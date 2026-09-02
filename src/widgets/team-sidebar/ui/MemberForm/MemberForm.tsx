@@ -19,6 +19,7 @@ import { Input } from '@/shared/ui/input'
 import { Label } from '@/shared/ui/label'
 import { Popover, PopoverContent, PopoverTrigger } from '@/shared/ui/popover'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/shared/ui/select'
+import { Switch } from '@/shared/ui/switch'
 import { Textarea } from '@/shared/ui/textarea'
 import {
   characterFor,
@@ -27,6 +28,7 @@ import {
   toggled,
   toolSummary,
 } from '../../lib/member-draft/member-draft'
+import { writes } from '@/entities/tool'
 import { CharacterPicker } from '../CharacterPicker/CharacterPicker'
 import { ToolPicker } from '../ToolPicker/ToolPicker'
 import { useScrollState } from '@/shared/lib/scroll-state/useScrollState'
@@ -46,6 +48,11 @@ type MemberFormProps = {
   onCancel(): void
 }
 
+type NoteMeta = {
+  children: React.ReactNode
+  tone?: 'warn'
+}
+
 export function MemberForm({
   initial,
   knownTools,
@@ -61,6 +68,7 @@ export function MemberForm({
   const [tools, setTools] = useState(initial?.tools ?? [])
   const [knowledge, setKnowledge] = useState(initial?.knowledge ?? [])
   const [source, setSource] = useState<AgentSource>(initial?.source ?? 'user')
+  const [worktree, setWorktree] = useState(initial?.worktree ?? true)
   const [picked, setPicked] = useState<CharacterId | null>(initialCharacter(initial))
   const [missing, setMissing] = useState<string | null>(null)
   const [sheet, setSheet] = useState<HTMLElement | null>(null)
@@ -116,7 +124,7 @@ export function MemberForm({
             }
             onSubmit(
               draftFrom(
-                { name, description, prompt, character, model, tools, knowledge, source },
+                { name, description, prompt, character, model, tools, knowledge, worktree, source },
                 initial,
               ),
             )
@@ -229,6 +237,14 @@ export function MemberForm({
                     />
                   </PopoverContent>
                 </Popover>
+              </Row>
+
+              <Row label={t`Own workspace`} htmlFor="member-worktree">
+                <Switch id="member-worktree" checked={worktree} onCheckedChange={setWorktree} />
+                <Note>{t`Works in a git worktree of its own; changes come back as a branch.`}</Note>
+                {!worktree && writes(tools) && (
+                  <Note tone="warn">{t`Writes straight into the shared working tree.`}</Note>
+                )}
               </Row>
             </aside>
 
@@ -398,6 +414,17 @@ function Row({
   )
 }
 
-function Note({ children }: { children: React.ReactNode }) {
-  return <p className="text-xs leading-snug text-muted-foreground">{children}</p>
+// A note under a field. 'warn' is for one that says what the setting above it
+// gives up, which reads as the same aside as the rest until it is coloured.
+function Note({ children, tone }: NoteMeta) {
+  return (
+    <p
+      className={cn(
+        'text-xs leading-snug',
+        tone === 'warn' ? 'text-removed' : 'text-muted-foreground',
+      )}
+    >
+      {children}
+    </p>
+  )
 }

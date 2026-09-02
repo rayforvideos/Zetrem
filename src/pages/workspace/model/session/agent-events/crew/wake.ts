@@ -1,7 +1,7 @@
-import { sessionStore } from '@/entities/agent-session'
+import type { SessionStore } from '@/entities/agent-session'
 
-export function wake(toolUseId: string): void {
-  const status = sessionStore.find(toolUseId)?.status
+export function wake(children: SessionStore, toolUseId: string): void {
+  const status = children.find(toolUseId)?.status
   if (status === undefined || status === 'working') return
-  sessionStore.patch(toolUseId, { status: 'working', endedAtMs: undefined })
+  children.patch(toolUseId, { status: 'working', endedAtMs: undefined })
 }

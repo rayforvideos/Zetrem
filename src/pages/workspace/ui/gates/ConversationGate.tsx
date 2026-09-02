@@ -1,26 +1,38 @@
 import type { ReactNode } from 'react'
 import { t } from '@lingui/core/macro'
+import { helpersOf, topLevel } from '@/entities/agent-session'
 import { hintDue, hintSeen } from '@/entities/settings'
 import { AgentReport } from '@/widgets/agent-report'
 import { awayOf, spokeAtMs, Composer, ConversationPane, RestartNote } from '@/widgets/conversation'
 import { useLibraryAccess } from '../../model/library/useLibraryAccess'
-import type { LibraryNotes, Workspace } from '../../model/screen/useWorkspace/useWorkspace.types'
+import type {
+  LibraryNotes,
+  LibraryProposals,
+  Workspace,
+} from '../../model/screen/useWorkspace/useWorkspace.types'
 
 // The conversation gate: the transcript, the composer under it, and the
 // teammate report to the side.
 export function ConversationGate({
   work,
   library,
+  proposals,
+  chatTitleOf,
   sidebar,
 }: {
   work: Workspace
   library: LibraryNotes
+  proposals: LibraryProposals
+  chatTitleOf(session: string): string | null
   sidebar: ReactNode
 }) {
   const { chatting, prefs, team } = work
   const { agent, attach, children, conv, focus, nowMs, status } = chatting
   const { settings, update, reload } = prefs
   const libraryAccess = useLibraryAccess(work.projects.current?.path ?? null, chatting.live)
+  // The subagents a teammate called in belong to that teammate's report, not
+  // to the row of teammates the conversation is waiting on.
+  const teammates = topLevel(children)
 
   return (
     <ConversationPane
@@ -28,8 +40,12 @@ export function ConversationGate({
       status={conv.status}
       statusState={status}
       permission={conv.permission}
+      proposals={proposals.proposals}
+      chatTitleOf={chatTitleOf}
+      onAcceptProposal={proposals.accept}
+      onDismissProposal={proposals.dismiss}
       you={{ name: team.yourName, face: settings.userFace }}
-      away={agent.running ? awayOf(children, spokeAtMs(conv.turns)) : null}
+      away={agent.running ? awayOf(teammates, spokeAtMs(conv.turns)) : null}
       chores={conv.chores}
       nowMs={nowMs}
       hint={hintDue('ask-whole-job', settings.hintsSeen, conv.turns.length === 0)}
@@ -88,7 +104,8 @@ export function ConversationGate({
         chatting.openAgent === null ? null : (
           <AgentReport
             session={chatting.openAgent}
-            sessions={children}
+            sessions={teammates}
+            helpers={helpersOf(children, chatting.openAgent.id)}
             nowMs={nowMs}
             onClose={() => focus.pick(null)}
             onPick={focus.pick}

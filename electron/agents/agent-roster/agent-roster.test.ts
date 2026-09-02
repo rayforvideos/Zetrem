@@ -20,6 +20,7 @@ const draft: AgentDefDraft = {
   tools: ['Read'],
   knowledge: [],
   prompt: 'look closely',
+  worktree: true,
   source: 'user',
 }
 

@@ -92,6 +92,7 @@ export function useAgentDefs(projectPath: string | null): TeamSource {
         knowledge: def.knowledge,
         prompt: def.prompt,
         source: def.source,
+        worktree: def.worktree,
       },
     ]),
   )

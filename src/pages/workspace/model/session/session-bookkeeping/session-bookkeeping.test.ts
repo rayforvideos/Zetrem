@@ -1,10 +1,22 @@
-import { beforeEach, describe, expect, it } from 'vitest'
-import { sessionStore, statusStore } from '@/entities/agent-session'
+import { describe, expect, it } from 'vitest'
+import { createChatStatus, createSessionStore } from '@/entities/agent-session'
 import type { AgentSession } from '@/entities/agent-session'
 import type { ExitReason } from '@/entities/claude-cli'
-import { conversation } from '../../chat/conversation/conversation'
+import { createConversation } from '../../chat/conversation/conversation'
 import type { AgentEventRefs } from '../agent-events/agent-events.types'
+import { freshRefs } from '../agent-events/refs/refs'
 import { beginSession, closeSession } from './session-bookkeeping'
+
+function fakeRefs(): AgentEventRefs {
+  return freshRefs(
+    {
+      conversation: createConversation(),
+      status: createChatStatus(),
+      children: createSessionStore(),
+    },
+    { onModelRefused: () => {}, onLimit: () => {} },
+  )
+}
 
 function ask(requestId: string): AgentEventRefs['asks'][number] {
   return { requestId, toolName: 'Bash', line: 'rm -rf /', detail: '', input: {} }
@@ -29,75 +41,77 @@ function child(id: string): AgentSession {
 
 const crashed: ExitReason = { code: 'cli-said', said: 'the CLI fell over' }
 
-beforeEach(() => {
-  conversation.reset()
-  statusStore.reset()
-  sessionStore.clear()
-})
-
 describe('closeSession: what the exit leaves behind', () => {
   it('drops an ask nobody can answer any more, card and queue alike', () => {
-    const asks = [ask('req-1'), ask('req-2')]
-    conversation.setPermission({
+    const refs = fakeRefs()
+    refs.asks.push(ask('req-1'), ask('req-2'))
+    refs.stores.conversation.setPermission({
       requestId: 'req-1',
       toolName: 'Bash',
       line: 'rm -rf /',
       detail: '',
     })
 
-    closeSession({ reason: null, stopped: true, asks, childIds: new Set() })
+    closeSession(refs, { reason: null, stopped: true })
 
-    expect(asks, 'nobody can answer a session that has gone').toEqual([])
-    expect(conversation.get().permission).toBeNull()
-    expect(conversation.get().status).toBe('done')
+    expect(refs.asks, 'nobody can answer a session that has gone').toEqual([])
+    expect(refs.stores.conversation.get().permission).toBeNull()
+    expect(refs.stores.conversation.get().status).toBe('done')
   })
 
   it('calls a crash trouble, and says what happened', () => {
-    closeSession({ reason: crashed, stopped: false, asks: [], childIds: new Set() })
+    const refs = fakeRefs()
+    closeSession(refs, { reason: crashed, stopped: false })
 
-    expect(conversation.get().trouble).toBe(true)
-    expect(conversation.get().turns.at(-1)?.text).toContain('the CLI fell over')
+    expect(refs.stores.conversation.get().trouble).toBe(true)
+    expect(refs.stores.conversation.get().turns.at(-1)?.text).toContain('the CLI fell over')
   })
 
   it('does not call a stop you asked for trouble', () => {
-    closeSession({ reason: crashed, stopped: true, asks: [], childIds: new Set() })
+    const refs = fakeRefs()
+    closeSession(refs, { reason: crashed, stopped: true })
 
-    expect(conversation.get().trouble, 'a stop you asked for is not trouble').toBe(false)
-    expect(conversation.get().turns.at(-1)?.text).toContain('the CLI fell over')
+    expect(refs.stores.conversation.get().trouble, 'a stop you asked for is not trouble').toBe(
+      false,
+    )
+    expect(refs.stores.conversation.get().turns.at(-1)?.text).toContain('the CLI fell over')
   })
 
   it('says nothing when the exit had nothing to report', () => {
-    closeSession({ reason: null, stopped: false, asks: [], childIds: new Set() })
+    const refs = fakeRefs()
+    closeSession(refs, { reason: null, stopped: false })
 
-    expect(conversation.get().turns).toEqual([])
-    expect(conversation.get().trouble).toBe(false)
+    expect(refs.stores.conversation.get().turns).toEqual([])
+    expect(refs.stores.conversation.get().trouble).toBe(false)
   })
 
   it('stops the clock, finishes the children, and clears the chores', () => {
-    statusStore.apply({ type: 'activity', activity: 'requesting' })
-    sessionStore.open(child('a'))
-    sessionStore.open(child('b'))
-    conversation.startChore('chore-1', 'watching the build')
-    const childIds = new Set(['a'])
+    const refs = fakeRefs()
+    refs.stores.status.apply({ type: 'activity', activity: 'requesting' })
+    refs.stores.children.open(child('a'))
+    refs.stores.children.open(child('b'))
+    refs.stores.conversation.startChore('chore-1', 'watching the build')
+    refs.childIds.add('a')
 
-    closeSession({ reason: null, stopped: true, asks: [], childIds })
+    closeSession(refs, { reason: null, stopped: true })
 
-    expect(statusStore.get().activity).toBe('idle')
-    expect(sessionStore.find('a')?.status).toBe('done')
+    expect(refs.stores.status.get().activity).toBe('idle')
+    expect(refs.stores.children.find('a')?.status).toBe('done')
     expect(
-      sessionStore.find('b')?.status,
+      refs.stores.children.find('b')?.status,
       'only the children this session sent out are ended',
     ).toBe('working')
-    expect(childIds.size).toBe(0)
-    expect(conversation.get().chores).toEqual([])
+    expect(refs.childIds.size).toBe(0)
+    expect(refs.stores.conversation.get().chores).toEqual([])
   })
 
   it('settles a half-written turn before the exit line lands after it', () => {
-    conversation.delta('halfway through a thought')
+    const refs = fakeRefs()
+    refs.stores.conversation.delta('halfway through a thought')
 
-    closeSession({ reason: crashed, stopped: false, asks: [], childIds: new Set() })
+    closeSession(refs, { reason: crashed, stopped: false })
 
-    const turns = conversation.get().turns
+    const turns = refs.stores.conversation.get().turns
     expect(turns[0]?.text).toBe('halfway through a thought')
     expect(turns[0]?.draft).toBe('')
     expect(turns[1]?.role, 'what was being said settles first, then the exit line').toBe('system')
@@ -106,81 +120,62 @@ describe('closeSession: what the exit leaves behind', () => {
 
 describe('beginSession: the slate the next run starts on', () => {
   it('clears everything the last run left in the refs', () => {
-    const asks = [ask('req-1')]
-    const sends = new Map([['tool-1', { to: 'agent-a', message: '이어서 부탁해' }]])
-    const childIds = new Set(['a'])
-    const limits = new Map([['seven_day', 'allowed_warning 1787173200000 false']])
-    sessionStore.open(child('a'))
+    const refs = fakeRefs()
+    refs.asks.push(ask('req-1'))
+    refs.sends.set('tool-1', { to: 'agent-a', message: '이어서 부탁해' })
+    refs.childIds.add('a')
+    refs.limits.set('seven_day', 'allowed_warning 1787173200000 false')
+    refs.stores.children.open(child('a'))
 
-    beginSession({ resumed: false, asks, sends, childIds, limits })
+    beginSession(refs, false)
 
-    expect(asks).toEqual([])
-    expect(sends.size).toBe(0)
-    expect(childIds.size).toBe(0)
-    expect(limits.size).toBe(0)
-    expect(sessionStore.get()).toEqual([])
+    expect(refs.asks).toEqual([])
+    expect(refs.sends.size).toBe(0)
+    expect(refs.childIds.size).toBe(0)
+    expect(refs.limits.size).toBe(0)
+    expect(refs.stores.children.get()).toEqual([])
   })
 
   it('clears a chore the dead session never got to finish', () => {
     // A killed CLI takes its background commands with it, but never sends
     // task_updated. The relaunch path skips closeSession, so the new session
     // must not inherit a banner ticking over a process that no longer exists.
-    conversation.startChore('chore-1', 'Run coverage and i18n catalog check')
+    const refs = fakeRefs()
+    refs.stores.conversation.startChore('chore-1', 'Run coverage and i18n catalog check')
 
-    beginSession({
-      resumed: true,
-      asks: [],
-      sends: new Map(),
-      childIds: new Set(),
-      limits: new Map(),
-    })
+    beginSession(refs, true)
 
-    expect(conversation.get().chores).toEqual([])
+    expect(refs.stores.conversation.get().chores).toEqual([])
   })
 
   it('starts working with no trouble showing', () => {
-    conversation.setTrouble(true)
+    const refs = fakeRefs()
+    refs.stores.conversation.setTrouble(true)
 
-    beginSession({
-      resumed: false,
-      asks: [],
-      sends: new Map(),
-      childIds: new Set(),
-      limits: new Map(),
-    })
+    beginSession(refs, false)
 
-    expect(conversation.get().status).toBe('working')
+    expect(refs.stores.conversation.get().status).toBe('working')
     expect(
-      conversation.get().trouble,
+      refs.stores.conversation.get().trouble,
       "yesterday's trouble does not follow a new conversation",
     ).toBe(false)
   })
 
   it('keeps what the chat already cost when it is being resumed', () => {
-    statusStore.restoreChat({ usd: 0.58 })
+    const refs = fakeRefs()
+    refs.stores.status.restoreChat({ usd: 0.58 })
 
-    beginSession({
-      resumed: true,
-      asks: [],
-      sends: new Map(),
-      childIds: new Set(),
-      limits: new Map(),
-    })
+    beginSession(refs, true)
 
-    expect(statusStore.get().cost.usd).toBe(0.58)
+    expect(refs.stores.status.get().cost.usd).toBe(0.58)
   })
 
   it('starts a fresh chat from nothing', () => {
-    statusStore.restoreChat({ usd: 0.58 })
+    const refs = fakeRefs()
+    refs.stores.status.restoreChat({ usd: 0.58 })
 
-    beginSession({
-      resumed: false,
-      asks: [],
-      sends: new Map(),
-      childIds: new Set(),
-      limits: new Map(),
-    })
+    beginSession(refs, false)
 
-    expect(statusStore.get().cost.usd).toBe(0)
+    expect(refs.stores.status.get().cost.usd).toBe(0)
   })
 })

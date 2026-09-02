@@ -73,13 +73,13 @@ async function ask<T>(channel: string, ...args: unknown[]): Promise<T> {
   return (await handler({}, ...args)) as T
 }
 
-function call(library: { url: string; headers: { Authorization: string } }, body: unknown) {
+function call(library: { url: string; headers: Record<string, string> }, body: unknown) {
   return fetch(library.url, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
       Accept: 'application/json, text/event-stream',
-      Authorization: library.headers.Authorization,
+      ...library.headers,
     },
     body: JSON.stringify(body),
   })
@@ -88,7 +88,7 @@ function call(library: { url: string; headers: { Authorization: string } }, body
 function serverIn(args: string[]): {
   type: string
   url: string
-  headers: { Authorization: string }
+  headers: Record<string, string>
 } {
   return JSON.parse(args[1] as string).mcpServers.library
 }
@@ -111,7 +111,7 @@ afterEach(async () => {
 
 describe('where a library is kept', () => {
   it('holds the notes in the app, under a file named after the project', async () => {
-    await librarySessionArgs(workspace)
+    await librarySessionArgs(workspace, '')
     expect(existsSync(fileFor(workspace))).toBe(true)
     expect(existsSync(join(workspace, '.zetrem'))).toBe(false)
   })
@@ -120,15 +120,15 @@ describe('where a library is kept', () => {
     const stale = join(userData, 'library-index')
     mkdirSync(stale, { recursive: true })
     writeFileSync(join(stale, 'abc.sqlite'), 'stale')
-    await librarySessionArgs(workspace)
+    await librarySessionArgs(workspace, '')
     expect(existsSync(stale)).toBe(false)
   })
 
   it('keeps a file that is not a database aside rather than throwing it away', async () => {
-    await librarySessionArgs(workspace)
+    await librarySessionArgs(workspace, '')
     closeLibraries()
     writeFileSync(fileFor(workspace), 'not a database')
-    await librarySessionArgs(workspace)
+    await librarySessionArgs(workspace, '')
     const kept = readdirSync(join(userData, 'library')).filter((name) => name.includes('.broken-'))
     expect(kept).toHaveLength(1)
     expect(readFileSync(join(userData, 'library', kept[0] as string), 'utf8')).toBe(
@@ -141,7 +141,7 @@ describe('where a library is kept', () => {
     // A directory standing where the file should be cannot be opened either,
     // but nothing about it says the notes are rubble.
     mkdirSync(fileFor(workspace), { recursive: true })
-    await expect(librarySessionArgs(workspace)).rejects.toThrow()
+    await expect(librarySessionArgs(workspace, '')).rejects.toThrow()
     expect(readdirSync(join(userData, 'library')).some((name) => name.includes('.broken'))).toBe(
       false,
     )
@@ -156,7 +156,7 @@ describe('a library the project kept as files', () => {
       join(root, 'plans', 'auth.md'),
       '---\ntitle: Auth\ntags: [chosen]\n---\nWe went with sessions.\n',
     )
-    await librarySessionArgs(workspace)
+    await librarySessionArgs(workspace, '')
     const listing = held(workspace)
     expect(listing.folders).toEqual([{ name: 'plans' }])
     expect(listing.notes.map((one) => one.id)).toEqual(['plans/auth.md'])
@@ -166,7 +166,7 @@ describe('a library the project kept as files', () => {
 
 describe('what a session is handed', () => {
   it('adds an MCP config that points at a live server, and no directory', async () => {
-    const args = await librarySessionArgs(workspace)
+    const args = await librarySessionArgs(workspace, '')
     expect(args).toHaveLength(2)
     expect(args[0]).toBe('--mcp-config')
     const library = serverIn(args)
@@ -180,28 +180,132 @@ describe('what a session is handed', () => {
     expect(said.result.instructions).toContain('library_search')
   })
 
-  it('writes an agent note through the tool, into this workspace, and says so', async () => {
-    const library = serverIn(await librarySessionArgs(workspace))
+  // The screen works in the scratch workspace while no project is picked, so a
+  // suggestion the screen is meant to see has to be raised in that same library.
+  async function propose(
+    title = 'From the agent',
+    sessionId = '',
+    args: Record<string, unknown> = {},
+  ): Promise<void> {
+    await ask('library:list')
+    const library = serverIn(await librarySessionArgs(scratch(), sessionId))
     const reply = await call(library, {
       jsonrpc: '2.0',
       id: 2,
       method: 'tools/call',
       params: {
         name: 'library_write',
-        arguments: { title: 'From the agent', body: 'It learned this.', tags: ['probe'] },
+        arguments: { title, body: 'It learned this.', tags: ['probe'], ...args },
       },
     })
     const body = (await reply.json()) as { result: { isError?: boolean } }
     expect(body.result.isError).toBeUndefined()
-    const [note] = held(workspace).notes
-    expect(note).toMatchObject({ id: 'From the agent.md', tags: ['probe'], source: 'agent' })
+  }
+
+  it('only proposes through the tool: the library is untouched until a person says so', async () => {
+    await propose()
+    expect(held(scratch()).notes).toEqual([])
+    const waiting = await ask<{ id: string; title: string; tags: string[] }[]>('library:proposals')
+    expect(waiting).toHaveLength(1)
+    expect(waiting[0]).toMatchObject({ title: 'From the agent', tags: ['probe'], folder: '' })
     expect(boundary.told).toBeGreaterThan(0)
+  })
+
+  it('carries the session the config was built for, and the name it was asked under', async () => {
+    await propose('From the agent', 'agent-42', { by: 'React 개발자' })
+    const [waiting] = await ask<{ session: string; by: string }[]>('library:proposals')
+    expect(waiting).toMatchObject({ session: 'agent-42', by: 'React 개발자' })
+  })
+
+  it('reads no session when nobody gave one, as from the probe', async () => {
+    await propose()
+    const [waiting] = await ask<{ session: string; by: string }[]>('library:proposals')
+    expect(waiting).toMatchObject({ session: '', by: '' })
+  })
+
+  it('ignores a session header the CLI never sends, and takes the config one instead', async () => {
+    await ask('library:list')
+    const library = serverIn(await librarySessionArgs(scratch(), 'agent-1'))
+    const reply = await call(
+      { ...library, headers: { ...library.headers, 'X-Zetrem-Session': 'not; a valid id' } },
+      {
+        jsonrpc: '2.0',
+        id: 2,
+        method: 'tools/call',
+        params: {
+          name: 'library_write',
+          arguments: { title: 'Bad header', body: 'x' },
+        },
+      },
+    )
+    expect(
+      ((await reply.json()) as { result: { isError?: boolean } }).result.isError,
+    ).toBeUndefined()
+    const [waiting] = await ask<{ session: string }[]>('library:proposals')
+    expect(waiting?.session).toBe('')
+  })
+
+  it('writes the note the moment the person accepts, and stops waiting', async () => {
+    await propose()
+    const [waiting] = await ask<{ id: string }[]>('library:proposals')
+    const note = await ask<LibraryNote | null>('library:proposal-accept', waiting?.id)
+    expect(note).toMatchObject({ id: 'From the agent.md', tags: ['probe'], source: 'agent' })
+    expect(held(scratch()).notes.map((one) => one.id)).toEqual(['From the agent.md'])
+    expect(await ask('library:proposals')).toEqual([])
+  })
+
+  it('drops the suggestion the person waves off, writing nothing', async () => {
+    await propose()
+    const [waiting] = await ask<{ id: string }[]>('library:proposals')
+    await ask('library:proposal-dismiss', waiting?.id)
+    expect(await ask('library:proposals')).toEqual([])
+    expect(held(scratch()).notes).toEqual([])
+  })
+
+  it('refuses to propose a title Accept could never file, wording why', async () => {
+    await ask('library:list')
+    const library = serverIn(await librarySessionArgs(scratch(), ''))
+    const reply = await call(library, {
+      jsonrpc: '2.0',
+      id: 2,
+      method: 'tools/call',
+      params: {
+        name: 'library_write',
+        arguments: { title: 'a/b', body: 'It learned this.' },
+      },
+    })
+    const body = (await reply.json()) as {
+      result: { isError?: boolean; content: { text: string }[] }
+    }
+    expect(body.result.isError).toBe(true)
+    expect(body.result.content[0]?.text).toContain('is not a note title')
+    expect(await ask('library:proposals')).toEqual([])
+  })
+
+  it('refuses to propose a folder name that could climb out of the library', async () => {
+    await ask('library:list')
+    const library = serverIn(await librarySessionArgs(scratch(), ''))
+    const reply = await call(library, {
+      jsonrpc: '2.0',
+      id: 2,
+      method: 'tools/call',
+      params: {
+        name: 'library_write',
+        arguments: { title: 'Auth', body: 'It learned this.', folder: '../etc' },
+      },
+    })
+    const body = (await reply.json()) as {
+      result: { isError?: boolean; content: { text: string }[] }
+    }
+    expect(body.result.isError).toBe(true)
+    expect(body.result.content[0]?.text).toContain('is not a folder name')
+    expect(await ask('library:proposals')).toEqual([])
   })
 
   it('finds through the tool what the screen wrote, since both work in one library', async () => {
     const created = await ask<LibraryNote | null>('library:create', null, 'Auth choice')
     await ask('library:write', created?.id, 'We went with sessions.')
-    const library = serverIn(await librarySessionArgs(scratch()))
+    const library = serverIn(await librarySessionArgs(scratch(), ''))
     const reply = await call(library, {
       jsonrpc: '2.0',
       id: 1,
@@ -217,8 +321,8 @@ describe('what a session is handed', () => {
   it('closes the server of a library no session will reach again', async () => {
     const other = mkdtempSync(join(tmpdir(), 'zetrem-ws-'))
     try {
-      const first = serverIn(await librarySessionArgs(workspace))
-      await librarySessionArgs(other)
+      const first = serverIn(await librarySessionArgs(workspace, ''))
+      await librarySessionArgs(other, '')
       const reply = await call(first, { jsonrpc: '2.0', id: 1, method: 'ping' }).catch(() => null)
       expect(reply).toBeNull()
     } finally {
@@ -227,8 +331,8 @@ describe('what a session is handed', () => {
   })
 
   it('starts one server for the whole app and reuses it', async () => {
-    const first = await librarySessionArgs(workspace)
-    const second = await librarySessionArgs(workspace)
+    const first = await librarySessionArgs(workspace, '')
+    const second = await librarySessionArgs(workspace, '')
     expect(second[1]).toBe(first[1])
   })
 })
@@ -289,8 +393,8 @@ describe('when a project has closed its library to agents', () => {
   it('hands the session nothing, so the agent gets no tools at all', async () => {
     const { setLibraryOpenToAgents } = await import('./library-access/library-access')
     await setLibraryOpenToAgents(workspace, false)
-    expect(await librarySessionArgs(workspace)).toEqual([])
+    expect(await librarySessionArgs(workspace, '')).toEqual([])
     await setLibraryOpenToAgents(workspace, true)
-    expect(await librarySessionArgs(workspace)).toHaveLength(2)
+    expect(await librarySessionArgs(workspace, '')).toHaveLength(2)
   })
 })

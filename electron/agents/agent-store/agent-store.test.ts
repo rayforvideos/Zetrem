@@ -16,6 +16,7 @@ const draft = {
   tools: ['Read'],
   knowledge: [],
   prompt: '당신은 고친 자리를 봅니다.',
+  worktree: true,
 }
 
 describe('writeAgentDef: a new person is kept in the app folder', () => {

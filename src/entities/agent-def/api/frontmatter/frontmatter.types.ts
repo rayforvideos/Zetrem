@@ -13,6 +13,7 @@ export type AgentDef = {
   prompt: string
   source: AgentSource
   path: string
+  worktree: boolean
 }
 
 export type AgentDefDraft = {
@@ -24,4 +25,5 @@ export type AgentDefDraft = {
   knowledge: string[]
   prompt: string
   source: AgentSource
+  worktree: boolean
 }

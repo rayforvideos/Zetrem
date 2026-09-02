@@ -5,6 +5,10 @@ import { summaryOf } from '@/entities/library/lib/summary/summary'
 import type { LibraryNote, LibraryNoteSummary } from '@/entities/library/model/note'
 import type { NoteRow } from './library-db.types'
 
+// The version an older build would refuse to understand. A table added here
+// costs nothing to a file written before it existed — `IF NOT EXISTS` lays it
+// on the next open, and an older build simply never looks — so an addition
+// leaves the number alone.
 const SCHEMA_VERSION = '1'
 const NAME_MAX = 40
 const HASH_CHARS = 8
@@ -30,6 +34,16 @@ const SCHEMA = `
     updated_at_ms INTEGER NOT NULL
   );
   CREATE INDEX IF NOT EXISTS notes_folder ON notes (folder);
+  CREATE TABLE IF NOT EXISTS proposals (
+    id TEXT PRIMARY KEY,
+    folder TEXT NOT NULL,
+    title TEXT NOT NULL,
+    body TEXT NOT NULL,
+    tags TEXT NOT NULL,
+    proposed_at_ms INTEGER NOT NULL,
+    session TEXT NOT NULL DEFAULT '',
+    by TEXT NOT NULL DEFAULT ''
+  );
   CREATE TABLE IF NOT EXISTS links (from_id TEXT NOT NULL, to_title TEXT NOT NULL);
   CREATE INDEX IF NOT EXISTS links_to_title ON links (to_title);
   CREATE VIRTUAL TABLE IF NOT EXISTS notes_fts USING fts5 (id UNINDEXED, title, body, tags);
@@ -61,6 +75,20 @@ export function libraryDbFile(userData: string, workspace: string): string {
   return join(userData, 'library', `${cut.length === 0 ? 'library' : cut}-${short}.sqlite`)
 }
 
+// `session` and `by` were added after some files already had a `proposals`
+// table without them; `CREATE TABLE IF NOT EXISTS` leaves an existing table
+// exactly as it was, so a file from before this ran needs the columns added
+// by hand. New files get them from SCHEMA above, so this is a no-op there —
+// the version stays put, as the comment on it explains.
+function ensureProposalColumns(db: DatabaseSync): void {
+  const cols = new Set(
+    (db.prepare('PRAGMA table_info(proposals)').all() as { name: string }[]).map((col) => col.name),
+  )
+  if (!cols.has('session'))
+    db.exec("ALTER TABLE proposals ADD COLUMN session TEXT NOT NULL DEFAULT ''")
+  if (!cols.has('by')) db.exec("ALTER TABLE proposals ADD COLUMN by TEXT NOT NULL DEFAULT ''")
+}
+
 function versionOf(db: DatabaseSync): string | null {
   const row = db.prepare("SELECT value FROM meta WHERE key = 'schema_version'").get() as
     | { value: string }
@@ -73,6 +101,7 @@ function versionOf(db: DatabaseSync): string | null {
 // away the work rather than a cache of it.
 function lay(db: DatabaseSync, workspace: string): void {
   db.exec(SCHEMA)
+  ensureProposalColumns(db)
   const written = versionOf(db)
   if (written === null) {
     db.prepare("INSERT INTO meta (key, value) VALUES ('schema_version', ?)").run(SCHEMA_VERSION)
@@ -106,8 +135,10 @@ export function openLibraryDb(file: string, workspace: string): DatabaseSync {
 
 // A note is four statements across three tables, so it is written all at once
 // or not at all: a failure half way would leave the search index describing a
-// note that is not there. A caller already in a transaction keeps its own.
-function atLeastAtOnce(db: DatabaseSync, work: () => void): void {
+// note that is not there. A caller already in a transaction keeps its own,
+// which is also what lets a caller of its own — accepting a proposal, say —
+// nest several of these calls into one all-or-nothing change.
+export function atLeastAtOnce(db: DatabaseSync, work: () => void): void {
   if (db.isTransaction) {
     work()
     return
@@ -122,7 +153,7 @@ function atLeastAtOnce(db: DatabaseSync, work: () => void): void {
   }
 }
 
-function tagsOf(raw: string): string[] {
+export function tagsOf(raw: string): string[] {
   try {
     const parsed: unknown = JSON.parse(raw)
     return Array.isArray(parsed) ? parsed.filter((one) => typeof one === 'string') : []

@@ -1,6 +1,6 @@
 import type { ChildTurnEvent, Task } from './child.types'
 
-import { blocksIn, resultText, str, toolLine } from '../shared/shared'
+import { blocksIn, childOpenOf, resultText, str, toolLine } from '../shared/shared'
 
 const TASK_STATES = ['pending', 'running', 'completed', 'failed', 'killed', 'paused'] as const
 
@@ -18,11 +18,15 @@ export function childSays(
     }
     if (block.type === 'tool_use' && typeof block.name === 'string') {
       const callId = typeof block.id === 'string' ? block.id : toolLine(block.name, block.input)
+      if ((block.name === 'Agent' || block.name === 'Task') && typeof block.id === 'string') {
+        out.push(childOpenOf(block, toolUseId))
+      }
       out.push({
         type: 'childStream',
         toolUseId,
         callId,
         line: toolLine(block.name, block.input),
+        input: block.input ?? null,
       })
       const sent = crewTalk(block)
       if (sent !== null) out.push({ type: 'childSent', toolUseId, callId, ...sent })

@@ -1,11 +1,10 @@
-import { sessionStore } from '@/entities/agent-session'
 import type { AgentEventRefs } from '../agent-events.types'
 
 import type { Addressed } from './addressee.types'
 
 export function whose(event: Addressed, refs: AgentEventRefs): string | null {
   if (event.toolUseId !== null && refs.childIds.has(event.toolUseId)) return event.toolUseId
-  const byTask = sessionStore.findByTask(event.taskId)
+  const byTask = refs.stores.children.findByTask(event.taskId)
   if (byTask !== null && refs.childIds.has(byTask.id)) return byTask.id
   return null
 }

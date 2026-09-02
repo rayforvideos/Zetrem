@@ -79,7 +79,16 @@ describe('the lock: only the people we hired can be called', () => {
       model: 'default' as const,
       effort: 'default' as const,
       persona: '말투',
-      people: [{ name: 'scout', description: '찾는다', prompt: '찾아라', model: null, tools: [] }],
+      people: [
+        {
+          name: 'scout',
+          description: '찾는다',
+          prompt: '찾아라',
+          model: null,
+          tools: [],
+          isolated: true,
+        },
+      ],
       lock: { blockedAgents: [] },
     })
     expect(args).toContain('--agent')
@@ -95,7 +104,16 @@ describe('the lock: only the people we hired can be called', () => {
       model: 'default' as const,
       effort: 'default' as const,
       persona: '말투',
-      people: [{ name: 'scout', description: '찾는다', prompt: '찾아라', model: null, tools: [] }],
+      people: [
+        {
+          name: 'scout',
+          description: '찾는다',
+          prompt: '찾아라',
+          model: null,
+          tools: [],
+          isolated: true,
+        },
+      ],
       lock: null,
     })
     expect(args).toContain('--agents')
@@ -111,7 +129,16 @@ describe('what a locked orchestrator is told', () => {
       effort: 'default' as const,
       persona: '말투',
       orchestrator: '너는 오케스트레이터다',
-      people: [{ name: 'scout', description: '찾는다', prompt: '찾아라', model: null, tools: [] }],
+      people: [
+        {
+          name: 'scout',
+          description: '찾는다',
+          prompt: '찾아라',
+          model: null,
+          tools: [],
+          isolated: true,
+        },
+      ],
       lock: { blockedAgents: [] },
     })
     const spec = JSON.parse(args[args.indexOf('--agents') + 1] as string)
@@ -125,7 +152,16 @@ describe('what a locked orchestrator is told', () => {
       model: 'default' as const,
       effort: 'default' as const,
       persona: '말투',
-      people: [{ name: 'scout', description: '찾는다', prompt: '찾아라', model: null, tools: [] }],
+      people: [
+        {
+          name: 'scout',
+          description: '찾는다',
+          prompt: '찾아라',
+          model: null,
+          tools: [],
+          isolated: true,
+        },
+      ],
       lock: { blockedAgents: [] },
     })
     expect(JSON.parse(args[args.indexOf('--agents') + 1] as string).zetrem.prompt).toBe('말투')
@@ -176,7 +212,16 @@ describe('a teammate is given a working tree of its own where git can hold one',
     model: 'default' as const,
     effort: 'default' as const,
     persona: '말투',
-    people: [{ name: 'scout', description: '찾는다', prompt: '찾아라', model: null, tools: [] }],
+    people: [
+      {
+        name: 'scout',
+        description: '찾는다',
+        prompt: '찾아라',
+        model: null,
+        tools: [],
+        isolated: true,
+      },
+    ],
     lock: { blockedAgents: [] },
   }
 

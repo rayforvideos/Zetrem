@@ -51,6 +51,7 @@ export function useAgent(
   >([])
   const childIds = useRef(new Set<string>())
   const sends = useRef(new Map<string, Sent>())
+  const limits = useRef(new Map<string, string>())
   const attempt = useRef<Attempt | null>(null)
   const stopping = useRef(false)
   const refused = useRef(onModelRefused)
@@ -104,6 +105,7 @@ export function useAgent(
         asks: asks.current,
         childIds: childIds.current,
         sends: sends.current,
+        limits: limits.current,
         onModelRefused: refused.current,
       }
       for (const turn of parseClaudeLine(event.line)) {
@@ -130,6 +132,7 @@ export function useAgent(
       asks: asks.current,
       sends: sends.current,
       childIds: childIds.current,
+      limits: limits.current,
     })
     const id = `agent-${Date.now()}`
     hostId.current = id
@@ -177,6 +180,7 @@ export function useAgent(
     asks.current.length = 0
     childIds.current.clear()
     sends.current.clear()
+    limits.current.clear()
     sessionStore.clear()
     statusStore.reset()
     conversation.settleDraft()

@@ -19,12 +19,13 @@ export function closeSession({ reason, stopped, asks, childIds }: SessionClose):
   forgetCrew()
 }
 
-export function beginSession({ resumed, asks, sends, childIds }: SessionBegin): void {
+export function beginSession({ resumed, asks, sends, childIds, limits }: SessionBegin): void {
   statusStore.reset(resumed)
   sessionStore.clear()
   forgetCrew()
   childIds.clear()
   sends.clear()
+  limits.clear()
   asks.length = 0
   conversation.setStatus('working')
   conversation.setTrouble(false)

@@ -1,10 +1,8 @@
-import type { ChatStatusState, StatusState } from './status-store.types'
+import type { ChatStatusState } from './status-store.types'
 
 import type { StatusEvent } from '@/entities/claude-cli/@x/agent-session'
 import type { ChatSpend } from '@/entities/conversation/@x/agent-session'
-import { accountStatus } from '../account-status/account-status'
 import { spentAfter } from '../spend/spend'
-import { statusView } from '../status-view/status-view'
 
 type Listener = () => void
 
@@ -109,45 +107,4 @@ export function createChatStatus() {
       })
     },
   }
-}
-
-// Compatibility shim: today's single global chat, kept until every consumer
-// carries its own ChatStatus (Task 9 deletes this).
-const chatShim = createChatStatus()
-
-let view: StatusState = statusView(chatShim.get(), accountStatus.get())
-chatShim.subscribe(() => {
-  view = statusView(chatShim.get(), accountStatus.get())
-})
-accountStatus.subscribe(() => {
-  view = statusView(chatShim.get(), accountStatus.get())
-})
-
-export const statusStore = {
-  get(): StatusState {
-    return view
-  },
-  subscribe(listener: Listener): () => void {
-    const stopChat = chatShim.subscribe(listener)
-    const stopAccount = accountStatus.subscribe(listener)
-    return () => {
-      stopChat()
-      stopAccount()
-    }
-  },
-  apply(event: StatusEvent): void {
-    if (event.type === 'limit') accountStatus.applyLimit(event.limit)
-    else chatShim.apply(event)
-  },
-  setUpdate: accountStatus.setUpdate,
-  restoreChat: chatShim.restoreChat,
-  usageRead: accountStatus.usageRead,
-  usageUnreadable: accountStatus.usageUnreadable,
-  usageForgotten: accountStatus.usageForgotten,
-  usageKept: accountStatus.usageKept,
-  forgetSession: chatShim.forgetSession,
-  learnProbe: chatShim.learnProbe,
-  reset(keepSpend = false): void {
-    chatShim.reset(keepSpend)
-  },
 }

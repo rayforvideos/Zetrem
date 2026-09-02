@@ -1,13 +1,10 @@
 import { beforeEach, describe, expect, it } from 'vitest'
-import { accountStatus } from '../account-status/account-status'
-import { createChatStatus, statusStore } from './status-store'
+import { createChatStatus } from './status-store'
+
+let store = createChatStatus()
 
 beforeEach(() => {
-  statusStore.reset()
-  // statusStore.reset() only clears the chat side; the account (limits,
-  // usage, update) is now a separate store and needs its own reset for
-  // tests to stay isolated from one another.
-  accountStatus.reset()
+  store = createChatStatus()
 })
 
 const session = {
@@ -33,259 +30,139 @@ function metrics(costUsd: number, contextWindow: number | null = 1_000_000) {
   }
 }
 
-describe('statusStore: the last thing known to be true', () => {
+describe('createChatStatus: the last thing known to be true about a chat', () => {
   it('says it does not know before it has heard anything, so the screen cannot invent', () => {
-    const state = statusStore.get()
+    const state = store.get()
     expect(state.session).toBeNull()
-    expect(state.limits).toEqual([])
-    expect(state.update).toBeNull()
     expect(state.context).toEqual({ used: 0, window: null })
   })
 
   it('fills in who this session is from init', () => {
-    statusStore.apply({ type: 'session', session })
-    expect(statusStore.get().session?.cliVersion).toBe('2.1.231')
+    store.apply({ type: 'session', session })
+    expect(store.get().session?.cliVersion).toBe('2.1.231')
   })
 
   it('overwrites context with the latest value, because it is a size and not a total', () => {
-    statusStore.apply({ type: 'context', used: 28364 })
-    statusStore.apply({ type: 'context', used: 31059 })
-    expect(statusStore.get().context.used).toBe(31059)
+    store.apply({ type: 'context', used: 28364 })
+    store.apply({ type: 'context', used: 31059 })
+    expect(store.get().context.used).toBe(31059)
   })
 
   it('has no denominator until a result gives one', () => {
-    statusStore.apply({ type: 'context', used: 28364 })
-    expect(statusStore.get().context.window).toBeNull()
-    statusStore.apply({ type: 'metrics', metrics: metrics(0.1) })
-    expect(statusStore.get().context.window).toBe(1_000_000)
+    store.apply({ type: 'context', used: 28364 })
+    expect(store.get().context.window).toBeNull()
+    store.apply({ type: 'metrics', metrics: metrics(0.1) })
+    expect(store.get().context.window).toBe(1_000_000)
   })
 
   it('keeps a known denominator when a result comes without one', () => {
-    statusStore.apply({ type: 'metrics', metrics: metrics(0.1, 1_000_000) })
-    statusStore.apply({ type: 'metrics', metrics: metrics(0.2, null) })
-    expect(statusStore.get().context.window).toBe(1_000_000)
+    store.apply({ type: 'metrics', metrics: metrics(0.1, 1_000_000) })
+    store.apply({ type: 'metrics', metrics: metrics(0.2, null) })
+    expect(store.get().context.window).toBe(1_000_000)
   })
 
   it('holds the session total and this turn separately', () => {
-    statusStore.apply({ type: 'metrics', metrics: metrics(0.125331) })
-    expect(statusStore.get().cost.usd).toBeCloseTo(0.125331, 6)
-    expect(statusStore.get().cost.lastTurnUsd).toBeCloseTo(0.125331, 6)
+    store.apply({ type: 'metrics', metrics: metrics(0.125331) })
+    expect(store.get().cost.usd).toBeCloseTo(0.125331, 6)
+    expect(store.get().cost.lastTurnUsd).toBeCloseTo(0.125331, 6)
 
-    statusStore.apply({ type: 'metrics', metrics: metrics(0.166547) })
-    expect(statusStore.get().cost.usd).toBeCloseTo(0.166547, 6)
-    expect(statusStore.get().cost.lastTurnUsd).toBeCloseTo(0.041216, 6)
-  })
-
-  it('holds the latest limit warning', () => {
-    statusStore.apply({
-      type: 'limit',
-      limit: {
-        kind: 'seven_day',
-        utilization: 0.28,
-        resetsAtMs: 1787173200000,
-        overage: false,
-        status: 'allowed_warning',
-      },
-    })
-    expect(statusStore.get().limits[0]?.utilization).toBe(0.28)
-  })
-
-  it('keeps a five hour and a weekly limit side by side, since one does not replace the other', () => {
-    statusStore.apply({
-      type: 'limit',
-      limit: {
-        kind: 'seven_day',
-        utilization: 0.5,
-        resetsAtMs: 1787173200000,
-        overage: false,
-        status: 'allowed',
-      },
-    })
-    statusStore.apply({
-      type: 'limit',
-      limit: {
-        kind: 'five_hour',
-        utilization: 0.1,
-        resetsAtMs: 1787000000000,
-        overage: false,
-        status: 'allowed',
-      },
-    })
-    expect(statusStore.get().limits.map((limit) => limit.kind)).toEqual(['five_hour', 'seven_day'])
-  })
-
-  it('replaces a limit of the same kind rather than stacking it', () => {
-    for (const utilization of [0.2, 0.4]) {
-      statusStore.apply({
-        type: 'limit',
-        limit: {
-          kind: 'seven_day',
-          utilization,
-          resetsAtMs: 1787173200000,
-          overage: false,
-          status: 'allowed',
-        },
-      })
-    }
-    expect(statusStore.get().limits).toHaveLength(1)
-    expect(statusStore.get().limits[0]?.utilization).toBe(0.4)
+    store.apply({ type: 'metrics', metrics: metrics(0.166547) })
+    expect(store.get().cost.usd).toBeCloseTo(0.166547, 6)
+    expect(store.get().cost.lastTurnUsd).toBeCloseTo(0.041216, 6)
   })
 
   it('keeps what the chat already cost when the next message resumes it', () => {
-    statusStore.restoreChat({ usd: 0.58 })
-    statusStore.reset(true)
-    expect(statusStore.get().cost.usd, 'going on talking cannot make it cheaper').toBe(0.58)
-    statusStore.apply({ type: 'metrics', metrics: metrics(0.23) })
-    expect(statusStore.get().cost.usd).toBeCloseTo(0.81, 5)
+    store.restoreChat({ usd: 0.58 })
+    store.reset(true)
+    expect(store.get().cost.usd, 'going on talking cannot make it cheaper').toBe(0.58)
+    store.apply({ type: 'metrics', metrics: metrics(0.23) })
+    expect(store.get().cost.usd).toBeCloseTo(0.81, 5)
   })
 
   it('starts a brand new chat from nothing, so the last chat does not follow it', () => {
-    statusStore.restoreChat({ usd: 0.58 })
-    statusStore.reset()
-    expect(statusStore.get().cost.usd).toBe(0)
-    statusStore.apply({ type: 'metrics', metrics: metrics(0.23) })
-    expect(statusStore.get().cost.usd).toBeCloseTo(0.23, 5)
+    store.restoreChat({ usd: 0.58 })
+    store.reset()
+    expect(store.get().cost.usd).toBe(0)
+    store.apply({ type: 'metrics', metrics: metrics(0.23) })
+    expect(store.get().cost.usd).toBeCloseTo(0.23, 5)
   })
 
   it('holds what is in progress', () => {
-    statusStore.apply({ type: 'activity', activity: 'requesting' })
-    expect(statusStore.get().activity).toBe('requesting')
-  })
-
-  it('takes update news from us, not from the CLI', () => {
-    statusStore.setUpdate({ current: '2.1.231', latest: '2.1.240', managedBy: 'Homebrew' })
-    expect(statusStore.get().update).toEqual({
-      current: '2.1.231',
-      latest: '2.1.240',
-      managedBy: 'Homebrew',
-    })
+    store.apply({ type: 'activity', activity: 'requesting' })
+    expect(store.get().activity).toBe('requesting')
   })
 
   it('lets go of everything from the last session, or the new one measures against the old cost', () => {
-    statusStore.apply({ type: 'session', session })
-    statusStore.apply({ type: 'context', used: 28364 })
-    statusStore.apply({ type: 'metrics', metrics: metrics(0.9) })
+    store.apply({ type: 'session', session })
+    store.apply({ type: 'context', used: 28364 })
+    store.apply({ type: 'metrics', metrics: metrics(0.9) })
 
-    statusStore.reset()
-    expect(statusStore.get().session).toBeNull()
-    expect(statusStore.get().context).toEqual({ used: 0, window: null })
-    expect(statusStore.get().cost.usd).toBe(0)
+    store.reset()
+    expect(store.get().session).toBeNull()
+    expect(store.get().context).toEqual({ used: 0, window: null })
+    expect(store.get().cost.usd).toBe(0)
 
-    statusStore.apply({ type: 'metrics', metrics: metrics(0.02) })
-    expect(statusStore.get().cost.lastTurnUsd).toBeCloseTo(0.02, 6)
-  })
-
-  it('keeps the CLI version through a reset, because that is a fact about the install', () => {
-    statusStore.setUpdate({ current: '2.1.231', latest: '2.1.240', managedBy: 'npm' })
-    statusStore.reset()
-    expect(statusStore.get().update).toEqual({
-      current: '2.1.231',
-      latest: '2.1.240',
-      managedBy: 'npm',
-    })
+    store.apply({ type: 'metrics', metrics: metrics(0.02) })
+    expect(store.get().cost.lastTurnUsd).toBeCloseTo(0.02, 6)
   })
 
   it('never reports a negative turn cost, even if the total drops', () => {
-    statusStore.apply({ type: 'metrics', metrics: metrics(0.2) })
-    statusStore.apply({ type: 'metrics', metrics: metrics(0.05) })
-    expect(statusStore.get().cost.lastTurnUsd).toBe(0)
+    store.apply({ type: 'metrics', metrics: metrics(0.2) })
+    store.apply({ type: 'metrics', metrics: metrics(0.05) })
+    expect(store.get().cost.lastTurnUsd).toBe(0)
   })
 
   it('says nothing when context has not changed, so the same number is not redrawn every round trip', () => {
     let count = 0
-    const stop = statusStore.subscribe(() => {
+    const stop = store.subscribe(() => {
       count += 1
     })
-    statusStore.apply({ type: 'context', used: 28364 })
+    store.apply({ type: 'context', used: 28364 })
     expect(count).toBe(1)
-    statusStore.apply({ type: 'context', used: 28364 })
+    store.apply({ type: 'context', used: 28364 })
     expect(count).toBe(1)
     stop()
   })
 
   it('tells subscribers about a change and stays quiet when there is none', () => {
     let count = 0
-    const stop = statusStore.subscribe(() => {
+    const stop = store.subscribe(() => {
       count += 1
     })
-    statusStore.apply({ type: 'activity', activity: 'requesting' })
+    store.apply({ type: 'activity', activity: 'requesting' })
     expect(count).toBe(1)
-    statusStore.apply({ type: 'activity', activity: 'requesting' })
+    store.apply({ type: 'activity', activity: 'requesting' })
     expect(count).toBe(1)
     stop()
-    statusStore.apply({ type: 'activity', activity: 'idle' })
+    store.apply({ type: 'activity', activity: 'idle' })
     expect(count).toBe(1)
-  })
-})
-
-describe('usage: whether the limits on hand are fresh or only kept from before', () => {
-  it('marks the limits as kept once the disk cache has been read', () => {
-    statusStore.usageKept()
-    expect(statusStore.get().usage).toBe('kept')
-  })
-
-  it('clears the kept mark once a fresh read succeeds', () => {
-    statusStore.usageKept()
-    statusStore.usageRead(1_700_000_000_000)
-    expect(statusStore.get().usage).toBe('read')
-  })
-
-  it('leaves the kept mark set when the fresh read fails, since the kept limits are still all there is', () => {
-    statusStore.usageKept()
-    statusStore.usageUnreadable()
-    expect(statusStore.get().usage).toBe('kept')
-  })
-
-  it('drops the limits outright when they stop being this account’s', () => {
-    statusStore.apply({
-      type: 'limit',
-      limit: {
-        kind: 'five_hour',
-        utilization: 0.2,
-        resetsAtMs: 1787173200000,
-        overage: false,
-        status: 'allowed',
-      },
-    })
-    statusStore.usageRead(1_700_000_000_000)
-    statusStore.usageForgotten()
-    expect(statusStore.get().limits).toEqual([])
-    expect(statusStore.get().usage).toBe('unread')
-    expect(statusStore.get().usageAtMs).toBeNull()
-  })
-
-  it('lets a failed read after forgetting say so, rather than reading as no limits', () => {
-    statusStore.usageForgotten()
-    statusStore.usageUnreadable()
-    expect(statusStore.get().usage).toBe('unreadable')
   })
 })
 
 describe('forgetSession: the session on hand belonged to one account', () => {
   it('drops what the probe learned, so the next probe is believed', () => {
-    statusStore.learnProbe(session)
-    expect(statusStore.get().probed).toBe(true)
+    store.learnProbe(session)
+    expect(store.get().probed).toBe(true)
 
-    statusStore.forgetSession()
+    store.forgetSession()
 
-    expect(statusStore.get().session).toBeNull()
-    expect(statusStore.get().probed).toBe(false)
+    expect(store.get().session).toBeNull()
+    expect(store.get().probed).toBe(false)
   })
 
   it('leaves what the account did not decide, so the turn on screen survives', () => {
-    statusStore.apply({ type: 'metrics', metrics: metrics(0.4) })
-    statusStore.apply({ type: 'session', session })
+    store.apply({ type: 'metrics', metrics: metrics(0.4) })
+    store.apply({ type: 'session', session })
 
-    statusStore.forgetSession()
+    store.forgetSession()
 
-    expect(statusStore.get().cost.usd).toBeCloseTo(0.4, 5)
+    expect(store.get().cost.usd).toBeCloseTo(0.4, 5)
   })
 })
 
 describe('restoreChat: reopening a chat brings its totals back', () => {
   it('puts back what the chat had spent', () => {
-    statusStore.reset()
-    statusStore.restoreChat({
+    store.restoreChat({
       usd: 0.42,
       turns: 3,
       tokensOut: 1200,
@@ -296,7 +173,7 @@ describe('restoreChat: reopening a chat brings its totals back', () => {
       contextUsed: 90_000,
       contextWindow: 1_000_000,
     })
-    const state = statusStore.get()
+    const state = store.get()
     expect(state.cost.usd).toBe(0.42)
     expect(state.cost.turns).toBe(3)
     expect(state.cost.tokens.out).toBe(1200)
@@ -307,16 +184,14 @@ describe('restoreChat: reopening a chat brings its totals back', () => {
   })
 
   it('does nothing for a chat saved before the totals were kept', () => {
-    statusStore.reset()
-    statusStore.restoreChat(null)
-    expect(statusStore.get().cost.usd).toBe(0)
+    store.restoreChat(null)
+    expect(store.get().cost.usd).toBe(0)
   })
 
   it('keeps what it has when a field is missing, rather than reading it as zero', () => {
-    statusStore.reset()
-    statusStore.restoreChat({ usd: 1 })
-    expect(statusStore.get().cost.usd).toBe(1)
-    expect(statusStore.get().cost.turns).toBe(0)
+    store.restoreChat({ usd: 1 })
+    expect(store.get().cost.usd).toBe(1)
+    expect(store.get().cost.turns).toBe(0)
   })
 })
 

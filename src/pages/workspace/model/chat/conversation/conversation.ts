@@ -185,6 +185,3 @@ export function createConversation(): Conversation {
     },
   }
 }
-
-// Until every consumer takes its conversation as an argument (Task 9).
-export const conversation = createConversation()

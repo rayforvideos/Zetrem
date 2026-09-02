@@ -1,15 +1,19 @@
 import { beforeEach, describe, expect, it } from 'vitest'
-import { sessionStore, statusStore } from '@/entities/agent-session'
+import { createChatStatus, createSessionStore } from '@/entities/agent-session'
 import { parseClaudeLine } from '@/entities/claude-cli'
 import type { AgentEventRefs } from '@/pages/workspace/model/session/agent-events/agent-events.types'
 import { applyAgentEvent } from '@/pages/workspace/model/session/agent-events/agent-events'
 import { freshRefs } from '@/pages/workspace/model/session/agent-events/refs/refs'
-import { conversation } from '@/pages/workspace/model/chat/conversation/conversation'
+import { createConversation } from '@/pages/workspace/model/chat/conversation/conversation'
 import captured from './live-subagent.json'
+
+let conversation = createConversation()
+let status = createChatStatus()
+let sessionStore = createSessionStore()
 
 function refs(): AgentEventRefs {
   return freshRefs(
-    { conversation, status: statusStore, children: sessionStore },
+    { conversation, status, children: sessionStore },
     { onModelRefused: () => {}, onLimit: () => {} },
   )
 }
@@ -24,9 +28,9 @@ function replay(): AgentEventRefs {
 
 describe('a real run of the CLI, replayed line for line', () => {
   beforeEach(() => {
-    sessionStore.clear()
-    statusStore.reset()
-    conversation.reset()
+    conversation = createConversation()
+    status = createChatStatus()
+    sessionStore = createSessionStore()
   })
 
   it('opens exactly one agent, and it is the one that was summoned', () => {

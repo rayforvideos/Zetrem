@@ -55,8 +55,10 @@ type NoteMeta = {
 
 // The form is two columns, 264px of fields beside the instructions. A window
 // narrower than 36rem leaves no room for both, so they stack and the whole
-// body scrolls instead of the dialog clipping a column away. The variants are
-// written out in full: the stylesheet is built from the strings it finds.
+// body scrolls instead of the dialog clipping a column away. The form is the
+// container and the body reads it: a query looks at ancestors, never at the
+// element it is on. The variants are written out in full: the stylesheet is
+// built from the strings it finds.
 export function MemberForm({
   initial,
   knownTools,
@@ -119,7 +121,7 @@ export function MemberForm({
         className="h-[min(84vh,720px)] max-w-[min(92vw,900px)] gap-0 overflow-hidden p-0 sm:max-w-[min(92vw,900px)]"
       >
         <form
-          className="flex h-full min-h-0 flex-col"
+          className="@container/member flex h-full min-h-0 flex-col"
           onSubmit={(event) => {
             event.preventDefault()
             if (lack !== null) {
@@ -146,7 +148,7 @@ export function MemberForm({
             </span>
           </DialogHeader>
 
-          <div className="@container/member flex min-h-0 flex-1 @max-[36rem]/member:flex-col @max-[36rem]/member:overflow-y-auto">
+          <div className="flex min-h-0 flex-1 @max-[36rem]/member:flex-col @max-[36rem]/member:overflow-y-auto">
             <aside
               ref={side}
               className="zt-scroll zt-fade-y flex w-[264px] flex-none flex-col gap-4 overflow-y-auto border-r border-border px-5 py-5 @max-[36rem]/member:w-full @max-[36rem]/member:overflow-visible @max-[36rem]/member:border-r-0 @max-[36rem]/member:border-b"

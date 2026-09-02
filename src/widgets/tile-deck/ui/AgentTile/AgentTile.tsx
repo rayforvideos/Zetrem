@@ -5,6 +5,7 @@ import { MOTION } from '@/shared/config/motion/motion'
 import type { Rect } from '../../lib/grid/grid.types'
 import { Gauge } from '../layers/Gauge/Gauge'
 import { Headline } from '../layers/Headline/Headline'
+import { Helpers } from '../layers/Helpers/Helpers'
 import { CallLog } from '../layers/CallLog/CallLog'
 import { Transcript } from '../layers/Transcript/Transcript'
 import {
@@ -17,6 +18,9 @@ import { t } from '@lingui/core/macro'
 
 type AgentTileProps = {
   session: AgentSession
+  // The subagents this teammate called in. They are folded into its tile
+  // instead of standing as tiles of their own.
+  helpers?: AgentSession[]
   rect: Rect
   delayMs: number
   nowMs: number
@@ -28,6 +32,7 @@ type AgentTileProps = {
 
 export function AgentTile({
   session,
+  helpers = [],
   rect,
   delayMs,
   nowMs,
@@ -92,6 +97,7 @@ export function AgentTile({
                 </div>
               </div>
             )}
+            {!sweep && <Helpers helpers={helpers} />}
             {!sweep && <Gauge session={session} nowMs={nowMs} />}
           </div>
         </Surface>

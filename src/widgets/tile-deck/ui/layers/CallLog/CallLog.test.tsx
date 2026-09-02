@@ -62,3 +62,40 @@ describe('CallLog: every tool the agent reached for, and what came back', () => 
     expect(draw([running])).toContain('0:45')
   })
 })
+
+const edit = { old_string: '옛 줄', new_string: '새 줄' }
+
+describe('CallLog: an edit shows as the change it made', () => {
+  it('opens the change under the call in hand, with what it added and took away', () => {
+    const html = draw([call('e', 'Edit b.ts', { input: edit, endedAtMs: null })])
+    expect(html).toContain('data-change')
+    expect(html).toContain('옛 줄')
+    expect(html).toContain('새 줄')
+    expect(html).toContain('+1')
+    expect(html).toContain('−1')
+  })
+
+  it('leaves an earlier edit as a count alone, so only one change is ever open', () => {
+    const html = draw([
+      call('e1', 'Edit a.ts', { input: edit }),
+      call('e2', 'Edit b.ts', { input: edit, endedAtMs: null }),
+    ])
+    expect(count(html, 'data-change=')).toBe(1)
+    expect(count(html, 'data-change-badge')).toBe(2)
+  })
+
+  it('opens the last change once the agent has stopped, since that is where it left off', () => {
+    const html = draw([call('r', 'Read a.ts'), call('e', 'Edit b.ts', { input: edit })], false)
+    expect(count(html, 'data-change=')).toBe(1)
+    expect(html).toContain('새 줄')
+  })
+
+  it('says nothing about changes for a call that changed nothing', () => {
+    const html = draw([call('r', 'Read a.ts', { input: { file_path: 'a.ts' } })], false)
+    expect(html).not.toContain('data-change')
+  })
+})
+
+function count(html: string, needle: string): number {
+  return html.split(needle).length - 1
+}

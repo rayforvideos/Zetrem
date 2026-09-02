@@ -168,7 +168,7 @@ export function Row({ chat, kit }: { chat: ChatSummary; kit: RowKit }) {
         <span className="truncate">{named(chat.title)}</span>
         {mark && (
           <span
-            role="status"
+            role="img"
             aria-label={mark.label}
             title={mark.label}
             className={cn(

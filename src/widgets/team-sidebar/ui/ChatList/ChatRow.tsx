@@ -27,12 +27,14 @@ import {
 import { CARRIED, canLand } from '../../lib/chat-drop/chat-drop'
 import { whenLabel } from '../../lib/when/when'
 import { named } from '../../lib/named/named'
+import { liveMark } from '../../lib/live-mark/live-mark'
 import type { RowKit } from './ChatList.types'
 
 export function Row({ chat, kit }: { chat: ChatSummary; kit: RowKit }) {
   const {
     names,
     nowMs,
+    live,
     onOpen,
     onRemove,
     onRename,
@@ -44,6 +46,7 @@ export function Row({ chat, kit }: { chat: ChatSummary; kit: RowKit }) {
     onPaired,
   } = kit
   const open = chat.id === kit.openId
+  const mark = liveMark(live[chat.id])
   const [editing, setEditing] = useState(false)
   const [naming, setNaming] = useState(false)
   const [asking, setAsking] = useState(false)
@@ -163,6 +166,17 @@ export function Row({ chat, kit }: { chat: ChatSummary; kit: RowKit }) {
         title={`${named(chat.title)} · ${whenLabel(chat.savedAtMs, nowMs)}`}
       >
         <span className="truncate">{named(chat.title)}</span>
+        {mark && (
+          <span
+            role="status"
+            aria-label={mark.label}
+            title={mark.label}
+            className={cn(
+              'size-1.5 flex-none rounded-full',
+              mark.tone === 'working' ? 'bg-primary zt-breath' : 'bg-amber-500',
+            )}
+          />
+        )}
       </Button>
       <div
         className={cn(

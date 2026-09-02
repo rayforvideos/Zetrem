@@ -58,8 +58,10 @@ export function useWorkspace() {
     lock: lockOf(settings, defs, authored),
     resume: chat.resumeId,
   }
-  const agent = useAgent(runConfig, (model) =>
-    update({ refusedModels: withRefused(settings.refusedModels, model) }),
+  const agent = useAgent(
+    runConfig,
+    (model) => update({ refusedModels: withRefused(settings.refusedModels, model) }),
+    chat.openId,
   )
   const { conversation: conv, children, status, nowMs } = agent
 

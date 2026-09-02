@@ -40,7 +40,9 @@ const SCHEMA = `
     title TEXT NOT NULL,
     body TEXT NOT NULL,
     tags TEXT NOT NULL,
-    proposed_at_ms INTEGER NOT NULL
+    proposed_at_ms INTEGER NOT NULL,
+    session TEXT NOT NULL DEFAULT '',
+    by TEXT NOT NULL DEFAULT ''
   );
   CREATE TABLE IF NOT EXISTS links (from_id TEXT NOT NULL, to_title TEXT NOT NULL);
   CREATE INDEX IF NOT EXISTS links_to_title ON links (to_title);
@@ -73,6 +75,20 @@ export function libraryDbFile(userData: string, workspace: string): string {
   return join(userData, 'library', `${cut.length === 0 ? 'library' : cut}-${short}.sqlite`)
 }
 
+// `session` and `by` were added after some files already had a `proposals`
+// table without them; `CREATE TABLE IF NOT EXISTS` leaves an existing table
+// exactly as it was, so a file from before this ran needs the columns added
+// by hand. New files get them from SCHEMA above, so this is a no-op there —
+// the version stays put, as the comment on it explains.
+function ensureProposalColumns(db: DatabaseSync): void {
+  const cols = new Set(
+    (db.prepare('PRAGMA table_info(proposals)').all() as { name: string }[]).map((col) => col.name),
+  )
+  if (!cols.has('session'))
+    db.exec("ALTER TABLE proposals ADD COLUMN session TEXT NOT NULL DEFAULT ''")
+  if (!cols.has('by')) db.exec("ALTER TABLE proposals ADD COLUMN by TEXT NOT NULL DEFAULT ''")
+}
+
 function versionOf(db: DatabaseSync): string | null {
   const row = db.prepare("SELECT value FROM meta WHERE key = 'schema_version'").get() as
     | { value: string }
@@ -85,6 +101,7 @@ function versionOf(db: DatabaseSync): string | null {
 // away the work rather than a cache of it.
 function lay(db: DatabaseSync, workspace: string): void {
   db.exec(SCHEMA)
+  ensureProposalColumns(db)
   const written = versionOf(db)
   if (written === null) {
     db.prepare("INSERT INTO meta (key, value) VALUES ('schema_version', ?)").run(SCHEMA_VERSION)

@@ -9,4 +9,9 @@ export type LibraryProposal = {
   body: string
   tags: string[]
   proposedAtMs: number
+  // The agent host that proposed it, '' for one raised before this column
+  // existed, or by a caller that never had a session to give (a probe).
+  session: string
+  // A teammate's name, as they gave it in the ask — '' when nobody said.
+  by: string
 }

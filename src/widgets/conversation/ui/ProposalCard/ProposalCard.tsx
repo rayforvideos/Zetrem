@@ -1,6 +1,6 @@
 import { t } from '@lingui/core/macro'
 import { BookMarked } from 'lucide-react'
-import { leadOf, ProposalChips } from '@/entities/library'
+import { leadOf, ProposalChips, proposerLine, ProposerLine } from '@/entities/library'
 import type { LibraryProposal } from '@/entities/library'
 import { Markdown } from '@/shared/markdown/Markdown/Markdown'
 import { Button } from '@/shared/ui/button'
@@ -11,17 +11,22 @@ import { Button } from '@/shared/ui/button'
 export function ProposalCard({
   proposal,
   waiting,
+  chatTitleOf,
   onAccept,
   onDismiss,
 }: {
   proposal: LibraryProposal
   // How many are waiting in all, this one included.
   waiting: number
+  // The chat a session's proposal came from, by its host id; null when the
+  // host is not one this screen remembers, as after a restart.
+  chatTitleOf(session: string): string | null
   onAccept(id: string): void
   onDismiss(id: string): void
 }) {
   const lead = leadOf(proposal.body)
   const behind = waiting - 1
+  const proposer = proposerLine(proposal, chatTitleOf)
 
   return (
     <div
@@ -35,6 +40,7 @@ export function ProposalCard({
 
       <div className="flex min-w-0 flex-col gap-1.5">
         <p className="text-base font-medium [overflow-wrap:anywhere]">{proposal.title}</p>
+        <ProposerLine proposer={proposer} />
         {lead.length > 0 && (
           <Markdown text={lead} className="text-sm leading-relaxed text-muted-foreground" />
         )}

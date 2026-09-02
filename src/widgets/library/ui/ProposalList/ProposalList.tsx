@@ -4,7 +4,7 @@ import type { ProposalListProps } from './ProposalList.types'
 
 // What agents have asked to add, above the library itself: none of it is in
 // the library yet, and the section is gone the moment nothing is waiting.
-export function ProposalList({ proposals, onAccept, onDismiss }: ProposalListProps) {
+export function ProposalList({ proposals, chatTitleOf, onAccept, onDismiss }: ProposalListProps) {
   if (proposals.length === 0) return null
 
   return (
@@ -20,6 +20,7 @@ export function ProposalList({ proposals, onAccept, onDismiss }: ProposalListPro
           <ProposalRow
             key={proposal.id}
             proposal={proposal}
+            chatTitleOf={chatTitleOf}
             onAccept={onAccept}
             onDismiss={onDismiss}
           />

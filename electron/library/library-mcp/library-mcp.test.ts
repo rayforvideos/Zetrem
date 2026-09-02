@@ -24,6 +24,8 @@ const proposal = {
   body: 'Tokens.',
   tags: ['a'],
   proposedAtMs: 3,
+  session: '',
+  by: '',
 }
 
 function fakeTools(calls: Call[], refuse?: 'title' | 'folder'): LibraryTools {
@@ -36,8 +38,8 @@ function fakeTools(calls: Call[], refuse?: 'title' | 'folder'): LibraryTools {
       calls.push({ tool: 'read', args: [id] })
       return id === note.id ? (note as never) : null
     },
-    async write(input) {
-      calls.push({ tool: 'write', args: [input] })
+    async write(input, context) {
+      calls.push({ tool: 'write', args: [input, context] })
       return refuse === undefined ? { ok: true, proposal } : { ok: false, why: refuse }
     },
     async recent(limit) {
@@ -197,7 +199,7 @@ describe('the tools', () => {
   it('proposes rather than writes, and says the note is not in the library yet', async () => {
     const input = { title: 'auth', body: 'Tokens.', tags: ['a'], folder: 'analysis' }
     const result = await callTool('library_write', input)
-    expect(calls).toEqual([{ tool: 'write', args: [input] }])
+    expect(calls).toEqual([{ tool: 'write', args: [input, { session: '' }] }])
     expect(result.isError).toBeUndefined()
     expect(result.content[0]!.text).toBe(
       'Proposed "auth" to the person. It is not in the library until they accept it — do not assume it was.',
@@ -254,6 +256,15 @@ describe('the tools', () => {
     }
   })
 
+  it('trims "by" and cuts it to 80 characters, storing it as given otherwise', async () => {
+    const long = `  ${'a'.repeat(90)}  `
+    await callTool('library_write', { title: 'x', body: 'y', by: long })
+    const [, context] = calls[0]!.args as [unknown, unknown]
+    expect(context).toEqual({ session: '' })
+    const [input] = calls[0]!.args as [{ by?: string }]
+    expect(input.by).toBe('a'.repeat(80))
+  })
+
   it('tells an agent up front that library_write only suggests', async () => {
     const body = (await (await rpc('tools/list')).json()) as {
       result: { tools: { name: string; description: string }[] }
@@ -261,6 +272,43 @@ describe('the tools', () => {
     const write = body.result.tools.find((tool) => tool.name === 'library_write')
     expect(write?.description).toContain('Propose')
     expect(write?.description).toContain('nothing is saved until they accept')
+  })
+
+  it('hands the session header to the write tool as call context', async () => {
+    const res = await post(
+      {
+        jsonrpc: '2.0',
+        id: 1,
+        method: 'tools/call',
+        params: { name: 'library_write', arguments: { title: 'x', body: 'y' } },
+      },
+      { 'x-zetrem-session': 'agent-42' },
+    )
+    await res.json()
+    expect(calls).toEqual([
+      { tool: 'write', args: [{ title: 'x', body: 'y' }, { session: 'agent-42' }] },
+    ])
+  })
+
+  it('reads no session from a missing or an invalid header', async () => {
+    const bad = ['', 'has spaces', 'semi;colon', 'x'.repeat(65)]
+    for (const value of bad) {
+      calls.length = 0
+      const headers: Record<string, string> = value === '' ? {} : { 'x-zetrem-session': value }
+      const res = await post(
+        {
+          jsonrpc: '2.0',
+          id: 1,
+          method: 'tools/call',
+          params: { name: 'library_write', arguments: { title: 'x', body: 'y' } },
+        },
+        headers,
+      )
+      await res.json()
+      expect(calls, value).toEqual([
+        { tool: 'write', args: [{ title: 'x', body: 'y' }, { session: '' }] },
+      ])
+    }
   })
 
   it('lists recent notes', async () => {
@@ -279,6 +327,7 @@ describe('the tools', () => {
       ['library_write', { title: 'x' }],
       ['library_write', { title: 'x', body: 'y', tags: 'a' }],
       ['library_write', { title: 'x', body: 'y', folder: 1 }],
+      ['library_write', { title: 'x', body: 'y', by: 1 }],
       ['library_recent', { limit: -1 }],
       ['library_nope', {}],
     ]
@@ -321,16 +370,28 @@ describe('the protocol edges', () => {
 })
 
 describe('the config handed to the CLI', () => {
-  it('names the server, its url and the bearer header', () => {
-    expect(JSON.parse(mcpConfigFor(server))).toEqual({
+  it('names the server, its url, the bearer header, and the session header', () => {
+    expect(JSON.parse(mcpConfigFor(server, 'agent-1'))).toEqual({
       mcpServers: {
         library: {
           type: 'http',
           url: server.url,
-          headers: { Authorization: `Bearer ${server.token}` },
+          headers: {
+            Authorization: `Bearer ${server.token}`,
+            'X-Zetrem-Session': 'agent-1',
+          },
         },
       },
     })
-    expect(Object.keys(JSON.parse(mcpConfigFor(server, 'notes')).mcpServers)).toEqual(['notes'])
+    expect(Object.keys(JSON.parse(mcpConfigFor(server, 'agent-1', 'notes')).mcpServers)).toEqual([
+      'notes',
+    ])
+  })
+
+  it('carries an empty session for a caller that has none, like the probe', () => {
+    const config = JSON.parse(mcpConfigFor(server, '')) as {
+      mcpServers: { library: { headers: Record<string, string> } }
+    }
+    expect(config.mcpServers.library.headers['X-Zetrem-Session']).toBe('')
   })
 })

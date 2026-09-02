@@ -150,11 +150,16 @@ function toolsFor(workspace: string): LibraryTools {
     // written when the person accepts, and not a moment before. A title or
     // folder that could never be filed is refused now, at the ask, rather than
     // stored as a proposal Accept can never carry out.
-    async write(input) {
+    async write(input, context) {
       const folder = input.folder ?? ''
       if (folder.length > 0 && !isFolderName(folder)) return { ok: false, why: 'folder' }
       if (!isTitle(input.title)) return { ok: false, why: 'title' }
-      const proposal = addProposal(await dbFor(workspace), { ...input, folder })
+      const proposal = addProposal(await dbFor(workspace), {
+        ...input,
+        folder,
+        session: context.session,
+        by: input.by ?? '',
+      })
       tellProposed()
       return { ok: true, proposal }
     },
@@ -175,8 +180,10 @@ async function serverFor(file: string, workspace: string): Promise<LibraryMcp> {
 // What a session is handed so its agent can search and write the library. The
 // notes are the app's now, so nothing of the project is opened to it: the tools
 // are the whole of it. Nothing at all, when the project has closed its library
-// to agents.
-export async function librarySessionArgs(workspace: string): Promise<string[]> {
+// to agents. sessionId is the caller's own id (a running host's, or '' from
+// one that has none, like the probe) — it rides along in the MCP config so a
+// proposal can later be traced back to it.
+export async function librarySessionArgs(workspace: string, sessionId: string): Promise<string[]> {
   if (!(await libraryOpenToAgents(workspace))) return []
   const { file, real } = await fileFor(workspace)
   await dbAt(file, real)
@@ -184,7 +191,7 @@ export async function librarySessionArgs(workspace: string): Promise<string[]> {
   // nobody left to serve.
   await closeServersExcept(file)
   // The CLI takes the MCP config as a JSON string, so nothing is written for it.
-  return ['--mcp-config', mcpConfigFor(await serverFor(file, workspace))]
+  return ['--mcp-config', mcpConfigFor(await serverFor(file, workspace), sessionId)]
 }
 
 async function closeServersExcept(file: string): Promise<void> {

@@ -9,6 +9,7 @@ import type {
   JsonRpcResponse,
   ToolDef,
   ToolResult,
+  LibraryCallContext,
   LibraryMcp,
   LibraryTools,
   LibraryWriteInput,
@@ -69,6 +70,11 @@ const TOOLS: ToolDef[] = [
           type: 'string',
           description: 'Folder inside the library; the root when omitted.',
         },
+        by: {
+          type: 'string',
+          description:
+            'Your name, as the person knows you — leave it out if you are the orchestrator.',
+        },
       },
       required: ['title', 'body'],
       additionalProperties: false,
@@ -124,6 +130,8 @@ async function callRead(tools: LibraryTools, args: Record<string, unknown>): Pro
 const isStringArray = (value: unknown): value is string[] =>
   Array.isArray(value) && value.every((one) => typeof one === 'string')
 
+const BY_MAX = 80
+
 function writeInput(args: Record<string, unknown>): LibraryWriteInput | string {
   if (typeof args.title !== 'string') return 'library_write needs a string "title"'
   if (typeof args.body !== 'string') return 'library_write needs a string "body"'
@@ -133,9 +141,13 @@ function writeInput(args: Record<string, unknown>): LibraryWriteInput | string {
   if (args.folder !== undefined && typeof args.folder !== 'string') {
     return 'library_write "folder" must be a string'
   }
+  if (args.by !== undefined && typeof args.by !== 'string') {
+    return 'library_write "by" must be a string'
+  }
   const input: LibraryWriteInput = { title: args.title, body: args.body }
   if (args.tags !== undefined) input.tags = args.tags
   if (args.folder !== undefined) input.folder = args.folder
+  if (args.by !== undefined) input.by = args.by.trim().slice(0, BY_MAX)
   return input
 }
 
@@ -143,10 +155,14 @@ function writeInput(args: Record<string, unknown>): LibraryWriteInput | string {
 // is filed" would go on to tell the person something untrue. A refusal says
 // which of the two — title or folder — is the reason, so an agent can fix its
 // own ask instead of trying the same one again.
-async function callWrite(tools: LibraryTools, args: Record<string, unknown>): Promise<ToolResult> {
+async function callWrite(
+  tools: LibraryTools,
+  args: Record<string, unknown>,
+  context: LibraryCallContext,
+): Promise<ToolResult> {
   const input = writeInput(args)
   if (typeof input === 'string') return failure(input)
-  const result = await tools.write(input)
+  const result = await tools.write(input, context)
   if (!result.ok) {
     return failure(
       result.why === 'folder'
@@ -170,7 +186,11 @@ async function callRecent(tools: LibraryTools, args: Record<string, unknown>): P
   return text(await tools.recent(args.limit ?? 10))
 }
 
-async function callTool(tools: LibraryTools, params: unknown): Promise<ToolResult> {
+async function callTool(
+  tools: LibraryTools,
+  params: unknown,
+  context: LibraryCallContext,
+): Promise<ToolResult> {
   if (!isRecord(params) || typeof params.name !== 'string')
     return failure('tools/call needs a "name"')
   const args = params.arguments === undefined ? {} : params.arguments
@@ -181,7 +201,7 @@ async function callTool(tools: LibraryTools, params: unknown): Promise<ToolResul
     case 'library_read':
       return callRead(tools, args)
     case 'library_write':
-      return callWrite(tools, args)
+      return callWrite(tools, args, context)
     case 'library_recent':
       return callRecent(tools, args)
     default:
@@ -205,6 +225,7 @@ async function dispatch(
   tools: LibraryTools,
   name: string,
   request: JsonRpcRequest,
+  context: LibraryCallContext,
 ): Promise<JsonRpcResponse> {
   const id = request.id as JsonRpcId
   switch (request.method) {
@@ -220,7 +241,7 @@ async function dispatch(
     case 'tools/list':
       return ok(id, { tools: TOOLS })
     case 'tools/call':
-      return ok(id, await callTool(tools, request.params))
+      return ok(id, await callTool(tools, request.params, context))
     default:
       return err(id, METHOD_NOT_FOUND, `method not found: ${String(request.method)}`)
   }
@@ -263,7 +284,23 @@ function gate(req: IncomingMessage, token: string): HttpReply | null {
   return null
 }
 
-async function handlePost(tools: LibraryTools, name: string, body: string): Promise<HttpReply> {
+// Which session's spawn this call arrived through, read off the header the
+// CLI was launched with. Anything that is not a bare id — missing, a list, or
+// carrying a character that id would never have — is not trusted as one.
+const SESSION_HEADER = /^[A-Za-z0-9-]{1,64}$/
+
+function sessionOf(req: IncomingMessage): string {
+  const raw = req.headers['x-zetrem-session']
+  const value = Array.isArray(raw) ? raw[0] : raw
+  return typeof value === 'string' && SESSION_HEADER.test(value) ? value : ''
+}
+
+async function handlePost(
+  tools: LibraryTools,
+  name: string,
+  body: string,
+  context: LibraryCallContext,
+): Promise<HttpReply> {
   let message: unknown
   try {
     message = JSON.parse(body)
@@ -274,7 +311,7 @@ async function handlePost(tools: LibraryTools, name: string, body: string): Prom
     return json(400, err(null, INVALID_REQUEST, 'expected one JSON-RPC message'))
   const request = message as JsonRpcRequest
   if (request.id === undefined || request.id === null) return { status: 202 }
-  const response = await dispatch(tools, name, request)
+  const response = await dispatch(tools, name, request, context)
   const headers: Record<string, string> =
     request.method === 'initialize' ? { 'mcp-session-id': randomToken() } : {}
   return json(200, response, headers)
@@ -298,7 +335,7 @@ async function handle(
   if (refused) return send(res, refused)
   const body = await readBody(req)
   if (body === null) return send(res, { status: 413 })
-  send(res, await handlePost(tools, name, body))
+  send(res, await handlePost(tools, name, body, { session: sessionOf(req) }))
 }
 
 function listen(server: Server): Promise<number> {
@@ -325,13 +362,17 @@ export async function startLibraryMcp(tools: LibraryTools, name = 'library'): Pr
   }
 }
 
-export function mcpConfigFor(server: LibraryMcp, name = 'library'): string {
+// sessionId is the agent host's own id (agent-host.ts's `id`), so a proposal
+// its tool calls raise can later be traced back to the chat that host was
+// running in. '' from a caller that has no session of its own, like the
+// probe that only checks the CLI still starts.
+export function mcpConfigFor(server: LibraryMcp, sessionId: string, name = 'library'): string {
   return JSON.stringify({
     mcpServers: {
       [name]: {
         type: 'http',
         url: server.url,
-        headers: { Authorization: `Bearer ${server.token}` },
+        headers: { Authorization: `Bearer ${server.token}`, 'X-Zetrem-Session': sessionId },
       },
     },
   })

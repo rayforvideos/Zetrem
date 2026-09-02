@@ -9,11 +9,13 @@ import type {
 export function LibraryGate({
   library,
   proposals,
+  chatTitleOf,
   nowMs,
   sidebar,
 }: {
   library: LibraryNotes
   proposals: LibraryProposals
+  chatTitleOf(session: string): string | null
   nowMs: number
   sidebar: ReactNode
 }) {
@@ -46,6 +48,7 @@ export function LibraryGate({
       onRenameFolder={library.renameFolder}
       onRemoveFolder={library.removeFolder}
       proposals={proposals.proposals}
+      chatTitleOf={chatTitleOf}
       onAcceptProposal={proposals.accept}
       onDismissProposal={proposals.dismiss}
       sidebar={sidebar}

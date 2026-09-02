@@ -3,11 +3,13 @@ import type { StatusState } from '@/entities/agent-session'
 import { StatusDrawer } from '@/widgets/status-bar'
 import { UsageBar } from '@/widgets/status-bar'
 import { useCliUpdate } from '../../model/session/useCliUpdate'
+import type { Conversation } from '../../model/chat/conversation/conversation.types'
 import type { useConnectors } from '../../model/extensions/useConnectors'
 
 export function StatusBarPanel({
   shown,
   status,
+  conversationStore,
   wires,
   nowMs,
   open,
@@ -15,12 +17,13 @@ export function StatusBarPanel({
 }: {
   shown: boolean
   status: StatusState
+  conversationStore: Conversation | null
   wires: ReturnType<typeof useConnectors>
   nowMs: number
   open: boolean
   onToggle(): void
 }) {
-  const cliUpdate = useCliUpdate(status.session?.cliVersion ?? null)
+  const cliUpdate = useCliUpdate(status.session?.cliVersion ?? null, conversationStore)
   const [appVersion, setAppVersion] = useState<string | null>(null)
 
   useEffect(() => {

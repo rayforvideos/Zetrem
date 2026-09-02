@@ -23,8 +23,17 @@ const ALONE = [
   'Write it yourself, or hand off one write task at a time. Reads may run in parallel freely.',
 ]
 
+// A teammate may opt out of its own worktree and write straight into the shared
+// tree, which the lines above do not cover: nothing comes back on a branch, and
+// nothing keeps a second writer out of the files it is editing.
+function sharedWriterLine(names: string[]): string {
+  return `Teammates who work directly in the shared working tree, with no branch to merge: ${names.join(', ')}. While one of them is out, hand off no other file-writing work in parallel and run no git command that rewrites the working tree.`
+}
+
 // The fence is the runtime's, not this text's: what is said here is only what
 // the orchestrator has to do about work that comes back behind one.
-export function orchestratorPrompt(isolated: boolean): string {
-  return [...SAID, ...(isolated ? FENCED : ALONE)].join(' ')
+export function orchestratorPrompt(isolated: boolean, sharedWriters: string[]): string {
+  if (!isolated) return [...SAID, ...ALONE].join(' ')
+  const named = sharedWriters.length === 0 ? [] : [sharedWriterLine(sharedWriters)]
+  return [...SAID, ...FENCED, ...named].join(' ')
 }

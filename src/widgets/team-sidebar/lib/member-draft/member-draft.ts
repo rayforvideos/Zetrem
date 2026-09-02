@@ -17,6 +17,7 @@ export function draftFrom(fields: MemberFields, initial: AgentDefDraft | null): 
     tools: fields.tools ?? initial?.tools ?? [],
     knowledge: fields.knowledge ?? initial?.knowledge ?? [],
     prompt: fields.prompt.trim(),
+    worktree: fields.worktree,
   }
 }
 

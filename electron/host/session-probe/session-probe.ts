@@ -138,7 +138,9 @@ export function registerSessionProbe(): void {
         ...probeArgs({
           ...run,
           persona: PERSONA,
-          orchestrator: orchestratorPrompt(isolated),
+          // The probe reads back what the CLI answers, never hands off work, so
+          // there is nobody out in the shared tree for it to be warned about.
+          orchestrator: orchestratorPrompt(isolated, []),
           isolated,
         }),
         ...added,

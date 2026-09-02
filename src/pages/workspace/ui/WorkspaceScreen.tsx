@@ -128,6 +128,7 @@ export function WorkspaceScreen() {
         <StatusBarPanel
           shown={layout.gate !== 'welcome'}
           status={status}
+          conversationStore={chatting.agent.conversationStore}
           wires={extensions.wires}
           nowMs={nowMs}
           open={layout.drawerOpen}

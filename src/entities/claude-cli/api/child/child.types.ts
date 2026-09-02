@@ -8,9 +8,12 @@ export type ChildTurnEvent =
       subagentType: string
       prompt: string
       background: boolean
+      // Set when this child was opened from inside another teammate's tool call
+      // rather than the orchestrator's own, i.e. this is a grandchild.
+      parentId?: string
     }
   | { type: 'childSay'; toolUseId: string; role: 'user' | 'assistant'; text: string }
-  | { type: 'childStream'; toolUseId: string; callId: string; line: string }
+  | { type: 'childStream'; toolUseId: string; callId: string; line: string; input: unknown }
   | {
       // The CLI carries a teammate-to-teammate message only in the sender's tool call: the
       // agent on the other end is woken without ever being handed the words.

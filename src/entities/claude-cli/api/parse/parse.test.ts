@@ -517,6 +517,7 @@ describe('parseClaudeLine: what a child is doing, tool by tool', () => {
         toolUseId: 'toolu_sub1',
         callId: 'Read src/a.ts',
         line: 'Read src/a.ts',
+        input: { file_path: 'src/a.ts' },
       },
     ])
   })
@@ -532,6 +533,70 @@ describe('parseClaudeLine: what a child is doing, tool by tool', () => {
       }),
     )
     expect(events.some((e) => e.type === 'stream')).toBe(false)
+  })
+
+  it('carries an Edit call’s input intact, so a diff view can read it later', () => {
+    const events = parseClaudeLine(
+      line({
+        type: 'assistant',
+        parent_tool_use_id: 'toolu_sub1',
+        message: {
+          content: [
+            {
+              type: 'tool_use',
+              name: 'Edit',
+              input: { file_path: 'src/a.ts', old_string: 'a', new_string: 'b' },
+            },
+          ],
+        },
+      }),
+    )
+    const stream = events.find((e) => e.type === 'childStream')
+    expect(stream).toMatchObject({
+      type: 'childStream',
+      input: { file_path: 'src/a.ts', old_string: 'a', new_string: 'b' },
+    })
+  })
+
+  it('opens a nested session, with its parent, when a child calls Agent', () => {
+    const events = parseClaudeLine(
+      line({
+        type: 'assistant',
+        parent_tool_use_id: 'toolu_sub1',
+        message: {
+          content: [
+            {
+              type: 'tool_use',
+              id: 'toolu_grand1',
+              name: 'Agent',
+              input: {
+                subagent_type: 'Explore',
+                description: '탐색',
+                prompt: '찾아봐',
+              },
+            },
+          ],
+        },
+      }),
+    )
+    expect(events).toEqual([
+      {
+        type: 'childOpen',
+        toolUseId: 'toolu_grand1',
+        label: '탐색',
+        subagentType: 'Explore',
+        prompt: '찾아봐',
+        background: false,
+        parentId: 'toolu_sub1',
+      },
+      {
+        type: 'childStream',
+        toolUseId: 'toolu_sub1',
+        callId: 'toolu_grand1',
+        line: expect.any(String),
+        input: expect.any(Object),
+      },
+    ])
   })
 })
 

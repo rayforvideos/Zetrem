@@ -1,13 +1,15 @@
-import { execFile } from 'node:child_process'
 import type { WorktreeDiff, WorktreeRollback } from '@/app/desk/desk.types'
 import { lost, won } from '@/shared/lib/outcome/outcome'
 import type { Outcome } from '@/shared/lib/outcome/outcome.types'
 import { handle } from '../../ipc/ipc'
 import { recallProject } from '../../store/project-memory/project-memory'
-import type { GitReply, ReviewDeps } from './worktree-review.types'
+import { runGit } from '../../shell/git-run/git-run'
+import type { GitReply } from '../../shell/git-run/git-run.types'
+import type { ReviewDeps } from './worktree-review.types'
 
-const GIT_TIMEOUT_MS = 60_000
-const GIT_BUFFER_MAX = 32 * 1024 * 1024
+// Where git-running started out, and where the review's own callers still reach
+// for it.
+export { runGit }
 
 // The runtime names a worktree branch after its own agent id, which is hex.
 // Anything else cannot name one, and would be a string this app made up.
@@ -15,24 +17,6 @@ const AGENT_ID = /^[0-9a-f]{6,}$/
 
 function branchOf(agentId: string): string {
   return `worktree-agent-${agentId}`
-}
-
-export function runGit(args: string[], cwd: string): Promise<GitReply> {
-  return new Promise((resolve) => {
-    execFile(
-      'git',
-      args,
-      { cwd, timeout: GIT_TIMEOUT_MS, maxBuffer: GIT_BUFFER_MAX, windowsHide: true },
-      (trouble, stdout, stderr) => {
-        if (trouble === null) {
-          resolve({ code: 0, stdout, stderr })
-          return
-        }
-        const code = typeof trouble.code === 'number' ? trouble.code : 1
-        resolve({ code, stdout, stderr: stderr.length > 0 ? stderr : trouble.message })
-      },
-    )
-  })
 }
 
 const liveDeps: ReviewDeps = { here: recallProject, git: runGit }

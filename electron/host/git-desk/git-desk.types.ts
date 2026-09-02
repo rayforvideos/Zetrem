@@ -1,4 +1,4 @@
-import type { GitReply } from '../worktree-review/worktree-review.types'
+import type { GitReply } from '../../shell/git-run/git-run.types'
 
 // Which side of a change a diff should show: what is staged, what is not
 // yet, or a file git does not know at all.

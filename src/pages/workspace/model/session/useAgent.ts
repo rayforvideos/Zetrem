@@ -1,32 +1,46 @@
-import { useEffect, useRef, useState, useSyncExternalStore } from 'react'
-import { sessionStore, statusStore } from '@/entities/agent-session'
-import { addressed } from '@/entities/teammate'
-import { parseClaudeLine, permissionAlwaysResult, permissionResult } from '@/entities/claude-cli'
-import type { AgentSession, StatusState } from '@/entities/agent-session'
-import type { ModelChoice, RunConfig } from '@/entities/claude-cli'
-import { applyAgentEvent } from './agent-events/agent-events'
-import type { Sent } from './agent-events/agent-events.types'
-import { advancePermission } from '../chat/conversation/advance-permission'
-import { conversation } from '../chat/conversation/conversation'
-import { sentOf, withPaths } from '@/entities/attachment'
+import { useCallback, useEffect, useState, useSyncExternalStore } from 'react'
+import type { AgentSession, ChatStatusState } from '@/entities/agent-session'
+import type { ModelChoice } from '@/entities/claude-cli'
 import type { Attached } from '@/entities/attachment'
-import { reasonOf } from '@/shared/lib/failure/failure'
-import { shouldRelaunch } from './relaunch/relaunch'
-import { beginSession, closeSession } from './session-bookkeeping/session-bookkeeping'
 import { settled } from './settle/settle'
-import { afterYouStopped } from './asked-to-stop/asked-to-stop'
-import type { Attempt } from './relaunch/relaunch.types'
-import type { ConversationState } from '../chat/conversation/conversation.types'
-import { rememberHostChat } from './host-chats/host-chats'
-import { t } from '@lingui/core/macro'
+import type { Conversation, ConversationState } from '../chat/conversation/conversation.types'
+import type { ChatRunConfig, ChatSession } from './chat-sessions/chat-session/chat-session.types'
 
 const CLOCK_MS = 1000
+
+// Stable identity: useSyncExternalStore must get the same object back across
+// renders while nothing has changed, and there is no session to read from
+// when nothing is open.
+const EMPTY_CONV: ConversationState = {
+  turns: [],
+  status: 'done',
+  permission: null,
+  chores: [],
+  trouble: false,
+}
+
+const EMPTY_STATUS: ChatStatusState = {
+  session: null,
+  probed: false,
+  context: { used: 0, window: null },
+  cost: {
+    usd: 0,
+    lastTurnUsd: 0,
+    tokens: { in: 0, out: 0, cacheRead: 0, cacheCreate: 0 },
+    durationMs: 0,
+    turns: 0,
+  },
+  activity: 'idle',
+}
+
+const EMPTY_CHILDREN: AgentSession[] = []
 
 type Agent = {
   running: boolean
   conversation: ConversationState
+  conversationStore: Conversation | null
   children: AgentSession[]
-  status: StatusState
+  status: ChatStatusState
   nowMs: number
   send(text: string, to?: string | null, files?: Attached[]): void
   decide(allow: boolean, always?: boolean): void
@@ -35,40 +49,48 @@ type Agent = {
   restart(): void
 }
 
+// A thin subscription over the active chat's session: everything the screen
+// shows lives on the session already (Task 6), so this hook does not launch,
+// stop or reset anything on its own account — it just reads.
 export function useAgent(
-  config: Omit<RunConfig, 'persona'>,
+  session: ChatSession | null,
+  config: ChatRunConfig,
   onModelRefused: (model: ModelChoice) => void,
-  // The chat this session's turns are saved into — a proposal's tool call
-  // remembers it against the host id, so a card can later say which chat it
-  // came from. Read at launch, not before: the id the composer had when the
-  // person hit send is the one that matters.
-  chatId: string | null,
 ): Agent {
-  const configRef = useRef(config)
-  const chatIdRef = useRef(chatId)
-  const conv = useSyncExternalStore(conversation.subscribe, conversation.get, conversation.get)
-  const children = useSyncExternalStore(sessionStore.subscribe, sessionStore.get, sessionStore.get)
-  const status = useSyncExternalStore(statusStore.subscribe, statusStore.get, statusStore.get)
+  const subscribe = useCallback(
+    (listener: () => void) => session?.subscribe(listener) ?? (() => undefined),
+    [session],
+  )
+  const conv = useSyncExternalStore(
+    subscribe,
+    () => session?.stores.conversation.get() ?? EMPTY_CONV,
+    () => EMPTY_CONV,
+  )
+  const children = useSyncExternalStore(
+    subscribe,
+    () => session?.stores.children.get() ?? EMPTY_CHILDREN,
+    () => EMPTY_CHILDREN,
+  )
+  const status = useSyncExternalStore(
+    subscribe,
+    () => session?.stores.status.get() ?? EMPTY_STATUS,
+    () => EMPTY_STATUS,
+  )
+  // Read on the session-wide subscribe rather than a store of its own: every
+  // hostId change comes with a store emit (beginSession resets status, reset
+  // clears the permission, an exit closes the session), so this snapshot is
+  // never the stale half of a pair.
+  const running = useSyncExternalStore(
+    subscribe,
+    () => session?.running() ?? false,
+    () => false,
+  )
   const [nowMs, setNowMs] = useState(() => Date.now())
-  const [running, setRunning] = useState(false)
-
-  const hostId = useRef<string | null>(null)
-  const asks = useRef<
-    { requestId: string; toolName: string; line: string; detail: string; input: unknown }[]
-  >([])
-  const childIds = useRef(new Set<string>())
-  const sends = useRef(new Map<string, Sent>())
-  const limits = useRef(new Map<string, string>())
-  const attempt = useRef<Attempt | null>(null)
-  const stopping = useRef(false)
-  const refused = useRef(onModelRefused)
 
   // Written after commit, not during render: a render React throws away must
-  // not leave its config behind for launch() to hand the subprocess.
+  // not leave its config behind for the session's next launch to pick up.
   useEffect(() => {
-    configRef.current = config
-    refused.current = onModelRefused
-    chatIdRef.current = chatId
+    session?.configure(config, onModelRefused)
   })
 
   useEffect(() => {
@@ -78,162 +100,22 @@ export function useAgent(
 
   const convStatus = conv.status
   useEffect(() => {
+    if (session === null) return
     const at = { nowMs, parentWorking: convStatus === 'working' }
-    for (const id of settled(children, at)) sessionStore.patch(id, { status: 'done' })
-  }, [children, nowMs, convStatus])
-
-  useEffect(() => {
-    const unsubscribe = window.desk.onAgentEvent((event) => {
-      if (event.id !== hostId.current) return
-
-      if (event.kind === 'exit') {
-        const stopped = stopping.current
-        hostId.current = null
-        setRunning(false)
-        stopping.current = false
-        const failed = attempt.current
-        attempt.current = null
-        if (failed !== null && shouldRelaunch(failed, event.code)) {
-          conversation.system(t`Could not pick that conversation back up. Starting a new one.`)
-          launch(failed.prompt, null, failed.files)
-          return
-        }
-        closeSession({
-          reason: event.reason,
-          stopped,
-          asks: asks.current,
-          childIds: childIds.current,
-        })
-        return
-      }
-      if (event.kind === 'workspace') return
-      if (attempt.current !== null) attempt.current.spoke = true
-
-      const refs = {
-        asks: asks.current,
-        childIds: childIds.current,
-        sends: sends.current,
-        limits: limits.current,
-        onModelRefused: refused.current,
-      }
-      for (const turn of parseClaudeLine(event.line)) {
-        applyAgentEvent(afterYouStopped(turn, stopping.current), refs)
-      }
-    })
-    return () => {
-      unsubscribe()
-      if (hostId.current) {
-        // The screen is being rebuilt (a language change does this) and the
-        // process cannot follow it across; the next message resumes the thread.
-        conversation.settleDraft()
-        conversation.system(
-          t`The screen was rebuilt, so this session paused. Your next message picks it back up.`,
-        )
-        window.desk.stopAgent(hostId.current)
-      }
-    }
-  }, [])
-
-  function launch(text: string, resume: string | null, files: Attached[] = []): void {
-    beginSession({
-      resumed: resume !== null,
-      asks: asks.current,
-      sends: sends.current,
-      childIds: childIds.current,
-      limits: limits.current,
-    })
-    const id = `agent-${Date.now()}`
-    hostId.current = id
-    if (chatIdRef.current !== null) rememberHostChat(id, chatIdRef.current)
-    stopping.current = false
-    setRunning(true)
-    stopping.current = false
-    attempt.current = { prompt: text, files, resumed: resume !== null, spoke: false }
-    void window.desk
-      .startAgent(id, text, { ...configRef.current, persona: '', resume }, files)
-      .catch((cause: unknown) => {
-        if (hostId.current !== id) return
-        hostId.current = null
-        setRunning(false)
-        attempt.current = null
-        conversation.system(`Could not start Claude Code: ${reasonOf(cause)}`)
-        conversation.setStatus('done')
-        conversation.setTrouble(true)
-      })
-  }
-
-  function send(text: string, to: string | null = null, files: Attached[] = []): void {
-    conversation.say('user', text, to ?? undefined, sentOf(files))
-    conversation.setStatus('working')
-    const dressed = withPaths(addressed(text, to), files)
-    // A stopped session is on its way out: this message starts a fresh one.
-    if (hostId.current && !stopping.current) {
-      window.desk.sendToAgent(hostId.current, dressed, files)
-      return
-    }
-    launch(dressed, configRef.current.resume ?? null, files)
-  }
-
-  // The process is replaced, not the conversation: the next message resumes
-  // it in a session that has the team, permissions and model as they are now.
-  function restart(): void {
-    reset()
-    conversation.system(
-      t`Session restarted. The next message picks the conversation back up with your team as it is now.`,
-    )
-  }
-
-  function reset(): void {
-    const id = hostId.current
-    hostId.current = null
-    setRunning(false)
-    attempt.current = null
-    asks.current.length = 0
-    childIds.current.clear()
-    sends.current.clear()
-    limits.current.clear()
-    sessionStore.clear()
-    statusStore.reset()
-    conversation.settleDraft()
-    conversation.setStatus('done')
-    conversation.setPermission(null)
-    conversation.setTrouble(false)
-    // stopAgent kills the CLI and every background command it ran; the exit
-    // event finds hostId already null, so closeSession never clears these.
-    conversation.clearChores()
-    if (id !== null) window.desk.stopAgent(id)
-  }
-
-  function decide(allow: boolean, always = false): void {
-    const id = hostId.current
-    if (id === null || asks.current.length === 0) return
-    const current = asks.current.shift()!
-    window.desk.respondPermission(
-      id,
-      current.requestId,
-      allow && always
-        ? permissionAlwaysResult(current.toolName, current.input)
-        : permissionResult(allow, current.input),
-    )
-    advancePermission(asks.current)
-  }
-
-  function stop(): void {
-    attempt.current = null
-    stopping.current = true
-    if (hostId.current) window.desk.stopAgent(hostId.current)
-  }
+    for (const id of settled(children, at)) session.stores.children.patch(id, { status: 'done' })
+  }, [session, children, nowMs, convStatus])
 
   return {
     running,
     conversation: conv,
+    conversationStore: session?.stores.conversation ?? null,
     children,
     status,
     nowMs,
-    send,
-    decide,
-    stop,
-    reset,
-    restart,
+    send: (text, to = null, files = []) => session?.send(text, to, files),
+    decide: (allow, always = false) => session?.decide(allow, always),
+    stop: () => session?.stop(),
+    reset: () => session?.reset(),
+    restart: () => session?.restart(),
   }
 }

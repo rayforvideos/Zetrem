@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState, useSyncExternalStore } from 'react'
 import { accountStatus, statusView } from '@/entities/agent-session'
 import { allowedStock, roster, offStock, stockAgents } from '@/entities/teammate'
+import { topLevel } from '@/entities/agent-session'
 import { withRefused, withoutRefused } from '@/entities/claude-cli'
 import { projectStore } from '@/entities/project'
 import { GRID_PAD } from '@/shared/config/theme'
@@ -135,7 +136,10 @@ export function useWorkspace() {
     defs.map((def) => def.name),
     authored,
   )
-  const openAgent = children.find((session) => session.id === focus.openAgentId) ?? null
+  // A subagent a teammate called in itself is part of that teammate's report,
+  // so it is never a teammate the workspace shows, opens or counts on its own.
+  const teammates = topLevel(children)
+  const openAgent = teammates.find((session) => session.id === focus.openAgentId) ?? null
   // The probe keeps reporting a session after our child has been stopped, so
   // status.session outlives the thing it describes.
   const held = agent.running ? status.session : null
@@ -143,7 +147,7 @@ export function useWorkspace() {
   const teamMembers = team(
     defs,
     sessionAgentNames,
-    roster(sessionAgentNames, children, conv.status !== 'done'),
+    roster(sessionAgentNames, teammates, conv.status !== 'done'),
   )
   useEffect(() => {
     if (settings.wasStockOn === null || stock.length === 0) return

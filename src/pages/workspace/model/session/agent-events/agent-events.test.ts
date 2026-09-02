@@ -222,6 +222,206 @@ describe('applyAgentEvent: the order has to be nailed down', () => {
   })
 })
 
+describe('a grandchild’s task events land on the grandchild, not on its parent', () => {
+  it('tags the nested session with its parent and files task events on it, not the parent', () => {
+    const refs = fakeRefs()
+    applyAgentEvent(
+      {
+        type: 'childOpen',
+        toolUseId: 'toolu_child',
+        label: '팀원',
+        subagentType: 'general-purpose',
+        prompt: '일해줘',
+        background: false,
+      },
+      refs,
+    )
+    applyAgentEvent(
+      {
+        type: 'childOpen',
+        toolUseId: 'toolu_grand',
+        label: '탐색',
+        subagentType: 'Explore',
+        prompt: '찾아봐',
+        background: false,
+        parentId: 'toolu_child',
+      },
+      refs,
+    )
+    expect(refs.stores.children.get().find((s) => s.id === 'toolu_grand')?.parentId).toBe(
+      'toolu_child',
+    )
+
+    applyAgentEvent(
+      {
+        type: 'childStarted',
+        toolUseId: 'toolu_grand',
+        taskId: 'task-grand',
+        taskType: 'local_agent',
+        description: '',
+      },
+      refs,
+    )
+    applyAgentEvent(
+      {
+        type: 'childNotified',
+        toolUseId: 'toolu_grand',
+        taskId: 'task-grand',
+        summary: '다 찾았다',
+        done: true,
+      },
+      refs,
+    )
+
+    const grandchild = refs.stores.children.get().find((s) => s.id === 'toolu_grand')
+    expect(grandchild?.headline).toBe('다 찾았다')
+    expect(grandchild?.status).toBe('reported')
+
+    const parent = refs.stores.children.get().find((s) => s.id === 'toolu_child')
+    expect(parent?.headline).toBe('일해줘')
+    expect(parent?.status).toBe('working')
+  })
+
+  it('drops a grandchild whose parent is nobody we know, rather than seating it at the top', () => {
+    const refs = fakeRefs()
+    applyAgentEvent(
+      {
+        type: 'childOpen',
+        toolUseId: 'toolu_orphan',
+        label: '떠돌이',
+        subagentType: 'Explore',
+        prompt: '찾아봐',
+        background: false,
+        parentId: 'toolu_ghost',
+      },
+      refs,
+    )
+    expect(refs.stores.children.get()).toEqual([])
+    expect(refs.childIds.has('toolu_orphan')).toBe(false)
+  })
+
+  it('still hangs the task id on a grandchild whose task was announced first', () => {
+    const refs = fakeRefs()
+    applyAgentEvent(
+      {
+        type: 'childOpen',
+        toolUseId: 'toolu_child',
+        label: '팀원',
+        subagentType: 'general-purpose',
+        prompt: '일해줘',
+        background: false,
+      },
+      refs,
+    )
+    // The CLI registers the task before the tool_use block streams in.
+    applyAgentEvent(
+      {
+        type: 'childStarted',
+        toolUseId: 'toolu_grand',
+        taskId: 'task-grand',
+        taskType: 'local_agent',
+        description: '',
+      },
+      refs,
+    )
+    applyAgentEvent(
+      {
+        type: 'childOpen',
+        toolUseId: 'toolu_grand',
+        label: '탐색',
+        subagentType: 'Explore',
+        prompt: '찾아봐',
+        background: false,
+        parentId: 'toolu_child',
+      },
+      refs,
+    )
+    expect(refs.stores.children.get().find((s) => s.id === 'toolu_grand')?.taskId).toBe(
+      'task-grand',
+    )
+
+    applyAgentEvent(
+      {
+        type: 'childNotified',
+        toolUseId: null,
+        taskId: 'task-grand',
+        summary: '다 찾았다',
+        done: true,
+      },
+      refs,
+    )
+    expect(refs.stores.children.get().find((s) => s.id === 'toolu_grand')?.headline).toBe(
+      '다 찾았다',
+    )
+  })
+})
+
+describe('a teammate’s call is stored as the change it made', () => {
+  it('keeps the diff and its count, and never the raw input', () => {
+    const refs = fakeRefs()
+    applyAgentEvent(
+      {
+        type: 'childOpen',
+        toolUseId: 'toolu_child',
+        label: '팀원',
+        subagentType: 'general-purpose',
+        prompt: '일해줘',
+        background: false,
+      },
+      refs,
+    )
+    applyAgentEvent(
+      {
+        type: 'childStream',
+        toolUseId: 'toolu_child',
+        callId: 'c1',
+        line: 'Edit a.ts',
+        input: { file_path: 'a.ts', old_string: '옛 줄', new_string: '새 줄' },
+      },
+      refs,
+    )
+
+    const call = refs.stores.children.get().find((s) => s.id === 'toolu_child')?.stream[0]
+    expect(call?.change).toEqual([
+      [
+        { kind: 'remove', text: '옛 줄' },
+        { kind: 'add', text: '새 줄' },
+      ],
+    ])
+    expect(call?.count).toEqual({ added: 1, removed: 1 })
+    expect(call).not.toHaveProperty('input')
+  })
+
+  it('leaves a call that changed nothing without a change to draw', () => {
+    const refs = fakeRefs()
+    applyAgentEvent(
+      {
+        type: 'childOpen',
+        toolUseId: 'toolu_child',
+        label: '팀원',
+        subagentType: 'general-purpose',
+        prompt: '일해줘',
+        background: false,
+      },
+      refs,
+    )
+    applyAgentEvent(
+      {
+        type: 'childStream',
+        toolUseId: 'toolu_child',
+        callId: 'c1',
+        line: 'Read a.ts',
+        input: { file_path: 'a.ts' },
+      },
+      refs,
+    )
+
+    const call = refs.stores.children.get().find((s) => s.id === 'toolu_child')?.stream[0]
+    expect(call?.change).toBeUndefined()
+    expect(call?.count).toBeUndefined()
+  })
+})
+
 it('hands a limit to the account, not to the chat', () => {
   const limit: RateLimit = {
     kind: 'seven_day',
@@ -451,7 +651,13 @@ describe('a child that runs several rounds does not vanish for reporting once', 
       refs,
     )
     applyAgentEvent(
-      { type: 'childStream', toolUseId: 'toolu_b', callId: 'call1', line: 'Read b.ts' },
+      {
+        type: 'childStream',
+        toolUseId: 'toolu_b',
+        callId: 'call1',
+        line: 'Read b.ts',
+        input: null,
+      },
       refs,
     )
 
@@ -483,7 +689,13 @@ describe('a child that runs several rounds does not vanish for reporting once', 
     const refs = fakeRefs()
     open(refs, 'toolu_k')
     applyAgentEvent(
-      { type: 'childStream', toolUseId: 'toolu_k', callId: 'call1', line: 'Read a.ts' },
+      {
+        type: 'childStream',
+        toolUseId: 'toolu_k',
+        callId: 'call1',
+        line: 'Read a.ts',
+        input: null,
+      },
       refs,
     )
 
@@ -578,7 +790,13 @@ describe('a child that runs several rounds does not vanish for reporting once', 
     expect(refs.stores.children.get().find((s) => s.id === 'toolu_h')?.status).toBe('done')
 
     applyAgentEvent(
-      { type: 'childStream', toolUseId: 'toolu_h', callId: 'call1', line: 'Read late.ts' },
+      {
+        type: 'childStream',
+        toolUseId: 'toolu_h',
+        callId: 'call1',
+        line: 'Read late.ts',
+        input: null,
+      },
       refs,
     )
     const child = refs.stores.children.get().find((s) => s.id === 'toolu_h')
@@ -607,7 +825,13 @@ describe('a child that runs several rounds does not vanish for reporting once', 
     open(refs, 'toolu_f')
     applyAgentEvent({ type: 'turnEnded' }, refs)
     applyAgentEvent(
-      { type: 'childStream', toolUseId: 'toolu_f', callId: 'call1', line: 'Read late.ts' },
+      {
+        type: 'childStream',
+        toolUseId: 'toolu_f',
+        callId: 'call1',
+        line: 'Read late.ts',
+        input: null,
+      },
       refs,
     )
 
@@ -649,7 +873,13 @@ describe('an agent woken by a message gets a tile too', () => {
     const refs = fakeRefs()
     send(refs, 'tu_2', 'Hardy', resumed)
     applyAgentEvent(
-      { type: 'childStream', toolUseId: 'abc34151ab50738ee', callId: 'call1', line: 'Read a.ts' },
+      {
+        type: 'childStream',
+        toolUseId: 'abc34151ab50738ee',
+        callId: 'call1',
+        line: 'Read a.ts',
+        input: null,
+      },
       refs,
     )
     expect(
@@ -754,7 +984,13 @@ describe('a subagent reports what it is doing while it works', () => {
     const refs = fakeRefs()
     open(refs, 'toolu_twice')
     applyAgentEvent(
-      { type: 'childStream', toolUseId: 'toolu_twice', callId: 'c1', line: 'Read use-cart.ts' },
+      {
+        type: 'childStream',
+        toolUseId: 'toolu_twice',
+        callId: 'c1',
+        line: 'Read use-cart.ts',
+        input: null,
+      },
       refs,
     )
     applyAgentEvent(
@@ -940,7 +1176,13 @@ describe('a subagent reports what it is doing while it works', () => {
       refs,
     )
     applyAgentEvent(
-      { type: 'childStream', toolUseId: 'toolu_w', callId: 'toolu_sh', line: 'Bash sleep 60' },
+      {
+        type: 'childStream',
+        toolUseId: 'toolu_w',
+        callId: 'toolu_sh',
+        line: 'Bash sleep 60',
+        input: null,
+      },
       refs,
     )
     applyAgentEvent(

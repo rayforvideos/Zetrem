@@ -1,4 +1,6 @@
 export { metrics } from './lib/metrics/metrics'
+export { helpersOf, topLevel } from './lib/hierarchy/hierarchy'
+export { saidBack } from './lib/said-back/said-back'
 export type {
   AgentSession,
   Call,

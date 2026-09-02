@@ -5,8 +5,7 @@ import { addressee, whose } from './addressee'
 import { absorbs, resumedAgent } from '@/entities/claude-cli'
 import type { AgentSession, SessionStore, TranscriptEntry } from '@/entities/agent-session'
 import type { ClaudeTurnEvent } from '@/entities/claude-cli'
-import { shapeOfLine } from '@/entities/tool'
-import { resultNote } from '@/entities/tool'
+import { changeBadge, changeLines, resultNote, shapeOfLine, toolNameOf } from '@/entities/tool'
 import { clip } from '@/pages/workspace/model/session/agent-events/clip/clip'
 import type { AgentEventRefs } from '../agent-events.types'
 import { t } from '@lingui/core/macro'
@@ -23,6 +22,10 @@ export function applyCrewEvent(turn: ClaudeTurnEvent, refs: AgentEventRefs): voi
   const children = refs.stores.children
   switch (turn.type) {
     case 'childOpen': {
+      // A grandchild named under a parent we never opened has nothing to hang
+      // off. Seating it anyway would put it on the board as a teammate of its
+      // own, which is exactly what a helper is not, so it is let go.
+      if (turn.parentId !== undefined && !refs.childIds.has(turn.parentId)) return
       refs.childIds.add(turn.toolUseId)
       // The CLI can register the task before the tool_use block streams in, so
       // the id it announced early is claimed here or the child reads untracked.
@@ -50,6 +53,7 @@ export function applyCrewEvent(turn: ClaudeTurnEvent, refs: AgentEventRefs): voi
         startedAtMs: Date.now(),
         detached: turn.background,
         ...(early === undefined ? {} : { taskId: early }),
+        ...(turn.parentId === undefined ? {} : { parentId: turn.parentId }),
       })
       return
     }
@@ -80,11 +84,21 @@ export function applyCrewEvent(turn: ClaudeTurnEvent, refs: AgentEventRefs): voi
       children.patch(turn.toolUseId, { headline: turn.text.trim(), doing: '' })
       children.appendTranscript(turn.toolUseId, { role: turn.role, text: turn.text })
       return
-    case 'childStream':
+    case 'childStream': {
       if (!refs.childIds.has(turn.toolUseId) || closedForGood(children, turn.toolUseId)) return
       wake(children, turn.toolUseId)
-      children.beginCall(turn.toolUseId, { id: turn.callId, line: turn.line })
+      // The differ runs here, once, and the raw input is let go: what is stored
+      // is the change itself, so no view has to hold a whole file to draw it.
+      const change = changeLines(toolNameOf(turn.line), turn.input)
+      const count = changeBadge(change)
+      children.beginCall(turn.toolUseId, {
+        id: turn.callId,
+        line: turn.line,
+        ...(change.length === 0 ? {} : { change }),
+        ...(count === null ? {} : { count }),
+      })
       return
+    }
     case 'childSent': {
       if (!refs.childIds.has(turn.toolUseId)) return
       const heard = children.findByTask(turn.to)
@@ -209,7 +223,7 @@ export function wakeResumed(toolUseId: string, stdout: string, refs: AgentEventR
 
 function assignment(prompt: string): TranscriptEntry[] {
   const said = prompt.trim()
-  return said.length === 0 ? [] : [{ role: 'user', text: said }]
+  return said.length === 0 ? [] : [{ role: 'user', text: said, atMs: Date.now() }]
 }
 
 function closeCall(

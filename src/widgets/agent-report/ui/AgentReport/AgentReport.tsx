@@ -1,6 +1,6 @@
-import type { AgentSession, SessionStatus } from '@/entities/agent-session'
+import type { AgentSession } from '@/entities/agent-session'
 import { useScrollState } from '@/shared/lib/scroll-state/useScrollState'
-import { shapeOfLine, tally } from '@/entities/tool'
+import { tally } from '@/entities/tool'
 import { AgentSprite, personaOf } from '@/entities/teammate'
 import { cn } from '@/shared/lib/cn'
 import {
@@ -14,17 +14,17 @@ import {
   AlertDialogTitle,
 } from '@/shared/ui/alert-dialog'
 import { Button } from '@/shared/ui/button'
-import { ToolIcon } from '@/entities/tool'
 import { Markdown } from '@/shared/markdown/Markdown/Markdown'
 import { leadOf } from '../../lib/lead/lead'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { runsOf, stepTo } from '../../lib/runs/runs'
 import { rollbackTitle, rollbackWarning } from '../../lib/review/review'
 import type { DiffTone } from '../../lib/review/review.types'
+import { stateWord } from '../../lib/state-word/state-word'
 import { useWorktreeReview } from '../../model/useWorktreeReview'
-import { i18n } from '@lingui/core'
-import { msg, t } from '@lingui/core/macro'
-import type { MessageDescriptor } from '@lingui/core'
+import { CallStream } from '../CallStream/CallStream'
+import { HelperList } from '../HelperList/HelperList'
+import { t } from '@lingui/core/macro'
 
 const TONE: Record<DiffTone, string> = {
   added: 'text-added',
@@ -33,22 +33,25 @@ const TONE: Record<DiffTone, string> = {
   plain: '',
 }
 
-const STATE: Record<SessionStatus, MessageDescriptor> = {
-  working: msg`Working`,
-  waiting: msg`Waiting on you`,
-  reported: msg`Reported back`,
-  done: msg`Done`,
-}
-
 type AgentReportProps = {
   session: AgentSession
   sessions: AgentSession[]
+  // The subagents this teammate called in. They have no report of their own,
+  // so what they came back with is read here.
+  helpers: AgentSession[]
   nowMs: number
   onClose(): void
   onPick(id: string): void
 }
 
-export function AgentReport({ session, sessions, nowMs, onClose, onPick }: AgentReportProps) {
+export function AgentReport({
+  session,
+  sessions,
+  helpers,
+  nowMs,
+  onClose,
+  onPick,
+}: AgentReportProps) {
   const [body] = useScrollState<HTMLDivElement>()
   const runs = runsOf(sessions, session)
   const at = runs.findIndex((run) => run.id === session.id)
@@ -77,7 +80,7 @@ export function AgentReport({ session, sessions, nowMs, onClose, onPick }: Agent
           <span className="flex flex-col">
             <span className="text-base leading-tight">{persona.name}</span>
             <span className="font-mono text-xs text-muted-foreground">
-              {i18n._(STATE[session.status])} · {Math.max(0, Math.round(ranMs / 1000))}s ·{' '}
+              {stateWord(session.status)} · {Math.max(0, Math.round(ranMs / 1000))}s ·{' '}
               {session.model}
             </span>
           </span>
@@ -152,31 +155,9 @@ export function AgentReport({ session, sessions, nowMs, onClose, onPick }: Agent
         </div>
       )}
 
-      <div className="flex flex-col gap-1 pt-2">
-        <span className="mb-1 text-xs tracking-[0.08em] text-muted-foreground">{t`What they did`}</span>
-        {session.stream.length === 0 && (
-          <span className="text-xs text-muted-foreground">{t`Nothing yet`}</span>
-        )}
-        {session.stream.map((call) => {
-          const shape = shapeOfLine(call.line)
-          return (
-            <span
-              key={call.id}
-              className="flex items-center gap-2 font-mono text-xs text-muted-foreground"
-            >
-              <ToolIcon shape={shape} />
-              <span className="truncate">{call.line}</span>
-              {call.failed ? (
-                <span className="ml-auto flex-none text-removed">{t`failed`}</span>
-              ) : (
-                call.note.length > 0 && (
-                  <span className="ml-auto flex-none truncate">{call.note}</span>
-                )
-              )}
-            </span>
-          )
-        })}
-      </div>
+      <CallStream calls={session.stream} />
+
+      <HelperList helpers={helpers} />
 
       {session.agentId !== undefined && (
         <div data-worktree-review className="flex flex-col gap-2 pt-2">

@@ -1,8 +1,9 @@
-import { useEffect, useRef, useState, useSyncExternalStore } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { chatId, renamed } from '@/entities/conversation'
 import type { ChatSummary, Transcript } from '@/entities/conversation'
 import { troubleLine } from '@/shared/lib/ask/ask'
-import { leaving } from './leave/leave'
+import { chatSwitch } from './chat-switch/chat-switch'
+import { comingBackTo } from './coming-back/coming-back'
 import { mayRestore } from './restore-guard/restore-guard'
 import { chatSessions } from '../session/chat-sessions/chat-sessions'
 import type { ChatSession } from '../session/chat-sessions/chat-session/chat-session.types'
@@ -26,11 +27,6 @@ function freshId(): string {
 }
 
 export function useTranscript(project: string | null): Chats {
-  // Re-renders whenever a session opens, drops, starts or stops working: the
-  // chat this hook hands back may be a different object without openId or
-  // project having changed at all.
-  useSyncExternalStore(chatSessions.subscribe, chatSessions.live, chatSessions.live)
-
   const [chats, setChats] = useState<ChatSummary[]>([])
   const [openId, setOpenId] = useState<string | null>(null)
   const [ready, setReady] = useState(false)
@@ -39,6 +35,10 @@ export function useTranscript(project: string | null): Chats {
   const shown = useRef(project)
   shown.current = project
 
+  // The invariant this hook owes the screen: every path that sets openId opens
+  // the chat's session first, so a ready hook with a project and an open chat
+  // always has one. useAgent.send() on a null session runs nothing, and the
+  // composer would clear into silence.
   const session = openId === null || project === null ? null : chatSessions.find(openId)
 
   async function refresh(): Promise<ChatSummary[]> {
@@ -62,27 +62,43 @@ export function useTranscript(project: string | null): Chats {
     setReady(false)
     openTicket.current += 1
     // The chat on screen belongs to the project that is being left; write it
-    // back there before this hook starts reading the new one.
-    if (openId !== null) chatSessions.find(openId)?.keep()
+    // back there, then let its session go if there is nothing left running in
+    // it, before this hook starts reading the new project.
+    const left = openId
+    if (left !== null) {
+      chatSessions.find(left)?.keep()
+      chatSessions.release(left)
+    }
     loadedFor.current = null
     refresh()
       .then(async (found) => {
         if (!alive) return
-        const latest = found[0]
-        if (latest === undefined) {
-          setOpenId(freshId())
+        const wanted = chatSessions.lastOpened(project)
+        const back = comingBackTo(
+          found,
+          wanted,
+          wanted !== null && chatSessions.find(wanted) !== null,
+        )
+        if (back === null) {
+          // Nothing saved here yet. The chat still needs its session now: the
+          // first message runs on the session, not on the id.
+          const id = freshId()
+          chatSessions.open(id, project)
+          chatSessions.opened(id, project)
+          setOpenId(id)
           return
         }
-        const saved = await window.desk.readTranscript(project, latest.id).catch(() => null)
+        const saved = await window.desk.readTranscript(project, back).catch(() => null)
         if (!alive) return
-        const s = chatSessions.open(latest.id, project)
+        const s = chatSessions.open(back, project)
         if (
           saved !== null &&
           mayRestore({ running: s.running(), turnCount: s.stores.conversation.get().turns.length })
         ) {
           s.restore(saved)
         }
-        setOpenId(latest.id)
+        chatSessions.opened(back, project)
+        setOpenId(back)
       })
       .catch(() => undefined)
       .finally(() => {
@@ -95,11 +111,23 @@ export function useTranscript(project: string | null): Chats {
     }
   }, [project])
 
+  // A chat is only in the list once it is on disk, and it is only written when
+  // one of its turns settles — in a chat nobody is looking at, too. Without
+  // this the sidebar never hears about a chat started here, so it can never
+  // show what that chat is doing either.
+  useEffect(() => {
+    if (project === null) return
+    return chatSessions.onSaved((_chatId, into) => {
+      if (into === project) void refresh()
+    })
+  }, [project])
+
   function open(id: string): void {
-    if (project === null || leaving(openId, id) === 'stay') return
+    if (project === null || chatSwitch(id, openId) === 'return') return
     const prev = openId
     const ticket = ++openTicket.current
     const s = chatSessions.open(id, project)
+    chatSessions.opened(id, project)
     setOpenId(id)
     if (prev !== null) {
       chatSessions.find(prev)?.keep()
@@ -133,6 +161,7 @@ export function useTranscript(project: string | null): Chats {
     if (project === null) return
     const id = freshId()
     chatSessions.open(id, project)
+    chatSessions.opened(id, project)
     const prev = openId
     setOpenId(id)
     if (prev !== null) {

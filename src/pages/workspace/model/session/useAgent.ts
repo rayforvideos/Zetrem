@@ -114,10 +114,10 @@ export function useAgent(
       unsubscribe()
       if (hostId.current) {
         // The screen is being rebuilt (a language change does this) and the
-        // session cannot follow it across; say so where the chat will be read.
+        // process cannot follow it across; the next message resumes the thread.
         conversation.settleDraft()
         conversation.system(
-          t`The screen was rebuilt, so this session ended. Your next message starts a new one.`,
+          t`The screen was rebuilt, so this session paused. Your next message picks it back up.`,
         )
         window.desk.stopAgent(hostId.current)
       }

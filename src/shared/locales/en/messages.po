@@ -664,8 +664,8 @@ msgid "Claude Code reports {0}"
 msgstr "Claude Code reports {0}"
 
 #: src/entities/claude-cli/lib/exit-line/exit-line.ts:11
-msgid "Claude Code stopped without a word (exit {code}). Your next message starts a new session."
-msgstr "Claude Code stopped without a word (exit {code}). Your next message starts a new session."
+msgid "Claude Code stopped without a word (exit {code}). Your next message picks the conversation back up."
+msgstr "Claude Code stopped without a word (exit {code}). Your next message picks the conversation back up."
 
 #: src/widgets/welcome/lib/slides/slides.ts:8
 msgid "Claude Code, with a screen"
@@ -770,12 +770,12 @@ msgstr "Could not bring over Claude Desktop"
 msgid "Could not check for updates."
 msgstr "Could not check for updates."
 
-#: src/pages/workspace/model/chat/useTranscript.ts:286
-#: src/pages/workspace/model/chat/useTranscript.ts:302
+#: src/pages/workspace/model/chat/useTranscript.ts:297
+#: src/pages/workspace/model/chat/useTranscript.ts:313
 msgid "Could not file that chat"
 msgstr "Could not file that chat"
 
-#: src/pages/workspace/model/chat/useTranscript.ts:255
+#: src/pages/workspace/model/chat/useTranscript.ts:266
 msgid "Could not forget that chat"
 msgstr "Could not forget that chat"
 
@@ -783,11 +783,11 @@ msgstr "Could not forget that chat"
 msgid "Could not install Claude Code"
 msgstr "Could not install Claude Code"
 
-#: src/pages/workspace/model/chat/useTranscript.ts:75
+#: src/pages/workspace/model/chat/useTranscript.ts:86
 msgid "Could not list your saved chats"
 msgstr "Could not list your saved chats"
 
-#: src/pages/workspace/model/chat/useTranscript.ts:232
+#: src/pages/workspace/model/chat/useTranscript.ts:243
 msgid "Could not open that chat"
 msgstr "Could not open that chat"
 
@@ -876,7 +876,7 @@ msgstr "Could not remove that project"
 msgid "Could not remove the account."
 msgstr "Could not remove the account."
 
-#: src/pages/workspace/model/chat/useTranscript.ts:279
+#: src/pages/workspace/model/chat/useTranscript.ts:290
 msgid "Could not rename that chat"
 msgstr "Could not rename that chat"
 
@@ -2447,8 +2447,8 @@ msgid "The saved conversation is deleted. This cannot be undone."
 msgstr "The saved conversation is deleted. This cannot be undone."
 
 #: src/pages/workspace/model/session/useAgent.ts:120
-msgid "The screen was rebuilt, so this session ended. Your next message starts a new one."
-msgstr "The screen was rebuilt, so this session ended. Your next message starts a new one."
+msgid "The screen was rebuilt, so this session paused. Your next message picks it back up."
+msgstr "The screen was rebuilt, so this session paused. Your next message picks it back up."
 
 #: src/entities/claude-cli/lib/failure/failure.ts:79
 msgid "The server had a problem"
@@ -2516,7 +2516,7 @@ msgstr "this chat {percent}%"
 msgid "this chat {size}"
 msgstr "this chat {size}"
 
-#: src/pages/workspace/model/chat/useTranscript.ts:169
+#: src/pages/workspace/model/chat/useTranscript.ts:180
 msgid "This chat is not being saved"
 msgstr "This chat is not being saved"
 

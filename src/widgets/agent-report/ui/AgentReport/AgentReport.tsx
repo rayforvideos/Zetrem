@@ -1,6 +1,6 @@
 import type { AgentSession, SessionStatus } from '@/entities/agent-session'
 import { useScrollState } from '@/shared/lib/scroll-state/useScrollState'
-import { shapeOfLine, tally } from '@/entities/tool'
+import { ChangeDiff, changeLines, shapeOfLine, tally, toolNameOf } from '@/entities/tool'
 import { AgentSprite, personaOf } from '@/entities/teammate'
 import { cn } from '@/shared/lib/cn'
 import {
@@ -43,12 +43,22 @@ const STATE: Record<SessionStatus, MessageDescriptor> = {
 type AgentReportProps = {
   session: AgentSession
   sessions: AgentSession[]
+  // The subagents this teammate called in. They have no report of their own,
+  // so what they came back with is read here.
+  helpers: AgentSession[]
   nowMs: number
   onClose(): void
   onPick(id: string): void
 }
 
-export function AgentReport({ session, sessions, nowMs, onClose, onPick }: AgentReportProps) {
+export function AgentReport({
+  session,
+  sessions,
+  helpers,
+  nowMs,
+  onClose,
+  onPick,
+}: AgentReportProps) {
   const [body] = useScrollState<HTMLDivElement>()
   const runs = runsOf(sessions, session)
   const at = runs.findIndex((run) => run.id === session.id)
@@ -159,24 +169,51 @@ export function AgentReport({ session, sessions, nowMs, onClose, onPick }: Agent
         )}
         {session.stream.map((call) => {
           const shape = shapeOfLine(call.line)
+          const groups = changeLines(toolNameOf(call.line), call.input)
           return (
-            <span
-              key={call.id}
-              className="flex items-center gap-2 font-mono text-xs text-muted-foreground"
-            >
-              <ToolIcon shape={shape} />
-              <span className="truncate">{call.line}</span>
-              {call.failed ? (
-                <span className="ml-auto flex-none text-removed">{t`failed`}</span>
-              ) : (
-                call.note.length > 0 && (
-                  <span className="ml-auto flex-none truncate">{call.note}</span>
-                )
+            <div key={call.id} className="flex flex-col gap-1.5">
+              <span className="flex items-center gap-2 font-mono text-xs text-muted-foreground">
+                <ToolIcon shape={shape} />
+                <span className="truncate">{call.line}</span>
+                {call.failed ? (
+                  <span className="ml-auto flex-none text-removed">{t`failed`}</span>
+                ) : (
+                  call.note.length > 0 && (
+                    <span className="ml-auto flex-none truncate">{call.note}</span>
+                  )
+                )}
+              </span>
+              {groups.length > 0 && (
+                <div
+                  data-change
+                  className="zt-scroll mb-1 max-h-80 overflow-auto rounded-lg border border-border bg-card p-3"
+                >
+                  <ChangeDiff groups={groups} />
+                </div>
               )}
-            </span>
+            </div>
           )
         })}
       </div>
+
+      {helpers.length > 0 && (
+        <div data-helpers className="flex flex-col gap-4 pt-2">
+          <span className="text-xs tracking-[0.08em] text-muted-foreground">{t`Their helpers`}</span>
+          {helpers.map((helper) => (
+            <div key={helper.id} data-helper={helper.id} className="flex flex-col gap-1.5">
+              <span className="flex items-center gap-2 font-mono text-xs text-muted-foreground">
+                <AgentSprite subagentType={helper.subagentType || helper.label} size={16} />
+                <span className="flex-none">{helper.subagentType || helper.label}</span>
+                <span className="truncate">{helper.label}</span>
+                <span className="ml-auto flex-none">{i18n._(STATE[helper.status])}</span>
+              </span>
+              {helper.headline.length > 0 && (
+                <Markdown text={helper.headline} className="text-sm leading-relaxed" />
+              )}
+            </div>
+          ))}
+        </div>
+      )}
 
       {session.agentId !== undefined && (
         <div data-worktree-review className="flex flex-col gap-2 pt-2">

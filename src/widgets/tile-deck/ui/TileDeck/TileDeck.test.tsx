@@ -114,6 +114,18 @@ describe('TileDeck', () => {
     expect(count(html, 'data-status')).toBe(1)
     expect(html).not.toContain('data-crew-board')
   })
+
+  it('folds a subagent a teammate called in into that teammate’s tile', () => {
+    const helper = session('g1', {
+      parentId: 's0',
+      subagentType: 'Explore',
+      headline: '두 곳을 찾았습니다',
+    })
+    const html = render({ kind: 'fanned', ids: ['s0', 'g1'], closing: [] }, [fleet[0]!, helper])
+    expect(count(html, 'data-status')).toBe(1)
+    expect(html).toContain('data-helper="g1"')
+    expect(html).toContain('두 곳을 찾았습니다')
+  })
 })
 
 describe('TileDeck: a tile that is leaving', () => {

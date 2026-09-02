@@ -15,6 +15,7 @@ import {
   soloRect,
 } from '../../lib/grid/grid'
 import type { Rect, Viewport } from '../../lib/grid/grid.types'
+import { tilesOf } from '../../lib/tiles/tiles'
 import type { DeckState } from '../../model/deck-machine/deck-machine.types'
 import { closingIds, visibleIds } from '../../model/deck-machine/deck-machine'
 import { AgentTile } from '../AgentTile/AgentTile'
@@ -23,6 +24,8 @@ import { CrewSheet } from '../CrewSheet/CrewSheet'
 
 type TileDeckProps = {
   state: DeckState
+  // Every session at once. The deck itself decides who stands as a tile and
+  // whose work is folded into someone else's.
   sessions: AgentSession[]
   viewport: Viewport
   nowMs: number
@@ -59,13 +62,17 @@ export function TileDeck({
 
   const atGrid = state.kind === 'fanned' || (state.kind === 'fanning' && advanced)
 
-  const gridSessions = findSessions(visibleIds(state), sessions)
+  const roll = tilesOf(sessions)
+  const standingSessions = roll.map((tile) => tile.session)
+  const helpersById = new Map(roll.map((tile) => [tile.session.id, tile.helpers]))
+
+  const gridSessions = findSessions(visibleIds(state), standingSessions)
   const board = boarded(gridSessions.length)
   const placed = observatoryLayout(gridSessions.length, viewport, sidebarW)
   const placedBoard = boardLayout(viewport, sidebarW)
   const [openLane, setOpenLane] = useState<string | null>(null)
   const [sheet, setSheet] = useState(false)
-  const narrow = !roomToFan(viewport, sidebarW) && sessions.length > 0
+  const narrow = !roomToFan(viewport, sidebarW) && standingSessions.length > 0
 
   useEffect(() => {
     if (narrow && roster) setSheet(false)
@@ -95,7 +102,7 @@ export function TileDeck({
 
   const tiles: PlacedTile[] = [
     ...standing,
-    ...findSessions(closingIds(state), sessions).map((session) => ({
+    ...findSessions(closingIds(state), standingSessions).map((session) => ({
       session,
       rect: seats.current.get(session.id) ?? solo,
       delayMs: 0,
@@ -140,7 +147,7 @@ export function TileDeck({
       </div>
       {narrow && (
         <CrewSheet
-          sessions={sessions}
+          sessions={standingSessions}
           bar={tight.bar}
           sheet={tight.sheet}
           nowMs={nowMs}
@@ -170,6 +177,7 @@ export function TileDeck({
           <AgentTile
             key={tile.session.id}
             session={tile.session}
+            helpers={helpersById.get(tile.session.id) ?? []}
             rect={tile.rect}
             delayMs={tile.delayMs}
             nowMs={nowMs}

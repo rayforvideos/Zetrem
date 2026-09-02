@@ -801,6 +801,7 @@ msgstr "그 폴더를 열지 못했습니다"
 msgid "Could not open the file picker"
 msgstr "파일 선택 창을 열지 못했습니다"
 
+#: src/pages/workspace/model/session/chat-sessions/chat-session/chat-session.ts:119
 #: src/pages/workspace/model/session/useAgent.ts:95
 msgid "Could not pick that conversation back up. Starting a new one."
 msgstr "그 대화를 이어받지 못했습니다. 새로 시작합니다."
@@ -2060,6 +2061,7 @@ msgstr "세션"
 msgid "Session details"
 msgstr "세션 상세"
 
+#: src/pages/workspace/model/session/chat-sessions/chat-session/chat-session.ts:213
 #: src/pages/workspace/model/session/useAgent.ts:161
 msgid "Session restarted. The next message picks the conversation back up with your team as it is now."
 msgstr "세션을 다시 시작했어요. 다음 메시지가 지금의 팀 구성으로 이 대화를 이어서 진행해요."
@@ -2517,6 +2519,7 @@ msgid "this chat {size}"
 msgstr "이 대화 {size}"
 
 #: src/pages/workspace/model/chat/useTranscript.ts:178
+#: src/pages/workspace/model/session/chat-sessions/chat-session/autosave/autosave.ts:62
 msgid "This chat is not being saved"
 msgstr "이 대화는 저장되지 않습니다"
 

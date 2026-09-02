@@ -1083,7 +1083,7 @@ msgid "Face"
 msgstr "얼굴"
 
 #: src/widgets/agent-report/ui/CallStream/CallStream.tsx:23
-#: src/widgets/tile-deck/ui/layers/CallLog/CallLog.tsx:100
+#: src/widgets/tile-deck/ui/layers/CallLog/CallLog.tsx:102
 msgid "failed"
 msgstr "실패"
 
@@ -1174,6 +1174,7 @@ msgid "Forget this memory?"
 msgstr "이 메모리를 지울까요?"
 
 #. placeholder {0}: entry.from
+#: src/widgets/tile-deck/ui/layers/Timeline/Timeline.tsx:64
 #: src/widgets/tile-deck/ui/layers/Transcript/Transcript.tsx:46
 msgid "from {0}"
 msgstr "{0}에게서"

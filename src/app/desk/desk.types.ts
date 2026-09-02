@@ -22,8 +22,8 @@ import type {
   LibraryListing,
   LibraryNote,
   LibraryNoteSummary,
-  LibraryProposal,
 } from '@/entities/library/model/note'
+import type { LibraryProposal } from '@/entities/library/model/proposal'
 import type { Outcome } from '@/shared/lib/outcome/outcome.types'
 import type { ExitReason } from '@/entities/claude-cli/lib/exit-line/exit-line.types'
 import type { Attached } from '@/entities/attachment/lib/attachment/attachment.types'

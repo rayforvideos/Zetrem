@@ -6,10 +6,10 @@ export type {
   SessionStatus,
   TranscriptEntry,
 } from './model/session/session.types'
-export { createSessionStore, sessionStore } from './model/session-store/session-store'
+export { createSessionStore } from './model/session-store/session-store'
 export type { SessionStore } from './model/session-store/session-store.types'
 export { nudgeFor } from './model/nudge/nudge'
-export { createChatStatus, statusStore } from './model/status-store/status-store'
+export { createChatStatus } from './model/status-store/status-store'
 export type {
   AccountStatusState,
   ChatStatus,

@@ -128,5 +128,3 @@ export function createSessionStore() {
     },
   }
 }
-
-export const sessionStore = createSessionStore()

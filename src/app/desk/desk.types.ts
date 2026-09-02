@@ -110,7 +110,7 @@ export type Invokes = {
   // The draft's scope says which folder it goes in, and a name already used by
   // the other scope comes back refused rather than hiding one of the two.
   'agents:write': (draft: AgentDefDraft) => Outcome<string>
-  'agents:remove': (name: string, source: AgentSource) => void
+  'agents:remove': (name: string, source: AgentSource) => Outcome<void>
   'agents:replace': (
     draft: AgentDefDraft,
     previousName: string,

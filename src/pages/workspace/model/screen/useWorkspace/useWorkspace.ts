@@ -52,7 +52,7 @@ export function useWorkspace() {
     release,
     note: teamNote,
     settleNote,
-  } = useAgentDefs(project?.id ?? null)
+  } = useAgentDefs(project?.path ?? null)
   const { failure: projectFailure, report: reportProject } = useFailure()
   const { all: allProjects, refresh: refreshProjects } = useProjects(project)
 

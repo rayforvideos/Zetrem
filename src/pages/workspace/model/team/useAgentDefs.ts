@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import type { AgentDef, AgentDefDraft, AgentSource } from '@/entities/agent-def'
 import type { TeamNote } from '@/widgets/team-sidebar'
-import { won } from '@/shared/lib/outcome/outcome'
 import type { Outcome, Why } from '@/shared/lib/outcome/outcome.types'
 import { t } from '@lingui/core/macro'
 
@@ -16,8 +15,9 @@ type TeamSource = {
 }
 
 // Half the team is kept for the open project, so opening another one is a
-// different roster: the list is read again whenever the project changes.
-export function useAgentDefs(projectId: string | null): TeamSource {
+// different roster: the roster is a function of the path, and the list is
+// read again whenever it changes.
+export function useAgentDefs(projectPath: string | null): TeamSource {
   const [defs, setDefs] = useState<AgentDef[]>([])
   const [note, setNote] = useState<TeamNote | null>(null)
 
@@ -28,7 +28,24 @@ export function useAgentDefs(projectId: string | null): TeamSource {
       .catch((cause: unknown) => setNote({ kind: 'trouble', text: reasonOf(cause) }))
   }
 
-  useEffect(reload, [projectId])
+  // A fast project switch can fire two reads whose replies land out of order;
+  // without a guard the older project's roster would land last and stick. A
+  // note from the project just left must not linger either.
+  useEffect(() => {
+    let live = true
+    setNote(null)
+    window.desk
+      .listAgentDefs()
+      .then((got) => {
+        if (live) setDefs(got)
+      })
+      .catch((cause: unknown) => {
+        if (live) setNote({ kind: 'trouble', text: reasonOf(cause) })
+      })
+    return () => {
+      live = false
+    }
+  }, [projectPath])
 
   // Nobody is kept twice, so the scope someone is in now is the scope the
   // roster says they are in.
@@ -53,13 +70,7 @@ export function useAgentDefs(projectId: string | null): TeamSource {
   // Letting someone go cannot be refused: they are already on the roster, so
   // the scope they are in is the scope they leave from.
   function release(name: string): void {
-    errand(
-      async () => {
-        await window.desk.removeAgentDef(name, scopeOf(name))
-        return won(null)
-      },
-      { kind: 'released', name },
-    )
+    errand(() => window.desk.removeAgentDef(name, scopeOf(name)), { kind: 'released', name })
   }
 
   function edit(draft: AgentDefDraft, previousName: string): void {
@@ -95,7 +106,9 @@ export function useAgentDefs(projectId: string | null): TeamSource {
 // Main names the reason and hands back the evidence; the words are written here.
 function refusalOf(why: Why): TeamNote {
   if (why.code === 'refused') return { kind: 'taken', name: why.said }
-  return { kind: 'trouble', text: t`Open a project before keeping someone for it.` }
+  if (why.code === 'unsupported')
+    return { kind: 'trouble', text: t`Open a project before keeping someone for it.` }
+  return { kind: 'trouble', text: why.said }
 }
 
 function reasonOf(cause: unknown): string {

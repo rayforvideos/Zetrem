@@ -11,6 +11,7 @@ const existing: AgentDefDraft = {
   tools: ['Read'],
   knowledge: [],
   prompt: 'look closely',
+  source: 'project',
 }
 
 describe('editing does not lose what the form never asked about', () => {
@@ -46,6 +47,37 @@ describe('editing does not lose what the form never asked about', () => {
   it('keeps the default face until somebody picks one', () => {
     expect(characterFor('star')).toBe('star')
     expect(characterFor(null)).toBe(DEFAULT_CHARACTER)
+  })
+})
+
+describe('the draft carries where that teammate is kept', () => {
+  it('takes the scope the form chose', () => {
+    const draft = draftFrom(
+      { name: 'n', description: 'd', prompt: 'p', character: 'star', source: 'project' },
+      null,
+    )
+    expect(draft.source).toBe('project')
+  })
+
+  it('keeps the scope somebody already has when the form does not ask', () => {
+    const draft = draftFrom(
+      { name: 'n', description: 'd', prompt: 'p', character: 'star' },
+      existing,
+    )
+    expect(draft.source).toBe('project')
+  })
+
+  it('makes a new teammate shared, since that is the one that works anywhere', () => {
+    const draft = draftFrom({ name: 'n', description: 'd', prompt: 'p', character: 'star' }, null)
+    expect(draft.source).toBe('user')
+  })
+
+  it('moves someone out of a project when the form says so', () => {
+    const draft = draftFrom(
+      { name: 'n', description: 'd', prompt: 'p', character: 'star', source: 'user' },
+      existing,
+    )
+    expect(draft.source).toBe('user')
   })
 })
 

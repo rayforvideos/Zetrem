@@ -1,3 +1,8 @@
+// Where a teammate is kept: 'user' is shared across every project, 'project'
+// belongs to the open one alone. Both live in the app's own folder; neither is
+// ever written into the project itself.
+export type AgentSource = 'project' | 'user'
+
 export type AgentDef = {
   character: string | null
   name: string
@@ -6,7 +11,7 @@ export type AgentDef = {
   tools: string[]
   knowledge: string[]
   prompt: string
-  source: 'project' | 'user'
+  source: AgentSource
   path: string
 }
 
@@ -18,4 +23,5 @@ export type AgentDefDraft = {
   tools: string[]
   knowledge: string[]
   prompt: string
+  source: AgentSource
 }

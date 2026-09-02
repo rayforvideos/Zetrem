@@ -71,6 +71,7 @@ export function WorkspaceSidebar({
           sessionUp: chatting.held !== null,
           read: focus.read,
           canWrite: true,
+          projectOpen: projects.current !== null,
           hint: hintDue('hire-first', prefs.settings.hintsSeen, team.defs.length === 0),
           onHintSeen: () =>
             prefs.update({ hintsSeen: hintSeen('hire-first', prefs.settings.hintsSeen) }),

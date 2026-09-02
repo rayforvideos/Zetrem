@@ -22,6 +22,13 @@ describe('noteLine: the words and the button never disagree', () => {
     expect(noteLine({ kind: 'released', name: 'Ray' }, true).text).toContain('until it ends')
   })
 
+  it('names the person a scope already knows, and offers no restart for it', () => {
+    const said = noteLine({ kind: 'taken', name: 'Ray' }, true)
+    expect(said.text).toContain('Ray')
+    expect(said.text).toContain('other scope')
+    expect(said.restart).toBe(false)
+  })
+
   it('says a problem as the problem it is', () => {
     expect(noteLine({ kind: 'trouble', text: '파일을 쓰지 못했다' }, true)).toEqual({
       text: '파일을 쓰지 못했다',

@@ -28,6 +28,7 @@ export function TeamList({
   sessionUp,
   read,
   canWrite,
+  projectOpen,
   hint,
   note,
   avatar,
@@ -50,6 +51,7 @@ export function TeamList({
           key={editing}
           initial={target}
           knownTools={knownTools}
+          projectOpen={projectOpen}
           onCancel={() => setEditing(null)}
           onSubmit={(draft) => {
             if (target === null) onHire(draft)
@@ -183,6 +185,13 @@ function MemberRow({
         <span className="flex min-w-0 flex-col gap-0.5 text-left">
           <span className="flex min-w-0 items-center gap-1.5 text-sm leading-tight">
             <span className="truncate">{member.name}</span>
+            {/* Quietly said, and only for the few: the rest of the team is
+                shared, so saying so on every row would be noise. */}
+            {member.origin === 'project' && (
+              <span data-scope="project" className="flex-none text-xs text-muted-foreground">
+                {i18n._(ORIGIN.project)}
+              </span>
+            )}
           </span>
           <span className="truncate text-xs leading-tight text-muted-foreground">
             {row.now ?? member.description ?? ''}

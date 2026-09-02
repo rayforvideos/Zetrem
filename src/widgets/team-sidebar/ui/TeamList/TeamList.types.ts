@@ -11,6 +11,9 @@ export type TeamListProps = {
   sessionUp: boolean
   read: string[]
   canWrite: boolean
+  // Whether a teammate can be kept for the open project, since there has to be
+  // one to keep them for.
+  projectOpen: boolean
   hint: boolean
   note: TeamNote | null
   avatar: number

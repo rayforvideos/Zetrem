@@ -17,6 +17,9 @@ export function draftFrom(fields: MemberFields, initial: AgentDefDraft | null): 
     tools: fields.tools ?? initial?.tools ?? [],
     knowledge: fields.knowledge ?? initial?.knowledge ?? [],
     prompt: fields.prompt.trim(),
+    // Shared unless somebody said otherwise: a teammate you can call anywhere
+    // is the one that surprises nobody.
+    source: fields.source ?? initial?.source ?? 'user',
   }
 }
 

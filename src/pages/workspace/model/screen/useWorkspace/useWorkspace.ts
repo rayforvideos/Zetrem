@@ -44,7 +44,15 @@ import { t } from '@lingui/core/macro'
 export function useWorkspace() {
   const { settings, loading, failure: settingsFailure, update } = useSettings()
   const project = useSyncExternalStore(projectStore.subscribe, projectStore.get, projectStore.get)
-  const { defs, drafts, hire, edit, release, note: teamNote, settleNote } = useAgentDefs()
+  const {
+    defs,
+    drafts,
+    hire,
+    edit,
+    release,
+    note: teamNote,
+    settleNote,
+  } = useAgentDefs(project?.id ?? null)
   const { failure: projectFailure, report: reportProject } = useFailure()
   const { all: allProjects, refresh: refreshProjects } = useProjects(project)
 

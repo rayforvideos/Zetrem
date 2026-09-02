@@ -45,6 +45,9 @@ export function createChatSession(
   chatId: string,
   project: string,
   deps: ChatSessionDeps,
+  // The registry hears every save this chat lands; a session made on its own
+  // (a test) tells nobody.
+  onSaved: () => void = () => undefined,
 ): ChatSession {
   const stores: AgentStores = {
     conversation: createConversation(),
@@ -77,7 +80,7 @@ export function createChatSession(
     })
   }
 
-  const autosave = attachAutosave({ chatId, project, stores, meta, thread, deps })
+  const autosave = attachAutosave({ chatId, project, stores, meta, thread, deps, onSaved })
 
   // A reset empties the status store, and the next message must still pick the
   // conversation back up: the id a real run reported stays with the chat.
@@ -214,6 +217,7 @@ export function createChatSession(
       )
     },
     reset,
+    dispose: autosave.dispose,
     handle(event: AgentEvent): void {
       if (!owns(event.id)) return
       if (event.kind === 'exit') {

@@ -14,6 +14,7 @@ export function attachAutosave(owner: AutosaveOwner): Autosave {
   let lastSaved = ''
   let toldSaveTrouble = false
   let due = false
+  let gone = false
 
   function spend(): ChatSpend | null {
     const spent = owner.stores.status.get()
@@ -46,6 +47,7 @@ export function attachAutosave(owner: AutosaveOwner): Autosave {
   }
 
   function write(): void {
+    if (gone) return
     const packed = pack()
     const stamp = stampOf(packed)
     if (stamp === lastSaved) return
@@ -54,6 +56,9 @@ export function attachAutosave(owner: AutosaveOwner): Autosave {
       .writeTranscript(owner.project, packed)
       .then(() => {
         toldSaveTrouble = false
+        // A chat that went while its write was in flight is not news anybody
+        // can act on: the list it would refresh no longer holds it.
+        if (!gone) owner.onSaved()
       })
       .catch((cause: unknown) => {
         lastSaved = ''
@@ -89,18 +94,26 @@ export function attachAutosave(owner: AutosaveOwner): Autosave {
   // A message writes the person's turn and sets the status to working in the
   // same breath: waiting a tick means the save reads the state it meant to.
   function schedule(): void {
-    if (due) return
+    if (due || gone) return
     due = true
     queueMicrotask(settled)
   }
 
-  owner.stores.conversation.subscribe(schedule)
-  owner.stores.status.subscribe(schedule)
+  const stopConversation = owner.stores.conversation.subscribe(schedule)
+  const stopStatus = owner.stores.status.subscribe(schedule)
 
   return {
     keep,
     markSaved(): void {
       lastSaved = stampOf(pack())
+    },
+    // A queued write is a microtask nobody holds a handle to: the flag is what
+    // cancels it, and the flag is read where the write would have started.
+    dispose(): void {
+      gone = true
+      due = false
+      stopConversation()
+      stopStatus()
     },
   }
 }

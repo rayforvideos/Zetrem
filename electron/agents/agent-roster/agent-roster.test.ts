@@ -146,7 +146,10 @@ describe('removeFromRoster: let someone go from the scope they are in', () => {
   })
 
   it('does nothing about a project person when no project is open', async () => {
-    await expect(removeFromRoster(await dirs(false), 'anyone', 'project')).resolves.toBeUndefined()
+    await expect(removeFromRoster(await dirs(false), 'anyone', 'project')).resolves.toEqual({
+      ok: true,
+      value: undefined,
+    })
   })
 })
 
@@ -216,5 +219,30 @@ describe('replaceInRoster: editing, including a change of scope', () => {
     await writeToRoster(where, draft)
     expect(await replaceInRoster(where, mine, draft.name, 'user')).toMatchObject({ ok: false })
     expect(await listAgentDefs(where.user)).toHaveLength(1)
+  })
+
+  // A folder written by an older version, or by hand, can already hold a
+  // shared and a project person of the same name; only the project one shows.
+  // Editing that one in place is not a new clash, even though the other scope
+  // still has the name.
+  it('editing someone already shadowed is not a new clash', async () => {
+    const where = await dirs()
+    await writeAgentDef(where.user, { ...draft, description: 'the shared brief' })
+    await writeAgentDef(where.project ?? '', { ...mine, description: 'the brief for here' })
+
+    const answer = await replaceInRoster(
+      where,
+      { ...mine, description: 'a newer brief for here' },
+      mine.name,
+      'project',
+    )
+
+    expect(answer).toMatchObject({ ok: true })
+    const roster = await readRoster(where)
+    expect(roster).toHaveLength(1)
+    expect(roster[0]).toMatchObject({ description: 'a newer brief for here', source: 'project' })
+    const shared = await listAgentDefs(where.user)
+    expect(shared).toHaveLength(1)
+    expect(shared[0]).toMatchObject({ description: 'the shared brief' })
   })
 })

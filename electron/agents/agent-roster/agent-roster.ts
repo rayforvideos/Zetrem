@@ -21,8 +21,7 @@ function otherThan(source: AgentSource): AgentSource {
   return source === 'project' ? 'user' : 'project'
 }
 
-const same = (one: string, two: string): boolean =>
-  one.toLocaleLowerCase() === two.toLocaleLowerCase()
+const same = (one: string, two: string): boolean => one.toLowerCase() === two.toLowerCase()
 
 // The project's own people come second so they win the name: opening a project
 // is how you say which version of someone you mean today.
@@ -63,10 +62,11 @@ export async function removeFromRoster(
   dirs: RosterDirs,
   name: string,
   source: AgentSource,
-): Promise<void> {
+): Promise<Outcome<void>> {
   const dir = dirOf(dirs, source)
-  if (dir === null) return
+  if (dir === null) return won(undefined)
   await removeAgentDef(dir, name)
+  return won(undefined)
 }
 
 // Changing scope is a move: written into the new folder, taken out of the old.
@@ -79,9 +79,13 @@ export async function replaceInRoster(
   const dir = dirOf(dirs, draft.source)
   if (dir === null) return lost('unsupported', draft.name)
   // The entry being moved sits in the other scope until this write finishes:
-  // it is the one name there that is not somebody else.
-  const spared = previousSource === draft.source ? null : previousName
-  if (await takenElsewhere(dirs, draft, spared)) return lost('refused', draft.name)
+  // it is the one name there that is not somebody else. Editing it in place —
+  // same scope, same name — creates no new ambiguity: the other scope already
+  // held that name before this write, and still does after it, so there is
+  // nothing to refuse.
+  const inPlace = previousSource === draft.source && same(previousName, draft.name)
+  const spared = previousSource === draft.source ? (inPlace ? previousName : null) : previousName
+  if (!inPlace && (await takenElsewhere(dirs, draft, spared))) return lost('refused', draft.name)
 
   if (previousSource === draft.source) return won(await replaceAgentDef(dir, draft, previousName))
 

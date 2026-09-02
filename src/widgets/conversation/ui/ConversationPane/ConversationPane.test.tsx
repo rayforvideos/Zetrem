@@ -403,4 +403,10 @@ describe('a suggestion for the library, over the message box', () => {
   it('is not there when nothing has been suggested', () => {
     expect(pane([turn({ text: '됐어' })])).not.toContain('data-proposal=')
   })
+
+  it('shows the same card over the greeting, before any turn has been sent', () => {
+    const html = pane([], null, [SUGGESTED])
+    expect(html).toContain('data-proposal="p1"')
+    expect(html.indexOf('data-proposal="p1"')).toBeLessThan(html.indexOf('<textarea'))
+  })
 })

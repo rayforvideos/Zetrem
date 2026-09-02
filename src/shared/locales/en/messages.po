@@ -179,11 +179,11 @@ msgstr "{n}m ago"
 msgid "{name} can be called this session"
 msgstr "{name} can be called this session"
 
-#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:232
+#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:240
 msgid "{name} is off. The running session keeps them until it ends."
 msgstr "{name} is off. The running session keeps them until it ends."
 
-#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:231
+#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:239
 msgid "{name} is on. The running session cannot call them yet."
 msgstr "{name} is on. The running session cannot call them yet."
 
@@ -770,12 +770,12 @@ msgstr "Could not bring over Claude Desktop"
 msgid "Could not check for updates."
 msgstr "Could not check for updates."
 
-#: src/pages/workspace/model/chat/useTranscript.ts:186
-#: src/pages/workspace/model/chat/useTranscript.ts:205
+#: src/pages/workspace/model/chat/useTranscript.ts:215
+#: src/pages/workspace/model/chat/useTranscript.ts:234
 msgid "Could not file that chat"
 msgstr "Could not file that chat"
 
-#: src/pages/workspace/model/chat/useTranscript.ts:153
+#: src/pages/workspace/model/chat/useTranscript.ts:182
 msgid "Could not forget that chat"
 msgstr "Could not forget that chat"
 
@@ -787,7 +787,7 @@ msgstr "Could not install Claude Code"
 msgid "Could not list your saved chats"
 msgstr "Could not list your saved chats"
 
-#: src/pages/workspace/model/chat/useTranscript.ts:125
+#: src/pages/workspace/model/chat/useTranscript.ts:153
 msgid "Could not open that chat"
 msgstr "Could not open that chat"
 
@@ -801,7 +801,7 @@ msgstr "Could not open that folder"
 msgid "Could not open the file picker"
 msgstr "Could not open the file picker"
 
-#: src/pages/workspace/model/session/chat-sessions/chat-session/chat-session.ts:119
+#: src/pages/workspace/model/session/chat-sessions/chat-session/chat-session.ts:123
 msgid "Could not pick that conversation back up. Starting a new one."
 msgstr "Could not pick that conversation back up. Starting a new one."
 
@@ -876,7 +876,7 @@ msgstr "Could not remove that project"
 msgid "Could not remove the account."
 msgstr "Could not remove the account."
 
-#: src/pages/workspace/model/chat/useTranscript.ts:178
+#: src/pages/workspace/model/chat/useTranscript.ts:207
 msgid "Could not rename that chat"
 msgstr "Could not rename that chat"
 
@@ -898,6 +898,7 @@ msgid "Could not start Claude Code"
 msgstr "Could not start Claude Code"
 
 #: src/entities/claude-cli/lib/exit-line/exit-line.ts:15
+#: src/pages/workspace/model/session/chat-sessions/chat-session/chat-session.ts:110
 msgid "Could not start Claude Code: {said}"
 msgstr "Could not start Claude Code: {said}"
 
@@ -1240,7 +1241,7 @@ msgstr "Hard problems. Much slower"
 msgid "Held up"
 msgstr "Held up"
 
-#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:160
+#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:161
 msgid "Hide team sidebar"
 msgstr "Hide team sidebar"
 
@@ -2060,7 +2061,7 @@ msgstr "Session"
 msgid "Session details"
 msgstr "Session details"
 
-#: src/pages/workspace/model/session/chat-sessions/chat-session/chat-session.ts:213
+#: src/pages/workspace/model/session/chat-sessions/chat-session/chat-session.ts:217
 msgid "Session restarted. The next message picks the conversation back up with your team as it is now."
 msgstr "Session restarted. The next message picks the conversation back up with your team as it is now."
 
@@ -2088,7 +2089,7 @@ msgstr "share unknown"
 msgid "Shift+Enter starts a new line. Off, sending takes the modifier key with Enter."
 msgstr "Shift+Enter starts a new line. Off, sending takes the modifier key with Enter."
 
-#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:160
+#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:161
 msgid "Show team sidebar"
 msgstr "Show team sidebar"
 
@@ -2516,7 +2517,7 @@ msgstr "this chat {percent}%"
 msgid "this chat {size}"
 msgstr "this chat {size}"
 
-#: src/pages/workspace/model/session/chat-sessions/chat-session/autosave/autosave.ts:62
+#: src/pages/workspace/model/session/chat-sessions/chat-session/autosave/autosave.ts:67
 msgid "This chat is not being saved"
 msgstr "This chat is not being saved"
 
@@ -2847,7 +2848,7 @@ msgstr "You talk on the left"
 msgid "Your account"
 msgstr "Your account"
 
-#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:218
+#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:228
 msgid "Your account changed before the reply finished, so it stops here."
 msgstr "Your account changed before the reply finished, so it stops here."
 

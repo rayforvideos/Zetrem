@@ -1083,7 +1083,7 @@ msgid "Face"
 msgstr "Face"
 
 #: src/widgets/agent-report/ui/CallStream/CallStream.tsx:23
-#: src/widgets/tile-deck/ui/layers/CallLog/CallLog.tsx:102
+#: src/widgets/tile-deck/ui/layers/CallLog/CallLog.tsx:82
 msgid "failed"
 msgstr "failed"
 

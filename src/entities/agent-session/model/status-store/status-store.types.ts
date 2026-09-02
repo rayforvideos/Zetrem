@@ -7,7 +7,7 @@ export type UpdateInfo = {
   managedBy: string | null
 }
 
-export type UsageRead = 'unread' | 'read' | 'unreadable' | 'kept'
+type UsageRead = 'unread' | 'read' | 'unreadable' | 'kept'
 
 export type ChatStatusState = {
   session: SessionIdentity | null

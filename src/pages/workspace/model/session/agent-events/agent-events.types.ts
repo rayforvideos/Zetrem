@@ -2,7 +2,7 @@ import type { ChatStatus, SessionStore } from '@/entities/agent-session'
 import type { ModelChoice, RateLimit } from '@/entities/claude-cli'
 import type { Conversation } from '../../chat/conversation/conversation.types'
 
-export type Sent = { to: string; message: string }
+type Sent = { to: string; message: string }
 
 export type AgentStores = {
   conversation: Conversation

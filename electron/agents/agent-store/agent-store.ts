@@ -2,9 +2,9 @@ import { readFile, readdir, mkdir, rm } from 'node:fs/promises'
 import { isAbsolute, join, relative, resolve } from 'node:path'
 import { saveFile } from '../../store/save-file/save-file'
 import { fileNameOf, parseAgentDef, toAgentFile } from '@/entities/agent-def'
-import type { AgentDef, AgentDefDraft } from '@/entities/agent-def'
+import type { AgentDef, AgentDefDraft, AgentSource } from '@/entities/agent-def'
 
-async function readDir(dir: string, source: AgentDef['source']): Promise<AgentDef[]> {
+async function readDir(dir: string, source: AgentSource): Promise<AgentDef[]> {
   let names: string[]
   try {
     names = await readdir(dir)
@@ -25,8 +25,13 @@ async function readDir(dir: string, source: AgentDef['source']): Promise<AgentDe
   return out
 }
 
-export async function listAgentDefs(dir: string): Promise<AgentDef[]> {
-  const defs = await readDir(dir, 'user')
+// A folder holds one scope's people, and which scope that is comes from the
+// folder it was read out of: nothing in the file says.
+export async function listAgentDefs(
+  dir: string,
+  source: AgentSource = 'user',
+): Promise<AgentDef[]> {
+  const defs = await readDir(dir, source)
   return defs.sort((a, b) => a.name.localeCompare(b.name))
 }
 
@@ -45,9 +50,11 @@ export async function removeAgentDef(dir: string, name: string): Promise<void> {
   await rm(insideRoster(dir, name), { force: true })
 }
 
+// The folder is the scope, so a draft is written here by the folder it is
+// handed, not by the scope it names.
 export async function replaceAgentDef(
   dir: string,
-  draft: AgentDefDraft,
+  draft: Omit<AgentDefDraft, 'source'>,
   previousName: string,
 ): Promise<string> {
   const path = await writeAgentDef(dir, draft)
@@ -56,7 +63,10 @@ export async function replaceAgentDef(
   return path
 }
 
-export async function writeAgentDef(dir: string, draft: AgentDefDraft): Promise<string> {
+export async function writeAgentDef(
+  dir: string,
+  draft: Omit<AgentDefDraft, 'source'>,
+): Promise<string> {
   const path = insideRoster(dir, draft.name)
   await mkdir(resolve(dir), { recursive: true })
   await saveFile(path, toAgentFile(draft))

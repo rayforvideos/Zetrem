@@ -42,7 +42,9 @@ export function parseAgentDef(
 
 const READING_MARK = '<!-- zetrem:knowledge -->'
 
-export function toAgentFile(draft: AgentDefDraft): string {
+// The file says nothing about scope: which folder it sits in is what decides
+// that, and parseAgentDef is told the scope by whoever read the folder.
+export function toAgentFile(draft: Omit<AgentDefDraft, 'source'>): string {
   const head = [FENCE, `name: ${draft.name}`, `description: ${quote(draft.description)}`]
   if (draft.model !== null) head.push(`model: ${draft.model}`)
   if (draft.character !== null) head.push(`character: ${draft.character}`)

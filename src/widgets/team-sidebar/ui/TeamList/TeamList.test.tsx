@@ -29,6 +29,7 @@ function list(props: Partial<Parameters<typeof TeamList>[0]> = {}): string {
       sessionUp={false}
       read={[]}
       canWrite
+      projectOpen
       note={null}
       avatar={24}
       onHire={() => {}}
@@ -132,6 +133,22 @@ describe('someone you hired can be edited or let go', () => {
     const html = list()
     const at = html.indexOf('More for')
     expect(html.slice(html.lastIndexOf('<button', at), at)).toContain('opacity-0')
+  })
+})
+
+describe('a row says when someone belongs to this project alone', () => {
+  it('marks the project one, since the rest of the team follows you everywhere', () => {
+    expect(row(list({ members: [member({ origin: 'project' })] }))).toContain('This project')
+  })
+
+  it('says nothing on a shared row, or the mark would mean nothing', () => {
+    expect(row(list({ members: [member({ origin: 'user' })] }))).not.toContain('This project')
+  })
+
+  it('keeps the mark quiet beside the name rather than starting a section', () => {
+    const html = row(list({ members: [member({ origin: 'project' })] }))
+    const at = html.indexOf('data-scope="project"')
+    expect(html.slice(at, html.indexOf('</span>', at))).toContain('text-muted-foreground')
   })
 })
 

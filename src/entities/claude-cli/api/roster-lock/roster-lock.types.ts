@@ -4,6 +4,7 @@ export type Person = {
   prompt: string
   model: string | null
   tools: string[]
+  isolated: boolean
 }
 
 export type RosterLock = {

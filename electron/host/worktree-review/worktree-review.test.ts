@@ -1,5 +1,6 @@
 import { describe, expect, it, vi } from 'vitest'
-import type { GitReply, ReviewDeps } from './worktree-review.types'
+import type { GitReply } from '../../shell/git-run/git-run.types'
+import type { ReviewDeps } from './worktree-review.types'
 
 vi.mock('electron', () => ({
   app: { getPath: () => '/userData' },

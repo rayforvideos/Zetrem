@@ -4,9 +4,16 @@ import { agentArgs } from '@/entities/claude-cli/@x/teammate'
 import { ORCHESTRATOR, agentsArgs } from '@/entities/claude-cli/@x/teammate'
 import { PERSONA, orchestratorPrompt } from './orchestrator'
 
-const person = { name: 'Explore', description: '', prompt: '찾아본다', model: null, tools: [] }
-const brief = orchestratorPrompt(true)
-const briefs = [brief, orchestratorPrompt(false)]
+const person = {
+  name: 'Explore',
+  description: '',
+  prompt: '찾아본다',
+  model: null,
+  tools: [],
+  isolated: true,
+}
+const brief = orchestratorPrompt(true, [])
+const briefs = [brief, orchestratorPrompt(false, [])]
 
 describe('what the orchestrator is told', () => {
   it('names no language of its own, so the person picks it by speaking', () => {
@@ -87,8 +94,8 @@ describe('the app does not shape the answer itself', () => {
 })
 
 describe('what the orchestrator is told about the tree everyone is working in', () => {
-  const isolated = orchestratorPrompt(true)
-  const alone = orchestratorPrompt(false)
+  const isolated = orchestratorPrompt(true, [])
+  const alone = orchestratorPrompt(false, [])
 
   it('says where a teammate leaves its work when the runtime can fence one off', () => {
     expect(isolated).toContain('worktree')
@@ -133,5 +140,35 @@ describe('what the orchestrator is told about the tree everyone is working in', 
       expect(one).toContain('subagent_type')
       expect(one).toContain('summarize the result for the user in one paragraph')
     }
+  })
+})
+
+describe('what the orchestrator is told about teammates that opted out of a worktree', () => {
+  const shared = orchestratorPrompt(true, ['scout', 'reviewer'])
+
+  it('names them, since nothing else in the brief says they left no branch behind', () => {
+    expect(shared).toContain('scout, reviewer')
+    expect(shared).toContain('no branch to merge')
+  })
+
+  it('asks for no other file-writing handoff while one of them is out', () => {
+    expect(shared.toLowerCase()).toContain('parallel')
+    expect(shared).toContain('rewrites the working tree')
+  })
+
+  it('keeps every line it already had about the ones that do get a worktree', () => {
+    expect(shared).toContain('worktree-<name>')
+    expect(shared).toContain('--no-ff')
+    expect(shared.toLowerCase()).toContain('one branch at a time')
+  })
+
+  it('says nothing of the sort when every teammate is behind a fence', () => {
+    expect(orchestratorPrompt(true, [])).not.toContain('no branch to merge')
+  })
+
+  it('ignores the list where nothing is fenced, since the tree is shared either way', () => {
+    const alone = orchestratorPrompt(false, ['scout'])
+    expect(alone).not.toContain('scout')
+    expect(alone).toBe(orchestratorPrompt(false, []))
   })
 })

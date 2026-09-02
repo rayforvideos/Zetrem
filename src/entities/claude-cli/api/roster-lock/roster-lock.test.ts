@@ -10,9 +10,13 @@ function person(overrides: Partial<Parameters<typeof peopleSpec>[0][number]> = {
     prompt: '당신은 찾습니다.',
     model: 'haiku' as string | null,
     tools: [] as string[],
+    isolated: true,
     ...overrides,
   }
 }
+
+const NOTICE =
+  '\n\nYou work in a git worktree of your own. If a node_modules folder is present there, it is linked from the main checkout: never install, update or remove dependencies inside the worktree.'
 
 describe('peopleSpec: handing the people we hired to the session', () => {
   it('carries the name, description, brief and model as they are', () => {
@@ -178,10 +182,59 @@ describe('a teammate is fenced into a worktree by the definition itself', () => 
     expect(JSON.parse(args[1] as string)).toEqual({
       scout: {
         description: '찾아본다',
-        prompt: '당신은 찾습니다.',
+        prompt: `당신은 찾습니다.${NOTICE}`,
         model: 'haiku',
         isolation: 'worktree',
       },
+    })
+  })
+
+  it('tells a fenced teammate not to touch dependencies from inside its worktree', () => {
+    const spec = peopleSpec([person()], true)
+    expect(spec.scout?.prompt).toContain(NOTICE)
+  })
+
+  it('says it as a condition, since a project may have no node_modules to link at all', () => {
+    const said = peopleSpec([person()], true).scout?.prompt ?? ''
+    expect(said, 'a worktree with nothing linked in would make a flat claim a lie').toContain(
+      'If a node_modules folder is present',
+    )
+    expect(said).not.toContain('shares node_modules')
+  })
+
+  it('says nothing about node_modules to a teammate that never gets a worktree', () => {
+    const spec = peopleSpec([person()], false)
+    expect(spec.scout?.prompt).not.toContain(NOTICE)
+  })
+})
+
+describe('only a teammate that opted in is fenced, even when the workspace can hold one', () => {
+  it('leaves a person marked isolated: false with no isolation at all', () => {
+    const spec = peopleSpec([person({ isolated: false })], true)
+    expect(spec.scout).not.toHaveProperty('isolation')
+  })
+
+  it('leaves their prompt untouched, since they never enter a worktree', () => {
+    const spec = peopleSpec([person({ isolated: false })], true)
+    expect(spec.scout?.prompt).toBe('당신은 찾습니다.')
+  })
+
+  it('still fences a person marked isolated: true beside them', () => {
+    const spec = peopleSpec(
+      [person({ isolated: false }), person({ name: 'reviewer', isolated: true })],
+      true,
+    )
+    expect(spec.scout).not.toHaveProperty('isolation')
+    expect(spec.reviewer).toHaveProperty('isolation', 'worktree')
+  })
+
+  it('carries model and tools for an opted-out person exactly as for anyone else', () => {
+    const spec = peopleSpec([person({ isolated: false, tools: ['Read'] })], true)
+    expect(spec.scout).toEqual({
+      description: '찾아본다',
+      prompt: '당신은 찾습니다.',
+      model: 'haiku',
+      tools: ['Read'],
     })
   })
 })
@@ -230,7 +283,7 @@ describe('the generic helper is fenced too, since it is spawned by name like any
     const given = spec(agentsArgs([mine], lock, boss, true))
     expect(given.claude).toEqual({
       description: '내 사람',
-      prompt: '내 것',
+      prompt: `내 것${NOTICE}`,
       model: 'haiku',
       tools: ['Read'],
       isolation: 'worktree',

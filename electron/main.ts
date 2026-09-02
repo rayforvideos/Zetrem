@@ -2,6 +2,7 @@ import { resolve } from 'node:path'
 import { BrowserWindow, Menu, app, dialog, session, shell } from 'electron'
 import { CHROME_TOP, MIN_WINDOW, TRAFFIC_LIGHT } from '@/shared/config/theme'
 import { killAllAgents, registerAgentHost } from './host/agent-host/agent-host'
+import { stopFollowingWorktrees } from './host/worktree-links/worktree-links'
 import { chromeNow, followScheme, wearTheme } from './shell/app-theme/app-theme'
 import { registerAttachments } from './shell/attachments/attachments'
 import { registerAgentDefs } from './agents/agent-defs/agent-defs'
@@ -48,6 +49,7 @@ function dropChildren(): void {
   killAllAgents()
   killAllProbes()
   killTrackedChildren()
+  stopFollowingWorktrees()
 }
 
 const inspectPort = isPackagedRun()

@@ -23,6 +23,10 @@ function isPerson(value: unknown): value is Person {
     typeof one?.description === 'string' &&
     typeof one?.prompt === 'string' &&
     (one?.model === null || typeof one?.model === 'string') &&
+    // Whether this teammate wants a worktree is the roster's answer, not main's:
+    // main reads it to know who writes into the shared tree. A person that never
+    // said is assumed to be fenced (isolated: true).
+    (one?.isolated === undefined || typeof one?.isolated === 'boolean') &&
     strings(one?.tools)
   )
 }
@@ -50,7 +54,7 @@ export function runConfigOf(value: unknown): Omit<RunConfig, 'persona'> | null {
     model: raw.model as ModelChoice,
     effort: raw.effort as EffortChoice,
     resume: raw.resume ?? null,
-    people: raw.people,
+    people: raw.people.map((p) => ({ ...p, isolated: p.isolated ?? true })),
     lock: raw.lock,
   }
 }

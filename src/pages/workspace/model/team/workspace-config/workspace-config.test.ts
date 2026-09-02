@@ -14,6 +14,7 @@ function def(name: string, overrides: Partial<AgentDef> = {}): AgentDef {
     prompt: 'go',
     source: 'user',
     path: `/${name}.md`,
+    worktree: true,
     ...overrides,
   }
 }
@@ -21,12 +22,27 @@ function def(name: string, overrides: Partial<AgentDef> = {}): AgentDef {
 describe('peopleOf: what the session is told about our team', () => {
   it('carries the name, description, brief and model', () => {
     expect(peopleOf([def('Ray', { model: 'sonnet' })])).toEqual([
-      { name: 'Ray', description: 'Ray does things', prompt: 'go', model: 'sonnet', tools: [] },
+      {
+        name: 'Ray',
+        description: 'Ray does things',
+        prompt: 'go',
+        model: 'sonnet',
+        tools: [],
+        isolated: true,
+      },
     ])
   })
 
   it('sends nobody when nobody was hired', () => {
     expect(peopleOf([])).toEqual([])
+  })
+
+  it('carries whether the definition opted out of its own worktree', () => {
+    expect(peopleOf([def('Ray', { worktree: false })])[0]?.isolated).toBe(false)
+  })
+
+  it('stays isolated for a definition that never said otherwise', () => {
+    expect(peopleOf([def('Ray')])[0]?.isolated).toBe(true)
   })
 })
 

@@ -62,6 +62,7 @@ export function useAgentDefs(): TeamSource {
         tools: def.tools,
         knowledge: def.knowledge,
         prompt: def.prompt,
+        worktree: def.worktree,
       },
     ]),
   )

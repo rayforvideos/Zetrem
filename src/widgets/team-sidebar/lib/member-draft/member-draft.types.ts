@@ -5,6 +5,7 @@ export type MemberFields = {
   description: string
   prompt: string
   character: CharacterId
+  worktree: boolean
   model?: string | null
   tools?: string[]
   knowledge?: string[]

@@ -6,7 +6,7 @@ describe('chatSwitch: what a click on a chat in the sidebar asks for', () => {
     expect(chatSwitch('a', 'a')).toBe('return')
   })
 
-  it('swaps to another chat, which lets the running session go', () => {
+  it('swaps to another chat, which leaves the running session alone', () => {
     expect(chatSwitch('b', 'a')).toBe('swap')
   })
 

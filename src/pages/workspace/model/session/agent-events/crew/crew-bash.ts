@@ -1,28 +1,26 @@
-import { sessionStore } from '@/entities/agent-session'
+import type { AgentEventRefs } from '../agent-events.types'
 import { wake } from './wake'
 
-// Task id → the session that backgrounded the shell. While one runs its owner
-// is waiting on it, not finished.
-const ownedBash = new Map<string, string>()
-
-export function adoptChildBash(taskId: string, toolUseId: string | null): boolean {
+export function adoptChildBash(
+  refs: AgentEventRefs,
+  taskId: string,
+  toolUseId: string | null,
+): boolean {
   if (toolUseId === null) return false
-  const owner = sessionStore.get().find((s) => s.stream.some((call) => call.id === toolUseId))
+  const owner = refs.stores.children
+    .get()
+    .find((s) => s.stream.some((call) => call.id === toolUseId))
   if (owner === undefined) return false
-  ownedBash.set(taskId, owner.id)
-  wake(owner.id)
+  refs.ownedBash.set(taskId, owner.id)
+  wake(refs.stores.children, owner.id)
   return true
 }
 
-export function releaseChildBash(taskId: string): void {
-  ownedBash.delete(taskId)
+export function releaseChildBash(refs: AgentEventRefs, taskId: string): void {
+  refs.ownedBash.delete(taskId)
 }
 
-export function ownsRunningBash(id: string): boolean {
-  for (const owner of ownedBash.values()) if (owner === id) return true
+export function ownsRunningBash(refs: AgentEventRefs, id: string): boolean {
+  for (const owner of refs.ownedBash.values()) if (owner === id) return true
   return false
-}
-
-export function forgetOwnedBash(): void {
-  ownedBash.clear()
 }

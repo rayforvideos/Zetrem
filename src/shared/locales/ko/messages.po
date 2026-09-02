@@ -155,7 +155,7 @@ msgstr "{held, plural, other {#줄}}"
 msgid "{installed} installed from {sources, plural, one {# source} other {# sources}}"
 msgstr "{sources, plural, other {마켓플레이스 #곳}}에서 {installed}개 설치됨"
 
-#: src/entities/claude-cli/api/turn/turn.ts:107
+#: src/entities/claude-cli/api/turn/turn.ts:90
 msgid "{kind} {name} did not load: {why}"
 msgstr "{kind} {name}을(를) 불러오지 못했습니다: {why}"
 
@@ -238,7 +238,7 @@ msgid "{target} updated. Restart the session to load it."
 msgstr "{target} 업데이트했습니다. 세션을 다시 시작해야 불러옵니다."
 
 #: src/entities/claude-cli/api/aside/aside.ts:16
-#: src/entities/claude-cli/api/turn/turn.ts:72
+#: src/entities/claude-cli/api/turn/turn.ts:55
 msgid "{tool} was not allowed"
 msgstr "{tool} 사용이 허용되지 않았습니다"
 
@@ -677,7 +677,7 @@ msgstr "Claude Code에 화면을 붙였습니다"
 msgid "Clear"
 msgstr "지우기"
 
-#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:125
+#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:118
 #: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:510
 msgid "Close"
 msgstr "닫기"
@@ -687,7 +687,7 @@ msgstr "닫기"
 msgid "Close {0}"
 msgstr "{0} 닫기"
 
-#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:124
+#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:117
 msgid "Close report"
 msgstr "보고서 닫기"
 
@@ -968,7 +968,7 @@ msgstr "거부"
 msgid "Description"
 msgstr "설명"
 
-#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:229
+#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:173
 msgid "Diff"
 msgstr "변경 내용"
 
@@ -984,7 +984,7 @@ msgstr "이 팀원이 먼저 읽을 문서입니다. 길어도 열기 전까지�
 msgid "Don't ask again this session"
 msgstr "이번 세션에서는 다시 묻지 않기"
 
-#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:40
+#: src/widgets/agent-report/lib/state-word/state-word.ts:12
 #: src/widgets/library/ui/NoteReader/NoteReader.tsx:95
 #: src/widgets/setup/ui/PluginShelf/PluginShelf.tsx:129
 #: src/widgets/setup/ui/SetupPane/SetupPane.tsx:219
@@ -1017,7 +1017,7 @@ msgstr "이 스태시 버리기"
 msgid "Drop this stash?"
 msgstr "이 스태시를 버릴까요?"
 
-#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:106
+#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:99
 msgid "Earlier run"
 msgstr "이전 실행"
 
@@ -1035,7 +1035,7 @@ msgstr "{0} 수정"
 msgid "Edit this file?"
 msgstr "이 파일을 고칠까요?"
 
-#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:135
+#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:128
 msgid "Edited"
 msgstr "수정"
 
@@ -1082,8 +1082,8 @@ msgstr "확장"
 msgid "Face"
 msgstr "얼굴"
 
-#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:179
-#: src/widgets/tile-deck/ui/layers/CallLog/CallLog.tsx:109
+#: src/widgets/agent-report/ui/CallStream/CallStream.tsx:23
+#: src/widgets/tile-deck/ui/layers/CallLog/CallLog.tsx:100
 msgid "failed"
 msgstr "실패"
 
@@ -1289,7 +1289,7 @@ msgstr "Claude Code 설치 중…"
 msgid "Is Zetrem earning its keep?"
 msgstr "Zetrem이 쓸 만한가요?"
 
-#: src/entities/claude-cli/api/turn/turn.ts:106
+#: src/entities/claude-cli/api/turn/turn.ts:89
 msgid "it could not be loaded"
 msgstr "불러올 수 없었습니다"
 
@@ -1331,7 +1331,7 @@ msgstr "이어서 말하세요"
 msgid "Keep in"
 msgstr "폴더에 넣기"
 
-#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:267
+#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:211
 #: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:954
 #: src/widgets/setup/ui/MemoryField/MemoryField.tsx:154
 msgid "Keep it"
@@ -1353,7 +1353,7 @@ msgstr "언어"
 msgid "Later"
 msgstr "나중에"
 
-#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:117
+#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:110
 msgid "Later run"
 msgstr "다음 실행"
 
@@ -1399,7 +1399,7 @@ msgstr "수동"
 msgid "Max"
 msgstr "최대"
 
-#: src/entities/claude-cli/api/turn/turn.ts:96
+#: src/entities/claude-cli/api/turn/turn.ts:79
 msgid "MCP server"
 msgstr "MCP 서버"
 
@@ -1627,7 +1627,7 @@ msgstr "머지할 것이 없습니다: 이미 최신입니다."
 msgid "Nothing written yet."
 msgstr "아직 쓴 것이 없습니다."
 
-#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:168
+#: src/widgets/agent-report/ui/CallStream/CallStream.tsx:13
 msgid "Nothing yet"
 msgstr "아직 없음"
 
@@ -1709,7 +1709,7 @@ msgstr "노트를 고르세요"
 msgid "Pick a project first"
 msgstr "먼저 프로젝트를 고르세요"
 
-#: src/pages/workspace/model/session/agent-events/crew/crew.ts:201
+#: src/pages/workspace/model/session/agent-events/crew/crew.ts:210
 msgid "Picked up where they left off"
 msgstr "하던 일을 이어받았습니다"
 
@@ -1717,7 +1717,7 @@ msgstr "하던 일을 이어받았습니다"
 msgid "Planning"
 msgstr "계획하는 중"
 
-#: src/entities/claude-cli/api/turn/turn.ts:97
+#: src/entities/claude-cli/api/turn/turn.ts:80
 msgid "Plugin"
 msgstr "플러그인"
 
@@ -1767,7 +1767,7 @@ msgstr "푸시했습니다."
 msgid "Quick answers. Least thinking, cheapest"
 msgstr "빠른 답. 가장 적게 생각하고 가장 저렴합니다"
 
-#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:136
+#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:129
 msgid "Ran"
 msgstr "실행"
 
@@ -1783,7 +1783,7 @@ msgstr "재인증"
 msgid "Reach out to the web?"
 msgstr "웹에 접속할까요?"
 
-#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:134
+#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:127
 msgid "Read"
 msgstr "읽음"
 
@@ -1920,7 +1920,7 @@ msgstr "실행 중인 세션을 새로 띄워, 다음 메시지부터 바뀐 설
 msgid "Replace the running session so the next message goes on with them on the team"
 msgstr "실행 중인 세션을 새로 띄워, 다음 메시지부터 그들을 팀에 두고 이어서 진행해요"
 
-#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:39
+#: src/widgets/agent-report/lib/state-word/state-word.ts:11
 #: src/widgets/team-sidebar/lib/row-state/row-state.ts:9
 #: src/widgets/tile-deck/lib/state-word/state-word.ts:9
 msgid "Reported back"
@@ -1957,14 +1957,14 @@ msgstr "검토 담당"
 msgid "Reviews a change before it ships"
 msgstr "배포 전에 변경을 검토합니다"
 
-#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:238
-#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:268
+#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:182
+#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:212
 msgid "Roll back"
 msgstr "되돌리기"
 
 #. placeholder {0}: at + 1
 #. placeholder {1}: runs.length
-#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:111
+#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:104
 msgid "run {0} of {1}"
 msgstr "{1}회 중 {0}번째"
 
@@ -2032,7 +2032,7 @@ msgstr "라이브러리 검색"
 msgid "Search tools"
 msgstr "도구 검색"
 
-#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:137
+#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:130
 msgid "Searched"
 msgstr "검색"
 
@@ -2406,7 +2406,7 @@ msgstr "모델에 부하가 걸렸습니다"
 msgid "The note is deleted from the library. This cannot be undone."
 msgstr "라이브러리에서 노트가 지워집니다. 되돌릴 수 없습니다."
 
-#: src/pages/workspace/model/session/agent-events/crew/crew.ts:171
+#: src/pages/workspace/model/session/agent-events/crew/crew.ts:180
 msgid "the orchestrator"
 msgstr "오케스트레이터"
 
@@ -2475,8 +2475,8 @@ msgstr "작업 트리가 그 브랜치의 파일로 바뀝니다. 커밋 전 변
 msgid "Their file is deleted and they leave the roster. A session already running keeps them until it ends. This cannot be undone."
 msgstr "파일이 지워지고 명단에서 빠집니다. 이미 실행 중인 세션은 끝날 때까지 그대로 씁니다. 되돌릴 수 없습니다."
 
-#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:201
-#: src/widgets/tile-deck/ui/layers/Helpers/Helpers.tsx:19
+#: src/widgets/agent-report/ui/HelperList/HelperList.tsx:15
+#: src/widgets/tile-deck/ui/layers/Helpers/Helpers.tsx:28
 msgid "Their helpers"
 msgstr "이 팀원이 부른 도우미"
 
@@ -2628,7 +2628,7 @@ msgstr "오늘"
 msgid "Todo list"
 msgstr "할 일 목록"
 
-#: src/entities/claude-cli/api/turn/turn.ts:71
+#: src/entities/claude-cli/api/turn/turn.ts:54
 msgid "tool"
 msgstr "도구"
 
@@ -2697,7 +2697,7 @@ msgstr "승인을 기다리는 중입니다"
 msgid "Waiting on"
 msgstr "기다리는 중"
 
-#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:38
+#: src/widgets/agent-report/lib/state-word/state-word.ts:10
 #: src/widgets/team-sidebar/lib/row-state/row-state.ts:8
 msgid "Waiting on you"
 msgstr "응답을 기다리는 중"
@@ -2739,11 +2739,11 @@ msgstr "라이브러리란"
 msgid "What the session brings"
 msgstr "이 세션의 플러그인과 커넥터"
 
-#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:220
+#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:164
 msgid "What they changed"
 msgstr "무엇을 바꿨는지"
 
-#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:166
+#: src/widgets/agent-report/ui/CallStream/CallStream.tsx:11
 #: src/widgets/tile-deck/ui/AgentTile/AgentTile.tsx:89
 #: src/widgets/tile-deck/ui/CrewBoard/CrewBoard.tsx:120
 #: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:142
@@ -2754,7 +2754,7 @@ msgstr "무엇을 했는지"
 msgid "What they do, how to go about it, and what to hand back."
 msgstr "무슨 일을 어떤 방식으로 하고, 무엇을 돌려줄지 적으세요."
 
-#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:150
+#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:143
 msgid "What they said"
 msgstr "무엇이라 했는지"
 
@@ -2780,7 +2780,7 @@ msgid "Why the last item drops"
 msgstr "마지막 항목이 사라지는 이유"
 
 #: src/entities/tool/lib/tool-verb/tool-verb.ts:30
-#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:37
+#: src/widgets/agent-report/lib/state-word/state-word.ts:9
 #: src/widgets/conversation/lib/working/working.ts:87
 #: src/widgets/tile-deck/lib/state-word/state-word.ts:7
 msgid "Working"

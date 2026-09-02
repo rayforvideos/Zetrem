@@ -155,7 +155,7 @@ msgstr "{held, plural, one {# line} other {# lines}}"
 msgid "{installed} installed from {sources, plural, one {# source} other {# sources}}"
 msgstr "{installed} installed from {sources, plural, one {# source} other {# sources}}"
 
-#: src/entities/claude-cli/api/turn/turn.ts:107
+#: src/entities/claude-cli/api/turn/turn.ts:90
 msgid "{kind} {name} did not load: {why}"
 msgstr "{kind} {name} did not load: {why}"
 
@@ -238,7 +238,7 @@ msgid "{target} updated. Restart the session to load it."
 msgstr "{target} updated. Restart the session to load it."
 
 #: src/entities/claude-cli/api/aside/aside.ts:16
-#: src/entities/claude-cli/api/turn/turn.ts:72
+#: src/entities/claude-cli/api/turn/turn.ts:55
 msgid "{tool} was not allowed"
 msgstr "{tool} was not allowed"
 
@@ -677,7 +677,7 @@ msgstr "Claude Code, with a screen"
 msgid "Clear"
 msgstr "Clear"
 
-#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:125
+#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:118
 #: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:510
 msgid "Close"
 msgstr "Close"
@@ -687,7 +687,7 @@ msgstr "Close"
 msgid "Close {0}"
 msgstr "Close {0}"
 
-#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:124
+#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:117
 msgid "Close report"
 msgstr "Close report"
 
@@ -968,7 +968,7 @@ msgstr "Deny"
 msgid "Description"
 msgstr "Description"
 
-#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:229
+#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:173
 msgid "Diff"
 msgstr "Diff"
 
@@ -984,7 +984,7 @@ msgstr "Documents they read first. Long ones cost nothing until they open them."
 msgid "Don't ask again this session"
 msgstr "Don't ask again this session"
 
-#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:40
+#: src/widgets/agent-report/lib/state-word/state-word.ts:12
 #: src/widgets/library/ui/NoteReader/NoteReader.tsx:95
 #: src/widgets/setup/ui/PluginShelf/PluginShelf.tsx:129
 #: src/widgets/setup/ui/SetupPane/SetupPane.tsx:219
@@ -1017,7 +1017,7 @@ msgstr "Drop this stash"
 msgid "Drop this stash?"
 msgstr "Drop this stash?"
 
-#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:106
+#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:99
 msgid "Earlier run"
 msgstr "Earlier run"
 
@@ -1035,7 +1035,7 @@ msgstr "Edit {0}"
 msgid "Edit this file?"
 msgstr "Edit this file?"
 
-#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:135
+#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:128
 msgid "Edited"
 msgstr "Edited"
 
@@ -1082,8 +1082,8 @@ msgstr "Extensions"
 msgid "Face"
 msgstr "Face"
 
-#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:179
-#: src/widgets/tile-deck/ui/layers/CallLog/CallLog.tsx:109
+#: src/widgets/agent-report/ui/CallStream/CallStream.tsx:23
+#: src/widgets/tile-deck/ui/layers/CallLog/CallLog.tsx:100
 msgid "failed"
 msgstr "failed"
 
@@ -1289,7 +1289,7 @@ msgstr "Installing Claude Code…"
 msgid "Is Zetrem earning its keep?"
 msgstr "Is Zetrem earning its keep?"
 
-#: src/entities/claude-cli/api/turn/turn.ts:106
+#: src/entities/claude-cli/api/turn/turn.ts:89
 msgid "it could not be loaded"
 msgstr "it could not be loaded"
 
@@ -1331,7 +1331,7 @@ msgstr "Keep going"
 msgid "Keep in"
 msgstr "Keep in"
 
-#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:267
+#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:211
 #: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:954
 #: src/widgets/setup/ui/MemoryField/MemoryField.tsx:154
 msgid "Keep it"
@@ -1353,7 +1353,7 @@ msgstr "Language"
 msgid "Later"
 msgstr "Later"
 
-#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:117
+#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:110
 msgid "Later run"
 msgstr "Later run"
 
@@ -1399,7 +1399,7 @@ msgstr "manual"
 msgid "Max"
 msgstr "Max"
 
-#: src/entities/claude-cli/api/turn/turn.ts:96
+#: src/entities/claude-cli/api/turn/turn.ts:79
 msgid "MCP server"
 msgstr "MCP server"
 
@@ -1627,7 +1627,7 @@ msgstr "Nothing to merge: already up to date."
 msgid "Nothing written yet."
 msgstr "Nothing written yet."
 
-#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:168
+#: src/widgets/agent-report/ui/CallStream/CallStream.tsx:13
 msgid "Nothing yet"
 msgstr "Nothing yet"
 
@@ -1709,7 +1709,7 @@ msgstr "Pick a note"
 msgid "Pick a project first"
 msgstr "Pick a project first"
 
-#: src/pages/workspace/model/session/agent-events/crew/crew.ts:201
+#: src/pages/workspace/model/session/agent-events/crew/crew.ts:210
 msgid "Picked up where they left off"
 msgstr "Picked up where they left off"
 
@@ -1717,7 +1717,7 @@ msgstr "Picked up where they left off"
 msgid "Planning"
 msgstr "Planning"
 
-#: src/entities/claude-cli/api/turn/turn.ts:97
+#: src/entities/claude-cli/api/turn/turn.ts:80
 msgid "Plugin"
 msgstr "Plugin"
 
@@ -1767,7 +1767,7 @@ msgstr "Pushed."
 msgid "Quick answers. Least thinking, cheapest"
 msgstr "Quick answers. Least thinking, cheapest"
 
-#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:136
+#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:129
 msgid "Ran"
 msgstr "Ran"
 
@@ -1783,7 +1783,7 @@ msgstr "Re-authenticate"
 msgid "Reach out to the web?"
 msgstr "Reach out to the web?"
 
-#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:134
+#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:127
 msgid "Read"
 msgstr "Read"
 
@@ -1920,7 +1920,7 @@ msgstr "Replace the running session so the next message goes on with the change"
 msgid "Replace the running session so the next message goes on with them on the team"
 msgstr "Replace the running session so the next message goes on with them on the team"
 
-#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:39
+#: src/widgets/agent-report/lib/state-word/state-word.ts:11
 #: src/widgets/team-sidebar/lib/row-state/row-state.ts:9
 #: src/widgets/tile-deck/lib/state-word/state-word.ts:9
 msgid "Reported back"
@@ -1957,14 +1957,14 @@ msgstr "Reviewer"
 msgid "Reviews a change before it ships"
 msgstr "Reviews a change before it ships"
 
-#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:238
-#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:268
+#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:182
+#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:212
 msgid "Roll back"
 msgstr "Roll back"
 
 #. placeholder {0}: at + 1
 #. placeholder {1}: runs.length
-#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:111
+#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:104
 msgid "run {0} of {1}"
 msgstr "run {0} of {1}"
 
@@ -2032,7 +2032,7 @@ msgstr "Search the library"
 msgid "Search tools"
 msgstr "Search tools"
 
-#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:137
+#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:130
 msgid "Searched"
 msgstr "Searched"
 
@@ -2406,7 +2406,7 @@ msgstr "The model is overloaded"
 msgid "The note is deleted from the library. This cannot be undone."
 msgstr "The note is deleted from the library. This cannot be undone."
 
-#: src/pages/workspace/model/session/agent-events/crew/crew.ts:171
+#: src/pages/workspace/model/session/agent-events/crew/crew.ts:180
 msgid "the orchestrator"
 msgstr "the orchestrator"
 
@@ -2475,8 +2475,8 @@ msgstr "The working tree changes to that branch's files. Uncommitted changes com
 msgid "Their file is deleted and they leave the roster. A session already running keeps them until it ends. This cannot be undone."
 msgstr "Their file is deleted and they leave the roster. A session already running keeps them until it ends. This cannot be undone."
 
-#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:201
-#: src/widgets/tile-deck/ui/layers/Helpers/Helpers.tsx:19
+#: src/widgets/agent-report/ui/HelperList/HelperList.tsx:15
+#: src/widgets/tile-deck/ui/layers/Helpers/Helpers.tsx:28
 msgid "Their helpers"
 msgstr "Their helpers"
 
@@ -2628,7 +2628,7 @@ msgstr "Today"
 msgid "Todo list"
 msgstr "Todo list"
 
-#: src/entities/claude-cli/api/turn/turn.ts:71
+#: src/entities/claude-cli/api/turn/turn.ts:54
 msgid "tool"
 msgstr "tool"
 
@@ -2697,7 +2697,7 @@ msgstr "Waiting for your approval"
 msgid "Waiting on"
 msgstr "Waiting on"
 
-#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:38
+#: src/widgets/agent-report/lib/state-word/state-word.ts:10
 #: src/widgets/team-sidebar/lib/row-state/row-state.ts:8
 msgid "Waiting on you"
 msgstr "Waiting on you"
@@ -2739,11 +2739,11 @@ msgstr "What the library is"
 msgid "What the session brings"
 msgstr "What the session brings"
 
-#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:220
+#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:164
 msgid "What they changed"
 msgstr "What they changed"
 
-#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:166
+#: src/widgets/agent-report/ui/CallStream/CallStream.tsx:11
 #: src/widgets/tile-deck/ui/AgentTile/AgentTile.tsx:89
 #: src/widgets/tile-deck/ui/CrewBoard/CrewBoard.tsx:120
 #: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:142
@@ -2754,7 +2754,7 @@ msgstr "What they did"
 msgid "What they do, how to go about it, and what to hand back."
 msgstr "What they do, how to go about it, and what to hand back."
 
-#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:150
+#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:143
 msgid "What they said"
 msgstr "What they said"
 
@@ -2780,7 +2780,7 @@ msgid "Why the last item drops"
 msgstr "Why the last item drops"
 
 #: src/entities/tool/lib/tool-verb/tool-verb.ts:30
-#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:37
+#: src/widgets/agent-report/lib/state-word/state-word.ts:9
 #: src/widgets/conversation/lib/working/working.ts:87
 #: src/widgets/tile-deck/lib/state-word/state-word.ts:7
 msgid "Working"

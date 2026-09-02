@@ -1,7 +1,11 @@
 import { renderToStaticMarkup } from 'react-dom/server'
 import { describe, expect, it } from 'vitest'
 import type { AgentSession } from '@/entities/agent-session'
+import type { BoardPhase } from '../../lib/board-phase/board-phase.types'
+import type { Rect } from '../../lib/grid/grid.types'
 import type { DeckState } from '../../model/deck-machine/deck-machine.types'
+import { CrewLayer } from './CrewLayer'
+import type { PlacedTile } from './CrewLayer.types'
 import { TileDeck } from './TileDeck'
 
 const viewport = { w: 1440, h: 900 }
@@ -170,5 +174,117 @@ describe('TileDeck: a tile that is leaving', () => {
       />,
     )
     expect(oneLeaving).not.toBe(two)
+  })
+})
+
+// The crew layer is the only place both layers stand at once, and the phase a
+// running deck derives from its crew count is fed to it directly here.
+const SEAT: Rect = { x: 900, y: 80, w: 400, h: 380 }
+const BOARD: Rect = { x: 900, y: 80, w: 400, h: 772 }
+
+function seatedTile(one: AgentSession, closing: boolean): PlacedTile {
+  return { session: one, rect: SEAT, delayMs: 0, closing }
+}
+
+function layer(phase: BoardPhase, tiles: PlacedTile[], sessions: AgentSession[]): string {
+  return renderToStaticMarkup(
+    <CrewLayer
+      phase={phase}
+      tiles={tiles}
+      sessions={sessions}
+      helpers={new Map()}
+      board={BOARD}
+      grid
+      nowMs={0}
+      face="onigiri"
+      name="Ray"
+      openId={null}
+      sweeping={false}
+      attention={null}
+      onOpen={() => {}}
+    />,
+  )
+}
+
+describe('the deck taking up the board', () => {
+  const three = [session('s0'), session('s1'), session('s2')]
+  const two = [seatedTile(three[0]!, true), seatedTile(three[1]!, true)]
+
+  it('plays the tiles out under the arriving board, instead of cutting', () => {
+    const html = layer('boarding', two, three)
+
+    expect(count(html, 'data-presence="leaving"')).toBe(2)
+    expect(html).toContain('zt-tile-out')
+    const board = html.slice(html.indexOf('data-crew-board'))
+    expect(board).toContain('data-presence="arriving"')
+    expect(board).toContain('zt-tile-in')
+  })
+
+  it('staggers the cards in, so the board fills rather than appears', () => {
+    const html = layer('boarding', two, three)
+    const delays = [...html.matchAll(/zt-tile-in [^;"]*? (\d+)ms both/g)].map((hit) => hit[1])
+    expect(delays).toEqual(['0', '60', '120'])
+  })
+
+  it('lets the leaving tiles take no click meant for the board', () => {
+    expect(count(layer('boarding', two, three), 'pointer-events:none')).toBeGreaterThanOrEqual(2)
+  })
+
+  it('draws the board alone once it is up', () => {
+    const html = layer('board', [], three)
+    expect(count(html, 'data-status')).toBe(0)
+    expect(html).toContain('data-crew-board')
+    expect(html).not.toContain('data-presence')
+  })
+})
+
+describe('the deck giving the board back', () => {
+  const pair = [session('s0'), session('s1')]
+  const tiles = [seatedTile(pair[0]!, false), seatedTile(pair[1]!, false)]
+
+  it('plays the board out over the arriving tiles, instead of cutting', () => {
+    const html = layer('unboarding', tiles, pair)
+
+    expect(count(html, 'data-presence="arriving"')).toBe(2)
+    expect(html).toContain('zt-tile-in')
+    const board = html.slice(html.indexOf('data-crew-board'), html.indexOf('data-status'))
+    expect(board).toContain('data-presence="leaving"')
+    expect(board).toContain('zt-tile-out')
+  })
+
+  it('lets the leaving board take no click meant for the tiles', () => {
+    const html = layer('unboarding', tiles, pair)
+    const board = html.slice(html.indexOf('data-crew-board'), html.indexOf('data-status'))
+    expect(board).toContain('pointer-events:none')
+  })
+
+  it('draws the tiles alone once the board is gone', () => {
+    const html = layer('tiles', tiles, [])
+    expect(count(html, 'data-status')).toBe(2)
+    expect(html).not.toContain('data-crew-board')
+  })
+})
+
+describe('a teammate that finishes under the board', () => {
+  it('leaves through the board, rather than flashing a tile it never had', () => {
+    const crew = ['s0', 's1', 's2'].map((id) => session(id))
+    const html = render({ kind: 'fanned', ids: ['s0', 's1', 's2'], closing: ['s9'] }, [
+      ...crew,
+      session('s9'),
+    ])
+
+    expect(html).toContain('data-crew-board')
+    expect(html).not.toContain('data-closing')
+    expect(count(html, 'data-status')).toBe(0)
+  })
+
+  it('still leaves as a tile when tiles are what the deck is showing', () => {
+    const html = render({ kind: 'fanned', ids: ['s0'], closing: ['s9'] }, [
+      session('s0'),
+      session('s9'),
+    ])
+
+    expect(html).toContain('data-closing="true"')
+    expect(html).not.toContain('data-crew-board')
   })
 })

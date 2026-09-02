@@ -114,6 +114,9 @@ function presenceStyle(closing: boolean, delayMs: number): CSSProperties {
     height: '100%',
     transformOrigin: 'center',
     animation: `${shape} both`,
+    // A tile on its way out must not catch the clicks meant for whatever is
+    // arriving in its place.
+    pointerEvents: closing ? 'none' : undefined,
   }
 }
 

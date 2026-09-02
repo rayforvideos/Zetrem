@@ -5,6 +5,7 @@ import { ToolIcon } from '@/entities/tool'
 import { reachOf } from '@/shared/lib/reach/reach'
 import { formatClock } from '@/shared/lib/units/units'
 import { Button } from '@/shared/ui/button'
+import { MOTION } from '@/shared/config/motion/motion'
 import { modelLabel } from '@/shared/lib/model-label/model-label'
 import { laneOf } from '../../lib/lane/lane'
 
@@ -13,12 +14,17 @@ export function CrewCard({
   nowMs,
   open,
   attention,
+  delayMs = null,
   onOpen,
 }: {
   session: AgentSession
   nowMs: number
   open: boolean
   attention: boolean
+  // How long this card waits before it arrives, while the board is boarding.
+  // Null once the board is up: a card that appears then belongs to a teammate
+  // who joined, and the board is already there to hold it.
+  delayMs?: number | null
   onOpen(): void
 }) {
   const lane = laneOf(session, nowMs)
@@ -32,7 +38,7 @@ export function CrewCard({
       data-open={open || undefined}
       onClick={onOpen}
       aria-pressed={open}
-      style={{ ...cardStyle, ...(open ? openStyle : null) }}
+      style={{ ...cardStyle, ...(open ? openStyle : null), ...arrivalStyle(delayMs) }}
     >
       <span
         aria-hidden
@@ -67,6 +73,16 @@ export function CrewCard({
     </Button>
   )
 }
+
+function arrivalStyle(delayMs: number | null): CSSProperties {
+  if (delayMs === null) return EMPTY_STYLE
+  return {
+    transformOrigin: 'center',
+    animation: `zt-tile-in ${MOTION.arriveMs}ms ${MOTION.spring} ${delayMs}ms both`,
+  }
+}
+
+const EMPTY_STYLE: CSSProperties = {}
 
 const modelStyle: CSSProperties = {
   flex: 'none',

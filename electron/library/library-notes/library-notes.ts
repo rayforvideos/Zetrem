@@ -21,7 +21,7 @@ export function isFolderName(name: unknown): name is string {
   )
 }
 
-function isTitle(title: unknown): title is string {
+export function isTitle(title: unknown): title is string {
   return (
     typeof title === 'string' &&
     title === title.trim() &&

@@ -22,6 +22,7 @@ import {
   createNote,
   fileNote,
   isFolderName,
+  isTitle,
   listNotes,
   readNote,
   removeFolder,
@@ -146,13 +147,16 @@ function toolsFor(workspace: string): LibraryTools {
       return readNote(await dbFor(workspace), id)
     },
     // The library is the person's, so an agent's write only asks. The note is
-    // written when the person accepts, and not a moment before.
+    // written when the person accepts, and not a moment before. A title or
+    // folder that could never be filed is refused now, at the ask, rather than
+    // stored as a proposal Accept can never carry out.
     async write(input) {
       const folder = input.folder ?? ''
-      if (folder.length > 0 && !isFolderName(folder)) return null
+      if (folder.length > 0 && !isFolderName(folder)) return { ok: false, why: 'folder' }
+      if (!isTitle(input.title)) return { ok: false, why: 'title' }
       const proposal = addProposal(await dbFor(workspace), { ...input, folder })
       tellProposed()
-      return proposal
+      return { ok: true, proposal }
     },
     async recent(limit) {
       return recentNotes(await dbFor(workspace), limit)

@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { STREAM_BUFFER, TRANSCRIPT_BUFFER } from '../session/session'
+import type { DiffLine } from '@/entities/tool/@x/agent-session'
 import type { AgentSession } from '../session/session.types'
 import { sessionStore } from './session-store'
 
@@ -196,20 +197,49 @@ describe('sessionStore: closing the right call when an id comes round again', ()
   })
 })
 
-describe('sessionStore: a call keeps its raw input', () => {
-  it('stores the input given when the call opens', () => {
+describe('sessionStore: a call keeps the change it made, not the input it made it from', () => {
+  const first: DiffLine[][] = [[{ kind: 'add', text: '첫 줄' }]]
+  const second: DiffLine[][] = [[{ kind: 'add', text: '둘째 줄' }]]
+
+  it('stores the change given when the call opens', () => {
     sessionStore.clear()
     sessionStore.open(session('a'))
-    sessionStore.beginCall('a', { id: 'c1', line: 'Edit a.ts', input: { old_string: 'x' } })
-    expect(sessionStore.get()[0]?.stream[0]?.input).toEqual({ old_string: 'x' })
+    sessionStore.beginCall('a', {
+      id: 'c1',
+      line: 'Edit a.ts',
+      change: first,
+      count: { added: 1, removed: 0 },
+    })
+    const [only] = sessionStore.get()
+    expect(only?.stream[0]?.change).toEqual(first)
+    expect(only?.stream[0]?.count).toEqual({ added: 1, removed: 0 })
   })
 
-  it('keeps the newer input when the same call is announced again', () => {
+  it('keeps the newer change when the same call is announced again', () => {
     sessionStore.clear()
     sessionStore.open(session('a'))
-    sessionStore.beginCall('a', { id: 'c1', line: 'Edit', input: { old_string: 'first' } })
-    sessionStore.beginCall('a', { id: 'c1', line: 'Edit a.ts', input: { old_string: 'second' } })
-    expect(sessionStore.get()[0]?.stream[0]?.input).toEqual({ old_string: 'second' })
+    sessionStore.beginCall('a', { id: 'c1', line: 'Edit', change: first })
+    sessionStore.beginCall('a', { id: 'c1', line: 'Edit a.ts', change: second })
+    expect(sessionStore.get()[0]?.stream[0]?.change).toEqual(second)
+  })
+
+  it('leaves the change it already has when a later word says nothing about it', () => {
+    sessionStore.clear()
+    sessionStore.open(session('a'))
+    sessionStore.beginCall('a', { id: 'c1', line: 'Edit', change: first })
+    sessionStore.beginCall('a', { id: 'c1', line: 'Edit a.ts' })
+    expect(sessionStore.get()[0]?.stream[0]?.change).toEqual(first)
+  })
+
+  it('carries the change onto the row a bare tool name left standing', () => {
+    sessionStore.clear()
+    sessionStore.open(session('a'))
+    sessionStore.beginCall('a', { id: 'p1', line: 'Edit' })
+    sessionStore.endCall('a', 'p1', { failed: false, note: '' })
+    sessionStore.beginCall('a', { id: 'toolu_1', line: 'Edit a.ts', change: second })
+    const stream = sessionStore.get()[0]?.stream ?? []
+    expect(stream).toHaveLength(1)
+    expect(stream[0]?.change).toEqual(second)
   })
 })
 

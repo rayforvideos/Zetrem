@@ -39,13 +39,42 @@ describe('Helpers: the teammates a teammate called in', () => {
     const html = draw([helper('late', { startedAtMs: 900 }), helper('early', { startedAtMs: 100 })])
     expect(marks(html)).toEqual(['early', 'late'])
     expect(html).toContain('Their helpers')
-    expect(html).toContain('early를 살펴보는 중')
+    expect(html).toContain('일 early')
+  })
+
+  it('says what a working helper was called in for, not the words it was handed', () => {
+    const html = draw([
+      helper('busy', {
+        label: '스타일 점검',
+        headline: 'You are working in the directory /Users/…',
+      }),
+    ])
+    expect(html).toContain('스타일 점검')
+    expect(html).not.toContain('You are working in the directory')
+  })
+
+  it('says what a helper came back with once it has reported', () => {
+    const html = draw([
+      helper('back', { label: '스타일 점검', headline: '세 곳을 고쳤습니다', status: 'done' }),
+    ])
+    expect(html).toContain('세 곳을 고쳤습니다')
   })
 
   it('shows four and counts the rest, so one tile never fills with helpers', () => {
     const html = draw([1, 2, 3, 4, 5].map((n) => helper(`h${n}`, { startedAtMs: n })))
     expect(marks(html)).toHaveLength(4)
     expect(html).toContain('data-more')
+    expect(html).toContain('+1')
+  })
+
+  it('keeps the one still working in view when older ones have already come back', () => {
+    const html = draw([
+      ...[1, 2, 3, 4].map((n) => helper(`h${n}`, { startedAtMs: n, status: 'done' })),
+      helper('h5', { startedAtMs: 5 }),
+    ])
+    expect(marks(html)).toHaveLength(4)
+    expect(marks(html)).toContain('h5')
+    expect(marks(html)[0]).toBe('h5')
     expect(html).toContain('+1')
   })
 

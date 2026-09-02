@@ -119,6 +119,7 @@ describe('TileDeck', () => {
     const helper = session('g1', {
       parentId: 's0',
       subagentType: 'Explore',
+      status: 'reported',
       headline: '두 곳을 찾았습니다',
     })
     const html = render({ kind: 'fanned', ids: ['s0', 'g1'], closing: [] }, [fleet[0]!, helper])

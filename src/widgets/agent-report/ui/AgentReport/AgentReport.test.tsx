@@ -99,7 +99,17 @@ describe('AgentReport: every edit shown whole', () => {
   it('lays the written lines out under the call that wrote them', () => {
     const wrote = call('c4', 'Write new.ts')
     const html = report({
-      stream: [{ ...wrote, input: { file_path: 'new.ts', content: '첫 줄\n둘째 줄' } }],
+      stream: [
+        {
+          ...wrote,
+          change: [
+            [
+              { kind: 'add', text: '첫 줄' },
+              { kind: 'add', text: '둘째 줄' },
+            ],
+          ],
+        },
+      ],
     })
     expect(html).toContain('data-change')
     expect(html).toContain('첫 줄')

@@ -1,6 +1,6 @@
-import type { AgentSession, SessionStatus } from '@/entities/agent-session'
+import type { AgentSession } from '@/entities/agent-session'
 import { useScrollState } from '@/shared/lib/scroll-state/useScrollState'
-import { ChangeDiff, changeLines, shapeOfLine, tally, toolNameOf } from '@/entities/tool'
+import { tally } from '@/entities/tool'
 import { AgentSprite, personaOf } from '@/entities/teammate'
 import { cn } from '@/shared/lib/cn'
 import {
@@ -14,30 +14,23 @@ import {
   AlertDialogTitle,
 } from '@/shared/ui/alert-dialog'
 import { Button } from '@/shared/ui/button'
-import { ToolIcon } from '@/entities/tool'
 import { Markdown } from '@/shared/markdown/Markdown/Markdown'
 import { leadOf } from '../../lib/lead/lead'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { runsOf, stepTo } from '../../lib/runs/runs'
 import { rollbackTitle, rollbackWarning } from '../../lib/review/review'
 import type { DiffTone } from '../../lib/review/review.types'
+import { stateWord } from '../../lib/state-word/state-word'
 import { useWorktreeReview } from '../../model/useWorktreeReview'
-import { i18n } from '@lingui/core'
-import { msg, t } from '@lingui/core/macro'
-import type { MessageDescriptor } from '@lingui/core'
+import { CallStream } from '../CallStream/CallStream'
+import { HelperList } from '../HelperList/HelperList'
+import { t } from '@lingui/core/macro'
 
 const TONE: Record<DiffTone, string> = {
   added: 'text-added',
   removed: 'text-removed',
   meta: 'text-muted-foreground',
   plain: '',
-}
-
-const STATE: Record<SessionStatus, MessageDescriptor> = {
-  working: msg`Working`,
-  waiting: msg`Waiting on you`,
-  reported: msg`Reported back`,
-  done: msg`Done`,
 }
 
 type AgentReportProps = {
@@ -87,7 +80,7 @@ export function AgentReport({
           <span className="flex flex-col">
             <span className="text-base leading-tight">{persona.name}</span>
             <span className="font-mono text-xs text-muted-foreground">
-              {i18n._(STATE[session.status])} · {Math.max(0, Math.round(ranMs / 1000))}s ·{' '}
+              {stateWord(session.status)} · {Math.max(0, Math.round(ranMs / 1000))}s ·{' '}
               {session.model}
             </span>
           </span>
@@ -162,58 +155,9 @@ export function AgentReport({
         </div>
       )}
 
-      <div className="flex flex-col gap-1 pt-2">
-        <span className="mb-1 text-xs tracking-[0.08em] text-muted-foreground">{t`What they did`}</span>
-        {session.stream.length === 0 && (
-          <span className="text-xs text-muted-foreground">{t`Nothing yet`}</span>
-        )}
-        {session.stream.map((call) => {
-          const shape = shapeOfLine(call.line)
-          const groups = changeLines(toolNameOf(call.line), call.input)
-          return (
-            <div key={call.id} className="flex flex-col gap-1.5">
-              <span className="flex items-center gap-2 font-mono text-xs text-muted-foreground">
-                <ToolIcon shape={shape} />
-                <span className="truncate">{call.line}</span>
-                {call.failed ? (
-                  <span className="ml-auto flex-none text-removed">{t`failed`}</span>
-                ) : (
-                  call.note.length > 0 && (
-                    <span className="ml-auto flex-none truncate">{call.note}</span>
-                  )
-                )}
-              </span>
-              {groups.length > 0 && (
-                <div
-                  data-change
-                  className="zt-scroll mb-1 max-h-80 overflow-auto rounded-lg border border-border bg-card p-3"
-                >
-                  <ChangeDiff groups={groups} />
-                </div>
-              )}
-            </div>
-          )
-        })}
-      </div>
+      <CallStream calls={session.stream} />
 
-      {helpers.length > 0 && (
-        <div data-helpers className="flex flex-col gap-4 pt-2">
-          <span className="text-xs tracking-[0.08em] text-muted-foreground">{t`Their helpers`}</span>
-          {helpers.map((helper) => (
-            <div key={helper.id} data-helper={helper.id} className="flex flex-col gap-1.5">
-              <span className="flex items-center gap-2 font-mono text-xs text-muted-foreground">
-                <AgentSprite subagentType={helper.subagentType || helper.label} size={16} />
-                <span className="flex-none">{helper.subagentType || helper.label}</span>
-                <span className="truncate">{helper.label}</span>
-                <span className="ml-auto flex-none">{i18n._(STATE[helper.status])}</span>
-              </span>
-              {helper.headline.length > 0 && (
-                <Markdown text={helper.headline} className="text-sm leading-relaxed" />
-              )}
-            </div>
-          ))}
-        </div>
-      )}
+      <HelperList helpers={helpers} />
 
       {session.agentId !== undefined && (
         <div data-worktree-review className="flex flex-col gap-2 pt-2">

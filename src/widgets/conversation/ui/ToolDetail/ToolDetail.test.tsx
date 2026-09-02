@@ -119,6 +119,34 @@ describe('ToolDetail: each tool drawn in its own shape', () => {
     expect(html).toContain('… 60 more lines')
   })
 
+  it('spends the cap across a multi-edit as a whole, not on each edit in turn', () => {
+    // Three edits of 200 written lines each: the first fills 200 of the 400,
+    // the second the rest, and the third never opens. What was cut is counted
+    // once, over the whole call, rather than once per edit.
+    const chunk = (mark: string): string =>
+      Array.from({ length: 200 }, (_, i) => `${mark}${i}`).join('\n')
+    const html = renderToStaticMarkup(
+      <ToolDetail
+        tool={tool({
+          line: 'MultiEdit a.ts',
+          input: {
+            file_path: 'a.ts',
+            edits: [
+              { old_string: '', new_string: chunk('가') },
+              { old_string: '', new_string: chunk('나') },
+              { old_string: '', new_string: chunk('다') },
+            ],
+          },
+        })}
+      />,
+    )
+    expect(html).toContain('가199')
+    expect(html).toContain('나199')
+    expect(html).not.toContain('다0')
+    expect(html).toContain('… 200 more lines')
+    expect(html.match(/… 200 more lines/g)).toHaveLength(1)
+  })
+
   it('draws nothing for a tool with no view of its own', () => {
     expect(
       renderToStaticMarkup(

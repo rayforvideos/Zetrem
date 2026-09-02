@@ -28,6 +28,18 @@ function seenStamp(patch: Partial<AgentSession>): Partial<AgentSession> {
   return { lastSeenAtMs: Date.now() }
 }
 
+type Opening = Pick<Call, 'id' | 'line' | 'change' | 'count'>
+
+// One call is announced more than once — first as the bare tool name, then
+// with its arguments — and only the later word carries the edit. Whatever the
+// newer announcement actually says is kept; what it leaves out stays as it was.
+function changeOf(call: Opening): Partial<Call> {
+  return {
+    ...(call.change === undefined ? {} : { change: call.change }),
+    ...(call.count === undefined ? {} : { count: call.count }),
+  }
+}
+
 function endStamp(before: AgentSession, patch: Partial<AgentSession>): Partial<AgentSession> {
   if (patch.endedAtMs !== undefined) return {}
   if (patch.status !== 'done' || before.status === 'done') return {}
@@ -69,7 +81,7 @@ export const sessionStore = {
     const lastSeenAtMs = Date.now()
     patchOne(id, { transcript, lastSeenAtMs })
   },
-  beginCall(id: string, call: { id: string; line: string; input?: unknown }): void {
+  beginCall(id: string, call: Opening): void {
     const target = sessions.find((s) => s.id === id)
     if (!target) return
     const open = target.stream.findLastIndex(
@@ -80,8 +92,7 @@ export const sessionStore = {
       const again = target.stream.with(open, {
         ...held,
         line: mergedLine(held.line, call.line),
-        // The newer announcement's input is the more complete one.
-        ...(call.input === undefined ? {} : { input: call.input }),
+        ...changeOf(call),
       })
       patchOne(id, { stream: again, lastSeenAtMs: Date.now() })
       return
@@ -96,7 +107,7 @@ export const sessionStore = {
         endedAtMs: null,
         failed: false,
         note: '',
-        input: call.input,
+        ...changeOf(call),
       })
       patchOne(id, { stream: taken, lastSeenAtMs: Date.now() })
       return

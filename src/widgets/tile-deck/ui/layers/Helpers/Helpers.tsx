@@ -1,5 +1,6 @@
 import type { CSSProperties } from 'react'
 import type { AgentSession } from '@/entities/agent-session'
+import { saidBack } from '@/entities/agent-session'
 import { AgentSprite } from '@/entities/teammate'
 import { t } from '@lingui/core/macro'
 
@@ -10,8 +11,16 @@ const SHOWN = 4
 export function Helpers({ helpers }: { helpers: AgentSession[] }) {
   if (helpers.length === 0) return null
 
+  // The store hands these over in the order they opened, but a resumed session
+  // can arrive out of turn, so the row order is settled here rather than trusted.
   const ordered = [...helpers].sort((a, b) => a.startedAtMs - b.startedAtMs)
-  const shown = ordered.slice(0, SHOWN)
+  // Whoever is still working comes first: a tile is about what is happening
+  // now, and four helpers that have all reported back would hide the one that
+  // has not. Within each half the oldest still leads.
+  const shown = [
+    ...ordered.filter((one) => one.status === 'working'),
+    ...ordered.filter((one) => one.status !== 'working'),
+  ].slice(0, SHOWN)
   const rest = ordered.length - shown.length
 
   return (
@@ -21,7 +30,7 @@ export function Helpers({ helpers }: { helpers: AgentSession[] }) {
         <div key={helper.id} data-helper={helper.id} style={rowStyle}>
           <AgentSprite subagentType={helper.subagentType || helper.label} size={14} />
           <span style={nameStyle}>{helper.subagentType || helper.label}</span>
-          <span style={saidStyle}>{helper.headline}</span>
+          <span style={saidStyle}>{saidBy(helper)}</span>
           {helper.status === 'working' ? (
             <span className="zt-breath" style={markStyle}>
               ●
@@ -38,6 +47,11 @@ export function Helpers({ helpers }: { helpers: AgentSession[] }) {
       )}
     </div>
   )
+}
+
+// What it was called in for while it works, what it found once it is back.
+function saidBy(helper: AgentSession): string {
+  return saidBack(helper) ? helper.headline : helper.label
 }
 
 const rootStyle: CSSProperties = {
@@ -65,13 +79,17 @@ const rowStyle: CSSProperties = {
   minWidth: 0,
   padding: '1px 0',
   opacity: 0.7,
+  overflow: 'hidden',
 }
 
 const nameStyle: CSSProperties = {
-  flex: '0 0 auto',
+  flex: '0 1 auto',
+  minWidth: 0,
   fontFamily: 'var(--zt-mono)',
   fontSize: 11,
   whiteSpace: 'nowrap',
+  textOverflow: 'ellipsis',
+  overflow: 'hidden',
 }
 
 const saidStyle: CSSProperties = {

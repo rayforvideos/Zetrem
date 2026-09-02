@@ -16,7 +16,7 @@ import { beginSession, closeSession } from './session-bookkeeping/session-bookke
 import { settled } from './settle/settle'
 import { afterYouStopped } from './asked-to-stop/asked-to-stop'
 import type { Attempt } from './relaunch/relaunch.types'
-import type { ConversationState } from '../chat/conversation/conversation.types'
+import type { Conversation, ConversationState } from '../chat/conversation/conversation.types'
 import { t } from '@lingui/core/macro'
 
 const CLOCK_MS = 1000
@@ -24,6 +24,7 @@ const CLOCK_MS = 1000
 type Agent = {
   running: boolean
   conversation: ConversationState
+  conversationStore: Conversation
   children: AgentSession[]
   status: StatusState
   nowMs: number
@@ -205,6 +206,7 @@ export function useAgent(
   return {
     running,
     conversation: conv,
+    conversationStore: conversation,
     children,
     status,
     nowMs,

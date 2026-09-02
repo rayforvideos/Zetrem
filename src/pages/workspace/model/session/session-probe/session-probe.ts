@@ -1,30 +1,31 @@
-import { readUsage, statusStore } from '@/entities/agent-session'
+import type { ChatStatus } from '@/entities/agent-session'
+import { accountStatus, readUsage } from '@/entities/agent-session'
 import { parseClaudeLine } from '@/entities/claude-cli'
 
-export function learnSession(line: string | null): void {
-  if (line === null) return
-  if (statusStore.get().session !== null) return
+export function learnSession(status: ChatStatus | null, line: string | null): void {
+  if (status === null || line === null) return
+  if (status.get().session !== null) return
   for (const turn of parseClaudeLine(line)) {
-    if (turn.type === 'session') statusStore.learnProbe(turn.session)
+    if (turn.type === 'session') status.learnProbe(turn.session)
   }
 }
 
 export function learnKeptUsage(report: string | null): void {
   if (report === null) return
-  if (statusStore.get().limits.length > 0) return
+  if (accountStatus.get().limits.length > 0) return
   for (const limit of readUsage(report)) {
-    statusStore.apply({ type: 'limit', limit })
+    accountStatus.applyLimit(limit)
   }
-  statusStore.usageKept()
+  accountStatus.usageKept()
 }
 
 export function learnUsage(report: string | null): void {
   if (report === null) {
-    statusStore.usageUnreadable()
+    accountStatus.usageUnreadable()
     return
   }
   for (const limit of readUsage(report)) {
-    statusStore.apply({ type: 'limit', limit })
+    accountStatus.applyLimit(limit)
   }
-  statusStore.usageRead(Date.now())
+  accountStatus.usageRead(Date.now())
 }

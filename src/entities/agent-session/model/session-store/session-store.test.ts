@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { STREAM_BUFFER, TRANSCRIPT_BUFFER } from '../session/session'
 import type { AgentSession } from '../session/session.types'
-import { sessionStore } from './session-store'
+import { createSessionStore, sessionStore } from './session-store'
 
 function session(id: string): AgentSession {
   return {
@@ -247,5 +247,16 @@ describe('a row that only names the tool gives way when the real call arrives', 
     sessionStore.endCall('a', 'c1', { failed: false, note: '2 lines' })
     sessionStore.beginCall('a', { id: 'c2', line: 'Bash npm test' })
     expect(sessionStore.get()[0]?.stream).toHaveLength(2)
+  })
+})
+
+describe('createSessionStore: one per chat', () => {
+  it('keeps children of two chats apart', () => {
+    const a = createSessionStore()
+    const b = createSessionStore()
+    a.open(session('x'))
+    expect(a.get()).toHaveLength(1)
+    expect(b.get()).toHaveLength(0)
+    expect(b.find('x')).toBeNull()
   })
 })

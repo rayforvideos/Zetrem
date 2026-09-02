@@ -16,7 +16,7 @@ export function WorkspaceSidebar({
   library: LibraryNotes
   onOpenProject(id: string): void
 }) {
-  const { account, chatting, layout, prefs, projects, team } = work
+  const { chatting, layout, prefs, projects, team } = work
   const { chat, focus } = chatting
 
   function pickTeammate(id: string | null): void {
@@ -53,13 +53,9 @@ export function WorkspaceSidebar({
           openId: layout.libraryOpen ? null : chat.openId,
           // Coming back to the open chat (from the library) must not end its session.
           onOpen: (id) =>
-            chatSwitch(id, chat.openId) === 'return'
-              ? layout.leaveLibrary()
-              : account.swap(() => chat.open(id)),
-          onStart: () => account.swap(chat.start),
-          // Removing the chat that is open mid-reply must also let its agent go.
-          onRemove: (id) =>
-            id === chat.openId ? account.swap(() => chat.remove(id)) : chat.remove(id),
+            chatSwitch(id, chat.openId) === 'return' ? layout.leaveLibrary() : chat.open(id),
+          onStart: chat.start,
+          onRemove: chat.remove,
           onRename: chat.rename,
           onFile: chat.file,
           onFileMany: chat.fileMany,

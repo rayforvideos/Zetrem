@@ -1,14 +1,14 @@
 import type { Project } from '@/entities/project'
 
 // What switching projects needs from the rest of the workspace: the list to
-// fall back on, a way to report trouble, and the teardown of whatever the
-// old project still runs.
+// fall back on and a way to report trouble. The session rooted in the old
+// folder is not touched here: it keeps running under its own chat, and is
+// saved there, whichever project the screen shows next.
 export type SwitchDeps = {
   project: Project | null
   allProjects: Project[]
   refreshProjects(): void
   report(what: string): (cause: unknown) => void
-  dropSession(): void
 }
 
 export type ProjectSwitch = {

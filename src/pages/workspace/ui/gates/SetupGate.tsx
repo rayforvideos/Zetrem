@@ -12,7 +12,7 @@ export function SetupGate({
   onOpenProject(id: string): void
 }) {
   const { account, chatting, extensions, layout, prefs, projects, team } = work
-  const { auth, swap } = account
+  const { auth, stopAll } = account
   const { settings, update } = prefs
 
   return (
@@ -28,11 +28,11 @@ export function SetupGate({
         installing: auth.installing,
         onInstall: auth.install,
         onRecheck: auth.recheck,
-        onAdd: () => swap(auth.addAccount),
-        onSwitch: (id) => swap(() => auth.switchAccount(id)),
-        onReauth: (id) => swap(() => auth.reauthAccount(id)),
-        onRemove: (id) => swap(() => auth.removeAccount(id)),
-        onSignOut: () => swap(auth.logout),
+        onAdd: () => stopAll(auth.addAccount),
+        onSwitch: (id) => stopAll(() => auth.switchAccount(id)),
+        onReauth: (id) => stopAll(() => auth.reauthAccount(id)),
+        onRemove: (id) => stopAll(() => auth.removeAccount(id)),
+        onSignOut: () => stopAll(auth.logout),
         onCancelLogin: auth.cancelLogin,
       }}
       you={{

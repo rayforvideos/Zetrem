@@ -4,7 +4,14 @@ import { agentArgs } from '@/entities/claude-cli/@x/teammate'
 import { ORCHESTRATOR, agentsArgs } from '@/entities/claude-cli/@x/teammate'
 import { PERSONA, orchestratorPrompt } from './orchestrator'
 
-const person = { name: 'Explore', description: '', prompt: '찾아본다', model: null, tools: [] }
+const person = {
+  name: 'Explore',
+  description: '',
+  prompt: '찾아본다',
+  model: null,
+  tools: [],
+  isolated: true,
+}
 const brief = orchestratorPrompt(true)
 const briefs = [brief, orchestratorPrompt(false)]
 

@@ -19,6 +19,7 @@ import { Input } from '@/shared/ui/input'
 import { Label } from '@/shared/ui/label'
 import { Popover, PopoverContent, PopoverTrigger } from '@/shared/ui/popover'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/shared/ui/select'
+import { Switch } from '@/shared/ui/switch'
 import { Textarea } from '@/shared/ui/textarea'
 import {
   characterFor,
@@ -27,6 +28,7 @@ import {
   toggled,
   toolSummary,
 } from '../../lib/member-draft/member-draft'
+import { writes } from '../../lib/writes/writes'
 import { CharacterPicker } from '../CharacterPicker/CharacterPicker'
 import { ToolPicker } from '../ToolPicker/ToolPicker'
 import { useScrollState } from '@/shared/lib/scroll-state/useScrollState'
@@ -51,6 +53,7 @@ export function MemberForm({ initial, knownTools, onSubmit, onCancel }: MemberFo
   const [model, setModel] = useState(initial?.model ?? null)
   const [tools, setTools] = useState(initial?.tools ?? [])
   const [knowledge, setKnowledge] = useState(initial?.knowledge ?? [])
+  const [worktree, setWorktree] = useState(initial?.worktree ?? true)
   const [picked, setPicked] = useState<CharacterId | null>(initialCharacter(initial))
   const [missing, setMissing] = useState<string | null>(null)
   const [sheet, setSheet] = useState<HTMLElement | null>(null)
@@ -105,7 +108,10 @@ export function MemberForm({ initial, knownTools, onSubmit, onCancel }: MemberFo
               return
             }
             onSubmit(
-              draftFrom({ name, description, prompt, character, model, tools, knowledge }, initial),
+              draftFrom(
+                { name, description, prompt, character, model, tools, knowledge, worktree },
+                initial,
+              ),
             )
           }}
         >
@@ -198,6 +204,18 @@ export function MemberForm({ initial, knownTools, onSubmit, onCancel }: MemberFo
                     />
                   </PopoverContent>
                 </Popover>
+              </Row>
+
+              <Row label={t`Own workspace`} htmlFor="member-worktree">
+                <span className="flex items-center gap-2">
+                  <Switch id="member-worktree" checked={worktree} onCheckedChange={setWorktree} />
+                </span>
+                <Note>{t`Works in a git worktree of its own; changes come back as a branch.`}</Note>
+                {!worktree && writes(tools) && (
+                  <p data-shared-warning className="text-xs leading-snug text-muted-foreground">
+                    {t`Writes straight into the shared working tree.`}
+                  </p>
+                )}
               </Row>
             </aside>
 

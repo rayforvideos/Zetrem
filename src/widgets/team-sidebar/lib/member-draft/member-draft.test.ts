@@ -11,12 +11,13 @@ const existing: AgentDefDraft = {
   tools: ['Read'],
   knowledge: [],
   prompt: 'look closely',
+  worktree: true,
 }
 
 describe('editing does not lose what the form never asked about', () => {
   it('carries the chosen face into the draft, so editing does not wipe it', () => {
     const draft = draftFrom(
-      { name: 'reviewer', description: 'd', prompt: 'p', character: 'ghost' },
+      { name: 'reviewer', description: 'd', prompt: 'p', character: 'ghost', worktree: true },
       existing,
     )
     expect(draft.character).toBe('ghost')
@@ -24,7 +25,7 @@ describe('editing does not lose what the form never asked about', () => {
 
   it('keeps whatever the form does not ask about', () => {
     const draft = draftFrom(
-      { name: 'reviewer', description: 'd', prompt: 'p', character: 'star' },
+      { name: 'reviewer', description: 'd', prompt: 'p', character: 'star', worktree: true },
       existing,
     )
     expect(draft.model).toBe('sonnet')
@@ -32,9 +33,20 @@ describe('editing does not lose what the form never asked about', () => {
   })
 
   it('has nothing to keep for someone new', () => {
-    const draft = draftFrom({ name: 'n', description: 'd', prompt: 'p', character: 'jelly' }, null)
+    const draft = draftFrom(
+      { name: 'n', description: 'd', prompt: 'p', character: 'jelly', worktree: true },
+      null,
+    )
     expect(draft.model).toBeNull()
     expect(draft.tools).toEqual([])
+  })
+
+  it('carries the worktree toggle the form holds, since it always knows it', () => {
+    const on = draftFrom(
+      { name: 'n', description: 'd', prompt: 'p', character: 'jelly', worktree: false },
+      existing,
+    )
+    expect(on.worktree).toBe(false)
   })
 
   it('opens on the face that person already has', () => {

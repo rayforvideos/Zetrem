@@ -3,6 +3,7 @@ import { chatId, renamed } from '@/entities/conversation'
 import type { ChatSummary, Transcript } from '@/entities/conversation'
 import { troubleLine } from '@/shared/lib/ask/ask'
 import { leaving } from './leave/leave'
+import { mayRestore } from './restore-guard/restore-guard'
 import { chatSessions } from '../session/chat-sessions/chat-sessions'
 import type { ChatSession } from '../session/chat-sessions/chat-session/chat-session.types'
 import { t } from '@lingui/core/macro'
@@ -75,7 +76,10 @@ export function useTranscript(project: string | null): Chats {
         const saved = await window.desk.readTranscript(project, latest.id).catch(() => null)
         if (!alive) return
         const s = chatSessions.open(latest.id, project)
-        if (!s.running() && s.stores.conversation.get().turns.length === 0 && saved !== null) {
+        if (
+          saved !== null &&
+          mayRestore({ running: s.running(), turnCount: s.stores.conversation.get().turns.length })
+        ) {
           s.restore(saved)
         }
         setOpenId(latest.id)
@@ -109,7 +113,12 @@ export function useTranscript(project: string | null): Chats {
     void window.desk
       .readTranscript(project, id)
       .then((saved) => {
-        if (saved !== null && openTicket.current === ticket) s.restore(saved)
+        if (saved === null || openTicket.current !== ticket) return
+        if (
+          mayRestore({ running: s.running(), turnCount: s.stores.conversation.get().turns.length })
+        ) {
+          s.restore(saved)
+        }
       })
       .catch((cause: unknown) => {
         if (openTicket.current !== ticket) return

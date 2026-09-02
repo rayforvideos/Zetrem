@@ -7,7 +7,13 @@ import { conversation } from '@/pages/workspace/model/chat/conversation/conversa
 import captured from './live-subagent.json'
 
 function refs(): AgentEventRefs {
-  return { asks: [], childIds: new Set<string>(), sends: new Map<string, string>() }
+  return {
+    asks: [],
+    childIds: new Set<string>(),
+    sends: new Map(),
+    limits: new Map<string, string>(),
+    onModelRefused: () => {},
+  }
 }
 
 function replay(): AgentEventRefs {

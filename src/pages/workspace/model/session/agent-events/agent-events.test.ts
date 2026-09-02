@@ -24,6 +24,7 @@ function fakeRefs(): AgentEventRefs {
     asks: [],
     childIds: new Set<string>(),
     sends: new Map<string, { to: string; message: string }>(),
+    limits: new Map<string, string>(),
     onModelRefused: () => {},
   }
 }
@@ -56,7 +57,7 @@ describe('applyAgentEvent: the order has to be nailed down', () => {
       utilization: 0.28,
       resetsAtMs: Date.now(),
       overage: false,
-      status: 'approaching',
+      status: 'allowed_warning',
     }
     applyAgentEvent({ type: 'limit', limit }, fakeRefs())
     const last = conversation.get().turns.at(-1)!
@@ -223,6 +224,87 @@ describe('applyAgentEvent: the order has to be nailed down', () => {
   })
 })
 
+describe('a rate limit reaches the chat once, and again only when it turned over', () => {
+  const RESETS = new Date('2026-08-14T05:00:00+09:00').getTime()
+
+  function fakeLimit(overrides: Partial<RateLimit> = {}): RateLimit {
+    return {
+      kind: 'seven_day',
+      utilization: 0.86,
+      resetsAtMs: RESETS,
+      overage: false,
+      status: 'allowed_warning',
+      ...overrides,
+    }
+  }
+
+  function systemLines(): string[] {
+    return conversation
+      .get()
+      .turns.filter((turn) => turn.role === 'system')
+      .map((turn) => turn.text)
+  }
+
+  it('says the same limit once, however many ticks carry it', () => {
+    const refs = fakeRefs()
+    applyAgentEvent({ type: 'limit', limit: fakeLimit() }, refs)
+    applyAgentEvent({ type: 'limit', limit: fakeLimit() }, refs)
+    expect(systemLines()).toHaveLength(1)
+  })
+
+  it('leaves a share that is only creeping up to the strip, which is already drawing it', () => {
+    const refs = fakeRefs()
+    applyAgentEvent({ type: 'limit', limit: fakeLimit({ utilization: 0.86 }) }, refs)
+    applyAgentEvent({ type: 'limit', limit: fakeLimit({ utilization: 0.97 }) }, refs)
+    expect(systemLines()).toHaveLength(1)
+  })
+
+  it('speaks again when a warning turns into a refusal', () => {
+    const refs = fakeRefs()
+    applyAgentEvent({ type: 'limit', limit: fakeLimit({ status: 'allowed_warning' }) }, refs)
+    applyAgentEvent({ type: 'limit', limit: fakeLimit({ status: 'rejected' }) }, refs)
+    expect(systemLines()).toHaveLength(2)
+  })
+
+  it('speaks again when the window it resets in moves', () => {
+    const refs = fakeRefs()
+    applyAgentEvent({ type: 'limit', limit: fakeLimit() }, refs)
+    applyAgentEvent({ type: 'limit', limit: fakeLimit({ resetsAtMs: RESETS + 3_600_000 }) }, refs)
+    expect(systemLines()).toHaveLength(2)
+  })
+
+  it('speaks again when the run goes onto overage', () => {
+    const refs = fakeRefs()
+    applyAgentEvent({ type: 'limit', limit: fakeLimit({ overage: false }) }, refs)
+    applyAgentEvent({ type: 'limit', limit: fakeLimit({ overage: true }) }, refs)
+    expect(systemLines()).toHaveLength(2)
+  })
+
+  it('forgets a limit that came back to allowed, so its return is news again', () => {
+    const refs = fakeRefs()
+    applyAgentEvent({ type: 'limit', limit: fakeLimit() }, refs)
+    applyAgentEvent({ type: 'limit', limit: fakeLimit({ status: 'allowed' }) }, refs)
+    applyAgentEvent({ type: 'limit', limit: fakeLimit() }, refs)
+    expect(systemLines()).toHaveLength(2)
+  })
+
+  it('keeps one kind of limit from silencing another', () => {
+    const refs = fakeRefs()
+    applyAgentEvent({ type: 'limit', limit: fakeLimit({ kind: 'seven_day' }) }, refs)
+    applyAgentEvent({ type: 'limit', limit: fakeLimit({ kind: 'five_hour' }) }, refs)
+    applyAgentEvent({ type: 'limit', limit: fakeLimit({ kind: 'seven_day' }) }, refs)
+    applyAgentEvent({ type: 'limit', limit: fakeLimit({ kind: 'five_hour' }) }, refs)
+    expect(systemLines()).toHaveLength(2)
+  })
+
+  it('starts over for a new session, which begins with nothing told', () => {
+    const first = fakeRefs()
+    applyAgentEvent({ type: 'limit', limit: fakeLimit() }, first)
+    applyAgentEvent({ type: 'limit', limit: fakeLimit() }, fakeRefs())
+    expect(systemLines()).toHaveLength(2)
+  })
+})
+
 describe('limitLine: a limit states facts and nothing else', () => {
   it('says so while running on overage', () => {
     const line = limitLine({
@@ -230,7 +312,7 @@ describe('limitLine: a limit states facts and nothing else', () => {
       utilization: 0.95,
       resetsAtMs: new Date('2026-08-14T05:00:00+09:00').getTime(),
       overage: true,
-      status: 'approaching',
+      status: 'allowed_warning',
     })
     expect(line).toContain('on overage')
   })
@@ -241,7 +323,7 @@ describe('limitLine: a limit states facts and nothing else', () => {
       utilization: 0.5,
       resetsAtMs: Date.now(),
       overage: false,
-      status: 'approaching',
+      status: 'allowed_warning',
     })
     expect(line).not.toContain('초과분')
   })
@@ -1170,7 +1252,13 @@ describe('addressing a child by the id the CLI actually sends', () => {
 
 describe('work the CLI sends to the background stays visible while it runs', () => {
   function refs(): AgentEventRefs {
-    return { asks: [], childIds: new Set(), sends: new Map(), onModelRefused: () => {} }
+    return {
+      asks: [],
+      childIds: new Set(),
+      sends: new Map(),
+      limits: new Map(),
+      onModelRefused: () => {},
+    }
   }
 
   beforeEach(() => {

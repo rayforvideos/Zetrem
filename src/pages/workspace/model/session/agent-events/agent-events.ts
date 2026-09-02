@@ -106,7 +106,7 @@ function announce(turn: ClaudeTurnEvent, refs: AgentEventRefs): void {
       return
     }
     case 'limit':
-      if (turn.limit.status !== 'allowed') conversation.system(limitLine(turn.limit))
+      if (worthSaying(turn.limit, refs.limits)) conversation.system(limitLine(turn.limit))
       return
     case 'compacted':
       conversation.system(compactedLine(turn.trigger, turn.preTokens, turn.postTokens))
@@ -135,6 +135,22 @@ function announce(turn: ClaudeTurnEvent, refs: AgentEventRefs): void {
     default:
       return
   }
+}
+
+// The CLI resends a rate limit on every tick it is not allowed, and the share
+// used creeps up inside it. The strip is already drawing that share, so the
+// chat only speaks when the state itself turns over: the status, the window it
+// resets in, or whether the run went onto overage. Coming back to allowed
+// clears the memory, so falling behind a limit again is news again.
+function worthSaying(limit: RateLimit, told: Map<string, string>): boolean {
+  if (limit.status === 'allowed') {
+    told.delete(limit.kind)
+    return false
+  }
+  const state = `${limit.status} ${limit.resetsAtMs} ${limit.overage}`
+  if (told.get(limit.kind) === state) return false
+  told.set(limit.kind, state)
+  return true
 }
 
 function drop(requestId: string, refs: AgentEventRefs): void {

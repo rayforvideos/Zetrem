@@ -13,4 +13,5 @@ export type SessionBegin = {
   asks: AgentEventRefs['asks']
   sends: AgentEventRefs['sends']
   childIds: Set<string>
+  limits: AgentEventRefs['limits']
 }

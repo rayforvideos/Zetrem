@@ -109,13 +109,15 @@ describe('beginSession: the slate the next run starts on', () => {
     const asks = [ask('req-1')]
     const sends = new Map([['tool-1', { to: 'agent-a', message: '이어서 부탁해' }]])
     const childIds = new Set(['a'])
+    const limits = new Map([['seven_day', 'allowed_warning 1787173200000 false']])
     sessionStore.open(child('a'))
 
-    beginSession({ resumed: false, asks, sends, childIds })
+    beginSession({ resumed: false, asks, sends, childIds, limits })
 
     expect(asks).toEqual([])
     expect(sends.size).toBe(0)
     expect(childIds.size).toBe(0)
+    expect(limits.size).toBe(0)
     expect(sessionStore.get()).toEqual([])
   })
 
@@ -125,7 +127,13 @@ describe('beginSession: the slate the next run starts on', () => {
     // must not inherit a banner ticking over a process that no longer exists.
     conversation.startChore('chore-1', 'Run coverage and i18n catalog check')
 
-    beginSession({ resumed: true, asks: [], sends: new Map(), childIds: new Set() })
+    beginSession({
+      resumed: true,
+      asks: [],
+      sends: new Map(),
+      childIds: new Set(),
+      limits: new Map(),
+    })
 
     expect(conversation.get().chores).toEqual([])
   })
@@ -133,7 +141,13 @@ describe('beginSession: the slate the next run starts on', () => {
   it('starts working with no trouble showing', () => {
     conversation.setTrouble(true)
 
-    beginSession({ resumed: false, asks: [], sends: new Map(), childIds: new Set() })
+    beginSession({
+      resumed: false,
+      asks: [],
+      sends: new Map(),
+      childIds: new Set(),
+      limits: new Map(),
+    })
 
     expect(conversation.get().status).toBe('working')
     expect(
@@ -145,7 +159,13 @@ describe('beginSession: the slate the next run starts on', () => {
   it('keeps what the chat already cost when it is being resumed', () => {
     statusStore.restoreChat({ usd: 0.58 })
 
-    beginSession({ resumed: true, asks: [], sends: new Map(), childIds: new Set() })
+    beginSession({
+      resumed: true,
+      asks: [],
+      sends: new Map(),
+      childIds: new Set(),
+      limits: new Map(),
+    })
 
     expect(statusStore.get().cost.usd).toBe(0.58)
   })
@@ -153,7 +173,13 @@ describe('beginSession: the slate the next run starts on', () => {
   it('starts a fresh chat from nothing', () => {
     statusStore.restoreChat({ usd: 0.58 })
 
-    beginSession({ resumed: false, asks: [], sends: new Map(), childIds: new Set() })
+    beginSession({
+      resumed: false,
+      asks: [],
+      sends: new Map(),
+      childIds: new Set(),
+      limits: new Map(),
+    })
 
     expect(statusStore.get().cost.usd).toBe(0)
   })

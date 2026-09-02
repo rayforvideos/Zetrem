@@ -179,11 +179,11 @@ msgstr "{n}분 전"
 msgid "{name} can be called this session"
 msgstr "{name}은(는) 이번 세션에서 부를 수 있습니다"
 
-#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:230
+#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:232
 msgid "{name} is off. The running session keeps them until it ends."
 msgstr "{name}을(를) 껐습니다. 실행 중인 세션은 끝날 때까지 그대로 데리고 있습니다."
 
-#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:229
+#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:231
 msgid "{name} is on. The running session cannot call them yet."
 msgstr "{name}을(를) 켰습니다. 실행 중인 세션은 아직 부를 수 없습니다."
 
@@ -770,12 +770,12 @@ msgstr "Claude Desktop에서 가져오지 못했습니다"
 msgid "Could not check for updates."
 msgstr "업데이트를 확인하지 못했습니다."
 
-#: src/pages/workspace/model/chat/useTranscript.ts:291
-#: src/pages/workspace/model/chat/useTranscript.ts:307
+#: src/pages/workspace/model/chat/useTranscript.ts:177
+#: src/pages/workspace/model/chat/useTranscript.ts:196
 msgid "Could not file that chat"
 msgstr "대화를 폴더에 넣지 못했습니다"
 
-#: src/pages/workspace/model/chat/useTranscript.ts:260
+#: src/pages/workspace/model/chat/useTranscript.ts:144
 msgid "Could not forget that chat"
 msgstr "그 대화를 지우지 못했습니다"
 
@@ -783,16 +783,16 @@ msgstr "그 대화를 지우지 못했습니다"
 msgid "Could not install Claude Code"
 msgstr "Claude Code를 설치하지 못했습니다"
 
-#: src/pages/workspace/model/chat/useTranscript.ts:84
+#: src/pages/workspace/model/chat/useTranscript.ts:46
 msgid "Could not list your saved chats"
 msgstr "저장된 대화 목록을 읽지 못했습니다"
 
-#: src/pages/workspace/model/chat/useTranscript.ts:241
+#: src/pages/workspace/model/chat/useTranscript.ts:116
 msgid "Could not open that chat"
 msgstr "그 대화를 열지 못했습니다"
 
-#: src/pages/workspace/model/project/useProjectSwitch/useProjectSwitch.ts:21
-#: src/pages/workspace/model/project/useProjectSwitch/useProjectSwitch.ts:32
+#: src/pages/workspace/model/project/useProjectSwitch/useProjectSwitch.ts:20
+#: src/pages/workspace/model/project/useProjectSwitch/useProjectSwitch.ts:31
 msgid "Could not open that folder"
 msgstr "그 폴더를 열지 못했습니다"
 
@@ -802,7 +802,6 @@ msgid "Could not open the file picker"
 msgstr "파일 선택 창을 열지 못했습니다"
 
 #: src/pages/workspace/model/session/chat-sessions/chat-session/chat-session.ts:119
-#: src/pages/workspace/model/session/useAgent.ts:95
 msgid "Could not pick that conversation back up. Starting a new one."
 msgstr "그 대화를 이어받지 못했습니다. 새로 시작합니다."
 
@@ -869,7 +868,7 @@ msgstr "로그인 상태를 읽지 못했습니다"
 msgid "Could not remove that memory"
 msgstr "그 메모리를 지우지 못했어요"
 
-#: src/pages/workspace/model/project/useProjectSwitch/useProjectSwitch.ts:49
+#: src/pages/workspace/model/project/useProjectSwitch/useProjectSwitch.ts:45
 msgid "Could not remove that project"
 msgstr "프로젝트를 지우지 못했습니다"
 
@@ -877,11 +876,11 @@ msgstr "프로젝트를 지우지 못했습니다"
 msgid "Could not remove the account."
 msgstr "계정을 제거하지 못했습니다."
 
-#: src/pages/workspace/model/chat/useTranscript.ts:284
+#: src/pages/workspace/model/chat/useTranscript.ts:169
 msgid "Could not rename that chat"
 msgstr "대화 이름을 바꾸지 못했습니다"
 
-#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:79
+#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:86
 msgid "Could not reopen your last project"
 msgstr "마지막 프로젝트를 다시 열지 못했습니다"
 
@@ -1241,7 +1240,7 @@ msgstr "어려운 문제용. 훨씬 느립니다"
 msgid "Held up"
 msgstr "멈춰 있음"
 
-#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:153
+#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:160
 msgid "Hide team sidebar"
 msgstr "팀 사이드바 접기"
 
@@ -2062,7 +2061,6 @@ msgid "Session details"
 msgstr "세션 상세"
 
 #: src/pages/workspace/model/session/chat-sessions/chat-session/chat-session.ts:213
-#: src/pages/workspace/model/session/useAgent.ts:161
 msgid "Session restarted. The next message picks the conversation back up with your team as it is now."
 msgstr "세션을 다시 시작했어요. 다음 메시지가 지금의 팀 구성으로 이 대화를 이어서 진행해요."
 
@@ -2090,7 +2088,7 @@ msgstr "사용량 알 수 없음"
 msgid "Shift+Enter starts a new line. Off, sending takes the modifier key with Enter."
 msgstr "Shift+Enter로 줄을 바꿉니다. 끄면 보조키+Enter로 보냅니다."
 
-#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:153
+#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:160
 msgid "Show team sidebar"
 msgstr "팀 사이드바 펼치기"
 
@@ -2448,10 +2446,6 @@ msgstr "지금 세션은 라이브러리를 그대로 봐요. 다음 세션부�
 msgid "The saved conversation is deleted. This cannot be undone."
 msgstr "저장된 대화가 삭제됩니다. 되돌릴 수 없습니다."
 
-#: src/pages/workspace/model/session/useAgent.ts:116
-msgid "The screen was rebuilt, so this session paused. Your next message picks it back up."
-msgstr "화면을 다시 그리면서 이 세션이 잠시 멈췄어요. 다음 메시지가 이어서 진행해요."
-
 #: src/entities/claude-cli/lib/failure/failure.ts:79
 msgid "The server had a problem"
 msgstr "서버에 문제가 있었습니다"
@@ -2518,7 +2512,6 @@ msgstr "이 대화 {percent}%"
 msgid "this chat {size}"
 msgstr "이 대화 {size}"
 
-#: src/pages/workspace/model/chat/useTranscript.ts:178
 #: src/pages/workspace/model/session/chat-sessions/chat-session/autosave/autosave.ts:62
 msgid "This chat is not being saved"
 msgstr "이 대화는 저장되지 않습니다"
@@ -2834,10 +2827,6 @@ msgstr "같은 이름의 커넥터가 이미 있습니다"
 msgid "You decide what runs"
 msgstr "무엇을 실행할지 직접 정합니다"
 
-#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:216
-msgid "You left before the reply finished, so it stops here."
-msgstr "답변이 끝나기 전에 자리를 떠나서, 여기서 멈췄어요."
-
 #: src/pages/workspace/model/session/asked-to-stop/asked-to-stop.ts:6
 msgid "You stopped this"
 msgstr "직접 멈췄습니다"
@@ -2849,6 +2838,10 @@ msgstr "왼쪽에서 대화합니다"
 #: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:20
 msgid "Your account"
 msgstr "내 계정"
+
+#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:218
+msgid "Your account changed before the reply finished, so it stops here."
+msgstr "답변이 끝나기 전에 계정이 바뀌어서, 여기서 멈췄어요."
 
 #: src/entities/settings/config/choices/choices.ts:51
 msgid "Your account turned this one down. Try it again if your plan changed."

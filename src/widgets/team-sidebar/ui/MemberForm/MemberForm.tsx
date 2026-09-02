@@ -28,7 +28,7 @@ import {
   toggled,
   toolSummary,
 } from '../../lib/member-draft/member-draft'
-import { writes } from '../../lib/writes/writes'
+import { writes } from '@/entities/tool'
 import { CharacterPicker } from '../CharacterPicker/CharacterPicker'
 import { ToolPicker } from '../ToolPicker/ToolPicker'
 import { useScrollState } from '@/shared/lib/scroll-state/useScrollState'
@@ -43,6 +43,11 @@ type MemberFormProps = {
   knownTools: string[]
   onSubmit(draft: AgentDefDraft): void
   onCancel(): void
+}
+
+type NoteMeta = {
+  children: React.ReactNode
+  tone?: 'warn'
 }
 
 export function MemberForm({ initial, knownTools, onSubmit, onCancel }: MemberFormProps) {
@@ -207,14 +212,10 @@ export function MemberForm({ initial, knownTools, onSubmit, onCancel }: MemberFo
               </Row>
 
               <Row label={t`Own workspace`} htmlFor="member-worktree">
-                <span className="flex items-center gap-2">
-                  <Switch id="member-worktree" checked={worktree} onCheckedChange={setWorktree} />
-                </span>
+                <Switch id="member-worktree" checked={worktree} onCheckedChange={setWorktree} />
                 <Note>{t`Works in a git worktree of its own; changes come back as a branch.`}</Note>
                 {!worktree && writes(tools) && (
-                  <p data-shared-warning className="text-xs leading-snug text-muted-foreground">
-                    {t`Writes straight into the shared working tree.`}
-                  </p>
+                  <Note tone="warn">{t`Writes straight into the shared working tree.`}</Note>
                 )}
               </Row>
             </aside>
@@ -385,6 +386,17 @@ function Row({
   )
 }
 
-function Note({ children }: { children: React.ReactNode }) {
-  return <p className="text-xs leading-snug text-muted-foreground">{children}</p>
+// A note under a field. 'warn' is for one that says what the setting above it
+// gives up, which reads as the same aside as the rest until it is coloured.
+function Note({ children, tone }: NoteMeta) {
+  return (
+    <p
+      className={cn(
+        'text-xs leading-snug',
+        tone === 'warn' ? 'text-removed' : 'text-muted-foreground',
+      )}
+    >
+      {children}
+    </p>
+  )
 }

@@ -16,7 +16,7 @@ function person(overrides: Partial<Parameters<typeof peopleSpec>[0][number]> = {
 }
 
 const NOTICE =
-  '\n\nYou work in a git worktree that shares node_modules with the main checkout: never install, update or remove dependencies here.'
+  '\n\nYou work in a git worktree of your own. If a node_modules folder is present there, it is linked from the main checkout: never install, update or remove dependencies inside the worktree.'
 
 describe('peopleSpec: handing the people we hired to the session', () => {
   it('carries the name, description, brief and model as they are', () => {
@@ -189,9 +189,17 @@ describe('a teammate is fenced into a worktree by the definition itself', () => 
     })
   })
 
-  it('tells a fenced teammate its worktree shares node_modules with the main checkout', () => {
+  it('tells a fenced teammate not to touch dependencies from inside its worktree', () => {
     const spec = peopleSpec([person()], true)
     expect(spec.scout?.prompt).toContain(NOTICE)
+  })
+
+  it('says it as a condition, since a project may have no node_modules to link at all', () => {
+    const said = peopleSpec([person()], true).scout?.prompt ?? ''
+    expect(said, 'a worktree with nothing linked in would make a flat claim a lie').toContain(
+      'If a node_modules folder is present',
+    )
+    expect(said).not.toContain('shares node_modules')
   })
 
   it('says nothing about node_modules to a teammate that never gets a worktree', () => {

@@ -4,7 +4,7 @@ import { chatId, packTranscript, renamed } from '@/entities/conversation'
 import type { ChatSpend, ChatSummary, Transcript } from '@/entities/conversation'
 import { conversation } from './conversation/conversation'
 import { troubleLine } from '@/shared/lib/ask/ask'
-import { maySave, mustKeepOnLeave, threadToSave } from './may-save/may-save'
+import { maySave, mustKeepOnLeave, threadLearned, threadToSave } from './may-save/may-save'
 import { stampOf } from './save-stamp/save-stamp'
 import { t } from '@lingui/core/macro'
 
@@ -15,8 +15,6 @@ type Chats = {
   ready: boolean
   open(id: string): void
   start(): void
-  // The next message begins a new session: nothing older is resumed.
-  detach(): void
   remove(id: string): void
   rename(id: string, wanted: string): void
   file(id: string, folder: string): void
@@ -55,6 +53,17 @@ export function useTranscript(project: string | null): Chats {
     resumeId,
   })
   leaving.current = { openId, thread }
+
+  // The live session's id is kept once a real run reports it: a reset (another
+  // screen, a rebuilt one) empties the status store, and the next message must
+  // still resume the conversation it was part of.
+  const learned = threadLearned({
+    liveSessionId: status.session?.id ?? null,
+    probed: status.probed,
+  })
+  useEffect(() => {
+    if (learned !== null) setResumeId(learned)
+  }, [learned])
 
   // The whole screen can be torn down with a chat still open (a language
   // change rebuilds it): that chat is written back on the way out.
@@ -236,10 +245,6 @@ export function useTranscript(project: string | null): Chats {
       })
   }
 
-  function detach(): void {
-    setResumeId(null)
-  }
-
   function start(): void {
     letGo()
     setOpenId(freshId())
@@ -310,7 +315,6 @@ export function useTranscript(project: string | null): Chats {
     ready,
     open,
     start,
-    detach,
     remove,
     rename,
     file,

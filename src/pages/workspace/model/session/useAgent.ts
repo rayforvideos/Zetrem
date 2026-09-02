@@ -116,10 +116,10 @@ export function useAgent(
       unsubscribe()
       if (hostId.current) {
         // The screen is being rebuilt (a language change does this) and the
-        // session cannot follow it across; say so where the chat will be read.
+        // process cannot follow it across; the next message resumes the thread.
         conversation.settleDraft()
         conversation.system(
-          t`The screen was rebuilt, so this session ended. Your next message starts a new one.`,
+          t`The screen was rebuilt, so this session paused. Your next message picks it back up.`,
         )
         window.desk.stopAgent(hostId.current)
       }
@@ -165,10 +165,12 @@ export function useAgent(
     launch(dressed, configRef.current.resume ?? null, files)
   }
 
+  // The process is replaced, not the conversation: the next message resumes
+  // it in a session that has the team, permissions and model as they are now.
   function restart(): void {
     reset()
     conversation.system(
-      t`Session stopped. The next message starts a new one with your team as it is now.`,
+      t`Session restarted. The next message picks the conversation back up with your team as it is now.`,
     )
   }
 

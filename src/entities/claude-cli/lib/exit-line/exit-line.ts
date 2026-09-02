@@ -8,7 +8,7 @@ export function exitLine(reason: ExitReason): string {
   if (reason.code === 'cli-said') return reason.said
   if (reason.code === 'died') {
     const code = reason.said
-    return t`Claude Code stopped without a word (exit ${code}). Your next message starts a new session.`
+    return t`Claude Code stopped without a word (exit ${code}). Your next message picks the conversation back up.`
   }
   if (reason.said.length === 0) return t`Could not start Claude Code`
   const said = reason.said

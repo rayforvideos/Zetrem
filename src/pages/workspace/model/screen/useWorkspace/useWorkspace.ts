@@ -11,7 +11,7 @@ import { tidyUserName } from '@/entities/user'
 
 import { layerOver } from '@/shared/lib/modal/modal'
 import { screenGate } from '../screen-gate/screen-gate'
-import { sessionLive, stirring } from '../../session/live/live'
+import { anySessionLive, sessionLive, stirring } from '../../session/live/live'
 import { useAgent } from '../../session/useAgent'
 import { chatSessions } from '../../session/chat-sessions/chat-sessions'
 import { useChatSessions } from '../../session/chat-sessions/useChatSessions'
@@ -156,6 +156,7 @@ export function useWorkspace() {
 
   const live = sessionLive(status, conv.status)
   const working = useSyncExternalStore(chatSessions.subscribe, chatSessions.live, chatSessions.live)
+  const anyLive = anySessionLive(live, working)
   const atWork = stirring(conv.status, children)
   const sidebarLabel = sidebar.open ? t`Hide team sidebar` : t`Show team sidebar`
   const sessionId = status.session?.id ?? null
@@ -211,14 +212,21 @@ export function useWorkspace() {
     setPendingRestart(said)
   }
 
+  // Leaving a chat stops nothing, but it does put the screen down: the
+  // teammate that was picked out and the library covering the chat both belong
+  // to the chat being left.
+  function go(act: () => void): void {
+    focus.clearAll()
+    setLibraryOpen(false)
+    act()
+  }
+
   // An account change is the one thing that stops every chat: a live CLI
   // writes into the credentials file all accounts share, so nothing can be
   // left running under the account that is leaving.
-  function stopAll(go: () => void): void {
+  function stopAll(act: () => void): void {
     chatSessions.stopAll(t`Your account changed before the reply finished, so it stops here.`)
-    focus.clearAll()
-    setLibraryOpen(false)
-    go()
+    go(act)
   }
 
   const agentToggles = {
@@ -250,7 +258,9 @@ export function useWorkspace() {
       status,
       held,
       live,
+      anyLive,
       working,
+      go,
       atWork,
       nowMs,
       attach,

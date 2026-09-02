@@ -24,7 +24,9 @@ export function SetupGate({
         busyOn: auth.busyOn,
         error: auth.authError,
         note: auth.loginNote,
-        sessionLive: chatting.live,
+        // Every chat, not just the one on screen: an account change stops them
+        // all, so a reply running behind another chat still earns the warning.
+        sessionLive: chatting.anyLive,
         installing: auth.installing,
         onInstall: auth.install,
         onRecheck: auth.recheck,

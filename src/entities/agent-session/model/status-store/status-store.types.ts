@@ -1,4 +1,5 @@
 import type { RateLimit, SessionIdentity } from '@/entities/claude-cli/@x/agent-session'
+import type { createChatStatus } from './status-store'
 
 export type UpdateInfo = {
   current: string | null
@@ -6,11 +7,9 @@ export type UpdateInfo = {
   managedBy: string | null
 }
 
-type UsageRead = 'unread' | 'read' | 'unreadable' | 'kept'
+export type UsageRead = 'unread' | 'read' | 'unreadable' | 'kept'
 
-export type StatusState = {
-  usage: UsageRead
-  usageAtMs: number | null
+export type ChatStatusState = {
   session: SessionIdentity | null
   probed: boolean
   context: { used: number; window: number | null }
@@ -21,7 +20,17 @@ export type StatusState = {
     durationMs: number
     turns: number
   }
-  limits: RateLimit[]
-  update: UpdateInfo | null
   activity: 'requesting' | 'idle'
 }
+
+export type AccountStatusState = {
+  usage: UsageRead
+  usageAtMs: number | null
+  limits: RateLimit[]
+  update: UpdateInfo | null
+}
+
+// What the widgets draw: the chat on screen and the account, as one object.
+export type StatusState = ChatStatusState & AccountStatusState
+
+export type ChatStatus = ReturnType<typeof createChatStatus>

@@ -9,6 +9,10 @@ import {
   recentProjects,
   rememberProject,
 } from '../store/project-memory/project-memory'
+import {
+  dropProjectAgents,
+  moveProjectAgents,
+} from '../agents/project-agents-home/project-agents-home'
 import { queue } from '../store/queue/queue'
 import { saveFile } from '../store/save-file/save-file'
 import { handle } from '../ipc/ipc'
@@ -147,6 +151,12 @@ async function repathProjectNow(
     projects: memory.projects.map((one) => (one.id === id ? moved : one)),
   })
   if (memory.current === id) await rememberProject(path)
+  // The teammates kept for this project are filed under its old path, so they
+  // follow it to the new one. What is remembered is written first: a folder
+  // that will not move is worth a line in the log, not a repath refused.
+  await moveProjectAgents(found.path, path).catch((cause: unknown) =>
+    console.warn(`could not move the teammates kept for ${found.path} to ${path}`, cause),
+  )
   return moved
 }
 
@@ -160,6 +170,13 @@ async function forgetProjectNow(id: string, nowMs: number): Promise<void> {
   // Main resolves its working folder from what was last remembered; a
   // forgotten current must not go on being the agents' and library's home.
   if (memory.current === id && gone !== undefined) await forgetRememberedProject(gone.path)
+  if (gone === undefined) return
+  // The people kept for this project alone are forgotten with it, so nothing
+  // of it is left sitting in userData. As with a repath, the record is already
+  // written: a folder that will not go is logged, not raised.
+  await dropProjectAgents(gone.path).catch((cause: unknown) =>
+    console.warn(`could not remove the teammates kept for ${gone.path}`, cause),
+  )
 }
 
 // Each of these reads projects.json, changes it and writes it back. Two at

@@ -10,7 +10,7 @@ import {
   writeToRoster,
 } from '../agent-roster/agent-roster'
 import type { RosterDirs } from '../agent-roster/agent-roster.types'
-import { projectKey } from '../project-key/project-key'
+import { projectKey } from '../../store/project-key/project-key'
 import { authoredAgents } from '../authored-agents/authored-agents'
 import { recallProject } from '../../store/project-memory/project-memory'
 import { handle } from '../../ipc/ipc'
@@ -18,6 +18,11 @@ import { handle } from '../../ipc/ipc'
 // Both folders are the app's own. A teammate kept for one project still lives
 // under userData, named by a hash of the project's path: nothing is written
 // into the project, and nothing about it is shared with anyone.
+//
+// The folder is named by the project's path, not by anything that survives a
+// project being repathed or forgotten: moving or removing a project today
+// leaves its project-agents folder behind
+// (follow-up: see issue "project-agents folder on repath/forget").
 async function rosterDirs(): Promise<RosterDirs> {
   const project = await recallProject()
   return {

@@ -17,10 +17,10 @@ describe('projectKey: one folder, one drawer', () => {
   })
 
   it('is a name every filesystem accepts, whatever the path had in it', () => {
-    expect(projectKey('/Users/someone/a folder/a:b*c/../zetrem')).toMatch(/^[0-9a-f]{40}$/)
+    expect(projectKey('/Users/someone/a folder/a:b*c/../zetrem')).toMatch(/^[0-9a-f]{32}$/)
   })
 
   it('stays short enough to sit under a path limit', () => {
-    expect(projectKey(`/${'deep/'.repeat(60)}end`)).toHaveLength(40)
+    expect(projectKey(`/${'deep/'.repeat(60)}end`)).toHaveLength(32)
   })
 })

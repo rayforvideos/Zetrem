@@ -203,6 +203,7 @@ msgstr "{refused}은(는) 읽을 수 없습니다. 글이나 데이터 파일만
 msgid "{reported} reported back"
 msgstr "{reported}명 보고 완료"
 
+#: src/entities/tool/ui/ChangeDiff/ChangeDiff.tsx:10
 #: src/widgets/conversation/lib/limits/limits.ts:6
 msgid "{rest, plural, one {# more line} other {# more lines}}"
 msgstr "{rest, plural, other {#줄 더}}"
@@ -1708,7 +1709,7 @@ msgstr "노트를 고르세요"
 msgid "Pick a project first"
 msgstr "먼저 프로젝트를 고르세요"
 
-#: src/pages/workspace/model/session/agent-events/crew/crew.ts:196
+#: src/pages/workspace/model/session/agent-events/crew/crew.ts:201
 msgid "Picked up where they left off"
 msgstr "하던 일을 이어받았습니다"
 
@@ -2405,7 +2406,7 @@ msgstr "모델에 부하가 걸렸습니다"
 msgid "The note is deleted from the library. This cannot be undone."
 msgstr "라이브러리에서 노트가 지워집니다. 되돌릴 수 없습니다."
 
-#: src/pages/workspace/model/session/agent-events/crew/crew.ts:166
+#: src/pages/workspace/model/session/agent-events/crew/crew.ts:171
 msgid "the orchestrator"
 msgstr "오케스트레이터"
 
@@ -2618,7 +2619,7 @@ msgstr "라이브러리에"
 msgid "Today"
 msgstr "오늘"
 
-#: src/widgets/conversation/ui/ToolLine/ToolLine.tsx:95
+#: src/widgets/conversation/ui/ToolLine/ToolLine.tsx:94
 msgid "Todo list"
 msgstr "할 일 목록"
 

@@ -203,6 +203,7 @@ msgstr "{refused} is not something they can read. Notes and data files only."
 msgid "{reported} reported back"
 msgstr "{reported} reported back"
 
+#: src/entities/tool/ui/ChangeDiff/ChangeDiff.tsx:10
 #: src/widgets/conversation/lib/limits/limits.ts:6
 msgid "{rest, plural, one {# more line} other {# more lines}}"
 msgstr "{rest, plural, one {# more line} other {# more lines}}"
@@ -1708,7 +1709,7 @@ msgstr "Pick a note"
 msgid "Pick a project first"
 msgstr "Pick a project first"
 
-#: src/pages/workspace/model/session/agent-events/crew/crew.ts:196
+#: src/pages/workspace/model/session/agent-events/crew/crew.ts:201
 msgid "Picked up where they left off"
 msgstr "Picked up where they left off"
 
@@ -2405,7 +2406,7 @@ msgstr "The model is overloaded"
 msgid "The note is deleted from the library. This cannot be undone."
 msgstr "The note is deleted from the library. This cannot be undone."
 
-#: src/pages/workspace/model/session/agent-events/crew/crew.ts:166
+#: src/pages/workspace/model/session/agent-events/crew/crew.ts:171
 msgid "the orchestrator"
 msgstr "the orchestrator"
 
@@ -2618,7 +2619,7 @@ msgstr "To library"
 msgid "Today"
 msgstr "Today"
 
-#: src/widgets/conversation/ui/ToolLine/ToolLine.tsx:95
+#: src/widgets/conversation/ui/ToolLine/ToolLine.tsx:94
 msgid "Todo list"
 msgstr "Todo list"
 

@@ -1,12 +1,8 @@
-import type { AgentDef, AgentDefDraft } from './frontmatter.types'
+import type { AgentDef, AgentDefDraft, AgentSource } from './frontmatter.types'
 
 const FENCE = '---'
 
-export function parseAgentDef(
-  text: string,
-  source: AgentDef['source'],
-  path: string,
-): AgentDef | null {
+export function parseAgentDef(text: string, source: AgentSource, path: string): AgentDef | null {
   const lines = text.split('\n')
   if (lines[0]?.trim() !== FENCE) return null
 

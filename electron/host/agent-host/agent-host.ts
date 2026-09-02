@@ -21,6 +21,7 @@ import { runConfigOf } from '../run-config-guard/run-config-guard'
 import { launchFor } from '../../spawn/spawn-claude/spawn-claude'
 import { scratchWorkspace } from '../../shell/workspace-dir/workspace-dir'
 import { isGitWorkspace } from '../../shell/git-workspace/git-workspace'
+import { followWorktrees, liveDeps as worktreeLinkDeps } from '../worktree-links/worktree-links'
 import { dropSends, holdSend, releaseSends } from '../pending-sends/pending-sends'
 import type { PendingSend } from '../pending-sends/pending-sends.types'
 
@@ -159,6 +160,14 @@ export function registerAgentHost(): void {
         // Whether a teammate can be fenced into a worktree is the workspace's
         // to answer, so it is answered here and never taken from the renderer.
         const isolated = isGitWorkspace(workspace)
+        // A teammate fenced into a worktree gets a fresh checkout with no
+        // node_modules of its own; this links the main checkout's in, never
+        // blocking the spawn below on it.
+        if (isolated) {
+          followWorktrees(workspace, worktreeLinkDeps).catch((cause: unknown) => {
+            console.error('[worktree-links] could not follow', workspace, cause)
+          })
+        }
         const launch = launchFor(await claudeBin(), [
           ...agentArgs({
             ...run,

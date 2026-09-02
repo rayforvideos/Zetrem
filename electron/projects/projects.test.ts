@@ -1,4 +1,4 @@
-import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs'
+import { existsSync, mkdirSync, mkdtempSync, readdirSync, rmSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
@@ -12,6 +12,7 @@ vi.mock('electron', () => ({
 const { createProject, forgetProject, listProjects, openProject, repathProject, restoreProject } =
   await import('./projects')
 const { recallProject } = await import('../store/project-memory/project-memory')
+const { projectKey } = await import('../store/project-key/project-key')
 
 let home = ''
 
@@ -19,6 +20,16 @@ const dir = (name: string): string => {
   const path = join(home, name)
   mkdirSync(path, { recursive: true })
   return path
+}
+
+// Where the app keeps the teammates a project has to itself.
+const teammates = (path: string): string =>
+  join(boundary.userData, 'project-agents', projectKey(path))
+
+const keepTeammate = (path: string, name: string): void => {
+  const at = teammates(path)
+  mkdirSync(at, { recursive: true })
+  writeFileSync(join(at, name), 'reads what changed')
 }
 
 beforeEach(() => {
@@ -69,6 +80,16 @@ describe('the projects a person can come back to', () => {
     expect(await recallProject()).toBe(path)
   })
 
+  it('takes the teammates kept for a project with it when it moves', async () => {
+    const start = dir('start')
+    const made = await createProject(start)
+    keepTeammate(start, 'ray.md')
+    const path = dir('shop')
+    await repathProject(made?.id ?? '', path)
+    expect(existsSync(teammates(start))).toBe(false)
+    expect(readdirSync(teammates(path))).toEqual(['ray.md'])
+  })
+
   it('moves no project it does not know, and onto no folder that is not there', async () => {
     const made = await createProject(dir('shop'))
     expect(await repathProject('nope', dir('blog'))).toBeNull()
@@ -108,6 +129,16 @@ describe('the projects a person can come back to', () => {
     expect(await listProjects()).toEqual([])
     expect(await restoreProject()).toBeNull()
     expect(await recallProject()).toBeNull()
+  })
+
+  it('forgets the teammates it was keeping for that project alone', async () => {
+    const path = dir('shop')
+    const made = await createProject(path)
+    keepTeammate(path, 'ray.md')
+    await forgetProject(made?.id ?? '')
+    expect(existsSync(teammates(path))).toBe(false)
+    // The folder the project stood on is the person's, not the app's.
+    expect(existsSync(path)).toBe(true)
   })
 
   it('takes two quick opens in turn, so the list and the working folder agree', async () => {

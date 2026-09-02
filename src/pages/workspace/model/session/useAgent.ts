@@ -162,10 +162,12 @@ export function useAgent(
     launch(dressed, configRef.current.resume ?? null, files)
   }
 
+  // The process is replaced, not the conversation: the next message resumes
+  // it in a session that has the team, permissions and model as they are now.
   function restart(): void {
     reset()
     conversation.system(
-      t`Session stopped. The next message starts a new one with your team as it is now.`,
+      t`Session restarted. The next message picks the conversation back up with your team as it is now.`,
     )
   }
 

@@ -15,8 +15,6 @@ type Chats = {
   ready: boolean
   open(id: string): void
   start(): void
-  // The next message begins a new session: nothing older is resumed.
-  detach(): void
   remove(id: string): void
   rename(id: string, wanted: string): void
   file(id: string, folder: string): void
@@ -247,10 +245,6 @@ export function useTranscript(project: string | null): Chats {
       })
   }
 
-  function detach(): void {
-    setResumeId(null)
-  }
-
   function start(): void {
     letGo()
     setOpenId(freshId())
@@ -321,7 +315,6 @@ export function useTranscript(project: string | null): Chats {
     ready,
     open,
     start,
-    detach,
     remove,
     rename,
     file,

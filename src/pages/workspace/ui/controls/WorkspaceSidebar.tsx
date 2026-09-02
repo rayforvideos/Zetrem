@@ -83,7 +83,6 @@ export function WorkspaceSidebar({
           onRestart: () => {
             focus.clearAll()
             team.settleNote()
-            chat.detach()
             chatting.agent.restart()
           },
         }}

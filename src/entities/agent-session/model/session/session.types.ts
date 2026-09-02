@@ -32,6 +32,9 @@ export type AgentSession = {
   // Set for a teammate the runtime fenced into a worktree of its own: its work
   // is on branch worktree-agent-<agentId>, so the report can show and undo it.
   agentId?: string
+  // Set when this session is a grandchild: a subagent a teammate itself
+  // spawned, as opposed to one the orchestrator spawned directly.
+  parentId?: string
 }
 
 export type Call = {
@@ -41,6 +44,9 @@ export type Call = {
   endedAtMs: number | null
   failed: boolean
   note: string
+  // The tool call's raw arguments, carried through so a diff view (or similar)
+  // can read them without re-parsing the summary line.
+  input?: unknown
 }
 
 export type TranscriptEntry = {

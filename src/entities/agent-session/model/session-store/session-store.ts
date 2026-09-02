@@ -69,7 +69,7 @@ export const sessionStore = {
     const lastSeenAtMs = Date.now()
     patchOne(id, { transcript, lastSeenAtMs })
   },
-  beginCall(id: string, call: { id: string; line: string }): void {
+  beginCall(id: string, call: { id: string; line: string; input?: unknown }): void {
     const target = sessions.find((s) => s.id === id)
     if (!target) return
     const open = target.stream.findLastIndex(
@@ -80,6 +80,8 @@ export const sessionStore = {
       const again = target.stream.with(open, {
         ...held,
         line: mergedLine(held.line, call.line),
+        // The newer announcement's input is the more complete one.
+        ...(call.input === undefined ? {} : { input: call.input }),
       })
       patchOne(id, { stream: again, lastSeenAtMs: Date.now() })
       return
@@ -94,6 +96,7 @@ export const sessionStore = {
         endedAtMs: null,
         failed: false,
         note: '',
+        input: call.input,
       })
       patchOne(id, { stream: taken, lastSeenAtMs: Date.now() })
       return

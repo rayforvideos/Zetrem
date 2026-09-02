@@ -47,6 +47,9 @@ export type ChatSession = {
   stop(): void
   restart(): void
   reset(): void
+  // Lets the chat's own stores go, so nothing it emits afterwards can queue a
+  // save. The registry calls this before the last reset.
+  dispose(): void
   handle(event: AgentEvent): void
   thread(): string | null
   keep(): void

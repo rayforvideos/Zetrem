@@ -54,9 +54,14 @@ export function WorkspaceSidebar({
           live: chatting.working,
           // Coming back to the open chat (from the library) must not end its session.
           onOpen: (id) =>
-            chatSwitch(id, chat.openId) === 'return' ? layout.leaveLibrary() : chat.open(id),
-          onStart: chat.start,
-          onRemove: chat.remove,
+            chatSwitch(id, chat.openId) === 'return'
+              ? layout.leaveLibrary()
+              : chatting.go(() => chat.open(id)),
+          onStart: () => chatting.go(chat.start),
+          // Only the chat being left puts the screen down; removing one from
+          // under the sidebar leaves what you were reading where it was.
+          onRemove: (id) =>
+            id === chat.openId ? chatting.go(() => chat.remove(id)) : chat.remove(id),
           onRename: chat.rename,
           onFile: chat.file,
           onFileMany: chat.fileMany,

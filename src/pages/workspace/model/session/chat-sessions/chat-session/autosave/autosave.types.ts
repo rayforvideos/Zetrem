@@ -8,6 +8,9 @@ export type AutosaveOwner = {
   meta: ChatMeta
   thread(): string | null
   deps: ChatSessionDeps
+  // Told after every write that lands, so the registry can refresh the chat
+  // list and let go of a session whose last save is on disk.
+  onSaved(): void
 }
 
 export type Autosave = {
@@ -16,4 +19,7 @@ export type Autosave = {
   // Takes what is on screen for already written, so a chat read from disk is
   // not read and rewritten in the same breath.
   markSaved(): void
+  // Lets the stores go and cancels the write that was queued but not yet run,
+  // so a chat the person removed cannot be written back after it is gone.
+  dispose(): void
 }

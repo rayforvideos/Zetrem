@@ -5,15 +5,14 @@ import type { Project } from '@/entities/project'
 import type { ProjectSwitch, SwitchDeps } from './useProjectSwitch.types'
 
 // Moving between projects: adopt, open by id, forget. The session rooted in
-// the old folder is dropped first, or it would keep streaming turns into the
-// new project's transcript.
+// the old folder keeps running under its own chat, and is saved there — a
+// project switch does not stop it.
 export function useProjectSwitch(deps: SwitchDeps): ProjectSwitch {
-  const { project, allProjects, refreshProjects, report, dropSession } = deps
+  const { project, allProjects, refreshProjects, report } = deps
 
   function adopt(picked: Project | null): void {
     // Two projects may share one folder, so identity is the id, not the path.
     if (!picked || picked.id === project?.id) return
-    dropSession()
     projectStore.set(picked)
   }
 
@@ -34,9 +33,6 @@ export function useProjectSwitch(deps: SwitchDeps): ProjectSwitch {
 
   function forget(id: string): void {
     const current = project !== null && project.id === id
-    // The agent is rooted in the folder being forgotten: it goes first, not
-    // after the round-trips, or it streams on into whatever comes next.
-    if (current) dropSession()
     forgetProject(id)
       .then(async () => {
         if (current) {

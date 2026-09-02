@@ -1,4 +1,4 @@
-import { statusStore } from '@/entities/agent-session'
+import { accountStatus } from '@/entities/agent-session'
 
 let changes = 0
 const listeners = new Set<() => void>()
@@ -22,10 +22,9 @@ export function subscribeAccountChange(listener: () => void): () => void {
 // and everything watching the count asks again.
 export function accountChanged(): void {
   changes += 1
-  statusStore.forgetSession()
   // The limits merge by kind and would otherwise sit there until a reading
   // of the same kind replaced them, so a kind the last account had lingers as
   // this account's. The bar says it is reading instead.
-  statusStore.usageForgotten()
+  accountStatus.usageForgotten()
   for (const listener of listeners) listener()
 }

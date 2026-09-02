@@ -14,6 +14,7 @@ export function ChatList({
   chats,
   openId,
   nowMs,
+  live,
   onOpen,
   onStart,
   onRemove,
@@ -53,6 +54,7 @@ export function ChatList({
   const kit: RowKit = {
     openId,
     nowMs,
+    live,
     names,
     onOpen,
     onRemove,

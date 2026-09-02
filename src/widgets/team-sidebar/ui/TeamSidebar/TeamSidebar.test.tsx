@@ -10,6 +10,7 @@ function bar(props: Partial<Parameters<typeof TeamSidebar>[0]> = {}): string {
       chats={{
         chats: [],
         openId: null,
+        live: {},
         onOpen: () => {},
         onStart: () => {},
         onRemove: () => {},
@@ -135,6 +136,7 @@ describe('chats gathered into folders, without hiding the rest', () => {
       chats: {
         chats: [chat('one', '출고'), chat('two', '출고')],
         openId: null,
+        live: {},
         onOpen: () => {},
         onStart: () => {},
         onRemove: () => {},
@@ -152,6 +154,7 @@ describe('chats gathered into folders, without hiding the rest', () => {
       chats: {
         chats: [chat('filed', '출고'), chat('loose', '')],
         openId: null,
+        live: {},
         onOpen: () => {},
         onStart: () => {},
         onRemove: () => {},
@@ -168,6 +171,7 @@ describe('chats gathered into folders, without hiding the rest', () => {
       chats: {
         chats: [chat('open', '출고')],
         openId: 'chat-open-a',
+        live: {},
         onOpen: () => {},
         onStart: () => {},
         onRemove: () => {},
@@ -184,6 +188,7 @@ describe('chats gathered into folders, without hiding the rest', () => {
       chats: {
         chats: [chat('a', ''), chat('b', '')],
         openId: null,
+        live: {},
         onOpen: () => {},
         onStart: () => {},
         onRemove: () => {},
@@ -209,6 +214,7 @@ describe('a way out when the folders stop helping', () => {
       chats: {
         chats,
         openId,
+        live: {},
         onOpen: () => {},
         onStart: () => {},
         onRemove: () => {},
@@ -252,6 +258,7 @@ describe('carrying a chat onto another to make a place for both', () => {
       chats: {
         chats,
         openId: null,
+        live: {},
         onOpen: () => {},
         onStart: () => {},
         onRemove: () => {},
@@ -267,6 +274,44 @@ describe('carrying a chat onto another to make a place for both', () => {
 
   it('keeps the menu as the way that needs no dragging', () => {
     expect(withChats([chat('one')])).toContain('More for one')
+  })
+})
+
+describe('a chat says what it is doing without being opened', () => {
+  const chat = {
+    id: 'chat-x',
+    title: '뒤에서 도는 대화',
+    sessionId: null,
+    savedAtMs: 1,
+    folder: '',
+  }
+  const withLive = (live: Record<string, 'working' | 'asking'>) =>
+    bar({
+      chats: {
+        chats: [chat],
+        openId: null,
+        live,
+        onOpen: () => {},
+        onStart: () => {},
+        onRemove: () => {},
+        onRename: () => {},
+        onFile: () => {},
+        onFileMany: () => {},
+      },
+    })
+
+  it('marks the chat that is waiting on a permission, unopened', () => {
+    const html = withLive({ 'chat-x': 'asking' })
+    expect(html).toContain('role="img"')
+    expect(html).toContain('aria-label="Waiting for your permission"')
+  })
+
+  it('marks the chat that is still replying', () => {
+    expect(withLive({ 'chat-x': 'working' })).toContain('aria-label="Still replying"')
+  })
+
+  it('leaves a chat that is doing nothing unmarked', () => {
+    expect(withLive({})).not.toContain('role="img"')
   })
 })
 

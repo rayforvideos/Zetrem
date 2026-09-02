@@ -1,10 +1,11 @@
-import { beforeEach, describe, expect, it } from 'vitest'
-import { sessionStore, statusStore } from '@/entities/agent-session'
+import { describe, expect, it } from 'vitest'
+import { createChatStatus, createSessionStore } from '@/entities/agent-session'
 import type { RateLimit, ResultMetrics } from '@/entities/claude-cli'
 import type { AgentEventRefs } from './agent-events.types'
 import { applyAgentEvent, compactedLine, limitLine, turnLine } from './agent-events'
-import { conversation } from '../../chat/conversation/conversation'
-import { forgetCrew, remember, wakeResumed } from './crew/crew'
+import { createConversation } from '../../chat/conversation/conversation'
+import { freshRefs } from './refs/refs'
+import { remember, wakeResumed } from './crew/crew'
 
 function fakeMetrics(costUsd: number, overrides: Partial<ResultMetrics> = {}): ResultMetrics {
   return {
@@ -20,21 +21,15 @@ function fakeMetrics(costUsd: number, overrides: Partial<ResultMetrics> = {}): R
 }
 
 function fakeRefs(): AgentEventRefs {
-  return {
-    asks: [],
-    childIds: new Set<string>(),
-    sends: new Map<string, { to: string; message: string }>(),
-    limits: new Map<string, string>(),
-    onModelRefused: () => {},
-  }
+  return freshRefs(
+    {
+      conversation: createConversation(),
+      status: createChatStatus(),
+      children: createSessionStore(),
+    },
+    { onModelRefused: () => {}, onLimit: () => {} },
+  )
 }
-
-beforeEach(() => {
-  forgetCrew()
-  conversation.reset()
-  statusStore.reset()
-  sessionStore.clear()
-})
 
 describe('applyAgentEvent: the order has to be nailed down', () => {
   it('reports each turn on its own, and never puts a price on it', () => {
@@ -42,7 +37,7 @@ describe('applyAgentEvent: the order has to be nailed down', () => {
     applyAgentEvent({ type: 'metrics', metrics: fakeMetrics(0.1) }, refs)
     applyAgentEvent({ type: 'metrics', metrics: fakeMetrics(0.16) }, refs)
 
-    const lines = conversation
+    const lines = refs.stores.conversation
       .get()
       .turns.filter((turn) => turn.role === 'system')
       .map((turn) => turn.text)
@@ -59,8 +54,9 @@ describe('applyAgentEvent: the order has to be nailed down', () => {
       overage: false,
       status: 'allowed_warning',
     }
-    applyAgentEvent({ type: 'limit', limit }, fakeRefs())
-    const last = conversation.get().turns.at(-1)!
+    const refs = fakeRefs()
+    applyAgentEvent({ type: 'limit', limit }, refs)
+    const last = refs.stores.conversation.get().turns.at(-1)!
     expect(last.role).toBe('system')
     expect(last.text).toContain('Weekly limit 28%')
   })
@@ -73,25 +69,28 @@ describe('applyAgentEvent: the order has to be nailed down', () => {
       overage: false,
       status: 'allowed',
     }
-    applyAgentEvent({ type: 'limit', limit }, fakeRefs())
-    expect(conversation.get().turns).toHaveLength(0)
+    const refs = fakeRefs()
+    applyAgentEvent({ type: 'limit', limit }, refs)
+    expect(refs.stores.conversation.get().turns).toHaveLength(0)
   })
 
   it('runs deltas into the draft', () => {
-    applyAgentEvent({ type: 'delta', text: '안' }, fakeRefs())
-    applyAgentEvent({ type: 'delta', text: '녕' }, fakeRefs())
-    const turn = conversation.get().turns.at(-1)!
+    const refs = fakeRefs()
+    applyAgentEvent({ type: 'delta', text: '안' }, refs)
+    applyAgentEvent({ type: 'delta', text: '녕' }, refs)
+    const turn = refs.stores.conversation.get().turns.at(-1)!
     expect(turn.role).toBe('assistant')
     expect(turn.draft).toBe('안녕')
   })
 
   it('keeps a draft that never settled when the turn ends', () => {
-    applyAgentEvent({ type: 'delta', text: '여기까지 쓰다 멈' }, fakeRefs())
-    applyAgentEvent({ type: 'turnEnded' }, fakeRefs())
-    const turn = conversation.get().turns.at(-1)!
+    const refs = fakeRefs()
+    applyAgentEvent({ type: 'delta', text: '여기까지 쓰다 멈' }, refs)
+    applyAgentEvent({ type: 'turnEnded' }, refs)
+    const turn = refs.stores.conversation.get().turns.at(-1)!
     expect(turn.text).toBe('여기까지 쓰다 멈')
     expect(turn.draft).toBe('')
-    expect(conversation.get().status).toBe('waiting')
+    expect(refs.stores.conversation.get().status).toBe('waiting')
   })
 
   it('settles the draft even when the turn metrics land on top of it first', () => {
@@ -100,26 +99,25 @@ describe('applyAgentEvent: the order has to be nailed down', () => {
     applyAgentEvent({ type: 'metrics', metrics: fakeMetrics(0.1) }, refs)
     applyAgentEvent({ type: 'turnEnded' }, refs)
 
-    const turns = conversation.get().turns
+    const turns = refs.stores.conversation.get().turns
     expect(turns.every((turn) => turn.draft.length === 0)).toBe(true)
     expect(turns.some((turn) => turn.text === '여기까지 쓰다 멈')).toBe(true)
   })
 
   it('changes nothing at the end of an ordinary turn, where settled text already cleared the draft', () => {
-    applyAgentEvent({ type: 'delta', text: '안녕' }, fakeRefs())
-    applyAgentEvent({ type: 'headline', text: '안녕하세요' }, fakeRefs())
-    applyAgentEvent({ type: 'turnEnded' }, fakeRefs())
-    const turn = conversation.get().turns.at(-1)!
+    const refs = fakeRefs()
+    applyAgentEvent({ type: 'delta', text: '안녕' }, refs)
+    applyAgentEvent({ type: 'headline', text: '안녕하세요' }, refs)
+    applyAgentEvent({ type: 'turnEnded' }, refs)
+    const turn = refs.stores.conversation.get().turns.at(-1)!
     expect(turn.text).toBe('안녕하세요')
     expect(turn.draft).toBe('')
   })
 
   it('puts the API error before the turn summary', () => {
-    applyAgentEvent(
-      { type: 'metrics', metrics: fakeMetrics(0.1, { apiErrorStatus: '529' }) },
-      fakeRefs(),
-    )
-    const lines = conversation.get().turns.map((turn) => turn.text)
+    const refs = fakeRefs()
+    applyAgentEvent({ type: 'metrics', metrics: fakeMetrics(0.1, { apiErrorStatus: '529' }) }, refs)
+    const lines = refs.stores.conversation.get().turns.map((turn) => turn.text)
     expect(lines[0]).toBe('API error 529')
     expect(lines[1]).toContain('This turn')
   })
@@ -148,7 +146,7 @@ describe('applyAgentEvent: the order has to be nailed down', () => {
       },
       refs,
     )
-    expect(sessionStore.get().find((s) => s.id === 'toolu_1')?.status).toBe('reported')
+    expect(refs.stores.children.get().find((s) => s.id === 'toolu_1')?.status).toBe('reported')
 
     applyAgentEvent({ type: 'childClosed', toolUseId: 'toolu_1' }, refs)
     applyAgentEvent(
@@ -163,12 +161,12 @@ describe('applyAgentEvent: the order has to be nailed down', () => {
       refs,
     )
 
-    const tool = conversation
+    const tool = refs.stores.conversation
       .get()
       .turns.at(-1)!
       .tools.find((t) => t.toolUseId === 'toolu_1')
     expect(tool?.result?.stdout).toBe('4')
-    expect(sessionStore.get().find((s) => s.id === 'toolu_1')?.status).toBe('done')
+    expect(refs.stores.children.get().find((s) => s.id === 'toolu_1')?.status).toBe('done')
   })
 
   it('closes a child that came back with an error, since a dead child files no receipt', () => {
@@ -189,7 +187,7 @@ describe('applyAgentEvent: the order has to be nailed down', () => {
       refs,
     )
 
-    const child = sessionStore.get().find((s) => s.id === 'toolu_3')
+    const child = refs.stores.children.get().find((s) => s.id === 'toolu_3')
     expect(child?.status).toBe('done')
     expect(child?.headline).toContain('Failed')
   })
@@ -208,7 +206,7 @@ describe('applyAgentEvent: the order has to be nailed down', () => {
       refs,
     )
     applyAgentEvent({ type: 'childClosed', toolUseId: 'toolu_2' }, refs)
-    expect(sessionStore.get().find((s) => s.id === 'toolu_2')?.status).toBe('working')
+    expect(refs.stores.children.get().find((s) => s.id === 'toolu_2')?.status).toBe('working')
 
     applyAgentEvent(
       {
@@ -220,7 +218,7 @@ describe('applyAgentEvent: the order has to be nailed down', () => {
       },
       refs,
     )
-    expect(sessionStore.get().find((s) => s.id === 'toolu_2')?.status).toBe('reported')
+    expect(refs.stores.children.get().find((s) => s.id === 'toolu_2')?.status).toBe('reported')
   })
 })
 
@@ -250,7 +248,9 @@ describe('a grandchild’s task events land on the grandchild, not on its parent
       },
       refs,
     )
-    expect(sessionStore.get().find((s) => s.id === 'toolu_grand')?.parentId).toBe('toolu_child')
+    expect(refs.stores.children.get().find((s) => s.id === 'toolu_grand')?.parentId).toBe(
+      'toolu_child',
+    )
 
     applyAgentEvent(
       {
@@ -273,11 +273,11 @@ describe('a grandchild’s task events land on the grandchild, not on its parent
       refs,
     )
 
-    const grandchild = sessionStore.get().find((s) => s.id === 'toolu_grand')
+    const grandchild = refs.stores.children.get().find((s) => s.id === 'toolu_grand')
     expect(grandchild?.headline).toBe('다 찾았다')
     expect(grandchild?.status).toBe('reported')
 
-    const parent = sessionStore.get().find((s) => s.id === 'toolu_child')
+    const parent = refs.stores.children.get().find((s) => s.id === 'toolu_child')
     expect(parent?.headline).toBe('일해줘')
     expect(parent?.status).toBe('working')
   })
@@ -296,7 +296,7 @@ describe('a grandchild’s task events land on the grandchild, not on its parent
       },
       refs,
     )
-    expect(sessionStore.get()).toEqual([])
+    expect(refs.stores.children.get()).toEqual([])
     expect(refs.childIds.has('toolu_orphan')).toBe(false)
   })
 
@@ -336,7 +336,9 @@ describe('a grandchild’s task events land on the grandchild, not on its parent
       },
       refs,
     )
-    expect(sessionStore.get().find((s) => s.id === 'toolu_grand')?.taskId).toBe('task-grand')
+    expect(refs.stores.children.get().find((s) => s.id === 'toolu_grand')?.taskId).toBe(
+      'task-grand',
+    )
 
     applyAgentEvent(
       {
@@ -348,7 +350,9 @@ describe('a grandchild’s task events land on the grandchild, not on its parent
       },
       refs,
     )
-    expect(sessionStore.get().find((s) => s.id === 'toolu_grand')?.headline).toBe('다 찾았다')
+    expect(refs.stores.children.get().find((s) => s.id === 'toolu_grand')?.headline).toBe(
+      '다 찾았다',
+    )
   })
 })
 
@@ -377,7 +381,7 @@ describe('a teammate’s call is stored as the change it made', () => {
       refs,
     )
 
-    const call = sessionStore.get().find((s) => s.id === 'toolu_child')?.stream[0]
+    const call = refs.stores.children.get().find((s) => s.id === 'toolu_child')?.stream[0]
     expect(call?.change).toEqual([
       [
         { kind: 'remove', text: '옛 줄' },
@@ -412,10 +416,31 @@ describe('a teammate’s call is stored as the change it made', () => {
       refs,
     )
 
-    const call = sessionStore.get().find((s) => s.id === 'toolu_child')?.stream[0]
+    const call = refs.stores.children.get().find((s) => s.id === 'toolu_child')?.stream[0]
     expect(call?.change).toBeUndefined()
     expect(call?.count).toBeUndefined()
   })
+})
+
+it('hands a limit to the account, not to the chat', () => {
+  const limit: RateLimit = {
+    kind: 'seven_day',
+    utilization: 0.28,
+    resetsAtMs: Date.now(),
+    overage: false,
+    status: 'allowed_warning',
+  }
+  const heard: RateLimit[] = []
+  const refs = freshRefs(
+    {
+      conversation: createConversation(),
+      status: createChatStatus(),
+      children: createSessionStore(),
+    },
+    { onModelRefused: () => {}, onLimit: (limit) => heard.push(limit) },
+  )
+  applyAgentEvent({ type: 'limit', limit }, refs)
+  expect(heard).toHaveLength(1)
 })
 
 describe('a rate limit reaches the chat once, and again only when it turned over', () => {
@@ -432,8 +457,8 @@ describe('a rate limit reaches the chat once, and again only when it turned over
     }
   }
 
-  function systemLines(): string[] {
-    return conversation
+  function systemLines(refs: AgentEventRefs): string[] {
+    return refs.stores.conversation
       .get()
       .turns.filter((turn) => turn.role === 'system')
       .map((turn) => turn.text)
@@ -443,35 +468,35 @@ describe('a rate limit reaches the chat once, and again only when it turned over
     const refs = fakeRefs()
     applyAgentEvent({ type: 'limit', limit: fakeLimit() }, refs)
     applyAgentEvent({ type: 'limit', limit: fakeLimit() }, refs)
-    expect(systemLines()).toHaveLength(1)
+    expect(systemLines(refs)).toHaveLength(1)
   })
 
   it('leaves a share that is only creeping up to the strip, which is already drawing it', () => {
     const refs = fakeRefs()
     applyAgentEvent({ type: 'limit', limit: fakeLimit({ utilization: 0.86 }) }, refs)
     applyAgentEvent({ type: 'limit', limit: fakeLimit({ utilization: 0.97 }) }, refs)
-    expect(systemLines()).toHaveLength(1)
+    expect(systemLines(refs)).toHaveLength(1)
   })
 
   it('speaks again when a warning turns into a refusal', () => {
     const refs = fakeRefs()
     applyAgentEvent({ type: 'limit', limit: fakeLimit({ status: 'allowed_warning' }) }, refs)
     applyAgentEvent({ type: 'limit', limit: fakeLimit({ status: 'rejected' }) }, refs)
-    expect(systemLines()).toHaveLength(2)
+    expect(systemLines(refs)).toHaveLength(2)
   })
 
   it('speaks again when the window it resets in moves', () => {
     const refs = fakeRefs()
     applyAgentEvent({ type: 'limit', limit: fakeLimit() }, refs)
     applyAgentEvent({ type: 'limit', limit: fakeLimit({ resetsAtMs: RESETS + 3_600_000 }) }, refs)
-    expect(systemLines()).toHaveLength(2)
+    expect(systemLines(refs)).toHaveLength(2)
   })
 
   it('speaks again when the run goes onto overage', () => {
     const refs = fakeRefs()
     applyAgentEvent({ type: 'limit', limit: fakeLimit({ overage: false }) }, refs)
     applyAgentEvent({ type: 'limit', limit: fakeLimit({ overage: true }) }, refs)
-    expect(systemLines()).toHaveLength(2)
+    expect(systemLines(refs)).toHaveLength(2)
   })
 
   it('forgets a limit that came back to allowed, so its return is news again', () => {
@@ -479,7 +504,7 @@ describe('a rate limit reaches the chat once, and again only when it turned over
     applyAgentEvent({ type: 'limit', limit: fakeLimit() }, refs)
     applyAgentEvent({ type: 'limit', limit: fakeLimit({ status: 'allowed' }) }, refs)
     applyAgentEvent({ type: 'limit', limit: fakeLimit() }, refs)
-    expect(systemLines()).toHaveLength(2)
+    expect(systemLines(refs)).toHaveLength(2)
   })
 
   it('keeps one kind of limit from silencing another', () => {
@@ -488,14 +513,20 @@ describe('a rate limit reaches the chat once, and again only when it turned over
     applyAgentEvent({ type: 'limit', limit: fakeLimit({ kind: 'five_hour' }) }, refs)
     applyAgentEvent({ type: 'limit', limit: fakeLimit({ kind: 'seven_day' }) }, refs)
     applyAgentEvent({ type: 'limit', limit: fakeLimit({ kind: 'five_hour' }) }, refs)
-    expect(systemLines()).toHaveLength(2)
+    expect(systemLines(refs)).toHaveLength(2)
   })
 
   it('starts over for a new session, which begins with nothing told', () => {
-    const first = fakeRefs()
+    const stores = {
+      conversation: createConversation(),
+      status: createChatStatus(),
+      children: createSessionStore(),
+    }
+    const hooks = { onModelRefused: () => {}, onLimit: () => {} }
+    const first = freshRefs(stores, hooks)
     applyAgentEvent({ type: 'limit', limit: fakeLimit() }, first)
-    applyAgentEvent({ type: 'limit', limit: fakeLimit() }, fakeRefs())
-    expect(systemLines()).toHaveLength(2)
+    applyAgentEvent({ type: 'limit', limit: fakeLimit() }, freshRefs(stores, hooks))
+    expect(systemLines(first)).toHaveLength(2)
   })
 })
 
@@ -597,13 +628,13 @@ describe('a child that runs several rounds does not vanish for reporting once', 
       },
       refs,
     )
-    expect(sessionStore.get().find((s) => s.id === 'toolu_a')?.status).toBe('reported')
+    expect(refs.stores.children.get().find((s) => s.id === 'toolu_a')?.status).toBe('reported')
 
     applyAgentEvent(
       { type: 'childSay', toolUseId: 'toolu_a', role: 'assistant', text: 'round two' },
       refs,
     )
-    expect(sessionStore.get().find((s) => s.id === 'toolu_a')?.status).toBe('working')
+    expect(refs.stores.children.get().find((s) => s.id === 'toolu_a')?.status).toBe('working')
   })
 
   it('keeps the tools a child uses after it reported', () => {
@@ -630,7 +661,7 @@ describe('a child that runs several rounds does not vanish for reporting once', 
       refs,
     )
 
-    const child = sessionStore.get().find((s) => s.id === 'toolu_b')
+    const child = refs.stores.children.get().find((s) => s.id === 'toolu_b')
     expect(child?.stream.map((call) => call.line)).toContain('Read b.ts')
     expect(child?.status).toBe('working')
   })
@@ -650,7 +681,7 @@ describe('a child that runs several rounds does not vanish for reporting once', 
     )
     applyAgentEvent({ type: 'turnEnded' }, refs)
 
-    expect(sessionStore.get().find((s) => s.id === 'toolu_c')?.status).toBe('reported')
+    expect(refs.stores.children.get().find((s) => s.id === 'toolu_c')?.status).toBe('reported')
     expect(refs.childIds.has('toolu_c')).toBe(true)
   })
 
@@ -668,7 +699,7 @@ describe('a child that runs several rounds does not vanish for reporting once', 
       refs,
     )
 
-    const child = sessionStore.get().find((s) => s.id === 'toolu_k')
+    const child = refs.stores.children.get().find((s) => s.id === 'toolu_k')
     expect(child?.lastSeenAtMs).toBeGreaterThan(0)
   })
 
@@ -685,14 +716,14 @@ describe('a child that runs several rounds does not vanish for reporting once', 
       },
       refs,
     )
-    sessionStore.patch('toolu_g', { status: 'done' })
+    refs.stores.children.patch('toolu_g', { status: 'done' })
     applyAgentEvent({ type: 'turnEnded' }, refs)
     applyAgentEvent(
       { type: 'childSay', toolUseId: 'toolu_g', role: 'assistant', text: 'round two' },
       refs,
     )
 
-    const child = sessionStore.get().find((s) => s.id === 'toolu_g')
+    const child = refs.stores.children.get().find((s) => s.id === 'toolu_g')
     expect(child?.status).toBe('working')
     expect(child?.headline).toBe('round two')
     expect(child?.endedAtMs).toBeUndefined()
@@ -703,7 +734,7 @@ describe('a child that runs several rounds does not vanish for reporting once', 
     open(refs, 'toolu_l')
     applyAgentEvent({ type: 'turnEnded' }, refs)
 
-    expect(sessionStore.get().find((s) => s.id === 'toolu_l')?.status).toBe('working')
+    expect(refs.stores.children.get().find((s) => s.id === 'toolu_l')?.status).toBe('working')
   })
 
   it('reads a clean result as finished for an agent the orchestrator waited on', () => {
@@ -731,7 +762,7 @@ describe('a child that runs several rounds does not vanish for reporting once', 
     )
     applyAgentEvent({ type: 'childClosed', toolUseId: 'toolu_m' }, refs)
 
-    expect(sessionStore.get().find((s) => s.id === 'toolu_m')?.status).toBe('done')
+    expect(refs.stores.children.get().find((s) => s.id === 'toolu_m')?.status).toBe('done')
   })
 
   it('reads a clean result as a receipt for an agent sent to the background', () => {
@@ -749,14 +780,14 @@ describe('a child that runs several rounds does not vanish for reporting once', 
     )
     applyAgentEvent({ type: 'childClosed', toolUseId: 'toolu_n' }, refs)
 
-    expect(sessionStore.get().find((s) => s.id === 'toolu_n')?.status).toBe('working')
+    expect(refs.stores.children.get().find((s) => s.id === 'toolu_n')?.status).toBe('working')
   })
 
   it('brings a child that failed back if it turns out to still be alive', () => {
     const refs = fakeRefs()
     open(refs, 'toolu_h')
     applyAgentEvent({ type: 'childClosed', toolUseId: 'toolu_h', error: 'timed out' }, refs)
-    expect(sessionStore.get().find((s) => s.id === 'toolu_h')?.status).toBe('done')
+    expect(refs.stores.children.get().find((s) => s.id === 'toolu_h')?.status).toBe('done')
 
     applyAgentEvent(
       {
@@ -768,7 +799,7 @@ describe('a child that runs several rounds does not vanish for reporting once', 
       },
       refs,
     )
-    const child = sessionStore.get().find((s) => s.id === 'toolu_h')
+    const child = refs.stores.children.get().find((s) => s.id === 'toolu_h')
     expect(child?.status).toBe('working')
     expect(child?.endedAtMs).toBeUndefined()
   })
@@ -777,7 +808,7 @@ describe('a child that runs several rounds does not vanish for reporting once', 
     const refs = fakeRefs()
     open(refs, 'toolu_i')
     open(refs, 'toolu_i')
-    expect(sessionStore.get().filter((s) => s.id === 'toolu_i')).toHaveLength(1)
+    expect(refs.stores.children.get().filter((s) => s.id === 'toolu_i')).toHaveLength(1)
   })
 
   it('leaves a child that is still working, because someone running in the background is not done', () => {
@@ -785,7 +816,7 @@ describe('a child that runs several rounds does not vanish for reporting once', 
     open(refs, 'toolu_e')
     applyAgentEvent({ type: 'turnEnded' }, refs)
 
-    expect(sessionStore.get().find((s) => s.id === 'toolu_e')?.status).toBe('working')
+    expect(refs.stores.children.get().find((s) => s.id === 'toolu_e')?.status).toBe('working')
     expect(refs.childIds.has('toolu_e')).toBe(true)
   })
 
@@ -805,7 +836,7 @@ describe('a child that runs several rounds does not vanish for reporting once', 
     )
 
     expect(
-      sessionStore
+      refs.stores.children
         .get()
         .find((s) => s.id === 'toolu_f')
         ?.stream.map((call) => call.line),
@@ -832,7 +863,7 @@ describe('an agent woken by a message gets a tile too', () => {
     const refs = fakeRefs()
     send(refs, 'tu_1', 'Joi', resumed)
 
-    const child = sessionStore.get().find((s) => s.id === 'abc34151ab50738ee')
+    const child = refs.stores.children.get().find((s) => s.id === 'abc34151ab50738ee')
     expect(child?.status).toBe('working')
     expect(child?.label).toBe('Joi')
     expect(refs.childIds.has('abc34151ab50738ee')).toBe(true)
@@ -852,7 +883,7 @@ describe('an agent woken by a message gets a tile too', () => {
       refs,
     )
     expect(
-      sessionStore
+      refs.stores.children
         .get()
         .find((s) => s.id === 'abc34151ab50738ee')
         ?.stream.map((call) => call.line),
@@ -862,7 +893,7 @@ describe('an agent woken by a message gets a tile too', () => {
   it('opens nothing for a message that only delivered', () => {
     const refs = fakeRefs()
     send(refs, 'tu_3', 'Ray', '{"success":true,"message":"delivered"}')
-    expect(sessionStore.get()).toHaveLength(0)
+    expect(refs.stores.children.get()).toHaveLength(0)
   })
 
   it('leaves another tool result alone', () => {
@@ -879,14 +910,14 @@ describe('an agent woken by a message gets a tile too', () => {
       },
       refs,
     )
-    expect(sessionStore.get()).toHaveLength(0)
+    expect(refs.stores.children.get()).toHaveLength(0)
   })
 
   it('keeps one tile when the same agent is woken twice', () => {
     const refs = fakeRefs()
     send(refs, 'tu_5', 'Joi', resumed)
     send(refs, 'tu_6', 'Joi', resumed)
-    expect(sessionStore.get()).toHaveLength(1)
+    expect(refs.stores.children.get()).toHaveLength(1)
   })
 })
 
@@ -920,7 +951,7 @@ describe('a subagent reports what it is doing while it works', () => {
       refs,
     )
 
-    const child = sessionStore.get().find((s) => s.id === 'toolu_p')
+    const child = refs.stores.children.get().find((s) => s.id === 'toolu_p')
     expect(child?.doing).toBe('Reading the config')
     expect(child?.tokens).toBe(12_822)
     expect(child?.stream.map((call) => call.line)).toEqual(['Read'])
@@ -942,7 +973,7 @@ describe('a subagent reports what it is doing while it works', () => {
     applyAgentEvent({ ...tick, lastTool: 'Bash' }, refs)
 
     expect(
-      sessionStore
+      refs.stores.children
         .get()
         .find((s) => s.id === 'toolu_q')
         ?.stream.map((call) => call.line),
@@ -979,7 +1010,7 @@ describe('a subagent reports what it is doing while it works', () => {
     )
 
     expect(
-      sessionStore
+      refs.stores.children
         .get()
         .find((s) => s.id === 'toolu_twice')
         ?.stream.map((call) => call.line),
@@ -1010,7 +1041,7 @@ describe('a subagent reports what it is doing while it works', () => {
       refs,
     )
 
-    const child = sessionStore.get().find((s) => s.id === 'toolu_said')
+    const child = refs.stores.children.get().find((s) => s.id === 'toolu_said')
     expect(child?.headline).toBe('설정을 두 군데 고쳤습니다')
     expect(child?.doing).toBe('Running echo "--- main.tsx ---"')
   })
@@ -1034,13 +1065,13 @@ describe('a subagent reports what it is doing while it works', () => {
       refs,
     )
 
-    expect(sessionStore.get().find((s) => s.id === 'toolu_stale')?.doing).toBe('')
+    expect(refs.stores.children.get().find((s) => s.id === 'toolu_stale')?.doing).toBe('')
   })
 
   it('brings a settled agent back, because progress means it is alive', () => {
     const refs = fakeRefs()
     open(refs, 'toolu_r')
-    sessionStore.patch('toolu_r', { status: 'done' })
+    refs.stores.children.patch('toolu_r', { status: 'done' })
     applyAgentEvent(
       {
         type: 'childProgress',
@@ -1053,7 +1084,7 @@ describe('a subagent reports what it is doing while it works', () => {
       refs,
     )
 
-    const child = sessionStore.get().find((s) => s.id === 'toolu_r')
+    const child = refs.stores.children.get().find((s) => s.id === 'toolu_r')
     expect(child?.status).toBe('working')
     expect(child?.endedAtMs).toBeUndefined()
   })
@@ -1081,7 +1112,7 @@ describe('a subagent reports what it is doing while it works', () => {
       },
       refs,
     )
-    expect(sessionStore.get().find((s) => s.id === 'toolu_done')?.status).toBe('done')
+    expect(refs.stores.children.get().find((s) => s.id === 'toolu_done')?.status).toBe('done')
   })
 
   it('lets no straggling notification reopen a child the CLI closed', () => {
@@ -1128,7 +1159,7 @@ describe('a subagent reports what it is doing while it works', () => {
       },
       refs,
     )
-    expect(sessionStore.get().find((s) => s.id === 'toolu_late')?.status).toBe('done')
+    expect(refs.stores.children.get().find((s) => s.id === 'toolu_late')?.status).toBe('done')
   })
 
   it('keeps an agent working through completed while its own shell still runs', () => {
@@ -1164,12 +1195,15 @@ describe('a subagent reports what it is doing while it works', () => {
       },
       refs,
     )
-    expect(conversation.get().chores, "a child's shell is not the conversation's chore").toEqual([])
+    expect(
+      refs.stores.conversation.get().chores,
+      "a child's shell is not the conversation's chore",
+    ).toEqual([])
     applyAgentEvent(
       { type: 'childStateKnown', toolUseId: null, taskId: 'task_w', state: 'completed', error: '' },
       refs,
     )
-    expect(sessionStore.get().find((s) => s.id === 'toolu_w')?.status).toBe('working')
+    expect(refs.stores.children.get().find((s) => s.id === 'toolu_w')?.status).toBe('working')
 
     applyAgentEvent(
       {
@@ -1185,7 +1219,7 @@ describe('a subagent reports what it is doing while it works', () => {
       { type: 'childStateKnown', toolUseId: null, taskId: 'task_w', state: 'completed', error: '' },
       refs,
     )
-    expect(sessionStore.get().find((s) => s.id === 'toolu_w')?.status).toBe('done')
+    expect(refs.stores.children.get().find((s) => s.id === 'toolu_w')?.status).toBe('done')
   })
 
   it('ignores progress from a task that is not one of ours, such as a subagent own shell', () => {
@@ -1201,7 +1235,7 @@ describe('a subagent reports what it is doing while it works', () => {
       },
       refs,
     )
-    expect(sessionStore.get()).toEqual([])
+    expect(refs.stores.children.get()).toEqual([])
   })
 })
 
@@ -1260,7 +1294,7 @@ describe('a message names the teammate it is sent to', () => {
       },
       refs,
     )
-    const woken = sessionStore.get().find((s) => s.id === 'a2ca1d0a38717aa60')
+    const woken = refs.stores.children.get().find((s) => s.id === 'a2ca1d0a38717aa60')
     expect(woken?.label).toBe('Karina')
     expect(woken?.subagentType).toBe('Karina')
   })
@@ -1284,10 +1318,10 @@ describe('a permission request the CLI takes back is taken off the screen', () =
   it('clears the dialog when the one on screen is withdrawn', () => {
     const refs = fakeRefs()
     ask(refs, 'req_1')
-    expect(conversation.get().permission?.requestId).toBe('req_1')
+    expect(refs.stores.conversation.get().permission?.requestId).toBe('req_1')
 
     applyAgentEvent({ type: 'permissionDropped', requestId: 'req_1' }, refs)
-    expect(conversation.get().permission).toBeNull()
+    expect(refs.stores.conversation.get().permission).toBeNull()
     expect(refs.asks).toHaveLength(0)
   })
 
@@ -1297,8 +1331,8 @@ describe('a permission request the CLI takes back is taken off the screen', () =
     ask(refs, 'req_2')
     applyAgentEvent({ type: 'permissionDropped', requestId: 'req_1' }, refs)
 
-    expect(conversation.get().permission?.requestId).toBe('req_2')
-    expect(conversation.get().permission?.line).toBe('Bash req_2')
+    expect(refs.stores.conversation.get().permission?.requestId).toBe('req_2')
+    expect(refs.stores.conversation.get().permission?.line).toBe('Bash req_2')
   })
 
   it('takes a queued one out without disturbing the one on screen', () => {
@@ -1307,7 +1341,7 @@ describe('a permission request the CLI takes back is taken off the screen', () =
     ask(refs, 'req_2')
     applyAgentEvent({ type: 'permissionDropped', requestId: 'req_2' }, refs)
 
-    expect(conversation.get().permission?.requestId).toBe('req_1')
+    expect(refs.stores.conversation.get().permission?.requestId).toBe('req_1')
     expect(refs.asks.map((held) => held.requestId)).toEqual(['req_1'])
   })
 
@@ -1316,7 +1350,7 @@ describe('a permission request the CLI takes back is taken off the screen', () =
     ask(refs, 'req_1')
     applyAgentEvent({ type: 'permissionDropped', requestId: 'req_nope' }, refs)
 
-    expect(conversation.get().permission?.requestId).toBe('req_1')
+    expect(refs.stores.conversation.get().permission?.requestId).toBe('req_1')
     expect(refs.asks).toHaveLength(1)
   })
 
@@ -1324,7 +1358,7 @@ describe('a permission request the CLI takes back is taken off the screen', () =
     const refs = fakeRefs()
     ask(refs, 'req_1')
     applyAgentEvent({ type: 'permissionDropped', requestId: 'req_1' }, refs)
-    expect(conversation.get().status).toBe('working')
+    expect(refs.stores.conversation.get().status).toBe('working')
   })
 })
 
@@ -1332,7 +1366,7 @@ describe('what the CLI reports about itself reaches the conversation', () => {
   it('puts a notice in the conversation as its own line', () => {
     const refs = fakeRefs()
     applyAgentEvent({ type: 'notice', text: 'Stopped: Reached maximum budget ($0.02)' }, refs)
-    const last = conversation.get().turns.at(-1)
+    const last = refs.stores.conversation.get().turns.at(-1)
     expect(last?.role).toBe('system')
     expect(last?.text).toBe('Stopped: Reached maximum budget ($0.02)')
   })
@@ -1375,7 +1409,7 @@ describe('addressing a child by the id the CLI actually sends', () => {
       refs,
     )
 
-    const child = sessionStore.get().find((s) => s.id === 'toolu_z')
+    const child = refs.stores.children.get().find((s) => s.id === 'toolu_z')
     expect(child?.status).toBe('reported')
     expect(child?.headline).toBe('다 봤습니다')
   })
@@ -1387,7 +1421,7 @@ describe('addressing a child by the id the CLI actually sends', () => {
       { type: 'childNotified', toolUseId: null, taskId: 'someone_else', summary: 'hi', done: true },
       refs,
     )
-    expect(sessionStore.get().find((s) => s.id === 'toolu_z')?.status).toBe('working')
+    expect(refs.stores.children.get().find((s) => s.id === 'toolu_z')?.status).toBe('working')
   })
 
   it('takes a told finish rather than waiting out the silence', () => {
@@ -1398,7 +1432,7 @@ describe('addressing a child by the id the CLI actually sends', () => {
       { type: 'childStateKnown', toolUseId: null, taskId: 'task_y', state: 'completed', error: '' },
       refs,
     )
-    expect(sessionStore.get().find((s) => s.id === 'toolu_y')?.status).toBe('done')
+    expect(refs.stores.children.get().find((s) => s.id === 'toolu_y')?.status).toBe('done')
   })
 
   it('writes down why a task failed, instead of ending it as if all was well', () => {
@@ -1415,7 +1449,7 @@ describe('addressing a child by the id the CLI actually sends', () => {
       },
       refs,
     )
-    const child = sessionStore.get().find((s) => s.id === 'toolu_x')
+    const child = refs.stores.children.get().find((s) => s.id === 'toolu_x')
     expect(child?.status).toBe('done')
     expect(child?.headline).toContain('the tool crashed')
   })
@@ -1437,7 +1471,7 @@ describe('addressing a child by the id the CLI actually sends', () => {
       { type: 'childStateKnown', toolUseId: null, taskId: 'task_w', state: 'paused', error: '' },
       refs,
     )
-    expect(sessionStore.get().find((s) => s.id === 'toolu_w')?.status).toBe('working')
+    expect(refs.stores.children.get().find((s) => s.id === 'toolu_w')?.status).toBe('working')
   })
 
   it('ends a detached agent, which the tool result deliberately leaves alone', () => {
@@ -1456,7 +1490,7 @@ describe('addressing a child by the id the CLI actually sends', () => {
     link(refs, 'toolu_bg', 'task_bg')
     applyAgentEvent({ type: 'childClosed', toolUseId: 'toolu_bg' }, refs)
     expect(
-      sessionStore.get().find((s) => s.id === 'toolu_bg')?.status,
+      refs.stores.children.get().find((s) => s.id === 'toolu_bg')?.status,
       '분리된 에이전트는 도구 결과로 끝나지 않는다',
     ).toBe('working')
 
@@ -1470,38 +1504,25 @@ describe('addressing a child by the id the CLI actually sends', () => {
       },
       refs,
     )
-    expect(sessionStore.get().find((s) => s.id === 'toolu_bg')?.status).toBe('done')
+    expect(refs.stores.children.get().find((s) => s.id === 'toolu_bg')?.status).toBe('done')
   })
 
   it('brings a settled child back when the CLI says it is running again', () => {
     const refs = fakeRefs()
     open(refs, 'toolu_v')
     link(refs, 'toolu_v', 'task_v')
-    sessionStore.patch('toolu_v', { status: 'done' })
+    refs.stores.children.patch('toolu_v', { status: 'done' })
     applyAgentEvent(
       { type: 'childStateKnown', toolUseId: null, taskId: 'task_v', state: 'running', error: '' },
       refs,
     )
-    expect(sessionStore.get().find((s) => s.id === 'toolu_v')?.status).toBe('working')
+    expect(refs.stores.children.get().find((s) => s.id === 'toolu_v')?.status).toBe('working')
   })
 })
 
 describe('work the CLI sends to the background stays visible while it runs', () => {
-  function refs(): AgentEventRefs {
-    return {
-      asks: [],
-      childIds: new Set(),
-      sends: new Map(),
-      limits: new Map(),
-      onModelRefused: () => {},
-    }
-  }
-
-  beforeEach(() => {
-    conversation.reset()
-  })
-
   it('puts a background command on the board with the words the CLI used', () => {
+    const refs = fakeRefs()
     applyAgentEvent(
       {
         type: 'childStarted',
@@ -1510,15 +1531,15 @@ describe('work the CLI sends to the background stays visible while it runs', () 
         taskType: 'local_bash',
         description: 'Sleep 12s then echo hi',
       },
-      refs(),
+      refs,
     )
-    const [chore] = conversation.get().chores
+    const [chore] = refs.stores.conversation.get().chores
     expect(chore?.id).toBe('task1')
     expect(chore?.line).toBe('Sleep 12s then echo hi')
   })
 
   it('takes it off the board once the CLI says it finished', () => {
-    const at = refs()
+    const at = fakeRefs()
     applyAgentEvent(
       {
         type: 'childStarted',
@@ -1533,11 +1554,11 @@ describe('work the CLI sends to the background stays visible while it runs', () 
       { type: 'childNotified', toolUseId: 'tu1', taskId: 'task1', summary: 'x', done: true },
       at,
     )
-    expect(conversation.get().chores).toHaveLength(0)
+    expect(at.stores.conversation.get().chores).toHaveLength(0)
   })
 
   it('leaves it there while the state only says it is still running', () => {
-    const at = refs()
+    const at = fakeRefs()
     applyAgentEvent(
       {
         type: 'childStarted',
@@ -1552,15 +1573,16 @@ describe('work the CLI sends to the background stays visible while it runs', () 
       { type: 'childStateKnown', toolUseId: 'tu1', taskId: 'task1', state: 'running', error: '' },
       at,
     )
-    expect(conversation.get().chores).toHaveLength(1)
+    expect(at.stores.conversation.get().chores).toHaveLength(1)
     applyAgentEvent(
       { type: 'childStateKnown', toolUseId: 'tu1', taskId: 'task1', state: 'failed', error: 'no' },
       at,
     )
-    expect(conversation.get().chores).toHaveLength(0)
+    expect(at.stores.conversation.get().chores).toHaveLength(0)
   })
 
   it('does not put a teammate on the background board, since a teammate gets a tile', () => {
+    const refs = fakeRefs()
     applyAgentEvent(
       {
         type: 'childStarted',
@@ -1569,13 +1591,13 @@ describe('work the CLI sends to the background stays visible while it runs', () 
         taskType: 'local_agent',
         description: 'Look into the docs',
       },
-      refs(),
+      refs,
     )
-    expect(conversation.get().chores).toHaveLength(0)
+    expect(refs.stores.conversation.get().chores).toHaveLength(0)
   })
 
   it('counts the same task once, however many times the CLI announces it', () => {
-    const at = refs()
+    const at = fakeRefs()
     const start = {
       type: 'childStarted' as const,
       toolUseId: 'tu1',
@@ -1585,7 +1607,7 @@ describe('work the CLI sends to the background stays visible while it runs', () 
     }
     applyAgentEvent(start, at)
     applyAgentEvent(start, at)
-    expect(conversation.get().chores).toHaveLength(1)
+    expect(at.stores.conversation.get().chores).toHaveLength(1)
   })
 })
 
@@ -1593,12 +1615,12 @@ describe('the session that wakes up on its own', () => {
   it('shows work again when words arrive after the turn had ended', () => {
     const refs = fakeRefs()
     applyAgentEvent({ type: 'turnEnded' }, refs)
-    expect(conversation.get().status).toBe('waiting')
+    expect(refs.stores.conversation.get().status).toBe('waiting')
     applyAgentEvent({ type: 'result' } as never, refs)
-    conversation.setStatus('done')
+    refs.stores.conversation.setStatus('done')
 
     applyAgentEvent({ type: 'delta', text: '보고를 받아' }, refs)
-    expect(conversation.get().status).toBe('working')
+    expect(refs.stores.conversation.get().status).toBe('working')
   })
 
   it('does not steal a turn that is waiting on your answer', () => {
@@ -1614,9 +1636,9 @@ describe('the session that wakes up on its own', () => {
       },
       refs,
     )
-    expect(conversation.get().status).toBe('waiting')
+    expect(refs.stores.conversation.get().status).toBe('waiting')
     applyAgentEvent({ type: 'delta', text: 'x' }, refs)
-    expect(conversation.get().status).toBe('waiting')
+    expect(refs.stores.conversation.get().status).toBe('waiting')
   })
 })
 
@@ -1656,7 +1678,7 @@ describe('a progress ping that carries no count', () => {
       },
       refs,
     )
-    expect(sessionStore.get().find((s) => s.id === 'toolu_tok')?.tokens).toBe(4200)
+    expect(refs.stores.children.get().find((s) => s.id === 'toolu_tok')?.tokens).toBe(4200)
   })
 })
 
@@ -1690,7 +1712,7 @@ describe('the orchestrator speaking to a teammate', () => {
     hired(refs)
     remember('call_send', { to: 'agent-x', message: '합계는 네가 맡아줘' }, refs)
 
-    const heard = sessionStore.get().find((s) => s.id === 'toolu_x')!
+    const heard = refs.stores.children.get().find((s) => s.id === 'toolu_x')!
     expect(heard.transcript.at(-1)?.text).toBe('합계는 네가 맡아줘')
     expect(heard.transcript.at(-1)?.from).not.toBe('')
   })
@@ -1712,7 +1734,7 @@ describe('the orchestrator speaking to a teammate', () => {
 
     wakeResumed('call_send', JSON.stringify({ success: true, resumedAgentId: 'agent-x' }), refs)
 
-    const board = sessionStore.get()
+    const board = refs.stores.children.get()
     expect(board).toHaveLength(1)
     expect(board[0]?.id).toBe('toolu_x')
     expect(board[0]?.status).toBe('working')
@@ -1722,7 +1744,7 @@ describe('the orchestrator speaking to a teammate', () => {
     const refs = fakeRefs()
     remember('call_send', { to: 'a99', message: 'hello' }, refs)
     wakeResumed('call_send', JSON.stringify({ success: true, resumedAgentId: 'a99' }), refs)
-    expect(sessionStore.get().map((s) => s.id)).toEqual(['a99'])
+    expect(refs.stores.children.get().map((s) => s.id)).toEqual(['a99'])
   })
 })
 
@@ -1760,13 +1782,13 @@ describe('where an isolated teammate left its work', () => {
     const refs = fakeRefs()
     open(refs)
     done(refs, 'a879059595fc11096')
-    expect(sessionStore.find('toolu_w')?.agentId).toBe('a879059595fc11096')
+    expect(refs.stores.children.find('toolu_w')?.agentId).toBe('a879059595fc11096')
   })
 
   it('leaves a tile unstamped when the runtime named no agent, as for a plain tool', () => {
     const refs = fakeRefs()
     open(refs)
     done(refs)
-    expect(sessionStore.find('toolu_w')?.agentId).toBeUndefined()
+    expect(refs.stores.children.find('toolu_w')?.agentId).toBeUndefined()
   })
 })

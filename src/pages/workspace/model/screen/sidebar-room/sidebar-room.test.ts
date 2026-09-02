@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { MIN_TALK_PX, sidebarFits, sidebarShows } from './sidebar-room'
+import { MIN_TALK_PX, sidebarFits, sidebarFloats, sidebarShows, sidebarSpan } from './sidebar-room'
 
 describe('sidebarFits: whether there is room for the team beside the conversation', () => {
   it('keeps the team out when it would leave the conversation too narrow to read', () => {
@@ -32,5 +32,18 @@ describe('sidebarShows: what the sidebar actually does', () => {
 
   it('still opens in a narrow window when you ask for it there and then', () => {
     expect(sidebarShows(false, true, false)).toBe(true)
+  })
+})
+
+describe('a sidebar opened by hand where it does not fit', () => {
+  it('floats over the conversation and takes no room from it', () => {
+    expect(sidebarFloats(true, false)).toBe(true)
+    expect(sidebarSpan(true, false, 260, 16)).toBe(0)
+  })
+
+  it('sits beside the conversation, with its gap, wherever it fits', () => {
+    expect(sidebarFloats(true, true)).toBe(false)
+    expect(sidebarSpan(true, true, 260, 16)).toBe(276)
+    expect(sidebarSpan(false, true, 260, 16)).toBe(0)
   })
 })

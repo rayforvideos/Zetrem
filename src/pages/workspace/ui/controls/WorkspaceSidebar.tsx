@@ -1,5 +1,7 @@
 import { hintDue, hintSeen } from '@/entities/settings'
 import { MOTION } from '@/shared/config/motion/motion'
+import { cn } from '@/shared/lib/cn'
+import { Button } from '@/shared/ui/button'
 import { TeamSidebar } from '@/widgets/team-sidebar'
 import { chatSwitch } from '../../model/chat/chat-switch/chat-switch'
 import { tuckedBy } from '../../model/screen/tuck/tuck'
@@ -35,76 +37,98 @@ export function WorkspaceSidebar({
     focus.address(name)
   }
 
+  // Where the sidebar does not fit, it lies over the conversation rather than
+  // squeezing it, and a click beside it puts it away.
+  const floating = layout.sidebar.floating
+
   return (
-    <div
-      ref={layout.attachSidebar}
-      data-tucked={layout.sidebar.open ? undefined : ''}
-      style={{
-        marginLeft: tuckedBy(layout.sidebar.open, layout.sidebarBoxW, layout.sidebar.width),
-        transition: `margin ${MOTION.moveMs}ms ${MOTION.easing}`,
-      }}
-      className="flex flex-none"
-    >
-      <TeamSidebar
-        projects={{
-          current: projects.current,
-          all: projects.all,
-          // A note still being typed is saved into this project before the next one takes over.
-          onOpen: onOpenProject,
-          onPickFolder: projects.pick,
-          onForget: projects.forget,
+    <>
+      {floating && (
+        <Button
+          variant="quiet"
+          size="bare"
+          data-sidebar-backdrop
+          aria-label={layout.sidebarLabel}
+          className="absolute inset-0 z-[4] rounded-none bg-background/40"
+          onClick={layout.sidebar.toggle}
+        />
+      )}
+      <div
+        ref={layout.attachSidebar}
+        data-floating={floating ? '' : undefined}
+        data-tucked={layout.sidebar.open ? undefined : ''}
+        style={{
+          marginLeft: floating
+            ? 0
+            : tuckedBy(layout.sidebar.open, layout.sidebarBoxW, layout.sidebar.width),
+          transition: `margin ${MOTION.moveMs}ms ${MOTION.easing}`,
         }}
-        chats={{
-          chats: chat.chats,
-          openId: layout.libraryOpen ? null : chat.openId,
-          live: chatting.working,
-          // Coming back to the open chat (from the library) must not end its session.
-          onOpen: (id) =>
-            chatSwitch(id, chat.openId) === 'return'
-              ? layout.leaveLibrary()
-              : chatting.go(() => chat.open(id)),
-          onStart: () => chatting.go(chat.start),
-          // Only the chat being left puts the screen down; removing one from
-          // under the sidebar leaves what you were reading where it was.
-          onRemove: (id) =>
-            id === chat.openId ? chatting.go(() => chat.remove(id)) : chat.remove(id),
-          onRename: chat.rename,
-          onFile: chat.file,
-          onFileMany: chat.fileMany,
-        }}
-        team={{
-          members: team.members,
-          drafts: team.drafts,
-          knownTools: prefs.settings.knownTools,
-          sessionUp: chatting.held !== null,
-          read: focus.read,
-          canWrite: true,
-          projectOpen: projects.current !== null,
-          hint: hintDue('hire-first', prefs.settings.hintsSeen, team.defs.length === 0),
-          onHintSeen: () =>
-            prefs.update({ hintsSeen: hintSeen('hire-first', prefs.settings.hintsSeen) }),
-          note: team.note,
-          onHire: team.hire,
-          onEdit: team.edit,
-          onRelease: team.release,
-          onPick: pickTeammate,
-          onAddress: addressTeammate,
-          onRestart: () => {
-            focus.clearAll()
-            team.settleNote()
-            chatting.agent.restart()
-          },
-        }}
-        agents={team.toggles}
-        nowMs={chatting.nowMs}
-        width={layout.sidebar.width}
-        onResize={layout.sidebar.resize}
-        onResizeEnd={layout.sidebar.commit}
-        libraryOpen={layout.libraryOpen}
-        libraryUnseen={library.unseen}
-        libraryPending={proposals.proposals.length}
-        onOpenLibrary={layout.openLibrary}
-      />
-    </div>
+        className={cn(
+          'flex flex-none',
+          floating && 'absolute inset-y-0 left-0 z-[5] bg-background shadow-xl',
+        )}
+      >
+        <TeamSidebar
+          projects={{
+            current: projects.current,
+            all: projects.all,
+            // A note still being typed is saved into this project before the next one takes over.
+            onOpen: onOpenProject,
+            onPickFolder: projects.pick,
+            onForget: projects.forget,
+          }}
+          chats={{
+            chats: chat.chats,
+            openId: layout.libraryOpen ? null : chat.openId,
+            live: chatting.working,
+            // Coming back to the open chat (from the library) must not end its session.
+            onOpen: (id) =>
+              chatSwitch(id, chat.openId) === 'return'
+                ? layout.leaveLibrary()
+                : chatting.go(() => chat.open(id)),
+            onStart: () => chatting.go(chat.start),
+            // Only the chat being left puts the screen down; removing one from
+            // under the sidebar leaves what you were reading where it was.
+            onRemove: (id) =>
+              id === chat.openId ? chatting.go(() => chat.remove(id)) : chat.remove(id),
+            onRename: chat.rename,
+            onFile: chat.file,
+            onFileMany: chat.fileMany,
+          }}
+          team={{
+            members: team.members,
+            drafts: team.drafts,
+            knownTools: prefs.settings.knownTools,
+            sessionUp: chatting.held !== null,
+            read: focus.read,
+            canWrite: true,
+            projectOpen: projects.current !== null,
+            hint: hintDue('hire-first', prefs.settings.hintsSeen, team.defs.length === 0),
+            onHintSeen: () =>
+              prefs.update({ hintsSeen: hintSeen('hire-first', prefs.settings.hintsSeen) }),
+            note: team.note,
+            onHire: team.hire,
+            onEdit: team.edit,
+            onRelease: team.release,
+            onPick: pickTeammate,
+            onAddress: addressTeammate,
+            onRestart: () => {
+              focus.clearAll()
+              team.settleNote()
+              chatting.agent.restart()
+            },
+          }}
+          agents={team.toggles}
+          nowMs={chatting.nowMs}
+          width={layout.sidebar.width}
+          onResize={layout.sidebar.resize}
+          onResizeEnd={layout.sidebar.commit}
+          libraryOpen={layout.libraryOpen}
+          libraryUnseen={library.unseen}
+          libraryPending={proposals.proposals.length}
+          onOpenLibrary={layout.openLibrary}
+        />
+      </div>
+    </>
   )
 }

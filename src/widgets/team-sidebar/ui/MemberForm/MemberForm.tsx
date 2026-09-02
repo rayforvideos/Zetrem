@@ -53,6 +53,11 @@ type NoteMeta = {
   tone?: 'warn'
 }
 
+// The form is two columns, 264px of fields beside the instructions. A window
+// narrower than 36rem leaves no room for both, so they stack and the whole
+// body scrolls instead of the dialog clipping a column away.
+const STACK = '@max-[36rem]/member'
+
 export function MemberForm({
   initial,
   knownTools,
@@ -142,10 +147,12 @@ export function MemberForm({
             </span>
           </DialogHeader>
 
-          <div className="flex min-h-0 flex-1">
+          <div
+            className={`@container/member flex min-h-0 flex-1 ${STACK}:flex-col ${STACK}:overflow-y-auto`}
+          >
             <aside
               ref={side}
-              className="zt-scroll zt-fade-y flex w-[264px] flex-none flex-col gap-4 overflow-y-auto border-r border-border px-5 py-5"
+              className={`zt-scroll zt-fade-y flex w-[264px] flex-none flex-col gap-4 overflow-y-auto border-r border-border px-5 py-5 ${STACK}:w-full ${STACK}:overflow-visible ${STACK}:border-r-0 ${STACK}:border-b`}
             >
               <Row label={t`Name`} htmlFor="member-name">
                 <Input
@@ -250,7 +257,7 @@ export function MemberForm({
 
             {/* biome-ignore lint/a11y/noStaticElementInteractions: a drop target is not something you press, and there is no keyboard gesture to hand it */}
             <div
-              className="flex min-h-0 min-w-0 flex-1 flex-col gap-4 px-6 py-5"
+              className={`flex min-h-0 min-w-0 flex-1 flex-col gap-4 px-6 py-5 ${STACK}:min-h-[24rem] ${STACK}:flex-none`}
               onDragOver={(event) => {
                 if (!event.dataTransfer.types.includes('Files')) return
                 event.preventDefault()

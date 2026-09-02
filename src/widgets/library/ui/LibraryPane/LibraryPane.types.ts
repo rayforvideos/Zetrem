@@ -41,6 +41,7 @@ export type LibraryPaneProps = {
   onRemoveFolder(name: string): void
   // What agents have suggested and nobody has answered yet, oldest first.
   proposals: LibraryProposal[]
+  chatTitleOf(session: string): string | null
   onAcceptProposal(id: string): void
   onDismissProposal(id: string): void
   sidebar: ReactNode

@@ -71,6 +71,7 @@ export function LibraryPane(props: LibraryPaneProps) {
       <div className="zt-rise flex w-full min-w-0 flex-1 flex-col px-6 py-6">
         <ProposalList
           proposals={props.proposals}
+          chatTitleOf={props.chatTitleOf}
           onAccept={props.onAcceptProposal}
           onDismiss={props.onDismissProposal}
         />

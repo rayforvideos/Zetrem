@@ -24,6 +24,7 @@ import { useStarAsk } from '../model/chat/useStarAsk/useStarAsk'
 import { useLibraryNotes } from '../model/library/useLibraryNotes'
 import { useLibraryProposals } from '../model/library/useLibraryProposals'
 import { useWorkspace } from '../model/screen/useWorkspace/useWorkspace'
+import { chatOfHost } from '../model/session/host-chats/host-chats'
 
 // The shell: it composes the workspace's domains into the gates, and holds
 // nothing of its own beyond the library notes and the suggestions waiting on
@@ -41,6 +42,14 @@ export function WorkspaceScreen() {
   )
   const proposals = useLibraryProposals(projects.current?.path ?? null)
   useStarAsk(conv.status === 'working', chatting.chat.chats.length, settings, update)
+
+  // A proposal names the host that raised it; the title it shows is the chat
+  // that host was running in, when this screen still remembers it.
+  const chatTitleOf = (session: string): string | null => {
+    const chatId = chatOfHost(session)
+    if (chatId === null) return null
+    return chatting.chat.chats.find((one) => one.id === chatId)?.title ?? null
+  }
 
   // A note still being typed is saved into this project before the next one
   // takes over.
@@ -91,6 +100,7 @@ export function WorkspaceScreen() {
                 <LibraryGate
                   library={library}
                   proposals={proposals}
+                  chatTitleOf={chatTitleOf}
                   nowMs={nowMs}
                   sidebar={sidebar}
                 />
@@ -99,6 +109,7 @@ export function WorkspaceScreen() {
                   work={work}
                   library={library}
                   proposals={proposals}
+                  chatTitleOf={chatTitleOf}
                   sidebar={sidebar}
                 />
               )

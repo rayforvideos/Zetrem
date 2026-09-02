@@ -129,7 +129,7 @@ export function registerSessionProbe(): void {
       const workspace = await workspaceDir(project, app.getPath('userData'))
       let added: string[] = []
       try {
-        added = await librarySessionArgs(workspace)
+        added = await librarySessionArgs(workspace, '')
       } catch (cause: unknown) {
         console.error('[library] could not lay out', workspace, cause)
       }

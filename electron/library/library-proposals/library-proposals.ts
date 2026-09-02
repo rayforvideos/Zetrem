@@ -18,6 +18,8 @@ function proposalOf(row: ProposalRow): LibraryProposal {
     body: row.body,
     tags: tagsOf(row.tags),
     proposedAtMs: row.proposed_at_ms,
+    session: row.session,
+    by: row.by,
   }
 }
 
@@ -47,10 +49,12 @@ export function addProposal(
     body: input.body,
     tags: input.tags ?? [],
     proposedAtMs: nowMs,
+    session: input.session,
+    by: input.by,
   }
   db.prepare(
-    `INSERT INTO proposals (id, folder, title, body, tags, proposed_at_ms)
-     VALUES (?, ?, ?, ?, ?, ?)`,
+    `INSERT INTO proposals (id, folder, title, body, tags, proposed_at_ms, session, by)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
   ).run(
     proposal.id,
     proposal.folder,
@@ -58,6 +62,8 @@ export function addProposal(
     proposal.body,
     JSON.stringify(proposal.tags),
     proposal.proposedAtMs,
+    proposal.session,
+    proposal.by,
   )
   return proposal
 }

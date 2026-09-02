@@ -16,11 +16,13 @@ export function ConversationGate({
   work,
   library,
   proposals,
+  chatTitleOf,
   sidebar,
 }: {
   work: Workspace
   library: LibraryNotes
   proposals: LibraryProposals
+  chatTitleOf(session: string): string | null
   sidebar: ReactNode
 }) {
   const { chatting, prefs, team } = work
@@ -35,6 +37,7 @@ export function ConversationGate({
       statusState={status}
       permission={conv.permission}
       proposals={proposals.proposals}
+      chatTitleOf={chatTitleOf}
       onAcceptProposal={proposals.accept}
       onDismissProposal={proposals.dismiss}
       you={{ name: team.yourName, face: settings.userFace }}

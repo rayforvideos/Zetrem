@@ -1,15 +1,16 @@
 import { useState } from 'react'
 import { t } from '@lingui/core/macro'
-import { leadOf, ProposalChips } from '@/entities/library'
+import { leadOf, ProposalChips, proposerLine, ProposerLine } from '@/entities/library'
 import { Markdown } from '@/shared/markdown/Markdown/Markdown'
 import { Button } from '@/shared/ui/button'
 import type { ProposalRowProps } from './ProposalRow.types'
 
 // One thing an agent would like to add. It opens to its whole body, because a
 // person deciding on a note should be able to read the note.
-export function ProposalRow({ proposal, onAccept, onDismiss }: ProposalRowProps) {
+export function ProposalRow({ proposal, chatTitleOf, onAccept, onDismiss }: ProposalRowProps) {
   const [open, setOpen] = useState(false)
   const lead = leadOf(proposal.body)
+  const proposer = proposerLine(proposal, chatTitleOf)
 
   return (
     <li
@@ -28,6 +29,8 @@ export function ProposalRow({ proposal, onAccept, onDismiss }: ProposalRowProps)
           <span className="w-full truncate text-xs leading-snug text-muted-foreground">{lead}</span>
         )}
       </Button>
+
+      <ProposerLine proposer={proposer} />
 
       {open && (
         <Markdown text={proposal.body} className="text-sm leading-relaxed text-muted-foreground" />

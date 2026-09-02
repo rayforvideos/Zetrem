@@ -17,6 +17,7 @@ import { settled } from './settle/settle'
 import { afterYouStopped } from './asked-to-stop/asked-to-stop'
 import type { Attempt } from './relaunch/relaunch.types'
 import type { ConversationState } from '../chat/conversation/conversation.types'
+import { rememberHostChat } from './host-chats/host-chats'
 import { t } from '@lingui/core/macro'
 
 const CLOCK_MS = 1000
@@ -37,8 +38,14 @@ type Agent = {
 export function useAgent(
   config: Omit<RunConfig, 'persona'>,
   onModelRefused: (model: ModelChoice) => void,
+  // The chat this session's turns are saved into — a proposal's tool call
+  // remembers it against the host id, so a card can later say which chat it
+  // came from. Read at launch, not before: the id the composer had when the
+  // person hit send is the one that matters.
+  chatId: string | null,
 ): Agent {
   const configRef = useRef(config)
+  const chatIdRef = useRef(chatId)
   const conv = useSyncExternalStore(conversation.subscribe, conversation.get, conversation.get)
   const children = useSyncExternalStore(sessionStore.subscribe, sessionStore.get, sessionStore.get)
   const status = useSyncExternalStore(statusStore.subscribe, statusStore.get, statusStore.get)
@@ -61,6 +68,7 @@ export function useAgent(
   useEffect(() => {
     configRef.current = config
     refused.current = onModelRefused
+    chatIdRef.current = chatId
   })
 
   useEffect(() => {
@@ -136,6 +144,7 @@ export function useAgent(
     })
     const id = `agent-${Date.now()}`
     hostId.current = id
+    if (chatIdRef.current !== null) rememberHostChat(id, chatIdRef.current)
     stopping.current = false
     setRunning(true)
     stopping.current = false

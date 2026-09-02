@@ -36,6 +36,7 @@ type ConversationPaneProps = {
   permission: PermissionAsk | null
   // What agents have suggested for the library, oldest first.
   proposals: LibraryProposal[]
+  chatTitleOf(session: string): string | null
   you: { name: string; face: FaceId }
   away: Waiting | null
   chores: Chore[]
@@ -59,6 +60,7 @@ export function ConversationPane({
   statusState,
   permission,
   proposals,
+  chatTitleOf,
   you,
   away,
   chores,
@@ -85,6 +87,7 @@ export function ConversationPane({
     <ProposalCard
       proposal={oldest}
       waiting={proposals.length}
+      chatTitleOf={chatTitleOf}
       onAccept={onAcceptProposal}
       onDismiss={onDismissProposal}
     />

@@ -67,6 +67,7 @@ function working(turns: Turn[]): string {
       }}
       permission={null}
       proposals={[]}
+      chatTitleOf={() => null}
       onAcceptProposal={() => {}}
       onDismissProposal={() => {}}
       chores={[]}
@@ -120,6 +121,7 @@ function pane(
       statusState={STATUS}
       permission={permission}
       proposals={proposals}
+      chatTitleOf={() => null}
       onAcceptProposal={() => {}}
       onDismissProposal={() => {}}
       chores={[]}
@@ -373,6 +375,8 @@ const SUGGESTED: LibraryProposal = {
   body: 'We went with sessions.',
   tags: [],
   proposedAtMs: 0,
+  session: '',
+  by: '',
 }
 
 const ASK: PermissionAsk = {

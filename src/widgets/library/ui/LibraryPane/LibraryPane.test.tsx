@@ -34,6 +34,8 @@ const suggested = {
   body: 'We went with sessions.\n\nThe long reasoning.',
   tags: ['auth'],
   proposedAtMs: NOW - 60_000,
+  session: '',
+  by: '',
 }
 
 function pane(over: Partial<Parameters<typeof LibraryPane>[0]> = {}): string {
@@ -66,6 +68,7 @@ function pane(over: Partial<Parameters<typeof LibraryPane>[0]> = {}): string {
       onRenameFolder={() => {}}
       onRemoveFolder={() => {}}
       proposals={[]}
+      chatTitleOf={() => null}
       onAcceptProposal={() => {}}
       onDismissProposal={() => {}}
       sidebar={null}

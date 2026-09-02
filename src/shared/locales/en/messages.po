@@ -13,11 +13,11 @@ msgstr ""
 "Language-Team: \n"
 "Plural-Forms: \n"
 
-#: src/pages/workspace/model/session/agent-events/agent-events.ts:153
+#: src/pages/workspace/model/session/agent-events/agent-events.ts:169
 msgid " · on overage"
 msgstr " · on overage"
 
-#: src/pages/workspace/model/session/agent-events/agent-events.ts:151
+#: src/pages/workspace/model/session/agent-events/agent-events.ts:167
 msgid " {pct}% used,"
 msgstr " {pct}% used,"
 
@@ -79,7 +79,7 @@ msgid "{0} left"
 msgstr "{0} left"
 
 #. placeholder {0}: limitKindLabel(limit.kind)
-#: src/pages/workspace/model/session/agent-events/agent-events.ts:154
+#: src/pages/workspace/model/session/agent-events/agent-events.ts:170
 msgid "{0} limit{share} resets {when}{overage}"
 msgstr "{0} limit{share} resets {when}{overage}"
 
@@ -135,7 +135,7 @@ msgstr "{0}m ago"
 msgid "{back} teammates"
 msgstr "{back} teammates"
 
-#: src/pages/workspace/model/session/agent-events/agent-events.ts:164
+#: src/pages/workspace/model/session/agent-events/agent-events.ts:180
 msgid "{base}. Earlier turns live on as a summary."
 msgstr "{base}. Earlier turns live on as a summary."
 
@@ -528,7 +528,7 @@ msgstr "Attach a file"
 msgid "Author"
 msgstr "Author"
 
-#: src/pages/workspace/model/session/agent-events/agent-events.ts:171
+#: src/pages/workspace/model/session/agent-events/agent-events.ts:187
 msgid "auto"
 msgstr "auto"
 
@@ -664,8 +664,8 @@ msgid "Claude Code reports {0}"
 msgstr "Claude Code reports {0}"
 
 #: src/entities/claude-cli/lib/exit-line/exit-line.ts:11
-msgid "Claude Code stopped without a word (exit {code}). Your next message starts a new session."
-msgstr "Claude Code stopped without a word (exit {code}). Your next message starts a new session."
+msgid "Claude Code stopped without a word (exit {code}). Your next message picks the conversation back up."
+msgstr "Claude Code stopped without a word (exit {code}). Your next message picks the conversation back up."
 
 #: src/widgets/welcome/lib/slides/slides.ts:8
 msgid "Claude Code, with a screen"
@@ -749,7 +749,7 @@ msgstr "Context"
 msgid "Continue"
 msgstr "Continue"
 
-#: src/pages/workspace/model/session/agent-events/agent-events.ts:162
+#: src/pages/workspace/model/session/agent-events/agent-events.ts:178
 msgid "Conversation compacted here"
 msgstr "Conversation compacted here"
 
@@ -770,12 +770,12 @@ msgstr "Could not bring over Claude Desktop"
 msgid "Could not check for updates."
 msgstr "Could not check for updates."
 
-#: src/pages/workspace/model/chat/useTranscript.ts:286
-#: src/pages/workspace/model/chat/useTranscript.ts:302
+#: src/pages/workspace/model/chat/useTranscript.ts:291
+#: src/pages/workspace/model/chat/useTranscript.ts:307
 msgid "Could not file that chat"
 msgstr "Could not file that chat"
 
-#: src/pages/workspace/model/chat/useTranscript.ts:255
+#: src/pages/workspace/model/chat/useTranscript.ts:260
 msgid "Could not forget that chat"
 msgstr "Could not forget that chat"
 
@@ -783,11 +783,11 @@ msgstr "Could not forget that chat"
 msgid "Could not install Claude Code"
 msgstr "Could not install Claude Code"
 
-#: src/pages/workspace/model/chat/useTranscript.ts:75
+#: src/pages/workspace/model/chat/useTranscript.ts:84
 msgid "Could not list your saved chats"
 msgstr "Could not list your saved chats"
 
-#: src/pages/workspace/model/chat/useTranscript.ts:232
+#: src/pages/workspace/model/chat/useTranscript.ts:241
 msgid "Could not open that chat"
 msgstr "Could not open that chat"
 
@@ -801,7 +801,7 @@ msgstr "Could not open that folder"
 msgid "Could not open the file picker"
 msgstr "Could not open the file picker"
 
-#: src/pages/workspace/model/session/useAgent.ts:88
+#: src/pages/workspace/model/session/useAgent.ts:89
 msgid "Could not pick that conversation back up. Starting a new one."
 msgstr "Could not pick that conversation back up. Starting a new one."
 
@@ -876,7 +876,7 @@ msgstr "Could not remove that project"
 msgid "Could not remove the account."
 msgstr "Could not remove the account."
 
-#: src/pages/workspace/model/chat/useTranscript.ts:279
+#: src/pages/workspace/model/chat/useTranscript.ts:284
 msgid "Could not rename that chat"
 msgstr "Could not rename that chat"
 
@@ -1390,7 +1390,7 @@ msgstr "Low"
 msgid "Manage"
 msgstr "Manage"
 
-#: src/pages/workspace/model/session/agent-events/agent-events.ts:172
+#: src/pages/workspace/model/session/agent-events/agent-events.ts:188
 msgid "manual"
 msgstr "manual"
 
@@ -1442,7 +1442,7 @@ msgstr "Message your team"
 msgid "Model"
 msgstr "Model"
 
-#: src/pages/workspace/ui/gates/ConversationGate.tsx:83
+#: src/pages/workspace/ui/gates/ConversationGate.tsx:82
 msgid "Model changed. The running session keeps its model."
 msgstr "Model changed. The running session keeps its model."
 
@@ -1692,7 +1692,7 @@ msgstr "Permission"
 msgid "Permissions"
 msgstr "Permissions"
 
-#: src/pages/workspace/ui/gates/ConversationGate.tsx:79
+#: src/pages/workspace/ui/gates/ConversationGate.tsx:78
 msgid "Permissions changed. The running session follows the old ones."
 msgstr "Permissions changed. The running session follows the old ones."
 
@@ -1911,6 +1911,14 @@ msgstr "Rename folder"
 msgid "Renamed"
 msgstr "Renamed"
 
+#: src/widgets/conversation/ui/RestartNote/RestartNote.tsx:14
+msgid "Replace the running session so the next message goes on with the change"
+msgstr "Replace the running session so the next message goes on with the change"
+
+#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:123
+msgid "Replace the running session so the next message goes on with them on the team"
+msgstr "Replace the running session so the next message goes on with them on the team"
+
 #: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:39
 #: src/widgets/team-sidebar/lib/row-state/row-state.ts:9
 #: src/widgets/tile-deck/lib/state-word/state-word.ts:9
@@ -2052,9 +2060,9 @@ msgstr "Session"
 msgid "Session details"
 msgstr "Session details"
 
-#: src/pages/workspace/model/session/useAgent.ts:168
-msgid "Session stopped. The next message starts a new one with your team as it is now."
-msgstr "Session stopped. The next message starts a new one with your team as it is now."
+#: src/pages/workspace/model/session/useAgent.ts:173
+msgid "Session restarted. The next message picks the conversation back up with your team as it is now."
+msgstr "Session restarted. The next message picks the conversation back up with your team as it is now."
 
 #: src/widgets/setup/ui/SetupPane/SetupPane.tsx:71
 msgid "Set a few things and your agents get to work!"
@@ -2218,14 +2226,6 @@ msgstr "Stock rules"
 #: src/widgets/conversation/ui/Composer/Composer.tsx:234
 msgid "Stop"
 msgstr "Stop"
-
-#: src/widgets/conversation/ui/RestartNote/RestartNote.tsx:14
-msgid "Stop the running session so the next message starts one that follows the change"
-msgstr "Stop the running session so the next message starts one that follows the change"
-
-#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:123
-msgid "Stop the running session so the next message starts one that knows them"
-msgstr "Stop the running session so the next message starts one that knows them"
 
 #: src/entities/claude-cli/lib/failure/failure.ts:31
 msgid "Stopped"
@@ -2446,9 +2446,9 @@ msgstr "The running session keeps the library. Agents stop seeing it from the ne
 msgid "The saved conversation is deleted. This cannot be undone."
 msgstr "The saved conversation is deleted. This cannot be undone."
 
-#: src/pages/workspace/model/session/useAgent.ts:120
-msgid "The screen was rebuilt, so this session ended. Your next message starts a new one."
-msgstr "The screen was rebuilt, so this session ended. Your next message starts a new one."
+#: src/pages/workspace/model/session/useAgent.ts:122
+msgid "The screen was rebuilt, so this session paused. Your next message picks it back up."
+msgstr "The screen was rebuilt, so this session paused. Your next message picks it back up."
 
 #: src/entities/claude-cli/lib/failure/failure.ts:79
 msgid "The server had a problem"
@@ -2516,7 +2516,7 @@ msgstr "this chat {percent}%"
 msgid "this chat {size}"
 msgstr "this chat {size}"
 
-#: src/pages/workspace/model/chat/useTranscript.ts:169
+#: src/pages/workspace/model/chat/useTranscript.ts:178
 msgid "This chat is not being saved"
 msgstr "This chat is not being saved"
 
@@ -2577,7 +2577,7 @@ msgstr "This teammate changed no files."
 msgid "This teammate has no branch Zetrem can look up."
 msgstr "This teammate has no branch Zetrem can look up."
 
-#: src/pages/workspace/model/session/agent-events/agent-events.ts:179
+#: src/pages/workspace/model/session/agent-events/agent-events.ts:195
 msgid "This turn: {out} out · {seconds}s"
 msgstr "This turn: {out} out · {seconds}s"
 

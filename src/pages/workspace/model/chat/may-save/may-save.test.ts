@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { maySave, mustKeepOnLeave, threadToSave } from './may-save'
+import { maySave, mustKeepOnLeave, threadLearned, threadToSave } from './may-save'
 
 const ready = {
   ready: true,
@@ -75,5 +75,19 @@ describe('threadToSave: which session a chat should be picked back up from', () 
 
   it('falls back to what was resumed when no session has been reported', () => {
     expect(threadToSave({ liveSessionId: null, probed: false, resumeId: 'old' })).toBe('old')
+  })
+})
+
+describe('threadLearned: the session a chat should remember from what the CLI reports', () => {
+  it('learns the live session once a real run has one', () => {
+    expect(threadLearned({ liveSessionId: 'live', probed: false })).toBe('live')
+  })
+
+  it('learns nothing from the probe, whose session is nobody’s conversation', () => {
+    expect(threadLearned({ liveSessionId: 'probe', probed: true })).toBeNull()
+  })
+
+  it('learns nothing while no session has been reported', () => {
+    expect(threadLearned({ liveSessionId: null, probed: false })).toBeNull()
   })
 })

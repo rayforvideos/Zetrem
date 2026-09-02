@@ -1,8 +1,13 @@
 import { beforeEach, describe, expect, it } from 'vitest'
-import { statusStore } from './status-store'
+import { accountStatus } from '../account-status/account-status'
+import { createChatStatus, statusStore } from './status-store'
 
 beforeEach(() => {
   statusStore.reset()
+  // statusStore.reset() only clears the chat side; the account (limits,
+  // usage, update) is now a separate store and needs its own reset for
+  // tests to stay isolated from one another.
+  accountStatus.reset()
 })
 
 const session = {
@@ -160,22 +165,11 @@ describe('statusStore: the last thing known to be true', () => {
     statusStore.apply({ type: 'session', session })
     statusStore.apply({ type: 'context', used: 28364 })
     statusStore.apply({ type: 'metrics', metrics: metrics(0.9) })
-    statusStore.apply({
-      type: 'limit',
-      limit: {
-        kind: 'seven_day',
-        utilization: 0.28,
-        resetsAtMs: 1787173200000,
-        overage: false,
-        status: 'allowed_warning',
-      },
-    })
 
     statusStore.reset()
     expect(statusStore.get().session).toBeNull()
     expect(statusStore.get().context).toEqual({ used: 0, window: null })
     expect(statusStore.get().cost.usd).toBe(0)
-    expect(statusStore.get().limits).toEqual([])
 
     statusStore.apply({ type: 'metrics', metrics: metrics(0.02) })
     expect(statusStore.get().cost.lastTurnUsd).toBeCloseTo(0.02, 6)
@@ -323,5 +317,30 @@ describe('restoreChat: reopening a chat brings its totals back', () => {
     statusStore.restoreChat({ usd: 1 })
     expect(statusStore.get().cost.usd).toBe(1)
     expect(statusStore.get().cost.turns).toBe(0)
+  })
+})
+
+describe('createChatStatus: one per chat', () => {
+  it('keeps the cost of two chats apart', () => {
+    const a = createChatStatus()
+    const b = createChatStatus()
+    a.apply({ type: 'metrics', metrics: metrics(0.5) })
+    expect(a.get().cost.usd).toBeGreaterThan(0)
+    expect(b.get().cost.usd).toBe(0)
+  })
+
+  it("ignores a limit: that is the account's", () => {
+    const a = createChatStatus()
+    a.apply({
+      type: 'limit',
+      limit: {
+        kind: 'five_hour',
+        utilization: 0,
+        resetsAtMs: 0,
+        overage: false,
+        status: 'allowed',
+      },
+    })
+    expect(a.get()).not.toHaveProperty('limits')
   })
 })

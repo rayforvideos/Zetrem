@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it } from 'vitest'
-import { statusStore } from '@/entities/agent-session'
+import { accountStatus, statusStore } from '@/entities/agent-session'
 import { learnKeptUsage, learnSession, learnUsage } from './session-probe'
 
 const INIT = JSON.stringify({
@@ -64,6 +64,7 @@ describe('learnSession: taking the session in without anyone speaking', () => {
 describe('learnUsage: taking the account limits from what the CLI printed', () => {
   beforeEach(() => {
     statusStore.reset()
+    accountStatus.reset()
   })
 
   it('holds every limit the report named', () => {
@@ -104,6 +105,7 @@ describe('learnUsage: taking the account limits from what the CLI printed', () =
 describe('learnKeptUsage: taking the account limits kept from an earlier reading', () => {
   beforeEach(() => {
     statusStore.reset()
+    accountStatus.reset()
   })
 
   it('marks what it holds as kept, not fresh', () => {

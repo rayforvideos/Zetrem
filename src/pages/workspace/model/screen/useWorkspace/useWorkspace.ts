@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState, useSyncExternalStore } from 'react'
-import { statusStore } from '@/entities/agent-session'
+import { useEffect, useMemo, useRef, useState, useSyncExternalStore } from 'react'
+import { accountStatus, statusView } from '@/entities/agent-session'
 import { allowedStock, roster, offStock, stockAgents } from '@/entities/teammate'
 import { withRefused, withoutRefused } from '@/entities/claude-cli'
 import { projectStore } from '@/entities/project'
@@ -13,7 +13,8 @@ import { layerOver } from '@/shared/lib/modal/modal'
 import { screenGate } from '../screen-gate/screen-gate'
 import { sessionLive, stirring } from '../../session/live/live'
 import { useAgent } from '../../session/useAgent'
-import { conversation } from '../../chat/conversation/conversation'
+import { chatSessions } from '../../session/chat-sessions/chat-sessions'
+import { useChatSessions } from '../../session/chat-sessions/useChatSessions'
 import { useAgentDefs } from '../../team/useAgentDefs'
 import { useAccountChanges } from '../../account/useAccountChanges'
 import { useAuth } from '../../account/useAuth'
@@ -43,6 +44,7 @@ import { t } from '@lingui/core/macro'
 // window is wired here once, and what comes back is grouped by domain so a
 // screen part takes only the group it draws.
 export function useWorkspace() {
+  useChatSessions()
   const { settings, loading, failure: settingsFailure, update } = useSettings()
   const project = useSyncExternalStore(projectStore.subscribe, projectStore.get, projectStore.get)
   const { defs, drafts, hire, edit, release, note: teamNote, settleNote } = useAgentDefs()
@@ -57,12 +59,17 @@ export function useWorkspace() {
     effort: settings.effort,
     people: peopleOf(defs),
     lock: lockOf(settings, defs, authored),
-    resume: chat.resumeId,
   }
-  const agent = useAgent(runConfig, (model) =>
+  const agent = useAgent(chat.session, runConfig, (model) =>
     update({ refusedModels: withRefused(settings.refusedModels, model) }),
   )
-  const { conversation: conv, children, status, nowMs } = agent
+  const { conversation: conv, children, nowMs } = agent
+  const account = useSyncExternalStore(
+    accountStatus.subscribe,
+    accountStatus.get,
+    accountStatus.get,
+  )
+  const status = useMemo(() => statusView(agent.status, account), [agent.status, account])
 
   useEffect(() => {
     if (!settings.refusedModels.includes(settings.model)) return
@@ -114,8 +121,7 @@ export function useWorkspace() {
     project?.path ?? null,
     auth.accounts,
     accountAt,
-    // The shim stands in for the chat status until Task 7 hands in the real one.
-    statusStore,
+    chat.session?.stores.status ?? null,
     gate !== 'holding',
     conv.status === 'working',
   )
@@ -149,6 +155,7 @@ export function useWorkspace() {
   }, [settings.wasStockOn, stock, update])
 
   const live = sessionLive(status, conv.status)
+  const working = useSyncExternalStore(chatSessions.subscribe, chatSessions.live, chatSessions.live)
   const atWork = stirring(conv.status, children)
   const sidebarLabel = sidebar.open ? t`Hide team sidebar` : t`Show team sidebar`
   const sessionId = status.session?.id ?? null
@@ -196,12 +203,6 @@ export function useWorkspace() {
     allProjects,
     refreshProjects,
     report: reportProject,
-    dropSession: () => {
-      // The running agent is rooted in the old folder; left alive it would
-      // keep streaming turns into the new project's transcript.
-      agent.reset()
-      focus.clearAll()
-    },
   })
 
   function reload(patch: Partial<typeof settings>, said: string): void {
@@ -210,10 +211,11 @@ export function useWorkspace() {
     setPendingRestart(said)
   }
 
-  function swap(go: () => void): void {
-    const cutOff = agent.conversation.status === 'working'
-    agent.reset()
-    if (cutOff) conversation.system(t`You left before the reply finished, so it stops here.`)
+  // An account change is the one thing that stops every chat: a live CLI
+  // writes into the credentials file all accounts share, so nothing can be
+  // left running under the account that is leaving.
+  function stopAll(go: () => void): void {
+    chatSessions.stopAll(t`Your account changed before the reply finished, so it stops here.`)
     focus.clearAll()
     setLibraryOpen(false)
     go()
@@ -233,7 +235,7 @@ export function useWorkspace() {
 
   return {
     prefs: { settings, update, reload, failure: settingsFailure },
-    account: { auth, signedIn, swap },
+    account: { auth, signedIn, stopAll },
     projects: {
       current: project,
       all: allProjects,
@@ -248,6 +250,7 @@ export function useWorkspace() {
       status,
       held,
       live,
+      working,
       atWork,
       nowMs,
       attach,

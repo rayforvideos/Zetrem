@@ -17,7 +17,7 @@ export function StatusBarPanel({
 }: {
   shown: boolean
   status: StatusState
-  conversationStore: Conversation
+  conversationStore: Conversation | null
   wires: ReturnType<typeof useConnectors>
   nowMs: number
   open: boolean

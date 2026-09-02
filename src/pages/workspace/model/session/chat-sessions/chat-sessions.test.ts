@@ -167,4 +167,18 @@ describe('chatSessions: every chat keeps its own process', () => {
     expect(told).toBeGreaterThan(afterOpen)
     stop()
   })
+
+  it('opening another chat leaves the first one running, with no notice', async () => {
+    const deps = fakeDeps()
+    chatSessions.attach(deps)
+    const a = chatSessions.open('a', 'p')
+    a.configure(config as never, () => {})
+    a.send('길게 답해줘', null, [])
+    await Promise.resolve()
+    chatSessions.open('b', 'p')
+    chatSessions.release('a')
+    expect(deps.stopped).toHaveLength(0)
+    expect(a.running()).toBe(true)
+    expect(a.stores.conversation.get().turns.some((t) => t.role === 'system')).toBe(false)
+  })
 })

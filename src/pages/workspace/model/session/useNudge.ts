@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react'
 import { nudgeFor } from '@/entities/agent-session'
 import type { PermissionAsk } from '@/entities/agent-session'
-import { settledNow } from './settle-nudge/settle-nudge'
+import { SETTLE_GRACE_MS } from './settle-nudge/settle-nudge'
 
 function watching(): boolean {
   return document.visibilityState === 'visible' && document.hasFocus()
@@ -15,21 +15,34 @@ export function useNudge(
 ): void {
   const wasBusy = useRef(false)
   const askedFor = useRef<string | null>(null)
+  // The timer reads these at fire time, not at schedule time, so a change
+  // mid-grace (e.g. the orchestrator asks for permission) is honoured.
+  const wantedRef = useRef(wanted)
+  wantedRef.current = wanted
+  const permissionRef = useRef(permission)
+  permissionRef.current = permission
+  const troubleRef = useRef(trouble)
+  troubleRef.current = trouble
 
   useEffect(() => {
-    const settled = settledNow(wasBusy.current, busy)
+    const justSettled = wasBusy.current && !busy
     wasBusy.current = busy
-    if (!settled) return
-    const nudge = nudgeFor({
-      wanted,
-      watching: watching(),
-      reason: 'done',
-      tool: '',
-      asked: permission !== null,
-      trouble,
-    })
-    if (nudge !== null) window.desk.nudge(nudge.title, nudge.body)
-  }, [busy, wanted, permission, trouble])
+    if (!justSettled) return undefined
+    const timer = window.setTimeout(() => {
+      const nudge = nudgeFor({
+        wanted: wantedRef.current,
+        watching: watching(),
+        reason: 'done',
+        tool: '',
+        asked: permissionRef.current !== null,
+        trouble: troubleRef.current,
+      })
+      if (nudge !== null) window.desk.nudge(nudge.title, nudge.body)
+    }, SETTLE_GRACE_MS)
+    // Busy again before the grace period is up (the orchestrator waking to
+    // relay a teammate's result) cancels the notice for that gap.
+    return () => window.clearTimeout(timer)
+  }, [busy])
 
   useEffect(() => {
     if (permission === null) {

@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react'
 import type { AccountList } from '@/entities/auth'
+import type { ChatStatus } from '@/entities/agent-session'
 import type { RunConfig } from '@/entities/claude-cli'
 import { learnKeptUsage, learnSession } from './session-probe/session-probe'
 import { readUsage, readUsageAfter } from './usage-read/usage-read'
@@ -13,6 +14,7 @@ export function useSessionProbe(
   project: string | null,
   accounts: AccountList | null,
   account: number,
+  status: ChatStatus | null,
   awake = false,
   busy = false,
 ): void {
@@ -42,9 +44,9 @@ export function useSessionProbe(
     // flat list with theirs, so only a probe with none names the CLI's own.
     void window.desk
       .probeSession({ ...held.current, people: [], lock: null })
-      .then(learnSession)
+      .then((line) => learnSession(status, line))
       .catch(() => undefined)
-  }, [wanted, project, account])
+  }, [wanted, project, account, status])
 
   useEffect(() => {
     if (!awake) return undefined

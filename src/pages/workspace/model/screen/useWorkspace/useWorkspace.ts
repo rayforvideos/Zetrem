@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, useSyncExternalStore } from 'react'
+import { statusStore } from '@/entities/agent-session'
 import { allowedStock, roster, offStock, stockAgents } from '@/entities/teammate'
 import { withRefused, withoutRefused } from '@/entities/claude-cli'
 import { projectStore } from '@/entities/project'
@@ -113,6 +114,8 @@ export function useWorkspace() {
     project?.path ?? null,
     auth.accounts,
     accountAt,
+    // The shim stands in for the chat status until Task 7 hands in the real one.
+    statusStore,
     gate !== 'holding',
     conv.status === 'working',
   )

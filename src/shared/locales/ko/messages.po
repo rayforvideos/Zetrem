@@ -25,11 +25,11 @@ msgstr " {pct}% 사용,"
 msgid "· 2 working"
 msgstr "· 2명 작업 중"
 
-#: src/widgets/library/ui/LibraryPane/LibraryPane.tsx:125
+#: src/widgets/library/ui/LibraryPane/LibraryPane.tsx:153
 msgid "“To library” under an answer files it here."
 msgstr "답변 아래 「라이브러리에」를 누르면 여기에 담겨요."
 
-#: src/widgets/library/ui/LibraryPane/LibraryPane.tsx:48
+#: src/widgets/library/ui/LibraryPane/LibraryPane.tsx:53
 msgid "“To library” under an answer files it here. You can write here yourself."
 msgstr "답변 아래 「라이브러리에」를 누르면 여기에 담기고, 직접 쓸 수도 있어요."
 
@@ -384,7 +384,7 @@ msgstr "어떤 도구"
 msgid "Abort merge"
 msgstr "머지 되돌리기"
 
-#: src/widgets/library/ui/LibraryPane/LibraryPane.tsx:33
+#: src/widgets/library/ui/LibraryPane/LibraryPane.tsx:38
 msgid "About the library"
 msgstr "라이브러리란"
 
@@ -467,7 +467,7 @@ msgstr "에이전트"
 msgid "Agents search the library and file what they learn. Click to turn it off."
 msgstr "에이전트가 라이브러리를 검색하고 알게 된 것을 기록해요. 누르면 꺼져요."
 
-#: src/widgets/library/ui/LibraryPane/LibraryPane.tsx:127
+#: src/widgets/library/ui/LibraryPane/LibraryPane.tsx:155
 msgid "Agents suggest what they learn, and nothing lands here until you accept it."
 msgstr "에이전트는 알게 된 것을 제안만 하고, 받아들이기 전에는 여기에 아무것도 들어오지 않습니다."
 
@@ -565,6 +565,10 @@ msgstr "승인 대기"
 #: src/widgets/welcome/ui/WelcomePane/WelcomePane.tsx:128
 msgid "Back"
 msgstr "이전"
+
+#: src/widgets/library/ui/LibraryPane/LibraryPane.tsx:133
+msgid "Back to the list"
+msgstr "목록으로"
 
 #: src/entities/settings/config/choices/choices.ts:28
 msgid "Balanced for most tasks"
@@ -1144,7 +1148,7 @@ msgid "Filed by an agent"
 msgstr "에이전트가 남김"
 
 #. placeholder {0}: note.title
-#: src/pages/workspace/model/library/useLibraryNotes.ts:267
+#: src/pages/workspace/model/library/useLibraryNotes.ts:282
 msgid "Filed to the library · {0}"
 msgstr "라이브러리에 저장됨 · {0}"
 
@@ -1410,7 +1414,8 @@ msgid "Letters, numbers, hyphens. Sign in after adding if it asks."
 msgstr "영문, 숫자, 하이픈. 추가한 뒤 로그인을 요구하면 로그인하세요."
 
 #: src/widgets/conversation/ui/Composer/Composer.tsx:197
-#: src/widgets/library/ui/LibraryPane/LibraryPane.tsx:82
+#: src/widgets/library/ui/LibraryPane/LibraryPane.tsx:92
+#: src/widgets/library/ui/LibraryPane/LibraryPane.tsx:137
 #: src/widgets/team-sidebar/ui/TeamSidebar/TeamSidebar.tsx:91
 msgid "Library"
 msgstr "라이브러리"
@@ -1535,7 +1540,7 @@ msgstr "묻지 않습니다. 무엇이든 실행됩니다"
 msgid "Never mind"
 msgstr "그만두기"
 
-#: src/widgets/library/ui/LibraryPane/LibraryPane.tsx:57
+#: src/widgets/library/ui/LibraryPane/LibraryPane.tsx:62
 msgid "New"
 msgstr "새로 만들기"
 
@@ -1549,7 +1554,7 @@ msgstr "새 브랜치 이름"
 msgid "New chat"
 msgstr "새 대화"
 
-#: src/widgets/library/ui/LibraryPane/LibraryPane.tsx:63
+#: src/widgets/library/ui/LibraryPane/LibraryPane.tsx:68
 msgid "New folder"
 msgstr "새 폴더"
 
@@ -1557,7 +1562,7 @@ msgstr "새 폴더"
 msgid "New folder…"
 msgstr "새 폴더…"
 
-#: src/widgets/library/ui/LibraryPane/LibraryPane.tsx:62
+#: src/widgets/library/ui/LibraryPane/LibraryPane.tsx:67
 msgid "New note"
 msgstr "새 노트"
 
@@ -1593,7 +1598,7 @@ msgstr "아직 커넥터가 없습니다. 아래에서 추가하거나 Claude De
 msgid "No handler registered"
 msgstr "처리할 곳이 없습니다"
 
-#: src/widgets/library/ui/LibraryPane/LibraryPane.tsx:123
+#: src/widgets/library/ui/LibraryPane/LibraryPane.tsx:151
 msgid "No notes yet"
 msgstr "아직 노트가 없어요"
 
@@ -1716,7 +1721,7 @@ msgstr "폴더 열기…"
 msgid "Open the library"
 msgstr "라이브러리 열기"
 
-#: src/widgets/library/ui/LibraryPane/LibraryPane.tsx:129
+#: src/widgets/library/ui/LibraryPane/LibraryPane.tsx:157
 msgid "Or start with one of your own."
 msgstr "직접 첫 노트를 써도 좋아요."
 
@@ -1753,7 +1758,7 @@ msgstr "권한을 바꿨습니다. 실행 중인 세션은 기존 권한을 따�
 msgid "Pick a branch"
 msgstr "브랜치 선택"
 
-#: src/widgets/library/ui/LibraryPane/LibraryPane.tsx:136
+#: src/widgets/library/ui/LibraryPane/LibraryPane.tsx:164
 msgid "Pick a note"
 msgstr "노트를 고르세요"
 
@@ -1860,7 +1865,7 @@ msgstr "보고 읽는 중"
 msgid "Reading the catalog…"
 msgstr "목록을 읽는 중…"
 
-#: src/widgets/library/ui/LibraryPane/LibraryPane.tsx:115
+#: src/widgets/library/ui/LibraryPane/LibraryPane.tsx:143
 msgid "Reading the library…"
 msgstr "라이브러리을 읽는 중…"
 
@@ -2397,7 +2402,7 @@ msgstr "그 모델을 찾지 못했습니다"
 msgid "That name cannot be used"
 msgstr "그 이름은 쓸 수 없습니다"
 
-#: src/pages/workspace/model/library/useLibraryNotes.ts:274
+#: src/pages/workspace/model/library/useLibraryNotes.ts:289
 msgid "That note is in another project now; open it there to remove it."
 msgstr "그 노트는 다른 프로젝트에 있어요. 거기서 열어 지워 주세요."
 
@@ -2417,8 +2422,8 @@ msgstr "주소는 http나 https여야 합니다"
 msgid "The agents Claude Code brings. Each can be switched off."
 msgstr "Claude Code가 기본으로 제공하는 에이전트입니다. 하나씩 끌 수 있습니다."
 
-#: src/pages/workspace/model/library/useLibraryNotes.ts:264
-#: src/pages/workspace/model/library/useLibraryNotes.ts:283
+#: src/pages/workspace/model/library/useLibraryNotes.ts:279
+#: src/pages/workspace/model/library/useLibraryNotes.ts:298
 msgid "The answer could not be filed"
 msgstr "답변을 라이브러리에 저장하지 못했습니다"
 
@@ -2721,7 +2726,7 @@ msgstr "커밋 전 변경사항"
 msgid "under a minute"
 msgstr "1분 이내"
 
-#: src/pages/workspace/model/library/useLibraryNotes.ts:269
+#: src/pages/workspace/model/library/useLibraryNotes.ts:284
 #: src/pages/workspace/model/library/useLibraryProposals.ts:77
 msgid "Undo"
 msgstr "되돌리기"
@@ -2813,7 +2818,7 @@ msgstr "무슨 일을 맡길까요?"
 msgid "What the agents write down about this project shows up here, and is loaded into every new session."
 msgstr "에이전트가 이 프로젝트에 대해 기록한 내용이 여기에 보이고, 새 세션마다 로드됩니다."
 
-#: src/widgets/library/ui/LibraryPane/LibraryPane.tsx:40
+#: src/widgets/library/ui/LibraryPane/LibraryPane.tsx:45
 msgid "What the library is"
 msgstr "라이브러리란"
 
@@ -2840,7 +2845,7 @@ msgstr "무슨 일을 어떤 방식으로 하고, 무엇을 돌려줄지 적으�
 msgid "What they said"
 msgstr "무엇이라 했는지"
 
-#: src/widgets/library/ui/LibraryPane/LibraryPane.tsx:42
+#: src/widgets/library/ui/LibraryPane/LibraryPane.tsx:47
 msgid "What this project has learned, kept as notes so nobody has to work it out twice."
 msgstr "이 프로젝트가 알게 된 것을 노트로 모아 둔 곳이에요. 같은 걸 두 번 알아내지 않도록요."
 
@@ -2853,7 +2858,7 @@ msgstr "설치됨"
 msgid "When to call them"
 msgstr "언제 부를지"
 
-#: src/widgets/library/ui/LibraryPane/LibraryPane.tsx:45
+#: src/widgets/library/ui/LibraryPane/LibraryPane.tsx:50
 msgid "While the library button under the message box is on, agents search here and suggest what they find."
 msgstr "메시지 창 아래 라이브러리 버튼이 켜져 있으면 에이전트가 여기서 찾아보고, 알아낸 것을 제안합니다."
 
@@ -2880,7 +2885,7 @@ msgstr "마무리됨"
 msgid "Write in markdown"
 msgstr "마크다운으로 적으세요"
 
-#: src/widgets/library/ui/LibraryPane/LibraryPane.tsx:132
+#: src/widgets/library/ui/LibraryPane/LibraryPane.tsx:160
 msgid "Write the first note"
 msgstr "첫 노트 쓰기"
 

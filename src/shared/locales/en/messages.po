@@ -25,11 +25,11 @@ msgstr " {pct}% used,"
 msgid "· 2 working"
 msgstr "· 2 working"
 
-#: src/widgets/library/ui/LibraryPane/LibraryPane.tsx:125
+#: src/widgets/library/ui/LibraryPane/LibraryPane.tsx:153
 msgid "“To library” under an answer files it here."
 msgstr "“To library” under an answer files it here."
 
-#: src/widgets/library/ui/LibraryPane/LibraryPane.tsx:48
+#: src/widgets/library/ui/LibraryPane/LibraryPane.tsx:53
 msgid "“To library” under an answer files it here. You can write here yourself."
 msgstr "“To library” under an answer files it here. You can write here yourself."
 
@@ -384,7 +384,7 @@ msgstr "A tool"
 msgid "Abort merge"
 msgstr "Abort merge"
 
-#: src/widgets/library/ui/LibraryPane/LibraryPane.tsx:33
+#: src/widgets/library/ui/LibraryPane/LibraryPane.tsx:38
 msgid "About the library"
 msgstr "About the library"
 
@@ -467,7 +467,7 @@ msgstr "Agents"
 msgid "Agents search the library and file what they learn. Click to turn it off."
 msgstr "Agents search the library and file what they learn. Click to turn it off."
 
-#: src/widgets/library/ui/LibraryPane/LibraryPane.tsx:127
+#: src/widgets/library/ui/LibraryPane/LibraryPane.tsx:155
 msgid "Agents suggest what they learn, and nothing lands here until you accept it."
 msgstr "Agents suggest what they learn, and nothing lands here until you accept it."
 
@@ -565,6 +565,10 @@ msgstr "Awaiting approval"
 #: src/widgets/welcome/ui/WelcomePane/WelcomePane.tsx:128
 msgid "Back"
 msgstr "Back"
+
+#: src/widgets/library/ui/LibraryPane/LibraryPane.tsx:133
+msgid "Back to the list"
+msgstr "Back to the list"
 
 #: src/entities/settings/config/choices/choices.ts:28
 msgid "Balanced for most tasks"
@@ -1144,7 +1148,7 @@ msgid "Filed by an agent"
 msgstr "Filed by an agent"
 
 #. placeholder {0}: note.title
-#: src/pages/workspace/model/library/useLibraryNotes.ts:267
+#: src/pages/workspace/model/library/useLibraryNotes.ts:282
 msgid "Filed to the library · {0}"
 msgstr "Filed to the library · {0}"
 
@@ -1410,7 +1414,8 @@ msgid "Letters, numbers, hyphens. Sign in after adding if it asks."
 msgstr "Letters, numbers, hyphens. Sign in after adding if it asks."
 
 #: src/widgets/conversation/ui/Composer/Composer.tsx:197
-#: src/widgets/library/ui/LibraryPane/LibraryPane.tsx:82
+#: src/widgets/library/ui/LibraryPane/LibraryPane.tsx:92
+#: src/widgets/library/ui/LibraryPane/LibraryPane.tsx:137
 #: src/widgets/team-sidebar/ui/TeamSidebar/TeamSidebar.tsx:91
 msgid "Library"
 msgstr "Library"
@@ -1535,7 +1540,7 @@ msgstr "Never asks. Anything can run"
 msgid "Never mind"
 msgstr "Never mind"
 
-#: src/widgets/library/ui/LibraryPane/LibraryPane.tsx:57
+#: src/widgets/library/ui/LibraryPane/LibraryPane.tsx:62
 msgid "New"
 msgstr "New"
 
@@ -1549,7 +1554,7 @@ msgstr "New branch name"
 msgid "New chat"
 msgstr "New chat"
 
-#: src/widgets/library/ui/LibraryPane/LibraryPane.tsx:63
+#: src/widgets/library/ui/LibraryPane/LibraryPane.tsx:68
 msgid "New folder"
 msgstr "New folder"
 
@@ -1557,7 +1562,7 @@ msgstr "New folder"
 msgid "New folder…"
 msgstr "New folder…"
 
-#: src/widgets/library/ui/LibraryPane/LibraryPane.tsx:62
+#: src/widgets/library/ui/LibraryPane/LibraryPane.tsx:67
 msgid "New note"
 msgstr "New note"
 
@@ -1593,7 +1598,7 @@ msgstr "No connectors yet. Add one below, or bring over what Claude Desktop alre
 msgid "No handler registered"
 msgstr "No handler registered"
 
-#: src/widgets/library/ui/LibraryPane/LibraryPane.tsx:123
+#: src/widgets/library/ui/LibraryPane/LibraryPane.tsx:151
 msgid "No notes yet"
 msgstr "No notes yet"
 
@@ -1716,7 +1721,7 @@ msgstr "Open folder…"
 msgid "Open the library"
 msgstr "Open the library"
 
-#: src/widgets/library/ui/LibraryPane/LibraryPane.tsx:129
+#: src/widgets/library/ui/LibraryPane/LibraryPane.tsx:157
 msgid "Or start with one of your own."
 msgstr "Or start with one of your own."
 
@@ -1753,7 +1758,7 @@ msgstr "Permissions changed. The running session follows the old ones."
 msgid "Pick a branch"
 msgstr "Pick a branch"
 
-#: src/widgets/library/ui/LibraryPane/LibraryPane.tsx:136
+#: src/widgets/library/ui/LibraryPane/LibraryPane.tsx:164
 msgid "Pick a note"
 msgstr "Pick a note"
 
@@ -1860,7 +1865,7 @@ msgstr "Reading reports"
 msgid "Reading the catalog…"
 msgstr "Reading the catalog…"
 
-#: src/widgets/library/ui/LibraryPane/LibraryPane.tsx:115
+#: src/widgets/library/ui/LibraryPane/LibraryPane.tsx:143
 msgid "Reading the library…"
 msgstr "Reading the library…"
 
@@ -2397,7 +2402,7 @@ msgstr "That model was not found"
 msgid "That name cannot be used"
 msgstr "That name cannot be used"
 
-#: src/pages/workspace/model/library/useLibraryNotes.ts:274
+#: src/pages/workspace/model/library/useLibraryNotes.ts:289
 msgid "That note is in another project now; open it there to remove it."
 msgstr "That note is in another project now; open it there to remove it."
 
@@ -2417,8 +2422,8 @@ msgstr "The address has to be http or https"
 msgid "The agents Claude Code brings. Each can be switched off."
 msgstr "The agents Claude Code brings. Each can be switched off."
 
-#: src/pages/workspace/model/library/useLibraryNotes.ts:264
-#: src/pages/workspace/model/library/useLibraryNotes.ts:283
+#: src/pages/workspace/model/library/useLibraryNotes.ts:279
+#: src/pages/workspace/model/library/useLibraryNotes.ts:298
 msgid "The answer could not be filed"
 msgstr "The answer could not be filed"
 
@@ -2721,7 +2726,7 @@ msgstr "Uncommitted changes"
 msgid "under a minute"
 msgstr "under a minute"
 
-#: src/pages/workspace/model/library/useLibraryNotes.ts:269
+#: src/pages/workspace/model/library/useLibraryNotes.ts:284
 #: src/pages/workspace/model/library/useLibraryProposals.ts:77
 msgid "Undo"
 msgstr "Undo"
@@ -2813,7 +2818,7 @@ msgstr "What should they work on?"
 msgid "What the agents write down about this project shows up here, and is loaded into every new session."
 msgstr "What the agents write down about this project shows up here, and is loaded into every new session."
 
-#: src/widgets/library/ui/LibraryPane/LibraryPane.tsx:40
+#: src/widgets/library/ui/LibraryPane/LibraryPane.tsx:45
 msgid "What the library is"
 msgstr "What the library is"
 
@@ -2840,7 +2845,7 @@ msgstr "What they do, how to go about it, and what to hand back."
 msgid "What they said"
 msgstr "What they said"
 
-#: src/widgets/library/ui/LibraryPane/LibraryPane.tsx:42
+#: src/widgets/library/ui/LibraryPane/LibraryPane.tsx:47
 msgid "What this project has learned, kept as notes so nobody has to work it out twice."
 msgstr "What this project has learned, kept as notes so nobody has to work it out twice."
 
@@ -2853,7 +2858,7 @@ msgstr "What you have"
 msgid "When to call them"
 msgstr "When to call them"
 
-#: src/widgets/library/ui/LibraryPane/LibraryPane.tsx:45
+#: src/widgets/library/ui/LibraryPane/LibraryPane.tsx:50
 msgid "While the library button under the message box is on, agents search here and suggest what they find."
 msgstr "While the library button under the message box is on, agents search here and suggest what they find."
 
@@ -2880,7 +2885,7 @@ msgstr "Wrapped up"
 msgid "Write in markdown"
 msgstr "Write in markdown"
 
-#: src/widgets/library/ui/LibraryPane/LibraryPane.tsx:132
+#: src/widgets/library/ui/LibraryPane/LibraryPane.tsx:160
 msgid "Write the first note"
 msgstr "Write the first note"
 

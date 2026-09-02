@@ -1,4 +1,33 @@
+import type { ChildTurnEvent } from '../child/child.types'
+
 const STREAM_LINE_MAX = 120
+
+type ChildOpen = Extract<ChildTurnEvent, { type: 'childOpen' }>
+
+// A subagent is announced the same way wherever it is spawned from. The only
+// thing that differs is who spawned it: the orchestrator's own turn says
+// nothing, a teammate's turn names itself as the parent.
+export function childOpenOf(block: Record<string, unknown>, parentId?: string): ChildOpen {
+  const input = block.input as Record<string, unknown> | undefined
+  return {
+    type: 'childOpen',
+    toolUseId: str(block.id),
+    label: childLabel(block),
+    subagentType: str(input?.subagent_type),
+    prompt: str(input?.prompt),
+    background: input?.run_in_background === true,
+    ...(parentId === undefined ? {} : { parentId }),
+  }
+}
+
+function childLabel(block: Record<string, unknown>): string {
+  const input = block.input as Record<string, unknown> | undefined
+  if (typeof input?.description === 'string' && input.description.length > 0)
+    return input.description
+  if (typeof input?.subagent_type === 'string' && input.subagent_type.length > 0)
+    return input.subagent_type
+  return typeof block.name === 'string' ? block.name : 'subagent'
+}
 
 export function str(value: unknown, fallback = ''): string {
   return typeof value === 'string' ? value : fallback

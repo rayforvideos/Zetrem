@@ -1,7 +1,7 @@
 import type { CSSProperties } from 'react'
 import type { ChangeCount, DiffLine } from '@/entities/tool'
 import { ChangeDiff } from '@/entities/tool'
-import { ICON_W } from '../NowStage/NowStage.styles'
+import { ICON_W } from '../NowStage/NowStage'
 
 // How much of one edit the tile is willing to hold. The report shows the rest.
 const GLIMPSE_LINES = 8

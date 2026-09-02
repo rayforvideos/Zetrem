@@ -25,7 +25,7 @@ msgstr " {pct}% 사용,"
 msgid "· 2 working"
 msgstr "· 2명 작업 중"
 
-#: src/widgets/library/ui/LibraryPane/LibraryPane.tsx:124
+#: src/widgets/library/ui/LibraryPane/LibraryPane.tsx:125
 msgid "“To library” under an answer files it here."
 msgstr "답변 아래 「라이브러리에」를 누르면 여기에 담겨요."
 
@@ -139,7 +139,7 @@ msgstr "팀원 {back}명"
 msgid "{base}. Earlier turns live on as a summary."
 msgstr "{base}. 앞선 대화는 요약으로 남습니다."
 
-#: src/widgets/conversation/ui/ProposalCard/ProposalCard.tsx:59
+#: src/widgets/conversation/ui/ProposalCard/ProposalCard.tsx:65
 msgid "{behind} more waiting"
 msgstr "{behind}건 더 기다리는 중"
 
@@ -188,11 +188,11 @@ msgstr "{n}분 전"
 msgid "{name} can be called this session"
 msgstr "{name}은(는) 이번 세션에서 부를 수 있습니다"
 
-#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:227
+#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:229
 msgid "{name} is off. The running session keeps them until it ends."
 msgstr "{name}을(를) 껐습니다. 실행 중인 세션은 끝날 때까지 그대로 데리고 있습니다."
 
-#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:226
+#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:228
 msgid "{name} is on. The running session cannot call them yet."
 msgstr "{name}을(를) 켰습니다. 실행 중인 세션은 아직 부를 수 없습니다."
 
@@ -387,8 +387,8 @@ msgstr "라이브러리란"
 msgid "About you"
 msgstr "사용자"
 
-#: src/widgets/conversation/ui/ProposalCard/ProposalCard.tsx:47
-#: src/widgets/library/ui/ProposalRow/ProposalRow.tsx:40
+#: src/widgets/conversation/ui/ProposalCard/ProposalCard.tsx:53
+#: src/widgets/library/ui/ProposalRow/ProposalRow.tsx:43
 msgid "Accept"
 msgstr "받아들이기"
 
@@ -462,7 +462,7 @@ msgstr "에이전트"
 msgid "Agents search the library and file what they learn. Click to turn it off."
 msgstr "에이전트가 라이브러리를 검색하고 알게 된 것을 기록해요. 누르면 꺼져요."
 
-#: src/widgets/library/ui/LibraryPane/LibraryPane.tsx:126
+#: src/widgets/library/ui/LibraryPane/LibraryPane.tsx:127
 msgid "Agents suggest what they learn, and nothing lands here until you accept it."
 msgstr "에이전트는 알게 된 것을 제안만 하고, 받아들이기 전에는 여기에 아무것도 들어오지 않습니다."
 
@@ -518,7 +518,7 @@ msgstr "적용"
 msgid "Ask first"
 msgstr "먼저 묻기"
 
-#: src/widgets/conversation/ui/ConversationPane/ConversationPane.tsx:125
+#: src/widgets/conversation/ui/ConversationPane/ConversationPane.tsx:128
 msgid "Ask for the whole job"
 msgstr "일 전체를 맡기세요"
 
@@ -620,7 +620,7 @@ msgstr "장바구니 합계와 반올림"
 msgid "Change"
 msgstr "바꾸기"
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:151
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:162
 msgid "Change account, project, and permissions"
 msgstr "계정과 프로젝트, 권한을 바꿉니다"
 
@@ -784,7 +784,7 @@ msgstr "Claude Desktop에서 가져오지 못했습니다"
 msgid "Could not check for updates."
 msgstr "업데이트를 확인하지 못했습니다."
 
-#: src/pages/workspace/model/library/useLibraryProposals.ts:39
+#: src/pages/workspace/model/library/useLibraryProposals.ts:53
 msgid "Could not file \"{title}\". Check its title and folder in the library."
 msgstr "\"{title}\"을(를) 넣지 못했습니다. 라이브러리에서 제목과 폴더를 확인해 주세요."
 
@@ -819,7 +819,7 @@ msgstr "그 폴더를 열지 못했습니다"
 msgid "Could not open the file picker"
 msgstr "파일 선택 창을 열지 못했습니다"
 
-#: src/pages/workspace/model/session/useAgent.ts:89
+#: src/pages/workspace/model/session/useAgent.ts:97
 msgid "Could not pick that conversation back up. Starting a new one."
 msgstr "그 대화를 이어받지 못했습니다. 새로 시작합니다."
 
@@ -898,7 +898,7 @@ msgstr "계정을 제거하지 못했습니다."
 msgid "Could not rename that chat"
 msgstr "대화 이름을 바꾸지 못했습니다"
 
-#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:78
+#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:80
 msgid "Could not reopen your last project"
 msgstr "마지막 프로젝트를 다시 열지 못했습니다"
 
@@ -989,14 +989,18 @@ msgstr "설명"
 msgid "Diff"
 msgstr "변경 내용"
 
-#: src/widgets/conversation/ui/ProposalCard/ProposalCard.tsx:55
-#: src/widgets/library/ui/ProposalRow/ProposalRow.tsx:48
+#: src/widgets/conversation/ui/ProposalCard/ProposalCard.tsx:61
+#: src/widgets/library/ui/ProposalRow/ProposalRow.tsx:51
 msgid "Dismiss"
 msgstr "무시"
 
 #: src/shared/parts/FirstHint/FirstHint.tsx:29
 msgid "Dismiss this tip"
 msgstr "이 안내 닫기"
+
+#: src/pages/workspace/model/library/useLibraryProposals.ts:75
+msgid "Dismissed \"{title}\""
+msgstr "\"{title}\"을(를) 무시했습니다"
 
 #: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:318
 msgid "Documents they read first. Long ones cost nothing until they open them."
@@ -1125,7 +1129,7 @@ msgstr "피드백"
 msgid "Fetching"
 msgstr "가져오는 중"
 
-#: src/widgets/conversation/ui/ConversationPane/ConversationPane.tsx:241
+#: src/widgets/conversation/ui/ConversationPane/ConversationPane.tsx:244
 msgid "File this answer to the library as its own note"
 msgstr "이 답변을 별도 노트로 라이브러리에 넣기"
 
@@ -1200,6 +1204,10 @@ msgstr "이 메모리를 지울까요?"
 msgid "from {0}"
 msgstr "{0}에게서"
 
+#: src/entities/library/ui/ProposerLine/ProposerLine.tsx:13
+msgid "From {by}"
+msgstr "{by} 제안"
+
 #: src/widgets/status-bar/lib/strip/strip.ts:44
 msgid "from an earlier reading"
 msgstr "이전에 읽어둔 값"
@@ -1263,7 +1271,7 @@ msgstr "어려운 문제용. 훨씬 느립니다"
 msgid "Held up"
 msgstr "멈춰 있음"
 
-#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:150
+#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:152
 msgid "Hide team sidebar"
 msgstr "팀 사이드바 접기"
 
@@ -1282,6 +1290,10 @@ msgstr "브라우저가 열리지 않았다면 <0>이 링크를 여세요</0>."
 #: src/widgets/setup/ui/AddConnector/AddConnector.tsx:39
 msgid "Import from Claude Desktop"
 msgstr "Claude Desktop에서 가져오기"
+
+#: src/entities/library/ui/ProposerLine/ProposerLine.tsx:14
+msgid "In \"{chatTitle}\""
+msgstr "채팅 \"{chatTitle}\"에서"
 
 #: src/widgets/conversation/ui/ConversationPane/Chores.tsx:30
 msgid "In the background"
@@ -1392,7 +1404,7 @@ msgid "Letters, numbers, hyphens. Sign in after adding if it asks."
 msgstr "영문, 숫자, 하이픈. 추가한 뒤 로그인을 요구하면 로그인하세요."
 
 #: src/widgets/conversation/ui/Composer/Composer.tsx:197
-#: src/widgets/library/ui/LibraryPane/LibraryPane.tsx:81
+#: src/widgets/library/ui/LibraryPane/LibraryPane.tsx:82
 #: src/widgets/team-sidebar/ui/TeamSidebar/TeamSidebar.tsx:91
 msgid "Library"
 msgstr "라이브러리"
@@ -1465,7 +1477,7 @@ msgstr "팀에게 말하기"
 msgid "Model"
 msgstr "모델"
 
-#: src/pages/workspace/ui/gates/ConversationGate.tsx:91
+#: src/pages/workspace/ui/gates/ConversationGate.tsx:94
 msgid "Model changed. The running session keeps its model."
 msgstr "모델을 바꿨습니다. 실행 중인 세션은 기존 모델을 유지합니다."
 
@@ -1575,7 +1587,7 @@ msgstr "아직 커넥터가 없습니다. 아래에서 추가하거나 Claude De
 msgid "No handler registered"
 msgstr "처리할 곳이 없습니다"
 
-#: src/widgets/library/ui/LibraryPane/LibraryPane.tsx:122
+#: src/widgets/library/ui/LibraryPane/LibraryPane.tsx:123
 msgid "No notes yet"
 msgstr "아직 노트가 없어요"
 
@@ -1690,7 +1702,7 @@ msgstr "폴더 열기…"
 msgid "Open the library"
 msgstr "라이브러리 열기"
 
-#: src/widgets/library/ui/LibraryPane/LibraryPane.tsx:128
+#: src/widgets/library/ui/LibraryPane/LibraryPane.tsx:129
 msgid "Or start with one of your own."
 msgstr "직접 첫 노트를 써도 좋아요."
 
@@ -1715,7 +1727,7 @@ msgstr "권한"
 msgid "Permissions"
 msgstr "권한"
 
-#: src/pages/workspace/ui/gates/ConversationGate.tsx:87
+#: src/pages/workspace/ui/gates/ConversationGate.tsx:90
 msgid "Permissions changed. The running session follows the old ones."
 msgstr "권한을 바꿨습니다. 실행 중인 세션은 기존 권한을 따릅니다."
 
@@ -1723,7 +1735,7 @@ msgstr "권한을 바꿨습니다. 실행 중인 세션은 기존 권한을 따�
 msgid "Pick a branch"
 msgstr "브랜치 선택"
 
-#: src/widgets/library/ui/LibraryPane/LibraryPane.tsx:135
+#: src/widgets/library/ui/LibraryPane/LibraryPane.tsx:136
 msgid "Pick a note"
 msgstr "노트를 고르세요"
 
@@ -1830,7 +1842,7 @@ msgstr "보고 읽는 중"
 msgid "Reading the catalog…"
 msgstr "목록을 읽는 중…"
 
-#: src/widgets/library/ui/LibraryPane/LibraryPane.tsx:114
+#: src/widgets/library/ui/LibraryPane/LibraryPane.tsx:115
 msgid "Reading the library…"
 msgstr "라이브러리을 읽는 중…"
 
@@ -2025,7 +2037,7 @@ msgstr "저장 중…"
 msgid "Say the word and the whole team wakes up."
 msgstr "말 한마디면 팀 전체가 깨어납니다."
 
-#: src/widgets/conversation/ui/ConversationPane/ConversationPane.tsx:126
+#: src/widgets/conversation/ui/ConversationPane/ConversationPane.tsx:129
 msgid "Say what you want done, not the next step. The orchestrator splits it up and hands out the pieces."
 msgstr "다음 단계 말고 원하는 결과를 말하세요. 오케스트레이터가 알아서 쪼개서 나눠 줍니다."
 
@@ -2083,7 +2095,7 @@ msgstr "세션"
 msgid "Session details"
 msgstr "세션 상세"
 
-#: src/pages/workspace/model/session/useAgent.ts:173
+#: src/pages/workspace/model/session/useAgent.ts:182
 msgid "Session restarted. The next message picks the conversation back up with your team as it is now."
 msgstr "세션을 다시 시작했어요. 다음 메시지가 지금의 팀 구성으로 이 대화를 이어서 진행해요."
 
@@ -2095,7 +2107,7 @@ msgstr "몇 가지만 정하면 바로 일을 시작합니다"
 msgid "Set for everyone on your account. They cannot be removed or turned off here."
 msgstr "계정 전체에 설정된 것입니다. 여기서는 지우거나 끌 수 없습니다."
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:153
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:164
 msgid "Settings"
 msgstr "설정"
 
@@ -2111,7 +2123,7 @@ msgstr "사용량 알 수 없음"
 msgid "Shift+Enter starts a new line. Off, sending takes the modifier key with Enter."
 msgstr "Shift+Enter로 줄을 바꿉니다. 끄면 보조키+Enter로 보냅니다."
 
-#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:150
+#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:152
 msgid "Show team sidebar"
 msgstr "팀 사이드바 펼치기"
 
@@ -2273,7 +2285,7 @@ msgstr "멈췄습니다: {subtype}"
 msgid "Stopped: something went wrong"
 msgstr "멈췄습니다: 무언가 잘못됐습니다"
 
-#: src/widgets/conversation/ui/ProposalCard/ProposalCard.tsx:33
+#: src/widgets/conversation/ui/ProposalCard/ProposalCard.tsx:38
 msgid "Suggested for the library"
 msgstr "라이브러리에 제안됨"
 
@@ -2473,7 +2485,7 @@ msgstr "지금 세션은 라이브러리를 그대로 봐요. 다음 세션부�
 msgid "The saved conversation is deleted. This cannot be undone."
 msgstr "저장된 대화가 삭제됩니다. 되돌릴 수 없습니다."
 
-#: src/pages/workspace/model/session/useAgent.ts:122
+#: src/pages/workspace/model/session/useAgent.ts:130
 msgid "The screen was rebuilt, so this session paused. Your next message picks it back up."
 msgstr "화면을 다시 그리면서 이 세션이 잠시 멈췄어요. 다음 메시지가 이어서 진행해요."
 
@@ -2636,7 +2648,7 @@ msgstr "제목"
 msgid "To {addressee}"
 msgstr "{addressee}에게"
 
-#: src/widgets/conversation/ui/ConversationPane/ConversationPane.tsx:244
+#: src/widgets/conversation/ui/ConversationPane/ConversationPane.tsx:247
 msgid "To library"
 msgstr "라이브러리에"
 
@@ -2670,6 +2682,7 @@ msgid "under a minute"
 msgstr "1분 이내"
 
 #: src/pages/workspace/model/library/useLibraryNotes.ts:269
+#: src/pages/workspace/model/library/useLibraryProposals.ts:77
 msgid "Undo"
 msgstr "되돌리기"
 
@@ -2819,7 +2832,7 @@ msgstr "마무리됨"
 msgid "Write in markdown"
 msgstr "마크다운으로 적으세요"
 
-#: src/widgets/library/ui/LibraryPane/LibraryPane.tsx:131
+#: src/widgets/library/ui/LibraryPane/LibraryPane.tsx:132
 msgid "Write the first note"
 msgstr "첫 노트 쓰기"
 
@@ -2862,7 +2875,7 @@ msgstr "같은 이름의 커넥터가 이미 있습니다"
 msgid "You decide what runs"
 msgstr "무엇을 실행할지 직접 정합니다"
 
-#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:213
+#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:215
 msgid "You left before the reply finished, so it stops here."
 msgstr "답변이 끝나기 전에 자리를 떠나서, 여기서 멈췄어요."
 

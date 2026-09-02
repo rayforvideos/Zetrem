@@ -148,6 +148,7 @@ export function TileDeck({
       {narrow && (
         <CrewSheet
           sessions={standingSessions}
+          helpers={helpersById}
           bar={tight.bar}
           sheet={tight.sheet}
           nowMs={nowMs}
@@ -163,6 +164,7 @@ export function TileDeck({
       {!narrow && atGrid && board && (
         <CrewBoard
           sessions={gridSessions}
+          helpers={helpersById}
           face={face}
           name={name}
           rect={placedBoard.board}

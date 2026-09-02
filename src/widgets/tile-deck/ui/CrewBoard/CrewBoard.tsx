@@ -10,8 +10,10 @@ import { leading } from '../../lib/leading/leading'
 import { crowded } from '../../lib/grid/grid'
 import { focusOf } from '../../lib/focus/focus'
 import { attentionId } from '../../lib/attention/attention'
+import { timelineOf } from '../../lib/timeline/timeline'
 import { CallLog } from '../layers/CallLog/CallLog'
-import { Transcript } from '../layers/Transcript/Transcript'
+import { Helpers } from '../layers/Helpers/Helpers'
+import { Timeline } from '../layers/Timeline/Timeline'
 import { logHeadStyle, logPaneStyle, paneStyle, splitStyle } from '../styles'
 import { CrewCard } from './CrewCard'
 import { t } from '@lingui/core/macro'
@@ -24,6 +26,9 @@ type CrewBoardProps = {
   name: string
   openId: string | null
   heading?: boolean
+  // A teammate's own subagents, keyed by the teammate's session id. Passed
+  // through to whichever pane opens, cards or lanes alike.
+  helpers?: Map<string, AgentSession[]>
   onOpen(id: string | null): void
 }
 
@@ -35,6 +40,7 @@ export function CrewBoard({
   name,
   openId,
   heading = true,
+  helpers = EMPTY_HELPERS,
   onOpen,
 }: CrewBoardProps) {
   const lanes = crowded(sessions.length, rect.h)
@@ -79,6 +85,7 @@ export function CrewBoard({
                 <Lane
                   key={session.id}
                   session={session}
+                  helpers={helpers.get(session.id) ?? EMPTY_LIST}
                   nowMs={nowMs}
                   room={rect.h}
                   open={session.id === shown}
@@ -110,8 +117,8 @@ export function CrewBoard({
               </span>
               <div style={splitStyle}>
                 <div data-crew-said style={paneStyle}>
-                  {open.transcript.length > 0 ? (
-                    <Transcript entries={open.transcript} />
+                  {timelineOf(open).length > 0 ? (
+                    <Timeline session={open} />
                   ) : (
                     <p style={quietStyle}>{t`Nothing written yet.`}</p>
                   )}
@@ -121,6 +128,7 @@ export function CrewBoard({
                   <CallLog calls={open.stream} live={open.status === 'working'} nowMs={nowMs} />
                 </div>
               </div>
+              <Helpers helpers={helpers.get(open.id) ?? EMPTY_LIST} />
             </div>
           )}
         </div>
@@ -128,6 +136,12 @@ export function CrewBoard({
     </div>
   )
 }
+
+// Stable empty fallbacks: Helpers and the lane list are keyed off session id
+// lookups that may miss, and a fresh [] each render would retrigger memoised
+// children for no reason.
+const EMPTY_LIST: AgentSession[] = []
+const EMPTY_HELPERS: Map<string, AgentSession[]> = new Map()
 
 import { Lane } from './Lane'
 import {

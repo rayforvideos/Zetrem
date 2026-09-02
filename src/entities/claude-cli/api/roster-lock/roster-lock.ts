@@ -23,6 +23,11 @@ const GENERIC_HELPER = {
     'You are a general helper. Do the task handed to you, and report back what you did and what you found.',
 }
 
+// A worktree shares node_modules with the main checkout (symlinked, not copied), so a
+// teammate fenced into one must know not to touch dependencies from inside it.
+const WORKTREE_NODE_MODULES_NOTICE =
+  '\n\nYou work in a git worktree that shares node_modules with the main checkout: never install, update or remove dependencies here.'
+
 type Spec = Record<
   string,
   {
@@ -34,20 +39,26 @@ type Spec = Record<
   }
 >
 
+function withNotice(prompt: string): string {
+  return `${prompt}${WORKTREE_NODE_MODULES_NOTICE}`
+}
+
 // Declared on the definition rather than asked for at the call: the runtime then
-// fences every spawn of that teammate, whatever the orchestrator passes.
+// fences every spawn of that teammate, whatever the orchestrator passes. Only a
+// teammate that opted in is fenced, and only when the workspace can hold worktrees at all.
 export function peopleSpec(people: Person[], isolated: boolean): Spec {
   const spec: Spec = {}
   for (const person of people) {
     if (person.name.length === 0 || person.prompt.trim().length === 0) continue
+    const fenced = isolated && person.isolated
     // Naming tools makes the list exhaustive: the teammate loses everything not named, so an
     // empty pick is left off entirely.
     spec[person.name] = {
       description: person.description.length > 0 ? person.description : person.name,
-      prompt: person.prompt,
+      prompt: fenced ? withNotice(person.prompt) : person.prompt,
       ...(person.model === null ? {} : { model: person.model }),
       ...(person.tools.length === 0 ? {} : { tools: person.tools }),
-      ...(isolated ? { isolation: 'worktree' as const } : {}),
+      ...(fenced ? { isolation: 'worktree' as const } : {}),
     }
   }
   return spec
@@ -70,7 +81,11 @@ export function agentsArgs(
   if (isolated) {
     for (const name of GENERIC) {
       if (name in spec) continue
-      spec[name] = { ...GENERIC_HELPER, isolation: 'worktree' as const }
+      spec[name] = {
+        ...GENERIC_HELPER,
+        prompt: withNotice(GENERIC_HELPER.prompt),
+        isolation: 'worktree' as const,
+      }
     }
   }
 

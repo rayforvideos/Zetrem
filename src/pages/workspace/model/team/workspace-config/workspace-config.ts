@@ -14,6 +14,7 @@ export function peopleOf(defs: AgentDef[]): Person[] {
     prompt: briefOf(def.prompt, def.knowledge),
     model: def.model,
     tools: def.tools,
+    isolated: def.worktree,
   }))
 }
 

@@ -8,6 +8,7 @@ export type AgentDef = {
   prompt: string
   source: 'project' | 'user'
   path: string
+  worktree: boolean
 }
 
 export type AgentDefDraft = {
@@ -18,4 +19,5 @@ export type AgentDefDraft = {
   tools: string[]
   knowledge: string[]
   prompt: string
+  worktree: boolean
 }

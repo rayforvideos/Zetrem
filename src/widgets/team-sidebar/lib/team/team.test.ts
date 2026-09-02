@@ -15,6 +15,7 @@ function def(overrides: Partial<AgentDef> = {}): AgentDef {
     character: null,
     source: 'project',
     path: '.claude/agents/code-reviewer.md',
+    worktree: true,
     ...overrides,
   }
 }

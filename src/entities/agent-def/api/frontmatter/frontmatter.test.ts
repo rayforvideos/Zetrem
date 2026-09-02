@@ -27,6 +27,7 @@ describe('parseAgentDef: reading a person off disk', () => {
       prompt: '당신은 코드를 봅니다.\n\n두 번째 문단.',
       source: 'project',
       path: '.claude/agents/code-reviewer.md',
+      worktree: true,
     })
   })
 
@@ -72,6 +73,7 @@ describe('toAgentFile: writing a new person to disk', () => {
       tools: ['Read'],
       knowledge: [],
       prompt: '당신은 찾습니다.',
+      worktree: true,
     }
     const back = parseAgentDef(toAgentFile(draft), 'project', 'p')
     expect(back).toMatchObject(draft)
@@ -86,6 +88,7 @@ describe('toAgentFile: writing a new person to disk', () => {
       tools: [],
       knowledge: [],
       prompt: '본문',
+      worktree: true,
     })
     expect(text).not.toContain('model:')
     expect(text).not.toContain('tools:')
@@ -100,6 +103,7 @@ describe('toAgentFile: writing a new person to disk', () => {
       tools: [],
       knowledge: [],
       prompt: '본문',
+      worktree: true,
     })
     expect(parseAgentDef(text, 'user', 'a')?.description).toBe('코드: 본다')
   })
@@ -114,6 +118,7 @@ describe('toAgentFile: writing a new person to disk', () => {
       tools: [],
       knowledge: [],
       prompt: '본문',
+      worktree: true,
     })
     expect(parseAgentDef(text, 'user', 'a')?.description).toBe(description)
   })
@@ -139,6 +144,7 @@ describe('attached documents: listed in frontmatter, asked for in the body', () 
     tools: [],
     knowledge: ['docs/architecture.md', 'CONTRIBUTING.md'],
     prompt: '당신은 프론트를 맡는다.',
+    worktree: true,
   }
 
   it('keeps the list for us and the instruction for the engine', () => {
@@ -186,6 +192,7 @@ describe('teammates all work in the folder you opened', () => {
       tools: [],
       knowledge: [],
       prompt: 'go',
+      worktree: true,
     })
     expect(file).not.toContain('isolation')
   })
@@ -194,6 +201,77 @@ describe('teammates all work in the folder you opened', () => {
     const read = parseAgentDef('---\nname: x\nisolation: worktree\n---\nbody', 'user', '/x.md')
     expect(read?.name).toBe('x')
     expect(read?.prompt).toBe('body')
+  })
+})
+
+describe('worktree: only a change-making teammate needs the fence, and only some opt out', () => {
+  it('stays isolated when the file says nothing at all', () => {
+    const read = parseAgentDef('---\nname: x\n---\nbody', 'user', '/x.md')
+    expect(read?.worktree).toBe(true)
+  })
+
+  it('reads worktree: false as opting out of the fence', () => {
+    const read = parseAgentDef('---\nname: x\nworktree: false\n---\nbody', 'user', '/x.md')
+    expect(read?.worktree).toBe(false)
+  })
+
+  it('reads no/off the same as false, and anything else as staying in', () => {
+    expect(parseAgentDef('---\nname: x\nworktree: no\n---\nbody', 'user', '/x.md')?.worktree).toBe(
+      false,
+    )
+    expect(parseAgentDef('---\nname: x\nworktree: off\n---\nbody', 'user', '/x.md')?.worktree).toBe(
+      false,
+    )
+    expect(
+      parseAgentDef('---\nname: x\nworktree: true\n---\nbody', 'user', '/x.md')?.worktree,
+    ).toBe(true)
+  })
+
+  it("treats Claude Code's own isolation key as staying in, since that is what it already meant", () => {
+    const read = parseAgentDef('---\nname: x\nisolation: worktree\n---\nbody', 'user', '/x.md')
+    expect(read?.worktree).toBe(true)
+  })
+
+  it('writes the worktree line only when opting out', () => {
+    const on = toAgentFile({
+      name: 'a',
+      description: '',
+      model: null,
+      character: null,
+      tools: [],
+      knowledge: [],
+      prompt: 'go',
+      worktree: true,
+    })
+    expect(on).not.toContain('worktree:')
+
+    const off = toAgentFile({
+      name: 'a',
+      description: '',
+      model: null,
+      character: null,
+      tools: [],
+      knowledge: [],
+      prompt: 'go',
+      worktree: false,
+    })
+    expect(off).toContain('worktree: false')
+    expect(off).not.toContain('isolation')
+  })
+
+  it('round-trips an opt-out through the file', () => {
+    const draft = {
+      name: 'siena',
+      description: 'reviews',
+      model: null,
+      character: null,
+      tools: [],
+      knowledge: [],
+      prompt: 'go',
+      worktree: false,
+    }
+    const back = parseAgentDef(toAgentFile(draft), 'user', '/siena.md')
+    expect(back?.worktree).toBe(false)
   })
 })
 
@@ -221,6 +299,7 @@ describe('briefOf: the brief as the session must receive it', () => {
       tools: [],
       knowledge: ['/a.md'],
       prompt: 'go',
+      worktree: true,
     }
     const read = parseAgentDef(toAgentFile(draft), 'user', '/siena.md')
     expect(read?.prompt).toBe('go')

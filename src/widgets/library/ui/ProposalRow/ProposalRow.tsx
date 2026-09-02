@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { t } from '@lingui/core/macro'
-import { leadOf } from '@/entities/library'
+import { leadOf, ProposalChips } from '@/entities/library'
 import { Markdown } from '@/shared/markdown/Markdown/Markdown'
 import { Button } from '@/shared/ui/button'
 import type { ProposalRowProps } from './ProposalRow.types'
@@ -33,23 +33,7 @@ export function ProposalRow({ proposal, onAccept, onDismiss }: ProposalRowProps)
         <Markdown text={proposal.body} className="text-sm leading-relaxed text-muted-foreground" />
       )}
 
-      {(proposal.tags.length > 0 || proposal.folder.length > 0) && (
-        <p className="flex flex-wrap items-center gap-1.5 text-xs text-muted-foreground">
-          {proposal.folder.length > 0 && (
-            <span
-              data-proposal-folder={proposal.folder}
-              className="rounded-md bg-muted px-1.5 py-px"
-            >
-              {proposal.folder}
-            </span>
-          )}
-          {proposal.tags.map((tag) => (
-            <span key={tag} data-tag={tag} className="rounded-md bg-muted px-1.5 py-px">
-              {tag}
-            </span>
-          ))}
-        </p>
-      )}
+      <ProposalChips folder={proposal.folder} tags={proposal.tags} />
 
       <div className="flex flex-wrap items-center gap-2">
         <Button size="xs" onClick={() => onAccept(proposal.id)} className="rounded-full">

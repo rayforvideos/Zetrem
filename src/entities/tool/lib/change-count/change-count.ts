@@ -1,4 +1,5 @@
-import type { ToolActivity } from '@/entities/conversation'
+import type { ToolActivity } from '@/entities/conversation/@x/tool'
+import type { DiffLine } from '../diff/diff.types'
 import { lineDiff, linesOf } from '../diff/diff'
 import type { ChangeCount } from './change-count.types'
 
@@ -45,4 +46,28 @@ export function changeCount(tool: ToolActivity): ChangeCount | null {
     default:
       return null
   }
+}
+
+function tallyGroup(lines: DiffLine[]): ChangeCount {
+  let added = 0
+  let removed = 0
+  for (const line of lines) {
+    if (line.kind === 'add') added += 1
+    else if (line.kind === 'remove') removed += 1
+  }
+  return { added, removed }
+}
+
+// Same shape as changeCount, but reads it off diff groups already cut out
+// by changeLines, rather than re-reading the tool's raw input. This is what
+// lets it also count a NotebookEdit, which changeCount does not.
+export function changeBadge(groups: DiffLine[][]): ChangeCount | null {
+  let added = 0
+  let removed = 0
+  for (const group of groups) {
+    const one = tallyGroup(group)
+    added += one.added
+    removed += one.removed
+  }
+  return added === 0 && removed === 0 ? null : { added, removed }
 }

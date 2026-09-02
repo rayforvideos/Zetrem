@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import type { ToolActivity } from '@/entities/conversation'
+import type { ToolActivity } from '@/entities/conversation/@x/tool'
 import { changeCount } from './change-count'
 
 function tool(line: string, input: unknown): ToolActivity {

@@ -48,15 +48,19 @@ describe('what is meant to be read can be selected, and nothing else', () => {
       }
     }
     await walk(join('src', 'widgets'))
+    // ChangeDiff moved from widgets/conversation to entities/tool in #35/#48
+    // so both a tile and the report panel can draw a teammate's diffs, but
+    // it still marks the same text as selectable, so it is still counted.
+    await walk(join('src', 'entities'))
     expect(marked.sort()).toEqual([
       'AccountField.tsx',
       'AgentReport.tsx',
       'Approval.tsx',
+      'ChangeDiff.tsx',
       'ConversationPane.tsx',
       'GitDesk.tsx',
       'NoteReader.tsx',
       'StatusDrawer.tsx',
-      'ToolDetail.tsx',
     ])
   })
 })

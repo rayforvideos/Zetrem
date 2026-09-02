@@ -13,11 +13,11 @@ msgstr ""
 "Language-Team: \n"
 "Plural-Forms: \n"
 
-#: src/pages/workspace/model/session/agent-events/agent-events.ts:169
+#: src/pages/workspace/model/session/agent-events/agent-events.ts:172
 msgid " · on overage"
 msgstr " · 초과분 사용 중"
 
-#: src/pages/workspace/model/session/agent-events/agent-events.ts:167
+#: src/pages/workspace/model/session/agent-events/agent-events.ts:170
 msgid " {pct}% used,"
 msgstr " {pct}% 사용,"
 
@@ -79,7 +79,7 @@ msgid "{0} left"
 msgstr "{0} 남음"
 
 #. placeholder {0}: limitKindLabel(limit.kind)
-#: src/pages/workspace/model/session/agent-events/agent-events.ts:170
+#: src/pages/workspace/model/session/agent-events/agent-events.ts:173
 msgid "{0} limit{share} resets {when}{overage}"
 msgstr "{0} 한도{share} {when} 초기화{overage}"
 
@@ -135,7 +135,7 @@ msgstr "{0}분 전"
 msgid "{back} teammates"
 msgstr "팀원 {back}명"
 
-#: src/pages/workspace/model/session/agent-events/agent-events.ts:180
+#: src/pages/workspace/model/session/agent-events/agent-events.ts:183
 msgid "{base}. Earlier turns live on as a summary."
 msgstr "{base}. 앞선 대화는 요약으로 남습니다."
 
@@ -491,7 +491,7 @@ msgid "any moment"
 msgstr "곧"
 
 #. placeholder {0}: turn.metrics.apiErrorStatus
-#: src/pages/workspace/model/session/agent-events/agent-events.ts:116
+#: src/pages/workspace/model/session/agent-events/agent-events.ts:119
 msgid "API error {0}"
 msgstr "API 오류 {0}"
 
@@ -528,7 +528,7 @@ msgstr "파일 첨부"
 msgid "Author"
 msgstr "작성자"
 
-#: src/pages/workspace/model/session/agent-events/agent-events.ts:187
+#: src/pages/workspace/model/session/agent-events/agent-events.ts:190
 msgid "auto"
 msgstr "자동"
 
@@ -749,7 +749,7 @@ msgstr "컨텍스트"
 msgid "Continue"
 msgstr "계속"
 
-#: src/pages/workspace/model/session/agent-events/agent-events.ts:178
+#: src/pages/workspace/model/session/agent-events/agent-events.ts:181
 msgid "Conversation compacted here"
 msgstr "여기서 대화가 압축됐습니다"
 
@@ -801,7 +801,7 @@ msgstr "그 폴더를 열지 못했습니다"
 msgid "Could not open the file picker"
 msgstr "파일 선택 창을 열지 못했습니다"
 
-#: src/pages/workspace/model/session/useAgent.ts:89
+#: src/pages/workspace/model/session/useAgent.ts:94
 msgid "Could not pick that conversation back up. Starting a new one."
 msgstr "그 대화를 이어받지 못했습니다. 새로 시작합니다."
 
@@ -1390,7 +1390,7 @@ msgstr "낮음"
 msgid "Manage"
 msgstr "관리"
 
-#: src/pages/workspace/model/session/agent-events/agent-events.ts:188
+#: src/pages/workspace/model/session/agent-events/agent-events.ts:191
 msgid "manual"
 msgstr "수동"
 
@@ -1708,7 +1708,7 @@ msgstr "노트를 고르세요"
 msgid "Pick a project first"
 msgstr "먼저 프로젝트를 고르세요"
 
-#: src/pages/workspace/model/session/agent-events/crew/crew.ts:196
+#: src/pages/workspace/model/session/agent-events/crew/crew.ts:201
 msgid "Picked up where they left off"
 msgstr "하던 일을 이어받았습니다"
 
@@ -2060,7 +2060,7 @@ msgstr "세션"
 msgid "Session details"
 msgstr "세션 상세"
 
-#: src/pages/workspace/model/session/useAgent.ts:173
+#: src/pages/workspace/model/session/useAgent.ts:160
 msgid "Session restarted. The next message picks the conversation back up with your team as it is now."
 msgstr "세션을 다시 시작했어요. 다음 메시지가 지금의 팀 구성으로 이 대화를 이어서 진행해요."
 
@@ -2405,7 +2405,7 @@ msgstr "모델에 부하가 걸렸습니다"
 msgid "The note is deleted from the library. This cannot be undone."
 msgstr "라이브러리에서 노트가 지워집니다. 되돌릴 수 없습니다."
 
-#: src/pages/workspace/model/session/agent-events/crew/crew.ts:166
+#: src/pages/workspace/model/session/agent-events/crew/crew.ts:169
 msgid "the orchestrator"
 msgstr "오케스트레이터"
 
@@ -2446,7 +2446,7 @@ msgstr "지금 세션은 라이브러리를 그대로 봐요. 다음 세션부�
 msgid "The saved conversation is deleted. This cannot be undone."
 msgstr "저장된 대화가 삭제됩니다. 되돌릴 수 없습니다."
 
-#: src/pages/workspace/model/session/useAgent.ts:122
+#: src/pages/workspace/model/session/useAgent.ts:115
 msgid "The screen was rebuilt, so this session paused. Your next message picks it back up."
 msgstr "화면을 다시 그리면서 이 세션이 잠시 멈췄어요. 다음 메시지가 이어서 진행해요."
 
@@ -2577,7 +2577,7 @@ msgstr "이 팀원은 파일을 하나도 바꾸지 않았습니다."
 msgid "This teammate has no branch Zetrem can look up."
 msgstr "Zetrem이 찾아볼 수 있는 브랜치가 이 팀원에게 없습니다."
 
-#: src/pages/workspace/model/session/agent-events/agent-events.ts:195
+#: src/pages/workspace/model/session/agent-events/agent-events.ts:198
 msgid "This turn: {out} out · {seconds}s"
 msgstr "이번 턴: {out} 출력 · {seconds}초"
 

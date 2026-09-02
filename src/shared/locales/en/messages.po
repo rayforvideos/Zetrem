@@ -13,11 +13,11 @@ msgstr ""
 "Language-Team: \n"
 "Plural-Forms: \n"
 
-#: src/pages/workspace/model/session/agent-events/agent-events.ts:169
+#: src/pages/workspace/model/session/agent-events/agent-events.ts:172
 msgid " · on overage"
 msgstr " · on overage"
 
-#: src/pages/workspace/model/session/agent-events/agent-events.ts:167
+#: src/pages/workspace/model/session/agent-events/agent-events.ts:170
 msgid " {pct}% used,"
 msgstr " {pct}% used,"
 
@@ -79,7 +79,7 @@ msgid "{0} left"
 msgstr "{0} left"
 
 #. placeholder {0}: limitKindLabel(limit.kind)
-#: src/pages/workspace/model/session/agent-events/agent-events.ts:170
+#: src/pages/workspace/model/session/agent-events/agent-events.ts:173
 msgid "{0} limit{share} resets {when}{overage}"
 msgstr "{0} limit{share} resets {when}{overage}"
 
@@ -135,7 +135,7 @@ msgstr "{0}m ago"
 msgid "{back} teammates"
 msgstr "{back} teammates"
 
-#: src/pages/workspace/model/session/agent-events/agent-events.ts:180
+#: src/pages/workspace/model/session/agent-events/agent-events.ts:183
 msgid "{base}. Earlier turns live on as a summary."
 msgstr "{base}. Earlier turns live on as a summary."
 
@@ -491,7 +491,7 @@ msgid "any moment"
 msgstr "any moment"
 
 #. placeholder {0}: turn.metrics.apiErrorStatus
-#: src/pages/workspace/model/session/agent-events/agent-events.ts:116
+#: src/pages/workspace/model/session/agent-events/agent-events.ts:119
 msgid "API error {0}"
 msgstr "API error {0}"
 
@@ -528,7 +528,7 @@ msgstr "Attach a file"
 msgid "Author"
 msgstr "Author"
 
-#: src/pages/workspace/model/session/agent-events/agent-events.ts:187
+#: src/pages/workspace/model/session/agent-events/agent-events.ts:190
 msgid "auto"
 msgstr "auto"
 
@@ -749,7 +749,7 @@ msgstr "Context"
 msgid "Continue"
 msgstr "Continue"
 
-#: src/pages/workspace/model/session/agent-events/agent-events.ts:178
+#: src/pages/workspace/model/session/agent-events/agent-events.ts:181
 msgid "Conversation compacted here"
 msgstr "Conversation compacted here"
 
@@ -801,7 +801,7 @@ msgstr "Could not open that folder"
 msgid "Could not open the file picker"
 msgstr "Could not open the file picker"
 
-#: src/pages/workspace/model/session/useAgent.ts:89
+#: src/pages/workspace/model/session/useAgent.ts:94
 msgid "Could not pick that conversation back up. Starting a new one."
 msgstr "Could not pick that conversation back up. Starting a new one."
 
@@ -1390,7 +1390,7 @@ msgstr "Low"
 msgid "Manage"
 msgstr "Manage"
 
-#: src/pages/workspace/model/session/agent-events/agent-events.ts:188
+#: src/pages/workspace/model/session/agent-events/agent-events.ts:191
 msgid "manual"
 msgstr "manual"
 
@@ -1708,7 +1708,7 @@ msgstr "Pick a note"
 msgid "Pick a project first"
 msgstr "Pick a project first"
 
-#: src/pages/workspace/model/session/agent-events/crew/crew.ts:196
+#: src/pages/workspace/model/session/agent-events/crew/crew.ts:201
 msgid "Picked up where they left off"
 msgstr "Picked up where they left off"
 
@@ -2060,7 +2060,7 @@ msgstr "Session"
 msgid "Session details"
 msgstr "Session details"
 
-#: src/pages/workspace/model/session/useAgent.ts:173
+#: src/pages/workspace/model/session/useAgent.ts:160
 msgid "Session restarted. The next message picks the conversation back up with your team as it is now."
 msgstr "Session restarted. The next message picks the conversation back up with your team as it is now."
 
@@ -2405,7 +2405,7 @@ msgstr "The model is overloaded"
 msgid "The note is deleted from the library. This cannot be undone."
 msgstr "The note is deleted from the library. This cannot be undone."
 
-#: src/pages/workspace/model/session/agent-events/crew/crew.ts:166
+#: src/pages/workspace/model/session/agent-events/crew/crew.ts:169
 msgid "the orchestrator"
 msgstr "the orchestrator"
 
@@ -2446,7 +2446,7 @@ msgstr "The running session keeps the library. Agents stop seeing it from the ne
 msgid "The saved conversation is deleted. This cannot be undone."
 msgstr "The saved conversation is deleted. This cannot be undone."
 
-#: src/pages/workspace/model/session/useAgent.ts:122
+#: src/pages/workspace/model/session/useAgent.ts:115
 msgid "The screen was rebuilt, so this session paused. Your next message picks it back up."
 msgstr "The screen was rebuilt, so this session paused. Your next message picks it back up."
 
@@ -2577,7 +2577,7 @@ msgstr "This teammate changed no files."
 msgid "This teammate has no branch Zetrem can look up."
 msgstr "This teammate has no branch Zetrem can look up."
 
-#: src/pages/workspace/model/session/agent-events/agent-events.ts:195
+#: src/pages/workspace/model/session/agent-events/agent-events.ts:198
 msgid "This turn: {out} out · {seconds}s"
 msgstr "This turn: {out} out · {seconds}s"
 

@@ -770,12 +770,12 @@ msgstr "Claude Desktop에서 가져오지 못했습니다"
 msgid "Could not check for updates."
 msgstr "업데이트를 확인하지 못했습니다."
 
-#: src/pages/workspace/model/chat/useTranscript.ts:177
-#: src/pages/workspace/model/chat/useTranscript.ts:196
+#: src/pages/workspace/model/chat/useTranscript.ts:186
+#: src/pages/workspace/model/chat/useTranscript.ts:205
 msgid "Could not file that chat"
 msgstr "대화를 폴더에 넣지 못했습니다"
 
-#: src/pages/workspace/model/chat/useTranscript.ts:144
+#: src/pages/workspace/model/chat/useTranscript.ts:153
 msgid "Could not forget that chat"
 msgstr "그 대화를 지우지 못했습니다"
 
@@ -783,11 +783,11 @@ msgstr "그 대화를 지우지 못했습니다"
 msgid "Could not install Claude Code"
 msgstr "Claude Code를 설치하지 못했습니다"
 
-#: src/pages/workspace/model/chat/useTranscript.ts:46
+#: src/pages/workspace/model/chat/useTranscript.ts:47
 msgid "Could not list your saved chats"
 msgstr "저장된 대화 목록을 읽지 못했습니다"
 
-#: src/pages/workspace/model/chat/useTranscript.ts:116
+#: src/pages/workspace/model/chat/useTranscript.ts:125
 msgid "Could not open that chat"
 msgstr "그 대화를 열지 못했습니다"
 
@@ -876,7 +876,7 @@ msgstr "프로젝트를 지우지 못했습니다"
 msgid "Could not remove the account."
 msgstr "계정을 제거하지 못했습니다."
 
-#: src/pages/workspace/model/chat/useTranscript.ts:169
+#: src/pages/workspace/model/chat/useTranscript.ts:178
 msgid "Could not rename that chat"
 msgstr "대화 이름을 바꾸지 못했습니다"
 

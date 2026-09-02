@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { t } from '@lingui/core/macro'
 import { ChevronLeft, CircleHelp, Library, Plus } from 'lucide-react'
+import { cn } from '@/shared/lib/cn'
 import { Button } from '@/shared/ui/button'
 import {
   DropdownMenu,
@@ -18,8 +19,8 @@ const ICON = 'rounded-md text-muted-foreground hover:text-foreground'
 
 // Teammates on screen leave the library as little as 340px. Under 40rem the
 // list and the note take turns in the pane instead of sharing it: the list
-// until a note is opened, the note with a way back once one is.
-const NARROW = '@max-[40rem]/library'
+// until a note is opened, the note with a way back once one is. The variants
+// are written out in full: the stylesheet is built from the strings it finds.
 
 export function LibraryPane(props: LibraryPaneProps) {
   const { notes, open, loading, onCreate, sidebar } = props
@@ -83,9 +84,10 @@ export function LibraryPane(props: LibraryPaneProps) {
         <div className="flex min-h-0 flex-1 gap-8">
           <div
             data-library-list
-            className={`flex w-80 min-w-0 flex-none flex-col ${NARROW}:w-full ${
-              open === null ? '' : `${NARROW}:hidden`
-            }`}
+            className={cn(
+              'flex w-80 min-w-0 flex-none flex-col @max-[40rem]/library:w-full',
+              open !== null && '@max-[40rem]/library:hidden',
+            )}
           >
             <div className="flex h-7 flex-none items-center justify-between pb-4">
               <h2 className="flex items-baseline gap-1.5 truncate text-xs tracking-[0.08em] text-muted-foreground">
@@ -122,10 +124,13 @@ export function LibraryPane(props: LibraryPaneProps) {
           </div>
           <div
             data-library-note
-            className={`flex min-w-0 flex-1 flex-col ${open === null ? `${NARROW}:hidden` : ''}`}
+            className={cn(
+              'flex min-w-0 flex-1 flex-col',
+              open === null && '@max-[40rem]/library:hidden',
+            )}
           >
             {open !== null && (
-              <div className={`hidden h-7 flex-none items-center pb-4 ${NARROW}:flex`}>
+              <div className="hidden h-7 flex-none items-center pb-4 @max-[40rem]/library:flex">
                 <Button
                   variant="quiet"
                   size="bare"

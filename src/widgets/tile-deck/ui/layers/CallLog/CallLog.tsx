@@ -1,4 +1,4 @@
-import { Fragment, useCallback, useEffect, useRef } from 'react'
+import { useCallback, useEffect, useRef } from 'react'
 import type { CSSProperties } from 'react'
 import type { Call } from '@/entities/agent-session'
 import type { ChangeCount } from '@/entities/tool'
@@ -6,7 +6,7 @@ import { ToolIcon, targetOf, verbOf } from '@/entities/tool'
 import { atEnd } from '@/shared/lib/scroll-state/scroll-state'
 import { shapeOfCall } from '../../../lib/now/now'
 import { fillOf } from '../../../lib/fill/fill'
-import { ChangeGlimpse, ChangeMark } from '../ChangeGlimpse/ChangeGlimpse'
+import { ChangeMark } from '../ChangeGlimpse/ChangeGlimpse'
 import { ICON_W, NowStage } from '../NowStage/NowStage'
 import { t } from '@lingui/core/macro'
 
@@ -16,15 +16,6 @@ export function CallLog({ calls, live, nowMs }: CallLogProps) {
   const scrollRef = useRef<HTMLDivElement>(null)
   const following = useRef(true)
   const lastIndex = calls.length - 1
-  // The call whose change is open: the last one that actually changed
-  // something. A read or a shell command after an edit is not a new answer to
-  // "what is this teammate writing", so it must not take the diff away.
-  const openCall = calls.findLast((call) => (call.change ?? []).length > 0) ?? null
-  const openGroups = openCall?.change ?? []
-  const openCount = openCall?.count ?? null
-  // The open diff makes the log taller, so the follow has to run again when it
-  // grows, not only when another call arrives.
-  const openHeight = openGroups.reduce((lines, group) => lines + group.length, 0)
 
   const watch = useCallback(() => {
     const el = scrollRef.current
@@ -44,7 +35,7 @@ export function CallLog({ calls, live, nowMs }: CallLogProps) {
       watch()
     })
     return () => cancelAnimationFrame(frame)
-  }, [calls.length, openHeight, watch])
+  }, [calls.length, watch])
 
   if (calls.length === 0) return null
 
@@ -58,21 +49,10 @@ export function CallLog({ calls, live, nowMs }: CallLogProps) {
     >
       {calls.map((call, index) => {
         const now = index === lastIndex
-        const open = openCall !== null && openCall.id === call.id
         if (now && live) {
-          return (
-            <Fragment key={call.id}>
-              <NowStage call={call} live nowMs={nowMs} />
-              {open && <ChangeGlimpse groups={openGroups} count={openCount ?? undefined} />}
-            </Fragment>
-          )
+          return <NowStage key={call.id} call={call} live nowMs={nowMs} />
         }
-        return (
-          <Fragment key={call.id}>
-            <Row call={call} lit={now} count={call.count ?? null} />
-            {open && <ChangeGlimpse groups={openGroups} />}
-          </Fragment>
-        )
+        return <Row key={call.id} call={call} lit={now} count={call.count ?? null} />
       })}
     </div>
   )

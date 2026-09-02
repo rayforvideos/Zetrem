@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it } from 'vitest'
-import { conversation } from './conversation'
+import { conversation, createConversation } from './conversation'
 
 beforeEach(() => {
   conversation.reset()
@@ -187,5 +187,26 @@ describe('conversation: what our screen draws', () => {
     stop()
     conversation.say('user', '또')
     expect(count).toBe(1)
+  })
+})
+
+describe('createConversation: each chat has its own', () => {
+  it('keeps two conversations apart', () => {
+    const a = createConversation()
+    const b = createConversation()
+    a.say('user', 'A만')
+    expect(a.get().turns).toHaveLength(1)
+    expect(b.get().turns).toHaveLength(0)
+  })
+
+  it('tells only its own listeners', () => {
+    const a = createConversation()
+    const b = createConversation()
+    let heard = 0
+    b.subscribe(() => {
+      heard += 1
+    })
+    a.system('a에서 온 것')
+    expect(heard).toBe(0)
   })
 })

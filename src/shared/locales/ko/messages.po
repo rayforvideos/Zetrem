@@ -1175,7 +1175,6 @@ msgstr "이 메모리를 지울까요?"
 
 #. placeholder {0}: entry.from
 #: src/widgets/tile-deck/ui/layers/Timeline/Timeline.tsx:64
-#: src/widgets/tile-deck/ui/layers/Transcript/Transcript.tsx:46
 msgid "from {0}"
 msgstr "{0}에게서"
 
@@ -1624,7 +1623,7 @@ msgstr "넣어둔 스태시가 없습니다."
 msgid "Nothing to merge: already up to date."
 msgstr "머지할 것이 없습니다: 이미 최신입니다."
 
-#: src/widgets/tile-deck/ui/CrewBoard/CrewBoard.tsx:116
+#: src/widgets/tile-deck/ui/CrewBoard/CrewBoard.tsx:123
 msgid "Nothing written yet."
 msgstr "아직 쓴 것이 없습니다."
 
@@ -2746,7 +2745,7 @@ msgstr "무엇을 바꿨는지"
 
 #: src/widgets/agent-report/ui/CallStream/CallStream.tsx:11
 #: src/widgets/tile-deck/ui/AgentTile/AgentTile.tsx:89
-#: src/widgets/tile-deck/ui/CrewBoard/CrewBoard.tsx:120
+#: src/widgets/tile-deck/ui/CrewBoard/CrewBoard.tsx:127
 #: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:142
 msgid "What they did"
 msgstr "무엇을 했는지"
@@ -2826,7 +2825,7 @@ msgid "Yesterday"
 msgstr "어제"
 
 #: src/widgets/setup/ui/YouField/YouField.tsx:22
-#: src/widgets/tile-deck/ui/CrewBoard/CrewBoard.tsx:62
+#: src/widgets/tile-deck/ui/CrewBoard/CrewBoard.tsx:68
 msgid "You"
 msgstr "나"
 

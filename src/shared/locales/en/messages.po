@@ -1175,7 +1175,6 @@ msgstr "Forget this memory?"
 
 #. placeholder {0}: entry.from
 #: src/widgets/tile-deck/ui/layers/Timeline/Timeline.tsx:64
-#: src/widgets/tile-deck/ui/layers/Transcript/Transcript.tsx:46
 msgid "from {0}"
 msgstr "from {0}"
 
@@ -1624,7 +1623,7 @@ msgstr "Nothing stashed."
 msgid "Nothing to merge: already up to date."
 msgstr "Nothing to merge: already up to date."
 
-#: src/widgets/tile-deck/ui/CrewBoard/CrewBoard.tsx:116
+#: src/widgets/tile-deck/ui/CrewBoard/CrewBoard.tsx:123
 msgid "Nothing written yet."
 msgstr "Nothing written yet."
 
@@ -2746,7 +2745,7 @@ msgstr "What they changed"
 
 #: src/widgets/agent-report/ui/CallStream/CallStream.tsx:11
 #: src/widgets/tile-deck/ui/AgentTile/AgentTile.tsx:89
-#: src/widgets/tile-deck/ui/CrewBoard/CrewBoard.tsx:120
+#: src/widgets/tile-deck/ui/CrewBoard/CrewBoard.tsx:127
 #: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:142
 msgid "What they did"
 msgstr "What they did"
@@ -2826,7 +2825,7 @@ msgid "Yesterday"
 msgstr "Yesterday"
 
 #: src/widgets/setup/ui/YouField/YouField.tsx:22
-#: src/widgets/tile-deck/ui/CrewBoard/CrewBoard.tsx:62
+#: src/widgets/tile-deck/ui/CrewBoard/CrewBoard.tsx:68
 msgid "You"
 msgstr "You"
 

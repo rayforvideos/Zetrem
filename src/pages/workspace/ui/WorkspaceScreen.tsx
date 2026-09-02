@@ -22,10 +22,12 @@ import { t } from '@lingui/core/macro'
 
 import { useStarAsk } from '../model/chat/useStarAsk/useStarAsk'
 import { useLibraryNotes } from '../model/library/useLibraryNotes'
+import { useLibraryProposals } from '../model/library/useLibraryProposals'
 import { useWorkspace } from '../model/screen/useWorkspace/useWorkspace'
 
 // The shell: it composes the workspace's domains into the gates, and holds
-// nothing of its own beyond the library notes the sidebar and gates share.
+// nothing of its own beyond the library notes and the suggestions waiting on
+// them, which the sidebar and the gates share.
 export function WorkspaceScreen() {
   const work = useWorkspace()
   const { chatting, extensions, layout, prefs, projects, team } = work
@@ -37,13 +39,21 @@ export function WorkspaceScreen() {
     conv.status !== 'working',
     projects.current?.path ?? null,
   )
+  const proposals = useLibraryProposals(projects.current?.path ?? null)
   useStarAsk(conv.status === 'working', chatting.chat.chats.length, settings, update)
 
   // A note still being typed is saved into this project before the next one
   // takes over.
   const openProject = (id: string): void => void library.flush().then(() => projects.open(id))
 
-  const sidebar = <WorkspaceSidebar work={work} library={library} onOpenProject={openProject} />
+  const sidebar = (
+    <WorkspaceSidebar
+      work={work}
+      library={library}
+      proposals={proposals}
+      onOpenProject={openProject}
+    />
+  )
 
   return (
     <CrewProvider crew={crewOf(team.defs, status.session?.model ?? null)}>
@@ -78,9 +88,19 @@ export function WorkspaceScreen() {
               ) : layout.gate === 'setup' ? (
                 <SetupGate work={work} onOpenProject={openProject} />
               ) : layout.libraryOpen ? (
-                <LibraryGate library={library} nowMs={nowMs} sidebar={sidebar} />
+                <LibraryGate
+                  library={library}
+                  proposals={proposals}
+                  nowMs={nowMs}
+                  sidebar={sidebar}
+                />
               ) : (
-                <ConversationGate work={work} library={library} sidebar={sidebar} />
+                <ConversationGate
+                  work={work}
+                  library={library}
+                  proposals={proposals}
+                  sidebar={sidebar}
+                />
               )
             }
           />

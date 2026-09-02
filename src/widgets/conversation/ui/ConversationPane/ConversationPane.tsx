@@ -3,6 +3,7 @@ import { BookmarkPlus, FileText, Image } from 'lucide-react'
 import { Button } from '@/shared/ui/button'
 import type { ReactNode } from 'react'
 import type { PermissionAsk, SessionStatus, StatusState } from '@/entities/agent-session'
+import type { LibraryProposal } from '@/entities/library'
 import type { Chore } from '@/entities/conversation'
 import type { FaceId } from '@/entities/user'
 import { AgentSprite, personaOf } from '@/entities/teammate'
@@ -15,6 +16,7 @@ import { askedAtMs } from '../../lib/working/working'
 import { Wordmark } from '@/shared/graphics/Wordmark/Wordmark'
 import { Markdown } from '@/shared/markdown/Markdown/Markdown'
 import { Approval } from './Approval'
+import { ProposalCard } from '../ProposalCard/ProposalCard'
 import { FirstHint } from '@/shared/parts/FirstHint/FirstHint'
 import { Greeting } from './Greeting'
 import { Thinking } from './Thinking'
@@ -32,11 +34,15 @@ type ConversationPaneProps = {
   status: SessionStatus
   statusState: StatusState
   permission: PermissionAsk | null
+  // What agents have suggested for the library, oldest first.
+  proposals: LibraryProposal[]
   you: { name: string; face: FaceId }
   away: Waiting | null
   chores: Chore[]
   nowMs: number
   onDecide(allow: boolean, always?: boolean): void
+  onAcceptProposal(id: string): void
+  onDismissProposal(id: string): void
   onFileTurn(text: string): void
   sidebar: ReactNode
   report: ReactNode
@@ -52,11 +58,14 @@ export function ConversationPane({
   status,
   statusState,
   permission,
+  proposals,
   you,
   away,
   chores,
   nowMs,
   onDecide,
+  onAcceptProposal,
+  onDismissProposal,
   onFileTurn,
   sidebar,
   report,
@@ -70,6 +79,8 @@ export function ConversationPane({
   const lastTop = useRef(0)
   const busy = status === 'working'
   const lastIndex = turns.length - 1
+  // One card at a time: the one that has waited longest.
+  const oldest = proposals[0]
 
   function watch(): void {
     const el = scrollRef.current
@@ -109,7 +120,17 @@ export function ConversationPane({
               />
             </div>
           )}
-          <div className="mt-9 w-full max-w-3xl">{composer}</div>
+          <div className="mt-9 flex w-full max-w-3xl flex-col gap-4">
+            {oldest !== undefined && (
+              <ProposalCard
+                proposal={oldest}
+                waiting={proposals.length}
+                onAccept={onAcceptProposal}
+                onDismiss={onDismissProposal}
+              />
+            )}
+            {composer}
+          </div>
         </div>
       </div>
     )
@@ -241,7 +262,21 @@ export function ConversationPane({
           </>
         )}
 
-        {permission ? <Approval ask={permission} onDecide={onDecide} /> : composer}
+        {permission ? (
+          <Approval ask={permission} onDecide={onDecide} />
+        ) : (
+          <>
+            {oldest !== undefined && (
+              <ProposalCard
+                proposal={oldest}
+                waiting={proposals.length}
+                onAccept={onAcceptProposal}
+                onDismiss={onDismissProposal}
+              />
+            )}
+            {composer}
+          </>
+        )}
       </div>
     </div>
   )

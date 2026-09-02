@@ -180,22 +180,48 @@ describe('what a session is handed', () => {
     expect(said.result.instructions).toContain('library_search')
   })
 
-  it('writes an agent note through the tool, into this workspace, and says so', async () => {
-    const library = serverIn(await librarySessionArgs(workspace))
+  // The screen works in the scratch workspace while no project is picked, so a
+  // suggestion the screen is meant to see has to be raised in that same library.
+  async function propose(title = 'From the agent'): Promise<void> {
+    await ask('library:list')
+    const library = serverIn(await librarySessionArgs(scratch()))
     const reply = await call(library, {
       jsonrpc: '2.0',
       id: 2,
       method: 'tools/call',
       params: {
         name: 'library_write',
-        arguments: { title: 'From the agent', body: 'It learned this.', tags: ['probe'] },
+        arguments: { title, body: 'It learned this.', tags: ['probe'] },
       },
     })
     const body = (await reply.json()) as { result: { isError?: boolean } }
     expect(body.result.isError).toBeUndefined()
-    const [note] = held(workspace).notes
-    expect(note).toMatchObject({ id: 'From the agent.md', tags: ['probe'], source: 'agent' })
+  }
+
+  it('only proposes through the tool: the library is untouched until a person says so', async () => {
+    await propose()
+    expect(held(scratch()).notes).toEqual([])
+    const waiting = await ask<{ id: string; title: string; tags: string[] }[]>('library:proposals')
+    expect(waiting).toHaveLength(1)
+    expect(waiting[0]).toMatchObject({ title: 'From the agent', tags: ['probe'], folder: '' })
     expect(boundary.told).toBeGreaterThan(0)
+  })
+
+  it('writes the note the moment the person accepts, and stops waiting', async () => {
+    await propose()
+    const [waiting] = await ask<{ id: string }[]>('library:proposals')
+    const note = await ask<LibraryNote | null>('library:proposal-accept', waiting?.id)
+    expect(note).toMatchObject({ id: 'From the agent.md', tags: ['probe'], source: 'agent' })
+    expect(held(scratch()).notes.map((one) => one.id)).toEqual(['From the agent.md'])
+    expect(await ask('library:proposals')).toEqual([])
+  })
+
+  it('drops the suggestion the person waves off, writing nothing', async () => {
+    await propose()
+    const [waiting] = await ask<{ id: string }[]>('library:proposals')
+    await ask('library:proposal-dismiss', waiting?.id)
+    expect(await ask('library:proposals')).toEqual([])
+    expect(held(scratch()).notes).toEqual([])
   })
 
   it('finds through the tool what the screen wrote, since both work in one library', async () => {

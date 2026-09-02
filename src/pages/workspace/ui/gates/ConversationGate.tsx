@@ -4,17 +4,23 @@ import { hintDue, hintSeen } from '@/entities/settings'
 import { AgentReport } from '@/widgets/agent-report'
 import { awayOf, spokeAtMs, Composer, ConversationPane, RestartNote } from '@/widgets/conversation'
 import { useLibraryAccess } from '../../model/library/useLibraryAccess'
-import type { LibraryNotes, Workspace } from '../../model/screen/useWorkspace/useWorkspace.types'
+import type {
+  LibraryNotes,
+  LibraryProposals,
+  Workspace,
+} from '../../model/screen/useWorkspace/useWorkspace.types'
 
 // The conversation gate: the transcript, the composer under it, and the
 // teammate report to the side.
 export function ConversationGate({
   work,
   library,
+  proposals,
   sidebar,
 }: {
   work: Workspace
   library: LibraryNotes
+  proposals: LibraryProposals
   sidebar: ReactNode
 }) {
   const { chatting, prefs, team } = work
@@ -28,6 +34,9 @@ export function ConversationGate({
       status={conv.status}
       statusState={status}
       permission={conv.permission}
+      proposals={proposals.proposals}
+      onAcceptProposal={proposals.accept}
+      onDismissProposal={proposals.dismiss}
       you={{ name: team.yourName, face: settings.userFace }}
       away={agent.running ? awayOf(children, spokeAtMs(conv.turns)) : null}
       chores={conv.chores}

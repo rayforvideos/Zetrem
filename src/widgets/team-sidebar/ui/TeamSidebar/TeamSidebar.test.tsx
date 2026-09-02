@@ -49,6 +49,7 @@ function bar(props: Partial<Parameters<typeof TeamSidebar>[0]> = {}): string {
       onOpenLibrary={() => {}}
       libraryOpen={false}
       libraryUnseen={false}
+      libraryPending={0}
       {...props}
     />,
   )
@@ -283,6 +284,14 @@ describe('the sidebar ends with a way into the library', () => {
     const at = lit.indexOf('data-library-row')
     expect(lit.slice(at)).toContain('data-library-unseen')
     expect(lit.slice(at)).toContain('size-1.5')
+  })
+
+  it('counts what is waiting for a word on the row, and shows nothing when none is', () => {
+    const waiting = bar({ libraryPending: 2 })
+    const at = waiting.indexOf('data-library-row')
+    expect(waiting.slice(at)).toContain('data-library-pending')
+    expect(waiting.slice(at)).toMatch(/data-library-pending[^>]*>2</)
+    expect(bar()).not.toContain('data-library-pending')
   })
 
   it('marks that row as where you are while the library is open', () => {

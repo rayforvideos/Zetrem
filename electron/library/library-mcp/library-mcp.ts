@@ -58,7 +58,7 @@ const TOOLS: ToolDef[] = [
   {
     name: 'library_write',
     description:
-      'Write a new markdown note into the library. Use it to keep a conclusion, a decision or a finding that a later session should not have to rediscover. One conclusion per note; link related notes with [[title]].',
+      'Propose a new note for the library. The person sees it as a card and decides; nothing is saved until they accept. One conclusion per note; link related notes with [[title]].',
     inputSchema: {
       type: 'object',
       properties: {
@@ -139,13 +139,21 @@ function writeInput(args: Record<string, unknown>): LibraryWriteInput | string {
   return input
 }
 
+// The answer says what happened and no more: a caller that reads this as "it
+// is filed" would go on to tell the person something untrue.
 async function callWrite(tools: LibraryTools, args: Record<string, unknown>): Promise<ToolResult> {
   const input = writeInput(args)
   if (typeof input === 'string') return failure(input)
-  const note = await tools.write(input)
-  if (!note) return failure('the note could not be written')
-  const { body: _body, ...summary } = note
-  return text(summary)
+  const proposal = await tools.write(input)
+  if (!proposal) return failure('the note could not be written')
+  return {
+    content: [
+      {
+        type: 'text',
+        text: `Proposed "${proposal.title}" to the person. It is not in the library until they accept it — do not assume it was.`,
+      },
+    ],
+  }
 }
 
 async function callRecent(tools: LibraryTools, args: Record<string, unknown>): Promise<ToolResult> {

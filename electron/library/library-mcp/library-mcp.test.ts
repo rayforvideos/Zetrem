@@ -17,6 +17,15 @@ const summary = {
 }
 const note = { ...summary, body: 'Tokens live in the keychain.\n\nMore.' }
 
+const proposal = {
+  id: 'a1',
+  folder: 'analysis',
+  title: 'auth',
+  body: 'Tokens.',
+  tags: ['a'],
+  proposedAtMs: 3,
+}
+
 function fakeTools(calls: Call[]): LibraryTools {
   return {
     async search(query, limit) {
@@ -29,7 +38,7 @@ function fakeTools(calls: Call[]): LibraryTools {
     },
     async write(input) {
       calls.push({ tool: 'write', args: [input] })
-      return note as never
+      return proposal
     },
     async recent(limit) {
       calls.push({ tool: 'recent', args: [limit] })
@@ -185,11 +194,23 @@ describe('the tools', () => {
     expect(missing.content[0]!.text).toContain('no such note')
   })
 
-  it('writes and returns the summary, not the body', async () => {
+  it('proposes rather than writes, and says the note is not in the library yet', async () => {
     const input = { title: 'auth', body: 'Tokens.', tags: ['a'], folder: 'analysis' }
     const result = await callTool('library_write', input)
     expect(calls).toEqual([{ tool: 'write', args: [input] }])
-    expect(JSON.parse(result.content[0]!.text)).toEqual(summary)
+    expect(result.isError).toBeUndefined()
+    expect(result.content[0]!.text).toBe(
+      'Proposed "auth" to the person. It is not in the library until they accept it — do not assume it was.',
+    )
+  })
+
+  it('tells an agent up front that library_write only suggests', async () => {
+    const body = (await (await rpc('tools/list')).json()) as {
+      result: { tools: { name: string; description: string }[] }
+    }
+    const write = body.result.tools.find((tool) => tool.name === 'library_write')
+    expect(write?.description).toContain('Propose')
+    expect(write?.description).toContain('nothing is saved until they accept')
   })
 
   it('lists recent notes', async () => {

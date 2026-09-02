@@ -26,7 +26,7 @@ const proposal = {
   proposedAtMs: 3,
 }
 
-function fakeTools(calls: Call[]): LibraryTools {
+function fakeTools(calls: Call[], refuse?: 'title' | 'folder'): LibraryTools {
   return {
     async search(query, limit) {
       calls.push({ tool: 'search', args: [query, limit] })
@@ -38,7 +38,7 @@ function fakeTools(calls: Call[]): LibraryTools {
     },
     async write(input) {
       calls.push({ tool: 'write', args: [input] })
-      return proposal
+      return refuse === undefined ? { ok: true, proposal } : { ok: false, why: refuse }
     },
     async recent(limit) {
       calls.push({ tool: 'recent', args: [limit] })
@@ -202,6 +202,56 @@ describe('the tools', () => {
     expect(result.content[0]!.text).toBe(
       'Proposed "auth" to the person. It is not in the library until they accept it — do not assume it was.',
     )
+  })
+
+  it('words a refused title so an agent can fix its own ask', async () => {
+    const refusing = await startLibraryMcp(fakeTools(calls, 'title'))
+    try {
+      const res = await fetch(refusing.url, {
+        method: 'POST',
+        headers: {
+          authorization: `Bearer ${refusing.token}`,
+          'content-type': 'application/json',
+        },
+        body: JSON.stringify({
+          jsonrpc: '2.0',
+          id: 1,
+          method: 'tools/call',
+          params: { name: 'library_write', arguments: { title: 'x/y', body: 'z' } },
+        }),
+      })
+      const body = (await res.json()) as { result: { content: { text: string }[]; isError?: true } }
+      expect(body.result.isError).toBe(true)
+      expect(body.result.content[0]!.text).toBe(
+        'library_write: "x/y" is not a note title (1–80 characters, no slashes, no leading/trailing dots or spaces)',
+      )
+    } finally {
+      await refusing.close()
+    }
+  })
+
+  it('words a refused folder so an agent can fix its own ask', async () => {
+    const refusing = await startLibraryMcp(fakeTools(calls, 'folder'))
+    try {
+      const res = await fetch(refusing.url, {
+        method: 'POST',
+        headers: {
+          authorization: `Bearer ${refusing.token}`,
+          'content-type': 'application/json',
+        },
+        body: JSON.stringify({
+          jsonrpc: '2.0',
+          id: 1,
+          method: 'tools/call',
+          params: { name: 'library_write', arguments: { title: 'x', body: 'z', folder: '../etc' } },
+        }),
+      })
+      const body = (await res.json()) as { result: { content: { text: string }[]; isError?: true } }
+      expect(body.result.isError).toBe(true)
+      expect(body.result.content[0]!.text).toBe('library_write: "../etc" is not a folder name')
+    } finally {
+      await refusing.close()
+    }
   })
 
   it('tells an agent up front that library_write only suggests', async () => {

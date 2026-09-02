@@ -1,4 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
+import { t } from '@lingui/core/macro'
+import { toast } from 'sonner'
 import type { LibraryProposal } from '@/entities/library'
 
 // What agents have asked to add to this project's library. A proposal belongs
@@ -20,31 +22,31 @@ export function useLibraryProposals(project: string | null) {
     reload()
   }, [project, reload])
 
+  // Main pushes this after every accept and dismiss, whichever the outcome,
+  // so this alone keeps the list current — reading it again on every library
+  // edit elsewhere would reload it for changes that were never a proposal.
   useEffect(() => window.desk.onLibraryProposed(reload), [reload])
-
-  // Accepting one writes a note, and a note written elsewhere may have been
-  // one of these: both are a reason to ask again.
-  useEffect(() => window.desk.onLibraryChanged(reload), [reload])
 
   const accept = useCallback(
     (id: string): void => {
+      const title = proposals.find((one) => one.id === id)?.title ?? ''
       void window.desk
         .acceptLibraryProposal(id)
-        .then(() => reload())
+        .then((note) => {
+          // Accept already pushes 'library:proposed', which reloads the list;
+          // nothing failed the proposal stays right where it was.
+          if (note === null) {
+            toast.error(t`Could not file "${title}". Check its title and folder in the library.`)
+          }
+        })
         .catch(() => undefined)
     },
-    [reload],
+    [proposals],
   )
 
-  const dismiss = useCallback(
-    (id: string): void => {
-      void window.desk
-        .dismissLibraryProposal(id)
-        .then(() => reload())
-        .catch(() => undefined)
-    },
-    [reload],
-  )
+  const dismiss = useCallback((id: string): void => {
+    void window.desk.dismissLibraryProposal(id).catch(() => undefined)
+  }, [])
 
   return { proposals, accept, dismiss }
 }

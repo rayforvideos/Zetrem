@@ -1,7 +1,8 @@
 import { randomUUID } from 'node:crypto'
 import type { DatabaseSync } from 'node:sqlite'
-import type { LibraryNote, LibraryProposal } from '@/entities/library/model/note'
-import { tagsOf } from '../library-db/library-db'
+import type { LibraryNote } from '@/entities/library/model/note'
+import type { LibraryProposal } from '@/entities/library/model/proposal'
+import { atLeastAtOnce, tagsOf } from '../library-db/library-db'
 import type { ProposalRow } from '../library-db/library-db.types'
 import { createNote, isFolderName, writeNote } from '../library-notes/library-notes'
 import type { ProposalInput } from './library-proposals.types'
@@ -68,16 +69,23 @@ export function dismissProposal(db: DatabaseSync, id: unknown): void {
 // The note is written now, on the person's word, exactly as the agent's tool
 // used to write it. A proposal the library will not take stays where it is, so
 // nothing is lost to a folder that was renamed while it waited.
+//
+// The three steps — starting the note, writing its body, and dropping the
+// proposal — are one change: a crash between them must not leave an empty
+// note behind with its proposal still waiting, as if nothing had happened.
 export function acceptProposal(db: DatabaseSync, id: unknown): LibraryNote | null {
   if (typeof id !== 'string') return null
   const row = rowOf(db, id)
   if (row === null) return null
   const asked = proposalOf(row)
   if (asked.folder.length > 0 && !isFolderName(asked.folder)) return null
-  const started = createNote(db, asked.folder, asked.title)
-  if (started === null) return null
-  const note = writeNote(db, started.id, asked.body, { tags: asked.tags, source: 'agent' })
-  if (note === null) return null
-  dismissProposal(db, id)
+  let note: LibraryNote | null = null
+  atLeastAtOnce(db, () => {
+    const started = createNote(db, asked.folder, asked.title)
+    if (started === null) return
+    note = writeNote(db, started.id, asked.body, { tags: asked.tags, source: 'agent' })
+    if (note === null) return
+    dismissProposal(db, id)
+  })
   return note
 }

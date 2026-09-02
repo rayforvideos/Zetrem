@@ -224,6 +224,46 @@ describe('what a session is handed', () => {
     expect(held(scratch()).notes).toEqual([])
   })
 
+  it('refuses to propose a title Accept could never file, wording why', async () => {
+    await ask('library:list')
+    const library = serverIn(await librarySessionArgs(scratch()))
+    const reply = await call(library, {
+      jsonrpc: '2.0',
+      id: 2,
+      method: 'tools/call',
+      params: {
+        name: 'library_write',
+        arguments: { title: 'a/b', body: 'It learned this.' },
+      },
+    })
+    const body = (await reply.json()) as {
+      result: { isError?: boolean; content: { text: string }[] }
+    }
+    expect(body.result.isError).toBe(true)
+    expect(body.result.content[0]?.text).toContain('is not a note title')
+    expect(await ask('library:proposals')).toEqual([])
+  })
+
+  it('refuses to propose a folder name that could climb out of the library', async () => {
+    await ask('library:list')
+    const library = serverIn(await librarySessionArgs(scratch()))
+    const reply = await call(library, {
+      jsonrpc: '2.0',
+      id: 2,
+      method: 'tools/call',
+      params: {
+        name: 'library_write',
+        arguments: { title: 'Auth', body: 'It learned this.', folder: '../etc' },
+      },
+    })
+    const body = (await reply.json()) as {
+      result: { isError?: boolean; content: { text: string }[] }
+    }
+    expect(body.result.isError).toBe(true)
+    expect(body.result.content[0]?.text).toContain('is not a folder name')
+    expect(await ask('library:proposals')).toEqual([])
+  })
+
   it('finds through the tool what the screen wrote, since both work in one library', async () => {
     const created = await ask<LibraryNote | null>('library:create', null, 'Auth choice')
     await ask('library:write', created?.id, 'We went with sessions.')

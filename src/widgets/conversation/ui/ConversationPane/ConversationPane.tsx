@@ -81,6 +81,14 @@ export function ConversationPane({
   const lastIndex = turns.length - 1
   // One card at a time: the one that has waited longest.
   const oldest = proposals[0]
+  const card = oldest !== undefined && (
+    <ProposalCard
+      proposal={oldest}
+      waiting={proposals.length}
+      onAccept={onAcceptProposal}
+      onDismiss={onDismissProposal}
+    />
+  )
 
   function watch(): void {
     const el = scrollRef.current
@@ -121,14 +129,7 @@ export function ConversationPane({
             </div>
           )}
           <div className="mt-9 flex w-full max-w-3xl flex-col gap-4">
-            {oldest !== undefined && (
-              <ProposalCard
-                proposal={oldest}
-                waiting={proposals.length}
-                onAccept={onAcceptProposal}
-                onDismiss={onDismissProposal}
-              />
-            )}
+            {card}
             {composer}
           </div>
         </div>
@@ -266,14 +267,7 @@ export function ConversationPane({
           <Approval ask={permission} onDecide={onDecide} />
         ) : (
           <>
-            {oldest !== undefined && (
-              <ProposalCard
-                proposal={oldest}
-                waiting={proposals.length}
-                onAccept={onAcceptProposal}
-                onDismiss={onDismissProposal}
-              />
-            )}
+            {card}
             {composer}
           </>
         )}

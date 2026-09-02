@@ -140,17 +140,25 @@ function writeInput(args: Record<string, unknown>): LibraryWriteInput | string {
 }
 
 // The answer says what happened and no more: a caller that reads this as "it
-// is filed" would go on to tell the person something untrue.
+// is filed" would go on to tell the person something untrue. A refusal says
+// which of the two — title or folder — is the reason, so an agent can fix its
+// own ask instead of trying the same one again.
 async function callWrite(tools: LibraryTools, args: Record<string, unknown>): Promise<ToolResult> {
   const input = writeInput(args)
   if (typeof input === 'string') return failure(input)
-  const proposal = await tools.write(input)
-  if (!proposal) return failure('the note could not be written')
+  const result = await tools.write(input)
+  if (!result.ok) {
+    return failure(
+      result.why === 'folder'
+        ? `library_write: "${input.folder ?? ''}" is not a folder name`
+        : `library_write: "${input.title}" is not a note title (1–80 characters, no slashes, no leading/trailing dots or spaces)`,
+    )
+  }
   return {
     content: [
       {
         type: 'text',
-        text: `Proposed "${proposal.title}" to the person. It is not in the library until they accept it — do not assume it was.`,
+        text: `Proposed "${result.proposal.title}" to the person. It is not in the library until they accept it — do not assume it was.`,
       },
     ],
   }

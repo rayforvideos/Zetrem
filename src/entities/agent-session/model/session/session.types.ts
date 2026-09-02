@@ -60,4 +60,8 @@ export type TranscriptEntry = {
   text: string
   // Set when the words came from another teammate rather than the orchestrator.
   from?: string
+  // When this entry was said, so it can be merged in time order with the
+  // calls the teammate made around it. Absent on entries from before this
+  // was tracked; those sort ahead of anything timestamped.
+  atMs?: number
 }

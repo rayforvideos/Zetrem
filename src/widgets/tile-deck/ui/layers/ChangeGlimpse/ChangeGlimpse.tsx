@@ -16,9 +16,19 @@ export function ChangeMark({ count }: { count: ChangeCount }) {
   )
 }
 
-// The edit itself, opened under the call that made it. Only ever one of these
-// is on a tile at a time: the change the teammate has in hand.
-export function ChangeGlimpse({ groups, count }: { groups: DiffLine[][]; count?: ChangeCount }) {
+// The edit itself, opened under the call that made it. In CallLog only ever
+// one of these is on a tile at a time: the change the teammate has in hand.
+// Timeline opens one under every call that changed something, so it passes a
+// roomier maxLines of its own instead of the log's tighter default.
+export function ChangeGlimpse({
+  groups,
+  count,
+  maxLines = GLIMPSE_LINES,
+}: {
+  groups: DiffLine[][]
+  count?: ChangeCount
+  maxLines?: number
+}) {
   if (groups.length === 0) return null
   return (
     <div data-change style={rootStyle}>
@@ -27,7 +37,7 @@ export function ChangeGlimpse({ groups, count }: { groups: DiffLine[][]; count?:
           <ChangeMark count={count} />
         </span>
       )}
-      <ChangeDiff groups={groups} maxLines={GLIMPSE_LINES} />
+      <ChangeDiff groups={groups} maxLines={maxLines} />
     </div>
   )
 }

@@ -119,9 +119,26 @@ describe('sessionStore: the full transcript of a child', () => {
     sessionStore.appendTranscript('a', { role: 'user', text: '테스트 고쳐줘' })
     sessionStore.appendTranscript('a', { role: 'assistant', text: '어느 테스트인가요?' })
     expect(sessionStore.get()[0]!.transcript).toEqual([
-      { role: 'user', text: '테스트 고쳐줘' },
-      { role: 'assistant', text: '어느 테스트인가요?' },
+      { role: 'user', text: '테스트 고쳐줘', atMs: expect.any(Number) },
+      { role: 'assistant', text: '어느 테스트인가요?', atMs: expect.any(Number) },
     ])
+  })
+
+  it('stamps each entry with when it was said, so it can merge with the calls around it', () => {
+    vi.useFakeTimers()
+    vi.setSystemTime(5_000)
+    sessionStore.open(session('a'))
+    sessionStore.appendTranscript('a', { role: 'user', text: '테스트 고쳐줘' })
+    vi.setSystemTime(9_000)
+    sessionStore.appendTranscript('a', { role: 'assistant', text: '어느 테스트인가요?' })
+    expect(sessionStore.get()[0]!.transcript.map((entry) => entry.atMs)).toEqual([5_000, 9_000])
+    vi.useRealTimers()
+  })
+
+  it('keeps an explicit atMs instead of overwriting it', () => {
+    sessionStore.open(session('a'))
+    sessionStore.appendTranscript('a', { role: 'user', text: '테스트 고쳐줘', atMs: 42 })
+    expect(sessionStore.get()[0]!.transcript[0]!.atMs).toBe(42)
   })
 
   it('caps the transcript by dropping from the front', () => {

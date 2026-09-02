@@ -7,7 +7,7 @@ import { Gauge } from '../layers/Gauge/Gauge'
 import { Headline } from '../layers/Headline/Headline'
 import { Helpers } from '../layers/Helpers/Helpers'
 import { CallLog } from '../layers/CallLog/CallLog'
-import { Transcript } from '../layers/Transcript/Transcript'
+import { Timeline } from '../layers/Timeline/Timeline'
 import {
   logHeadStyle,
   logPaneStyle,
@@ -71,7 +71,7 @@ export function AgentTile({
             )}
             {sweep ? (
               transcriptOpen ? (
-                <Transcript entries={session.transcript} />
+                <Timeline session={session} />
               ) : (
                 <Headline session={session} onDismiss={onDismiss} />
               )
@@ -79,7 +79,7 @@ export function AgentTile({
               <div data-split style={splitStyle}>
                 <div data-said style={paneStyle}>
                   {transcriptOpen ? (
-                    <Transcript entries={session.transcript} />
+                    <Timeline session={session} />
                   ) : (
                     <Headline session={session} onDismiss={onDismiss} />
                   )}

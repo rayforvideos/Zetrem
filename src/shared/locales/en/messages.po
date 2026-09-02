@@ -139,7 +139,7 @@ msgstr "{back} teammates"
 msgid "{base}. Earlier turns live on as a summary."
 msgstr "{base}. Earlier turns live on as a summary."
 
-#: src/widgets/conversation/ui/ProposalCard/ProposalCard.tsx:75
+#: src/widgets/conversation/ui/ProposalCard/ProposalCard.tsx:59
 msgid "{behind} more waiting"
 msgstr "{behind} more waiting"
 
@@ -162,6 +162,11 @@ msgstr "{installed} installed from {sources, plural, one {# source} other {# sou
 #: src/entities/claude-cli/api/turn/turn.ts:107
 msgid "{kind} {name} did not load: {why}"
 msgstr "{kind} {name} did not load: {why}"
+
+#: src/widgets/team-sidebar/ui/TeamSidebar/TeamSidebar.tsx:96
+#: src/widgets/team-sidebar/ui/TeamSidebar/TeamSidebar.tsx:97
+msgid "{libraryPending} suggestions waiting"
+msgstr "{libraryPending} suggestions waiting"
 
 #: src/widgets/status-bar/lib/format/format.ts:62
 msgid "{n} need auth"
@@ -250,7 +255,7 @@ msgid "{tool} was not allowed: {why}"
 msgstr "{tool} was not allowed: {why}"
 
 #. placeholder {0}: agents.stock.length
-#: src/widgets/team-sidebar/ui/TeamSidebar/TeamSidebar.tsx:134
+#: src/widgets/team-sidebar/ui/TeamSidebar/TeamSidebar.tsx:137
 msgid "{using} of {0} agents on"
 msgstr "{using} of {0} agents on"
 
@@ -382,8 +387,8 @@ msgstr "About the library"
 msgid "About you"
 msgstr "About you"
 
-#: src/widgets/conversation/ui/ProposalCard/ProposalCard.tsx:63
-#: src/widgets/library/ui/ProposalRow/ProposalRow.tsx:56
+#: src/widgets/conversation/ui/ProposalCard/ProposalCard.tsx:47
+#: src/widgets/library/ui/ProposalRow/ProposalRow.tsx:40
 msgid "Accept"
 msgstr "Accept"
 
@@ -513,7 +518,7 @@ msgstr "Apply"
 msgid "Ask first"
 msgstr "Ask first"
 
-#: src/widgets/conversation/ui/ConversationPane/ConversationPane.tsx:117
+#: src/widgets/conversation/ui/ConversationPane/ConversationPane.tsx:125
 msgid "Ask for the whole job"
 msgstr "Ask for the whole job"
 
@@ -779,6 +784,10 @@ msgstr "Could not bring over Claude Desktop"
 msgid "Could not check for updates."
 msgstr "Could not check for updates."
 
+#: src/pages/workspace/model/library/useLibraryProposals.ts:39
+msgid "Could not file \"{title}\". Check its title and folder in the library."
+msgstr "Could not file \"{title}\". Check its title and folder in the library."
+
 #: src/pages/workspace/model/chat/useTranscript.ts:291
 #: src/pages/workspace/model/chat/useTranscript.ts:307
 msgid "Could not file that chat"
@@ -980,8 +989,8 @@ msgstr "Description"
 msgid "Diff"
 msgstr "Diff"
 
-#: src/widgets/conversation/ui/ProposalCard/ProposalCard.tsx:71
-#: src/widgets/library/ui/ProposalRow/ProposalRow.tsx:64
+#: src/widgets/conversation/ui/ProposalCard/ProposalCard.tsx:55
+#: src/widgets/library/ui/ProposalRow/ProposalRow.tsx:48
 msgid "Dismiss"
 msgstr "Dismiss"
 
@@ -1116,7 +1125,7 @@ msgstr "Feedback"
 msgid "Fetching"
 msgstr "Fetching"
 
-#: src/widgets/conversation/ui/ConversationPane/ConversationPane.tsx:240
+#: src/widgets/conversation/ui/ConversationPane/ConversationPane.tsx:241
 msgid "File this answer to the library as its own note"
 msgstr "File this answer to the library as its own note"
 
@@ -1834,7 +1843,7 @@ msgid "Reading what this session offers. The list fills in a moment."
 msgstr "Reading what this session offers. The list fills in a moment."
 
 #: src/entities/teammate/ui/StockList/StockList.tsx:11
-#: src/widgets/team-sidebar/ui/TeamSidebar/TeamSidebar.tsx:121
+#: src/widgets/team-sidebar/ui/TeamSidebar/TeamSidebar.tsx:124
 msgid "Reading which agents Claude Code brings. They will be listed here."
 msgstr "Reading which agents Claude Code brings. They will be listed here."
 
@@ -2016,7 +2025,7 @@ msgstr "Saving…"
 msgid "Say the word and the whole team wakes up."
 msgstr "Say the word and the whole team wakes up."
 
-#: src/widgets/conversation/ui/ConversationPane/ConversationPane.tsx:118
+#: src/widgets/conversation/ui/ConversationPane/ConversationPane.tsx:126
 msgid "Say what you want done, not the next step. The orchestrator splits it up and hands out the pieces."
 msgstr "Say what you want done, not the next step. The orchestrator splits it up and hands out the pieces."
 
@@ -2627,7 +2636,7 @@ msgstr "Title"
 msgid "To {addressee}"
 msgstr "To {addressee}"
 
-#: src/widgets/conversation/ui/ConversationPane/ConversationPane.tsx:243
+#: src/widgets/conversation/ui/ConversationPane/ConversationPane.tsx:244
 msgid "To library"
 msgstr "To library"
 

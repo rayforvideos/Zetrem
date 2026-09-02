@@ -139,7 +139,7 @@ msgstr "팀원 {back}명"
 msgid "{base}. Earlier turns live on as a summary."
 msgstr "{base}. 앞선 대화는 요약으로 남습니다."
 
-#: src/widgets/conversation/ui/ProposalCard/ProposalCard.tsx:75
+#: src/widgets/conversation/ui/ProposalCard/ProposalCard.tsx:59
 msgid "{behind} more waiting"
 msgstr "{behind}건 더 기다리는 중"
 
@@ -162,6 +162,11 @@ msgstr "{sources, plural, other {마켓플레이스 #곳}}에서 {installed}개 
 #: src/entities/claude-cli/api/turn/turn.ts:107
 msgid "{kind} {name} did not load: {why}"
 msgstr "{kind} {name}을(를) 불러오지 못했습니다: {why}"
+
+#: src/widgets/team-sidebar/ui/TeamSidebar/TeamSidebar.tsx:96
+#: src/widgets/team-sidebar/ui/TeamSidebar/TeamSidebar.tsx:97
+msgid "{libraryPending} suggestions waiting"
+msgstr "제안 {libraryPending}건 대기 중"
 
 #: src/widgets/status-bar/lib/format/format.ts:62
 msgid "{n} need auth"
@@ -250,7 +255,7 @@ msgid "{tool} was not allowed: {why}"
 msgstr "{tool} 사용이 허용되지 않았습니다: {why}"
 
 #. placeholder {0}: agents.stock.length
-#: src/widgets/team-sidebar/ui/TeamSidebar/TeamSidebar.tsx:134
+#: src/widgets/team-sidebar/ui/TeamSidebar/TeamSidebar.tsx:137
 msgid "{using} of {0} agents on"
 msgstr "에이전트 {0}개 중 {using}개 사용 중"
 
@@ -382,8 +387,8 @@ msgstr "라이브러리란"
 msgid "About you"
 msgstr "사용자"
 
-#: src/widgets/conversation/ui/ProposalCard/ProposalCard.tsx:63
-#: src/widgets/library/ui/ProposalRow/ProposalRow.tsx:56
+#: src/widgets/conversation/ui/ProposalCard/ProposalCard.tsx:47
+#: src/widgets/library/ui/ProposalRow/ProposalRow.tsx:40
 msgid "Accept"
 msgstr "받아들이기"
 
@@ -513,7 +518,7 @@ msgstr "적용"
 msgid "Ask first"
 msgstr "먼저 묻기"
 
-#: src/widgets/conversation/ui/ConversationPane/ConversationPane.tsx:117
+#: src/widgets/conversation/ui/ConversationPane/ConversationPane.tsx:125
 msgid "Ask for the whole job"
 msgstr "일 전체를 맡기세요"
 
@@ -779,6 +784,10 @@ msgstr "Claude Desktop에서 가져오지 못했습니다"
 msgid "Could not check for updates."
 msgstr "업데이트를 확인하지 못했습니다."
 
+#: src/pages/workspace/model/library/useLibraryProposals.ts:39
+msgid "Could not file \"{title}\". Check its title and folder in the library."
+msgstr "\"{title}\"을(를) 넣지 못했습니다. 라이브러리에서 제목과 폴더를 확인해 주세요."
+
 #: src/pages/workspace/model/chat/useTranscript.ts:291
 #: src/pages/workspace/model/chat/useTranscript.ts:307
 msgid "Could not file that chat"
@@ -980,8 +989,8 @@ msgstr "설명"
 msgid "Diff"
 msgstr "변경 내용"
 
-#: src/widgets/conversation/ui/ProposalCard/ProposalCard.tsx:71
-#: src/widgets/library/ui/ProposalRow/ProposalRow.tsx:64
+#: src/widgets/conversation/ui/ProposalCard/ProposalCard.tsx:55
+#: src/widgets/library/ui/ProposalRow/ProposalRow.tsx:48
 msgid "Dismiss"
 msgstr "무시"
 
@@ -1116,7 +1125,7 @@ msgstr "피드백"
 msgid "Fetching"
 msgstr "가져오는 중"
 
-#: src/widgets/conversation/ui/ConversationPane/ConversationPane.tsx:240
+#: src/widgets/conversation/ui/ConversationPane/ConversationPane.tsx:241
 msgid "File this answer to the library as its own note"
 msgstr "이 답변을 별도 노트로 라이브러리에 넣기"
 
@@ -1834,7 +1843,7 @@ msgid "Reading what this session offers. The list fills in a moment."
 msgstr "이 세션에서 쓸 수 있는 것을 읽는 중입니다. 곧 목록이 채워집니다."
 
 #: src/entities/teammate/ui/StockList/StockList.tsx:11
-#: src/widgets/team-sidebar/ui/TeamSidebar/TeamSidebar.tsx:121
+#: src/widgets/team-sidebar/ui/TeamSidebar/TeamSidebar.tsx:124
 msgid "Reading which agents Claude Code brings. They will be listed here."
 msgstr "Claude Code가 기본으로 제공하는 에이전트를 읽는 중입니다. 곧 여기에 표시됩니다."
 
@@ -2016,7 +2025,7 @@ msgstr "저장 중…"
 msgid "Say the word and the whole team wakes up."
 msgstr "말 한마디면 팀 전체가 깨어납니다."
 
-#: src/widgets/conversation/ui/ConversationPane/ConversationPane.tsx:118
+#: src/widgets/conversation/ui/ConversationPane/ConversationPane.tsx:126
 msgid "Say what you want done, not the next step. The orchestrator splits it up and hands out the pieces."
 msgstr "다음 단계 말고 원하는 결과를 말하세요. 오케스트레이터가 알아서 쪼개서 나눠 줍니다."
 
@@ -2627,7 +2636,7 @@ msgstr "제목"
 msgid "To {addressee}"
 msgstr "{addressee}에게"
 
-#: src/widgets/conversation/ui/ConversationPane/ConversationPane.tsx:243
+#: src/widgets/conversation/ui/ConversationPane/ConversationPane.tsx:244
 msgid "To library"
 msgstr "라이브러리에"
 

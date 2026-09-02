@@ -6,6 +6,7 @@ import { Surface } from '@/shared/parts/Surface/Surface'
 import { MOTION, staggerDelay } from '@/shared/config/motion/motion'
 import { CHROME_TOP, GRID_PAD, SHELL_PAD } from '@/shared/config/theme'
 import { attentionId } from '../../lib/attention/attention'
+import { tilesCanLeave, tilesLeaving, tilesStanding } from '../../lib/board-phase/board-phase'
 import {
   boardLayout,
   boarded,
@@ -18,8 +19,9 @@ import type { Rect, Viewport } from '../../lib/grid/grid.types'
 import { tilesOf } from '../../lib/tiles/tiles'
 import type { DeckState } from '../../model/deck-machine/deck-machine.types'
 import { closingIds, visibleIds } from '../../model/deck-machine/deck-machine'
-import { AgentTile } from '../AgentTile/AgentTile'
-import { CrewBoard } from '../CrewBoard/CrewBoard'
+import { useBoardPhase } from '../../model/useBoardPhase'
+import { CrewLayer } from './CrewLayer'
+import type { PlacedTile } from './CrewLayer.types'
 import { CrewSheet } from '../CrewSheet/CrewSheet'
 
 type TileDeckProps = {
@@ -35,13 +37,6 @@ type TileDeckProps = {
   name: string
   terminal: ReactNode
   onDismiss?: (id: string) => void
-}
-
-type PlacedTile = {
-  session: AgentSession
-  rect: Rect
-  delayMs: number
-  closing: boolean
 }
 
 export function TileDeck({
@@ -68,6 +63,7 @@ export function TileDeck({
 
   const gridSessions = findSessions(visibleIds(state), standingSessions)
   const board = boarded(gridSessions.length)
+  const phase = useBoardPhase(board)
   const placed = observatoryLayout(gridSessions.length, viewport, sidebarW)
   const placedBoard = boardLayout(viewport, sidebarW)
   const [openLane, setOpenLane] = useState<string | null>(null)
@@ -96,19 +92,48 @@ export function TileDeck({
     closing: false,
   }))
 
+  // Seats are only worth recording while the tiles are the deck's own layer:
+  // under the board the grid still has an opinion about where tiles would go,
+  // but nobody is sitting there.
+  const seating = tilesStanding(phase)
+
   useEffect(() => {
+    if (!seating) return
     for (const tile of standing) seats.current.set(tile.session.id, tile.rect)
   })
 
-  const tiles: PlacedTile[] = [
-    ...standing,
-    ...findSessions(closingIds(state), standingSessions).map((session) => ({
+  // A tile leaves from the seat it held, not from wherever the survivors moved
+  // to. A session with no seat never stood as a tile at all: it joined under
+  // the board and it leaves through the board, and drawing it here would flash
+  // a tile that was never there. Until the deck has drawn a frame it knows no
+  // seats, and takes the machine's word for who is leaving.
+  const stood = (session: AgentSession) => seats.current.size === 0 || seats.current.has(session.id)
+
+  const leavers: PlacedTile[] = tilesCanLeave(phase)
+    ? findSessions(closingIds(state), standingSessions)
+        .filter(stood)
+        .map((session) => ({
+          session,
+          rect: seats.current.get(session.id) ?? solo,
+          delayMs: 0,
+          closing: true,
+        }))
+    : NO_TILES
+
+  // Boarding holds the tiles at their last seats and plays them out under the
+  // arriving board. Whoever just joined has no seat, and arrives as a card.
+  const snapshot: PlacedTile[] = gridSessions
+    .filter((session) => seats.current.has(session.id))
+    .map((session) => ({
       session,
       rect: seats.current.get(session.id) ?? solo,
       delayMs: 0,
       closing: true,
-    })),
-  ]
+    }))
+
+  let tiles: PlacedTile[] = NO_TILES
+  if (tilesLeaving(phase)) tiles = snapshot
+  else if (seating) tiles = [...standing, ...leavers]
 
   const attention = attentionId(gridSessions)
 
@@ -161,34 +186,24 @@ export function TileDeck({
           onOpen={setOpenLane}
         />
       )}
-      {!narrow && atGrid && board && (
-        <CrewBoard
+      {!narrow && (
+        <CrewLayer
+          phase={phase}
+          tiles={tiles}
           sessions={gridSessions}
           helpers={helpersById}
+          board={placedBoard.board}
+          grid={atGrid}
+          nowMs={nowMs}
           face={face}
           name={name}
-          rect={placedBoard.board}
-          nowMs={nowMs}
           openId={openLane}
+          sweeping={sweeping}
+          attention={attention}
           onOpen={setOpenLane}
+          onDismiss={onDismiss}
         />
       )}
-      {!narrow &&
-        !board &&
-        tiles.map((tile) => (
-          <AgentTile
-            key={tile.session.id}
-            session={tile.session}
-            helpers={helpersById.get(tile.session.id) ?? []}
-            rect={tile.rect}
-            delayMs={tile.delayMs}
-            nowMs={nowMs}
-            sweeping={sweeping}
-            closing={tile.closing}
-            attention={!tile.closing && tile.session.id === attention}
-            onDismiss={onDismiss === undefined ? undefined : () => onDismiss(tile.session.id)}
-          />
-        ))}
     </div>
   )
 }
@@ -209,6 +224,8 @@ function findSessions(ids: string[], sessions: AgentSession[]): AgentSession[] {
     .map((id) => sessions.find((session) => session.id === id))
     .filter((session): session is AgentSession => session !== undefined)
 }
+
+const NO_TILES: PlacedTile[] = []
 
 const rootStyle: CSSProperties = { position: 'fixed', inset: 0, zIndex: 1 }
 

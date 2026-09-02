@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { ChevronDown, FileText, Paperclip, X } from 'lucide-react'
 import { addReading, readingPath } from '@/entities/agent-def'
-import type { AgentDefDraft } from '@/entities/agent-def'
+import type { AgentDefDraft, AgentSource } from '@/entities/agent-def'
 import { MODELS } from '@/entities/settings'
 import type { CharacterId } from '@/entities/teammate'
 import { AgentSprite } from '@/entities/teammate/ui/AgentSprite/AgentSprite'
@@ -41,6 +41,9 @@ const AVATAR = 32
 type MemberFormProps = {
   initial: AgentDefDraft | null
   knownTools: string[]
+  // Without a project open there is nowhere to keep somebody for one, so that
+  // scope is offered but not pickable.
+  projectOpen: boolean
   onSubmit(draft: AgentDefDraft): void
   onCancel(): void
 }
@@ -50,7 +53,13 @@ type NoteMeta = {
   tone?: 'warn'
 }
 
-export function MemberForm({ initial, knownTools, onSubmit, onCancel }: MemberFormProps) {
+export function MemberForm({
+  initial,
+  knownTools,
+  projectOpen,
+  onSubmit,
+  onCancel,
+}: MemberFormProps) {
   const [side] = useScrollState<HTMLElement>()
   const [name, setName] = useState(initial?.name ?? '')
   const [description, setDescription] = useState(initial?.description ?? '')
@@ -58,6 +67,7 @@ export function MemberForm({ initial, knownTools, onSubmit, onCancel }: MemberFo
   const [model, setModel] = useState(initial?.model ?? null)
   const [tools, setTools] = useState(initial?.tools ?? [])
   const [knowledge, setKnowledge] = useState(initial?.knowledge ?? [])
+  const [source, setSource] = useState<AgentSource>(initial?.source ?? 'user')
   const [worktree, setWorktree] = useState(initial?.worktree ?? true)
   const [picked, setPicked] = useState<CharacterId | null>(initialCharacter(initial))
   const [missing, setMissing] = useState<string | null>(null)
@@ -114,7 +124,7 @@ export function MemberForm({ initial, knownTools, onSubmit, onCancel }: MemberFo
             }
             onSubmit(
               draftFrom(
-                { name, description, prompt, character, model, tools, knowledge, worktree },
+                { name, description, prompt, character, model, tools, knowledge, worktree, source },
                 initial,
               ),
             )
@@ -179,6 +189,24 @@ export function MemberForm({ initial, knownTools, onSubmit, onCancel }: MemberFo
                     ))}
                   </SelectContent>
                 </Select>
+              </Row>
+
+              <Row label={t`Scope`} htmlFor="member-scope">
+                <Select
+                  value={source}
+                  onValueChange={(next) => setSource(next === 'project' ? 'project' : 'user')}
+                >
+                  <SelectTrigger id="member-scope" className="w-full">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="user">{t`Shared across projects`}</SelectItem>
+                    <SelectItem value="project" disabled={!projectOpen}>
+                      {t`This project only`}
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
+                {!projectOpen && <Note>{t`Open a project to keep someone for it alone.`}</Note>}
               </Row>
 
               <Row label={t`Tools`}>

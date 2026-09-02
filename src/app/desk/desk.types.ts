@@ -3,6 +3,7 @@
 import type {
   AgentDef,
   AgentDefDraft,
+  AgentSource,
 } from '@/entities/agent-def/api/frontmatter/frontmatter.types'
 import type { RunConfig } from '@/entities/claude-cli/api/run-config/run-config.types'
 import type { Settings } from '@/entities/settings/model/settings/settings.types'
@@ -107,9 +108,15 @@ export type Invokes = {
   'accounts:remove': (id: string) => Outcome<AccountList>
 
   'agents:list': () => AgentDef[]
-  'agents:write': (draft: AgentDefDraft) => string
-  'agents:remove': (name: string) => void
-  'agents:replace': (draft: AgentDefDraft, previousName: string) => string
+  // The draft's scope says which folder it goes in, and a name already used by
+  // the other scope comes back refused rather than hiding one of the two.
+  'agents:write': (draft: AgentDefDraft) => Outcome<string>
+  'agents:remove': (name: string, source: AgentSource) => Outcome<void>
+  'agents:replace': (
+    draft: AgentDefDraft,
+    previousName: string,
+    previousSource: AgentSource,
+  ) => Outcome<string>
   'agents:pickKnowledge': () => string[]
   'agents:authored': () => string[]
 

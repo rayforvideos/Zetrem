@@ -1,32 +1,55 @@
 import { join } from 'node:path'
 import { app, dialog } from 'electron'
 import { READABLE, shortPath } from '@/entities/agent-def'
-import type { AgentDefDraft } from '@/entities/agent-def'
+import type { AgentDefDraft, AgentSource } from '@/entities/agent-def'
 import { homedir } from 'node:os'
 import {
-  listAgentDefs,
-  removeAgentDef,
-  replaceAgentDef,
-  writeAgentDef,
-} from '../agent-store/agent-store'
+  readRoster,
+  removeFromRoster,
+  replaceInRoster,
+  writeToRoster,
+} from '../agent-roster/agent-roster'
+import type { RosterDirs } from '../agent-roster/agent-roster.types'
+import { projectKey } from '../../store/project-key/project-key'
 import { authoredAgents } from '../authored-agents/authored-agents'
 import { recallProject } from '../../store/project-memory/project-memory'
 import { handle } from '../../ipc/ipc'
 
-function agentDir(): string {
-  return join(app.getPath('userData'), 'agents')
+// Both folders are the app's own. A teammate kept for one project still lives
+// under userData, named by a hash of the project's path: nothing is written
+// into the project, and nothing about it is shared with anyone.
+//
+// The folder is named by the project's path, not by anything that survives a
+// project being repathed or forgotten: moving or removing a project today
+// leaves its project-agents folder behind
+// (follow-up: #55).
+async function rosterDirs(): Promise<RosterDirs> {
+  const project = await recallProject()
+  return {
+    user: join(app.getPath('userData'), 'agents'),
+    project:
+      project === null
+        ? null
+        : join(app.getPath('userData'), 'project-agents', projectKey(project)),
+  }
 }
 
 export function registerAgentDefs(): void {
-  handle('agents:list', () => listAgentDefs(agentDir()))
-  handle('agents:write', (_event, draft: AgentDefDraft) => writeAgentDef(agentDir(), draft))
-  handle('agents:remove', (_event, name: string) => removeAgentDef(agentDir(), name))
+  handle('agents:list', async () => readRoster(await rosterDirs()))
+  handle('agents:write', async (_event, draft: AgentDefDraft) =>
+    writeToRoster(await rosterDirs(), draft),
+  )
+  handle('agents:remove', async (_event, name: string, source: AgentSource) =>
+    removeFromRoster(await rosterDirs(), name, source),
+  )
   handle(
     'agents:authored',
     async (): Promise<string[]> => authoredAgents(await recallProject(), homedir()),
   )
-  handle('agents:replace', (_event, draft: AgentDefDraft, previousName: string) =>
-    replaceAgentDef(agentDir(), draft, previousName),
+  handle(
+    'agents:replace',
+    async (_event, draft: AgentDefDraft, previousName: string, previousSource: AgentSource) =>
+      replaceInRoster(await rosterDirs(), draft, previousName, previousSource),
   )
   handle('agents:pickKnowledge', async (): Promise<string[]> => {
     const project = await recallProject()

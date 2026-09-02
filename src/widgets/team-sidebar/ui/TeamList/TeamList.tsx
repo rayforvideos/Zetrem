@@ -7,6 +7,7 @@ import { Empty, EmptyDescription, EmptyHeader, EmptyTitle } from '@/shared/ui/em
 import { noteLine } from '../../lib/team-note/team-note'
 import { FirstHint } from '@/shared/parts/FirstHint/FirstHint'
 import { rowStateOf } from '../../lib/row-state/row-state'
+import { sectionsOf } from '../../lib/team-sections/team-sections'
 import type { Origin, TeamMember } from '../../lib/team/team.types'
 import type { TeamListProps } from './TeamList.types'
 import { MemberForm } from '../MemberForm/MemberForm'
@@ -28,6 +29,7 @@ export function TeamList({
   sessionUp,
   read,
   canWrite,
+  projectOpen,
   hint,
   note,
   avatar,
@@ -42,6 +44,22 @@ export function TeamList({
   const [editing, setEditing] = useState<'new' | string | null>(null)
   const said = note === null ? null : noteLine(note, sessionUp)
   const target = typeof editing === 'string' ? (drafts.get(editing) ?? null) : null
+  const sections = sectionsOf(members)
+
+  const rowsOf = (list: TeamMember[]) =>
+    list.map((member) => (
+      <MemberRow
+        read={read}
+        key={member.type}
+        member={member}
+        avatar={avatar}
+        sessionUp={sessionUp}
+        onPick={onPick}
+        onAddress={onAddress}
+        onEdit={() => setEditing(member.type)}
+        onRelease={() => onRelease(member.type)}
+      />
+    ))
 
   return (
     <>
@@ -50,6 +68,7 @@ export function TeamList({
           key={editing}
           initial={target}
           knownTools={knownTools}
+          projectOpen={projectOpen}
           onCancel={() => setEditing(null)}
           onSubmit={(draft) => {
             if (target === null) onHire(draft)
@@ -84,21 +103,24 @@ export function TeamList({
         />
       )}
 
-      <div className="flex flex-col gap-0.5">
-        {members.map((member) => (
-          <MemberRow
-            read={read}
-            key={member.type}
-            member={member}
-            avatar={avatar}
-            sessionUp={sessionUp}
-            onPick={onPick}
-            onAddress={onAddress}
-            onEdit={() => setEditing(member.type)}
-            onRelease={() => onRelease(member.type)}
-          />
-        ))}
-      </div>
+      {sections.project.length === 0 ? (
+        <div className="flex flex-col gap-0.5">{rowsOf(members)}</div>
+      ) : (
+        <>
+          <div data-team-section="shared" className="flex flex-col gap-0.5">
+            <div className="mb-0.5 px-2 text-xs tracking-wide text-muted-foreground">
+              {t`Shared`}
+            </div>
+            {rowsOf(sections.shared)}
+          </div>
+          <div data-team-section="project" className="mt-2 flex flex-col gap-0.5">
+            <div className="mb-0.5 px-2 text-xs tracking-wide text-muted-foreground">
+              {t`This project only`}
+            </div>
+            {rowsOf(sections.project)}
+          </div>
+        </>
+      )}
 
       {members.length === 0 && editing === null && (
         <Empty className="flex-none items-start justify-start gap-2 px-2.5 py-2 text-left md:px-2.5 md:py-2">

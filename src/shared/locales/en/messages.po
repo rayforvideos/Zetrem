@@ -107,7 +107,7 @@ msgid "{0} teammates"
 msgstr "{0} teammates"
 
 #. placeholder {0}: i18n._(ORIGIN[member.origin])
-#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:159
+#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:181
 msgid "{0}. Joins from the next session."
 msgstr "{0}. Joins from the next session."
 
@@ -188,11 +188,11 @@ msgstr "{n}m ago"
 msgid "{name} can be called this session"
 msgstr "{name} can be called this session"
 
-#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:244
+#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:252
 msgid "{name} is off. The running session keeps them until it ends."
 msgstr "{name} is off. The running session keeps them until it ends."
 
-#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:243
+#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:251
 msgid "{name} is on. The running session cannot call them yet."
 msgstr "{name} is on. The running session cannot call them yet."
 
@@ -204,7 +204,7 @@ msgstr "{name} is over {max}MB, so it cannot be sent as a picture. Point at it b
 msgid "{percent}% used"
 msgstr "{percent}% used"
 
-#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:338
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:366
 msgid "{refused} is not something they can read. Notes and data files only."
 msgstr "{refused} is not something they can read. Notes and data files only."
 
@@ -276,6 +276,10 @@ msgstr "{who} declined this and there is nothing to fall back to"
 msgid "{who} declined this and there is nothing to fall back to. {said}"
 msgstr "{who} declined this and there is nothing to fall back to. {said}"
 
+#: src/widgets/team-sidebar/lib/team-note/team-note.ts:26
+msgid "{who} is already on the team under the other scope. Pick another name."
+msgstr "{who} is already on the team under the other scope. Pick another name."
+
 #: src/entities/claude-cli/lib/failure/failure.ts:38
 msgid "{who} is not available on your account. Pick another in Settings."
 msgstr "{who} is not available on your account. Pick another in Settings."
@@ -336,15 +340,15 @@ msgstr "A dev run does not update itself."
 msgid "A name cannot start with a dash"
 msgstr "A name cannot start with a dash"
 
-#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:145
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:155
 msgid "A name to call them by"
 msgstr "A name to call them by"
 
-#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:354
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:382
 msgid "A running session cannot call them. Restart it, or they join the next one."
 msgstr "A running session cannot call them. Restart it, or they join the next one."
 
-#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:355
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:383
 msgid "A running session keeps the old brief until it is restarted"
 msgstr "A running session keeps the old brief until it is restarted"
 
@@ -430,11 +434,11 @@ msgstr "Add more"
 msgid "Add one by address"
 msgstr "Add one by address"
 
-#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:76
+#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:95
 msgid "Add teammate"
 msgstr "Add teammate"
 
-#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:81
+#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:100
 msgid "Add your first teammate"
 msgstr "Add your first teammate"
 
@@ -531,7 +535,7 @@ msgstr "Ask for the whole job, not the next step. The orchestrator splits it up,
 msgid "Asks before editing files or running commands"
 msgstr "Asks before editing files or running commands"
 
-#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:275
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:303
 msgid "Attach"
 msgstr "Attach"
 
@@ -603,7 +607,7 @@ msgstr "Can't connect"
 #: src/widgets/library/ui/NoteReader/NoteReader.tsx:193
 #: src/widgets/setup/ui/SetupPane/SetupPane.tsx:215
 #: src/widgets/team-sidebar/ui/ChatList/ChatRow.tsx:240
-#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:359
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:387
 #: src/widgets/team-sidebar/ui/MemberMenu/MemberMenu.tsx:66
 #: src/widgets/team-sidebar/ui/ProjectSwitcher/ProjectSwitcher.tsx:145
 msgid "Cancel"
@@ -664,7 +668,7 @@ msgstr "Choose project"
 msgid "Choose what can run without asking, check your remaining limits along the bottom, and stop anything while it is running."
 msgstr "Choose what can run without asking, check your remaining limits along the bottom, and stop anything while it is running."
 
-#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:21
+#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:22
 #: src/widgets/team-sidebar/ui/TeamSidebar/TeamSidebar.tsx:71
 msgid "Claude Code"
 msgstr "Claude Code"
@@ -816,7 +820,7 @@ msgid "Could not open that folder"
 msgstr "Could not open that folder"
 
 #: src/pages/workspace/model/chat/useAttachments.ts:63
-#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:85
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:95
 msgid "Could not open the file picker"
 msgstr "Could not open the file picker"
 
@@ -859,7 +863,7 @@ msgstr "Could not read what is available"
 
 #: src/pages/workspace/model/chat/useAttachments.ts:56
 #: src/pages/workspace/model/chat/useAttachments.ts:95
-#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:97
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:107
 msgid "Could not read what you attached"
 msgstr "Could not read what you attached"
 
@@ -899,7 +903,7 @@ msgstr "Could not remove the account."
 msgid "Could not rename that chat"
 msgstr "Could not rename that chat"
 
-#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:87
+#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:95
 msgid "Could not reopen your last project"
 msgstr "Could not reopen your last project"
 
@@ -930,11 +934,11 @@ msgid "Could not switch accounts."
 msgstr "Could not switch accounts."
 
 #: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:452
-#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:362
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:390
 msgid "Create"
 msgstr "Create"
 
-#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:108
+#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:130
 msgid "Create a teammate and they'll show up here."
 msgstr "Create a teammate and they'll show up here."
 
@@ -1004,7 +1008,7 @@ msgstr "Dismiss this tip"
 msgid "Dismissed \"{title}\""
 msgstr "Dismissed \"{title}\""
 
-#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:337
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:365
 msgid "Documents they read first. Long ones cost nothing until they open them."
 msgstr "Documents they read first. Long ones cost nothing until they open them."
 
@@ -1033,7 +1037,7 @@ msgstr "Drag to resize, double-click to reset"
 msgid "Drop"
 msgstr "Drop"
 
-#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:290
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:318
 msgid "Drop a document here, or click to pick one."
 msgstr "Drop a document here, or click to pick one."
 
@@ -1055,7 +1059,7 @@ msgid "Edit"
 msgstr "Edit"
 
 #. placeholder {0}: initial.name
-#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:127
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:137
 msgid "Edit {0}"
 msgstr "Edit {0}"
 
@@ -1096,7 +1100,7 @@ msgstr "Everyone you send out gets a card: their name, their task, and how long 
 msgid "Everything it has. Slowest and priciest"
 msgstr "Everything it has. Slowest and priciest"
 
-#: src/widgets/team-sidebar/lib/member-draft/member-draft.ts:35
+#: src/widgets/team-sidebar/lib/member-draft/member-draft.ts:38
 #: src/widgets/team-sidebar/ui/ToolPicker/ToolPicker.tsx:61
 msgid "Everything the session has"
 msgstr "Everything the session has"
@@ -1105,7 +1109,7 @@ msgstr "Everything the session has"
 msgid "Extensions"
 msgstr "Extensions"
 
-#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:161
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:171
 #: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:192
 msgid "Face"
 msgstr "Face"
@@ -1244,7 +1248,7 @@ msgstr "Git said: {0}"
 msgid "Give it a name"
 msgstr "Give it a name"
 
-#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:69
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:79
 msgid "Give them a name"
 msgstr "Give them a name"
 
@@ -1252,7 +1256,7 @@ msgstr "Give them a name"
 msgid "Give them a name, say when to call them, and write their instructions. The orchestrator goes by the \"when to call them\" line to pick who gets the job."
 msgstr "Give them a name, say when to call them, and write their instructions. The orchestrator goes by the \"when to call them\" line to pick who gets the job."
 
-#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:175
+#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:197
 msgid "Give them a task"
 msgstr "Give them a task"
 
@@ -1273,7 +1277,7 @@ msgstr "Hard problems. Much slower"
 msgid "Held up"
 msgstr "Held up"
 
-#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:165
+#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:173
 msgid "Hide team sidebar"
 msgstr "Hide team sidebar"
 
@@ -1475,7 +1479,7 @@ msgstr "Message your team"
 #: src/widgets/conversation/ui/Composer/Composer.tsx:203
 #: src/widgets/setup/ui/SetupPane/SetupPane.tsx:156
 #: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:109
-#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:165
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:175
 msgid "Model"
 msgstr "Model"
 
@@ -1506,7 +1510,7 @@ msgstr "More for {name}"
 msgid "More options for the folder {name}"
 msgstr "More options for the folder {name}"
 
-#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:140
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:150
 #: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:177
 msgid "Name"
 msgstr "Name"
@@ -1561,7 +1565,7 @@ msgstr "New note"
 msgid "New note in {name}"
 msgstr "New note in {name}"
 
-#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:127
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:137
 msgid "New teammate"
 msgstr "New teammate"
 
@@ -1585,7 +1589,7 @@ msgstr "No commits here yet. The graph starts with the first one."
 msgid "No connectors yet. Add one below, or bring over what Claude Desktop already has."
 msgstr "No connectors yet. Add one below, or bring over what Claude Desktop already has."
 
-#: src/pages/workspace/model/team/useAgentDefs.ts:79
+#: src/pages/workspace/model/team/useAgentDefs.ts:117
 msgid "No handler registered"
 msgstr "No handler registered"
 
@@ -1593,7 +1597,7 @@ msgstr "No handler registered"
 msgid "No notes yet"
 msgstr "No notes yet"
 
-#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:106
+#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:128
 msgid "No one here yet"
 msgstr "No one here yet"
 
@@ -1601,11 +1605,11 @@ msgstr "No one here yet"
 msgid "No tool by that name."
 msgstr "No tool by that name."
 
-#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:160
+#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:182
 msgid "Not available this session. Unlock it in Settings."
 msgstr "Not available this session. Unlock it in Settings."
 
-#: src/widgets/team-sidebar/lib/member-draft/member-draft.ts:34
+#: src/widgets/team-sidebar/lib/member-draft/member-draft.ts:37
 msgid "Not known yet"
 msgstr "Not known yet"
 
@@ -1696,6 +1700,14 @@ msgstr "One line the agent reads to decide whether this matters"
 msgid "One of you writes, one of you checks. Deal?"
 msgstr "One of you writes, one of you checks. Deal?"
 
+#: src/pages/workspace/model/team/useAgentDefs.ts:111
+msgid "Open a project before keeping someone for it."
+msgstr "Open a project before keeping someone for it."
+
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:209
+msgid "Open a project to keep someone for it alone."
+msgstr "Open a project to keep someone for it alone."
+
 #: src/widgets/team-sidebar/ui/ProjectSwitcher/ProjectSwitcher.tsx:131
 msgid "Open folder…"
 msgstr "Open folder…"
@@ -1712,7 +1724,7 @@ msgstr "Or start with one of your own."
 msgid "Orchestrating"
 msgstr "Orchestrating"
 
-#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:214
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:242
 msgid "Own workspace"
 msgstr "Own workspace"
 
@@ -1745,7 +1757,7 @@ msgstr "Pick a branch"
 msgid "Pick a note"
 msgstr "Pick a note"
 
-#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:68
+#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:87
 msgid "Pick a project first"
 msgstr "Pick a project first"
 
@@ -1836,7 +1848,7 @@ msgstr "Read the change before you judge it, and check what it touches."
 msgid "Reading"
 msgstr "Reading"
 
-#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:260
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:288
 msgid "Reading list"
 msgstr "Reading list"
 
@@ -1904,7 +1916,7 @@ msgid "Remove"
 msgstr "Remove"
 
 #. placeholder {0}: entry.name
-#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:321
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:349
 msgid "Remove {0}"
 msgstr "Remove {0}"
 
@@ -1956,7 +1968,7 @@ msgstr "Renamed"
 msgid "Replace the running session so the next message goes on with the change"
 msgstr "Replace the running session so the next message goes on with the change"
 
-#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:123
+#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:145
 msgid "Replace the running session so the next message goes on with them on the team"
 msgstr "Replace the running session so the next message goes on with them on the team"
 
@@ -1981,11 +1993,11 @@ msgid "Restart"
 msgstr "Restart"
 
 #: src/widgets/conversation/ui/RestartNote/RestartNote.tsx:17
-#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:126
+#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:148
 msgid "Restart session"
 msgstr "Restart session"
 
-#: src/pages/workspace/model/team/useAgentDefs.ts:80
+#: src/pages/workspace/model/team/useAgentDefs.ts:118
 msgid "Restart Zetrem. This version does not know about it yet."
 msgstr "Restart Zetrem. This version does not know about it yet."
 
@@ -2016,13 +2028,13 @@ msgstr "Run this command?"
 msgid "Running"
 msgstr "Running"
 
-#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:171
-#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:174
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:181
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:184
 msgid "Same as the session"
 msgstr "Same as the session"
 
 #: src/widgets/setup/ui/MemoryField/MemoryField.tsx:130
-#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:362
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:390
 msgid "Save"
 msgstr "Save"
 
@@ -2050,6 +2062,10 @@ msgstr "Say what you want done, not the next step. The orchestrator splits it up
 #: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:205
 msgid "Say what you would change and why, in that order."
 msgstr "Say what you would change and why, in that order."
+
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:194
+msgid "Scope"
+msgstr "Scope"
 
 #: src/widgets/library/ui/NoteList/NoteList.tsx:111
 msgid "Search"
@@ -2080,7 +2096,7 @@ msgstr "Searched"
 msgid "Searching"
 msgstr "Searching"
 
-#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:175
+#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:197
 msgid "See what they did"
 msgstr "See what they did"
 
@@ -2125,11 +2141,19 @@ msgstr "Settings sections"
 msgid "share unknown"
 msgstr "share unknown"
 
+#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:112
+msgid "Shared"
+msgstr "Shared"
+
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:203
+msgid "Shared across projects"
+msgstr "Shared across projects"
+
 #: src/widgets/setup/ui/SetupPane/SetupPane.tsx:121
 msgid "Shift+Enter starts a new line. Off, sending takes the modifier key with Enter."
 msgstr "Shift+Enter starts a new line. Off, sending takes the modifier key with Enter."
 
-#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:165
+#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:173
 msgid "Show team sidebar"
 msgstr "Show team sidebar"
 
@@ -2426,7 +2450,7 @@ msgstr "The file is deleted and its line leaves the index the agents load. This 
 msgid "The hardest problems. Slowest and priciest of these"
 msgstr "The hardest problems. Slowest and priciest of these"
 
-#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:156
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:166
 msgid "The kind of work they should get"
 msgstr "The kind of work they should get"
 
@@ -2458,7 +2482,7 @@ msgstr "The note is deleted from the library. This cannot be undone."
 msgid "the orchestrator"
 msgstr "the orchestrator"
 
-#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:158
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:168
 #: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:187
 msgid "The orchestrator reads this to pick who gets the job."
 msgstr "The orchestrator reads this to pick who gets the job."
@@ -2524,7 +2548,7 @@ msgstr "Their file is deleted and they leave the roster. A session already runni
 msgid "Their helpers"
 msgstr "Their helpers"
 
-#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:245
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:273
 #: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:202
 msgid "Their instructions"
 msgstr "Their instructions"
@@ -2541,7 +2565,7 @@ msgstr "Thinking"
 msgid "Thinks longer. Slower and pricier"
 msgstr "Thinks longer. Slower and pricier"
 
-#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:254
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:282
 #: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:208
 msgid "This always applies. Write it the way you would explain the job to a person."
 msgstr "This always applies. Write it the way you would explain the job to a person."
@@ -2582,7 +2606,7 @@ msgstr "This device"
 msgid "This diff is too large to show here."
 msgstr "This diff is too large to show here."
 
-#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:130
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:140
 msgid "This is everything they know when they start."
 msgstr "This is everything they know when they start."
 
@@ -2599,13 +2623,18 @@ msgid "This opens the browser to sign in again for this account. The session run
 msgstr "This opens the browser to sign in again for this account. The session running here stops."
 
 #: src/entities/plugin/lib/groups/groups.ts:11
-#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:19
+#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:20
 msgid "This project"
 msgstr "This project"
 
 #: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:518
 msgid "This project is not a git repository."
 msgstr "This project is not a git repository."
+
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:205
+#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:118
+msgid "This project only"
+msgstr "This project only"
 
 #: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:98
 msgid "This session"
@@ -2676,7 +2705,7 @@ msgstr "Todo list"
 msgid "tool"
 msgstr "tool"
 
-#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:184
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:212
 msgid "Tools"
 msgstr "Tools"
 
@@ -2803,7 +2832,7 @@ msgstr "What they changed"
 msgid "What they did"
 msgstr "What they did"
 
-#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:250
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:278
 msgid "What they do, how to go about it, and what to hand back."
 msgstr "What they do, how to go about it, and what to hand back."
 
@@ -2819,7 +2848,7 @@ msgstr "What this project has learned, kept as notes so nobody has to work it ou
 msgid "What you have"
 msgstr "What you have"
 
-#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:151
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:161
 #: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:182
 msgid "When to call them"
 msgstr "When to call them"
@@ -2839,7 +2868,7 @@ msgstr "Why the last item drops"
 msgid "Working"
 msgstr "Working"
 
-#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:216
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:244
 msgid "Works in a git worktree of its own; changes come back as a branch."
 msgstr "Works in a git worktree of its own; changes come back as a branch."
 
@@ -2855,7 +2884,7 @@ msgstr "Write in markdown"
 msgid "Write the first note"
 msgstr "Write the first note"
 
-#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:82
+#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:101
 msgid "Write their instructions once and the orchestrator can call them in any project."
 msgstr "Write their instructions once and the orchestrator can call them in any project."
 
@@ -2863,11 +2892,11 @@ msgstr "Write their instructions once and the orchestrator can call them in any 
 msgid "Write this file?"
 msgstr "Write this file?"
 
-#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:71
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:81
 msgid "Write what they do, and how"
 msgstr "Write what they do, and how"
 
-#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:218
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:246
 msgid "Writes straight into the shared working tree."
 msgstr "Writes straight into the shared working tree."
 
@@ -2906,11 +2935,11 @@ msgstr "You stopped this"
 msgid "You talk on the left"
 msgstr "You talk on the left"
 
-#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:20
+#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:21
 msgid "Your account"
 msgstr "Your account"
 
-#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:232
+#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:240
 msgid "Your account changed before the reply finished, so it stops here."
 msgstr "Your account changed before the reply finished, so it stops here."
 

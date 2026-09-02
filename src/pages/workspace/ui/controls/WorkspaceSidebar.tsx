@@ -1,6 +1,7 @@
 import { hintDue, hintSeen } from '@/entities/settings'
 import { MOTION } from '@/shared/config/motion/motion'
 import { TeamSidebar } from '@/widgets/team-sidebar'
+import { chatSwitch } from '../../model/chat/chat-switch/chat-switch'
 import { tuckedBy } from '../../model/screen/tuck/tuck'
 import type { LibraryNotes, Workspace } from '../../model/screen/useWorkspace/useWorkspace.types'
 
@@ -50,7 +51,11 @@ export function WorkspaceSidebar({
         chats={{
           chats: chat.chats,
           openId: layout.libraryOpen ? null : chat.openId,
-          onOpen: (id) => account.swap(() => chat.open(id)),
+          // Coming back to the open chat (from the library) must not end its session.
+          onOpen: (id) =>
+            chatSwitch(id, chat.openId) === 'return'
+              ? layout.leaveLibrary()
+              : account.swap(() => chat.open(id)),
           onStart: () => account.swap(chat.start),
           // Removing the chat that is open mid-reply must also let its agent go.
           onRemove: (id) =>
@@ -78,7 +83,6 @@ export function WorkspaceSidebar({
           onRestart: () => {
             focus.clearAll()
             team.settleNote()
-            chat.detach()
             chatting.agent.restart()
           },
         }}

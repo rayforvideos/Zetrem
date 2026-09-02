@@ -11,7 +11,7 @@ export function RestartNote({ said, onRestart }: { said: string; onRestart(): vo
         size="sm"
         onClick={onRestart}
         className="h-7 rounded-lg border border-border px-2.5 text-xs"
-        title={t`Stop the running session so the next message starts one that follows the change`}
+        title={t`Replace the running session so the next message goes on with the change`}
       >
         <RotateCcw className="size-3.5" />
         {t`Restart session`}

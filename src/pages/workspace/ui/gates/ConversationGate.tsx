@@ -18,7 +18,7 @@ export function ConversationGate({
   sidebar: ReactNode
 }) {
   const { chatting, prefs, team } = work
-  const { agent, attach, chat, children, conv, focus, nowMs, status } = chatting
+  const { agent, attach, children, conv, focus, nowMs, status } = chatting
   const { settings, update, reload } = prefs
   const libraryAccess = useLibraryAccess(work.projects.current?.path ?? null, chatting.live)
 
@@ -44,7 +44,6 @@ export function ConversationGate({
               onRestart={() => {
                 chatting.setPendingRestart(null)
                 focus.clearAll()
-                chat.detach()
                 agent.restart()
               }}
             />

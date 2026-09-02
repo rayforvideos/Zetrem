@@ -179,11 +179,11 @@ msgstr "{n}m ago"
 msgid "{name} can be called this session"
 msgstr "{name} can be called this session"
 
-#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:227
+#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:230
 msgid "{name} is off. The running session keeps them until it ends."
 msgstr "{name} is off. The running session keeps them until it ends."
 
-#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:226
+#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:229
 msgid "{name} is on. The running session cannot call them yet."
 msgstr "{name} is on. The running session cannot call them yet."
 
@@ -606,7 +606,7 @@ msgstr "Cart totals and rounding"
 msgid "Change"
 msgstr "Change"
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:131
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:132
 msgid "Change account, project, and permissions"
 msgstr "Change account, project, and permissions"
 
@@ -801,7 +801,7 @@ msgstr "Could not open that folder"
 msgid "Could not open the file picker"
 msgstr "Could not open the file picker"
 
-#: src/pages/workspace/model/session/useAgent.ts:94
+#: src/pages/workspace/model/session/useAgent.ts:95
 msgid "Could not pick that conversation back up. Starting a new one."
 msgstr "Could not pick that conversation back up. Starting a new one."
 
@@ -880,7 +880,7 @@ msgstr "Could not remove the account."
 msgid "Could not rename that chat"
 msgstr "Could not rename that chat"
 
-#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:78
+#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:79
 msgid "Could not reopen your last project"
 msgstr "Could not reopen your last project"
 
@@ -901,7 +901,7 @@ msgstr "Could not start Claude Code"
 msgid "Could not start Claude Code: {said}"
 msgstr "Could not start Claude Code: {said}"
 
-#: src/pages/workspace/model/session/useCliUpdate.ts:38
+#: src/pages/workspace/model/session/useCliUpdate.ts:41
 msgid "Could not start the update"
 msgstr "Could not start the update"
 
@@ -1240,7 +1240,7 @@ msgstr "Hard problems. Much slower"
 msgid "Held up"
 msgstr "Held up"
 
-#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:150
+#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:153
 msgid "Hide team sidebar"
 msgstr "Hide team sidebar"
 
@@ -2060,7 +2060,7 @@ msgstr "Session"
 msgid "Session details"
 msgstr "Session details"
 
-#: src/pages/workspace/model/session/useAgent.ts:160
+#: src/pages/workspace/model/session/useAgent.ts:161
 msgid "Session restarted. The next message picks the conversation back up with your team as it is now."
 msgstr "Session restarted. The next message picks the conversation back up with your team as it is now."
 
@@ -2072,7 +2072,7 @@ msgstr "Set a few things and your agents get to work!"
 msgid "Set for everyone on your account. They cannot be removed or turned off here."
 msgstr "Set for everyone on your account. They cannot be removed or turned off here."
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:133
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:134
 msgid "Settings"
 msgstr "Settings"
 
@@ -2088,7 +2088,7 @@ msgstr "share unknown"
 msgid "Shift+Enter starts a new line. Off, sending takes the modifier key with Enter."
 msgstr "Shift+Enter starts a new line. Off, sending takes the modifier key with Enter."
 
-#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:150
+#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:153
 msgid "Show team sidebar"
 msgstr "Show team sidebar"
 
@@ -2446,7 +2446,7 @@ msgstr "The running session keeps the library. Agents stop seeing it from the ne
 msgid "The saved conversation is deleted. This cannot be undone."
 msgstr "The saved conversation is deleted. This cannot be undone."
 
-#: src/pages/workspace/model/session/useAgent.ts:115
+#: src/pages/workspace/model/session/useAgent.ts:116
 msgid "The screen was rebuilt, so this session paused. Your next message picks it back up."
 msgstr "The screen was rebuilt, so this session paused. Your next message picks it back up."
 
@@ -2831,7 +2831,7 @@ msgstr "You already have a connector by that name"
 msgid "You decide what runs"
 msgstr "You decide what runs"
 
-#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:213
+#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:216
 msgid "You left before the reply finished, so it stops here."
 msgstr "You left before the reply finished, so it stops here."
 

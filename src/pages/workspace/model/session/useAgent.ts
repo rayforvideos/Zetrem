@@ -76,6 +76,10 @@ export function useAgent(
     () => session?.stores.status.get() ?? EMPTY_STATUS,
     () => EMPTY_STATUS,
   )
+  // Read on the session-wide subscribe rather than a store of its own: every
+  // hostId change comes with a store emit (beginSession resets status, reset
+  // clears the permission, an exit closes the session), so this snapshot is
+  // never the stale half of a pair.
   const running = useSyncExternalStore(
     subscribe,
     () => session?.running() ?? false,

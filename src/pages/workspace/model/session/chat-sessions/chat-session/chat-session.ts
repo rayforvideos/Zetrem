@@ -106,7 +106,8 @@ export function createChatSession(
         if (hostId !== id) return
         hostId = null
         attempt = null
-        conversation.system(`Could not start Claude Code: ${reasonOf(cause)}`)
+        const said = reasonOf(cause)
+        conversation.system(t`Could not start Claude Code: ${said}`)
         conversation.setStatus('done')
         conversation.setTrouble(true)
       })

@@ -218,7 +218,7 @@ export function wakeResumed(toolUseId: string, stdout: string, refs: AgentEventR
 
 function assignment(prompt: string): TranscriptEntry[] {
   const said = prompt.trim()
-  return said.length === 0 ? [] : [{ role: 'user', text: said }]
+  return said.length === 0 ? [] : [{ role: 'user', text: said, atMs: Date.now() }]
 }
 
 function closeCall(toolUseId: string, callId: string, failed: boolean, text: string): void {

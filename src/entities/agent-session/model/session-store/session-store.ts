@@ -77,8 +77,9 @@ export const sessionStore = {
   appendTranscript(id: string, entry: TranscriptEntry): void {
     const target = sessions.find((s) => s.id === id)
     if (!target) return
-    const transcript = [...target.transcript, entry].slice(-TRANSCRIPT_BUFFER)
     const lastSeenAtMs = Date.now()
+    const stamped = entry.atMs === undefined ? { ...entry, atMs: lastSeenAtMs } : entry
+    const transcript = [...target.transcript, stamped].slice(-TRANSCRIPT_BUFFER)
     patchOne(id, { transcript, lastSeenAtMs })
   },
   beginCall(id: string, call: Opening): void {

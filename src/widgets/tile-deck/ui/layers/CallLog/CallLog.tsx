@@ -78,7 +78,9 @@ export function CallLog({ calls, live, nowMs }: CallLogProps) {
   )
 }
 
-function Row({ call, lit, count }: { call: Call; lit: boolean; count: ChangeCount | null }) {
+// Exported so the left pane's Timeline can draw a call the same way the
+// right-hand log does, rather than keeping a second copy of this row.
+export function Row({ call, lit, count }: { call: Call; lit: boolean; count: ChangeCount | null }) {
   const shape = shapeOfCall(call.line)
   const target = shape.kind === 'plain' ? call.line : targetOf(shape)
   const fill = fillOf(call)

@@ -11,7 +11,6 @@ export type { SessionStore } from './model/session-store/session-store.types'
 export { nudgeFor } from './model/nudge/nudge'
 export { createChatStatus } from './model/status-store/status-store'
 export type {
-  AccountStatusState,
   ChatStatus,
   ChatStatusState,
   StatusState,

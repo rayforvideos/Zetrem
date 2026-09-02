@@ -118,8 +118,10 @@ export function openLibraryDb(file: string, workspace: string): DatabaseSync {
 
 // A note is four statements across three tables, so it is written all at once
 // or not at all: a failure half way would leave the search index describing a
-// note that is not there. A caller already in a transaction keeps its own.
-function atLeastAtOnce(db: DatabaseSync, work: () => void): void {
+// note that is not there. A caller already in a transaction keeps its own,
+// which is also what lets a caller of its own — accepting a proposal, say —
+// nest several of these calls into one all-or-nothing change.
+export function atLeastAtOnce(db: DatabaseSync, work: () => void): void {
   if (db.isTransaction) {
     work()
     return

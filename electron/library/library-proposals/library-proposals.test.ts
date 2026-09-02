@@ -1,6 +1,7 @@
 import type { DatabaseSync } from 'node:sqlite'
-import { afterEach, beforeEach, describe, expect, it } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { openLibraryDb } from '../library-db/library-db'
+import * as libraryNotes from '../library-notes/library-notes'
 import { addFolder, listNotes } from '../library-notes/library-notes'
 import { acceptProposal, addProposal, dismissProposal, listProposals } from './library-proposals'
 
@@ -77,6 +78,20 @@ describe('accepting one', () => {
 
   it('answers nothing for a suggestion that is no longer there', () => {
     expect(acceptProposal(db, 'nobody')).toBeNull()
+  })
+
+  it('accepts in one transaction: a failure between the note write and dropping the proposal leaves neither done', () => {
+    const asked = addProposal(db, { title: 'Auth', body: 'Sessions.' }, NOW)
+    const spy = vi.spyOn(libraryNotes, 'writeNote').mockImplementation(() => {
+      throw new Error('boom')
+    })
+    try {
+      expect(() => acceptProposal(db, asked.id)).toThrow('boom')
+    } finally {
+      spy.mockRestore()
+    }
+    expect(listNotes(db).notes).toEqual([])
+    expect(listProposals(db)).toHaveLength(1)
   })
 })
 

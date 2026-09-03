@@ -23,7 +23,13 @@ export function agentArgs(config: RunConfig): string[] {
 
   const isolated = config.isolated === true
   args.push(
-    ...agentsArgs(config.people, config.lock, config.orchestrator ?? config.persona, isolated),
+    ...agentsArgs(
+      config.people,
+      config.lock,
+      config.orchestrator ?? config.persona,
+      isolated,
+      config.spoken,
+    ),
   )
   if (isolated) args.push('--settings', WORKTREE_FROM_HEAD)
 

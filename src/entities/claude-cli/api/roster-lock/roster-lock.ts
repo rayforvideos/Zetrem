@@ -30,6 +30,16 @@ const GENERIC_HELPER = {
 const WORKTREE_NODE_MODULES_NOTICE =
   '\n\nYou work in a git worktree of your own. If a node_modules folder is present there, it is linked from the main checkout: never install, update or remove dependencies inside the worktree.'
 
+// A teammate's own definition is what it speaks, and the stock ones are
+// English, so its running narration drifts to English whatever the person
+// reads the app in. The screen hands over a line naming its language, and
+// every teammate's brief opens with it: a rule at the end of a long brief
+// was read past, and the first sentence came out in English anyway. The
+// main process cannot read the dictionary itself, so the line arrives as text.
+function spoken(prompt: string, line: string | undefined): string {
+  return line === undefined || line.length === 0 ? prompt : `${line}\n\n${prompt}`
+}
+
 type Spec = Record<
   string,
   {
@@ -48,7 +58,7 @@ function withNotice(prompt: string): string {
 // Declared on the definition rather than asked for at the call: the runtime then
 // fences every spawn of that teammate, whatever the orchestrator passes. Only a
 // teammate that opted in is fenced, and only when the workspace can hold worktrees at all.
-export function peopleSpec(people: Person[], isolated: boolean): Spec {
+export function peopleSpec(people: Person[], isolated: boolean, spokenLine?: string): Spec {
   const spec: Spec = {}
   for (const person of people) {
     if (person.name.length === 0 || person.prompt.trim().length === 0) continue
@@ -57,7 +67,7 @@ export function peopleSpec(people: Person[], isolated: boolean): Spec {
     // empty pick is left off entirely.
     spec[person.name] = {
       description: person.description.length > 0 ? person.description : person.name,
-      prompt: fenced ? withNotice(person.prompt) : person.prompt,
+      prompt: spoken(fenced ? withNotice(person.prompt) : person.prompt, spokenLine),
       ...(person.model === null ? {} : { model: person.model }),
       ...(person.tools.length === 0 ? {} : { tools: person.tools }),
       ...(fenced ? { isolation: 'worktree' as const } : {}),
@@ -71,8 +81,9 @@ export function agentsArgs(
   lock: RosterLock | null,
   orchestratorPrompt: string,
   isolated: boolean,
+  spokenLine?: string,
 ): string[] {
-  const spec = peopleSpec(people, isolated)
+  const spec = peopleSpec(people, isolated, spokenLine)
 
   if (lock === null) {
     return Object.keys(spec).length === 0 ? [] : ['--agents', JSON.stringify(spec)]
@@ -85,7 +96,7 @@ export function agentsArgs(
       if (name in spec) continue
       spec[name] = {
         ...GENERIC_HELPER,
-        prompt: withNotice(GENERIC_HELPER.prompt),
+        prompt: spoken(withNotice(GENERIC_HELPER.prompt), spokenLine),
         isolation: 'worktree' as const,
       }
     }

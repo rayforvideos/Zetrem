@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState, useSyncExternalStore } from 'react'
 import { accountStatus, statusView } from '@/entities/agent-session'
-import { allowedStock, roster, offStock, stockAgents } from '@/entities/teammate'
+import { allowedStock, roster, offStock, stockAgents, spokenLine } from '@/entities/teammate'
 import { topLevel } from '@/entities/agent-session'
 import { withRefused, withoutRefused } from '@/entities/claude-cli'
 import { projectStore } from '@/entities/project'
@@ -68,6 +68,8 @@ export function useWorkspace() {
     effort: settings.effort,
     people: peopleOf(defs),
     lock: lockOf(settings, defs, authored),
+    // Names the language the screen is read in; every teammate's brief opens with it.
+    spoken: spokenLine(),
   }
   const agent = useAgent(chat.session, runConfig, (model) =>
     update({ refusedModels: withRefused(settings.refusedModels, model) }),

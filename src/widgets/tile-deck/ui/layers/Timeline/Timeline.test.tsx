@@ -60,15 +60,28 @@ describe('Timeline: the said and the done, in the order they happened', () => {
     expect(html).toContain('one.ts')
   })
 
-  it('draws no diff under a call that read instead of wrote', () => {
+  it('leaves out a call that read instead of wrote, which the log under it lists', () => {
     const html = draw(session({ stream: [call('c1', 'Read one.ts')] }))
-    expect(html).toContain('data-call')
+    expect(html).not.toContain('data-call')
     expect(html).not.toContain('data-change')
   })
 
-  it('marks a call that failed', () => {
+  it('leaves out a call that failed, for the same reason', () => {
     const html = draw(session({ stream: [call('c1', 'Bash npx tsc', { failed: true })] }))
-    expect(html).toContain('data-call="failed"')
+    expect(html).not.toContain('data-call')
+  })
+
+  it('keeps the call a change sits under, as the caption of its diff', () => {
+    const html = draw(
+      session({
+        stream: [
+          call('c1', 'Read one.ts'),
+          call('c2', 'Edit one.ts', { change: [[{ kind: 'add', text: 'x' }]] }),
+        ],
+      }),
+    )
+    expect(html.match(/data-call/g)).toHaveLength(1)
+    expect(html).toContain('data-change')
   })
 
   it('draws nothing for a session with nothing said and nothing done', () => {

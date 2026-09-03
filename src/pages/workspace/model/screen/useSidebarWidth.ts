@@ -1,13 +1,15 @@
 import { useEffect, useState } from 'react'
 import type { Settings } from '@/entities/settings'
 import { SIDEBAR } from '@/shared/config/theme'
-import { sidebarFits, sidebarShows } from './sidebar-room/sidebar-room'
+import { sidebarFits, sidebarFloats, sidebarShows, sidebarSpan } from './sidebar-room/sidebar-room'
 
 type Sidebar = {
   width: number
   span: number
   open: boolean
   tight: boolean
+  // Open where it does not fit: shown over the conversation, taking no room from it.
+  floating: boolean
   toggle(): void
   resize(width: number): void
   commit(width: number): void
@@ -44,9 +46,10 @@ export function useSidebarWidth(
 
   return {
     width,
-    span: open ? width + SIDEBAR.gap : 0,
+    span: sidebarSpan(open, fits, width, SIDEBAR.gap),
     open,
     tight: !fits,
+    floating: sidebarFloats(open, fits),
     toggle,
     resize: setDragging,
     commit,

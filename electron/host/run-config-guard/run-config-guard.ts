@@ -49,6 +49,9 @@ export function runConfigOf(value: unknown): Omit<RunConfig, 'persona'> | null {
   if (raw.resume !== undefined && raw.resume !== null && typeof raw.resume !== 'string') return null
   if (!Array.isArray(raw.people) || !raw.people.every(isPerson)) return null
   if (!isLock(raw.lock)) return null
+  // The line naming the screen's language is text the teammates read, never
+  // an argument of its own: it rides inside the --agents JSON.
+  if (raw.spoken !== undefined && typeof raw.spoken !== 'string') return null
   return {
     permissionMode: raw.permissionMode as PermissionMode,
     model: raw.model as ModelChoice,
@@ -56,5 +59,6 @@ export function runConfigOf(value: unknown): Omit<RunConfig, 'persona'> | null {
     resume: raw.resume ?? null,
     people: raw.people.map((p) => ({ ...p, isolated: p.isolated ?? true })),
     lock: raw.lock,
+    ...(raw.spoken === undefined ? {} : { spoken: raw.spoken }),
   }
 }

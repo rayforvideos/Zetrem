@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { t } from '@lingui/core/macro'
-import { CircleHelp, Library, Plus } from 'lucide-react'
+import { ChevronLeft, CircleHelp, Library, Plus } from 'lucide-react'
+import { cn } from '@/shared/lib/cn'
 import { Button } from '@/shared/ui/button'
 import {
   DropdownMenu,
@@ -15,6 +16,11 @@ import { NoteReader } from '../NoteReader/NoteReader'
 import type { LibraryPaneProps } from './LibraryPane.types'
 
 const ICON = 'rounded-md text-muted-foreground hover:text-foreground'
+
+// Teammates on screen leave the library as little as 340px. Under 40rem the
+// list and the note take turns in the pane instead of sharing it: the list
+// until a note is opened, the note with a way back once one is. The variants
+// are written out in full: the stylesheet is built from the strings it finds.
 
 export function LibraryPane(props: LibraryPaneProps) {
   const { notes, open, loading, onCreate, sidebar } = props
@@ -68,7 +74,7 @@ export function LibraryPane(props: LibraryPaneProps) {
   return (
     <div data-library-pane className="relative z-[3] flex h-full gap-7">
       {sidebar}
-      <div className="zt-rise flex w-full min-w-0 flex-1 flex-col px-6 py-6">
+      <div className="zt-rise @container/library flex w-full min-w-0 flex-1 flex-col px-6 py-6">
         <ProposalList
           proposals={props.proposals}
           chatTitleOf={props.chatTitleOf}
@@ -76,7 +82,13 @@ export function LibraryPane(props: LibraryPaneProps) {
           onDismiss={props.onDismissProposal}
         />
         <div className="flex min-h-0 flex-1 gap-8">
-          <div className="flex w-80 min-w-0 flex-none flex-col">
+          <div
+            data-library-list
+            className={cn(
+              'flex w-80 min-w-0 flex-none flex-col @max-[40rem]/library:w-full',
+              open !== null && '@max-[40rem]/library:hidden',
+            )}
+          >
             <div className="flex h-7 flex-none items-center justify-between pb-4">
               <h2 className="flex items-baseline gap-1.5 truncate text-xs tracking-[0.08em] text-muted-foreground">
                 {t`Library`}
@@ -110,50 +122,72 @@ export function LibraryPane(props: LibraryPaneProps) {
               onRemoveFolder={props.onRemoveFolder}
             />
           </div>
-          {notes.length === 0 && open === null ? (
-            loading ? (
-              <p className="m-auto text-sm text-muted-foreground">{t`Reading the library…`}</p>
-            ) : (
-              <div
-                data-library-empty
-                className="m-auto flex max-w-xs flex-col items-center gap-5 text-center"
-              >
-                <Library aria-hidden className="size-8 text-muted-foreground" />
-                <div className="flex flex-col gap-2">
-                  <p className="text-base font-medium">{t`No notes yet`}</p>
-                  <p className="text-sm leading-6 text-muted-foreground">
-                    {t`“To library” under an answer files it here.`}
-                    <br />
-                    {t`Agents suggest what they learn, and nothing lands here until you accept it.`}
-                    <br />
-                    {t`Or start with one of your own.`}
-                  </p>
-                </div>
-                <Button size="sm" onClick={() => onCreate('')}>{t`Write the first note`}</Button>
+          <div
+            data-library-note
+            className={cn(
+              'flex min-w-0 flex-1 flex-col',
+              open === null && '@max-[40rem]/library:hidden',
+            )}
+          >
+            {open !== null && (
+              <div className="hidden h-7 flex-none items-center pb-4 @max-[40rem]/library:flex">
+                <Button
+                  variant="quiet"
+                  size="bare"
+                  onClick={props.onClose}
+                  aria-label={t`Back to the list`}
+                  className="zt-hit gap-1 text-xs text-muted-foreground"
+                >
+                  <ChevronLeft className="size-3.5" />
+                  {t`Library`}
+                </Button>
               </div>
-            )
-          ) : open === null ? (
-            <p className="m-auto text-sm text-muted-foreground">{t`Pick a note`}</p>
-          ) : (
-            <NoteReader
-              note={open}
-              titles={titles}
-              backlinks={props.backlinks}
-              editing={props.editing}
-              fresh={props.fresh}
-              guide={false}
-              savedAtMs={props.savedAtMs}
-              nowMs={props.nowMs}
-              onOpen={props.onOpen}
-              onOpenTitle={props.onOpenTitle}
-              onRemove={props.onRemove}
-              onStartEdit={props.onStartEdit}
-              onStopEdit={props.onStopEdit}
-              onSave={props.onSave}
-              onRename={props.onRename}
-              onTags={props.onTags}
-            />
-          )}
+            )}
+            {notes.length === 0 && open === null ? (
+              loading ? (
+                <p className="m-auto text-sm text-muted-foreground">{t`Reading the library…`}</p>
+              ) : (
+                <div
+                  data-library-empty
+                  className="m-auto flex max-w-xs flex-col items-center gap-5 text-center"
+                >
+                  <Library aria-hidden className="size-8 text-muted-foreground" />
+                  <div className="flex flex-col gap-2">
+                    <p className="text-base font-medium">{t`No notes yet`}</p>
+                    <p className="text-sm leading-6 text-muted-foreground">
+                      {t`“To library” under an answer files it here.`}
+                      <br />
+                      {t`Agents suggest what they learn, and nothing lands here until you accept it.`}
+                      <br />
+                      {t`Or start with one of your own.`}
+                    </p>
+                  </div>
+                  <Button size="sm" onClick={() => onCreate('')}>{t`Write the first note`}</Button>
+                </div>
+              )
+            ) : open === null ? (
+              <p className="m-auto text-sm text-muted-foreground">{t`Pick a note`}</p>
+            ) : (
+              <NoteReader
+                note={open}
+                titles={titles}
+                backlinks={props.backlinks}
+                editing={props.editing}
+                fresh={props.fresh}
+                guide={false}
+                savedAtMs={props.savedAtMs}
+                nowMs={props.nowMs}
+                onOpen={props.onOpen}
+                onOpenTitle={props.onOpenTitle}
+                onRemove={props.onRemove}
+                onStartEdit={props.onStartEdit}
+                onStopEdit={props.onStopEdit}
+                onSave={props.onSave}
+                onRename={props.onRename}
+                onTags={props.onTags}
+              />
+            )}
+          </div>
         </div>
       </div>
     </div>

@@ -29,6 +29,8 @@ export type LibraryPaneProps = {
   onTag(tag: string | null): void
   onOpen(id: string): void
   onOpenTitle(title: string): void
+  // Puts the open note down so the list has the pane to itself.
+  onClose(): void
   onCreate(folder: string): void
   onRemove(id: string): void
   onStartEdit(): void

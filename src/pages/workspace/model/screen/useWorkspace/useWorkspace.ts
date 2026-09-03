@@ -68,7 +68,7 @@ export function useWorkspace() {
     effort: settings.effort,
     people: peopleOf(defs),
     lock: lockOf(settings, defs, authored),
-    // Names the language the screen is read in; every teammate is told to speak it.
+    // Names the language the screen is read in; every teammate's brief opens with it.
     spoken: spokenLine(),
   }
   const agent = useAgent(chat.session, runConfig, (model) =>

@@ -2051,10 +2051,6 @@ msgstr "저장됨 · {0}"
 msgid "Saving…"
 msgstr "저장 중…"
 
-#: src/entities/teammate/model/spoken/spoken.ts:8
-msgid "Say everything in English: progress notes, questions and the report. Code, commands, paths and identifiers stay as they are."
-msgstr "모든 말은 한국어로 한다: 진행 메모, 질문, 보고까지. 코드, 명령어, 경로, 식별자는 원문 그대로 둔다."
-
 #: src/widgets/conversation/lib/greetings/greetings.ts:9
 msgid "Say the word and the whole team wakes up."
 msgstr "말 한마디면 팀 전체가 깨어납니다."
@@ -2249,6 +2245,10 @@ msgstr "일하던 중에 무언가 잘못됐습니다"
 #: src/widgets/setup/ui/PluginShelf/BrowseTab.tsx:78
 msgid "Sources"
 msgstr "마켓플레이스"
+
+#: src/entities/teammate/model/spoken/spoken.ts:8
+msgid "Speak English only, from your first sentence on: the short note saying what you are about to do, every progress note, every question and the report. Code, commands, paths and identifiers stay as they are."
+msgstr "한국어로만 말한다. 첫 문장부터 그렇다: 무엇을 하려는지 알리는 짧은 말, 모든 진행 메모, 모든 질문, 그리고 보고까지. 코드, 명령어, 경로, 식별자는 원문 그대로 둔다."
 
 #. placeholder {0}: file.path
 #: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:294

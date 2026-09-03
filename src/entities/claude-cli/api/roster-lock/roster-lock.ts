@@ -33,10 +33,11 @@ const WORKTREE_NODE_MODULES_NOTICE =
 // A teammate's own definition is what it speaks, and the stock ones are
 // English, so its running narration drifts to English whatever the person
 // reads the app in. The screen hands over a line naming its language, and
-// every teammate's brief ends with it; the main process cannot read the
-// dictionary itself, so the line arrives as text.
+// every teammate's brief opens with it: a rule at the end of a long brief
+// was read past, and the first sentence came out in English anyway. The
+// main process cannot read the dictionary itself, so the line arrives as text.
 function spoken(prompt: string, line: string | undefined): string {
-  return line === undefined || line.length === 0 ? prompt : `${prompt}\n\n${line}`
+  return line === undefined || line.length === 0 ? prompt : `${line}\n\n${prompt}`
 }
 
 type Spec = Record<

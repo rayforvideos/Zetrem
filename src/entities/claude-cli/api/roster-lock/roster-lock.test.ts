@@ -294,8 +294,8 @@ describe('the generic helper is fenced too, since it is spawned by name like any
 describe('every teammate is told to speak the language the app is read in', () => {
   const LINE = '모든 말은 한국어로 한다.'
 
-  it('ends each person with the line the screen handed over', () => {
-    expect(peopleSpec([person()], true, LINE).scout?.prompt).toContain(LINE)
+  it('opens each person with the line the screen handed over', () => {
+    expect(peopleSpec([person()], true, LINE).scout?.prompt.startsWith(LINE)).toBe(true)
   })
 
   it('tells the generic helper the same, and leaves the orchestrator to the person', () => {
@@ -305,9 +305,10 @@ describe('every teammate is told to speak the language the app is read in', () =
     expect(spec[ORCHESTRATOR]?.prompt).toBe(boss)
   })
 
-  it('puts the line after the worktree notice, so both are read', () => {
+  it('puts the line before the brief and its worktree notice, where it is read first', () => {
     const said = peopleSpec([person()], true, LINE).scout?.prompt ?? ''
-    expect(said.indexOf(NOTICE)).toBeLessThan(said.indexOf(LINE))
+    expect(said.indexOf(LINE)).toBeLessThan(said.indexOf(person().prompt))
+    expect(said).toContain(NOTICE)
   })
 
   it('adds nothing when the screen handed over no line', () => {

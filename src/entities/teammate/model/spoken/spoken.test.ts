@@ -4,7 +4,7 @@ import { spokenLine } from './spoken'
 
 describe('the line naming the language teammates speak', () => {
   it('names English on an English screen, code and paths excepted', () => {
-    expect(spokenLine()).toContain('Say everything in English')
+    expect(spokenLine()).toContain('Speak English only, from your first sentence on')
     expect(spokenLine()).toContain('Code, commands, paths and identifiers stay as they are.')
   })
 

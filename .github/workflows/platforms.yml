@@ -94,6 +94,28 @@ jobs:
           ls "$(npm prefix -g)" 2>/dev/null | grep -i claude || true
       - name: Launch it the way the app does
         run: npm run test:contract -- tests/contract/launch.contract.test.ts
+      # A teammate's worktree gets the checkout's node_modules as a junction on
+      # Windows. Removing the worktree must not follow the junction into the
+      # real folder: that would empty the checkout's dependencies. Only Windows
+      # can prove it, so it is proved here.
+      - name: Removing a worktree leaves the linked node_modules alone
+        if: runner.os == 'Windows'
+        shell: bash
+        run: |
+          set -e
+          tmp="$(mktemp -d)"
+          cd "$tmp"
+          git init -q main && cd main
+          git config user.email ci@example.test && git config user.name ci
+          printf 'node_modules\n' > .gitignore
+          echo 'x' > a.txt && git add . && git commit -qm first
+          mkdir -p node_modules/keep && echo 'kept' > node_modules/keep/index.js
+          git worktree add -q ../wt -b wt
+          cmd //c mklink //J "$(cygpath -w "$tmp/wt/node_modules")" "$(cygpath -w "$tmp/main/node_modules")" > /dev/null
+          test -f ../wt/node_modules/keep/index.js
+          git worktree remove --force ../wt
+          test -f node_modules/keep/index.js || (echo "::error::removing the worktree emptied the checkout's node_modules" && exit 1)
+          echo "node_modules survived"
 
   package:
     name: package (${{ matrix.os }})

@@ -27,20 +27,26 @@ export function laneRows(bones: Bone[]): LaneRow[] {
     const [first, ...rest] = bone.parents
     lanes[lane] = first ?? null
 
+    // A merge's extra parent either opens a lane of its own, which starts
+    // at this row, or joins a lane already waiting for that parent, which
+    // carries a line from above: that lane still passes through the row,
+    // with the merge's curve joining it.
     const bottoms: number[] = []
+    const opened: number[] = []
     for (const parent of rest) {
       const already = lanes.indexOf(parent)
       if (already >= 0 && already !== lane) {
         bottoms.push(already)
         continue
       }
-      const opened = freeLane()
-      lanes[opened] = parent
-      bottoms.push(opened)
+      const fresh = freeLane()
+      lanes[fresh] = parent
+      bottoms.push(fresh)
+      opened.push(fresh)
     }
 
     const throughs = lanes.flatMap((sha, at) =>
-      sha !== null && at !== lane && !bottoms.includes(at) ? [at] : [],
+      sha !== null && at !== lane && !opened.includes(at) ? [at] : [],
     )
 
     rows.push({

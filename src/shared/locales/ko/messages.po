@@ -188,11 +188,11 @@ msgstr "{n}분 전"
 msgid "{name} can be called this session"
 msgstr "{name}은(는) 이번 세션에서 부를 수 있습니다"
 
-#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:252
+#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:254
 msgid "{name} is off. The running session keeps them until it ends."
 msgstr "{name}을(를) 껐습니다. 실행 중인 세션은 끝날 때까지 그대로 데리고 있습니다."
 
-#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:251
+#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:253
 msgid "{name} is on. The running session cannot call them yet."
 msgstr "{name}을(를) 켰습니다. 실행 중인 세션은 아직 부를 수 없습니다."
 
@@ -907,7 +907,7 @@ msgstr "계정을 제거하지 못했습니다."
 msgid "Could not rename that chat"
 msgstr "대화 이름을 바꾸지 못했습니다"
 
-#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:95
+#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:97
 msgid "Could not reopen your last project"
 msgstr "마지막 프로젝트를 다시 열지 못했습니다"
 
@@ -1281,7 +1281,7 @@ msgstr "어려운 문제용. 훨씬 느립니다"
 msgid "Held up"
 msgstr "멈춰 있음"
 
-#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:173
+#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:175
 msgid "Hide team sidebar"
 msgstr "팀 사이드바 접기"
 
@@ -2158,7 +2158,7 @@ msgstr "모든 프로젝트에서 공용"
 msgid "Shift+Enter starts a new line. Off, sending takes the modifier key with Enter."
 msgstr "Shift+Enter로 줄을 바꿉니다. 끄면 보조키+Enter로 보냅니다."
 
-#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:173
+#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:175
 msgid "Show team sidebar"
 msgstr "팀 사이드바 펼치기"
 
@@ -2250,6 +2250,10 @@ msgstr "일하던 중에 무언가 잘못됐습니다"
 #: src/widgets/setup/ui/PluginShelf/BrowseTab.tsx:78
 msgid "Sources"
 msgstr "마켓플레이스"
+
+#: src/entities/teammate/model/spoken/spoken.ts:8
+msgid "Speak English only, from your first sentence on: the short note saying what you are about to do, every progress note, every question and the report. Code, commands, paths and identifiers stay as they are."
+msgstr "한국어로만 말한다. 첫 문장부터 그렇다: 무엇을 하려는지 알리는 짧은 말, 모든 진행 메모, 모든 질문, 그리고 보고까지. 코드, 명령어, 경로, 식별자는 원문 그대로 둔다."
 
 #. placeholder {0}: file.path
 #: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:294
@@ -2944,7 +2948,7 @@ msgstr "왼쪽에서 대화합니다"
 msgid "Your account"
 msgstr "내 계정"
 
-#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:240
+#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:242
 msgid "Your account changed before the reply finished, so it stops here."
 msgstr "답변이 끝나기 전에 계정이 바뀌어서, 여기서 멈췄어요."
 

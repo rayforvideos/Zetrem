@@ -83,6 +83,15 @@ describe('runConfigOf', () => {
     expect(runConfigOf({ ...sound, isolated: 'yes' })).not.toBeNull()
   })
 
+  it('carries the line naming the language the screen is read in, as text', () => {
+    expect(runConfigOf({ ...sound, spoken: '모두 한국어로.' })?.spoken).toBe('모두 한국어로.')
+    expect(runConfigOf(sound)).not.toHaveProperty('spoken')
+  })
+
+  it('refuses a language line that is not text, since it lands in a brief', () => {
+    expect(runConfigOf({ ...sound, spoken: ['ko'] })).toBeNull()
+  })
+
   it('refuses what is not an object at all', () => {
     expect(runConfigOf(null)).toBeNull()
     expect(runConfigOf('bypass')).toBeNull()

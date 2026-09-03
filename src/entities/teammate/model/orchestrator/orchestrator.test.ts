@@ -24,6 +24,10 @@ describe('what the orchestrator is told', () => {
     }
   })
 
+  it('expects the teammates in that language too, since each is told to speak it', () => {
+    for (const one of briefs) expect(one).toContain('progress notes as well')
+  })
+
   it('does say to hand off in the language being spoken, which the roster otherwise loses', () => {
     // Behind the roster the CLI's handoff drifts to English. Naming the language
     // back restores the CLI's own behaviour rather than shaping the reply.

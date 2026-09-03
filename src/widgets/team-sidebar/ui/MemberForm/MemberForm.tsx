@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { ChevronDown, FileText, Paperclip, X } from 'lucide-react'
 import { addReading, readingPath } from '@/entities/agent-def'
-import type { AgentDefDraft } from '@/entities/agent-def'
+import type { AgentDefDraft, AgentSource } from '@/entities/agent-def'
 import { MODELS } from '@/entities/settings'
 import type { CharacterId } from '@/entities/teammate'
 import { AgentSprite } from '@/entities/teammate/ui/AgentSprite/AgentSprite'
@@ -19,6 +19,7 @@ import { Input } from '@/shared/ui/input'
 import { Label } from '@/shared/ui/label'
 import { Popover, PopoverContent, PopoverTrigger } from '@/shared/ui/popover'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/shared/ui/select'
+import { Switch } from '@/shared/ui/switch'
 import { Textarea } from '@/shared/ui/textarea'
 import {
   characterFor,
@@ -27,9 +28,10 @@ import {
   toggled,
   toolSummary,
 } from '../../lib/member-draft/member-draft'
+import { writes } from '@/entities/tool'
 import { CharacterPicker } from '../CharacterPicker/CharacterPicker'
 import { ToolPicker } from '../ToolPicker/ToolPicker'
-import { useScrollState } from '@/shared/lib/scroll-state/useScrollState'
+import { useScrollState } from '@/shared/lib/measure/scroll-state/useScrollState'
 import { t } from '@lingui/core/macro'
 import { read } from '@/shared/lib/say/read'
 
@@ -39,11 +41,31 @@ const AVATAR = 32
 type MemberFormProps = {
   initial: AgentDefDraft | null
   knownTools: string[]
+  // Without a project open there is nowhere to keep somebody for one, so that
+  // scope is offered but not pickable.
+  projectOpen: boolean
   onSubmit(draft: AgentDefDraft): void
   onCancel(): void
 }
 
-export function MemberForm({ initial, knownTools, onSubmit, onCancel }: MemberFormProps) {
+type NoteMeta = {
+  children: React.ReactNode
+  tone?: 'warn'
+}
+
+// The form is two columns, 264px of fields beside the instructions. A window
+// narrower than 36rem leaves no room for both, so they stack and the whole
+// body scrolls instead of the dialog clipping a column away. The form is the
+// container and the body reads it: a query looks at ancestors, never at the
+// element it is on. The variants are written out in full: the stylesheet is
+// built from the strings it finds.
+export function MemberForm({
+  initial,
+  knownTools,
+  projectOpen,
+  onSubmit,
+  onCancel,
+}: MemberFormProps) {
   const [side] = useScrollState<HTMLElement>()
   const [name, setName] = useState(initial?.name ?? '')
   const [description, setDescription] = useState(initial?.description ?? '')
@@ -51,6 +73,8 @@ export function MemberForm({ initial, knownTools, onSubmit, onCancel }: MemberFo
   const [model, setModel] = useState(initial?.model ?? null)
   const [tools, setTools] = useState(initial?.tools ?? [])
   const [knowledge, setKnowledge] = useState(initial?.knowledge ?? [])
+  const [source, setSource] = useState<AgentSource>(initial?.source ?? 'user')
+  const [worktree, setWorktree] = useState(initial?.worktree ?? true)
   const [picked, setPicked] = useState<CharacterId | null>(initialCharacter(initial))
   const [missing, setMissing] = useState<string | null>(null)
   const [sheet, setSheet] = useState<HTMLElement | null>(null)
@@ -97,7 +121,7 @@ export function MemberForm({ initial, knownTools, onSubmit, onCancel }: MemberFo
         className="h-[min(84vh,720px)] max-w-[min(92vw,900px)] gap-0 overflow-hidden p-0 sm:max-w-[min(92vw,900px)]"
       >
         <form
-          className="flex h-full min-h-0 flex-col"
+          className="@container/member flex h-full min-h-0 flex-col"
           onSubmit={(event) => {
             event.preventDefault()
             if (lack !== null) {
@@ -105,7 +129,10 @@ export function MemberForm({ initial, knownTools, onSubmit, onCancel }: MemberFo
               return
             }
             onSubmit(
-              draftFrom({ name, description, prompt, character, model, tools, knowledge }, initial),
+              draftFrom(
+                { name, description, prompt, character, model, tools, knowledge, worktree, source },
+                initial,
+              ),
             )
           }}
         >
@@ -121,10 +148,10 @@ export function MemberForm({ initial, knownTools, onSubmit, onCancel }: MemberFo
             </span>
           </DialogHeader>
 
-          <div className="flex min-h-0 flex-1">
+          <div className="flex min-h-0 flex-1 @max-[36rem]/member:flex-col @max-[36rem]/member:overflow-y-auto">
             <aside
               ref={side}
-              className="zt-scroll zt-fade-y flex w-[264px] flex-none flex-col gap-4 overflow-y-auto border-r border-border px-5 py-5"
+              className="zt-scroll zt-fade-y flex w-[264px] flex-none flex-col gap-4 overflow-y-auto border-r border-border px-5 py-5 @max-[36rem]/member:w-full @max-[36rem]/member:overflow-visible @max-[36rem]/member:border-r-0 @max-[36rem]/member:border-b"
             >
               <Row label={t`Name`} htmlFor="member-name">
                 <Input
@@ -170,6 +197,24 @@ export function MemberForm({ initial, knownTools, onSubmit, onCancel }: MemberFo
                 </Select>
               </Row>
 
+              <Row label={t`Scope`} htmlFor="member-scope">
+                <Select
+                  value={source}
+                  onValueChange={(next) => setSource(next === 'project' ? 'project' : 'user')}
+                >
+                  <SelectTrigger id="member-scope" className="w-full">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="user">{t`Shared across projects`}</SelectItem>
+                    <SelectItem value="project" disabled={!projectOpen}>
+                      {t`This project only`}
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
+                {!projectOpen && <Note>{t`Open a project to keep someone for it alone.`}</Note>}
+              </Row>
+
               <Row label={t`Tools`}>
                 <Popover>
                   <PopoverTrigger asChild>
@@ -199,11 +244,19 @@ export function MemberForm({ initial, knownTools, onSubmit, onCancel }: MemberFo
                   </PopoverContent>
                 </Popover>
               </Row>
+
+              <Row label={t`Own workspace`} htmlFor="member-worktree">
+                <Switch id="member-worktree" checked={worktree} onCheckedChange={setWorktree} />
+                <Note>{t`Works in a git worktree of its own; changes come back as a branch.`}</Note>
+                {!worktree && writes(tools) && (
+                  <Note tone="warn">{t`Writes straight into the shared working tree.`}</Note>
+                )}
+              </Row>
             </aside>
 
             {/* biome-ignore lint/a11y/noStaticElementInteractions: a drop target is not something you press, and there is no keyboard gesture to hand it */}
             <div
-              className="flex min-h-0 min-w-0 flex-1 flex-col gap-4 px-6 py-5"
+              className="flex min-h-0 min-w-0 flex-1 flex-col gap-4 px-6 py-5 @max-[36rem]/member:min-h-[24rem] @max-[36rem]/member:flex-none"
               onDragOver={(event) => {
                 if (!event.dataTransfer.types.includes('Files')) return
                 event.preventDefault()
@@ -367,6 +420,17 @@ function Row({
   )
 }
 
-function Note({ children }: { children: React.ReactNode }) {
-  return <p className="text-xs leading-snug text-muted-foreground">{children}</p>
+// A note under a field. 'warn' is for one that says what the setting above it
+// gives up, which reads as the same aside as the rest until it is coloured.
+function Note({ children, tone }: NoteMeta) {
+  return (
+    <p
+      className={cn(
+        'text-xs leading-snug',
+        tone === 'warn' ? 'text-removed' : 'text-muted-foreground',
+      )}
+    >
+      {children}
+    </p>
+  )
 }

@@ -21,6 +21,11 @@ export function noteLine(note: TeamNote, sessionLive: boolean): NoteLine {
             restart: false,
           }
         : { text: t`${who} left the team.`, restart: false }
+    case 'taken':
+      return {
+        text: t`${who} is already on the team under the other scope. Pick another name.`,
+        restart: false,
+      }
     case 'trouble':
       return { text: note.text, restart: false }
   }

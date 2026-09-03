@@ -1,12 +1,8 @@
-import type { AgentDef, AgentDefDraft } from './frontmatter.types'
+import type { AgentDef, AgentDefDraft, AgentSource } from './frontmatter.types'
 
 const FENCE = '---'
 
-export function parseAgentDef(
-  text: string,
-  source: AgentDef['source'],
-  path: string,
-): AgentDef | null {
+export function parseAgentDef(text: string, source: AgentSource, path: string): AgentDef | null {
   const lines = text.split('\n')
   if (lines[0]?.trim() !== FENCE) return null
 
@@ -37,17 +33,33 @@ export function parseAgentDef(
     prompt: ownWords(lines.slice(close + 1).join('\n')),
     source,
     path,
+    worktree: worktreeOf(fields),
   }
+}
+
+// A file with no opinion, or one carrying Claude Code's own isolation key, is
+// left isolated: today's behaviour continues unless zetrem's own key opts out.
+const OFF = new Set(['false', 'no', 'off'])
+
+function worktreeOf(fields: Map<string, string | string[]>): boolean {
+  const value = fields.get('worktree')
+  if (typeof value === 'string' && OFF.has(value.toLowerCase())) return false
+  return true
 }
 
 const READING_MARK = '<!-- zetrem:knowledge -->'
 
-export function toAgentFile(draft: AgentDefDraft): string {
+// The file says nothing about scope: which folder it sits in is what decides
+// that, and parseAgentDef is told the scope by whoever read the folder.
+export function toAgentFile(draft: Omit<AgentDefDraft, 'source'>): string {
   const head = [FENCE, `name: ${draft.name}`, `description: ${quote(draft.description)}`]
   if (draft.model !== null) head.push(`model: ${draft.model}`)
   if (draft.character !== null) head.push(`character: ${draft.character}`)
   if (draft.tools.length > 0) head.push(`tools: ${draft.tools.join(', ')}`)
   if (draft.knowledge.length > 0) head.push(`knowledge: ${draft.knowledge.join(', ')}`)
+  // Only ever written when off: staying isolated needs no line, and "isolation"
+  // is Claude Code's own key, which it validates and we must not write.
+  if (!draft.worktree) head.push('worktree: false')
   head.push(FENCE, '')
   return `${head.join('\n')}${draft.prompt.trim()}\n${readingOrder(draft.knowledge)}`
 }

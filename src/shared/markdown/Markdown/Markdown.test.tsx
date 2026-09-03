@@ -7,6 +7,10 @@ function draw(text: string): string {
 }
 
 describe('Markdown: what agents write, as people read it', () => {
+  it('breaks a long URL rather than widening the column it sits in', () => {
+    expect(draw(`https://example.test/${'a'.repeat(300)}`)).toContain('[overflow-wrap:anywhere]')
+  })
+
   it('leaves a Korean range alone, since a tilde there means from and to', () => {
     const html = draw('2025년 하반기~2026년 상반기 사이에 나왔습니다.')
     expect(html).not.toContain('<del>')

@@ -62,3 +62,44 @@ describe('CallLog: every tool the agent reached for, and what came back', () => 
     expect(draw([running])).toContain('0:45')
   })
 })
+
+const edited: Partial<Call> = {
+  change: [
+    [
+      { kind: 'remove', text: '옛 줄' },
+      { kind: 'add', text: '새 줄' },
+    ],
+  ],
+  count: { added: 1, removed: 1 },
+}
+
+describe('CallLog: an edit shows its count, not its diff', () => {
+  it('marks a settled edit with what it added and took away, but no diff', () => {
+    const html = draw([call('e', 'Edit b.ts', edited), call('r', 'Read a.ts', { endedAtMs: null })])
+    expect(html).not.toContain('data-change=')
+    expect(html).not.toContain('옛 줄')
+    expect(html).not.toContain('새 줄')
+    expect(html).toContain('data-change-badge')
+    expect(html).toContain('+1')
+    expect(html).toContain('−1')
+  })
+
+  it('marks every settled edit with a count, not just the last', () => {
+    const html = draw([
+      call('e1', 'Edit a.ts', edited),
+      call('e2', 'Edit b.ts', edited),
+      call('r', 'Read x.ts', { endedAtMs: null }),
+    ])
+    expect(html).not.toContain('data-change=')
+    expect(count(html, 'data-change-badge')).toBe(2)
+  })
+
+  it('says nothing about changes for a call that changed nothing', () => {
+    const html = draw([call('r', 'Read a.ts')], false)
+    expect(html).not.toContain('data-change')
+  })
+})
+
+function count(html: string, needle: string): number {
+  return html.split(needle).length - 1
+}

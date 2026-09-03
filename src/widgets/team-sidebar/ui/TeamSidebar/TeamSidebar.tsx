@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { ChevronRight, Library } from 'lucide-react'
 import { SIDEBAR } from '@/shared/config/theme'
 import { cn } from '@/shared/lib/cn'
-import { useScrollState } from '@/shared/lib/scroll-state/useScrollState'
+import { useScrollState } from '@/shared/lib/measure/scroll-state/useScrollState'
 import { Button } from '@/shared/ui/button'
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/shared/ui/collapsible'
 import { ChatList } from '../ChatList/ChatList'
@@ -30,6 +30,8 @@ type TeamSidebarProps = {
   onOpenLibrary(): void
   libraryOpen: boolean
   libraryUnseen: boolean
+  // How many suggestions are waiting for a word. 0 shows nothing.
+  libraryPending: number
 }
 
 export function TeamSidebar({
@@ -44,6 +46,7 @@ export function TeamSidebar({
   onOpenLibrary,
   libraryOpen,
   libraryUnseen,
+  libraryPending,
 }: TeamSidebarProps) {
   const [column] = useScrollState<HTMLDivElement>()
 
@@ -78,7 +81,7 @@ export function TeamSidebar({
             'mt-auto justify-start gap-2 rounded-lg px-2',
             libraryOpen
               ? 'bg-card text-foreground'
-              : libraryUnseen
+              : libraryUnseen || libraryPending > 0
                 ? 'text-foreground hover:bg-card/60'
                 : 'text-muted-foreground hover:text-foreground',
           )}
@@ -86,12 +89,24 @@ export function TeamSidebar({
         >
           <Library className="size-4" />
           <span className="truncate">{t`Library`}</span>
-          {libraryUnseen && (
+          {libraryPending > 0 ? (
             <span
-              data-library-unseen
-              aria-hidden
-              className="size-1.5 flex-none rounded-full bg-current"
-            />
+              data-library-pending
+              role="status"
+              aria-label={t`${libraryPending} suggestions waiting`}
+              title={t`${libraryPending} suggestions waiting`}
+              className="flex-none rounded-full bg-current/15 px-1.5 text-xs tabular-nums"
+            >
+              {libraryPending}
+            </span>
+          ) : (
+            libraryUnseen && (
+              <span
+                data-library-unseen
+                aria-hidden
+                className="size-1.5 flex-none rounded-full bg-current"
+              />
+            )
           )}
         </Button>
       </div>

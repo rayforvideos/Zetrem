@@ -3,6 +3,7 @@
 import type {
   AgentDef,
   AgentDefDraft,
+  AgentSource,
 } from '@/entities/agent-def/api/frontmatter/frontmatter.types'
 import type { RunConfig } from '@/entities/claude-cli/api/run-config/run-config.types'
 import type { Settings } from '@/entities/settings/model/settings/settings.types'
@@ -23,6 +24,7 @@ import type {
   LibraryNote,
   LibraryNoteSummary,
 } from '@/entities/library/model/note'
+import type { LibraryProposal } from '@/entities/library/model/proposal'
 import type { Outcome } from '@/shared/lib/outcome/outcome.types'
 import type { ExitReason } from '@/entities/claude-cli/lib/exit-line/exit-line.types'
 import type { Attached } from '@/entities/attachment/lib/attachment/attachment.types'
@@ -106,9 +108,15 @@ export type Invokes = {
   'accounts:remove': (id: string) => Outcome<AccountList>
 
   'agents:list': () => AgentDef[]
-  'agents:write': (draft: AgentDefDraft) => string
-  'agents:remove': (name: string) => void
-  'agents:replace': (draft: AgentDefDraft, previousName: string) => string
+  // The draft's scope says which folder it goes in, and a name already used by
+  // the other scope comes back refused rather than hiding one of the two.
+  'agents:write': (draft: AgentDefDraft) => Outcome<string>
+  'agents:remove': (name: string, source: AgentSource) => Outcome<void>
+  'agents:replace': (
+    draft: AgentDefDraft,
+    previousName: string,
+    previousSource: AgentSource,
+  ) => Outcome<string>
   'agents:pickKnowledge': () => string[]
   'agents:authored': () => string[]
 
@@ -151,6 +159,10 @@ export type Invokes = {
   'library:file': (text: string) => LibraryNote | null
   'library:search': (query: string) => LibraryHit[]
   'library:backlinks': (id: string) => LibraryNoteSummary[]
+  // What agents have suggested and nobody has answered yet, oldest first.
+  'library:proposals': () => LibraryProposal[]
+  'library:proposal-accept': (id: string) => LibraryNote | null
+  'library:proposal-dismiss': (id: string) => void
   'library:folder-add': (name: string) => LibraryListing
   'library:folder-rename': (name: string, next: string) => LibraryListing
   'library:folder-remove': (name: string) => LibraryListing
@@ -210,6 +222,8 @@ export type Pushes = {
   'auth:progress': string
   'updater:ready': string
   'library:changed': null
+  // A suggestion arrived, or one was answered. The notes may not have moved.
+  'library:proposed': null
   'git:changed': null
 }
 

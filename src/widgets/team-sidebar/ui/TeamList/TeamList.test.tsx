@@ -29,6 +29,7 @@ function list(props: Partial<Parameters<typeof TeamList>[0]> = {}): string {
       sessionUp={false}
       read={[]}
       canWrite
+      projectOpen
       note={null}
       avatar={24}
       onHire={() => {}}
@@ -132,6 +133,36 @@ describe('someone you hired can be edited or let go', () => {
     const html = list()
     const at = html.indexOf('More for')
     expect(html.slice(html.lastIndexOf('<button', at), at)).toContain('opacity-0')
+  })
+})
+
+describe('the list splits into sections once someone belongs to this project alone', () => {
+  it('stays a single flat list, unchanged, when nobody is project-only', () => {
+    const html = list({ members: [member({ origin: 'user' })] })
+    expect(html).not.toContain('data-team-section')
+  })
+
+  it('opens a shared section and a project section, in that order, once one exists', () => {
+    const html = list({
+      members: [
+        member({ type: 'a', name: 'a', origin: 'user' }),
+        member({ type: 'b', name: 'b', origin: 'project' }),
+      ],
+    })
+    const sharedAt = html.indexOf('data-team-section="shared"')
+    const projectAt = html.indexOf('data-team-section="project"')
+    expect(sharedAt).toBeGreaterThan(-1)
+    expect(projectAt).toBeGreaterThan(sharedAt)
+    expect(html.slice(sharedAt, projectAt)).toContain('data-member="a"')
+    expect(html.slice(projectAt)).toContain('data-member="b"')
+  })
+
+  it('names the sections quietly, the way the chat list names its groups', () => {
+    const html = list({
+      members: [member({ type: 'a', origin: 'user' }), member({ type: 'b', origin: 'project' })],
+    })
+    expect(html).toContain('Shared')
+    expect(html).toContain('This project only')
   })
 })
 

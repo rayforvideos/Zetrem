@@ -12,10 +12,17 @@ import { importOldNotes } from './library-import/library-import'
 import { mcpConfigFor, startLibraryMcp } from './library-mcp/library-mcp'
 import type { LibraryMcp, LibraryTools } from './library-mcp/library-mcp.types'
 import {
+  acceptProposal,
+  addProposal,
+  dismissProposal,
+  listProposals,
+} from './library-proposals/library-proposals'
+import {
   addFolder,
   createNote,
   fileNote,
   isFolderName,
+  isTitle,
   listNotes,
   readNote,
   removeFolder,
@@ -34,6 +41,12 @@ const opening = new Map<string, Promise<DatabaseSync>>()
 
 function tellRenderers(): void {
   for (const win of BrowserWindow.getAllWindows()) push(win.webContents, 'library:changed', null)
+}
+
+// A suggestion is not a change to the library, so it gets a word of its own:
+// the card goes up, the notes stay as they were.
+function tellProposed(): void {
+  for (const win of BrowserWindow.getAllWindows()) push(win.webContents, 'library:proposed', null)
 }
 
 // Nothing happened when nothing was written, so the windows are left alone.
@@ -133,15 +146,22 @@ function toolsFor(workspace: string): LibraryTools {
     async read(id) {
       return readNote(await dbFor(workspace), id)
     },
-    async write(input) {
+    // The library is the person's, so an agent's write only asks. The note is
+    // written when the person accepts, and not a moment before. A title or
+    // folder that could never be filed is refused now, at the ask, rather than
+    // stored as a proposal Accept can never carry out.
+    async write(input, context) {
       const folder = input.folder ?? ''
-      if (folder.length > 0 && !isFolderName(folder)) return null
-      const db = await dbFor(workspace)
-      const started = createNote(db, folder, input.title)
-      if (started === null) return null
-      return told(
-        writeNote(db, started.id, input.body, { tags: input.tags ?? [], source: 'agent' }),
-      )
+      if (folder.length > 0 && !isFolderName(folder)) return { ok: false, why: 'folder' }
+      if (!isTitle(input.title)) return { ok: false, why: 'title' }
+      const proposal = addProposal(await dbFor(workspace), {
+        ...input,
+        folder,
+        session: context.session,
+        by: input.by ?? '',
+      })
+      tellProposed()
+      return { ok: true, proposal }
     },
     async recent(limit) {
       return recentNotes(await dbFor(workspace), limit)
@@ -160,8 +180,10 @@ async function serverFor(file: string, workspace: string): Promise<LibraryMcp> {
 // What a session is handed so its agent can search and write the library. The
 // notes are the app's now, so nothing of the project is opened to it: the tools
 // are the whole of it. Nothing at all, when the project has closed its library
-// to agents.
-export async function librarySessionArgs(workspace: string): Promise<string[]> {
+// to agents. sessionId is the caller's own id (a running host's, or '' from
+// one that has none, like the probe) — it rides along in the MCP config so a
+// proposal can later be traced back to it.
+export async function librarySessionArgs(workspace: string, sessionId: string): Promise<string[]> {
   if (!(await libraryOpenToAgents(workspace))) return []
   const { file, real } = await fileFor(workspace)
   await dbAt(file, real)
@@ -169,7 +191,7 @@ export async function librarySessionArgs(workspace: string): Promise<string[]> {
   // nobody left to serve.
   await closeServersExcept(file)
   // The CLI takes the MCP config as a JSON string, so nothing is written for it.
-  return ['--mcp-config', mcpConfigFor(await serverFor(file, workspace))]
+  return ['--mcp-config', mcpConfigFor(await serverFor(file, workspace), sessionId)]
 }
 
 async function closeServersExcept(file: string): Promise<void> {
@@ -223,6 +245,17 @@ export function registerLibrary(): void {
     const db = await currentDb()
     const note = readNote(db, id)
     return note === null ? [] : backlinksTo(db, note.title)
+  })
+  handle('library:proposals', async () => listProposals(await currentDb()))
+  handle('library:proposal-accept', async (_event, id) => {
+    const note = acceptProposal(await currentDb(), id)
+    if (note !== null) tellRenderers()
+    tellProposed()
+    return note
+  })
+  handle('library:proposal-dismiss', async (_event, id) => {
+    dismissProposal(await currentDb(), id)
+    tellProposed()
   })
   handle('library:folder-add', async (_event, name) => told(addFolder(await currentDb(), name)))
   handle('library:folder-rename', async (_event, name, next) =>

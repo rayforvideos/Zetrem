@@ -13,6 +13,7 @@ function def(name: string): AgentDef {
     prompt: '',
     source: 'user',
     path: `/${name}.md`,
+    worktree: true,
   }
 }
 

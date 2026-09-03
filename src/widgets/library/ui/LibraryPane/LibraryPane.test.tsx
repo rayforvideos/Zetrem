@@ -27,6 +27,17 @@ const mine = {
 
 const note = { ...summary, body: '## Why\nWe weighed both.' }
 
+const suggested = {
+  id: 'p1',
+  folder: '',
+  title: 'Auth choice',
+  body: 'We went with sessions.\n\nThe long reasoning.',
+  tags: ['auth'],
+  proposedAtMs: NOW - 60_000,
+  session: '',
+  by: '',
+}
+
 function pane(over: Partial<Parameters<typeof LibraryPane>[0]> = {}): string {
   return renderToStaticMarkup(
     <LibraryPane
@@ -46,6 +57,7 @@ function pane(over: Partial<Parameters<typeof LibraryPane>[0]> = {}): string {
       onTag={() => {}}
       onOpen={() => {}}
       onOpenTitle={() => {}}
+      onClose={() => {}}
       onCreate={() => {}}
       onRemove={() => {}}
       onStartEdit={() => {}}
@@ -56,6 +68,10 @@ function pane(over: Partial<Parameters<typeof LibraryPane>[0]> = {}): string {
       onAddFolder={() => {}}
       onRenameFolder={() => {}}
       onRemoveFolder={() => {}}
+      proposals={[]}
+      chatTitleOf={() => null}
+      onAcceptProposal={() => {}}
+      onDismissProposal={() => {}}
       sidebar={null}
       {...over}
     />,
@@ -67,7 +83,9 @@ describe('LibraryPane', () => {
     const out = pane({ notes: [] })
     expect(out).toContain('No notes yet')
     expect(out).toContain('“To library” under an answer files it here.')
-    expect(out).toContain('Agents file what they learn while the library button is on.')
+    expect(out).toContain(
+      'Agents suggest what they learn, and nothing lands here until you accept it.',
+    )
     expect(out).toContain('Write the first note')
     expect(out).toContain('lucide-library')
   })
@@ -123,6 +141,17 @@ describe('LibraryPane', () => {
     expect(out.match(/Use B/g)).toHaveLength(1)
   })
 
+  it('lets the note and the list take turns when the pane is narrow, with a way back', () => {
+    const closed = pane()
+    expect(closed).not.toContain('Back to the list')
+    expect(closed).toMatch(/data-library-list[^>]*@max-\[40rem\]\/library:w-full/)
+    expect(closed).toMatch(/data-library-note[^>]*@max-\[40rem\]\/library:hidden/)
+    const opened = pane({ open: note })
+    expect(opened).toContain('aria-label="Back to the list"')
+    expect(opened).toMatch(/data-library-list[^>]*@max-\[40rem\]\/library:hidden/)
+    expect(opened).not.toMatch(/data-library-note[^>]*@max-\[40rem\]\/library:hidden/)
+  })
+
   it('lists the notes that link here after the body', () => {
     const out = pane({ open: note, backlinks: [mine] })
     expect(out).toContain('data-backlinks')
@@ -165,6 +194,25 @@ describe('LibraryPane', () => {
     expect(out).toMatch(/data-note-folder[^>]*>analysis</)
     const mine = { ...note, id: 'scratch.md', folder: '', source: '' }
     expect(pane({ open: mine })).not.toContain('data-note-source')
+  })
+
+  it('puts what agents have suggested at the top, and hides the section when none wait', () => {
+    const out = pane({ proposals: [suggested, { ...suggested, id: 'p2', title: 'Later' }] })
+    expect(out).toContain('Waiting for you')
+    expect(out).toContain('data-proposal="p1"')
+    expect(out).toContain('data-proposal="p2"')
+    expect(out).toContain('Auth choice')
+    expect(out).toContain('We went with sessions.')
+    expect(out).toContain('data-tag="auth"')
+    expect(out).toContain('Accept')
+    expect(out).toContain('Dismiss')
+    expect(out.indexOf('Waiting for you')).toBeLessThan(out.indexOf('data-note-row='))
+    expect(pane()).not.toContain('Waiting for you')
+  })
+
+  it('keeps the rest of a suggestion folded away until it is asked for', () => {
+    const out = pane({ proposals: [suggested] })
+    expect(out).not.toContain('The long reasoning.')
   })
 
   it('refuses to remove a folder that still holds notes', () => {

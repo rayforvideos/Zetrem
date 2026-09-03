@@ -6,7 +6,8 @@ import { formatClock } from '@/shared/lib/units/units'
 import { Button } from '@/shared/ui/button'
 import { laneOf } from '../../lib/lane/lane'
 import { CallLog } from '../layers/CallLog/CallLog'
-import { Transcript } from '../layers/Transcript/Transcript'
+import { Helpers } from '../layers/Helpers/Helpers'
+import { Timeline } from '../layers/Timeline/Timeline'
 import {
   laneClockStyle,
   laneFaceStyle,
@@ -22,12 +23,15 @@ import {
 
 export function Lane({
   session,
+  helpers = [],
   nowMs,
   room,
   open,
   onOpen,
 }: {
   session: AgentSession
+  // This teammate's own subagents, shown under its transcript same as a tile.
+  helpers?: AgentSession[]
   nowMs: number
   room: number
   open: boolean
@@ -71,7 +75,10 @@ export function Lane({
       </Button>
       {open && (
         <div data-lane-open style={{ ...laneOpenStyle, maxHeight: laneRoom(room) }}>
-          {session.transcript.length > 0 && <Transcript entries={session.transcript} />}
+          {(session.transcript.length > 0 || session.stream.length > 0) && (
+            <Timeline session={session} />
+          )}
+          <Helpers helpers={helpers} />
           <CallLog calls={session.stream} live={lane.live} nowMs={nowMs} />
         </div>
       )}

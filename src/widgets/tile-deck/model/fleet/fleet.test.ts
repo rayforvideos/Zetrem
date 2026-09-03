@@ -40,6 +40,10 @@ describe('arrived: who needs a tile that does not have one', () => {
   it('gives a finished agent a tile again once it wakes back up', () => {
     expect(arrived([session('a', { status: 'working' })], new Set())).toEqual(['a'])
   })
+
+  it('never opens a tile for a subagent a teammate called in itself', () => {
+    expect(arrived([session('a'), session('helper', { parentId: 'a' })], new Set())).toEqual(['a'])
+  })
 })
 
 describe('retired: whose tile has been done long enough to close', () => {

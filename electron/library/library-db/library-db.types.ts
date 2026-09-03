@@ -15,3 +15,21 @@ export type NoteRow = {
 }
 
 export type FolderRow = { name: string }
+
+// A note an agent has suggested and nobody has answered yet. It is not a note:
+// it holds no id a reader could open, and leaves this table only when a person
+// accepts it or lets it go.
+export type ProposalRow = {
+  id: string
+  folder: string
+  title: string
+  body: string
+  // A JSON array of strings.
+  tags: string
+  proposed_at_ms: number
+  // The agent host that proposed it, '' for one raised before this column
+  // existed, or by a caller with no session to give (a probe).
+  session: string
+  // A teammate's name, as it gave it in the ask. '' when nobody said.
+  by: string
+}

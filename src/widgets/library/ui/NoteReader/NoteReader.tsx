@@ -75,7 +75,11 @@ export function NoteReader({
       <span className="tabular-nums">{sinceOf(note.updatedAtMs, nowMs)}</span>
       {note.tags.length > 0 && <span aria-hidden>·</span>}
       {note.tags.map((tag) => (
-        <span key={tag} data-tag={tag} className="rounded-md bg-card px-1.5 py-px">
+        <span
+          key={tag}
+          data-tag={tag}
+          className="max-w-full truncate rounded-md bg-card px-1.5 py-px"
+        >
           {tag}
         </span>
       ))}
@@ -114,7 +118,7 @@ export function NoteReader({
     <div
       key={note.id}
       data-selectable
-      className="zt-rise zt-scroll flex min-h-0 w-full flex-1 flex-col overflow-y-auto px-6 pb-16"
+      className="zt-rise zt-scroll flex min-h-0 w-full min-w-0 flex-1 flex-col overflow-y-auto px-6 pb-16"
     >
       <div className="mx-auto flex w-full max-w-[65ch] flex-col">
         <div className="sticky top-0 z-[1] flex flex-col gap-2 bg-background pb-5">

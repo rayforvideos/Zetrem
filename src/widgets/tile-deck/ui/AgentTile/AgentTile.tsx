@@ -5,8 +5,9 @@ import { MOTION } from '@/shared/config/motion/motion'
 import type { Rect } from '../../lib/grid/grid.types'
 import { Gauge } from '../layers/Gauge/Gauge'
 import { Headline } from '../layers/Headline/Headline'
+import { Helpers } from '../layers/Helpers/Helpers'
 import { CallLog } from '../layers/CallLog/CallLog'
-import { Transcript } from '../layers/Transcript/Transcript'
+import { Timeline } from '../layers/Timeline/Timeline'
 import {
   logHeadStyle,
   logPaneStyle,
@@ -17,6 +18,9 @@ import { t } from '@lingui/core/macro'
 
 type AgentTileProps = {
   session: AgentSession
+  // The subagents this teammate called in. They are folded into its tile
+  // instead of standing as tiles of their own.
+  helpers?: AgentSession[]
   rect: Rect
   delayMs: number
   nowMs: number
@@ -28,6 +32,7 @@ type AgentTileProps = {
 
 export function AgentTile({
   session,
+  helpers = [],
   rect,
   delayMs,
   nowMs,
@@ -66,7 +71,7 @@ export function AgentTile({
             )}
             {sweep ? (
               transcriptOpen ? (
-                <Transcript entries={session.transcript} />
+                <Timeline session={session} />
               ) : (
                 <Headline session={session} onDismiss={onDismiss} />
               )
@@ -74,7 +79,7 @@ export function AgentTile({
               <div data-split style={splitStyle}>
                 <div data-said style={paneStyle}>
                   {transcriptOpen ? (
-                    <Transcript entries={session.transcript} />
+                    <Timeline session={session} />
                   ) : (
                     <Headline session={session} onDismiss={onDismiss} />
                   )}
@@ -92,6 +97,7 @@ export function AgentTile({
                 </div>
               </div>
             )}
+            {!sweep && <Helpers helpers={helpers} />}
             {!sweep && <Gauge session={session} nowMs={nowMs} />}
           </div>
         </Surface>
@@ -108,6 +114,9 @@ function presenceStyle(closing: boolean, delayMs: number): CSSProperties {
     height: '100%',
     transformOrigin: 'center',
     animation: `${shape} both`,
+    // A tile on its way out must not catch the clicks meant for whatever is
+    // arriving in its place.
+    pointerEvents: closing ? 'none' : undefined,
   }
 }
 

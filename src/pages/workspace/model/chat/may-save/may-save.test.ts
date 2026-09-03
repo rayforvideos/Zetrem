@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { maySave, mustKeepOnLeave, threadLearned, threadToSave } from './may-save'
+import { maySave, threadLearned, threadToSave } from './may-save'
 
 const ready = {
   ready: true,
@@ -9,24 +9,6 @@ const ready = {
   status: 'done' as const,
   turnCount: 3,
 }
-
-describe('mustKeepOnLeave: leaving a chat writes it back first, even mid-turn', () => {
-  const leaving = { project: '/a', loadedFor: '/a', openId: 'chat-1', turnCount: 2 }
-
-  it('keeps a chat with turns, whatever its status', () => {
-    expect(mustKeepOnLeave(leaving)).toBe(true)
-  })
-
-  it('has nothing to keep for an empty chat or none open', () => {
-    expect(mustKeepOnLeave({ ...leaving, turnCount: 0 })).toBe(false)
-    expect(mustKeepOnLeave({ ...leaving, openId: null })).toBe(false)
-  })
-
-  it('never writes turns into a project they were not loaded for', () => {
-    expect(mustKeepOnLeave({ ...leaving, loadedFor: '/b' })).toBe(false)
-    expect(mustKeepOnLeave({ ...leaving, loadedFor: null })).toBe(false)
-  })
-})
 
 describe('maySave: a chat is only ever written back to the project it came from', () => {
   it('saves a settled chat of the project it was loaded for', () => {

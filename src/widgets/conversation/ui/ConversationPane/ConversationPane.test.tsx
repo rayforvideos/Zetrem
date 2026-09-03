@@ -1,6 +1,7 @@
 import { renderToStaticMarkup } from 'react-dom/server'
 import { describe, expect, it } from 'vitest'
 import type { PermissionAsk, StatusState } from '@/entities/agent-session'
+import type { LibraryProposal } from '@/entities/library'
 import type { ToolActivity, Turn } from '@/entities/conversation'
 import { modifierKey } from '@/shared/lib/platform/platform'
 import { TOOL_OUTPUT_LINES } from '../../lib/limits/limits'
@@ -65,6 +66,10 @@ function working(turns: Turn[]): string {
         cost: { ...STATUS.cost, tokens: { ...STATUS.cost.tokens, out: 1240 } },
       }}
       permission={null}
+      proposals={[]}
+      chatTitleOf={() => null}
+      onAcceptProposal={() => {}}
+      onDismissProposal={() => {}}
       chores={[]}
       you={{ name: 'Ray', face: 'onigiri' }}
       away={null}
@@ -104,13 +109,21 @@ function working(turns: Turn[]): string {
   )
 }
 
-function pane(turns: Turn[], permission: PermissionAsk | null = null): string {
+function pane(
+  turns: Turn[],
+  permission: PermissionAsk | null = null,
+  proposals: LibraryProposal[] = [],
+): string {
   return renderToStaticMarkup(
     <ConversationPane
       turns={turns}
       status="done"
       statusState={STATUS}
       permission={permission}
+      proposals={proposals}
+      chatTitleOf={() => null}
+      onAcceptProposal={() => {}}
+      onDismissProposal={() => {}}
       chores={[]}
       you={{ name: 'Ray', face: 'onigiri' }}
       away={null}
@@ -352,5 +365,52 @@ describe('the row that says the team is still out', () => {
       ),
     )
     expect(mine).toBe(theirs)
+  })
+})
+
+const SUGGESTED: LibraryProposal = {
+  id: 'p1',
+  folder: '',
+  title: 'Auth choice',
+  body: 'We went with sessions.',
+  tags: [],
+  proposedAtMs: 0,
+  session: '',
+  by: '',
+}
+
+const ASK: PermissionAsk = {
+  requestId: 'r1',
+  toolName: 'Bash',
+  line: 'Bash ls',
+  detail: 'ls',
+}
+
+describe('a suggestion for the library, over the message box', () => {
+  it('shows the oldest one waiting, and keeps the message box under it', () => {
+    const html = pane([turn({ text: '됐어' })], null, [
+      SUGGESTED,
+      { ...SUGGESTED, id: 'p2', title: 'Later' },
+    ])
+    expect(html).toContain('data-proposal="p1"')
+    expect(html).not.toContain('data-proposal="p2"')
+    expect(html).toContain('1 more waiting')
+    expect(html.indexOf('data-proposal="p1"')).toBeLessThan(html.indexOf('<textarea'))
+  })
+
+  it('stands aside for a permission, which is the one thing that takes the box', () => {
+    const html = pane([turn({ text: '됐어' })], ASK, [SUGGESTED])
+    expect(html).toContain('data-approval')
+    expect(html).not.toContain('data-proposal=')
+  })
+
+  it('is not there when nothing has been suggested', () => {
+    expect(pane([turn({ text: '됐어' })])).not.toContain('data-proposal=')
+  })
+
+  it('shows the same card over the greeting, before any turn has been sent', () => {
+    const html = pane([], null, [SUGGESTED])
+    expect(html).toContain('data-proposal="p1"')
+    expect(html.indexOf('data-proposal="p1"')).toBeLessThan(html.indexOf('<textarea'))
   })
 })

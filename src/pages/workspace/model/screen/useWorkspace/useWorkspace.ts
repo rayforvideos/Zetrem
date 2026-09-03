@@ -1,5 +1,7 @@
-import { useEffect, useRef, useState, useSyncExternalStore } from 'react'
-import { allowedStock, roster, offStock, stockAgents } from '@/entities/teammate'
+import { useEffect, useMemo, useRef, useState, useSyncExternalStore } from 'react'
+import { accountStatus, statusView } from '@/entities/agent-session'
+import { allowedStock, roster, offStock, stockAgents, spokenLine } from '@/entities/teammate'
+import { topLevel } from '@/entities/agent-session'
 import { withRefused, withoutRefused } from '@/entities/claude-cli'
 import { projectStore } from '@/entities/project'
 import { GRID_PAD } from '@/shared/config/theme'
@@ -10,9 +12,10 @@ import { tidyUserName } from '@/entities/user'
 
 import { layerOver } from '@/shared/lib/modal/modal'
 import { screenGate } from '../screen-gate/screen-gate'
-import { sessionLive, stirring } from '../../session/live/live'
+import { anySessionLive, sessionLive, stirring } from '../../session/live/live'
 import { useAgent } from '../../session/useAgent'
-import { conversation } from '../../chat/conversation/conversation'
+import { chatSessions } from '../../session/chat-sessions/chat-sessions'
+import { useChatSessions } from '../../session/chat-sessions/useChatSessions'
 import { useAgentDefs } from '../../team/useAgentDefs'
 import { useAccountChanges } from '../../account/useAccountChanges'
 import { useAuth } from '../../account/useAuth'
@@ -34,7 +37,7 @@ import { useSettingsPanel } from '../../settings/useSettingsPanel'
 import { useSidebarWidth } from '../useSidebarWidth'
 import { useTranscript } from '../../chat/useTranscript'
 import { useViewport } from '../useViewport'
-import { useOffsetWidth } from '@/pages/workspace/model/screen/offset-width/useOffsetWidth'
+import { useOffsetWidth } from '@/shared/lib/measure/offset-width/useOffsetWidth'
 import { lockOf, peopleOf } from '../../team/workspace-config/workspace-config'
 import { t } from '@lingui/core/macro'
 
@@ -42,9 +45,18 @@ import { t } from '@lingui/core/macro'
 // window is wired here once, and what comes back is grouped by domain so a
 // screen part takes only the group it draws.
 export function useWorkspace() {
+  useChatSessions()
   const { settings, loading, failure: settingsFailure, update } = useSettings()
   const project = useSyncExternalStore(projectStore.subscribe, projectStore.get, projectStore.get)
-  const { defs, drafts, hire, edit, release, note: teamNote, settleNote } = useAgentDefs()
+  const {
+    defs,
+    drafts,
+    hire,
+    edit,
+    release,
+    note: teamNote,
+    settleNote,
+  } = useAgentDefs(project?.path ?? null)
   const { failure: projectFailure, report: reportProject } = useFailure()
   const { all: allProjects, refresh: refreshProjects } = useProjects(project)
 
@@ -56,12 +68,19 @@ export function useWorkspace() {
     effort: settings.effort,
     people: peopleOf(defs),
     lock: lockOf(settings, defs, authored),
-    resume: chat.resumeId,
+    // Names the language the screen is read in; every teammate's brief opens with it.
+    spoken: spokenLine(),
   }
-  const agent = useAgent(runConfig, (model) =>
+  const agent = useAgent(chat.session, runConfig, (model) =>
     update({ refusedModels: withRefused(settings.refusedModels, model) }),
   )
-  const { conversation: conv, children, status, nowMs } = agent
+  const { conversation: conv, children, nowMs } = agent
+  const account = useSyncExternalStore(
+    accountStatus.subscribe,
+    accountStatus.get,
+    accountStatus.get,
+  )
+  const status = useMemo(() => statusView(agent.status, account), [agent.status, account])
 
   useEffect(() => {
     if (!settings.refusedModels.includes(settings.model)) return
@@ -113,10 +132,12 @@ export function useWorkspace() {
     project?.path ?? null,
     auth.accounts,
     accountAt,
+    chat.session?.stores.status ?? null,
     gate !== 'holding',
     conv.status === 'working',
   )
-  useNudge(settings.notify, conv.status, conv.permission, conv.trouble)
+  const atWork = stirring(conv.status, children)
+  useNudge(settings.notify, atWork, conv.permission, conv.trouble)
   useFleet(deck, children, nowMs, viewport, deckSidebarW)
 
   useLearnedSettings(status, settings, update)
@@ -126,7 +147,10 @@ export function useWorkspace() {
     defs.map((def) => def.name),
     authored,
   )
-  const openAgent = children.find((session) => session.id === focus.openAgentId) ?? null
+  // A subagent a teammate called in itself is part of that teammate's report,
+  // so it is never a teammate the workspace shows, opens or counts on its own.
+  const teammates = topLevel(children)
+  const openAgent = teammates.find((session) => session.id === focus.openAgentId) ?? null
   // The probe keeps reporting a session after our child has been stopped, so
   // status.session outlives the thing it describes.
   const held = agent.running ? status.session : null
@@ -134,7 +158,7 @@ export function useWorkspace() {
   const teamMembers = team(
     defs,
     sessionAgentNames,
-    roster(sessionAgentNames, children, conv.status !== 'done'),
+    roster(sessionAgentNames, teammates, conv.status !== 'done'),
   )
   useEffect(() => {
     if (settings.wasStockOn === null || stock.length === 0) return
@@ -146,7 +170,8 @@ export function useWorkspace() {
   }, [settings.wasStockOn, stock, update])
 
   const live = sessionLive(status, conv.status)
-  const atWork = stirring(conv.status, children)
+  const working = useSyncExternalStore(chatSessions.subscribe, chatSessions.live, chatSessions.live)
+  const anyLive = anySessionLive(live, working)
   const sidebarLabel = sidebar.open ? t`Hide team sidebar` : t`Show team sidebar`
   const sessionId = status.session?.id ?? null
   useEffect(() => {
@@ -193,12 +218,6 @@ export function useWorkspace() {
     allProjects,
     refreshProjects,
     report: reportProject,
-    dropSession: () => {
-      // The running agent is rooted in the old folder; left alive it would
-      // keep streaming turns into the new project's transcript.
-      agent.reset()
-      focus.clearAll()
-    },
   })
 
   function reload(patch: Partial<typeof settings>, said: string): void {
@@ -207,13 +226,21 @@ export function useWorkspace() {
     setPendingRestart(said)
   }
 
-  function swap(go: () => void): void {
-    const cutOff = agent.conversation.status === 'working'
-    agent.reset()
-    if (cutOff) conversation.system(t`You left before the reply finished, so it stops here.`)
+  // Leaving a chat stops nothing, but it does put the screen down: the
+  // teammate that was picked out and the library covering the chat both belong
+  // to the chat being left.
+  function go(act: () => void): void {
     focus.clearAll()
     setLibraryOpen(false)
-    go()
+    act()
+  }
+
+  // An account change is the one thing that stops every chat: a live CLI
+  // writes into the credentials file all accounts share, so nothing can be
+  // left running under the account that is leaving.
+  function stopAll(act: () => void): void {
+    chatSessions.stopAll(t`Your account changed before the reply finished, so it stops here.`)
+    go(act)
   }
 
   const agentToggles = {
@@ -230,7 +257,7 @@ export function useWorkspace() {
 
   return {
     prefs: { settings, update, reload, failure: settingsFailure },
-    account: { auth, signedIn, swap },
+    account: { auth, signedIn, stopAll },
     projects: {
       current: project,
       all: allProjects,
@@ -245,6 +272,9 @@ export function useWorkspace() {
       status,
       held,
       live,
+      anyLive,
+      working,
+      go,
       atWork,
       nowMs,
       attach,

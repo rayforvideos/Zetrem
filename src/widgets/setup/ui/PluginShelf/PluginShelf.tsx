@@ -18,7 +18,7 @@ import {
 } from '@/shared/ui/dialog'
 import { Spinner } from '@/shared/ui/spinner'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/shared/ui/tabs'
-import { useScrollState } from '@/shared/lib/scroll-state/useScrollState'
+import { useScrollState } from '@/shared/lib/measure/scroll-state/useScrollState'
 import { t } from '@lingui/core/macro'
 import { BrowseTab } from './BrowseTab'
 import { ConnectorsTab } from './ConnectorsTab'

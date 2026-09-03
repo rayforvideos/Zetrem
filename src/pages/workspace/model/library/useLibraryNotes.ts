@@ -249,6 +249,21 @@ export function useLibraryNotes(active: boolean, idle: boolean, project: string 
       .catch(() => undefined)
   }
 
+  // Putting the note down: what was being typed lands first, then the list
+  // has the pane to itself again. Nothing about the search or the tag moves.
+  function closeNote(): void {
+    setFresh(false)
+    writing.current = false
+    setEditing(false)
+    void flush()
+      .then(() => {
+        openId.current = null
+        setOpen(null)
+        setBacklinks([])
+      })
+      .catch(() => undefined)
+  }
+
   function openTitle(title: string): void {
     const found = notes.find((one) => one.title === title)
     if (found) openNote(found.id)
@@ -347,6 +362,7 @@ export function useLibraryNotes(active: boolean, idle: boolean, project: string 
     setTag,
     openNote,
     openTitle,
+    closeNote,
     remove,
     startEdit,
     stopEdit,

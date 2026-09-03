@@ -3,7 +3,7 @@ import { modelRefusedIn } from '../refused/refused'
 import type { TurnEvent } from './turn.types'
 
 import { retryLine, stoppedLine } from '../../lib/failure/failure'
-import { blocksIn, num, resultText, str, toolLine } from '../shared/shared'
+import { blocksIn, childOpenOf, num, resultText, str, toolLine } from '../shared/shared'
 
 export function fromAssistant(event: Record<string, unknown>): TurnEvent[] {
   const message = event.message as Record<string, unknown> | undefined
@@ -30,28 +30,11 @@ export function fromAssistant(event: Record<string, unknown>): TurnEvent[] {
         input: block.input,
       })
       if ((block.name === 'Agent' || block.name === 'Task') && typeof block.id === 'string') {
-        const input = block.input as Record<string, unknown> | undefined
-        out.push({
-          type: 'childOpen',
-          toolUseId: block.id,
-          label: childLabel(block),
-          subagentType: typeof input?.subagent_type === 'string' ? input.subagent_type : '',
-          prompt: str(input?.prompt),
-          background: input?.run_in_background === true,
-        })
+        out.push(childOpenOf(block))
       }
     }
   }
   return out
-}
-
-function childLabel(block: Record<string, unknown>): string {
-  const input = block.input as Record<string, unknown> | undefined
-  if (typeof input?.description === 'string' && input.description.length > 0)
-    return input.description
-  if (typeof input?.subagent_type === 'string' && input.subagent_type.length > 0)
-    return input.subagent_type
-  return typeof block.name === 'string' ? block.name : 'subagent'
 }
 
 export function fromStreamEvent(event: Record<string, unknown>): TurnEvent[] {

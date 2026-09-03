@@ -1,5 +1,7 @@
 export type TeamNote =
-  | { kind: 'created' | 'updated' | 'released'; name: string }
+  // 'taken' is a name the other scope already uses: keeping both would leave
+  // one of the two invisible.
+  | { kind: 'created' | 'updated' | 'released' | 'taken'; name: string }
   | { kind: 'trouble'; text: string }
 
 export type NoteLine = {

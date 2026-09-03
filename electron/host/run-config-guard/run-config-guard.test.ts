@@ -7,7 +7,7 @@ const sound = {
   effort: 'default',
   persona: 'ignored here',
   resume: null,
-  people: [{ name: 'a', description: 'b', prompt: 'c', model: null, tools: [] }],
+  people: [{ name: 'a', description: 'b', prompt: 'c', model: null, tools: [], isolated: true }],
   lock: null,
 }
 
@@ -48,6 +48,25 @@ describe('runConfigOf', () => {
     expect(runConfigOf({ ...sound, resume: undefined })?.resume).toBeNull()
   })
 
+  it("keeps each person's own worktree answer, which main reads to brief the orchestrator", () => {
+    const people = [
+      { name: 'a', description: 'b', prompt: 'c', model: null, tools: [], isolated: false },
+    ]
+    expect(runConfigOf({ ...sound, people })?.people[0]).toHaveProperty('isolated', false)
+  })
+
+  it('accepts a person without isolated and defaults to true', () => {
+    const half = [{ name: 'a', description: 'b', prompt: 'c', model: null, tools: [] }]
+    const result = runConfigOf({ ...sound, people: half })
+    expect(result).not.toBeNull()
+    expect(result?.people[0]).toHaveProperty('isolated', true)
+  })
+
+  it('refuses a person whose worktree answer is not a boolean, since it decides a fence', () => {
+    const half = [{ name: 'a', description: 'b', prompt: 'c', model: null, tools: [] }]
+    expect(runConfigOf({ ...sound, people: [{ ...half[0], isolated: 'yes' }] })).toBeNull()
+  })
+
   it('reads the roster and the lock by shape', () => {
     expect(runConfigOf({ ...sound, people: [{ name: 'a' }] })).toBeNull()
     expect(runConfigOf({ ...sound, lock: { blockedAgents: [1] } })).toBeNull()
@@ -62,6 +81,15 @@ describe('runConfigOf', () => {
       'a renderer that could ask for isolation could also ask for none',
     ).not.toHaveProperty('isolated')
     expect(runConfigOf({ ...sound, isolated: 'yes' })).not.toBeNull()
+  })
+
+  it('carries the line naming the language the screen is read in, as text', () => {
+    expect(runConfigOf({ ...sound, spoken: '모두 한국어로.' })?.spoken).toBe('모두 한국어로.')
+    expect(runConfigOf(sound)).not.toHaveProperty('spoken')
+  })
+
+  it('refuses a language line that is not text, since it lands in a brief', () => {
+    expect(runConfigOf({ ...sound, spoken: ['ko'] })).toBeNull()
   })
 
   it('refuses what is not an object at all', () => {

@@ -159,3 +159,47 @@ describe('links in a body', () => {
     expect(linkTargets('[[A]] [[A|x]] [[B]] `[[C]]`')).toEqual(['A', 'B'])
   })
 })
+
+describe('the proposals table gaining session and by', () => {
+  it('has both columns on a freshly laid file', () => {
+    const one = db()
+    const cols = new Set(
+      (one.prepare('PRAGMA table_info(proposals)').all() as { name: string }[]).map(
+        (col) => col.name,
+      ),
+    )
+    expect(cols.has('session')).toBe(true)
+    expect(cols.has('by')).toBe(true)
+  })
+
+  it('adds the columns to a file laid before they existed, defaulting rows already there', () => {
+    const file = join(mkdtempSync(join(tmpdir(), 'zetrem-lib-')), 'old.sqlite')
+    const old = new DatabaseSync(file)
+    try {
+      old.exec(`
+        CREATE TABLE proposals (
+          id TEXT PRIMARY KEY,
+          folder TEXT NOT NULL,
+          title TEXT NOT NULL,
+          body TEXT NOT NULL,
+          tags TEXT NOT NULL,
+          proposed_at_ms INTEGER NOT NULL
+        );
+      `)
+      old
+        .prepare(
+          'INSERT INTO proposals (id, folder, title, body, tags, proposed_at_ms) VALUES (?, ?, ?, ?, ?, ?)',
+        )
+        .run('p1', '', 'Old', 'From before the column existed.', '[]', 1)
+    } finally {
+      old.close()
+    }
+    const opened = db(file)
+    const row = opened.prepare('SELECT * FROM proposals WHERE id = ?').get('p1') as {
+      session: string
+      by: string
+    }
+    expect(row.session).toBe('')
+    expect(row.by).toBe('')
+  })
+})

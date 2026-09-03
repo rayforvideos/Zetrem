@@ -129,7 +129,7 @@ export function registerSessionProbe(): void {
       const workspace = await workspaceDir(project, app.getPath('userData'))
       let added: string[] = []
       try {
-        added = await librarySessionArgs(workspace)
+        added = await librarySessionArgs(workspace, '')
       } catch (cause: unknown) {
         console.error('[library] could not lay out', workspace, cause)
       }
@@ -138,7 +138,9 @@ export function registerSessionProbe(): void {
         ...probeArgs({
           ...run,
           persona: PERSONA,
-          orchestrator: orchestratorPrompt(isolated),
+          // The probe reads back what the CLI answers, never hands off work, so
+          // there is nobody out in the shared tree for it to be warned about.
+          orchestrator: orchestratorPrompt(isolated, []),
           isolated,
         }),
         ...added,

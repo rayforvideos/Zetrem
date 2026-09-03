@@ -1,5 +1,5 @@
 import type { AgentSession } from '@/entities/agent-session'
-import { useScrollState } from '@/shared/lib/scroll-state/useScrollState'
+import { useScrollState } from '@/shared/lib/measure/scroll-state/useScrollState'
 import { tally } from '@/entities/tool'
 import { AgentSprite, personaOf } from '@/entities/teammate'
 import { cn } from '@/shared/lib/cn'

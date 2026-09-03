@@ -37,7 +37,7 @@ import { useSettingsPanel } from '../../settings/useSettingsPanel'
 import { useSidebarWidth } from '../useSidebarWidth'
 import { useTranscript } from '../../chat/useTranscript'
 import { useViewport } from '../useViewport'
-import { useOffsetWidth } from '@/pages/workspace/model/screen/offset-width/useOffsetWidth'
+import { useOffsetWidth } from '@/shared/lib/measure/offset-width/useOffsetWidth'
 import { lockOf, peopleOf } from '../../team/workspace-config/workspace-config'
 import { t } from '@lingui/core/macro'
 

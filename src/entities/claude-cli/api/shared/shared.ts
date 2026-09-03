@@ -2,6 +2,8 @@ import type { ChildTurnEvent } from '../child/child.types'
 
 const STREAM_LINE_MAX = 120
 
+const DEFAULT_AGENT = 'general-purpose'
+
 type ChildOpen = Extract<ChildTurnEvent, { type: 'childOpen' }>
 
 // A subagent is announced the same way wherever it is spawned from. The only
@@ -13,7 +15,9 @@ export function childOpenOf(block: Record<string, unknown>, parentId?: string): 
     type: 'childOpen',
     toolUseId: str(block.id),
     label: childLabel(block),
-    subagentType: str(input?.subagent_type),
+    // An Agent call that names no type is run by the CLI as its general-purpose
+    // agent, so that is who the tile shows rather than a faceless "subagent".
+    subagentType: str(input?.subagent_type) || DEFAULT_AGENT,
     prompt: str(input?.prompt),
     background: input?.run_in_background === true,
     ...(parentId === undefined ? {} : { parentId }),

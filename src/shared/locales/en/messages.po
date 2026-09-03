@@ -1206,7 +1206,7 @@ msgid "Forget this memory?"
 msgstr "Forget this memory?"
 
 #. placeholder {0}: entry.from
-#: src/widgets/tile-deck/ui/layers/Timeline/Timeline.tsx:64
+#: src/widgets/tile-deck/ui/layers/Timeline/Timeline.tsx:69
 msgid "from {0}"
 msgstr "from {0}"
 

@@ -14,11 +14,16 @@ const CHANGE_MAX_LINES = 12
 
 type TimelineProps = { session: AgentSession }
 
-// The left pane's live stream: what the teammate said and everything it did,
-// merged into the one order it actually happened in. This is the same pane
-// Transcript used to fill with words alone; it keeps that scroll behaviour.
+// The left pane's live stream: what the teammate said, and the diff under
+// each change it made, in the one order it actually happened in. Everything
+// else it did (reads, runs, fetches, what failed) is the log's under this
+// pane, so a call with nothing changed is left out here rather than listed
+// twice. This is the same pane Transcript used to fill with words alone; it
+// keeps that scroll behaviour.
 export function Timeline({ session }: TimelineProps) {
-  const items = timelineOf(session)
+  const items = timelineOf(session).filter(
+    (item) => item.kind === 'said' || (item.call.change ?? []).length > 0,
+  )
   const scrollRef = useRef<HTMLDivElement>(null)
   const following = useRef(true)
   const lastIndex = items.length - 1

@@ -1132,6 +1132,10 @@ msgstr "실패"
 msgid "Failed"
 msgstr "실패"
 
+#: src/pages/workspace/model/session/agent-events/crew/crew.ts:129
+msgid "Failed: the run stopped before it was done"
+msgstr "실패: 작업이 끝나기 전에 멈췄습니다"
+
 #: src/entities/settings/config/choices/choices.ts:29
 msgid "Fast and cheap. Good for quick questions"
 msgstr "빠르고 저렴합니다. 간단한 질문에 좋습니다"
@@ -1771,7 +1775,7 @@ msgstr "노트를 고르세요"
 msgid "Pick a project first"
 msgstr "먼저 프로젝트를 고르세요"
 
-#: src/pages/workspace/model/session/agent-events/crew/crew.ts:215
+#: src/pages/workspace/model/session/agent-events/crew/crew.ts:226
 msgid "Picked up where they left off"
 msgstr "하던 일을 이어받았습니다"
 
@@ -2492,7 +2496,7 @@ msgstr "모델에 부하가 걸렸습니다"
 msgid "The note is deleted from the library. This cannot be undone."
 msgstr "라이브러리에서 노트가 지워집니다. 되돌릴 수 없습니다."
 
-#: src/pages/workspace/model/session/agent-events/crew/crew.ts:183
+#: src/pages/workspace/model/session/agent-events/crew/crew.ts:194
 msgid "the orchestrator"
 msgstr "오케스트레이터"
 

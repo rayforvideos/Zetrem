@@ -16,4 +16,6 @@ export type RunConfig = {
   people: Person[]
   lock: RosterLock | null
   isolated?: boolean
+  // A line naming the language the app is read in, ended onto every teammate's brief.
+  spoken?: string
 }

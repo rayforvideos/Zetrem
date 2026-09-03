@@ -9,7 +9,7 @@ const SAID = [
   'If the user named someone, give the work to that teammate. If not, pick whoever fits the job.',
   'When you spawn a subagent, write its description as a human-readable name; the app shows it as the name of that teammate.',
   'When handed-off work finishes, summarize the result for the user in one paragraph.',
-  'Write each handoff in the language the person is using, and ask the teammate to report back in it.',
+  'Write each handoff in the language the person is using, and ask the teammate to report back in it. Teammates are told to speak that language in their progress notes as well, so expect them in it.',
 ]
 
 const FENCED = [

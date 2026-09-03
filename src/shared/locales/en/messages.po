@@ -188,11 +188,11 @@ msgstr "{n}m ago"
 msgid "{name} can be called this session"
 msgstr "{name} can be called this session"
 
-#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:252
+#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:254
 msgid "{name} is off. The running session keeps them until it ends."
 msgstr "{name} is off. The running session keeps them until it ends."
 
-#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:251
+#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:253
 msgid "{name} is on. The running session cannot call them yet."
 msgstr "{name} is on. The running session cannot call them yet."
 
@@ -903,7 +903,7 @@ msgstr "Could not remove the account."
 msgid "Could not rename that chat"
 msgstr "Could not rename that chat"
 
-#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:95
+#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:97
 msgid "Could not reopen your last project"
 msgstr "Could not reopen your last project"
 
@@ -1277,7 +1277,7 @@ msgstr "Hard problems. Much slower"
 msgid "Held up"
 msgstr "Held up"
 
-#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:173
+#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:175
 msgid "Hide team sidebar"
 msgstr "Hide team sidebar"
 
@@ -2051,6 +2051,10 @@ msgstr "Saved · {0}"
 msgid "Saving…"
 msgstr "Saving…"
 
+#: src/entities/teammate/model/spoken/spoken.ts:8
+msgid "Say everything in English: progress notes, questions and the report. Code, commands, paths and identifiers stay as they are."
+msgstr "Say everything in English: progress notes, questions and the report. Code, commands, paths and identifiers stay as they are."
+
 #: src/widgets/conversation/lib/greetings/greetings.ts:9
 msgid "Say the word and the whole team wakes up."
 msgstr "Say the word and the whole team wakes up."
@@ -2153,7 +2157,7 @@ msgstr "Shared across projects"
 msgid "Shift+Enter starts a new line. Off, sending takes the modifier key with Enter."
 msgstr "Shift+Enter starts a new line. Off, sending takes the modifier key with Enter."
 
-#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:173
+#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:175
 msgid "Show team sidebar"
 msgstr "Show team sidebar"
 
@@ -2939,7 +2943,7 @@ msgstr "You talk on the left"
 msgid "Your account"
 msgstr "Your account"
 
-#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:240
+#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:242
 msgid "Your account changed before the reply finished, so it stops here."
 msgstr "Your account changed before the reply finished, so it stops here."
 

@@ -12,6 +12,7 @@ import {
 import type { RosterDirs } from '../agent-roster/agent-roster.types'
 import { projectKey } from '../../store/project-key/project-key'
 import { authoredAgents } from '../authored-agents/authored-agents'
+import { projectAgentsRoot } from '../project-agents-home/project-agents-home'
 import { recallProject } from '../../store/project-memory/project-memory'
 import { handle } from '../../ipc/ipc'
 
@@ -19,18 +20,14 @@ import { handle } from '../../ipc/ipc'
 // under userData, named by a hash of the project's path: nothing is written
 // into the project, and nothing about it is shared with anyone.
 //
-// The folder is named by the project's path, not by anything that survives a
-// project being repathed or forgotten: moving or removing a project today
-// leaves its project-agents folder behind
-// (follow-up: #55).
+// The folder is named by the project's path, so it is the projects module that
+// keeps it in step: repathing a project carries the folder over to the new
+// path's name, and forgetting a project removes it.
 async function rosterDirs(): Promise<RosterDirs> {
   const project = await recallProject()
   return {
     user: join(app.getPath('userData'), 'agents'),
-    project:
-      project === null
-        ? null
-        : join(app.getPath('userData'), 'project-agents', projectKey(project)),
+    project: project === null ? null : join(projectAgentsRoot(), projectKey(project)),
   }
 }
 

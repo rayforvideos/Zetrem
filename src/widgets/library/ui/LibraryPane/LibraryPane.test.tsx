@@ -57,6 +57,7 @@ function pane(over: Partial<Parameters<typeof LibraryPane>[0]> = {}): string {
       onTag={() => {}}
       onOpen={() => {}}
       onOpenTitle={() => {}}
+      onClose={() => {}}
       onCreate={() => {}}
       onRemove={() => {}}
       onStartEdit={() => {}}
@@ -138,6 +139,17 @@ describe('LibraryPane', () => {
     expect(out).toContain('data-tag="api"')
     expect(out).toContain('aria-current="true"')
     expect(out.match(/Use B/g)).toHaveLength(1)
+  })
+
+  it('lets the note and the list take turns when the pane is narrow, with a way back', () => {
+    const closed = pane()
+    expect(closed).not.toContain('Back to the list')
+    expect(closed).toMatch(/data-library-list[^>]*@max-\[40rem\]\/library:w-full/)
+    expect(closed).toMatch(/data-library-note[^>]*@max-\[40rem\]\/library:hidden/)
+    const opened = pane({ open: note })
+    expect(opened).toContain('aria-label="Back to the list"')
+    expect(opened).toMatch(/data-library-list[^>]*@max-\[40rem\]\/library:hidden/)
+    expect(opened).not.toMatch(/data-library-note[^>]*@max-\[40rem\]\/library:hidden/)
   })
 
   it('lists the notes that link here after the body', () => {

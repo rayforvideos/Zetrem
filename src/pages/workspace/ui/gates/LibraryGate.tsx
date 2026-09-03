@@ -37,6 +37,7 @@ export function LibraryGate({
       onTag={library.setTag}
       onOpen={library.openNote}
       onOpenTitle={library.openTitle}
+      onClose={library.closeNote}
       onCreate={library.create}
       onRemove={library.remove}
       onStartEdit={library.startEdit}

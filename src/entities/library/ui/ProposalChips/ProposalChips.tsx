@@ -12,7 +12,11 @@ export function ProposalChips({ folder, tags }: { folder: string; tags: string[]
         </span>
       )}
       {tags.map((tag) => (
-        <span key={tag} data-tag={tag} className="rounded-md bg-muted px-1.5 py-px">
+        <span
+          key={tag}
+          data-tag={tag}
+          className="max-w-full truncate rounded-md bg-muted px-1.5 py-px"
+        >
           {tag}
         </span>
       ))}

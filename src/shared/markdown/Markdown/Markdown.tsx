@@ -17,7 +17,7 @@ export const Markdown = memo(function Markdown({
 }) {
   const said = unfenced(text)
   return (
-    <div className={cn('zt-md', className)}>
+    <div className={cn('zt-md min-w-0 max-w-full [overflow-wrap:anywhere]', className)}>
       <ReactMarkdown
         remarkPlugins={[[remarkGfm, { singleTilde: false }]]}
         components={{

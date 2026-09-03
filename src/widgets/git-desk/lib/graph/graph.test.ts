@@ -100,4 +100,19 @@ describe('laneRows: whether the dot connects upward and downward', () => {
       [true, false],
     ])
   })
+
+  it("keeps a waiting lane's line through the row of a merge that joins it (#62)", () => {
+    // main: M2 -> M1 -> B; feature: F merges M1 as its second parent.
+    const rows = laneRows([
+      { sha: 'M2', parents: ['M1', 'F'] },
+      { sha: 'F', parents: ['F0', 'M1'] },
+      { sha: 'F0', parents: ['M1'] },
+      { sha: 'M1', parents: ['B'] },
+      { sha: 'B', parents: [] },
+    ])
+    const merge = rows[1]!
+    expect(merge.lane).toBe(1)
+    expect(merge.bottoms).toEqual([0])
+    expect(merge.throughs).toContain(0)
+  })
 })

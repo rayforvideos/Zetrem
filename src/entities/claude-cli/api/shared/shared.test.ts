@@ -32,4 +32,13 @@ describe('resultText', () => {
   it('skips a null block rather than throwing on it', () => {
     expect(resultText([null, { type: 'text', text: 'said' }])).toBe('said')
   })
+
+  it('keeps a long path whole, so the tile names the file and not a folder on the way', () => {
+    const deep = `/Users/me/work/${'a-long-project-folder-name/'.repeat(5)}.claude/worktrees/agent-a7d20c26f01d/src/types.ts`
+    expect(toolLine('Edit', { file_path: deep })).toBe(`Edit ${deep}`)
+  })
+
+  it('still cuts a command that runs on and on', () => {
+    expect(toolLine('Bash', { command: 'x'.repeat(500) }).length).toBe(120)
+  })
 })

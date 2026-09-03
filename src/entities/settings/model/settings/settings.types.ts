@@ -1,3 +1,4 @@
+import type { GIT_COLUMNS } from '@/shared/config/theme'
 import type { FaceId } from '@/entities/user/@x/settings'
 import type { EffortChoice, ModelChoice, PermissionMode } from '@/entities/claude-cli/@x/settings'
 
@@ -26,6 +27,9 @@ export type Settings = {
   notify: boolean
   sidebarOpen: boolean
   sidebarWidth: number
+  // How wide each draggable column of the git history was left, in px, keyed by
+  // column name. A width nobody has dragged is the default GIT_COLUMNS carries.
+  gitColumns: Record<keyof typeof GIT_COLUMNS, number>
   // The GitHub star ask: when it was last shown (null: never), and whether it was taken up.
   starAskedAtMs: number | null
   starred: boolean

@@ -57,7 +57,7 @@
     {
       // The grip is the WAI-ARIA window splitter; the hr the rule offers can
       // neither take focus nor carry a value.
-      "includes": ["**/SidebarGrip.tsx"],
+      "includes": ["**/SidebarGrip.tsx", "**/ColumnGrip.tsx"],
       "linter": { "rules": { "a11y": { "useSemanticElements": "off" } } }
     }
   ],

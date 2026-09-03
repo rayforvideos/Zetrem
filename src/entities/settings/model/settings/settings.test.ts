@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { SIDEBAR } from '@/shared/config/theme'
+import { GIT_COLUMNS, SIDEBAR } from '@/shared/config/theme'
 import { MODELS, PERMISSION_MODES } from '../../config/choices/choices'
 import { DEFAULT_SETTINGS, readSettings } from './settings'
 
@@ -43,6 +43,7 @@ describe('readSettings: reading back what was chosen', () => {
       enterSends: false,
       sidebarOpen: false,
       sidebarWidth: 300,
+      gitColumns: { refs: 200, changes: 128, author: 96, sha: 56, when: 48 },
       refusedModels: ['fable'],
       userName: 'Ray',
       userFace: 'ghost',
@@ -124,6 +125,38 @@ describe('the width of the board', () => {
 
   it('falls back to the default when the width is not a number', () => {
     expect(readSettings({ sidebarWidth: '넓게' }).sidebarWidth).toBe(SIDEBAR.width)
+  })
+})
+
+describe('the widths of the git history columns', () => {
+  it('starts every column at the width it was drawn at', () => {
+    expect(readSettings({}).gitColumns).toEqual({
+      refs: GIT_COLUMNS.refs.width,
+      changes: GIT_COLUMNS.changes.width,
+      author: GIT_COLUMNS.author.width,
+      sha: GIT_COLUMNS.sha.width,
+      when: GIT_COLUMNS.when.width,
+    })
+  })
+
+  it('keeps a width that was dragged', () => {
+    expect(readSettings({ gitColumns: { refs: 240 } }).gitColumns.refs).toBe(240)
+  })
+
+  it('pulls a saved width into range, so no column opens collapsed or eating the table', () => {
+    const held = readSettings({ gitColumns: { refs: 9999, sha: 1 } }).gitColumns
+    expect(held.refs).toBe(GIT_COLUMNS.refs.max)
+    expect(held.sha).toBe(GIT_COLUMNS.sha.min)
+  })
+
+  it('reads each column on its own, so one spoiled width leaves the rest standing', () => {
+    const held = readSettings({ gitColumns: { refs: '넓게', author: 160 } }).gitColumns
+    expect(held.refs).toBe(GIT_COLUMNS.refs.width)
+    expect(held.author).toBe(160)
+  })
+
+  it('falls back to every default when the whole field is not an object', () => {
+    expect(readSettings({ gitColumns: 'wide' }).gitColumns).toEqual(DEFAULT_SETTINGS.gitColumns)
   })
 })
 

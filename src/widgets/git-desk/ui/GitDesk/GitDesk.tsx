@@ -40,9 +40,12 @@ import { Input } from '@/shared/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/shared/ui/select'
 import { Spinner } from '@/shared/ui/spinner'
 import { Textarea } from '@/shared/ui/textarea'
+import type { GitColumnName, GitColumns } from '../../lib/columns/columns.types'
 import { laneRows } from '../../lib/graph/graph'
 import type { LaneRow } from '../../lib/graph/graph.types'
+import { useGitColumns } from '../../model/useGitColumns'
 import { useGitDesk } from '../../model/useGitDesk'
+import { ColumnGrip } from '../ColumnGrip/ColumnGrip'
 
 const ROW_H = 36
 const LANE_W = 18
@@ -318,14 +321,56 @@ function ColumnHead({ children, className }: { children?: ReactNode; className?:
 
 // The columns give way in order as the window narrows: the author first,
 // then the change bars; the label column and the right panel shrink too.
-const REFS_COL = 'w-28 flex-none xl:w-48'
-const CHANGES_COL = 'w-32 flex-none max-lg:hidden'
-const AUTHOR_COL = 'w-24 flex-none max-xl:hidden'
-const SHA_COL = 'w-14 flex-none'
-const WHEN_COL = 'w-12 flex-none'
+// The widths themselves are not here any more: they are dragged and kept in
+// settings, and the header, every row and the skeleton read the same numbers.
+const REFS_COL = 'flex-none'
+const CHANGES_COL = 'flex-none max-lg:hidden'
+const AUTHOR_COL = 'flex-none max-xl:hidden'
+const SHA_COL = 'flex-none'
+const WHEN_COL = 'flex-none'
 
-export function GitDesk({ project }: { project: string | null }) {
+// A column head with the grip that sets its width. The time column is titled in
+// the grip alone: the header leaves it blank because the times read as a clock.
+function HeadCell({
+  name,
+  label,
+  titled = true,
+  className,
+  sizing,
+}: {
+  name: GitColumnName
+  label: string
+  titled?: boolean
+  className?: string
+  sizing: ReturnType<typeof useGitColumns>
+}) {
+  return (
+    <span className={cn('relative', className)} style={{ width: sizing.columns[name] }}>
+      {titled && <ColumnHead>{label}</ColumnHead>}
+      <ColumnGrip
+        name={name}
+        label={label}
+        width={sizing.columns[name]}
+        onResize={sizing.resize}
+        onCommit={sizing.commit}
+        onReset={sizing.reset}
+      />
+    </span>
+  )
+}
+
+export function GitDesk({
+  project,
+  columns,
+  onColumns,
+}: {
+  project: string | null
+  columns: GitColumns
+  onColumns(next: GitColumns): void
+}) {
   const git = useGitDesk(project)
+  const sizing = useGitColumns(columns, onColumns)
+  const cols = sizing.columns
   const [newBranch, setNewBranch] = useState('')
   // A branch picked in the selector waits behind a confirmation: switching
   // rewrites the working tree, too much for one unnoticed click.
@@ -644,9 +689,12 @@ export function GitDesk({ project }: { project: string | null }) {
                 ) : (
                   <div className="flex min-w-0 flex-1 flex-col">
                     <div className="flex flex-none items-center gap-3 border-border border-b px-4 py-1.5">
-                      <span className={cn(REFS_COL, 'text-right')}>
-                        <ColumnHead>{t`Branch / tag`}</ColumnHead>
-                      </span>
+                      <HeadCell
+                        name="refs"
+                        label={t`Branch / tag`}
+                        className={cn(REFS_COL, 'text-right')}
+                        sizing={sizing}
+                      />
                       <span
                         className="flex-none"
                         style={{ width: (rows[0]?.row.width ?? 1) * LANE_W + 4 }}
@@ -656,16 +704,26 @@ export function GitDesk({ project }: { project: string | null }) {
                       <span className="min-w-16 flex-1">
                         <ColumnHead>{t`Commit message`}</ColumnHead>
                       </span>
-                      <span className={CHANGES_COL}>
-                        <ColumnHead>{t`Changes`}</ColumnHead>
-                      </span>
-                      <span className={AUTHOR_COL}>
-                        <ColumnHead>{t`Author`}</ColumnHead>
-                      </span>
-                      <span className={SHA_COL}>
-                        <ColumnHead>{t`Commit`}</ColumnHead>
-                      </span>
-                      <span className={WHEN_COL} />
+                      <HeadCell
+                        name="changes"
+                        label={t`Changes`}
+                        className={CHANGES_COL}
+                        sizing={sizing}
+                      />
+                      <HeadCell
+                        name="author"
+                        label={t`Author`}
+                        className={AUTHOR_COL}
+                        sizing={sizing}
+                      />
+                      <HeadCell name="sha" label={t`Commit`} className={SHA_COL} sizing={sizing} />
+                      <HeadCell
+                        name="when"
+                        label={t`Time`}
+                        titled={false}
+                        className={WHEN_COL}
+                        sizing={sizing}
+                      />
                     </div>
                     {!git.ready ? (
                       <ul className="flex-1 animate-pulse py-1" data-git-loading>
@@ -676,7 +734,7 @@ export function GitDesk({ project }: { project: string | null }) {
                               className="flex items-center gap-3 px-4"
                               style={{ height: ROW_H }}
                             >
-                              <span className={REFS_COL} />
+                              <span className={REFS_COL} style={{ width: cols.refs }} />
                               <span className="size-4 flex-none rounded-full bg-muted" />
                               <span
                                 className="h-3 rounded bg-muted"
@@ -718,6 +776,7 @@ export function GitDesk({ project }: { project: string | null }) {
                                     REFS_COL,
                                     'flex items-center justify-end gap-1 overflow-hidden',
                                   )}
+                                  style={{ width: cols.refs }}
                                 >
                                   {spare.slice(0, 2).map((name) => (
                                     <RefPill key={name} name={name} lane={row.lane} />
@@ -751,7 +810,10 @@ export function GitDesk({ project }: { project: string | null }) {
                                     >
                                       {commit.subject}
                                     </span>
-                                    <span className={CHANGES_COL}>
+                                    <span
+                                      className={cn(CHANGES_COL, 'overflow-hidden')}
+                                      style={{ width: cols.changes }}
+                                    >
                                       <ChangeBar stat={commit.stat} />
                                     </span>
                                     <span
@@ -759,6 +821,7 @@ export function GitDesk({ project }: { project: string | null }) {
                                         AUTHOR_COL,
                                         'truncate text-left text-muted-foreground text-xs',
                                       )}
+                                      style={{ width: cols.author }}
                                       title={commit.author}
                                     >
                                       {commit.author}
@@ -768,6 +831,7 @@ export function GitDesk({ project }: { project: string | null }) {
                                         SHA_COL,
                                         'text-left font-mono text-muted-foreground text-xs',
                                       )}
+                                      style={{ width: cols.sha }}
                                     >
                                       {commit.short}
                                     </span>
@@ -776,6 +840,7 @@ export function GitDesk({ project }: { project: string | null }) {
                                         WHEN_COL,
                                         'text-right text-muted-foreground text-xs tabular-nums',
                                       )}
+                                      style={{ width: cols.when }}
                                     >
                                       {whenLabel(commit.at)}
                                     </span>

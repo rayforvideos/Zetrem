@@ -153,7 +153,13 @@ export function WorkspaceScreen() {
           )
         }
       >
-        {settings.setupDone && <GitDesk project={projects.current?.path ?? null} />}
+        {settings.setupDone && (
+          <GitDesk
+            project={projects.current?.path ?? null}
+            columns={settings.gitColumns}
+            onColumns={(next) => update({ gitColumns: next })}
+          />
+        )}
         {settings.setupDone && (
           <Button
             variant="quiet"

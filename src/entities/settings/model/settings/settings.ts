@@ -1,6 +1,6 @@
 import type { Settings } from './settings.types'
 
-import { SIDEBAR } from '@/shared/config/theme'
+import { GIT_COLUMNS, SIDEBAR } from '@/shared/config/theme'
 // Not the barrel: the main process reads settings, and the barrel pulls UserFace's PNG art.
 import { isFaceId, tidyUserName } from '@/entities/user/@x/settings'
 import { NAMED_EFFORTS } from '@/entities/claude-cli/@x/settings'
@@ -32,6 +32,7 @@ export const DEFAULT_SETTINGS: Settings = {
   wasStockOn: null,
   sidebarOpen: true,
   sidebarWidth: SIDEBAR.width,
+  gitColumns: gitColumns(null),
   starAskedAtMs: null,
   starred: false,
 }
@@ -51,6 +52,26 @@ function names(saved: unknown, fallback: string[]): string[] {
 function sidebarWidth(saved: unknown): number {
   if (typeof saved !== 'number' || !Number.isFinite(saved)) return SIDEBAR.width
   return Math.min(SIDEBAR.max, Math.max(SIDEBAR.min, Math.round(saved)))
+}
+
+function gitColumn(name: keyof typeof GIT_COLUMNS, saved: unknown): number {
+  const bounds = GIT_COLUMNS[name]
+  if (typeof saved !== 'number' || !Number.isFinite(saved)) return bounds.width
+  return Math.min(bounds.max, Math.max(bounds.min, Math.round(saved)))
+}
+
+// Each column is read on its own, so a file that predates one of them, or that has
+// had a single width spoiled, still opens with the rest of the table as it was left.
+function gitColumns(saved: unknown): Settings['gitColumns'] {
+  const source =
+    typeof saved === 'object' && saved !== null ? (saved as Record<string, unknown>) : {}
+  return {
+    refs: gitColumn('refs', source.refs),
+    changes: gitColumn('changes', source.changes),
+    author: gitColumn('author', source.author),
+    sha: gitColumn('sha', source.sha),
+    when: gitColumn('when', source.when),
+  }
 }
 
 export function readSettings(saved: unknown): Settings {
@@ -84,6 +105,7 @@ export function readSettings(saved: unknown): Settings {
     enterSends: source.enterSends !== false,
     sidebarOpen: source.sidebarOpen !== false,
     sidebarWidth: sidebarWidth(source.sidebarWidth),
+    gitColumns: gitColumns(source.gitColumns),
     starAskedAtMs:
       typeof source.starAskedAtMs === 'number' && Number.isFinite(source.starAskedAtMs)
         ? source.starAskedAtMs

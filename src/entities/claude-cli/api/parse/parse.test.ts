@@ -325,9 +325,23 @@ describe('parseClaudeLine: background subagents', () => {
       type: 'childOpen',
       toolUseId: 'toolu_bg1',
       label: '백그라운드 일',
-      subagentType: '',
+      subagentType: 'general-purpose',
       prompt: 'x',
       background: true,
+    })
+  })
+
+  it('shows a call that named no type as the general-purpose agent the CLI runs it as', () => {
+    const events = parseClaudeLine(
+      JSON.stringify({
+        type: 'assistant',
+        message: {
+          content: [{ type: 'tool_use', id: 'toolu_nt', name: 'Agent', input: { prompt: 'x' } }],
+        },
+      }),
+    )
+    expect(events.find((one) => one.type === 'childOpen')).toMatchObject({
+      subagentType: 'general-purpose',
     })
   })
 })

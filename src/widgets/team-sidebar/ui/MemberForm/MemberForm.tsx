@@ -31,7 +31,7 @@ import {
 import { writes } from '@/entities/tool'
 import { CharacterPicker } from '../CharacterPicker/CharacterPicker'
 import { ToolPicker } from '../ToolPicker/ToolPicker'
-import { useScrollState } from '@/shared/lib/scroll-state/useScrollState'
+import { useScrollState } from '@/shared/lib/measure/scroll-state/useScrollState'
 import { t } from '@lingui/core/macro'
 import { read } from '@/shared/lib/say/read'
 

@@ -25,6 +25,7 @@ import type { GitFile, GitStat, ShownFile } from '@/entities/git/model/repo'
 import { CHROME_TOP } from '@/shared/config/theme'
 import { cn } from '@/shared/lib/cn'
 import { diffHunks } from '@/shared/lib/diff/hunks/hunks'
+import { useOffsetWidth } from '@/shared/lib/measure/offset-width/useOffsetWidth'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -40,6 +41,7 @@ import { Input } from '@/shared/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/shared/ui/select'
 import { Spinner } from '@/shared/ui/spinner'
 import { Textarea } from '@/shared/ui/textarea'
+import { columnRoom } from '../../lib/columns/columns'
 import type { GitColumnName, GitColumns } from '../../lib/columns/columns.types'
 import { laneRows } from '../../lib/graph/graph'
 import type { LaneRow } from '../../lib/graph/graph.types'
@@ -319,18 +321,16 @@ function ColumnHead({ children, className }: { children?: ReactNode; className?:
   )
 }
 
-// The columns give way in order as the window narrows: the author first,
-// then the change bars; the label column and the right panel shrink too.
-// The widths themselves are not here any more: they are dragged and kept in
-// settings, and the header, every row and the skeleton read the same numbers.
-const REFS_COL = 'flex-none'
-const CHANGES_COL = 'flex-none max-lg:hidden'
-const AUTHOR_COL = 'flex-none max-xl:hidden'
-const SHA_COL = 'flex-none'
-const WHEN_COL = 'flex-none'
+// Every column keeps the width it was given and none of them shrink on their own:
+// what a narrow window takes away is worked out up front, so the header, the rows
+// and the skeleton are all drawn to one set of numbers. Whichever column is short
+// of room clips what it holds, in place, rather than pushing its neighbours along.
+const COL = 'flex-none overflow-hidden'
 
 // A column head with the grip that sets its width. The time column is titled in
 // the grip alone: the header leaves it blank because the times read as a clock.
+// The clipping sits on the label, not on the head, because the grip hangs outside
+// the head's own box and an overflow rule there would cut the target in half.
 function HeadCell({
   name,
   label,
@@ -344,13 +344,15 @@ function HeadCell({
   className?: string
   sizing: ReturnType<typeof useGitColumns>
 }) {
+  if (!sizing.shows(name)) return null
   return (
-    <span className={cn('relative', className)} style={{ width: sizing.columns[name] }}>
-      {titled && <ColumnHead>{label}</ColumnHead>}
+    <span className={cn('relative flex-none', className)} style={{ width: sizing.columns[name] }}>
+      {titled && <ColumnHead className="block truncate">{label}</ColumnHead>}
       <ColumnGrip
         name={name}
         label={label}
         width={sizing.columns[name]}
+        ceiling={sizing.ceiling(name)}
         onResize={sizing.resize}
         onCommit={sizing.commit}
         onReset={sizing.reset}
@@ -369,8 +371,10 @@ export function GitDesk({
   onColumns(next: GitColumns): void
 }) {
   const git = useGitDesk(project)
-  const sizing = useGitColumns(columns, onColumns)
-  const cols = sizing.columns
+  // The table is measured rather than guessed at. What the columns may take between
+  // them is whatever the pane has left once the graph, the commit message and the
+  // frame have had their share, so no width a person sets can reach past the edge.
+  const [attachTable, tableW] = useOffsetWidth<HTMLDivElement>()
   const [newBranch, setNewBranch] = useState('')
   // A branch picked in the selector waits behind a confirmation: switching
   // rewrites the working tree, too much for one unnoticed click.
@@ -425,6 +429,13 @@ export function GitDesk({
     out.splice(at, 0, { row: wip, commit: null })
     return out
   }, [git.graph, dirty])
+
+  // The graph is as wide as the commits need lanes, so it is settled first and the
+  // columns are fitted into what is left of the row behind it.
+  const graphW = (rows[0]?.row.width ?? 1) * LANE_W + 4
+  const room = useMemo(() => columnRoom(tableW, graphW), [tableW, graphW])
+  const sizing = useGitColumns(columns, onColumns, room)
+  const cols = sizing.columns
 
   if (project === null) return null
 
@@ -687,43 +698,31 @@ export function GitDesk({
                     )}
                   </div>
                 ) : (
-                  <div className="flex min-w-0 flex-1 flex-col">
-                    <div className="flex flex-none items-center gap-3 border-border border-b px-4 py-1.5">
+                  <div className="flex min-w-0 flex-1 flex-col" ref={attachTable}>
+                    {/* The header stands outside the list that scrolls, so it leaves the
+                        scrollbar's gutter open on its own: without it the head of every
+                        column would sit a scrollbar's width right of the cells under it. */}
+                    <div className="flex flex-none items-center gap-3 border-border border-b py-1.5 pr-6 pl-4">
                       <HeadCell
                         name="refs"
                         label={t`Branch / tag`}
-                        className={cn(REFS_COL, 'text-right')}
+                        className="text-right"
                         sizing={sizing}
                       />
-                      <span
-                        className="flex-none"
-                        style={{ width: (rows[0]?.row.width ?? 1) * LANE_W + 4 }}
-                      >
+                      {/* Two lanes of graph are narrower than the word above them, so this
+                          one head is left to paint into the seam beside it. Nothing moves
+                          for it: the cell is a fixed width either way, and a label cut to
+                          three letters reads worse than one that leans on the gap. */}
+                      <span className="flex-none" style={{ width: graphW }}>
                         <ColumnHead>{t`Graph`}</ColumnHead>
                       </span>
-                      <span className="min-w-16 flex-1">
-                        <ColumnHead>{t`Commit message`}</ColumnHead>
+                      <span className="min-w-16 flex-1 overflow-hidden">
+                        <ColumnHead className="block truncate">{t`Commit message`}</ColumnHead>
                       </span>
-                      <HeadCell
-                        name="changes"
-                        label={t`Changes`}
-                        className={CHANGES_COL}
-                        sizing={sizing}
-                      />
-                      <HeadCell
-                        name="author"
-                        label={t`Author`}
-                        className={AUTHOR_COL}
-                        sizing={sizing}
-                      />
-                      <HeadCell name="sha" label={t`Commit`} className={SHA_COL} sizing={sizing} />
-                      <HeadCell
-                        name="when"
-                        label={t`Time`}
-                        titled={false}
-                        className={WHEN_COL}
-                        sizing={sizing}
-                      />
+                      <HeadCell name="changes" label={t`Changes`} sizing={sizing} />
+                      <HeadCell name="author" label={t`Author`} sizing={sizing} />
+                      <HeadCell name="sha" label={t`Commit`} sizing={sizing} />
+                      <HeadCell name="when" label={t`Time`} titled={false} sizing={sizing} />
                     </div>
                     {!git.ready ? (
                       <ul className="flex-1 animate-pulse py-1" data-git-loading>
@@ -731,10 +730,12 @@ export function GitDesk({
                           (slot, at) => (
                             <li
                               key={slot}
-                              className="flex items-center gap-3 px-4"
+                              className="flex items-center gap-3 pr-6 pl-4"
                               style={{ height: ROW_H }}
                             >
-                              <span className={REFS_COL} style={{ width: cols.refs }} />
+                              {sizing.shows('refs') && (
+                                <span className={COL} style={{ width: cols.refs }} />
+                              )}
                               <span className="size-4 flex-none rounded-full bg-muted" />
                               <span
                                 className="h-3 rounded bg-muted"
@@ -749,7 +750,12 @@ export function GitDesk({
                         {t`No commits here yet. The graph starts with the first one.`}
                       </p>
                     ) : (
-                      <ul className="zt-scroll min-w-0 flex-1 overflow-y-auto py-1" data-git-graph>
+                      // The gutter is held open whether the list scrolls or not, so the
+                      // rows keep one width and stay under their own column heads.
+                      <ul
+                        className="zt-scroll min-w-0 flex-1 overflow-y-auto py-1 [scrollbar-gutter:stable]"
+                        data-git-graph
+                      >
                         {rows.map(({ row, commit }) => {
                           const wip = commit === null
                           const chosen = wip ? git.pick.kind === 'wip' : picked === commit.sha
@@ -771,26 +777,25 @@ export function GitDesk({
                                 style={{ height: ROW_H }}
                                 data-git-row={row.sha}
                               >
-                                <span
-                                  className={cn(
-                                    REFS_COL,
-                                    'flex items-center justify-end gap-1 overflow-hidden',
-                                  )}
-                                  style={{ width: cols.refs }}
-                                >
-                                  {spare.slice(0, 2).map((name) => (
-                                    <RefPill key={name} name={name} lane={row.lane} />
-                                  ))}
-                                  {spare.length > 2 && (
-                                    <span
-                                      className="flex-none rounded-md px-1.5 py-0.5 font-medium font-mono text-xs text-background leading-none"
-                                      style={{ backgroundColor: laneColor(row.lane) }}
-                                      title={spare.slice(2).join(', ')}
-                                    >
-                                      +{spare.length - 2}
-                                    </span>
-                                  )}
-                                </span>
+                                {sizing.shows('refs') && (
+                                  <span
+                                    className={cn(COL, 'flex items-center justify-end gap-1')}
+                                    style={{ width: cols.refs }}
+                                  >
+                                    {spare.slice(0, 2).map((name) => (
+                                      <RefPill key={name} name={name} lane={row.lane} />
+                                    ))}
+                                    {spare.length > 2 && (
+                                      <span
+                                        className="flex-none rounded-md px-1.5 py-0.5 font-medium font-mono text-xs text-background leading-none"
+                                        style={{ backgroundColor: laneColor(row.lane) }}
+                                        title={spare.slice(2).join(', ')}
+                                      >
+                                        +{spare.length - 2}
+                                      </span>
+                                    )}
+                                  </span>
+                                )}
                                 <RowLines
                                   row={row}
                                   wip={wip}
@@ -810,40 +815,45 @@ export function GitDesk({
                                     >
                                       {commit.subject}
                                     </span>
-                                    <span
-                                      className={cn(CHANGES_COL, 'overflow-hidden')}
-                                      style={{ width: cols.changes }}
-                                    >
-                                      <ChangeBar stat={commit.stat} />
-                                    </span>
-                                    <span
-                                      className={cn(
-                                        AUTHOR_COL,
-                                        'truncate text-left text-muted-foreground text-xs',
-                                      )}
-                                      style={{ width: cols.author }}
-                                      title={commit.author}
-                                    >
-                                      {commit.author}
-                                    </span>
-                                    <span
-                                      className={cn(
-                                        SHA_COL,
-                                        'text-left font-mono text-muted-foreground text-xs',
-                                      )}
-                                      style={{ width: cols.sha }}
-                                    >
-                                      {commit.short}
-                                    </span>
-                                    <span
-                                      className={cn(
-                                        WHEN_COL,
-                                        'text-right text-muted-foreground text-xs tabular-nums',
-                                      )}
-                                      style={{ width: cols.when }}
-                                    >
-                                      {whenLabel(commit.at)}
-                                    </span>
+                                    {sizing.shows('changes') && (
+                                      <span className={COL} style={{ width: cols.changes }}>
+                                        <ChangeBar stat={commit.stat} />
+                                      </span>
+                                    )}
+                                    {sizing.shows('author') && (
+                                      <span
+                                        className={cn(
+                                          COL,
+                                          'truncate text-left text-muted-foreground text-xs',
+                                        )}
+                                        style={{ width: cols.author }}
+                                        title={commit.author}
+                                      >
+                                        {commit.author}
+                                      </span>
+                                    )}
+                                    {sizing.shows('sha') && (
+                                      <span
+                                        className={cn(
+                                          COL,
+                                          'truncate text-left font-mono text-muted-foreground text-xs',
+                                        )}
+                                        style={{ width: cols.sha }}
+                                      >
+                                        {commit.short}
+                                      </span>
+                                    )}
+                                    {sizing.shows('when') && (
+                                      <span
+                                        className={cn(
+                                          COL,
+                                          'truncate text-right text-muted-foreground text-xs tabular-nums',
+                                        )}
+                                        style={{ width: cols.when }}
+                                      >
+                                        {whenLabel(commit.at)}
+                                      </span>
+                                    )}
                                   </>
                                 )}
                               </Button>

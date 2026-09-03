@@ -10,6 +10,7 @@ type ColumnGripProps = {
   name: GitColumnName
   label: string
   width: number
+  ceiling: number
   onResize(name: GitColumnName, px: number): void
   onCommit(name: GitColumnName, px: number): void
   onReset(name: GitColumnName): void
@@ -17,10 +18,17 @@ type ColumnGripProps = {
 
 // The divider between two column heads, taken hold of. It fills the gap it sits
 // in rather than the head's own edge, so the target is the seam a person aims at.
-export function ColumnGrip({ name, label, width, onResize, onCommit, onReset }: ColumnGripProps) {
+export function ColumnGrip({
+  name,
+  label,
+  width,
+  ceiling,
+  onResize,
+  onCommit,
+  onReset,
+}: ColumnGripProps) {
   const start = useRef<{ x: number; width: number } | null>(null)
   const latest = useRef(width)
-  const bounds = GIT_COLUMNS[name]
 
   function down(event: ReactPointerEvent<HTMLDivElement>): void {
     start.current = { x: event.clientX, width }
@@ -31,7 +39,7 @@ export function ColumnGrip({ name, label, width, onResize, onCommit, onReset }: 
   function move(event: ReactPointerEvent<HTMLDivElement>): void {
     const from = start.current
     if (from === null) return
-    latest.current = draggedColumn(name, from.width, event.clientX - from.x)
+    latest.current = draggedColumn(name, from.width, event.clientX - from.x, ceiling)
     onResize(name, latest.current)
   }
 
@@ -46,7 +54,7 @@ export function ColumnGrip({ name, label, width, onResize, onCommit, onReset }: 
   }
 
   function key(event: KeyboardEvent<HTMLDivElement>): void {
-    const next = nudgedColumn(name, width, event.key)
+    const next = nudgedColumn(name, width, event.key, ceiling)
     if (next === null) return
     event.preventDefault()
     onResize(name, next)
@@ -60,8 +68,8 @@ export function ColumnGrip({ name, label, width, onResize, onCommit, onReset }: 
       aria-orientation="vertical"
       aria-label={t`${label} column width`}
       aria-valuenow={width}
-      aria-valuemin={bounds.min}
-      aria-valuemax={bounds.max}
+      aria-valuemin={GIT_COLUMNS[name].min}
+      aria-valuemax={ceiling}
       tabIndex={0}
       onPointerDown={down}
       onPointerMove={move}

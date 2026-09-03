@@ -33,3 +33,15 @@ export const GIT_COLUMNS = {
 // One arrow key press. Half the sidebar's notch, because these columns are a
 // quarter of its width and a 16px jump skips past what was being aimed at.
 export const GIT_COLUMN_STEP = 8
+
+// The frame a history row is drawn inside: the padding at each end, the seam
+// between two cells, the floor the commit message keeps for itself, and the
+// gutter the list's scrollbar stands in. The resizable columns share whatever is
+// left of the table after all of that, which is what keeps a widened column from
+// pushing the ones on its right off the edge.
+export const GIT_TABLE = { pad: 16, gap: 12, message: 64, gutter: 8 } as const
+
+// The order the columns step aside in, once the table is too narrow to draw even
+// their floors. The author goes first and the change bars next, because those are
+// the two a commit still reads without. The graph and the message never leave.
+export const GIT_COLUMN_GIVEWAY = ['author', 'changes', 'refs', 'when', 'sha'] as const

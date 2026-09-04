@@ -101,8 +101,11 @@ When you hand over a job, this is what happens:
    mode, editing a file or running a command waits for an answer.
 5. **It gathers the reports into one reply.** Conversations are saved per
    project, so reopening one continues where it stopped.
-6. **It notifies you** when work finishes or needs approval, but only while the
-   window is behind another.
+6. **It finds you when the team is waiting.** A permission ask or a question at
+   the end of a turn marks that chat in the sidebar, sends a system notification
+   while the window is behind another, shows a toast while you are on another
+   chat, and reminds you once after two minutes. Everything clears the moment
+   you answer.
 
 ---
 
@@ -110,8 +113,8 @@ When you hand over a job, this is what happens:
 
 A teammate is three things: a name, when to call them, and their standing
 instructions. The orchestrator reads the middle one to decide who gets a job.
-Teammates are stored per user rather than per project, so they are available in
-any folder.
+A teammate belongs to one project or to all of them; the team list is split
+into the two. Each one also chooses whether it works in a worktree of its own.
 
 You can also restrict a teammate to certain tools, or attach documents for them
 to read first. Both are passed to the session.
@@ -122,8 +125,8 @@ to read first. Both are passed to the session.
 
 | | |
 |---|---|
-| **Library** | Notes each project keeps, held by the app and never written into the project folder. Agents search it before they say they do not know and file what they learn; "To library" under an answer files that answer. A switch in the composer decides, per project, whether sessions get it. |
-| **Teammates** | Created in the app, stored per user. Callable from any project, each with its own model, tools and reading list. |
+| **Library** | Notes each project keeps, held by the app and never written into the project folder. Agents search it before they say they do not know; when one wants to add a note it proposes a card you accept or dismiss, and nothing lands on its own. "To library" under an answer files that answer. A switch in the composer decides, per project, whether sessions get it. |
+| **Teammates** | Created in the app, for one project or for all of them. Each with its own model, tools, reading list and, if it wants one, a worktree of its own. |
 | **Built-in agents** | The agents Claude Code provides. Each can be switched off. |
 | **Permission modes** | Ask first · Auto-edit (edits files, asks before commands) · Allow all. |
 | **Model and effort** | Picked where you type, applied from the next session: the model, and Claude Code's effort level (low to max) under it. |

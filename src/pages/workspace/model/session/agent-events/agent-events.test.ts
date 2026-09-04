@@ -1765,6 +1765,65 @@ describe('the orchestrator speaking to a teammate', () => {
     expect(board[0]?.status).toBe('working')
   })
 
+  it('keeps the one tile through a resume, as the CLI re-announces it under the message id', () => {
+    // Measured on CLI 2.1.260 (#76): after SendMessage, task_started and the
+    // task_notification carry the same task_id but the SendMessage call's
+    // tool_use_id, not the Agent call's. The task id is what must be matched.
+    const refs = fakeRefs()
+    hired(refs)
+    applyAgentEvent(
+      {
+        type: 'childNotified',
+        toolUseId: 'toolu_x',
+        taskId: 'agent-x',
+        summary: 'one line',
+        done: true,
+        failed: false,
+      },
+      refs,
+    )
+    remember('call_send', { to: 'agent-x', message: '한 줄 더' }, refs)
+    wakeResumed('call_send', JSON.stringify({ success: true, resumedAgentId: 'agent-x' }), refs)
+    applyAgentEvent(
+      {
+        type: 'childStarted',
+        toolUseId: 'call_send',
+        taskId: 'agent-x',
+        taskType: 'local_agent',
+        description: 'Nova',
+      },
+      refs,
+    )
+    applyAgentEvent(
+      {
+        type: 'childProgress',
+        toolUseId: 'call_send',
+        taskId: 'agent-x',
+        doing: 'Reading README.md',
+        lastTool: 'Read',
+        tokens: 12,
+      },
+      refs,
+    )
+    applyAgentEvent(
+      {
+        type: 'childNotified',
+        toolUseId: 'call_send',
+        taskId: 'agent-x',
+        summary: 'two lines',
+        done: true,
+        failed: false,
+      },
+      refs,
+    )
+
+    const board = refs.stores.children.get()
+    expect(board).toHaveLength(1)
+    expect(board[0]?.id).toBe('toolu_x')
+    expect(board[0]?.status).toBe('reported')
+    expect(board[0]?.headline).toBe('two lines')
+  })
+
   it('still opens a tile for an agent the board has never seen', () => {
     const refs = fakeRefs()
     remember('call_send', { to: 'a99', message: 'hello' }, refs)

@@ -49,6 +49,14 @@ export function waitingOn(conv: Settled, atWork: boolean): WaitingOn | null {
   return said === null ? null : { kind: 'question', said }
 }
 
+// What names this particular wait. A permission carries the runtime's own
+// request id; a question is named by the turn it ended, which is as far as one
+// question ever reaches.
+export function markOf(conv: Settled): string {
+  if (conv.permission !== null) return conv.permission.requestId
+  return conv.turns.at(-1)?.id ?? ''
+}
+
 // Where a wait is worth raising. Away from the window there is only the system
 // notice; in the app there is the screen itself, and a chat already in view
 // needs nothing said about it.

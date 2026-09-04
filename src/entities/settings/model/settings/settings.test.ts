@@ -111,6 +111,10 @@ describe('what settings accept and what the app offers are one list', () => {
       expect(readSettings({ permissionMode: mode.id }).permissionMode, mode.id).toBe(mode.id)
     }
   })
+
+  it('keeps a saved plan mode, which older files never held', () => {
+    expect(readSettings({ permissionMode: 'plan' }).permissionMode).toBe('plan')
+  })
 })
 
 describe('the width of the board', () => {

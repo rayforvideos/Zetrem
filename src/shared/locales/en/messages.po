@@ -438,6 +438,10 @@ msgstr "Add a marketplace to bring in skills and agents"
 msgid "Add account"
 msgstr "Add account"
 
+#: src/widgets/setup/ui/ProjectField/ProjectField.tsx:79
+msgid "Add folder"
+msgstr "Add folder"
+
 #: src/widgets/setup/ui/PluginShelf/PluginShelf.tsx:87
 msgid "Add more"
 msgstr "Add more"
@@ -641,7 +645,7 @@ msgstr "Cancel sign-in"
 msgid "Cart totals and rounding"
 msgstr "Cart totals and rounding"
 
-#: src/widgets/setup/ui/ProjectField/ProjectField.tsx:22
+#: src/widgets/setup/ui/ProjectField/ProjectField.tsx:23
 msgid "Change"
 msgstr "Change"
 
@@ -676,7 +680,7 @@ msgstr "Checking…"
 msgid "Choose a project folder"
 msgstr "Choose a project folder"
 
-#: src/widgets/setup/ui/ProjectField/ProjectField.tsx:22
+#: src/widgets/setup/ui/ProjectField/ProjectField.tsx:23
 msgid "Choose folder"
 msgstr "Choose folder"
 
@@ -801,6 +805,10 @@ msgstr "Could not {0} {target}"
 msgid "Could not add {name}"
 msgstr "Could not add {name}"
 
+#: src/pages/workspace/model/project/useProjectSwitch/useProjectSwitch.ts:63
+msgid "Could not add that folder"
+msgstr "Could not add that folder"
+
 #: src/pages/workspace/model/extensions/useConnectors.ts:90
 msgid "Could not bring over Claude Desktop"
 msgstr "Could not bring over Claude Desktop"
@@ -834,8 +842,8 @@ msgstr "Could not list your saved chats"
 msgid "Could not open that chat"
 msgstr "Could not open that chat"
 
-#: src/pages/workspace/model/project/useProjectSwitch/useProjectSwitch.ts:20
-#: src/pages/workspace/model/project/useProjectSwitch/useProjectSwitch.ts:31
+#: src/pages/workspace/model/project/useProjectSwitch/useProjectSwitch.ts:27
+#: src/pages/workspace/model/project/useProjectSwitch/useProjectSwitch.ts:38
 msgid "Could not open that folder"
 msgstr "Could not open that folder"
 
@@ -907,11 +915,15 @@ msgstr "Could not read your settings"
 msgid "Could not read your sign-in"
 msgstr "Could not read your sign-in"
 
+#: src/pages/workspace/model/project/useProjectSwitch/useProjectSwitch.ts:68
+msgid "Could not remove that folder"
+msgstr "Could not remove that folder"
+
 #: src/widgets/setup/model/useAgentMemory.ts:120
 msgid "Could not remove that memory"
 msgstr "Could not remove that memory"
 
-#: src/pages/workspace/model/project/useProjectSwitch/useProjectSwitch.ts:45
+#: src/pages/workspace/model/project/useProjectSwitch/useProjectSwitch.ts:52
 msgid "Could not remove that project"
 msgstr "Could not remove that project"
 
@@ -1130,6 +1142,10 @@ msgstr "Everything the session has"
 msgid "Extensions"
 msgstr "Extensions"
 
+#: src/widgets/setup/ui/ProjectField/ProjectField.tsx:53
+msgid "Extra folders"
+msgstr "Extra folders"
+
 #: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:177
 #: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:192
 msgid "Face"
@@ -1208,6 +1224,10 @@ msgstr "Folder for both"
 #: src/widgets/team-sidebar/ui/ChatList/ChatRow.tsx:87
 msgid "Folder name"
 msgstr "Folder name"
+
+#: src/widgets/setup/ui/ProjectField/ProjectField.tsx:55
+msgid "Folders outside the project your team may also read and write, such as a sibling package or a folder of specs."
+msgstr "Folders outside the project your team may also read and write, such as a sibling package or a folder of specs."
 
 #: src/widgets/setup/lib/tongues/tongues.ts:5
 msgid "Follows the language your computer is set to"
@@ -1825,7 +1845,7 @@ msgid "Previous 7 days"
 msgstr "Previous 7 days"
 
 #: src/widgets/setup/ui/MemoryField/MemoryField.tsx:27
-#: src/widgets/setup/ui/ProjectField/ProjectField.tsx:9
+#: src/widgets/setup/ui/ProjectField/ProjectField.tsx:10
 msgid "Project"
 msgstr "Project"
 
@@ -1907,7 +1927,7 @@ msgstr "Reading what this session offers. The list fills in a moment."
 msgid "Reading which agents Claude Code brings. They will be listed here."
 msgstr "Reading which agents Claude Code brings. They will be listed here."
 
-#: src/widgets/setup/ui/ProjectField/ProjectField.tsx:27
+#: src/widgets/setup/ui/ProjectField/ProjectField.tsx:28
 msgid "Recent"
 msgstr "Recent"
 
@@ -1958,6 +1978,10 @@ msgstr "Remove {0}?"
 #: src/widgets/team-sidebar/ui/MemberMenu/MemberMenu.tsx:60
 msgid "Remove {name}?"
 msgstr "Remove {name}?"
+
+#: src/widgets/setup/ui/ProjectField/ProjectField.tsx:68
+msgid "Remove {path}"
+msgstr "Remove {path}"
 
 #: src/widgets/team-sidebar/ui/MemberMenu/MemberMenu.tsx:51
 msgid "Remove from team"

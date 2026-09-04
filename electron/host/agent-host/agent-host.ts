@@ -9,6 +9,7 @@ import { claudeBin, loginPath } from '../../cli/login-path/login-path'
 import { exitReason, startTrouble } from '../../spawn/exit-reason/exit-reason'
 import type { ExitReason } from '@/entities/claude-cli/lib/exit-line/exit-line.types'
 import { recallProject } from '../../store/project-memory/project-memory'
+import { extraDirArgs } from '../../projects/projects'
 import { librarySessionArgs } from '../../library/library'
 import { handle, on, push } from '../../ipc/ipc'
 import { lineReader } from '../../spawn/line-reader/line-reader'
@@ -178,6 +179,11 @@ export function registerAgentHost(): void {
             console.error('[worktree-links] could not follow', workspace, cause)
           })
         }
+        const env = agentEnv(process.env, await loginPath())
+        // The folders this project also works in are the record's to name, not
+        // the renderer's: what a session may reach outside its own folder is
+        // decided here, as its working folder is.
+        const extra = await extraDirArgs(workspace)
         const launch = launchFor(await claudeBin(), [
           ...agentArgs({
             ...run,
@@ -186,8 +192,8 @@ export function registerAgentHost(): void {
             isolated,
           }),
           ...added,
+          ...extra,
         ])
-        const env = agentEnv(process.env, await loginPath())
 
         // Nothing below may await: the spawn and the map entry have to happen
         // in one uninterrupted step, or a stop can land between them.

@@ -1,6 +1,13 @@
 import { useRef } from 'react'
 import { t } from '@lingui/core/macro'
-import { forgetProject, openProject, pickProject, projectStore } from '@/entities/project'
+import {
+  addProjectDir,
+  forgetProject,
+  openProject,
+  pickProject,
+  projectStore,
+  removeProjectDir,
+} from '@/entities/project'
 import type { Project } from '@/entities/project'
 import type { ProjectSwitch, SwitchDeps } from './useProjectSwitch.types'
 
@@ -45,5 +52,21 @@ export function useProjectSwitch(deps: SwitchDeps): ProjectSwitch {
       .catch(report(t`Could not remove that project`))
   }
 
-  return { pick, open, forget }
+  // The extra folders belong to the project on screen, so both of these
+  // answer with the project as it now stands and the screen follows it.
+  function keep(changed: Project | null): void {
+    if (changed !== null && changed.id === projectStore.get()?.id) projectStore.set(changed)
+  }
+
+  function addDir(): void {
+    if (project === null) return
+    addProjectDir(project.id).then(keep).catch(report(t`Could not add that folder`))
+  }
+
+  function removeDir(path: string): void {
+    if (project === null) return
+    removeProjectDir(project.id, path).then(keep).catch(report(t`Could not remove that folder`))
+  }
+
+  return { pick, open, forget, addDir, removeDir }
 }

@@ -1,4 +1,12 @@
-import { existsSync, mkdirSync, mkdtempSync, readdirSync, rmSync, writeFileSync } from 'node:fs'
+import {
+  existsSync,
+  mkdirSync,
+  mkdtempSync,
+  readdirSync,
+  realpathSync,
+  rmSync,
+  writeFileSync,
+} from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
@@ -9,8 +17,17 @@ vi.mock('electron', () => ({
   app: { getPath: () => boundary.userData },
 }))
 
-const { createProject, forgetProject, listProjects, openProject, repathProject, restoreProject } =
-  await import('./projects')
+const {
+  addProjectDir,
+  createProject,
+  extraDirArgs,
+  forgetProject,
+  listProjects,
+  openProject,
+  removeProjectDir,
+  repathProject,
+  restoreProject,
+} = await import('./projects')
 const { recallProject } = await import('../store/project-memory/project-memory')
 const { projectKey } = await import('../store/project-key/project-key')
 
@@ -170,5 +187,70 @@ describe('the projects a person can come back to', () => {
 
   it('refuses to create on a folder that does not exist', async () => {
     expect(await createProject(join(home, 'missing'))).toBeNull()
+  })
+})
+
+// An extra folder is stored the way the CLI will be given it, symlinks
+// resolved, and on macOS the temporary folder is reached through one.
+const real = (path: string): string => realpathSync(path)
+
+describe('the extra folders a project works in', () => {
+  it('remembers them on the project and hands them to the session there', async () => {
+    const shop = dir('shop')
+    const specs = dir('specs')
+    const made = await createProject(shop, 1000)
+    const grown = await addProjectDir(made?.id ?? '', specs, 2000)
+    expect(grown?.extraDirs).toEqual([real(specs)])
+    expect(await extraDirArgs(shop)).toEqual(['--add-dir', real(specs)])
+  })
+
+  it('gives a session nothing for a folder no project of its own was kept for', async () => {
+    await createProject(dir('shop'), 1000)
+    expect(await extraDirArgs(dir('elsewhere'))).toEqual([])
+  })
+
+  it('refuses a folder that is not there, and one already listed', async () => {
+    const shop = dir('shop')
+    const specs = dir('specs')
+    const made = await createProject(shop, 1000)
+    await addProjectDir(made?.id ?? '', specs, 2000)
+    expect((await addProjectDir(made?.id ?? '', join(home, 'missing'), 3000))?.extraDirs).toEqual([
+      real(specs),
+    ])
+    expect((await addProjectDir(made?.id ?? '', specs, 4000))?.extraDirs).toEqual([real(specs)])
+  })
+
+  it('takes one away, and the session stops being given it', async () => {
+    const shop = dir('shop')
+    const specs = dir('specs')
+    const lib = dir('lib')
+    const made = await createProject(shop, 1000)
+    await addProjectDir(made?.id ?? '', specs, 2000)
+    await addProjectDir(made?.id ?? '', lib, 3000)
+    const left = await removeProjectDir(made?.id ?? '', specs, 4000)
+    expect(left?.extraDirs).toEqual([real(lib)])
+    expect(await extraDirArgs(shop)).toEqual(['--add-dir', real(lib)])
+  })
+
+  it('forgets them with the project they hung on', async () => {
+    const shop = dir('shop')
+    const specs = dir('specs')
+    const made = await createProject(shop, 1000)
+    await addProjectDir(made?.id ?? '', specs, 2000)
+    await forgetProject(made?.id ?? '', 3000)
+    await createProject(shop, 4000)
+    expect((await restoreProject())?.extraDirs).toBeUndefined()
+    expect(await extraDirArgs(shop)).toEqual([])
+  })
+
+  it('leaves a folder that has gone since out of the arguments, list intact', async () => {
+    const shop = dir('shop')
+    const specs = dir('specs')
+    const made = await createProject(shop, 1000)
+    await addProjectDir(made?.id ?? '', specs, 2000)
+    const kept = real(specs)
+    rmSync(specs, { recursive: true, force: true })
+    expect(await extraDirArgs(shop)).toEqual([])
+    expect((await restoreProject())?.extraDirs).toEqual([kept])
   })
 })

@@ -21,6 +21,7 @@ type Flat = {
   notice: Failure | null
   installing: boolean
   recent: { id: string; path: string; name: string }[]
+  extraDirs: string[]
 }
 
 function pane(over: Partial<Flat> = {}): string {
@@ -38,6 +39,7 @@ function pane(over: Partial<Flat> = {}): string {
     notice: null,
     installing: false,
     recent: [],
+    extraDirs: [],
     ...over,
   }
   return renderToStaticMarkup(
@@ -65,8 +67,11 @@ function pane(over: Partial<Flat> = {}): string {
         project={{
           chosen: flat.project,
           recent: flat.recent,
+          extraDirs: flat.extraDirs,
           onChoose: () => {},
           onPickRecent: () => {},
+          onAddDir: () => {},
+          onRemoveDir: () => {},
         }}
         defaults={{
           permissionMode: flat.permissionMode,
@@ -241,6 +246,21 @@ describe('SetupPane: everything to settle before starting, on one screen', () =>
     })
     expect(html).toContain('alpha')
     expect(html).toContain('/tmp/alpha')
+  })
+
+  it('lists the extra folders this project also works in', () => {
+    const html = pane({
+      project: { name: 'zetrem', path: '/tmp/zetrem' },
+      extraDirs: ['/tmp/specs'],
+    })
+    expect(html).toContain('data-extra-dirs')
+    expect(html).toContain('/tmp/specs')
+    expect(html).toContain('Add folder')
+  })
+
+  it('offers to add one even before there is one, but only once a project is chosen', () => {
+    expect(pane({ project: { name: 'zetrem', path: '/tmp/zetrem' } })).toContain('Add folder')
+    expect(pane(), 'nothing to hang them on yet').not.toContain('data-extra-dirs')
   })
 
   it('keeps the field quiet when there is nowhere to go back to', () => {

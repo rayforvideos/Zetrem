@@ -1,65 +1,45 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useEffectEvent, useRef } from 'react'
 import { nudgeFor } from '@/entities/agent-session'
-import type { PermissionAsk } from '@/entities/agent-session'
 import { SETTLE_GRACE_MS } from './settle-nudge/settle-nudge'
+import type { WaitingOn } from './waiting/waiting.types'
 
 function watching(): boolean {
   return document.visibilityState === 'visible' && document.hasFocus()
 }
 
+// The word once the run is over. What the run stopped *for* belongs to
+// useWaiting, so a turn that settled on a permission or a question says
+// nothing here: it would be a second notice for one event, and the wrong one,
+// since "finished" is the opposite of what happened.
 export function useNudge(
   wanted: boolean,
   busy: boolean,
-  permission: PermissionAsk | null,
+  waiting: WaitingOn | null,
   trouble: boolean,
 ): void {
   const wasBusy = useRef(false)
-  const askedFor = useRef<string | null>(null)
-  // The timer reads these at fire time, not at schedule time, so a change
-  // mid-grace (e.g. the orchestrator asks for permission) is honoured.
-  // Written after commit, not during render, as the other hooks here do.
-  const wantedRef = useRef(wanted)
-  const permissionRef = useRef(permission)
-  const troubleRef = useRef(trouble)
-  useEffect(() => {
-    wantedRef.current = wanted
-    permissionRef.current = permission
-    troubleRef.current = trouble
+
+  // The timer reads these when it fires, not when it was set, so a change
+  // mid-grace (the orchestrator stopping to ask) is honoured.
+  const settled = useEffectEvent(() => {
+    const nudge = nudgeFor({
+      wanted,
+      watching: watching(),
+      reason: 'done',
+      tool: '',
+      asked: waiting !== null,
+      trouble,
+    })
+    if (nudge !== null) window.desk.nudge(nudge.title, nudge.body)
   })
 
   useEffect(() => {
     const justSettled = wasBusy.current && !busy
     wasBusy.current = busy
     if (!justSettled) return undefined
-    const timer = window.setTimeout(() => {
-      const nudge = nudgeFor({
-        wanted: wantedRef.current,
-        watching: watching(),
-        reason: 'done',
-        tool: '',
-        asked: permissionRef.current !== null,
-        trouble: troubleRef.current,
-      })
-      if (nudge !== null) window.desk.nudge(nudge.title, nudge.body)
-    }, SETTLE_GRACE_MS)
+    const timer = window.setTimeout(settled, SETTLE_GRACE_MS)
     // Busy again before the grace period is up (the orchestrator waking to
     // relay a teammate's result) cancels the notice for that gap.
     return () => window.clearTimeout(timer)
   }, [busy])
-
-  useEffect(() => {
-    if (permission === null) {
-      askedFor.current = null
-      return
-    }
-    if (askedFor.current === permission.requestId) return
-    askedFor.current = permission.requestId
-    const nudge = nudgeFor({
-      wanted,
-      watching: watching(),
-      reason: 'permission',
-      tool: permission.toolName,
-    })
-    if (nudge !== null) window.desk.nudge(nudge.title, nudge.body)
-  }, [permission, wanted])
 }

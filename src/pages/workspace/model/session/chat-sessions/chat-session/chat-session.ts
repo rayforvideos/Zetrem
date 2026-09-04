@@ -13,8 +13,10 @@ import { applyAgentEvent } from '../../agent-events/agent-events'
 import { freshRefs } from '../../agent-events/refs/refs'
 import type { AgentStores } from '../../agent-events/agent-events.types'
 import { afterYouStopped } from '../../asked-to-stop/asked-to-stop'
+import { stirring } from '../../live/live'
 import { shouldRelaunch } from '../../relaunch/relaunch'
 import type { Attempt } from '../../relaunch/relaunch.types'
+import { markOf, waitingOn } from '../../waiting/waiting'
 import { beginSession, closeSession } from '../../session-bookkeeping/session-bookkeeping'
 import { rememberHostChat } from '../../host-chats/host-chats'
 import { attachAutosave } from './autosave/autosave'
@@ -26,6 +28,7 @@ import type {
   ChatSessionDeps,
   LiveState,
 } from './chat-session.types'
+import type { Held } from '../../waiting/waiting.types'
 import { t } from '@lingui/core/macro'
 
 // Two chats can send in the same millisecond, and a host id that repeats
@@ -138,6 +141,14 @@ export function createChatSession(
     return hostId === id
   }
 
+  // What this chat has stopped for, named so the same wait reads the same
+  // wherever the screen happens to be looking from.
+  function heldNow(): Held | null {
+    const conv = conversation.get()
+    const found = waitingOn(conv, stirring(conv.status, stores.children.get()))
+    return found === null ? null : { ...found, mark: markOf(conv) }
+  }
+
   function reset(): void {
     const id = hostId
     hostId = null
@@ -167,10 +178,11 @@ export function createChatSession(
       return hostId !== null
     },
     owns,
+    held: heldNow,
     live(): LiveState {
-      const conv = conversation.get()
-      if (conv.permission !== null) return 'asking'
-      return conv.status === 'working' ? 'working' : 'idle'
+      const found = heldNow()
+      if (found !== null) return found.kind === 'permission' ? 'asking' : 'question'
+      return conversation.get().status === 'working' ? 'working' : 'idle'
     },
     configure(next: ChatRunConfig, onModelRefused: (model: ModelChoice) => void): void {
       config = next

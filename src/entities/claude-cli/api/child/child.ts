@@ -86,6 +86,7 @@ export function childNotified(event: Record<string, unknown>): ChildTurnEvent[] 
     ...task,
     summary: str(event.summary),
     done: event.status === undefined || event.status === 'completed',
+    failed: event.status === 'failed' || event.status === 'killed',
   }))
 }
 

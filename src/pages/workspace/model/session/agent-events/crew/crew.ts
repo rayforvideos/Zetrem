@@ -119,6 +119,17 @@ export function applyCrewEvent(turn: ClaudeTurnEvent, refs: AgentEventRefs): voi
       if (id === null) return
       if (turn.summary) children.patch(id, { headline: turn.summary.trim(), doing: '' })
       if (closedForGood(children, id)) return
+      // A run that failed or was killed is over as surely as one that
+      // completed; left as working, its tile would never close.
+      if (turn.failed) {
+        const said = turn.summary.trim()
+        children.patch(id, {
+          status: 'done',
+          doing: '',
+          headline: said.length > 0 ? said : t`Failed: the run stopped before it was done`,
+        })
+        return
+      }
       // Done while the agent's own shell still runs would let the silence rule
       // close its tile mid-job.
       const parked = turn.done && !ownsRunningBash(refs, id)

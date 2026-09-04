@@ -143,6 +143,7 @@ describe('applyAgentEvent: the order has to be nailed down', () => {
         taskId: 'task-toolu_1',
         summary: '4',
         done: true,
+        failed: false,
       },
       refs,
     )
@@ -215,6 +216,7 @@ describe('applyAgentEvent: the order has to be nailed down', () => {
         taskId: 'task-toolu_2',
         summary: '4',
         done: true,
+        failed: false,
       },
       refs,
     )
@@ -269,6 +271,7 @@ describe('a grandchild’s task events land on the grandchild, not on its parent
         taskId: 'task-grand',
         summary: '다 찾았다',
         done: true,
+        failed: false,
       },
       refs,
     )
@@ -347,6 +350,7 @@ describe('a grandchild’s task events land on the grandchild, not on its parent
         taskId: 'task-grand',
         summary: '다 찾았다',
         done: true,
+        failed: false,
       },
       refs,
     )
@@ -625,6 +629,7 @@ describe('a child that runs several rounds does not vanish for reporting once', 
         taskId: 'task-toolu_a',
         summary: 'round one done',
         done: true,
+        failed: false,
       },
       refs,
     )
@@ -647,6 +652,7 @@ describe('a child that runs several rounds does not vanish for reporting once', 
         taskId: 'task-toolu_b',
         summary: 'done',
         done: true,
+        failed: false,
       },
       refs,
     )
@@ -676,6 +682,7 @@ describe('a child that runs several rounds does not vanish for reporting once', 
         taskId: 'task-toolu_c',
         summary: 'round one',
         done: true,
+        failed: false,
       },
       refs,
     )
@@ -713,6 +720,7 @@ describe('a child that runs several rounds does not vanish for reporting once', 
         taskId: 'task-toolu_g',
         summary: 'round one',
         done: true,
+        failed: false,
       },
       refs,
     )
@@ -757,6 +765,7 @@ describe('a child that runs several rounds does not vanish for reporting once', 
         taskId: 'task-toolu_m',
         summary: '4',
         done: true,
+        failed: false,
       },
       refs,
     )
@@ -1156,6 +1165,7 @@ describe('a subagent reports what it is doing while it works', () => {
         taskId: 'task-l',
         summary: 'idle',
         done: false,
+        failed: false,
       },
       refs,
     )
@@ -1405,6 +1415,7 @@ describe('addressing a child by the id the CLI actually sends', () => {
         taskId: 'task_z',
         summary: '다 봤습니다',
         done: true,
+        failed: false,
       },
       refs,
     )
@@ -1418,7 +1429,14 @@ describe('addressing a child by the id the CLI actually sends', () => {
     const refs = fakeRefs()
     open(refs, 'toolu_z')
     applyAgentEvent(
-      { type: 'childNotified', toolUseId: null, taskId: 'someone_else', summary: 'hi', done: true },
+      {
+        type: 'childNotified',
+        toolUseId: null,
+        taskId: 'someone_else',
+        summary: 'hi',
+        done: true,
+        failed: false,
+      },
       refs,
     )
     expect(refs.stores.children.get().find((s) => s.id === 'toolu_z')?.status).toBe('working')
@@ -1551,7 +1569,14 @@ describe('work the CLI sends to the background stays visible while it runs', () 
       at,
     )
     applyAgentEvent(
-      { type: 'childNotified', toolUseId: 'tu1', taskId: 'task1', summary: 'x', done: true },
+      {
+        type: 'childNotified',
+        toolUseId: 'tu1',
+        taskId: 'task1',
+        summary: 'x',
+        done: true,
+        failed: false,
+      },
       at,
     )
     expect(at.stores.conversation.get().chores).toHaveLength(0)
@@ -1740,6 +1765,65 @@ describe('the orchestrator speaking to a teammate', () => {
     expect(board[0]?.status).toBe('working')
   })
 
+  it('keeps the one tile through a resume, as the CLI re-announces it under the message id', () => {
+    // Measured on CLI 2.1.260 (#76): after SendMessage, task_started and the
+    // task_notification carry the same task_id but the SendMessage call's
+    // tool_use_id, not the Agent call's. The task id is what must be matched.
+    const refs = fakeRefs()
+    hired(refs)
+    applyAgentEvent(
+      {
+        type: 'childNotified',
+        toolUseId: 'toolu_x',
+        taskId: 'agent-x',
+        summary: 'one line',
+        done: true,
+        failed: false,
+      },
+      refs,
+    )
+    remember('call_send', { to: 'agent-x', message: '한 줄 더' }, refs)
+    wakeResumed('call_send', JSON.stringify({ success: true, resumedAgentId: 'agent-x' }), refs)
+    applyAgentEvent(
+      {
+        type: 'childStarted',
+        toolUseId: 'call_send',
+        taskId: 'agent-x',
+        taskType: 'local_agent',
+        description: 'Nova',
+      },
+      refs,
+    )
+    applyAgentEvent(
+      {
+        type: 'childProgress',
+        toolUseId: 'call_send',
+        taskId: 'agent-x',
+        doing: 'Reading README.md',
+        lastTool: 'Read',
+        tokens: 12,
+      },
+      refs,
+    )
+    applyAgentEvent(
+      {
+        type: 'childNotified',
+        toolUseId: 'call_send',
+        taskId: 'agent-x',
+        summary: 'two lines',
+        done: true,
+        failed: false,
+      },
+      refs,
+    )
+
+    const board = refs.stores.children.get()
+    expect(board).toHaveLength(1)
+    expect(board[0]?.id).toBe('toolu_x')
+    expect(board[0]?.status).toBe('reported')
+    expect(board[0]?.headline).toBe('two lines')
+  })
+
   it('still opens a tile for an agent the board has never seen', () => {
     const refs = fakeRefs()
     remember('call_send', { to: 'a99', message: 'hello' }, refs)
@@ -1790,5 +1874,59 @@ describe('where an isolated teammate left its work', () => {
     open(refs)
     done(refs)
     expect(refs.stores.children.find('toolu_w')?.agentId).toBeUndefined()
+  })
+})
+
+describe('a teammate whose run failed or was killed is over, not still working', () => {
+  function open(refs: AgentEventRefs, id: string): void {
+    applyAgentEvent(
+      {
+        type: 'childOpen',
+        toolUseId: id,
+        label: 'Film',
+        subagentType: 'general-purpose',
+        prompt: 'Make the video',
+        background: true,
+      },
+      refs,
+    )
+  }
+
+  it('closes the tile on a failed notice and says why in the headline', () => {
+    const refs = fakeRefs()
+    open(refs, 'toolu_stalled')
+    applyAgentEvent(
+      {
+        type: 'childNotified',
+        toolUseId: 'toolu_stalled',
+        taskId: 'task-s',
+        summary: 'Agent stalled: no progress for 600s',
+        done: false,
+        failed: true,
+      },
+      refs,
+    )
+    const held = refs.stores.children.get().find((s) => s.id === 'toolu_stalled')
+    expect(held?.status).toBe('done')
+    expect(held?.headline).toBe('Agent stalled: no progress for 600s')
+  })
+
+  it('says something when the notice carried no words', () => {
+    const refs = fakeRefs()
+    open(refs, 'toolu_killed')
+    applyAgentEvent(
+      {
+        type: 'childNotified',
+        toolUseId: 'toolu_killed',
+        taskId: 'task-k',
+        summary: '',
+        done: false,
+        failed: true,
+      },
+      refs,
+    )
+    const held = refs.stores.children.get().find((s) => s.id === 'toolu_killed')
+    expect(held?.status).toBe('done')
+    expect(held?.headline).toContain('Failed')
   })
 })

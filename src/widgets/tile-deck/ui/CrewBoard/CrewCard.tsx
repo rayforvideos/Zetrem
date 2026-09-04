@@ -8,12 +8,14 @@ import { Button } from '@/shared/ui/button'
 import { MOTION } from '@/shared/config/motion/motion'
 import { modelLabel } from '@/shared/lib/model-label/model-label'
 import { laneOf } from '../../lib/lane/lane'
+import { StateChip } from '../layers/StateChip/StateChip'
 
 export function CrewCard({
   session,
   nowMs,
   open,
   attention,
+  held = false,
   delayMs = null,
   onOpen,
 }: {
@@ -21,6 +23,8 @@ export function CrewCard({
   nowMs: number
   open: boolean
   attention: boolean
+  // The run this teammate belongs to has stopped for the person.
+  held?: boolean
   // How long this card waits before it arrives, while the board is boarding.
   // Null once the board is up: a card that appears then belongs to a teammate
   // who joined, and the board is already there to hold it.
@@ -56,6 +60,7 @@ export function CrewCard({
             {model}
           </span>
         )}
+        <StateChip status={session.status} held={held} />
         <span style={clockStyle}>{formatClock(lane.outMs / 1000)}</span>
       </span>
 

@@ -359,7 +359,14 @@ describe('parseClaudeLine: task notifications', () => {
       }),
     )
     expect(events).toEqual([
-      { type: 'childNotified', toolUseId: 'toolu_bg1', taskId: 'a9ad', summary: '4', done: true },
+      {
+        type: 'childNotified',
+        toolUseId: 'toolu_bg1',
+        taskId: 'a9ad',
+        summary: '4',
+        done: true,
+        failed: false,
+      },
     ])
   })
 
@@ -381,6 +388,7 @@ describe('parseClaudeLine: task notifications', () => {
         taskId: 'a9ad',
         summary: 'still going',
         done: false,
+        failed: false,
       },
     ])
   })
@@ -414,7 +422,14 @@ describe('parseClaudeLine: task notifications', () => {
       line({ type: 'system', subtype: 'task_notification', task_id: 'a9ad', summary: 'done' }),
     )
     expect(events).toEqual([
-      { type: 'childNotified', toolUseId: null, taskId: 'a9ad', summary: 'done', done: true },
+      {
+        type: 'childNotified',
+        toolUseId: null,
+        taskId: 'a9ad',
+        summary: 'done',
+        done: true,
+        failed: false,
+      },
     ])
   })
 
@@ -808,6 +823,7 @@ describe('a nested line belongs to the child, never to the conversation', () => 
       taskId: 'task_a',
       summary: 'read the file',
       done: true,
+      failed: false,
     })
   })
 })
@@ -1130,5 +1146,30 @@ describe('a content array with a hole in it', () => {
       }),
     )
     expect(events.some((event) => event.type === 'toolResult')).toBe(true)
+  })
+})
+
+describe('parseClaudeLine: a task that ended badly', () => {
+  it('marks a failed or killed notice as failed, and never as done', () => {
+    for (const status of ['failed', 'killed']) {
+      const events = parseClaudeLine(
+        JSON.stringify({
+          type: 'system',
+          subtype: 'task_notification',
+          task_id: 'a9ad',
+          tool_use_id: 'toolu_bad',
+          status,
+          summary: 'Agent stalled: no progress for 600s',
+        }),
+      )
+      expect(events).toContainEqual({
+        type: 'childNotified',
+        toolUseId: 'toolu_bad',
+        taskId: 'a9ad',
+        summary: 'Agent stalled: no progress for 600s',
+        done: false,
+        failed: true,
+      })
+    }
   })
 })

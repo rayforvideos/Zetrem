@@ -1,4 +1,4 @@
-type NudgeReason = 'done' | 'permission'
+type NudgeReason = 'done' | 'permission' | 'question'
 
 export type Nudge = { reason: NudgeReason; title: string; body: string }
 
@@ -10,4 +10,8 @@ export type NudgeAt = {
   asked?: boolean
   // The settled turn ended in an error, not a clean finish. Only meaningful for reason 'done'.
   trouble?: boolean
+  // What was asked. Only meaningful for reason 'question'.
+  said?: string
+  // The reminder rather than the first word, so it does not read as a second ask.
+  again?: boolean
 }

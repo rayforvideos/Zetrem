@@ -116,6 +116,65 @@ describe('a turn that stopped to ask is not a turn that finished', () => {
   })
 })
 
+describe('a turn that ended on a question is not a turn that finished', () => {
+  const asking = { wanted: true, watching: false, tool: '' }
+
+  it('says it needs you rather than that it is done', () => {
+    expect(nudgeFor({ ...asking, reason: 'question', said: '어느 쪽으로 할까요?' })).toEqual({
+      reason: 'question',
+      title: 'Zetrem needs you',
+      body: '어느 쪽으로 할까요?',
+    })
+  })
+
+  it('quotes the question, which is the one thing the app cannot say for itself', () => {
+    const long = `${'다'.repeat(200)}?`
+    const said = nudgeFor({ ...asking, reason: 'question', said: long })
+    expect(said?.body.length, 'a notification line nobody can read is no notification').toBe(80)
+    expect(said?.body.endsWith('…')).toBe(true)
+  })
+
+  it('folds the question onto one line, however it was laid out', () => {
+    expect(nudgeFor({ ...asking, reason: 'question', said: 'A\n\n  B?' })?.body).toBe('A B?')
+  })
+
+  it('still asks when the question came through with nothing readable in it', () => {
+    expect(nudgeFor({ ...asking, reason: 'question', said: '' })?.body).toBe(
+      'Waiting for your answer',
+    )
+  })
+
+  it('stays quiet about it while you are already looking', () => {
+    expect(nudgeFor({ ...asking, watching: true, reason: 'question', said: 'Which?' })).toBeNull()
+  })
+
+  it('stays quiet when notices are off', () => {
+    expect(nudgeFor({ ...asking, wanted: false, reason: 'question', said: 'Which?' })).toBeNull()
+  })
+})
+
+describe('the reminder does not read as a second ask', () => {
+  const asking = { wanted: true, watching: false, tool: 'Bash' }
+
+  it('says it is still waiting rather than that it needs you again', () => {
+    expect(nudgeFor({ ...asking, reason: 'permission', again: true })?.title).toBe(
+      'Zetrem is still waiting',
+    )
+  })
+
+  it('says the same of a question left standing', () => {
+    expect(nudgeFor({ ...asking, reason: 'question', said: 'Which?', again: true })?.title).toBe(
+      'Zetrem is still waiting',
+    )
+  })
+
+  it('keeps the first word as it was', () => {
+    expect(nudgeFor({ ...asking, reason: 'permission', again: false })?.title).toBe(
+      'Zetrem needs you',
+    )
+  })
+})
+
 describe('a turn that stopped on an error is not a turn that finished cleanly', () => {
   it('says a problem happened instead of claiming the team is done', () => {
     expect(nudgeFor(at({ trouble: true }))).toEqual({

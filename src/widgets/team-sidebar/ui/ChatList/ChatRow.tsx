@@ -171,9 +171,15 @@ export function Row({ chat, kit }: { chat: ChatSummary; kit: RowKit }) {
             role="img"
             aria-label={mark.label}
             title={mark.label}
+            data-mark={mark.tone}
+            // A run that has stopped for you is not a slower kind of working,
+            // so it is not a paler kind of the same dot: it is squared off as
+            // well as amber, which reads without colour.
             className={cn(
-              'size-1.5 flex-none rounded-full',
-              mark.tone === 'working' ? 'bg-primary zt-breath' : 'bg-amber-500',
+              'flex-none',
+              mark.tone === 'working'
+                ? 'size-1.5 rounded-full bg-primary zt-breath'
+                : 'size-2 rounded-[2px] bg-amber-500',
             )}
           />
         )}

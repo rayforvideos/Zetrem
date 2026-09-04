@@ -192,17 +192,25 @@ msgstr "{n}분 전"
 msgid "{name} can be called this session"
 msgstr "{name}은(는) 이번 세션에서 부를 수 있습니다"
 
-#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:254
+#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:273
 msgid "{name} is off. The running session keeps them until it ends."
 msgstr "{name}을(를) 껐습니다. 실행 중인 세션은 끝날 때까지 그대로 데리고 있습니다."
 
-#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:253
+#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:272
 msgid "{name} is on. The running session cannot call them yet."
 msgstr "{name}을(를) 켰습니다. 실행 중인 세션은 아직 부를 수 없습니다."
 
 #: src/entities/attachment/lib/heavy-line/heavy-line.ts:7
 msgid "{name} is over {max}MB, so it cannot be sent as a picture. Point at it by path instead."
 msgstr "{name}이(가) {max}MB를 넘어서 이미지로 보낼 수 없습니다. 대신 파일 경로로 알려 주세요."
+
+#: src/pages/workspace/model/session/useWaiting.ts:60
+msgid "{named}: Still waiting for you"
+msgstr "{named}: 아직 기다리는 중"
+
+#: src/pages/workspace/model/session/useWaiting.ts:60
+msgid "{named}: Waiting for you"
+msgstr "{named}: 당신을 기다리는 중"
 
 #: src/widgets/status-bar/lib/strip/strip.ts:47
 msgid "{percent}% used"
@@ -364,7 +372,7 @@ msgstr "세션이 아직 실행 중이라 로그아웃하지 않았습니다. �
 msgid "A session is still running, so your account was not changed. Stop it and try again."
 msgstr "세션이 아직 실행 중이라 계정을 바꾸지 않았습니다. 세션을 멈춘 뒤 다시 시도해 주세요."
 
-#: src/entities/agent-session/model/nudge/nudge.ts:18
+#: src/entities/agent-session/model/nudge/nudge.ts:30
 msgid "A session stopped with an error."
 msgstr "세션이 오류로 멈췄습니다."
 
@@ -614,7 +622,7 @@ msgstr "연결 안 됨"
 #: src/widgets/library/ui/NoteList/NoteList.tsx:273
 #: src/widgets/library/ui/NoteReader/NoteReader.tsx:197
 #: src/widgets/setup/ui/SetupPane/SetupPane.tsx:215
-#: src/widgets/team-sidebar/ui/ChatList/ChatRow.tsx:240
+#: src/widgets/team-sidebar/ui/ChatList/ChatRow.tsx:246
 #: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:393
 #: src/widgets/team-sidebar/ui/MemberMenu/MemberMenu.tsx:66
 #: src/widgets/team-sidebar/ui/ProjectSwitcher/ProjectSwitcher.tsx:145
@@ -633,7 +641,7 @@ msgstr "장바구니 합계와 반올림"
 msgid "Change"
 msgstr "바꾸기"
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:169
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:170
 msgid "Change account, project, and permissions"
 msgstr "계정과 프로젝트, 권한을 바꿉니다"
 
@@ -709,7 +717,7 @@ msgid "Close"
 msgstr "닫기"
 
 #. placeholder {0}: persona ? persona.name : session.label
-#: src/widgets/tile-deck/ui/layers/Headline/Headline.tsx:40
+#: src/widgets/tile-deck/ui/layers/Headline/Headline.tsx:42
 msgid "Close {0}"
 msgstr "{0} 닫기"
 
@@ -717,7 +725,7 @@ msgstr "{0} 닫기"
 msgid "Close report"
 msgstr "보고서 닫기"
 
-#: src/widgets/tile-deck/ui/layers/Headline/Headline.tsx:41
+#: src/widgets/tile-deck/ui/layers/Headline/Headline.tsx:43
 msgid "Close this tile. The run stays in the sidebar."
 msgstr "이 타일을 닫습니다. 기록은 사이드바에 남습니다."
 
@@ -832,7 +840,7 @@ msgstr "그 폴더를 열지 못했습니다"
 msgid "Could not open the file picker"
 msgstr "파일 선택 창을 열지 못했습니다"
 
-#: src/pages/workspace/model/session/chat-sessions/chat-session/chat-session.ts:128
+#: src/pages/workspace/model/session/chat-sessions/chat-session/chat-session.ts:131
 msgid "Could not pick that conversation back up. Starting a new one."
 msgstr "그 대화를 이어받지 못했습니다. 새로 시작합니다."
 
@@ -911,7 +919,7 @@ msgstr "계정을 제거하지 못했습니다."
 msgid "Could not rename that chat"
 msgstr "대화 이름을 바꾸지 못했습니다"
 
-#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:97
+#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:99
 msgid "Could not reopen your last project"
 msgstr "마지막 프로젝트를 다시 열지 못했습니다"
 
@@ -929,7 +937,7 @@ msgid "Could not start Claude Code"
 msgstr "Claude Code를 실행하지 못했습니다"
 
 #: src/entities/claude-cli/lib/exit-line/exit-line.ts:15
-#: src/pages/workspace/model/session/chat-sessions/chat-session/chat-session.ts:115
+#: src/pages/workspace/model/session/chat-sessions/chat-session/chat-session.ts:118
 msgid "Could not start Claude Code: {said}"
 msgstr "Claude Code를 실행하지 못했습니다: {said}"
 
@@ -960,12 +968,12 @@ msgid "Delete"
 msgstr "삭제"
 
 #. placeholder {0}: named(chat.title)
-#: src/widgets/team-sidebar/ui/ChatList/ChatRow.tsx:234
+#: src/widgets/team-sidebar/ui/ChatList/ChatRow.tsx:240
 msgid "Delete “{0}”?"
 msgstr "“{0}” 대화를 삭제할까요?"
 
-#: src/widgets/team-sidebar/ui/ChatList/ChatRow.tsx:225
-#: src/widgets/team-sidebar/ui/ChatList/ChatRow.tsx:242
+#: src/widgets/team-sidebar/ui/ChatList/ChatRow.tsx:231
+#: src/widgets/team-sidebar/ui/ChatList/ChatRow.tsx:248
 msgid "Delete chat"
 msgstr "대화 삭제"
 
@@ -1132,6 +1140,10 @@ msgstr "실패"
 msgid "Failed"
 msgstr "실패"
 
+#: src/pages/workspace/model/session/agent-events/crew/crew.ts:129
+msgid "Failed: the run stopped before it was done"
+msgstr "실패: 작업이 끝나기 전에 멈췄습니다"
+
 #: src/entities/settings/config/choices/choices.ts:29
 msgid "Fast and cheap. Good for quick questions"
 msgstr "빠르고 저렴합니다. 간단한 질문에 좋습니다"
@@ -1286,7 +1298,7 @@ msgstr "어려운 문제용. 훨씬 느립니다"
 msgid "Held up"
 msgstr "멈춰 있음"
 
-#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:175
+#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:194
 msgid "Hide team sidebar"
 msgstr "팀 사이드바 접기"
 
@@ -1376,7 +1388,7 @@ msgstr "방금"
 msgid "Keep going"
 msgstr "이어서 말하세요"
 
-#: src/widgets/team-sidebar/ui/ChatList/ChatRow.tsx:202
+#: src/widgets/team-sidebar/ui/ChatList/ChatRow.tsx:208
 msgid "Keep in"
 msgstr "폴더에 넣기"
 
@@ -1506,7 +1518,7 @@ msgstr "수정됨"
 #. placeholder {0}: named(chat.title)
 #: src/widgets/setup/ui/PluginShelf/ConnectorsTab.tsx:101
 #: src/widgets/setup/ui/PluginShelf/InstalledTab.tsx:65
-#: src/widgets/team-sidebar/ui/ChatList/ChatRow.tsx:193
+#: src/widgets/team-sidebar/ui/ChatList/ChatRow.tsx:199
 #: src/widgets/team-sidebar/ui/ChatList/FolderSection.tsx:121
 #: src/widgets/team-sidebar/ui/ProjectSwitcher/ProjectSwitcher.tsx:88
 msgid "More for {0}"
@@ -1563,7 +1575,7 @@ msgstr "새 대화"
 msgid "New folder"
 msgstr "새 폴더"
 
-#: src/widgets/team-sidebar/ui/ChatList/ChatRow.tsx:213
+#: src/widgets/team-sidebar/ui/ChatList/ChatRow.tsx:219
 msgid "New folder…"
 msgstr "새 폴더…"
 
@@ -1673,7 +1685,7 @@ msgstr "넣어둔 스태시가 없습니다."
 msgid "Nothing to merge: already up to date."
 msgstr "머지할 것이 없습니다: 이미 최신입니다."
 
-#: src/widgets/tile-deck/ui/CrewBoard/CrewBoard.tsx:135
+#: src/widgets/tile-deck/ui/CrewBoard/CrewBoard.tsx:141
 msgid "Nothing written yet."
 msgstr "아직 쓴 것이 없습니다."
 
@@ -1709,6 +1721,10 @@ msgstr "에이전트가 이 메모가 필요한지 판단할 때 읽는 한 줄�
 #: src/widgets/conversation/lib/greetings/greetings.ts:14
 msgid "One of you writes, one of you checks. Deal?"
 msgstr "한 명은 쓰고 한 명은 검토하고, 어때요?"
+
+#: src/pages/workspace/model/session/useWaiting.ts:62
+msgid "Open"
+msgstr "열기"
 
 #: src/pages/workspace/model/team/useAgentDefs.ts:111
 msgid "Open a project before keeping someone for it."
@@ -1771,7 +1787,7 @@ msgstr "노트를 고르세요"
 msgid "Pick a project first"
 msgstr "먼저 프로젝트를 고르세요"
 
-#: src/pages/workspace/model/session/agent-events/crew/crew.ts:215
+#: src/pages/workspace/model/session/agent-events/crew/crew.ts:226
 msgid "Picked up where they left off"
 msgstr "하던 일을 이어받았습니다"
 
@@ -1956,7 +1972,7 @@ msgid "Removed"
 msgstr "삭제했습니다"
 
 #: src/widgets/library/ui/NoteList/NoteList.tsx:238
-#: src/widgets/team-sidebar/ui/ChatList/ChatRow.tsx:200
+#: src/widgets/team-sidebar/ui/ChatList/ChatRow.tsx:206
 #: src/widgets/team-sidebar/ui/ChatList/FolderSection.tsx:128
 msgid "Rename"
 msgstr "이름 바꾸기"
@@ -2127,7 +2143,7 @@ msgstr "세션"
 msgid "Session details"
 msgstr "세션 상세"
 
-#: src/pages/workspace/model/session/chat-sessions/chat-session/chat-session.ts:222
+#: src/pages/workspace/model/session/chat-sessions/chat-session/chat-session.ts:234
 msgid "Session restarted. The next message picks the conversation back up with your team as it is now."
 msgstr "세션을 다시 시작했어요. 다음 메시지가 지금의 팀 구성으로 이 대화를 이어서 진행해요."
 
@@ -2139,7 +2155,7 @@ msgstr "몇 가지만 정하면 바로 일을 시작합니다"
 msgid "Set for everyone on your account. They cannot be removed or turned off here."
 msgstr "계정 전체에 설정된 것입니다. 여기서는 지우거나 끌 수 없습니다."
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:171
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:172
 msgid "Settings"
 msgstr "설정"
 
@@ -2163,7 +2179,7 @@ msgstr "모든 프로젝트에서 공용"
 msgid "Shift+Enter starts a new line. Off, sending takes the modifier key with Enter."
 msgstr "Shift+Enter로 줄을 바꿉니다. 끄면 보조키+Enter로 보냅니다."
 
-#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:175
+#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:194
 msgid "Show team sidebar"
 msgstr "팀 사이드바 펼치기"
 
@@ -2294,7 +2310,7 @@ msgstr "스태시에 넣기"
 msgid "Stay here"
 msgstr "여기 있기"
 
-#: src/widgets/team-sidebar/lib/live-mark/live-mark.ts:4
+#: src/widgets/team-sidebar/lib/live-mark/live-mark.ts:7
 msgid "Still replying"
 msgstr "아직 답하는 중"
 
@@ -2367,7 +2383,7 @@ msgid "Take everything out"
 msgstr "전부 빼기"
 
 #. placeholder {0}: chat.folder
-#: src/widgets/team-sidebar/ui/ChatList/ChatRow.tsx:218
+#: src/widgets/team-sidebar/ui/ChatList/ChatRow.tsx:224
 msgid "Take out of {0}"
 msgstr "{0}에서 빼기"
 
@@ -2492,7 +2508,7 @@ msgstr "모델에 부하가 걸렸습니다"
 msgid "The note is deleted from the library. This cannot be undone."
 msgstr "라이브러리에서 노트가 지워집니다. 되돌릴 수 없습니다."
 
-#: src/pages/workspace/model/session/agent-events/crew/crew.ts:183
+#: src/pages/workspace/model/session/agent-events/crew/crew.ts:194
 msgid "the orchestrator"
 msgstr "오케스트레이터"
 
@@ -2529,7 +2545,7 @@ msgstr "실행 중인 세션은 모델과 노력 수준을 그대로 씁니다. 
 msgid "The running session keeps the library. Agents stop seeing it from the next one."
 msgstr "지금 세션은 라이브러리를 그대로 봐요. 다음 세션부터 보지 않아요."
 
-#: src/widgets/team-sidebar/ui/ChatList/ChatRow.tsx:236
+#: src/widgets/team-sidebar/ui/ChatList/ChatRow.tsx:242
 msgid "The saved conversation is deleted. This cannot be undone."
 msgstr "저장된 대화가 삭제됩니다. 되돌릴 수 없습니다."
 
@@ -2594,6 +2610,10 @@ msgstr "이 컴퓨터의 모든 Claude Code CLI가 쓰는 계정이 바뀝니다
 
 #: src/widgets/status-bar/lib/format/format.ts:46
 msgid "this chat"
+msgstr "이 대화"
+
+#: src/pages/workspace/model/session/useWaiting.ts:57
+msgid "This chat"
 msgstr "이 대화"
 
 #: src/widgets/status-bar/lib/strip/strip.ts:67
@@ -2782,11 +2802,16 @@ msgstr "승인 대기 중"
 msgid "Waiting for you"
 msgstr "기다리는 제안"
 
-#: src/entities/agent-session/model/nudge/nudge.ts:11
+#: src/entities/agent-session/model/nudge/nudge.ts:16
+#: src/widgets/team-sidebar/lib/live-mark/live-mark.ts:9
+msgid "Waiting for your answer"
+msgstr "답을 기다리는 중"
+
+#: src/entities/agent-session/model/nudge/nudge.ts:23
 msgid "Waiting for your approval"
 msgstr "승인을 기다리는 중입니다"
 
-#: src/widgets/team-sidebar/lib/live-mark/live-mark.ts:5
+#: src/widgets/team-sidebar/lib/live-mark/live-mark.ts:8
 msgid "Waiting for your permission"
 msgstr "허가를 기다리는 중"
 
@@ -2799,11 +2824,12 @@ msgstr "기다리는 중"
 
 #: src/widgets/agent-report/lib/state-word/state-word.ts:10
 #: src/widgets/team-sidebar/lib/row-state/row-state.ts:8
+#: src/widgets/tile-deck/lib/state-word/state-word.ts:13
 msgid "Waiting on you"
 msgstr "응답을 기다리는 중"
 
 #. placeholder {0}: at.tool
-#: src/entities/agent-session/model/nudge/nudge.ts:11
+#: src/entities/agent-session/model/nudge/nudge.ts:23
 msgid "Waiting to run {0}"
 msgstr "{0} 실행을 기다립니다"
 
@@ -2844,8 +2870,8 @@ msgid "What they changed"
 msgstr "무엇을 바꿨는지"
 
 #: src/widgets/agent-report/ui/CallStream/CallStream.tsx:11
-#: src/widgets/tile-deck/ui/AgentTile/AgentTile.tsx:89
-#: src/widgets/tile-deck/ui/CrewBoard/CrewBoard.tsx:139
+#: src/widgets/tile-deck/ui/AgentTile/AgentTile.tsx:93
+#: src/widgets/tile-deck/ui/CrewBoard/CrewBoard.tsx:145
 #: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:142
 msgid "What they did"
 msgstr "무엇을 했는지"
@@ -2933,7 +2959,7 @@ msgid "Yesterday"
 msgstr "어제"
 
 #: src/widgets/setup/ui/YouField/YouField.tsx:22
-#: src/widgets/tile-deck/ui/CrewBoard/CrewBoard.tsx:79
+#: src/widgets/tile-deck/ui/CrewBoard/CrewBoard.tsx:83
 msgid "You"
 msgstr "나"
 
@@ -2957,7 +2983,7 @@ msgstr "왼쪽에서 대화합니다"
 msgid "Your account"
 msgstr "내 계정"
 
-#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:242
+#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:261
 msgid "Your account changed before the reply finished, so it stops here."
 msgstr "답변이 끝나기 전에 계정이 바뀌어서, 여기서 멈췄어요."
 
@@ -2998,7 +3024,7 @@ msgstr "조직 정책상 허용되지 않습니다"
 msgid "Your team"
 msgstr "내 팀"
 
-#: src/entities/agent-session/model/nudge/nudge.ts:21
+#: src/entities/agent-session/model/nudge/nudge.ts:33
 msgid "Your team has finished."
 msgstr "팀이 일을 마쳤습니다."
 
@@ -3044,7 +3070,7 @@ msgstr "Zetrem이 이 계정의 저장된 인증 정보를 잊습니다. 이 컴
 msgid "Zetrem greets you by this name, and your face marks the work in flight."
 msgstr "Zetrem이 이 이름으로 부릅니다. 얼굴은 진행 중인 작업에 표시됩니다."
 
-#: src/entities/agent-session/model/nudge/nudge.ts:17
+#: src/entities/agent-session/model/nudge/nudge.ts:29
 msgid "Zetrem hit a problem"
 msgstr "Zetrem에 문제가 생겼습니다"
 
@@ -3052,11 +3078,15 @@ msgstr "Zetrem에 문제가 생겼습니다"
 msgid "Zetrem is changing your account. Try again in a moment."
 msgstr "Zetrem이 계정을 바꾸는 중입니다. 잠시 후 다시 시도해 주세요."
 
-#: src/entities/agent-session/model/nudge/nudge.ts:21
+#: src/entities/agent-session/model/nudge/nudge.ts:33
 msgid "Zetrem is done"
 msgstr "일이 끝났습니다"
 
-#: src/entities/agent-session/model/nudge/nudge.ts:10
+#: src/entities/agent-session/model/nudge/nudge.ts:37
+msgid "Zetrem is still waiting"
+msgstr "Zetrem이 아직 기다립니다"
+
+#: src/entities/agent-session/model/nudge/nudge.ts:37
 msgid "Zetrem needs you"
 msgstr "Zetrem이 기다립니다"
 

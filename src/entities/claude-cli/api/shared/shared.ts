@@ -58,8 +58,24 @@ export function toolTarget(input: unknown): string {
   return ''
 }
 
+// A command can run to any length and is cut for the stream, but a path is
+// kept whole: cut inside a path, the line would end on a folder, and the
+// tile would show that folder's name where the file's should be. The screen
+// clips what does not fit.
 export function toolLine(name: string, input: unknown): string {
-  return `${name} ${toolTarget(input)}`.trim().slice(0, STREAM_LINE_MAX)
+  const line = `${name} ${toolTarget(input)}`.trim()
+  return isPath(input) ? line : line.slice(0, STREAM_LINE_MAX)
+}
+
+function isPath(input: unknown): boolean {
+  if (typeof input !== 'object' || input === null) return false
+  const fields = input as Record<string, unknown>
+  return (
+    typeof fields.command !== 'string' &&
+    (typeof fields.file_path === 'string' ||
+      typeof fields.path === 'string' ||
+      typeof fields.notebook_path === 'string')
+  )
 }
 
 // A content array off the wire can carry a null element, and reading .type off one throws.

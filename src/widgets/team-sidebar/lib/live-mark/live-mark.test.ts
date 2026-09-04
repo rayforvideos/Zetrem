@@ -7,7 +7,14 @@ describe('liveMark', () => {
   })
   it('names a working chat and one waiting on you', () => {
     expect(liveMark('working')?.tone).toBe('working')
-    expect(liveMark('asking')?.tone).toBe('asking')
+    expect(liveMark('asking')?.tone).toBe('held')
     expect(liveMark('asking')?.label.length).toBeGreaterThan(0)
+  })
+  it('draws a question the same as a permission, and names it differently', () => {
+    expect(liveMark('question')?.tone).toBe('held')
+    expect(liveMark('question')?.label).not.toBe(liveMark('asking')?.label)
+  })
+  it('never draws a stopped run the way it draws a running one', () => {
+    expect(liveMark('question')?.tone).not.toBe(liveMark('working')?.tone)
   })
 })

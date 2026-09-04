@@ -164,6 +164,20 @@ export function SetupPane({
                     chosen={defaults.effort}
                     onChoose={(id) => defaults.onEffort(id as EffortChoice)}
                   />
+                  <Field orientation="horizontal" className="rounded-2xl bg-card p-4">
+                    <FieldContent>
+                      <FieldLabel htmlFor="chrome">{t`Claude in Chrome`}</FieldLabel>
+                      <FieldDescription>
+                        {t`Lets the session read and drive your browser. Needs the Chrome extension, and the first run may ask for your say-so in the browser.`}
+                      </FieldDescription>
+                    </FieldContent>
+                    <Switch
+                      id="chrome"
+                      checked={defaults.chrome}
+                      onCheckedChange={defaults.onChrome}
+                      aria-label={t`Claude in Chrome`}
+                    />
+                  </Field>
                 </FieldGroup>
               </section>
               <section hidden={tab !== 'memory'} className="zt-rise">

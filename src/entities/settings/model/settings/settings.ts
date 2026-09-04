@@ -27,6 +27,7 @@ export const DEFAULT_SETTINGS: Settings = {
   enterSends: true,
   theme: 'dark',
   notify: true,
+  chrome: false,
   knownAgents: [],
   stockOff: [],
   wasStockOn: null,
@@ -102,6 +103,9 @@ export function readSettings(saved: unknown): Settings {
     tongue: oneOf(TONGUES, source.tongue, 'system'),
     theme: oneOf(THEMES, source.theme, DEFAULT_SETTINGS.theme),
     notify: source.notify !== false,
+    // Absent reads as off: an older file that never heard of browser tools must
+    // not gain them on upgrade.
+    chrome: source.chrome === true,
     enterSends: source.enterSends !== false,
     sidebarOpen: source.sidebarOpen !== false,
     sidebarWidth: sidebarWidth(source.sidebarWidth),

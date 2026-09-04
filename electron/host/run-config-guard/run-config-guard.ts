@@ -59,6 +59,10 @@ export function runConfigOf(value: unknown): Omit<RunConfig, 'persona'> | null {
     resume: raw.resume ?? null,
     people: raw.people.map((p) => ({ ...p, isolated: p.isolated ?? true })),
     lock: raw.lock,
+    // Reaching into the browser is a capability, so anything that is not the
+    // word true reads as off rather than as a reason to refuse the whole run:
+    // a session that starts without browser tools is the safe way to be wrong.
+    chrome: raw.chrome === true,
     ...(raw.spoken === undefined ? {} : { spoken: raw.spoken }),
   }
 }

@@ -20,6 +20,7 @@ type Flat = {
   loginNote: string
   notice: Failure | null
   installing: boolean
+  chrome: boolean
   recent: { id: string; path: string; name: string }[]
 }
 
@@ -37,6 +38,7 @@ function pane(over: Partial<Flat> = {}): string {
     loginNote: '',
     notice: null,
     installing: false,
+    chrome: false,
     recent: [],
     ...over,
   }
@@ -78,6 +80,8 @@ function pane(over: Partial<Flat> = {}): string {
           onNotify: () => {},
           enterSends: true,
           onEnterSends: () => {},
+          chrome: flat.chrome,
+          onChrome: () => {},
           onPermissionMode: () => {},
           onModel: () => {},
           onEffort: () => {},
@@ -130,6 +134,22 @@ describe('SetupPane: everything to settle before starting, on one screen', () =>
     for (const label of ['Claude', 'Project', 'Permissions', 'Model', 'Plugins']) {
       expect(html, `${label} is missing`).toContain(label)
     }
+  })
+
+  it('offers the browser switch under Session, and says what it needs', () => {
+    const html = pane()
+    expect(html).toContain('Claude in Chrome')
+    expect(html, 'a switch nobody can read is a switch nobody turns on').toContain(
+      'Needs the Chrome extension',
+    )
+  })
+
+  it('draws the browser switch off until it is turned on', () => {
+    const off = pane()
+    const on = pane({ chrome: true })
+    const at = (html: string) => html.slice(html.indexOf('id="chrome"'))
+    expect(at(off)).toContain('data-state="unchecked"')
+    expect(at(on)).toContain('data-state="checked"')
   })
 
   it('locks Start without an account and a project, and says why', () => {

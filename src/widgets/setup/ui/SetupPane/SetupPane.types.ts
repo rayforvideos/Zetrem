@@ -39,6 +39,8 @@ type Defaults = {
   onNotify(on: boolean): void
   enterSends: boolean
   onEnterSends(on: boolean): void
+  chrome: boolean
+  onChrome(on: boolean): void
   onPermissionMode(mode: PermissionMode): void
   onModel(model: ModelChoice): void
   onEffort(effort: EffortChoice): void

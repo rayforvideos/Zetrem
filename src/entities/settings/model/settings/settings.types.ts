@@ -25,6 +25,9 @@ export type Settings = {
   enterSends: boolean
   theme: 'system' | 'dark' | 'light'
   notify: boolean
+  // Whether a session may drive the person's browser through the Claude in Chrome
+  // extension. Off unless asked for, so no run reaches the browser by surprise.
+  chrome: boolean
   sidebarOpen: boolean
   sidebarWidth: number
   // How wide each draggable column of the git history was left, in px, keyed by

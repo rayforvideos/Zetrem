@@ -192,11 +192,11 @@ msgstr "{n}m ago"
 msgid "{name} can be called this session"
 msgstr "{name} can be called this session"
 
-#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:273
+#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:274
 msgid "{name} is off. The running session keeps them until it ends."
 msgstr "{name} is off. The running session keeps them until it ends."
 
-#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:272
+#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:273
 msgid "{name} is on. The running session cannot call them yet."
 msgstr "{name} is on. The running session cannot call them yet."
 
@@ -471,7 +471,7 @@ msgstr "After"
 msgid "Agent memory"
 msgstr "Agent memory"
 
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:178
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:192
 msgid "Agents"
 msgstr "Agents"
 
@@ -621,7 +621,7 @@ msgstr "Can't connect"
 
 #: src/widgets/library/ui/NoteList/NoteList.tsx:273
 #: src/widgets/library/ui/NoteReader/NoteReader.tsx:197
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:215
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:229
 #: src/widgets/team-sidebar/ui/ChatList/ChatRow.tsx:246
 #: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:393
 #: src/widgets/team-sidebar/ui/MemberMenu/MemberMenu.tsx:66
@@ -705,6 +705,11 @@ msgstr "Claude Code stopped without a word (exit {code}). Your next message pick
 #: src/widgets/welcome/lib/slides/slides.ts:8
 msgid "Claude Code, with a screen"
 msgstr "Claude Code, with a screen"
+
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:169
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:178
+msgid "Claude in Chrome"
+msgstr "Claude in Chrome"
 
 #: src/widgets/conversation/ui/Composer/Composer.tsx:117
 #: src/widgets/team-sidebar/ui/ToolPicker/ToolPicker.tsx:71
@@ -919,7 +924,7 @@ msgstr "Could not remove the account."
 msgid "Could not rename that chat"
 msgstr "Could not rename that chat"
 
-#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:99
+#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:100
 msgid "Could not reopen your last project"
 msgstr "Could not reopen your last project"
 
@@ -1035,7 +1040,7 @@ msgstr "Don't ask again this session"
 #: src/widgets/agent-report/lib/state-word/state-word.ts:12
 #: src/widgets/library/ui/NoteReader/NoteReader.tsx:99
 #: src/widgets/setup/ui/PluginShelf/PluginShelf.tsx:129
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:219
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:233
 #: src/widgets/tile-deck/lib/state-word/state-word.ts:10
 msgid "Done"
 msgstr "Done"
@@ -1298,7 +1303,7 @@ msgstr "Hard problems. Much slower"
 msgid "Held up"
 msgstr "Held up"
 
-#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:194
+#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:195
 msgid "Hide team sidebar"
 msgstr "Hide team sidebar"
 
@@ -1422,6 +1427,10 @@ msgstr "Later run"
 msgid "Let's get to work with your cute little agents!"
 msgstr "Let's get to work with your cute little agents!"
 
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:171
+msgid "Lets the session read and drive your browser. Needs the Chrome extension, and the first run may ask for your say-so in the browser."
+msgstr "Lets the session read and drive your browser. Needs the Chrome extension, and the first run may ask for your say-so in the browser."
+
 #: src/entities/connector/lib/refusal-why/refusal-why.ts:14
 msgid "Letters, numbers, hyphens and underscores only"
 msgstr "Letters, numbers, hyphens and underscores only"
@@ -1449,7 +1458,7 @@ msgstr "Linked from"
 msgid "Low"
 msgstr "Low"
 
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:191
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:205
 msgid "Manage"
 msgstr "Manage"
 
@@ -1800,7 +1809,7 @@ msgid "Plugin"
 msgstr "Plugin"
 
 #: src/widgets/setup/ui/PluginShelf/InstalledTab.tsx:37
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:187
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:201
 msgid "Plugins"
 msgstr "Plugins"
 
@@ -2179,7 +2188,7 @@ msgstr "Shared across projects"
 msgid "Shift+Enter starts a new line. Off, sending takes the modifier key with Enter."
 msgstr "Shift+Enter starts a new line. Off, sending takes the modifier key with Enter."
 
-#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:194
+#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:195
 msgid "Show team sidebar"
 msgstr "Show team sidebar"
 
@@ -2286,7 +2295,7 @@ msgid "Star it"
 msgstr "Star it"
 
 #: src/widgets/setup/ui/SetupPane/SetupPane.tsx:29
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:219
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:233
 msgid "Start"
 msgstr "Start"
 
@@ -2443,7 +2452,7 @@ msgstr "The <0>claude</0> command was not found. Zetrem can install it for you."
 msgid "The address has to be http or https"
 msgstr "The address has to be http or https"
 
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:180
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:194
 msgid "The agents Claude Code brings. Each can be switched off."
 msgstr "The agents Claude Code brings. Each can be switched off."
 
@@ -2983,7 +2992,7 @@ msgstr "You talk on the left"
 msgid "Your account"
 msgstr "Your account"
 
-#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:261
+#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:262
 msgid "Your account changed before the reply finished, so it stops here."
 msgstr "Your account changed before the reply finished, so it stops here."
 

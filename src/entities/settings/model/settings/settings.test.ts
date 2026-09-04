@@ -41,6 +41,7 @@ describe('readSettings: reading back what was chosen', () => {
       theme: 'light',
       notify: false,
       enterSends: false,
+      chrome: true,
       sidebarOpen: false,
       sidebarWidth: 300,
       gitColumns: { refs: 200, changes: 128, author: 96, sha: 56, when: 48 },
@@ -217,6 +218,22 @@ describe('being told when the work is done', () => {
   it('reads anything that is not a plain false as on', () => {
     expect(readSettings({ notify: 'yes' }).notify).toBe(true)
     expect(readSettings({}).notify).toBe(true)
+  })
+})
+
+describe('letting a session into the browser', () => {
+  it('is off until it is asked for, so no run reaches the browser by surprise', () => {
+    expect(readSettings(null).chrome).toBe(false)
+    expect(readSettings({}).chrome).toBe(false)
+  })
+
+  it('stays on once it has been turned on', () => {
+    expect(readSettings({ chrome: true }).chrome).toBe(true)
+  })
+
+  it('reads anything that is not a plain true as off', () => {
+    expect(readSettings({ chrome: 'yes' }).chrome).toBe(false)
+    expect(readSettings({ chrome: 1 }).chrome).toBe(false)
   })
 })
 

@@ -40,6 +40,20 @@ describe('agentArgs: what claude is started with', () => {
     expect(agentArgs(base)).not.toContain('--effort')
   })
 
+  it('asks for browser tools only when the person switched them on', () => {
+    expect(agentArgs({ ...base, chrome: true })).toContain('--chrome')
+  })
+
+  it('says nothing when browser tools are off, because silence is already off', () => {
+    expect(agentArgs({ ...base, chrome: false })).not.toContain('--chrome')
+    expect(agentArgs({ ...base, chrome: false })).not.toContain('--no-chrome')
+    expect(agentArgs(base), 'a config from before the toggle').not.toContain('--chrome')
+  })
+
+  it('carries the browser choice into the probe, so the reading matches the run', () => {
+    expect(probeArgs({ ...base, chrome: true })).toContain('--chrome')
+  })
+
   it('passes a chosen model and leaves the choice to the CLI on default', () => {
     expect(agentArgs({ ...base, model: 'haiku' })).toContain('haiku')
     expect(agentArgs(base)).not.toContain('--model')

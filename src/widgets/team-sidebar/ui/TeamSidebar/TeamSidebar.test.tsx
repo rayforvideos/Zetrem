@@ -288,7 +288,7 @@ describe('a chat says what it is doing without being opened', () => {
     savedAtMs: 1,
     folder: '',
   }
-  const withLive = (live: Record<string, 'working' | 'asking'>) =>
+  const withLive = (live: Record<string, 'working' | 'asking' | 'question'>) =>
     bar({
       chats: {
         chats: [chat],
@@ -309,8 +309,17 @@ describe('a chat says what it is doing without being opened', () => {
     expect(html).toContain('aria-label="Waiting for your permission"')
   })
 
+  it('marks the chat that stopped on a question of its own, unopened', () => {
+    expect(withLive({ 'chat-x': 'question' })).toContain('aria-label="Waiting for your answer"')
+  })
+
   it('marks the chat that is still replying', () => {
     expect(withLive({ 'chat-x': 'working' })).toContain('aria-label="Still replying"')
+  })
+
+  it('draws a stopped run apart from a running one, and not only in colour', () => {
+    expect(withLive({ 'chat-x': 'question' })).toContain('data-mark="held"')
+    expect(withLive({ 'chat-x': 'working' })).toContain('data-mark="working"')
   })
 
   it('leaves a chat that is doing nothing unmarked', () => {

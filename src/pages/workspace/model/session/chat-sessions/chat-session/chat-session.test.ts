@@ -55,6 +55,10 @@ function said(text: string): string {
   return line({ type: 'assistant', message: { content: [{ type: 'text', text }] } })
 }
 
+function ended(): string {
+  return line({ type: 'result', subtype: 'success' })
+}
+
 function asked(requestId: string): string {
   return line({
     type: 'control_request',
@@ -171,6 +175,34 @@ describe('createChatSession: one chat, its own process and stores', () => {
     session.decide(true)
     expect(deps.answered).toEqual([{ id, requestId: 'req-1' }])
     expect(session.stores.conversation.get().permission).toBeNull()
+  })
+
+  it('stands as waiting on you when the turn ended on a question', async () => {
+    const deps = fakeDeps()
+    const { session, id } = running(deps)
+    await Promise.resolve()
+    session.handle({ id, kind: 'line', line: said('두 가지 안이 있습니다. 어느 쪽으로 할까요?') })
+    session.handle({ id, kind: 'line', line: ended() })
+    expect(session.live()).toBe('question')
+  })
+
+  it('stands as idle when the turn ended on a report, which needs nothing', async () => {
+    const deps = fakeDeps()
+    const { session, id } = running(deps)
+    await Promise.resolve()
+    session.handle({ id, kind: 'line', line: said('세 파일을 모두 고쳤습니다.') })
+    session.handle({ id, kind: 'line', line: ended() })
+    expect(session.live()).toBe('idle')
+  })
+
+  it('lets a question go the moment the person replies to it', async () => {
+    const deps = fakeDeps()
+    const { session, id } = running(deps)
+    await Promise.resolve()
+    session.handle({ id, kind: 'line', line: said('어느 쪽으로 할까요?') })
+    session.handle({ id, kind: 'line', line: ended() })
+    session.send('첫 번째로', null, [])
+    expect(session.live()).toBe('working')
   })
 
   it('starts a new conversation when the one it resumed never spoke', async () => {

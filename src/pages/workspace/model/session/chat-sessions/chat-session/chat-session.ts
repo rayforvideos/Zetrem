@@ -13,8 +13,10 @@ import { applyAgentEvent } from '../../agent-events/agent-events'
 import { freshRefs } from '../../agent-events/refs/refs'
 import type { AgentStores } from '../../agent-events/agent-events.types'
 import { afterYouStopped } from '../../asked-to-stop/asked-to-stop'
+import { stirring } from '../../live/live'
 import { shouldRelaunch } from '../../relaunch/relaunch'
 import type { Attempt } from '../../relaunch/relaunch.types'
+import { waitingOn } from '../../waiting/waiting'
 import { beginSession, closeSession } from '../../session-bookkeeping/session-bookkeeping'
 import { rememberHostChat } from '../../host-chats/host-chats'
 import { attachAutosave } from './autosave/autosave'
@@ -169,7 +171,8 @@ export function createChatSession(
     owns,
     live(): LiveState {
       const conv = conversation.get()
-      if (conv.permission !== null) return 'asking'
+      const found = waitingOn(conv, stirring(conv.status, stores.children.get()))
+      if (found !== null) return found.kind === 'permission' ? 'asking' : 'question'
       return conv.status === 'working' ? 'working' : 'idle'
     },
     configure(next: ChatRunConfig, onModelRefused: (model: ModelChoice) => void): void {

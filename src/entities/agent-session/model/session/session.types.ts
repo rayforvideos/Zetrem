@@ -9,6 +9,9 @@ export type PermissionAsk = {
   toolName: string
   line: string
   detail: string
+  // The prose the tool is asking about, as markdown. A plan is what is being
+  // approved, so the card shows it whole rather than in the one-line slot.
+  plan?: string
 }
 
 export type AgentSession = {

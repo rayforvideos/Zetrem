@@ -13,11 +13,11 @@ msgstr ""
 "Language-Team: \n"
 "Plural-Forms: \n"
 
-#: src/pages/workspace/model/session/agent-events/agent-events.ts:172
+#: src/pages/workspace/model/session/agent-events/agent-events.ts:165
 msgid " · on overage"
 msgstr " · 초과분 사용 중"
 
-#: src/pages/workspace/model/session/agent-events/agent-events.ts:170
+#: src/pages/workspace/model/session/agent-events/agent-events.ts:163
 msgid " {pct}% used,"
 msgstr " {pct}% 사용,"
 
@@ -79,7 +79,7 @@ msgid "{0} left"
 msgstr "{0} 남음"
 
 #. placeholder {0}: limitKindLabel(limit.kind)
-#: src/pages/workspace/model/session/agent-events/agent-events.ts:173
+#: src/pages/workspace/model/session/agent-events/agent-events.ts:166
 msgid "{0} limit{share} resets {when}{overage}"
 msgstr "{0} 한도{share} {when} 초기화{overage}"
 
@@ -135,7 +135,7 @@ msgstr "{0}분 전"
 msgid "{back} teammates"
 msgstr "팀원 {back}명"
 
-#: src/pages/workspace/model/session/agent-events/agent-events.ts:183
+#: src/pages/workspace/model/session/agent-events/agent-events.ts:176
 msgid "{base}. Earlier turns live on as a summary."
 msgstr "{base}. 앞선 대화는 요약으로 남습니다."
 
@@ -496,7 +496,7 @@ msgstr "전체"
 msgid "All {0} connected"
 msgstr "{0}개 모두 연결됨"
 
-#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:70
+#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:84
 msgid "Allow"
 msgstr "허용"
 
@@ -505,7 +505,7 @@ msgstr "허용"
 msgid "Allow all"
 msgstr "전부 허용"
 
-#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:113
+#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:134
 msgid "Allow this?"
 msgstr "허용할까요?"
 
@@ -529,6 +529,10 @@ msgstr "API 오류 {0}"
 #: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:957
 msgid "Apply"
 msgstr "적용"
+
+#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:132
+msgid "Approve this plan?"
+msgstr "이 계획을 승인할까요?"
 
 #: src/entities/settings/config/choices/choices.ts:11
 #: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:47
@@ -559,7 +563,7 @@ msgstr "파일 첨부"
 msgid "Author"
 msgstr "작성자"
 
-#: src/pages/workspace/model/session/agent-events/agent-events.ts:190
+#: src/pages/workspace/model/session/agent-events/agent-events.ts:183
 msgid "auto"
 msgstr "자동"
 
@@ -784,7 +788,7 @@ msgstr "컨텍스트"
 msgid "Continue"
 msgstr "계속"
 
-#: src/pages/workspace/model/session/agent-events/agent-events.ts:181
+#: src/pages/workspace/model/session/agent-events/agent-events.ts:174
 msgid "Conversation compacted here"
 msgstr "여기서 대화가 압축됐습니다"
 
@@ -999,7 +1003,7 @@ msgstr "“{0}” 노트를 삭제할까요?"
 msgid "Deleted"
 msgstr "삭제됨"
 
-#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:84
+#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:98
 msgid "Deny"
 msgstr "거부"
 
@@ -1028,7 +1032,7 @@ msgstr "\"{title}\"을(를) 무시했습니다"
 msgid "Documents they read first. Long ones cost nothing until they open them."
 msgstr "이 팀원이 먼저 읽을 문서입니다. 길어도 열기 전까지는 비용이 들지 않습니다."
 
-#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:93
+#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:111
 msgid "Don't ask again this session"
 msgstr "이번 세션에서는 다시 묻지 않기"
 
@@ -1080,7 +1084,7 @@ msgstr "수정"
 msgid "Edit {0}"
 msgstr "{0} 수정"
 
-#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:108
+#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:127
 msgid "Edit this file?"
 msgstr "이 파일을 고칠까요?"
 
@@ -1453,7 +1457,7 @@ msgstr "낮음"
 msgid "Manage"
 msgstr "관리"
 
-#: src/pages/workspace/model/session/agent-events/agent-events.ts:191
+#: src/pages/workspace/model/session/agent-events/agent-events.ts:184
 msgid "manual"
 msgstr "수동"
 
@@ -1857,7 +1861,7 @@ msgstr "요청이 너무 잦습니다"
 msgid "Re-authenticate"
 msgstr "재인증"
 
-#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:111
+#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:130
 msgid "Reach out to the web?"
 msgstr "웹에 접속할까요?"
 
@@ -2046,7 +2050,7 @@ msgstr "되돌리기"
 msgid "run {0} of {1}"
 msgstr "{1}회 중 {0}번째"
 
-#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:103
+#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:122
 msgid "Run this command?"
 msgstr "이 명령을 실행할까요?"
 
@@ -2690,7 +2694,7 @@ msgstr "이 팀원은 파일을 하나도 바꾸지 않았습니다."
 msgid "This teammate has no branch Zetrem can look up."
 msgstr "Zetrem이 찾아볼 수 있는 브랜치가 이 팀원에게 없습니다."
 
-#: src/pages/workspace/model/session/agent-events/agent-events.ts:198
+#: src/pages/workspace/model/session/agent-events/agent-events.ts:191
 msgid "This turn: {out} out · {seconds}s"
 msgstr "이번 턴: {out} 출력 · {seconds}초"
 
@@ -2932,7 +2936,7 @@ msgstr "첫 노트 쓰기"
 msgid "Write their instructions once and the orchestrator can call them in any project."
 msgstr "지침을 한 번 써두면 어느 프로젝트에서든 부를 수 있습니다."
 
-#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:105
+#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:124
 msgid "Write this file?"
 msgstr "이 파일을 쓸까요?"
 

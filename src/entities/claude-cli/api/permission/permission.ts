@@ -5,7 +5,7 @@ import type {
   PermissionRule,
 } from './permission.types'
 
-import { toolLine, toolTarget } from '../shared/shared'
+import { toolLine, toolPlan, toolTarget } from '../shared/shared'
 
 export function permissionResult(allow: boolean, input: unknown): PermissionResult {
   return allow
@@ -54,6 +54,7 @@ export function fromControlRequest(event: Record<string, unknown>): PermissionEv
   if (request?.subtype !== 'can_use_tool') return []
   if (typeof event.request_id !== 'string') return []
   const toolName = typeof request.tool_name === 'string' ? request.tool_name : 'tool'
+  const plan = toolPlan(request.input)
   return [
     {
       type: 'permission',
@@ -61,6 +62,7 @@ export function fromControlRequest(event: Record<string, unknown>): PermissionEv
       toolName,
       line: toolLine(toolName, request.input),
       detail: toolTarget(request.input),
+      ...(plan === '' ? {} : { plan }),
       input: request.input,
     },
   ]

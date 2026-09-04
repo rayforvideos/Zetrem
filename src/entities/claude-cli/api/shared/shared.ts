@@ -48,6 +48,14 @@ export function withoutCd(command: string): string {
   return cut.test(command) ? command.replace(cut, '') : command
 }
 
+// ExitPlanMode carries the plan itself, written as markdown, and it belongs in
+// none of the keys above: a plan is paragraphs, and the slot that names a file
+// or a command would show nothing but its first words.
+export function toolPlan(input: unknown): string {
+  if (typeof input !== 'object' || input === null) return ''
+  return str((input as Record<string, unknown>).plan)
+}
+
 export function toolTarget(input: unknown): string {
   if (typeof input !== 'object' || input === null) return ''
   for (const key of TARGET_KEYS) {

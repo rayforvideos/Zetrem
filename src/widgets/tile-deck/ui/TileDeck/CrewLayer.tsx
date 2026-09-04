@@ -27,6 +27,9 @@ type CrewLayerProps = {
   openId: string | null
   sweeping: boolean
   attention: string | null
+  // The run has stopped for the person, so every teammate still going is going
+  // nowhere until that is answered.
+  held?: boolean
   onOpen(id: string | null): void
   onDismiss?: (id: string) => void
 }
@@ -46,6 +49,7 @@ export function CrewLayer({
   openId,
   sweeping,
   attention,
+  held = false,
   onOpen,
   onDismiss,
 }: CrewLayerProps) {
@@ -62,6 +66,7 @@ export function CrewLayer({
           rect={board}
           nowMs={nowMs}
           openId={openId}
+          held={held}
           presence={presence}
           onOpen={onOpen}
         />
@@ -77,6 +82,7 @@ export function CrewLayer({
           sweeping={sweeping}
           closing={tile.closing}
           attention={!tile.closing && tile.session.id === attention}
+          held={held}
           onDismiss={onDismiss === undefined ? undefined : () => onDismiss(tile.session.id)}
         />
       ))}

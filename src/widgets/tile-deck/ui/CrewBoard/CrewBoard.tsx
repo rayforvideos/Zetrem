@@ -29,6 +29,9 @@ type CrewBoardProps = {
   name: string
   openId: string | null
   heading?: boolean
+  // The run has stopped for the person, so nothing anyone here hands back
+  // moves until that is answered.
+  held?: boolean
   // Set while the deck is flipping between tiles and the board, so the board
   // can be seen to come and go instead of cutting.
   presence?: Presence | null
@@ -46,6 +49,7 @@ export function CrewBoard({
   name,
   openId,
   heading = true,
+  held = false,
   presence = null,
   helpers = EMPTY_HELPERS,
   onOpen,
@@ -100,6 +104,7 @@ export function CrewBoard({
                   nowMs={nowMs}
                   room={rect.h}
                   open={session.id === shown}
+                  held={held}
                   onOpen={() => onOpen(session.id === shown ? null : session.id)}
                 />
               ) : (
@@ -109,6 +114,7 @@ export function CrewBoard({
                   nowMs={nowMs}
                   attention={session.id === eye}
                   open={session.id === shown}
+                  held={held}
                   delayMs={presence === 'arriving' ? staggerDelay(index) : null}
                   onOpen={() => onOpen(session.id)}
                 />

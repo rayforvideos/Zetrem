@@ -27,6 +27,9 @@ type AgentTileProps = {
   sweeping?: boolean
   closing?: boolean
   attention?: boolean
+  // The run this teammate belongs to has stopped for the person, so its own
+  // work lands nowhere until that is answered.
+  held?: boolean
   onDismiss?: () => void
 }
 
@@ -39,6 +42,7 @@ export function AgentTile({
   sweeping = false,
   closing = false,
   attention = false,
+  held = false,
   onDismiss,
 }: AgentTileProps) {
   const transcriptOpen = session.transcript.length > 0
@@ -67,13 +71,13 @@ export function AgentTile({
           {session.status === 'waiting' && <div data-waiting style={waitingMarkStyle(attention)} />}
           <div style={bodyStyle}>
             {transcriptOpen && (
-              <Headline session={session} withText={false} onDismiss={onDismiss} />
+              <Headline session={session} withText={false} held={held} onDismiss={onDismiss} />
             )}
             {sweep ? (
               transcriptOpen ? (
                 <Timeline session={session} />
               ) : (
-                <Headline session={session} onDismiss={onDismiss} />
+                <Headline session={session} held={held} onDismiss={onDismiss} />
               )
             ) : (
               <div data-split style={splitStyle}>
@@ -81,7 +85,7 @@ export function AgentTile({
                   {transcriptOpen ? (
                     <Timeline session={session} />
                   ) : (
-                    <Headline session={session} onDismiss={onDismiss} />
+                    <Headline session={session} held={held} onDismiss={onDismiss} />
                   )}
                 </div>
                 <div data-log style={logPaneStyle}>

@@ -641,7 +641,7 @@ msgstr "Cart totals and rounding"
 msgid "Change"
 msgstr "Change"
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:169
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:170
 msgid "Change account, project, and permissions"
 msgstr "Change account, project, and permissions"
 
@@ -717,7 +717,7 @@ msgid "Close"
 msgstr "Close"
 
 #. placeholder {0}: persona ? persona.name : session.label
-#: src/widgets/tile-deck/ui/layers/Headline/Headline.tsx:40
+#: src/widgets/tile-deck/ui/layers/Headline/Headline.tsx:42
 msgid "Close {0}"
 msgstr "Close {0}"
 
@@ -725,7 +725,7 @@ msgstr "Close {0}"
 msgid "Close report"
 msgstr "Close report"
 
-#: src/widgets/tile-deck/ui/layers/Headline/Headline.tsx:41
+#: src/widgets/tile-deck/ui/layers/Headline/Headline.tsx:43
 msgid "Close this tile. The run stays in the sidebar."
 msgstr "Close this tile. The run stays in the sidebar."
 
@@ -1685,7 +1685,7 @@ msgstr "Nothing stashed."
 msgid "Nothing to merge: already up to date."
 msgstr "Nothing to merge: already up to date."
 
-#: src/widgets/tile-deck/ui/CrewBoard/CrewBoard.tsx:135
+#: src/widgets/tile-deck/ui/CrewBoard/CrewBoard.tsx:141
 msgid "Nothing written yet."
 msgstr "Nothing written yet."
 
@@ -2155,7 +2155,7 @@ msgstr "Set a few things and your agents get to work!"
 msgid "Set for everyone on your account. They cannot be removed or turned off here."
 msgstr "Set for everyone on your account. They cannot be removed or turned off here."
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:171
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:172
 msgid "Settings"
 msgstr "Settings"
 
@@ -2824,6 +2824,7 @@ msgstr "Waiting on"
 
 #: src/widgets/agent-report/lib/state-word/state-word.ts:10
 #: src/widgets/team-sidebar/lib/row-state/row-state.ts:8
+#: src/widgets/tile-deck/lib/state-word/state-word.ts:13
 msgid "Waiting on you"
 msgstr "Waiting on you"
 
@@ -2869,8 +2870,8 @@ msgid "What they changed"
 msgstr "What they changed"
 
 #: src/widgets/agent-report/ui/CallStream/CallStream.tsx:11
-#: src/widgets/tile-deck/ui/AgentTile/AgentTile.tsx:89
-#: src/widgets/tile-deck/ui/CrewBoard/CrewBoard.tsx:139
+#: src/widgets/tile-deck/ui/AgentTile/AgentTile.tsx:93
+#: src/widgets/tile-deck/ui/CrewBoard/CrewBoard.tsx:145
 #: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:142
 msgid "What they did"
 msgstr "What they did"
@@ -2958,7 +2959,7 @@ msgid "Yesterday"
 msgstr "Yesterday"
 
 #: src/widgets/setup/ui/YouField/YouField.tsx:22
-#: src/widgets/tile-deck/ui/CrewBoard/CrewBoard.tsx:79
+#: src/widgets/tile-deck/ui/CrewBoard/CrewBoard.tsx:83
 msgid "You"
 msgstr "You"
 

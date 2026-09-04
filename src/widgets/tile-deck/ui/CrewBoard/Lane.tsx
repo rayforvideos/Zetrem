@@ -5,6 +5,7 @@ import { reachOf } from '@/shared/lib/reach/reach'
 import { formatClock } from '@/shared/lib/units/units'
 import { Button } from '@/shared/ui/button'
 import { laneOf } from '../../lib/lane/lane'
+import { StateChip } from '../layers/StateChip/StateChip'
 import { CallLog } from '../layers/CallLog/CallLog'
 import { Helpers } from '../layers/Helpers/Helpers'
 import { Timeline } from '../layers/Timeline/Timeline'
@@ -27,6 +28,7 @@ export function Lane({
   nowMs,
   room,
   open,
+  held = false,
   onOpen,
 }: {
   session: AgentSession
@@ -35,6 +37,8 @@ export function Lane({
   nowMs: number
   room: number
   open: boolean
+  // The run this teammate belongs to has stopped for the person.
+  held?: boolean
   onOpen(): void
 }) {
   const lane = laneOf(session, nowMs)
@@ -69,6 +73,7 @@ export function Lane({
         <span data-target style={laneTargetStyle}>
           {lane.target}
         </span>
+        <StateChip status={session.status} held={held} />
         <span data-out style={laneClockStyle}>
           {formatClock(lane.outMs / 1000)}
         </span>

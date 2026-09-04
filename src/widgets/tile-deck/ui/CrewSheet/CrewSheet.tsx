@@ -23,6 +23,8 @@ type CrewSheetProps = {
   name: string
   open: boolean
   openId: string | null
+  // The run has stopped for the person, passed through to the board.
+  held?: boolean
   onToggle(): void
   onClose(): void
   onOpen(id: string | null): void
@@ -38,6 +40,7 @@ export function CrewSheet({
   name,
   open,
   openId,
+  held = false,
   onToggle,
   onClose,
   onOpen,
@@ -116,6 +119,7 @@ export function CrewSheet({
               name={name}
               heading={false}
               openId={openId}
+              held={held}
               onOpen={onOpen}
             />
           </div>

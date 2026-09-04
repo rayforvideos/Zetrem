@@ -25,6 +25,12 @@ describe('agentArgs: what claude is started with', () => {
     expect(args).toContain('--permission-prompt-tool')
   })
 
+  it('hands plan mode to the CLI and keeps the prompt, since the plan itself is asked about', () => {
+    const args = agentArgs({ ...base, permissionMode: 'plan' })
+    expect(args[args.indexOf('--permission-mode') + 1]).toBe('plan')
+    expect(args).toContain('--permission-prompt-tool')
+  })
+
   it('removes the prompt entirely for allow-all, because the CLI refuses both together', () => {
     const args = agentArgs({ ...base, permissionMode: 'bypass' })
     expect(args).toContain('--dangerously-skip-permissions')
@@ -51,7 +57,7 @@ describe('agentArgs: what claude is started with', () => {
     expect(args).toContain('말투')
   })
 
-  it('leaves partial messages off, so words appear once they are finished', () => {
+  it('asks for partial messages, or a long answer arrives all at once', () => {
     const args = agentArgs({
       permissionMode: 'ask' as const,
       lock: null,
@@ -60,7 +66,7 @@ describe('agentArgs: what claude is started with', () => {
       effort: 'default',
       persona: '',
     })
-    expect(args).not.toContain('--include-partial-messages')
+    expect(args).toContain('--include-partial-messages')
   })
 })
 
@@ -187,6 +193,10 @@ describe('probeArgs: asking what the session would be, without starting one', ()
   it('caps what it may spend, so an answer can never be paid for', () => {
     const args = probeArgs(base)
     expect(args[args.indexOf('--max-budget-usd') + 1]).toBe(PROBE_BUDGET_USD)
+  })
+
+  it('skips the token stream, which nobody is watching it write', () => {
+    expect(probeArgs(base)).not.toContain('--include-partial-messages')
   })
 
   it('asks in the same shape the real session runs in, or the answer would not match', () => {

@@ -44,6 +44,8 @@ export type ChildTurnEvent =
       taskId: string
       summary: string
       done: boolean
+      // The task ended badly (failed, killed): the tile closes and says so.
+      failed: boolean
     }
   | {
       type: 'childProgress'

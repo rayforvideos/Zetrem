@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import type { Turn } from '@/entities/conversation'
-import { REMIND_AFTER_MS, tellings, waitingOn, waitsOf, whereToTell } from './waiting'
+import { SETTLE_GRACE_MS } from '../settle-nudge/settle-nudge'
+import { REMIND_AFTER_MS, markOf, tellings, waitingOn, waitsOf, whereToTell } from './waiting'
 import type { Ledger, Settled, Wait } from './waiting.types'
 
 function turn(over: Partial<Turn> & { role: Turn['role'] }): Turn {
@@ -159,7 +160,6 @@ function wait(over: Partial<Wait> = {}): Wait {
     title: 'Shop',
     mark: 'req-1',
     onScreen: false,
-    steady: true,
     ...over,
   }
 }
@@ -170,7 +170,7 @@ describe('tellings: one word, one reminder, and no more', () => {
   it('speaks the first time a wait is seen', () => {
     const out = tellings([wait()], {}, AWAY)
     expect(out.say).toEqual([{ wait: wait(), where: 'system', again: false }])
-    expect(out.ledger['chat-1']).toEqual({ mark: 'req-1', toldAtMs: 1_000, times: 1 })
+    expect(out.ledger['chat-1']).toMatchObject({ mark: 'req-1', toldAtMs: 1_000, times: 1 })
   })
 
   it('stays quiet on the pass right after', () => {
@@ -205,15 +205,27 @@ describe('tellings: one word, one reminder, and no more', () => {
     expect(other.say).toHaveLength(1)
   })
 
-  it('holds a question until the settle grace has passed', () => {
-    const green = wait({ kind: 'question', mark: 'turn-1', steady: false })
+  it('says the same wait once, however the person moves around it', () => {
+    const first = tellings([wait()], {}, AWAY)
+    const back = tellings([wait({ onScreen: true })], first.ledger, {
+      watching: true,
+      nowMs: 3_000,
+    })
+    const away = tellings([wait()], back.ledger, { watching: true, nowMs: 4_000 })
+    expect(away.say, 'leaving a chat is not a new thing to be told').toEqual([])
+  })
+
+  it('holds a question for the settle grace, so a hand-back is not a question', () => {
+    const green = wait({ kind: 'question', mark: 'turn-1' })
     const out = tellings([green], {}, AWAY)
     expect(out.say).toEqual([])
-    expect(tellings([{ ...green, steady: true }], out.ledger, AWAY).say).toHaveLength(1)
+    expect(
+      tellings([green], out.ledger, { ...AWAY, nowMs: 1_000 + SETTLE_GRACE_MS }).say,
+    ).toHaveLength(1)
   })
 
   it('never holds a permission ask, which is explicit whatever else is going', () => {
-    expect(tellings([wait({ steady: false })], {}, AWAY).say).toHaveLength(1)
+    expect(tellings([wait()], {}, AWAY).say).toHaveLength(1)
   })
 
   it('says nothing about a chat the person is looking at, and forgets nothing either', () => {
@@ -223,8 +235,25 @@ describe('tellings: one word, one reminder, and no more', () => {
   })
 
   it('speaks as soon as they leave the chat they were looking at', () => {
-    const held: Ledger = { 'chat-1': { mark: 'req-1', toldAtMs: 0, times: 0 } }
+    const held: Ledger = { 'chat-1': { mark: 'req-1', seenAtMs: 0, toldAtMs: 0, times: 0 } }
     expect(tellings([wait()], held, { watching: true, nowMs: 5_000 }).say[0]?.where).toBe('toast')
+  })
+})
+
+describe('markOf: what names one wait', () => {
+  it('takes the runtime request id while a permission is pending', () => {
+    expect(markOf(conv({ permission: ASK }))).toBe('req-1')
+  })
+
+  it('names a question by the turn it ended', () => {
+    const one = said('Which one?')
+    expect(markOf(conv({ turns: [one] }))).toBe(one.id)
+  })
+
+  it('steps over the notices the app lands on top, which are not a new wait', () => {
+    const one = said('Which one?')
+    const after = conv({ turns: [one, turn({ role: 'system', text: 'API error 529' })] })
+    expect(markOf(after), 'a late metrics line is not a second question').toBe(one.id)
   })
 })
 
@@ -234,25 +263,18 @@ describe('waitsOf: every chat that has stopped, not only the one on screen', () 
     ['chat-2', 'Invoices'],
   ])
 
-  const base = {
-    titles,
-    openId: 'chat-1',
-    onScreen: true,
-    open: null,
-    openMark: '',
-    openSteady: true,
-  }
-
-  it('passes over chats that are simply working', () => {
-    expect(waitsOf({ ...base, live: { 'chat-2': 'working' } })).toEqual([])
+  it('has nothing to say when no chat has stopped', () => {
+    expect(waitsOf({ held: {}, titles, onScreenId: 'chat-1' })).toEqual([])
   })
 
-  it('reads the open chat in full, since its conversation is the one on hand', () => {
+  it('names each chat and says which one the person is looking at', () => {
     const out = waitsOf({
-      ...base,
-      live: { 'chat-1': 'question' },
-      open: { kind: 'question', said: 'Rename or copy?' },
-      openMark: 'turn-9',
+      held: {
+        'chat-1': { kind: 'question', said: 'Rename or copy?', mark: 'turn-9' },
+        'chat-2': { kind: 'permission', said: 'Bash', mark: 'req-3' },
+      },
+      titles,
+      onScreenId: 'chat-1',
     })
     expect(out).toEqual([
       {
@@ -262,25 +284,33 @@ describe('waitsOf: every chat that has stopped, not only the one on screen', () 
         mark: 'turn-9',
         title: 'Shop',
         onScreen: true,
-        steady: true,
+      },
+      {
+        chatId: 'chat-2',
+        kind: 'permission',
+        said: 'Bash',
+        mark: 'req-3',
+        title: 'Invoices',
+        onScreen: false,
       },
     ])
   })
 
-  it('knows a chat off screen by its state and its name', () => {
-    const out = waitsOf({ ...base, live: { 'chat-2': 'asking' } })
-    expect(out[0]).toMatchObject({
-      chatId: 'chat-2',
-      kind: 'permission',
-      said: '',
-      title: 'Invoices',
-      onScreen: false,
-      steady: true,
+  it('counts nothing as on screen while the library covers the chat', () => {
+    const out = waitsOf({
+      held: { 'chat-1': { kind: 'permission', said: 'Bash', mark: 'req-3' } },
+      titles,
+      onScreenId: null,
     })
+    expect(out[0]?.onScreen).toBe(false)
   })
 
-  it('counts the open chat as off screen while the library covers it', () => {
-    const out = waitsOf({ ...base, live: { 'chat-1': 'asking' }, onScreen: false })
-    expect(out[0]?.onScreen).toBe(false)
+  it('leaves a chat it has no name for still worth raising', () => {
+    const out = waitsOf({
+      held: { 'chat-9': { kind: 'permission', said: 'Bash', mark: 'req-3' } },
+      titles,
+      onScreenId: null,
+    })
+    expect(out[0]?.title).toBe('')
   })
 })

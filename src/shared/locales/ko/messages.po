@@ -192,11 +192,11 @@ msgstr "{n}분 전"
 msgid "{name} can be called this session"
 msgstr "{name}은(는) 이번 세션에서 부를 수 있습니다"
 
-#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:282
+#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:273
 msgid "{name} is off. The running session keeps them until it ends."
 msgstr "{name}을(를) 껐습니다. 실행 중인 세션은 끝날 때까지 그대로 데리고 있습니다."
 
-#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:281
+#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:272
 msgid "{name} is on. The running session cannot call them yet."
 msgstr "{name}을(를) 켰습니다. 실행 중인 세션은 아직 부를 수 없습니다."
 
@@ -840,7 +840,7 @@ msgstr "그 폴더를 열지 못했습니다"
 msgid "Could not open the file picker"
 msgstr "파일 선택 창을 열지 못했습니다"
 
-#: src/pages/workspace/model/session/chat-sessions/chat-session/chat-session.ts:130
+#: src/pages/workspace/model/session/chat-sessions/chat-session/chat-session.ts:131
 msgid "Could not pick that conversation back up. Starting a new one."
 msgstr "그 대화를 이어받지 못했습니다. 새로 시작합니다."
 
@@ -919,7 +919,7 @@ msgstr "계정을 제거하지 못했습니다."
 msgid "Could not rename that chat"
 msgstr "대화 이름을 바꾸지 못했습니다"
 
-#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:100
+#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:99
 msgid "Could not reopen your last project"
 msgstr "마지막 프로젝트를 다시 열지 못했습니다"
 
@@ -937,7 +937,7 @@ msgid "Could not start Claude Code"
 msgstr "Claude Code를 실행하지 못했습니다"
 
 #: src/entities/claude-cli/lib/exit-line/exit-line.ts:15
-#: src/pages/workspace/model/session/chat-sessions/chat-session/chat-session.ts:117
+#: src/pages/workspace/model/session/chat-sessions/chat-session/chat-session.ts:118
 msgid "Could not start Claude Code: {said}"
 msgstr "Claude Code를 실행하지 못했습니다: {said}"
 
@@ -1298,7 +1298,7 @@ msgstr "어려운 문제용. 훨씬 느립니다"
 msgid "Held up"
 msgstr "멈춰 있음"
 
-#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:203
+#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:194
 msgid "Hide team sidebar"
 msgstr "팀 사이드바 접기"
 
@@ -2143,7 +2143,7 @@ msgstr "세션"
 msgid "Session details"
 msgstr "세션 상세"
 
-#: src/pages/workspace/model/session/chat-sessions/chat-session/chat-session.ts:225
+#: src/pages/workspace/model/session/chat-sessions/chat-session/chat-session.ts:234
 msgid "Session restarted. The next message picks the conversation back up with your team as it is now."
 msgstr "세션을 다시 시작했어요. 다음 메시지가 지금의 팀 구성으로 이 대화를 이어서 진행해요."
 
@@ -2179,7 +2179,7 @@ msgstr "모든 프로젝트에서 공용"
 msgid "Shift+Enter starts a new line. Off, sending takes the modifier key with Enter."
 msgstr "Shift+Enter로 줄을 바꿉니다. 끄면 보조키+Enter로 보냅니다."
 
-#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:203
+#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:194
 msgid "Show team sidebar"
 msgstr "팀 사이드바 펼치기"
 
@@ -2983,7 +2983,7 @@ msgstr "왼쪽에서 대화합니다"
 msgid "Your account"
 msgstr "내 계정"
 
-#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:270
+#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:261
 msgid "Your account changed before the reply finished, so it stops here."
 msgstr "답변이 끝나기 전에 계정이 바뀌어서, 여기서 멈췄어요."
 

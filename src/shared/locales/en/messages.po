@@ -192,11 +192,11 @@ msgstr "{n}m ago"
 msgid "{name} can be called this session"
 msgstr "{name} can be called this session"
 
-#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:282
+#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:273
 msgid "{name} is off. The running session keeps them until it ends."
 msgstr "{name} is off. The running session keeps them until it ends."
 
-#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:281
+#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:272
 msgid "{name} is on. The running session cannot call them yet."
 msgstr "{name} is on. The running session cannot call them yet."
 
@@ -840,7 +840,7 @@ msgstr "Could not open that folder"
 msgid "Could not open the file picker"
 msgstr "Could not open the file picker"
 
-#: src/pages/workspace/model/session/chat-sessions/chat-session/chat-session.ts:130
+#: src/pages/workspace/model/session/chat-sessions/chat-session/chat-session.ts:131
 msgid "Could not pick that conversation back up. Starting a new one."
 msgstr "Could not pick that conversation back up. Starting a new one."
 
@@ -919,7 +919,7 @@ msgstr "Could not remove the account."
 msgid "Could not rename that chat"
 msgstr "Could not rename that chat"
 
-#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:100
+#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:99
 msgid "Could not reopen your last project"
 msgstr "Could not reopen your last project"
 
@@ -937,7 +937,7 @@ msgid "Could not start Claude Code"
 msgstr "Could not start Claude Code"
 
 #: src/entities/claude-cli/lib/exit-line/exit-line.ts:15
-#: src/pages/workspace/model/session/chat-sessions/chat-session/chat-session.ts:117
+#: src/pages/workspace/model/session/chat-sessions/chat-session/chat-session.ts:118
 msgid "Could not start Claude Code: {said}"
 msgstr "Could not start Claude Code: {said}"
 
@@ -1298,7 +1298,7 @@ msgstr "Hard problems. Much slower"
 msgid "Held up"
 msgstr "Held up"
 
-#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:203
+#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:194
 msgid "Hide team sidebar"
 msgstr "Hide team sidebar"
 
@@ -2143,7 +2143,7 @@ msgstr "Session"
 msgid "Session details"
 msgstr "Session details"
 
-#: src/pages/workspace/model/session/chat-sessions/chat-session/chat-session.ts:225
+#: src/pages/workspace/model/session/chat-sessions/chat-session/chat-session.ts:234
 msgid "Session restarted. The next message picks the conversation back up with your team as it is now."
 msgstr "Session restarted. The next message picks the conversation back up with your team as it is now."
 
@@ -2179,7 +2179,7 @@ msgstr "Shared across projects"
 msgid "Shift+Enter starts a new line. Off, sending takes the modifier key with Enter."
 msgstr "Shift+Enter starts a new line. Off, sending takes the modifier key with Enter."
 
-#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:203
+#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:194
 msgid "Show team sidebar"
 msgstr "Show team sidebar"
 
@@ -2983,7 +2983,7 @@ msgstr "You talk on the left"
 msgid "Your account"
 msgstr "Your account"
 
-#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:270
+#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:261
 msgid "Your account changed before the reply finished, so it stops here."
 msgstr "Your account changed before the reply finished, so it stops here."
 

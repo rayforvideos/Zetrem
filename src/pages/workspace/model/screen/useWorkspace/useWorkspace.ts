@@ -30,8 +30,7 @@ import { useSessionProbe } from '../../session/useSessionProbe'
 import { useAuthoredAgents } from '../../team/useAuthoredAgents'
 import { useNudge } from '../../session/useNudge'
 import { useWaiting } from '../../session/useWaiting'
-import { markOf, waitingOn, waitsOf } from '../../session/waiting/waiting'
-import { settledAfter } from '../../session/settle-nudge/settle-nudge'
+import { waitingOn, waitsOf } from '../../session/waiting/waiting'
 import { useSay } from '../../settings/useSay'
 import { useConnectors } from '../../extensions/useConnectors'
 import { useAttachments } from '../../chat/useAttachments'
@@ -144,14 +143,6 @@ export function useWorkspace() {
   useNudge(settings.notify, atWork, waiting, conv.trouble)
   useFleet(deck, children, nowMs, viewport, deckSidebarW)
 
-  // When work last stopped, so a question can keep the settle grace (#50): a
-  // teammate handing back leaves the orchestrator idle for a moment, and a
-  // moment is not a turn that ended on a question.
-  const [restedAt, setRestedAt] = useState<number | null>(null)
-  useEffect(() => {
-    setRestedAt(atWork ? null : Date.now())
-  }, [atWork])
-
   useLearnedSettings(status, settings, update)
 
   const stock = stockAgents(
@@ -183,21 +174,21 @@ export function useWorkspace() {
 
   const live = sessionLive(status, conv.status)
   const working = useSyncExternalStore(chatSessions.subscribe, chatSessions.live, chatSessions.live)
+  const stopped = useSyncExternalStore(
+    chatSessions.subscribe,
+    chatSessions.waiting,
+    chatSessions.waiting,
+  )
   const anyLive = anySessionLive(live, working)
 
-  // Every chat that has stopped for the person, not only the one on screen.
-  // The open chat is read out of the conversation on hand; the rest are known
-  // by the state their own session reports.
+  // Every chat that has stopped for the person, not only the one on screen: a
+  // chat nobody is reading is exactly the one that would go without a word.
   const waits = waitsOf({
-    live: working,
+    held: stopped,
     titles: new Map(chat.chats.map((one) => [one.id, one.title])),
-    openId: chat.openId,
-    // The library covers the chat without closing it, and a settings panel
-    // takes the whole screen: neither is a chat the person can answer from.
-    onScreen: gate === 'conversation' && !libraryOpen,
-    open: waiting,
-    openMark: markOf(conv),
-    openSteady: settledAfter(restedAt, nowMs),
+    // The library covers the open chat without closing it, and the settings
+    // panel takes the whole screen: from neither can the person answer.
+    onScreenId: gate === 'conversation' && !libraryOpen ? chat.openId : null,
   })
   useWaiting(waits, settings.notify, nowMs, (id) => go(() => chat.open(id)))
   const sidebarLabel = sidebar.open ? t`Hide team sidebar` : t`Show team sidebar`

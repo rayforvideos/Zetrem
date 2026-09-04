@@ -1,8 +1,8 @@
 import { createChatSession } from './chat-session/chat-session'
 import type { AgentEvent, ChatSession, ChatSessionDeps } from './chat-session/chat-session.types'
-import type { Held, SaveListener, Working } from './chat-sessions.types'
+import type { HeldWaits, Kept, SaveListener, Working } from './chat-sessions.types'
 
-const held = new Map<string, Held>()
+const held = new Map<string, Kept>()
 const listeners = new Set<() => void>()
 const saveListeners = new Set<SaveListener>()
 // Which chat each project was last showing. It outlives a screen rebuild (a
@@ -11,6 +11,7 @@ const lastOpen = new Map<string, string>()
 
 let deps: ChatSessionDeps | null = null
 let working: Working = {}
+let waits: HeldWaits = {}
 
 function sameWorking(before: Working, after: Working): boolean {
   const names = Object.keys(after)
@@ -27,12 +28,32 @@ function readWorking(): Working {
   return next
 }
 
+function readWaits(): HeldWaits {
+  const next: HeldWaits = {}
+  for (const [chatId, one] of held) {
+    const wait = one.session.held()
+    if (wait !== null) next[chatId] = wait
+  }
+  return next
+}
+
+// The wait a chat is on, compared by what it is rather than by identity, for
+// the same reason readWorking is: a fresh object every stream line would send
+// the workspace round again for nothing.
+function sameWaits(before: HeldWaits, after: HeldWaits): boolean {
+  const names = Object.keys(after)
+  if (names.length !== Object.keys(before).length) return false
+  return names.every((name) => before[name]?.mark === after[name]?.mark)
+}
+
 // The snapshot is read through useSyncExternalStore, which compares by
 // identity: a fresh object every time would rebuild the sidebar on every line
 // of every stream.
 function changed(): void {
   const next = readWorking()
   if (!sameWorking(working, next)) working = next
+  const stopped = readWaits()
+  if (!sameWaits(waits, stopped)) waits = stopped
   for (const listener of listeners) listener()
 }
 
@@ -122,6 +143,12 @@ export const chatSessions = {
   live(): Working {
     return working
   },
+  // What every chat has stopped for, which is what the workspace raises. Read
+  // from here rather than from the chat on screen: a chat nobody is reading is
+  // exactly the one that would otherwise go without a word.
+  waiting(): HeldWaits {
+    return waits
+  },
   // The chat this project is showing. Remembered out here so a screen rebuild
   // comes back to the chat the person was reading, not to whichever chat saved
   // last.
@@ -163,5 +190,6 @@ export const chatSessions = {
     lastOpen.clear()
     saveListeners.clear()
     working = {}
+    waits = {}
   },
 }

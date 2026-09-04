@@ -1,14 +1,6 @@
 import type { Turn } from '@/entities/conversation'
-import type {
-  Ledger,
-  LiveWait,
-  Settled,
-  Telling,
-  Wait,
-  WaitKind,
-  WaitingOn,
-  Where,
-} from './waiting.types'
+import { SETTLE_GRACE_MS } from '../settle-nudge/settle-nudge'
+import type { Held, Ledger, Settled, Telling, Wait, WaitingOn, Where } from './waiting.types'
 
 // Nobody answers a notice twice, and a notice that keeps repeating is one the
 // person learns to ignore. One reminder follows the first word after this
@@ -51,10 +43,16 @@ export function waitingOn(conv: Settled, atWork: boolean): WaitingOn | null {
 
 // What names this particular wait. A permission carries the runtime's own
 // request id; a question is named by the turn it ended, which is as far as one
-// question ever reaches.
+// question ever reaches. The app's own notices land on top of that turn
+// without being part of it, so they are stepped over: a metrics line arriving
+// late must not read as a second question.
 export function markOf(conv: Settled): string {
   if (conv.permission !== null) return conv.permission.requestId
-  return conv.turns.at(-1)?.id ?? ''
+  for (let index = conv.turns.length - 1; index >= 0; index -= 1) {
+    const turn = conv.turns[index]
+    if (turn !== undefined && turn.role !== 'system') return turn.id
+  }
+  return ''
 }
 
 // Where a wait is worth raising. Away from the window there is only the system
@@ -65,39 +63,23 @@ export function whereToTell(at: { watching: boolean; chatOnScreen: boolean }): W
   return at.chatOnScreen ? 'nothing' : 'toast'
 }
 
-// Every chat that has stopped for the person. The open chat is read in full,
-// since its conversation is the one on hand; the rest are known by the state
-// their session reports.
+// Every chat that has stopped for the person, named and placed. Each chat
+// reports its own wait, so a chat the screen is not showing is known as well
+// as the one it is, and moving between them changes nothing about the wait.
 export function waitsOf(at: {
-  live: Readonly<Record<string, string>>
+  held: Readonly<Record<string, Held>>
   titles: ReadonlyMap<string, string>
-  openId: string | null
-  // The open chat is actually in view: the library and the settings panel both
-  // cover it without closing it.
-  onScreen: boolean
-  open: WaitingOn | null
-  openMark: string
-  openSteady: boolean
+  // The chat actually in view, if any. The library and the settings panel both
+  // cover the open chat without closing it, and neither is a chat the person
+  // can answer from.
+  onScreenId: string | null
 }): Wait[] {
-  const out: Wait[] = []
-  for (const [chatId, state] of Object.entries(at.live)) {
-    if (!isWait(state)) continue
-    const mine = chatId === at.openId
-    const found = mine && at.open !== null ? at.open : { kind: kindOf(state), said: '' }
-    out.push({
-      chatId,
-      kind: found.kind,
-      said: found.said,
-      // A chat nobody is reading is known only by its state, so that is its
-      // mark: a second ask of the same kind, in a chat off screen, is the same
-      // wait as far as the person can tell.
-      mark: mine ? at.openMark : state,
-      title: at.titles.get(chatId) ?? '',
-      onScreen: mine && at.onScreen,
-      steady: mine ? at.openSteady : true,
-    })
-  }
-  return out
+  return Object.entries(at.held).map(([chatId, one]) => ({
+    ...one,
+    chatId,
+    title: at.titles.get(chatId) ?? '',
+    onScreen: chatId === at.onScreenId,
+  }))
 }
 
 // What to say now, and what the ledger looks like afterwards. Waits that are
@@ -115,29 +97,28 @@ export function tellings(
     const kept =
       before !== undefined && before.mark === wait.mark
         ? before
-        : { mark: wait.mark, toldAtMs: 0, times: 0 }
+        : { mark: wait.mark, seenAtMs: at.nowMs, toldAtMs: 0, times: 0 }
     next[wait.chatId] = kept
     const where = whereToTell({ watching: at.watching, chatOnScreen: wait.onScreen })
     if (where === 'nothing' || !ripe(wait, kept, at.nowMs)) continue
     say.push({ wait, where, again: kept.times === 1 })
-    next[wait.chatId] = { mark: wait.mark, toldAtMs: at.nowMs, times: kept.times + 1 }
+    next[wait.chatId] = { ...kept, toldAtMs: at.nowMs, times: kept.times + 1 }
   }
   return { say, ledger: next }
 }
 
-function ripe(wait: Wait, told: { toldAtMs: number; times: number }, nowMs: number): boolean {
-  if (wait.kind === 'question' && !wait.steady) return false
+function ripe(
+  wait: Wait,
+  told: { seenAtMs: number; toldAtMs: number; times: number },
+  nowMs: number,
+): boolean {
+  // The settle grace (#50): a teammate handing back leaves the orchestrator
+  // idle for a moment, and a moment is not a turn that ended on a question. A
+  // permission ask is explicit and never waits on it.
+  if (wait.kind === 'question' && nowMs - told.seenAtMs < SETTLE_GRACE_MS) return false
   if (told.times === 0) return true
   if (told.times > 1) return false
   return nowMs - told.toldAtMs >= REMIND_AFTER_MS
-}
-
-function isWait(state: string): state is LiveWait {
-  return state === 'asking' || state === 'question'
-}
-
-function kindOf(state: LiveWait): WaitKind {
-  return state === 'asking' ? 'permission' : 'question'
 }
 
 // The last thing anyone said, ignoring the system's own notices, which land on

@@ -66,9 +66,7 @@ export function useWaiting(
 
   // Written as a line rather than passed as the array: a fresh array every
   // render would run this on every line of every stream.
-  const shape = waits
-    .map((one) => `${one.chatId}/${one.mark}/${one.onScreen}/${one.steady}`)
-    .join('|')
+  const shape = waits.map((one) => `${one.chatId}/${one.mark}/${one.onScreen}`).join('|')
 
   useEffect(() => {
     tell()

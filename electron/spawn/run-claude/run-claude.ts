@@ -1,6 +1,7 @@
 import { lost, won } from '@/shared/lib/outcome/outcome'
 import type { Outcome } from '@/shared/lib/outcome/outcome.types'
 import { agentEnv } from '../shell-env/shell-env'
+import { loadSettings } from '../../store/settings-store/settings-store'
 import { claudeBin, loginPath } from '../../cli/login-path/login-path'
 import { accountWorkInFlight } from '../account-work/account-work'
 import { runSettled, trackChild, untrackChild } from '../run-settled/run-settled'
@@ -16,7 +17,10 @@ export async function runClaude(
   return runSettled<Outcome<string>>({
     bin: await claudeBin(),
     args,
-    env: agentEnv(process.env, await loginPath()),
+    // The catalog reads reach the same MCP servers a session does, so a
+    // connector whose token is named in settings reports the same state here
+    // as it does in the run.
+    env: agentEnv(process.env, await loginPath(), (await loadSettings()).passEnv),
     ...(cwd === undefined ? {} : { cwd }),
     mergeStderr: true,
     spawned: trackChild,

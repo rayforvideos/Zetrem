@@ -23,3 +23,21 @@ describe('the tile writes a state down only when nothing else shows it', () => {
     expect(html).not.toContain('letter-spacing')
   })
 })
+
+describe('a teammate working towards a run that has stopped for you', () => {
+  it('says you are the one it is waiting on', () => {
+    const html = renderToStaticMarkup(<StateChip status="working" held />)
+    expect(html).toContain('Waiting on you')
+    expect(html).toContain('data-held')
+  })
+
+  it('leaves the teammate itself as working, which is what it is doing', () => {
+    expect(renderToStaticMarkup(<StateChip status="working" held />)).toContain(
+      'data-state-chip="working"',
+    )
+  })
+
+  it('says nothing extra about a teammate that has finished', () => {
+    expect(renderToStaticMarkup(<StateChip status="done" held />)).toBe('')
+  })
+})

@@ -11,10 +11,12 @@ import { t } from '@lingui/core/macro'
 type HeadlineProps = {
   session: AgentSession
   withText?: boolean
+  // The run this teammate belongs to has stopped for the person.
+  held?: boolean
   onDismiss?: () => void
 }
 
-export function Headline({ session, withText = true, onDismiss }: HeadlineProps) {
+export function Headline({ session, withText = true, held = false, onDismiss }: HeadlineProps) {
   const persona = session.subagentType ? personaOf(session.subagentType) : null
   const model = modelLabel(useModel(session.subagentType))
   return (
@@ -30,7 +32,7 @@ export function Headline({ session, withText = true, onDismiss }: HeadlineProps)
           </span>
           <span style={assignmentStyle}>{persona ? session.label : session.model}</span>
         </div>
-        <StateChip status={session.status} />
+        <StateChip status={session.status} held={held} />
         {onDismiss !== undefined && (
           <Button
             variant="quiet"

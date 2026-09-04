@@ -35,6 +35,9 @@ type TileDeckProps = {
   roster?: boolean
   face: FaceId
   name: string
+  // The run has stopped for the person: a teammate still working is working
+  // towards an orchestrator that cannot act on it until they answer.
+  held?: boolean
   terminal: ReactNode
   onDismiss?: (id: string) => void
 }
@@ -48,6 +51,7 @@ export function TileDeck({
   roster = false,
   face,
   name,
+  held = false,
   terminal,
   onDismiss,
 }: TileDeckProps) {
@@ -181,6 +185,7 @@ export function TileDeck({
           name={name}
           open={sheet}
           openId={openLane}
+          held={held}
           onToggle={() => setSheet((was) => !was)}
           onClose={() => setSheet(false)}
           onOpen={setOpenLane}
@@ -200,6 +205,7 @@ export function TileDeck({
           openId={openLane}
           sweeping={sweeping}
           attention={attention}
+          held={held}
           onOpen={setOpenLane}
           onDismiss={onDismiss}
         />

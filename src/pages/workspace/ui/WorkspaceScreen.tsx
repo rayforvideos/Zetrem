@@ -79,6 +79,7 @@ export function WorkspaceScreen() {
             sessions={chatting.children}
             face={settings.userFace}
             name={team.yourName}
+            held={chatting.waiting !== null}
             viewport={layout.viewport}
             onDismiss={layout.deck.closeOne}
             nowMs={nowMs}

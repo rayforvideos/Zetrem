@@ -29,6 +29,8 @@ import { useProjectSwitch } from '../../project/useProjectSwitch/useProjectSwitc
 import { useSessionProbe } from '../../session/useSessionProbe'
 import { useAuthoredAgents } from '../../team/useAuthoredAgents'
 import { useNudge } from '../../session/useNudge'
+import { useWaiting } from '../../session/useWaiting'
+import { waitingOn, waitsOf } from '../../session/waiting/waiting'
 import { useSay } from '../../settings/useSay'
 import { useConnectors } from '../../extensions/useConnectors'
 import { useAttachments } from '../../chat/useAttachments'
@@ -137,7 +139,8 @@ export function useWorkspace() {
     conv.status === 'working',
   )
   const atWork = stirring(conv.status, children)
-  useNudge(settings.notify, atWork, conv.permission, conv.trouble)
+  const waiting = waitingOn(conv, atWork)
+  useNudge(settings.notify, atWork, waiting, conv.trouble)
   useFleet(deck, children, nowMs, viewport, deckSidebarW)
 
   useLearnedSettings(status, settings, update)
@@ -171,7 +174,23 @@ export function useWorkspace() {
 
   const live = sessionLive(status, conv.status)
   const working = useSyncExternalStore(chatSessions.subscribe, chatSessions.live, chatSessions.live)
+  const stopped = useSyncExternalStore(
+    chatSessions.subscribe,
+    chatSessions.waiting,
+    chatSessions.waiting,
+  )
   const anyLive = anySessionLive(live, working)
+
+  // Every chat that has stopped for the person, not only the one on screen: a
+  // chat nobody is reading is exactly the one that would go without a word.
+  const waits = waitsOf({
+    held: stopped,
+    titles: new Map(chat.chats.map((one) => [one.id, one.title])),
+    // The library covers the open chat without closing it, and the settings
+    // panel takes the whole screen: from neither can the person answer.
+    onScreenId: gate === 'conversation' && !libraryOpen ? chat.openId : null,
+  })
+  useWaiting(waits, settings.notify, nowMs, (id) => go(() => chat.open(id)))
   const sidebarLabel = sidebar.open ? t`Hide team sidebar` : t`Show team sidebar`
   const sessionId = status.session?.id ?? null
   useEffect(() => {
@@ -276,6 +295,7 @@ export function useWorkspace() {
       working,
       go,
       atWork,
+      waiting,
       nowMs,
       attach,
       focus,

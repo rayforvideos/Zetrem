@@ -2,8 +2,12 @@ import type { Attached } from '@/entities/attachment'
 import type { ExitReason, ModelChoice, RunConfig } from '@/entities/claude-cli'
 import type { ChatSpend, Transcript } from '@/entities/conversation'
 import type { AgentStores } from '../../agent-events/agent-events.types'
+import type { Held } from '../../waiting/waiting.types'
 
-export type LiveState = 'working' | 'asking' | 'idle'
+// 'asking' and 'question' are both the run stopped for the person: one on a
+// permission, one on something it asked. They are kept apart so the screen can
+// name which, not so it can treat them differently.
+export type LiveState = 'working' | 'asking' | 'question' | 'idle'
 
 export type ChatMeta = {
   title: string | null
@@ -39,6 +43,7 @@ export type ChatSession = {
   meta: ChatMeta
   running(): boolean
   owns(hostId: string): boolean
+  held(): Held | null
   live(): LiveState
   configure(config: ChatRunConfig, onModelRefused: (model: ModelChoice) => void): void
   restore(saved: Transcript): void

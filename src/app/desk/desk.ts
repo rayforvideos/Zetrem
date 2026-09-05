@@ -10,6 +10,8 @@ export type DeskBridge = {
   openProject: Invoke<'project:open'>
   forgetProject: Invoke<'project:forget'>
   repathProject: Invoke<'project:repath'>
+  addProjectDir: Invoke<'project:addDir'>
+  removeProjectDir: Invoke<'project:removeDir'>
 
   startAgent: Invoke<'agent:start'>
   sendToAgent: Send<'agent:send'>

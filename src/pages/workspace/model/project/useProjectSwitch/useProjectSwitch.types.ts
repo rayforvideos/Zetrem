@@ -15,4 +15,6 @@ export type ProjectSwitch = {
   pick(): void
   open(id: string): void
   forget(id: string): void
+  addDir(): void
+  removeDir(path: string): void
 }

@@ -3,7 +3,7 @@ import type { AgentEventRefs } from './agent-events.types'
 import type { ClaudeTurnEvent, RateLimit, ResultMetrics, StatusEvent } from '@/entities/claude-cli'
 import { formatResetTime } from '@/shared/lib/datetime/datetime'
 import { formatTokens, limitKindLabel } from '@/shared/lib/units/units'
-import { advancePermission } from '../../chat/conversation/advance-permission'
+import { advancePermission, askOf } from '../../chat/conversation/advance-permission'
 import { agentIdIn } from './agent-id/agent-id'
 import { stirred } from './stirred/stirred'
 import {
@@ -125,14 +125,7 @@ function announce(turn: ClaudeTurnEvent, refs: AgentEventRefs): void {
       return
     case 'permission':
       refs.asks.push(turn)
-      if (refs.asks.length === 1) {
-        conversation.setPermission({
-          requestId: turn.requestId,
-          toolName: turn.toolName,
-          line: turn.line,
-          detail: turn.detail,
-        })
-      }
+      if (refs.asks.length === 1) conversation.setPermission(askOf(turn))
       conversation.setStatus('waiting')
       return
     default:

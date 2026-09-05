@@ -13,11 +13,11 @@ msgstr ""
 "Language-Team: \n"
 "Plural-Forms: \n"
 
-#: src/pages/workspace/model/session/agent-events/agent-events.ts:172
+#: src/pages/workspace/model/session/agent-events/agent-events.ts:165
 msgid " · on overage"
 msgstr " · on overage"
 
-#: src/pages/workspace/model/session/agent-events/agent-events.ts:170
+#: src/pages/workspace/model/session/agent-events/agent-events.ts:163
 msgid " {pct}% used,"
 msgstr " {pct}% used,"
 
@@ -79,7 +79,7 @@ msgid "{0} left"
 msgstr "{0} left"
 
 #. placeholder {0}: limitKindLabel(limit.kind)
-#: src/pages/workspace/model/session/agent-events/agent-events.ts:173
+#: src/pages/workspace/model/session/agent-events/agent-events.ts:166
 msgid "{0} limit{share} resets {when}{overage}"
 msgstr "{0} limit{share} resets {when}{overage}"
 
@@ -135,7 +135,7 @@ msgstr "{0}m ago"
 msgid "{back} teammates"
 msgstr "{back} teammates"
 
-#: src/pages/workspace/model/session/agent-events/agent-events.ts:183
+#: src/pages/workspace/model/session/agent-events/agent-events.ts:176
 msgid "{base}. Earlier turns live on as a summary."
 msgstr "{base}. Earlier turns live on as a summary."
 
@@ -439,6 +439,10 @@ msgstr "Add a marketplace to bring in skills and agents"
 msgid "Add account"
 msgstr "Add account"
 
+#: src/widgets/setup/ui/ProjectField/ProjectField.tsx:79
+msgid "Add folder"
+msgstr "Add folder"
+
 #: src/widgets/setup/ui/PluginShelf/PluginShelf.tsx:87
 msgid "Add more"
 msgstr "Add more"
@@ -501,7 +505,7 @@ msgstr "All"
 msgid "All {0} connected"
 msgstr "All {0} connected"
 
-#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:70
+#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:84
 msgid "Allow"
 msgstr "Allow"
 
@@ -510,7 +514,7 @@ msgstr "Allow"
 msgid "Allow all"
 msgstr "Allow all"
 
-#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:113
+#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:134
 msgid "Allow this?"
 msgstr "Allow this?"
 
@@ -534,6 +538,10 @@ msgstr "API error {0}"
 #: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:957
 msgid "Apply"
 msgstr "Apply"
+
+#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:132
+msgid "Approve this plan?"
+msgstr "Approve this plan?"
 
 #: src/entities/settings/config/choices/choices.ts:12
 #: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:47
@@ -564,7 +572,7 @@ msgstr "Attach a file"
 msgid "Author"
 msgstr "Author"
 
-#: src/pages/workspace/model/session/agent-events/agent-events.ts:190
+#: src/pages/workspace/model/session/agent-events/agent-events.ts:183
 msgid "auto"
 msgstr "auto"
 
@@ -642,7 +650,7 @@ msgstr "Cancel sign-in"
 msgid "Cart totals and rounding"
 msgstr "Cart totals and rounding"
 
-#: src/widgets/setup/ui/ProjectField/ProjectField.tsx:22
+#: src/widgets/setup/ui/ProjectField/ProjectField.tsx:23
 msgid "Change"
 msgstr "Change"
 
@@ -677,7 +685,7 @@ msgstr "Checking…"
 msgid "Choose a project folder"
 msgstr "Choose a project folder"
 
-#: src/widgets/setup/ui/ProjectField/ProjectField.tsx:22
+#: src/widgets/setup/ui/ProjectField/ProjectField.tsx:23
 msgid "Choose folder"
 msgstr "Choose folder"
 
@@ -794,7 +802,7 @@ msgstr "Context"
 msgid "Continue"
 msgstr "Continue"
 
-#: src/pages/workspace/model/session/agent-events/agent-events.ts:181
+#: src/pages/workspace/model/session/agent-events/agent-events.ts:174
 msgid "Conversation compacted here"
 msgstr "Conversation compacted here"
 
@@ -806,6 +814,10 @@ msgstr "Could not {0} {target}"
 #: src/pages/workspace/model/extensions/useConnectors.ts:76
 msgid "Could not add {name}"
 msgstr "Could not add {name}"
+
+#: src/pages/workspace/model/project/useProjectSwitch/useProjectSwitch.ts:63
+msgid "Could not add that folder"
+msgstr "Could not add that folder"
 
 #: src/pages/workspace/model/extensions/useConnectors.ts:90
 msgid "Could not bring over Claude Desktop"
@@ -840,8 +852,8 @@ msgstr "Could not list your saved chats"
 msgid "Could not open that chat"
 msgstr "Could not open that chat"
 
-#: src/pages/workspace/model/project/useProjectSwitch/useProjectSwitch.ts:20
-#: src/pages/workspace/model/project/useProjectSwitch/useProjectSwitch.ts:31
+#: src/pages/workspace/model/project/useProjectSwitch/useProjectSwitch.ts:27
+#: src/pages/workspace/model/project/useProjectSwitch/useProjectSwitch.ts:38
 msgid "Could not open that folder"
 msgstr "Could not open that folder"
 
@@ -913,11 +925,15 @@ msgstr "Could not read your settings"
 msgid "Could not read your sign-in"
 msgstr "Could not read your sign-in"
 
+#: src/pages/workspace/model/project/useProjectSwitch/useProjectSwitch.ts:68
+msgid "Could not remove that folder"
+msgstr "Could not remove that folder"
+
 #: src/widgets/setup/model/useAgentMemory.ts:120
 msgid "Could not remove that memory"
 msgstr "Could not remove that memory"
 
-#: src/pages/workspace/model/project/useProjectSwitch/useProjectSwitch.ts:45
+#: src/pages/workspace/model/project/useProjectSwitch/useProjectSwitch.ts:52
 msgid "Could not remove that project"
 msgstr "Could not remove that project"
 
@@ -1009,7 +1025,7 @@ msgstr "Delete the note “{0}”?"
 msgid "Deleted"
 msgstr "Deleted"
 
-#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:84
+#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:98
 msgid "Deny"
 msgstr "Deny"
 
@@ -1038,7 +1054,7 @@ msgstr "Dismissed \"{title}\""
 msgid "Documents they read first. Long ones cost nothing until they open them."
 msgstr "Documents they read first. Long ones cost nothing until they open them."
 
-#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:93
+#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:111
 msgid "Don't ask again this session"
 msgstr "Don't ask again this session"
 
@@ -1090,7 +1106,7 @@ msgstr "Edit"
 msgid "Edit {0}"
 msgstr "Edit {0}"
 
-#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:108
+#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:127
 msgid "Edit this file?"
 msgstr "Edit this file?"
 
@@ -1139,6 +1155,10 @@ msgstr "Everything the session has"
 #: src/widgets/setup/ui/SetupPane/SetupPane.tsx:34
 msgid "Extensions"
 msgstr "Extensions"
+
+#: src/widgets/setup/ui/ProjectField/ProjectField.tsx:53
+msgid "Extra folders"
+msgstr "Extra folders"
 
 #: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:177
 #: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:192
@@ -1218,6 +1238,10 @@ msgstr "Folder for both"
 #: src/widgets/team-sidebar/ui/ChatList/ChatRow.tsx:87
 msgid "Folder name"
 msgstr "Folder name"
+
+#: src/widgets/setup/ui/ProjectField/ProjectField.tsx:55
+msgid "Folders outside the project your team may also read and write, such as a sibling package or a folder of specs."
+msgstr "Folders outside the project your team may also read and write, such as a sibling package or a folder of specs."
 
 #: src/widgets/setup/lib/tongues/tongues.ts:5
 msgid "Follows the language your computer is set to"
@@ -1475,7 +1499,7 @@ msgstr "Low"
 msgid "Manage"
 msgstr "Manage"
 
-#: src/pages/workspace/model/session/agent-events/agent-events.ts:191
+#: src/pages/workspace/model/session/agent-events/agent-events.ts:184
 msgid "manual"
 msgstr "manual"
 
@@ -1851,7 +1875,7 @@ msgid "Previous 7 days"
 msgstr "Previous 7 days"
 
 #: src/widgets/setup/ui/MemoryField/MemoryField.tsx:27
-#: src/widgets/setup/ui/ProjectField/ProjectField.tsx:9
+#: src/widgets/setup/ui/ProjectField/ProjectField.tsx:10
 msgid "Project"
 msgstr "Project"
 
@@ -1887,7 +1911,7 @@ msgstr "Rate limited"
 msgid "Re-authenticate"
 msgstr "Re-authenticate"
 
-#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:111
+#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:130
 msgid "Reach out to the web?"
 msgstr "Reach out to the web?"
 
@@ -1933,7 +1957,7 @@ msgstr "Reading what this session offers. The list fills in a moment."
 msgid "Reading which agents Claude Code brings. They will be listed here."
 msgstr "Reading which agents Claude Code brings. They will be listed here."
 
-#: src/widgets/setup/ui/ProjectField/ProjectField.tsx:27
+#: src/widgets/setup/ui/ProjectField/ProjectField.tsx:28
 msgid "Recent"
 msgstr "Recent"
 
@@ -1988,6 +2012,10 @@ msgstr "Remove {name}?"
 #: src/widgets/setup/ui/EnvField/EnvField.tsx:61
 msgid "Remove {one}"
 msgstr "Remove {one}"
+
+#: src/widgets/setup/ui/ProjectField/ProjectField.tsx:68
+msgid "Remove {path}"
+msgstr "Remove {path}"
 
 #: src/widgets/team-sidebar/ui/MemberMenu/MemberMenu.tsx:51
 msgid "Remove from team"
@@ -2080,7 +2108,7 @@ msgstr "Roll back"
 msgid "run {0} of {1}"
 msgstr "run {0} of {1}"
 
-#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:103
+#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:122
 msgid "Run this command?"
 msgstr "Run this command?"
 
@@ -2724,7 +2752,7 @@ msgstr "This teammate changed no files."
 msgid "This teammate has no branch Zetrem can look up."
 msgstr "This teammate has no branch Zetrem can look up."
 
-#: src/pages/workspace/model/session/agent-events/agent-events.ts:198
+#: src/pages/workspace/model/session/agent-events/agent-events.ts:191
 msgid "This turn: {out} out · {seconds}s"
 msgstr "This turn: {out} out · {seconds}s"
 
@@ -2974,7 +3002,7 @@ msgstr "Write the first note"
 msgid "Write their instructions once and the orchestrator can call them in any project."
 msgstr "Write their instructions once and the orchestrator can call them in any project."
 
-#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:105
+#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:124
 msgid "Write this file?"
 msgstr "Write this file?"
 

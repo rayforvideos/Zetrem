@@ -46,8 +46,11 @@ export function SetupGate({
       project={{
         chosen: projects.current,
         recent: projects.all.filter((one) => one.id !== projects.current?.id),
+        extraDirs: projects.current?.extraDirs ?? [],
         onChoose: projects.pick,
         onPickRecent: onOpenProject,
+        onAddDir: projects.addDir,
+        onRemoveDir: projects.removeDir,
       }}
       defaults={{
         permissionMode: settings.permissionMode,

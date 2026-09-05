@@ -312,6 +312,35 @@ describe('approval: the most important moment in this app', () => {
     expect(pane([], ask)).not.toContain('Keep going')
   })
 
+  it('shows the plan it is asking about, rendered rather than in one line', () => {
+    const html = pane([], {
+      requestId: 'r3',
+      toolName: 'ExitPlanMode',
+      line: 'ExitPlanMode',
+      detail: '',
+      plan: '## Steps\n\n1. Read `run-config.ts`\n2. Add the flag',
+    })
+    expect(html).toContain('Approve this plan?')
+    expect(html).toContain('data-plan')
+    expect(html).toContain('<h2')
+    expect(html).toContain('<ol')
+    expect(html).toContain('Add the flag')
+  })
+
+  it('withholds standing approval for a plan, so the next one is read too', () => {
+    const planned = pane([], {
+      requestId: 'r4',
+      toolName: 'ExitPlanMode',
+      line: 'ExitPlanMode',
+      detail: '',
+      plan: 'Do the thing',
+    })
+    expect(planned).not.toContain('ask again this session')
+    expect(planned).toContain('Allow')
+    expect(planned).toContain('Deny')
+    expect(pane([], ask), 'other tools keep it').toContain('ask again this session')
+  })
+
   it('asks about a tool it does not know, without inventing a name for it', () => {
     const html = pane([], {
       requestId: 'r2',

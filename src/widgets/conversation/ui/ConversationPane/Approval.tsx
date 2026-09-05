@@ -7,7 +7,10 @@ import { armed } from '@/widgets/conversation/lib/arming/arming'
 import { Button } from '@/shared/ui/button'
 import { Kbd, KbdGroup } from '@/shared/ui/kbd'
 import { ToolIcon } from '@/entities/tool'
+import { Markdown } from '@/shared/markdown/Markdown/Markdown'
 import { t } from '@lingui/core/macro'
+
+const PLAN_TOOL = 'ExitPlanMode'
 
 export function Approval({
   ask,
@@ -44,6 +47,7 @@ export function Approval({
   }, [ask.requestId, onDecide])
 
   const shape = toolShape(ask.toolName, null)
+  const plan = ask.toolName === PLAN_TOOL ? (ask.plan ?? '') : ''
 
   return (
     <div
@@ -55,15 +59,25 @@ export function Approval({
         <span className="font-mono text-xs text-muted-foreground">{ask.toolName}</span>
       </div>
 
-      <div
-        data-selectable
-        className="zt-scroll flex max-h-52 items-start gap-2 overflow-y-auto pr-2.5 font-mono text-sm [overflow-wrap:anywhere]"
-      >
-        <span className="mt-[3px] flex-none text-muted-foreground">
-          <ToolIcon shape={shape} />
-        </span>
-        <span className="whitespace-pre-wrap">{ask.detail || ask.line}</span>
-      </div>
+      {plan ? (
+        <div
+          data-plan
+          data-selectable
+          className="zt-scroll max-h-80 overflow-y-auto pr-2.5 text-sm"
+        >
+          <Markdown text={plan} />
+        </div>
+      ) : (
+        <div
+          data-selectable
+          className="zt-scroll flex max-h-52 items-start gap-2 overflow-y-auto pr-2.5 font-mono text-sm [overflow-wrap:anywhere]"
+        >
+          <span className="mt-[3px] flex-none text-muted-foreground">
+            <ToolIcon shape={shape} />
+          </span>
+          <span className="whitespace-pre-wrap">{ask.detail || ask.line}</span>
+        </div>
+      )}
 
       <div className="flex flex-wrap items-center gap-2">
         <Button size="sm" onClick={() => decide(true)} className="rounded-full">
@@ -84,14 +98,19 @@ export function Approval({
           {t`Deny`}
           <Kbd>Esc</Kbd>
         </Button>
-        <Button
-          size="sm"
-          variant="ghost"
-          onClick={() => decide(true, true)}
-          className="rounded-full text-muted-foreground"
-        >
-          {t`Don't ask again this session`}
-        </Button>
+        {/* Standing approval is withheld for plans: pressed once, every later
+            plan would be approved unread, which is the whole of what plan mode
+            is asked to prevent. */}
+        {ask.toolName !== PLAN_TOOL && (
+          <Button
+            size="sm"
+            variant="ghost"
+            onClick={() => decide(true, true)}
+            className="rounded-full text-muted-foreground"
+          >
+            {t`Don't ask again this session`}
+          </Button>
+        )}
       </div>
     </div>
   )
@@ -109,6 +128,8 @@ function verbOf(toolName: string): string {
     case 'WebFetch':
     case 'WebSearch':
       return t`Reach out to the web?`
+    case PLAN_TOOL:
+      return t`Approve this plan?`
     default:
       return t`Allow this?`
   }

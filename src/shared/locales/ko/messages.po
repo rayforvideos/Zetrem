@@ -500,7 +500,7 @@ msgstr "{0}개 모두 연결됨"
 msgid "Allow"
 msgstr "허용"
 
-#: src/entities/settings/config/choices/choices.ts:17
+#: src/entities/settings/config/choices/choices.ts:18
 #: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:47
 msgid "Allow all"
 msgstr "전부 허용"
@@ -530,7 +530,7 @@ msgstr "API 오류 {0}"
 msgid "Apply"
 msgstr "적용"
 
-#: src/entities/settings/config/choices/choices.ts:11
+#: src/entities/settings/config/choices/choices.ts:12
 #: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:47
 msgid "Ask first"
 msgstr "먼저 묻기"
@@ -543,7 +543,7 @@ msgstr "일 전체를 맡기세요"
 msgid "Ask for the whole job, not the next step. The orchestrator splits it up, hands out the pieces, and replies when they come back."
 msgstr "다음 단계 말고 일 전체를 맡기세요. 오케스트레이터가 알아서 쪼개서 나눠 주고, 결과가 오면 정리해서 답합니다."
 
-#: src/entities/settings/config/choices/choices.ts:11
+#: src/entities/settings/config/choices/choices.ts:12
 msgid "Asks before editing files or running commands"
 msgstr "파일을 고치거나 명령을 실행하기 전에 묻습니다"
 
@@ -563,7 +563,7 @@ msgstr "작성자"
 msgid "auto"
 msgstr "자동"
 
-#: src/entities/settings/config/choices/choices.ts:14
+#: src/entities/settings/config/choices/choices.ts:15
 #: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:47
 msgid "Auto-edit"
 msgstr "자동 편집"
@@ -582,7 +582,7 @@ msgstr "이전"
 msgid "Back to the list"
 msgstr "목록으로"
 
-#: src/entities/settings/config/choices/choices.ts:28
+#: src/entities/settings/config/choices/choices.ts:29
 msgid "Balanced for most tasks"
 msgstr "대부분의 일에 무난합니다"
 
@@ -747,7 +747,7 @@ msgstr "선택한 파일 커밋"
 msgid "compacting soon"
 msgstr "곧 압축"
 
-#: src/entities/settings/config/choices/choices.ts:27
+#: src/entities/settings/config/choices/choices.ts:28
 msgid "Complex work. Slower and pricier"
 msgstr "복잡한 일에 좋습니다. 느리고 비쌉니다"
 
@@ -958,8 +958,8 @@ msgstr "만들기"
 msgid "Create a teammate and they'll show up here."
 msgstr "팀원을 만들면 여기에 나타납니다."
 
-#: src/entities/settings/config/choices/choices.ts:21
-#: src/entities/settings/config/choices/choices.ts:34
+#: src/entities/settings/config/choices/choices.ts:22
+#: src/entities/settings/config/choices/choices.ts:35
 msgid "Default"
 msgstr "기본값"
 
@@ -1092,7 +1092,7 @@ msgstr "수정"
 msgid "Editing"
 msgstr "고치는 중"
 
-#: src/entities/settings/config/choices/choices.ts:15
+#: src/entities/settings/config/choices/choices.ts:16
 msgid "Edits files freely, asks before running commands"
 msgstr "파일은 알아서 고치고, 명령을 실행할 때만 묻습니다"
 
@@ -1105,7 +1105,7 @@ msgstr "노력"
 msgid "Every command is on screen"
 msgstr "실행한 명령이 전부 보입니다"
 
-#: src/entities/settings/config/choices/choices.ts:36
+#: src/entities/settings/config/choices/choices.ts:37
 msgid "Everyday work"
 msgstr "평소 작업"
 
@@ -1113,7 +1113,7 @@ msgstr "평소 작업"
 msgid "Everyone you send out gets a card: their name, their task, and how long they have been at it. Open one to see what they were asked and what they sent back."
 msgstr "내보낸 팀원마다 카드가 하나씩 생깁니다. 이름, 맡은 일, 걸린 시간이 보입니다. 눌러 보면 무엇을 시켰고 뭐라고 답했는지 볼 수 있습니다."
 
-#: src/entities/settings/config/choices/choices.ts:39
+#: src/entities/settings/config/choices/choices.ts:40
 msgid "Everything it has. Slowest and priciest"
 msgstr "가진 것을 다 씁니다. 가장 느리고 가장 비쌉니다"
 
@@ -1144,7 +1144,7 @@ msgstr "실패"
 msgid "Failed: the run stopped before it was done"
 msgstr "실패: 작업이 끝나기 전에 멈췄습니다"
 
-#: src/entities/settings/config/choices/choices.ts:29
+#: src/entities/settings/config/choices/choices.ts:30
 msgid "Fast and cheap. Good for quick questions"
 msgstr "빠르고 저렴합니다. 간단한 질문에 좋습니다"
 
@@ -1209,11 +1209,11 @@ msgstr "폴더 이름"
 msgid "Follows the language your computer is set to"
 msgstr "컴퓨터에 설정된 언어를 따릅니다"
 
-#: src/entities/settings/config/choices/choices.ts:21
+#: src/entities/settings/config/choices/choices.ts:22
 msgid "Follows your account setting"
 msgstr "계정 설정을 따릅니다"
 
-#: src/entities/settings/config/choices/choices.ts:34
+#: src/entities/settings/config/choices/choices.ts:35
 msgid "Follows your Claude Code setting"
 msgstr "Claude Code 설정을 따릅니다"
 
@@ -1290,7 +1290,7 @@ msgstr "그래프"
 msgid "Handing off"
 msgstr "넘기는 중"
 
-#: src/entities/settings/config/choices/choices.ts:38
+#: src/entities/settings/config/choices/choices.ts:39
 msgid "Hard problems. Much slower"
 msgstr "어려운 문제용. 훨씬 느립니다"
 
@@ -1302,7 +1302,7 @@ msgstr "멈춰 있음"
 msgid "Hide team sidebar"
 msgstr "팀 사이드바 접기"
 
-#: src/entities/settings/config/choices/choices.ts:37
+#: src/entities/settings/config/choices/choices.ts:38
 msgid "High"
 msgstr "높음"
 
@@ -1445,7 +1445,7 @@ msgstr "라이브러리 안내"
 msgid "Linked from"
 msgstr "이 노트를 가리키는 노트"
 
-#: src/entities/settings/config/choices/choices.ts:35
+#: src/entities/settings/config/choices/choices.ts:36
 msgid "Low"
 msgstr "낮음"
 
@@ -1457,7 +1457,7 @@ msgstr "관리"
 msgid "manual"
 msgstr "수동"
 
-#: src/entities/settings/config/choices/choices.ts:39
+#: src/entities/settings/config/choices/choices.ts:40
 msgid "Max"
 msgstr "최대"
 
@@ -1465,7 +1465,7 @@ msgstr "최대"
 msgid "MCP server"
 msgstr "MCP 서버"
 
-#: src/entities/settings/config/choices/choices.ts:36
+#: src/entities/settings/config/choices/choices.ts:37
 msgid "Medium"
 msgstr "보통"
 
@@ -1549,7 +1549,7 @@ msgstr "로그인 필요"
 msgid "Needs you"
 msgstr "기다리는 중"
 
-#: src/entities/settings/config/choices/choices.ts:17
+#: src/entities/settings/config/choices/choices.ts:18
 msgid "Never asks. Anything can run"
 msgstr "묻지 않습니다. 무엇이든 실행됩니다"
 
@@ -1791,6 +1791,10 @@ msgstr "먼저 프로젝트를 고르세요"
 msgid "Picked up where they left off"
 msgstr "하던 일을 이어받았습니다"
 
+#: src/entities/settings/config/choices/choices.ts:11
+msgid "Plan first"
+msgstr "계획 먼저"
+
 #: src/entities/tool/lib/tool-verb/tool-verb.ts:28
 msgid "Planning"
 msgstr "계획하는 중"
@@ -1841,7 +1845,7 @@ msgstr "푸시"
 msgid "Pushed."
 msgstr "푸시했습니다."
 
-#: src/entities/settings/config/choices/choices.ts:35
+#: src/entities/settings/config/choices/choices.ts:36
 msgid "Quick answers. Least thinking, cheapest"
 msgstr "빠른 답. 가장 적게 생각하고 가장 저렴합니다"
 
@@ -2476,7 +2480,7 @@ msgstr "빈 폴더가 라이브러리에서 지워집니다."
 msgid "The file is deleted and its line leaves the index the agents load. This cannot be undone."
 msgstr "파일이 삭제되고 에이전트가 로드하는 색인에서도 빠집니다. 되돌릴 수 없어요."
 
-#: src/entities/settings/config/choices/choices.ts:25
+#: src/entities/settings/config/choices/choices.ts:26
 msgid "The hardest problems. Slowest and priciest of these"
 msgstr "가장 어려운 문제용. 이 중 가장 느리고 가장 비쌉니다"
 
@@ -2591,7 +2595,7 @@ msgstr "빨리 읽고, 지루해하는 법이 없습니다."
 msgid "Thinking"
 msgstr "생각하는 중"
 
-#: src/entities/settings/config/choices/choices.ts:37
+#: src/entities/settings/config/choices/choices.ts:38
 msgid "Thinks longer. Slower and pricier"
 msgstr "더 오래 생각합니다. 느리고 비쌉니다"
 
@@ -2790,7 +2794,7 @@ msgstr "업데이트하는 중…"
 msgid "Use https, or http only for a server on this machine"
 msgstr "https를 쓰세요. http는 이 컴퓨터의 서버일 때만 됩니다"
 
-#: src/entities/settings/config/choices/choices.ts:38
+#: src/entities/settings/config/choices/choices.ts:39
 msgid "Very high"
 msgstr "매우 높음"
 
@@ -2916,6 +2920,10 @@ msgstr "일하는 중"
 msgid "Works in a git worktree of its own; changes come back as a branch."
 msgstr "자기만의 git 워크트리에서 일합니다. 변경은 브랜치로 돌아옵니다."
 
+#: src/entities/settings/config/choices/choices.ts:11
+msgid "Works out a plan and asks before doing it"
+msgstr "계획을 세우고, 실행하기 전에 묻습니다"
+
 #: src/widgets/tile-deck/lib/leading/leading.ts:13
 msgid "Wrapped up"
 msgstr "마무리됨"
@@ -2987,7 +2995,7 @@ msgstr "내 계정"
 msgid "Your account changed before the reply finished, so it stops here."
 msgstr "답변이 끝나기 전에 계정이 바뀌어서, 여기서 멈췄어요."
 
-#: src/entities/settings/config/choices/choices.ts:51
+#: src/entities/settings/config/choices/choices.ts:52
 msgid "Your account turned this one down. Try it again if your plan changed."
 msgstr "계정이 이 모델을 거절했습니다. 요금제가 바뀌었다면 다시 시도해 보세요."
 

@@ -500,7 +500,7 @@ msgstr "All {0} connected"
 msgid "Allow"
 msgstr "Allow"
 
-#: src/entities/settings/config/choices/choices.ts:17
+#: src/entities/settings/config/choices/choices.ts:18
 #: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:47
 msgid "Allow all"
 msgstr "Allow all"
@@ -530,7 +530,7 @@ msgstr "API error {0}"
 msgid "Apply"
 msgstr "Apply"
 
-#: src/entities/settings/config/choices/choices.ts:11
+#: src/entities/settings/config/choices/choices.ts:12
 #: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:47
 msgid "Ask first"
 msgstr "Ask first"
@@ -543,7 +543,7 @@ msgstr "Ask for the whole job"
 msgid "Ask for the whole job, not the next step. The orchestrator splits it up, hands out the pieces, and replies when they come back."
 msgstr "Ask for the whole job, not the next step. The orchestrator splits it up, hands out the pieces, and replies when they come back."
 
-#: src/entities/settings/config/choices/choices.ts:11
+#: src/entities/settings/config/choices/choices.ts:12
 msgid "Asks before editing files or running commands"
 msgstr "Asks before editing files or running commands"
 
@@ -563,7 +563,7 @@ msgstr "Author"
 msgid "auto"
 msgstr "auto"
 
-#: src/entities/settings/config/choices/choices.ts:14
+#: src/entities/settings/config/choices/choices.ts:15
 #: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:47
 msgid "Auto-edit"
 msgstr "Auto-edit"
@@ -582,7 +582,7 @@ msgstr "Back"
 msgid "Back to the list"
 msgstr "Back to the list"
 
-#: src/entities/settings/config/choices/choices.ts:28
+#: src/entities/settings/config/choices/choices.ts:29
 msgid "Balanced for most tasks"
 msgstr "Balanced for most tasks"
 
@@ -747,7 +747,7 @@ msgstr "Commit staged files"
 msgid "compacting soon"
 msgstr "compacting soon"
 
-#: src/entities/settings/config/choices/choices.ts:27
+#: src/entities/settings/config/choices/choices.ts:28
 msgid "Complex work. Slower and pricier"
 msgstr "Complex work. Slower and pricier"
 
@@ -958,8 +958,8 @@ msgstr "Create"
 msgid "Create a teammate and they'll show up here."
 msgstr "Create a teammate and they'll show up here."
 
-#: src/entities/settings/config/choices/choices.ts:21
-#: src/entities/settings/config/choices/choices.ts:34
+#: src/entities/settings/config/choices/choices.ts:22
+#: src/entities/settings/config/choices/choices.ts:35
 msgid "Default"
 msgstr "Default"
 
@@ -1092,7 +1092,7 @@ msgstr "Edited"
 msgid "Editing"
 msgstr "Editing"
 
-#: src/entities/settings/config/choices/choices.ts:15
+#: src/entities/settings/config/choices/choices.ts:16
 msgid "Edits files freely, asks before running commands"
 msgstr "Edits files freely, asks before running commands"
 
@@ -1105,7 +1105,7 @@ msgstr "Effort"
 msgid "Every command is on screen"
 msgstr "Every command is on screen"
 
-#: src/entities/settings/config/choices/choices.ts:36
+#: src/entities/settings/config/choices/choices.ts:37
 msgid "Everyday work"
 msgstr "Everyday work"
 
@@ -1113,7 +1113,7 @@ msgstr "Everyday work"
 msgid "Everyone you send out gets a card: their name, their task, and how long they have been at it. Open one to see what they were asked and what they sent back."
 msgstr "Everyone you send out gets a card: their name, their task, and how long they have been at it. Open one to see what they were asked and what they sent back."
 
-#: src/entities/settings/config/choices/choices.ts:39
+#: src/entities/settings/config/choices/choices.ts:40
 msgid "Everything it has. Slowest and priciest"
 msgstr "Everything it has. Slowest and priciest"
 
@@ -1144,7 +1144,7 @@ msgstr "Failed"
 msgid "Failed: the run stopped before it was done"
 msgstr "Failed: the run stopped before it was done"
 
-#: src/entities/settings/config/choices/choices.ts:29
+#: src/entities/settings/config/choices/choices.ts:30
 msgid "Fast and cheap. Good for quick questions"
 msgstr "Fast and cheap. Good for quick questions"
 
@@ -1209,11 +1209,11 @@ msgstr "Folder name"
 msgid "Follows the language your computer is set to"
 msgstr "Follows the language your computer is set to"
 
-#: src/entities/settings/config/choices/choices.ts:21
+#: src/entities/settings/config/choices/choices.ts:22
 msgid "Follows your account setting"
 msgstr "Follows your account setting"
 
-#: src/entities/settings/config/choices/choices.ts:34
+#: src/entities/settings/config/choices/choices.ts:35
 msgid "Follows your Claude Code setting"
 msgstr "Follows your Claude Code setting"
 
@@ -1290,7 +1290,7 @@ msgstr "Graph"
 msgid "Handing off"
 msgstr "Handing off"
 
-#: src/entities/settings/config/choices/choices.ts:38
+#: src/entities/settings/config/choices/choices.ts:39
 msgid "Hard problems. Much slower"
 msgstr "Hard problems. Much slower"
 
@@ -1302,7 +1302,7 @@ msgstr "Held up"
 msgid "Hide team sidebar"
 msgstr "Hide team sidebar"
 
-#: src/entities/settings/config/choices/choices.ts:37
+#: src/entities/settings/config/choices/choices.ts:38
 msgid "High"
 msgstr "High"
 
@@ -1445,7 +1445,7 @@ msgstr "Library guide"
 msgid "Linked from"
 msgstr "Linked from"
 
-#: src/entities/settings/config/choices/choices.ts:35
+#: src/entities/settings/config/choices/choices.ts:36
 msgid "Low"
 msgstr "Low"
 
@@ -1457,7 +1457,7 @@ msgstr "Manage"
 msgid "manual"
 msgstr "manual"
 
-#: src/entities/settings/config/choices/choices.ts:39
+#: src/entities/settings/config/choices/choices.ts:40
 msgid "Max"
 msgstr "Max"
 
@@ -1465,7 +1465,7 @@ msgstr "Max"
 msgid "MCP server"
 msgstr "MCP server"
 
-#: src/entities/settings/config/choices/choices.ts:36
+#: src/entities/settings/config/choices/choices.ts:37
 msgid "Medium"
 msgstr "Medium"
 
@@ -1549,7 +1549,7 @@ msgstr "Needs auth"
 msgid "Needs you"
 msgstr "Needs you"
 
-#: src/entities/settings/config/choices/choices.ts:17
+#: src/entities/settings/config/choices/choices.ts:18
 msgid "Never asks. Anything can run"
 msgstr "Never asks. Anything can run"
 
@@ -1791,6 +1791,10 @@ msgstr "Pick a project first"
 msgid "Picked up where they left off"
 msgstr "Picked up where they left off"
 
+#: src/entities/settings/config/choices/choices.ts:11
+msgid "Plan first"
+msgstr "Plan first"
+
 #: src/entities/tool/lib/tool-verb/tool-verb.ts:28
 msgid "Planning"
 msgstr "Planning"
@@ -1841,7 +1845,7 @@ msgstr "Push"
 msgid "Pushed."
 msgstr "Pushed."
 
-#: src/entities/settings/config/choices/choices.ts:35
+#: src/entities/settings/config/choices/choices.ts:36
 msgid "Quick answers. Least thinking, cheapest"
 msgstr "Quick answers. Least thinking, cheapest"
 
@@ -2476,7 +2480,7 @@ msgstr "The empty folder is removed from the library."
 msgid "The file is deleted and its line leaves the index the agents load. This cannot be undone."
 msgstr "The file is deleted and its line leaves the index the agents load. This cannot be undone."
 
-#: src/entities/settings/config/choices/choices.ts:25
+#: src/entities/settings/config/choices/choices.ts:26
 msgid "The hardest problems. Slowest and priciest of these"
 msgstr "The hardest problems. Slowest and priciest of these"
 
@@ -2591,7 +2595,7 @@ msgstr "They read fast and they never get bored."
 msgid "Thinking"
 msgstr "Thinking"
 
-#: src/entities/settings/config/choices/choices.ts:37
+#: src/entities/settings/config/choices/choices.ts:38
 msgid "Thinks longer. Slower and pricier"
 msgstr "Thinks longer. Slower and pricier"
 
@@ -2790,7 +2794,7 @@ msgstr "Updating…"
 msgid "Use https, or http only for a server on this machine"
 msgstr "Use https, or http only for a server on this machine"
 
-#: src/entities/settings/config/choices/choices.ts:38
+#: src/entities/settings/config/choices/choices.ts:39
 msgid "Very high"
 msgstr "Very high"
 
@@ -2916,6 +2920,10 @@ msgstr "Working"
 msgid "Works in a git worktree of its own; changes come back as a branch."
 msgstr "Works in a git worktree of its own; changes come back as a branch."
 
+#: src/entities/settings/config/choices/choices.ts:11
+msgid "Works out a plan and asks before doing it"
+msgstr "Works out a plan and asks before doing it"
+
 #: src/widgets/tile-deck/lib/leading/leading.ts:13
 msgid "Wrapped up"
 msgstr "Wrapped up"
@@ -2987,7 +2995,7 @@ msgstr "Your account"
 msgid "Your account changed before the reply finished, so it stops here."
 msgstr "Your account changed before the reply finished, so it stops here."
 
-#: src/entities/settings/config/choices/choices.ts:51
+#: src/entities/settings/config/choices/choices.ts:52
 msgid "Your account turned this one down. Try it again if your plan changed."
 msgstr "Your account turned this one down. Try it again if your plan changed."
 

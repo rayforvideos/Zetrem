@@ -8,6 +8,7 @@ export const PERMISSION_MODES: {
   label: MessageDescriptor
   hint: MessageDescriptor
 }[] = [
+  { id: 'plan', label: msg`Plan first`, hint: msg`Works out a plan and asks before doing it` },
   { id: 'ask', label: msg`Ask first`, hint: msg`Asks before editing files or running commands` },
   {
     id: 'acceptEdits',

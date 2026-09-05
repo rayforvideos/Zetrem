@@ -61,6 +61,10 @@ export function SetupGate({
         onNotify: (on) => update({ notify: on }),
         enterSends: settings.enterSends,
         onEnterSends: (on) => update({ enterSends: on }),
+        chrome: settings.chrome,
+        onChrome: (on) => update({ chrome: on }),
+        passEnv: settings.passEnv,
+        onPassEnv: (passEnv) => update({ passEnv }),
         onModel: (model) => update({ model }),
       }}
       plugins={{

@@ -39,6 +39,12 @@ export function agentArgs(config: RunConfig): string[] {
   if (config.model !== 'default') args.push('--model', config.model)
   if (config.effort !== 'default') args.push('--effort', config.effort)
 
+  // Only the on switch is spoken. Measured on CLI 2.1.260: a run with no chrome
+  // flag reports the same empty mcp_servers and tool list as one given
+  // --no-chrome, so silence already means off and saying it again would only
+  // put a second meaning on the same state.
+  if (config.chrome === true) args.push('--chrome')
+
   if (config.permissionMode === 'bypass') {
     args.push('--dangerously-skip-permissions')
     return args

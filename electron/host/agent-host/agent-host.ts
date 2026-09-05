@@ -18,6 +18,7 @@ import { accountWorkInFlight } from '../../spawn/account-work/account-work'
 import { errorTail } from '../../spawn/error-tail/error-tail'
 import { tell } from '../tell/tell'
 import { runConfigOf } from '../run-config-guard/run-config-guard'
+import { loadSettings } from '../../store/settings-store/settings-store'
 import { launchFor } from '../../spawn/spawn-claude/spawn-claude'
 import { scratchWorkspace } from '../../shell/workspace-dir/workspace-dir'
 import { isGitWorkspace } from '../../shell/git-workspace/git-workspace'
@@ -187,7 +188,9 @@ export function registerAgentHost(): void {
           }),
           ...added,
         ])
-        const env = agentEnv(process.env, await loginPath())
+        // The names the person asked to carry through are read here, at the
+        // spawn, so a change in settings reaches the next session with no restart.
+        const env = agentEnv(process.env, await loginPath(), (await loadSettings()).passEnv)
 
         // Nothing below may await: the spawn and the map entry have to happen
         // in one uninterrupted step, or a stop can land between them.

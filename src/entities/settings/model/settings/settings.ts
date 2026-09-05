@@ -3,6 +3,7 @@ import type { Settings } from './settings.types'
 import { GIT_COLUMNS, SIDEBAR } from '@/shared/config/theme'
 // Not the barrel: the main process reads settings, and the barrel pulls UserFace's PNG art.
 import { isFaceId, tidyUserName } from '@/entities/user/@x/settings'
+import { isEnvName } from '../../lib/env-name/env-name'
 import { NAMED_EFFORTS } from '@/entities/claude-cli/@x/settings'
 import type { EffortChoice, ModelChoice, PermissionMode } from '@/entities/claude-cli/@x/settings'
 
@@ -27,6 +28,8 @@ export const DEFAULT_SETTINGS: Settings = {
   enterSends: true,
   theme: 'dark',
   notify: true,
+  chrome: false,
+  passEnv: [],
   knownAgents: [],
   stockOff: [],
   wasStockOn: null,
@@ -102,6 +105,13 @@ export function readSettings(saved: unknown): Settings {
     tongue: oneOf(TONGUES, source.tongue, 'system'),
     theme: oneOf(THEMES, source.theme, DEFAULT_SETTINGS.theme),
     notify: source.notify !== false,
+    // Absent reads as off: an older file that never heard of browser tools must
+    // not gain them on upgrade.
+    chrome: source.chrome === true,
+    // Anything that is not a bare variable name is dropped rather than carried:
+    // the list ends up in a spawn's environment, and a hand-edited file is the
+    // one place a name like `A=B` could get in.
+    passEnv: names(source.passEnv, DEFAULT_SETTINGS.passEnv).filter(isEnvName),
     enterSends: source.enterSends !== false,
     sidebarOpen: source.sidebarOpen !== false,
     sidebarWidth: sidebarWidth(source.sidebarWidth),

@@ -41,6 +41,9 @@ const HOST_ENV = {
   MallocNanoZone: '0',
 }
 
+// What agentEnv lays on top of every environment it builds, whatever went in.
+const OURS_ONLY = agentEnv({})
+
 describe('agentEnv: what an agent inherits', () => {
   const env = agentEnv(HOST_ENV)
 
@@ -107,6 +110,49 @@ describe('agentEnv: what an agent inherits', () => {
   })
 })
 
+describe('variables the person asked to carry through', () => {
+  it('lets a named variable through, which is how a connector finds its token', () => {
+    const env = agentEnv({ GITHUB_TOKEN: 'ghp_x' }, undefined, ['GITHUB_TOKEN'])
+    expect(env.GITHUB_TOKEN).toBe('ghp_x')
+  })
+
+  it('carries the name only, so a variable the shell does not have stays absent', () => {
+    expect('GITHUB_TOKEN' in agentEnv({}, undefined, ['GITHUB_TOKEN'])).toBe(false)
+  })
+
+  it('leaves the allow list where it was, so nothing else rides along', () => {
+    const env = agentEnv({ GITHUB_TOKEN: 'ghp_x', STRIPE_KEY: 'sk_x' }, undefined, ['GITHUB_TOKEN'])
+    expect('STRIPE_KEY' in env).toBe(false)
+  })
+
+  it('refuses a name that is not a name, because the list ends up in a spawn', () => {
+    const env = agentEnv({ 'A=B': 'x', lower: 'y', '9LEAD': 'z' }, undefined, [
+      'A=B',
+      'lower',
+      '9LEAD',
+    ])
+    expect(Object.keys(env)).toEqual(Object.keys(OURS_ONLY))
+  })
+
+  it('cannot take over the path Zetrem worked out', () => {
+    const env = agentEnv({ PATH: '/evil' }, '/opt/homebrew/bin:/usr/bin', ['PATH'])
+    expect(env.PATH).toBe('/opt/homebrew/bin:/usr/bin')
+  })
+
+  it('cannot take over what Zetrem decides for the run', () => {
+    const env = agentEnv({ ZETREM: '0', GIT_EDITOR: 'vim' }, undefined, ['ZETREM', 'GIT_EDITOR'])
+    expect(env.ZETREM).toBe('1')
+    expect(env.GIT_EDITOR).toBe('true')
+  })
+
+  it('cannot bring back a mark of the session that started us', () => {
+    const env = agentEnv({ CLAUDE_CODE_MESSAGING_SOCKET: '/tmp/s.sock' }, undefined, [
+      'CLAUDE_CODE_MESSAGING_SOCKET',
+    ])
+    expect('CLAUDE_CODE_MESSAGING_SOCKET' in env).toBe(false)
+  })
+})
+
 describe('the child reads the same Claude Code settings we do', () => {
   it('carries the config dir through, or the agent sees other connectors than the app', () => {
     const env = agentEnv(HOST_ENV)
@@ -118,6 +164,39 @@ describe('the child reads the same Claude Code settings we do', () => {
   it('still drops the marks of the session that spawned it', () => {
     const env = agentEnv(HOST_ENV)
     for (const key of ['CLAUDECODE', 'CLAUDE_CODE_CHILD_SESSION', 'CLAUDE_CODE_MESSAGING_SOCKET']) {
+      expect(key in env, key).toBe(false)
+    }
+  })
+
+  it('carries the CLI’s own settings, or the terminal and the app behave differently', () => {
+    const env = agentEnv({
+      CLAUDE_CODE_USE_BEDROCK: '1',
+      CLAUDE_CODE_MAX_OUTPUT_TOKENS: '8192',
+    })
+    expect(env.CLAUDE_CODE_USE_BEDROCK).toBe('1')
+    expect(env.CLAUDE_CODE_MAX_OUTPUT_TOKENS).toBe('8192')
+  })
+
+  it('keeps our own reading of an added directory’s CLAUDE.md, whatever the shell says', () => {
+    const env = agentEnv({ CLAUDE_CODE_ADDITIONAL_DIRECTORIES_CLAUDE_MD: '0' })
+    expect(env.CLAUDE_CODE_ADDITIONAL_DIRECTORIES_CLAUDE_MD).toBe('1')
+  })
+
+  it('still drops what names the session that started us, prefix or no prefix', () => {
+    const env = agentEnv({
+      CLAUDE_CODE_SESSION_ID: 'abc',
+      CLAUDE_CODE_SESSION_ACCESS_TOKEN: 'secret',
+      CLAUDE_CODE_RESUME_PROMPT: 'carry on',
+      CLAUDE_CODE_ENTRYPOINT: 'cli',
+      CLAUDE_CODE_MESSAGING_TOKEN: 'tok',
+    })
+    for (const key of [
+      'CLAUDE_CODE_SESSION_ID',
+      'CLAUDE_CODE_SESSION_ACCESS_TOKEN',
+      'CLAUDE_CODE_RESUME_PROMPT',
+      'CLAUDE_CODE_ENTRYPOINT',
+      'CLAUDE_CODE_MESSAGING_TOKEN',
+    ]) {
       expect(key in env, key).toBe(false)
     }
   })

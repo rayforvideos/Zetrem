@@ -46,8 +46,11 @@ export function SetupGate({
       project={{
         chosen: projects.current,
         recent: projects.all.filter((one) => one.id !== projects.current?.id),
+        extraDirs: projects.current?.extraDirs ?? [],
         onChoose: projects.pick,
         onPickRecent: onOpenProject,
+        onAddDir: projects.addDir,
+        onRemoveDir: projects.removeDir,
       }}
       defaults={{
         permissionMode: settings.permissionMode,
@@ -61,6 +64,10 @@ export function SetupGate({
         onNotify: (on) => update({ notify: on }),
         enterSends: settings.enterSends,
         onEnterSends: (on) => update({ enterSends: on }),
+        chrome: settings.chrome,
+        onChrome: (on) => update({ chrome: on }),
+        passEnv: settings.passEnv,
+        onPassEnv: (passEnv) => update({ passEnv }),
         onModel: (model) => update({ model }),
       }}
       plugins={{

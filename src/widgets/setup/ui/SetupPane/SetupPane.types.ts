@@ -25,8 +25,12 @@ export type Account = {
 export type Project = {
   chosen: { name: string; path: string } | null
   recent: { id: string; name: string; path: string }[]
+  // Folders outside the project this project's sessions are also given.
+  extraDirs: string[]
   onChoose(): void
   onPickRecent(id: string): void
+  onAddDir(): void
+  onRemoveDir(path: string): void
 }
 
 type Defaults = {
@@ -39,6 +43,10 @@ type Defaults = {
   onNotify(on: boolean): void
   enterSends: boolean
   onEnterSends(on: boolean): void
+  chrome: boolean
+  onChrome(on: boolean): void
+  passEnv: string[]
+  onPassEnv(names: string[]): void
   onPermissionMode(mode: PermissionMode): void
   onModel(model: ModelChoice): void
   onEffort(effort: EffortChoice): void

@@ -20,7 +20,10 @@ type Flat = {
   loginNote: string
   notice: Failure | null
   installing: boolean
+  chrome: boolean
+  passEnv: string[]
   recent: { id: string; path: string; name: string }[]
+  extraDirs: string[]
 }
 
 function pane(over: Partial<Flat> = {}): string {
@@ -37,7 +40,10 @@ function pane(over: Partial<Flat> = {}): string {
     loginNote: '',
     notice: null,
     installing: false,
+    chrome: false,
+    passEnv: [],
     recent: [],
+    extraDirs: [],
     ...over,
   }
   return renderToStaticMarkup(
@@ -65,8 +71,11 @@ function pane(over: Partial<Flat> = {}): string {
         project={{
           chosen: flat.project,
           recent: flat.recent,
+          extraDirs: flat.extraDirs,
           onChoose: () => {},
           onPickRecent: () => {},
+          onAddDir: () => {},
+          onRemoveDir: () => {},
         }}
         defaults={{
           permissionMode: flat.permissionMode,
@@ -78,6 +87,10 @@ function pane(over: Partial<Flat> = {}): string {
           onNotify: () => {},
           enterSends: true,
           onEnterSends: () => {},
+          chrome: flat.chrome,
+          onChrome: () => {},
+          passEnv: flat.passEnv,
+          onPassEnv: () => {},
           onPermissionMode: () => {},
           onModel: () => {},
           onEffort: () => {},
@@ -132,11 +145,40 @@ describe('SetupPane: everything to settle before starting, on one screen', () =>
     }
   })
 
+  it('offers the browser switch under Session, and says what it needs', () => {
+    const html = pane()
+    expect(html).toContain('Claude in Chrome')
+    expect(html, 'a switch nobody can read is a switch nobody turns on').toContain(
+      'Needs the Chrome extension',
+    )
+  })
+
+  it('draws the browser switch off until it is turned on', () => {
+    const off = pane()
+    const on = pane({ chrome: true })
+    const at = (html: string) => html.slice(html.indexOf('id="chrome"'))
+    expect(at(off)).toContain('data-state="unchecked"')
+    expect(at(on)).toContain('data-state="checked"')
+  })
+
+  it('lists the named variables under Extensions, where the connectors live', () => {
+    const html = pane({ passEnv: ['GITHUB_TOKEN'] })
+    expect(html).toContain('Environment variables')
+    expect(html).toContain('GITHUB_TOKEN')
+  })
+
+  // Scoped to the actions bar rather than the whole page: Start is also the name
+  // of the first tab, and other fields have buttons of their own that are
+  // rightly disabled until they have something to do.
+  function startButton(html: string): string {
+    const actions = html.slice(html.indexOf('data-actions'))
+    return actions.slice(actions.lastIndexOf('<button', actions.indexOf('>Start<')))
+  }
+
   it('locks Start without an account and a project, and says why', () => {
     const html = pane()
     expect(html).toContain('Sign in and choose a project folder')
-    const start = html.slice(html.lastIndexOf('<button', html.indexOf('>Start<')))
-    expect(start).toContain('disabled=""')
+    expect(startButton(html)).toContain('disabled=""')
   })
 
   it('opens Start once both are set, so the test above cannot pass by accident', () => {
@@ -144,8 +186,7 @@ describe('SetupPane: everything to settle before starting, on one screen', () =>
       auth: { state: 'signed-in', email: 'sam@example.com', orgName: null },
       project: { name: 'zetrem', path: '/tmp/zetrem' },
     })
-    const start = html.slice(html.lastIndexOf('<button', html.indexOf('>Start<')))
-    expect(start).not.toContain('disabled=""')
+    expect(startButton(html)).not.toContain('disabled=""')
     expect(html).not.toContain('Sign in')
   })
 
@@ -241,6 +282,21 @@ describe('SetupPane: everything to settle before starting, on one screen', () =>
     })
     expect(html).toContain('alpha')
     expect(html).toContain('/tmp/alpha')
+  })
+
+  it('lists the extra folders this project also works in', () => {
+    const html = pane({
+      project: { name: 'zetrem', path: '/tmp/zetrem' },
+      extraDirs: ['/tmp/specs'],
+    })
+    expect(html).toContain('data-extra-dirs')
+    expect(html).toContain('/tmp/specs')
+    expect(html).toContain('Add folder')
+  })
+
+  it('offers to add one even before there is one, but only once a project is chosen', () => {
+    expect(pane({ project: { name: 'zetrem', path: '/tmp/zetrem' } })).toContain('Add folder')
+    expect(pane(), 'nothing to hang them on yet').not.toContain('data-extra-dirs')
   })
 
   it('keeps the field quiet when there is nowhere to go back to', () => {

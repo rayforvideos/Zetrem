@@ -90,6 +90,8 @@ export type Invokes = {
   'project:open': (id: string) => Project | null
   'project:forget': (id: string) => void
   'project:repath': (id: string, path: string) => Project | null
+  'project:addDir': (id: string, path: string) => Project | null
+  'project:removeDir': (id: string, path: string) => Project | null
 
   'agent:start': (id: string, prompt: string, config: RunConfig, files?: Attached[]) => void
 

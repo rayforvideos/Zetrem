@@ -3,6 +3,7 @@ import { app } from 'electron'
 import { agentEnv } from '../../spawn/shell-env/shell-env'
 import { probeArgs } from '@/entities/claude-cli/api/run-config/run-config'
 import { runConfigOf } from '../run-config-guard/run-config-guard'
+import { loadSettings } from '../../store/settings-store/settings-store'
 import { PERSONA, orchestratorPrompt } from '@/entities/teammate/model/orchestrator/orchestrator'
 import { claudeBin, loginPath } from '../../cli/login-path/login-path'
 import { recallProject } from '../../store/project-memory/project-memory'
@@ -145,7 +146,7 @@ export function registerSessionProbe(): void {
         }),
         ...added,
       ]
-      const env = agentEnv(process.env, await loginPath())
+      const env = agentEnv(process.env, await loginPath(), (await loadSettings()).passEnv)
       return readInit(await claudeBin(), args, workspace, env)
     })().catch(() => null)
     const mine = { project, account, answer }
@@ -166,7 +167,7 @@ export function registerSessionProbe(): void {
     if (reporting !== null) return reporting
     reporting = (async () => {
       const workspace = await workspaceDir(await recallProject(), app.getPath('userData'))
-      const env = agentEnv(process.env, await loginPath())
+      const env = agentEnv(process.env, await loginPath(), (await loadSettings()).passEnv)
       return readReport(await claudeBin(), workspace, env)
     })().catch(() => null)
     const said = await reporting

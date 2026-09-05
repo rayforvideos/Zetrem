@@ -5,6 +5,9 @@ export type PermissionEvent =
       toolName: string
       line: string
       detail: string
+      // Set only by a tool that hands over prose of its own, ExitPlanMode's
+      // plan among them, so the card can show it whole.
+      plan?: string
       input: unknown
     }
   | { type: 'permissionDropped'; requestId: string }

@@ -13,11 +13,11 @@ msgstr ""
 "Language-Team: \n"
 "Plural-Forms: \n"
 
-#: src/pages/workspace/model/session/agent-events/agent-events.ts:172
+#: src/pages/workspace/model/session/agent-events/agent-events.ts:165
 msgid " · on overage"
 msgstr " · on overage"
 
-#: src/pages/workspace/model/session/agent-events/agent-events.ts:170
+#: src/pages/workspace/model/session/agent-events/agent-events.ts:163
 msgid " {pct}% used,"
 msgstr " {pct}% used,"
 
@@ -79,7 +79,7 @@ msgid "{0} left"
 msgstr "{0} left"
 
 #. placeholder {0}: limitKindLabel(limit.kind)
-#: src/pages/workspace/model/session/agent-events/agent-events.ts:173
+#: src/pages/workspace/model/session/agent-events/agent-events.ts:166
 msgid "{0} limit{share} resets {when}{overage}"
 msgstr "{0} limit{share} resets {when}{overage}"
 
@@ -135,7 +135,7 @@ msgstr "{0}m ago"
 msgid "{back} teammates"
 msgstr "{back} teammates"
 
-#: src/pages/workspace/model/session/agent-events/agent-events.ts:183
+#: src/pages/workspace/model/session/agent-events/agent-events.ts:176
 msgid "{base}. Earlier turns live on as a summary."
 msgstr "{base}. Earlier turns live on as a summary."
 
@@ -192,11 +192,11 @@ msgstr "{n}m ago"
 msgid "{name} can be called this session"
 msgstr "{name} can be called this session"
 
-#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:273
+#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:274
 msgid "{name} is off. The running session keeps them until it ends."
 msgstr "{name} is off. The running session keeps them until it ends."
 
-#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:272
+#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:273
 msgid "{name} is on. The running session cannot call them yet."
 msgstr "{name} is on. The running session cannot call them yet."
 
@@ -422,6 +422,7 @@ msgid "Active"
 msgstr "Active"
 
 #: src/widgets/setup/ui/AddConnector/AddConnector.tsx:95
+#: src/widgets/setup/ui/EnvField/EnvField.tsx:48
 #: src/widgets/setup/ui/PluginShelf/SourcesTab.tsx:61
 msgid "Add"
 msgstr "Add"
@@ -438,6 +439,10 @@ msgstr "Add a marketplace to bring in skills and agents"
 msgid "Add account"
 msgstr "Add account"
 
+#: src/widgets/setup/ui/ProjectField/ProjectField.tsx:79
+msgid "Add folder"
+msgstr "Add folder"
+
 #: src/widgets/setup/ui/PluginShelf/PluginShelf.tsx:87
 msgid "Add more"
 msgstr "Add more"
@@ -449,6 +454,10 @@ msgstr "Add one by address"
 #: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:95
 msgid "Add teammate"
 msgstr "Add teammate"
+
+#: src/widgets/setup/ui/EnvField/EnvField.tsx:44
+msgid "Add variable"
+msgstr "Add variable"
 
 #: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:100
 msgid "Add your first teammate"
@@ -471,7 +480,7 @@ msgstr "After"
 msgid "Agent memory"
 msgstr "Agent memory"
 
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:178
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:193
 msgid "Agents"
 msgstr "Agents"
 
@@ -496,16 +505,16 @@ msgstr "All"
 msgid "All {0} connected"
 msgstr "All {0} connected"
 
-#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:70
+#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:84
 msgid "Allow"
 msgstr "Allow"
 
-#: src/entities/settings/config/choices/choices.ts:17
+#: src/entities/settings/config/choices/choices.ts:18
 #: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:47
 msgid "Allow all"
 msgstr "Allow all"
 
-#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:113
+#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:134
 msgid "Allow this?"
 msgstr "Allow this?"
 
@@ -530,7 +539,11 @@ msgstr "API error {0}"
 msgid "Apply"
 msgstr "Apply"
 
-#: src/entities/settings/config/choices/choices.ts:11
+#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:132
+msgid "Approve this plan?"
+msgstr "Approve this plan?"
+
+#: src/entities/settings/config/choices/choices.ts:12
 #: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:47
 msgid "Ask first"
 msgstr "Ask first"
@@ -543,7 +556,7 @@ msgstr "Ask for the whole job"
 msgid "Ask for the whole job, not the next step. The orchestrator splits it up, hands out the pieces, and replies when they come back."
 msgstr "Ask for the whole job, not the next step. The orchestrator splits it up, hands out the pieces, and replies when they come back."
 
-#: src/entities/settings/config/choices/choices.ts:11
+#: src/entities/settings/config/choices/choices.ts:12
 msgid "Asks before editing files or running commands"
 msgstr "Asks before editing files or running commands"
 
@@ -559,11 +572,11 @@ msgstr "Attach a file"
 msgid "Author"
 msgstr "Author"
 
-#: src/pages/workspace/model/session/agent-events/agent-events.ts:190
+#: src/pages/workspace/model/session/agent-events/agent-events.ts:183
 msgid "auto"
 msgstr "auto"
 
-#: src/entities/settings/config/choices/choices.ts:14
+#: src/entities/settings/config/choices/choices.ts:15
 #: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:47
 msgid "Auto-edit"
 msgstr "Auto-edit"
@@ -582,7 +595,7 @@ msgstr "Back"
 msgid "Back to the list"
 msgstr "Back to the list"
 
-#: src/entities/settings/config/choices/choices.ts:28
+#: src/entities/settings/config/choices/choices.ts:29
 msgid "Balanced for most tasks"
 msgstr "Balanced for most tasks"
 
@@ -621,7 +634,7 @@ msgstr "Can't connect"
 
 #: src/widgets/library/ui/NoteList/NoteList.tsx:273
 #: src/widgets/library/ui/NoteReader/NoteReader.tsx:197
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:215
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:233
 #: src/widgets/team-sidebar/ui/ChatList/ChatRow.tsx:246
 #: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:393
 #: src/widgets/team-sidebar/ui/MemberMenu/MemberMenu.tsx:66
@@ -637,7 +650,7 @@ msgstr "Cancel sign-in"
 msgid "Cart totals and rounding"
 msgstr "Cart totals and rounding"
 
-#: src/widgets/setup/ui/ProjectField/ProjectField.tsx:22
+#: src/widgets/setup/ui/ProjectField/ProjectField.tsx:23
 msgid "Change"
 msgstr "Change"
 
@@ -672,7 +685,7 @@ msgstr "Checking…"
 msgid "Choose a project folder"
 msgstr "Choose a project folder"
 
-#: src/widgets/setup/ui/ProjectField/ProjectField.tsx:22
+#: src/widgets/setup/ui/ProjectField/ProjectField.tsx:23
 msgid "Choose folder"
 msgstr "Choose folder"
 
@@ -705,6 +718,11 @@ msgstr "Claude Code stopped without a word (exit {code}). Your next message pick
 #: src/widgets/welcome/lib/slides/slides.ts:8
 msgid "Claude Code, with a screen"
 msgstr "Claude Code, with a screen"
+
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:170
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:179
+msgid "Claude in Chrome"
+msgstr "Claude in Chrome"
 
 #: src/widgets/conversation/ui/Composer/Composer.tsx:117
 #: src/widgets/team-sidebar/ui/ToolPicker/ToolPicker.tsx:71
@@ -747,7 +765,7 @@ msgstr "Commit staged files"
 msgid "compacting soon"
 msgstr "compacting soon"
 
-#: src/entities/settings/config/choices/choices.ts:27
+#: src/entities/settings/config/choices/choices.ts:28
 msgid "Complex work. Slower and pricier"
 msgstr "Complex work. Slower and pricier"
 
@@ -784,7 +802,7 @@ msgstr "Context"
 msgid "Continue"
 msgstr "Continue"
 
-#: src/pages/workspace/model/session/agent-events/agent-events.ts:181
+#: src/pages/workspace/model/session/agent-events/agent-events.ts:174
 msgid "Conversation compacted here"
 msgstr "Conversation compacted here"
 
@@ -796,6 +814,10 @@ msgstr "Could not {0} {target}"
 #: src/pages/workspace/model/extensions/useConnectors.ts:76
 msgid "Could not add {name}"
 msgstr "Could not add {name}"
+
+#: src/pages/workspace/model/project/useProjectSwitch/useProjectSwitch.ts:63
+msgid "Could not add that folder"
+msgstr "Could not add that folder"
 
 #: src/pages/workspace/model/extensions/useConnectors.ts:90
 msgid "Could not bring over Claude Desktop"
@@ -830,8 +852,8 @@ msgstr "Could not list your saved chats"
 msgid "Could not open that chat"
 msgstr "Could not open that chat"
 
-#: src/pages/workspace/model/project/useProjectSwitch/useProjectSwitch.ts:20
-#: src/pages/workspace/model/project/useProjectSwitch/useProjectSwitch.ts:31
+#: src/pages/workspace/model/project/useProjectSwitch/useProjectSwitch.ts:27
+#: src/pages/workspace/model/project/useProjectSwitch/useProjectSwitch.ts:38
 msgid "Could not open that folder"
 msgstr "Could not open that folder"
 
@@ -903,11 +925,15 @@ msgstr "Could not read your settings"
 msgid "Could not read your sign-in"
 msgstr "Could not read your sign-in"
 
+#: src/pages/workspace/model/project/useProjectSwitch/useProjectSwitch.ts:68
+msgid "Could not remove that folder"
+msgstr "Could not remove that folder"
+
 #: src/widgets/setup/model/useAgentMemory.ts:120
 msgid "Could not remove that memory"
 msgstr "Could not remove that memory"
 
-#: src/pages/workspace/model/project/useProjectSwitch/useProjectSwitch.ts:45
+#: src/pages/workspace/model/project/useProjectSwitch/useProjectSwitch.ts:52
 msgid "Could not remove that project"
 msgstr "Could not remove that project"
 
@@ -919,7 +945,7 @@ msgstr "Could not remove the account."
 msgid "Could not rename that chat"
 msgstr "Could not rename that chat"
 
-#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:99
+#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:100
 msgid "Could not reopen your last project"
 msgstr "Could not reopen your last project"
 
@@ -958,8 +984,8 @@ msgstr "Create"
 msgid "Create a teammate and they'll show up here."
 msgstr "Create a teammate and they'll show up here."
 
-#: src/entities/settings/config/choices/choices.ts:21
-#: src/entities/settings/config/choices/choices.ts:34
+#: src/entities/settings/config/choices/choices.ts:22
+#: src/entities/settings/config/choices/choices.ts:35
 msgid "Default"
 msgstr "Default"
 
@@ -999,7 +1025,7 @@ msgstr "Delete the note “{0}”?"
 msgid "Deleted"
 msgstr "Deleted"
 
-#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:84
+#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:98
 msgid "Deny"
 msgstr "Deny"
 
@@ -1028,14 +1054,14 @@ msgstr "Dismissed \"{title}\""
 msgid "Documents they read first. Long ones cost nothing until they open them."
 msgstr "Documents they read first. Long ones cost nothing until they open them."
 
-#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:93
+#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:111
 msgid "Don't ask again this session"
 msgstr "Don't ask again this session"
 
 #: src/widgets/agent-report/lib/state-word/state-word.ts:12
 #: src/widgets/library/ui/NoteReader/NoteReader.tsx:99
 #: src/widgets/setup/ui/PluginShelf/PluginShelf.tsx:129
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:219
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:237
 #: src/widgets/tile-deck/lib/state-word/state-word.ts:10
 msgid "Done"
 msgstr "Done"
@@ -1080,7 +1106,7 @@ msgstr "Edit"
 msgid "Edit {0}"
 msgstr "Edit {0}"
 
-#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:108
+#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:127
 msgid "Edit this file?"
 msgstr "Edit this file?"
 
@@ -1092,20 +1118,24 @@ msgstr "Edited"
 msgid "Editing"
 msgstr "Editing"
 
-#: src/entities/settings/config/choices/choices.ts:15
+#: src/entities/settings/config/choices/choices.ts:16
 msgid "Edits files freely, asks before running commands"
 msgstr "Edits files freely, asks before running commands"
 
 #: src/widgets/conversation/ui/Composer/Composer.tsx:206
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:162
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:163
 msgid "Effort"
 msgstr "Effort"
+
+#: src/widgets/setup/ui/EnvField/EnvField.tsx:26
+msgid "Environment variables"
+msgstr "Environment variables"
 
 #: src/widgets/welcome/lib/slides/slides.ts:26
 msgid "Every command is on screen"
 msgstr "Every command is on screen"
 
-#: src/entities/settings/config/choices/choices.ts:36
+#: src/entities/settings/config/choices/choices.ts:37
 msgid "Everyday work"
 msgstr "Everyday work"
 
@@ -1113,7 +1143,7 @@ msgstr "Everyday work"
 msgid "Everyone you send out gets a card: their name, their task, and how long they have been at it. Open one to see what they were asked and what they sent back."
 msgstr "Everyone you send out gets a card: their name, their task, and how long they have been at it. Open one to see what they were asked and what they sent back."
 
-#: src/entities/settings/config/choices/choices.ts:39
+#: src/entities/settings/config/choices/choices.ts:40
 msgid "Everything it has. Slowest and priciest"
 msgstr "Everything it has. Slowest and priciest"
 
@@ -1122,9 +1152,13 @@ msgstr "Everything it has. Slowest and priciest"
 msgid "Everything the session has"
 msgstr "Everything the session has"
 
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:33
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:34
 msgid "Extensions"
 msgstr "Extensions"
+
+#: src/widgets/setup/ui/ProjectField/ProjectField.tsx:53
+msgid "Extra folders"
+msgstr "Extra folders"
 
 #: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:177
 #: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:192
@@ -1144,7 +1178,7 @@ msgstr "Failed"
 msgid "Failed: the run stopped before it was done"
 msgstr "Failed: the run stopped before it was done"
 
-#: src/entities/settings/config/choices/choices.ts:29
+#: src/entities/settings/config/choices/choices.ts:30
 msgid "Fast and cheap. Good for quick questions"
 msgstr "Fast and cheap. Good for quick questions"
 
@@ -1205,15 +1239,19 @@ msgstr "Folder for both"
 msgid "Folder name"
 msgstr "Folder name"
 
+#: src/widgets/setup/ui/ProjectField/ProjectField.tsx:55
+msgid "Folders outside the project your team may also read and write, such as a sibling package or a folder of specs."
+msgstr "Folders outside the project your team may also read and write, such as a sibling package or a folder of specs."
+
 #: src/widgets/setup/lib/tongues/tongues.ts:5
 msgid "Follows the language your computer is set to"
 msgstr "Follows the language your computer is set to"
 
-#: src/entities/settings/config/choices/choices.ts:21
+#: src/entities/settings/config/choices/choices.ts:22
 msgid "Follows your account setting"
 msgstr "Follows your account setting"
 
-#: src/entities/settings/config/choices/choices.ts:34
+#: src/entities/settings/config/choices/choices.ts:35
 msgid "Follows your Claude Code setting"
 msgstr "Follows your Claude Code setting"
 
@@ -1243,7 +1281,7 @@ msgstr "from an earlier reading"
 msgid "From plugins"
 msgstr "From plugins"
 
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:30
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:31
 msgid "General"
 msgstr "General"
 
@@ -1264,6 +1302,10 @@ msgstr "Git is not answering here."
 #: src/widgets/agent-report/lib/review/review.ts:37
 msgid "Git said: {0}"
 msgstr "Git said: {0}"
+
+#: src/widgets/setup/ui/EnvField/EnvField.tsx:36
+msgid "GITHUB_TOKEN"
+msgstr "GITHUB_TOKEN"
 
 #: src/entities/connector/lib/refusal-why/refusal-why.ts:8
 msgid "Give it a name"
@@ -1290,7 +1332,7 @@ msgstr "Graph"
 msgid "Handing off"
 msgstr "Handing off"
 
-#: src/entities/settings/config/choices/choices.ts:38
+#: src/entities/settings/config/choices/choices.ts:39
 msgid "Hard problems. Much slower"
 msgstr "Hard problems. Much slower"
 
@@ -1298,11 +1340,11 @@ msgstr "Hard problems. Much slower"
 msgid "Held up"
 msgstr "Held up"
 
-#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:194
+#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:195
 msgid "Hide team sidebar"
 msgstr "Hide team sidebar"
 
-#: src/entities/settings/config/choices/choices.ts:37
+#: src/entities/settings/config/choices/choices.ts:38
 msgid "High"
 msgstr "High"
 
@@ -1406,7 +1448,7 @@ msgstr "Keep the name under {NAME_MAX} characters"
 msgid "Keep working"
 msgstr "Keep working"
 
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:112
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:113
 msgid "Language"
 msgstr "Language"
 
@@ -1421,6 +1463,10 @@ msgstr "Later run"
 #: src/widgets/conversation/lib/greetings/greetings.ts:7
 msgid "Let's get to work with your cute little agents!"
 msgstr "Let's get to work with your cute little agents!"
+
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:172
+msgid "Lets the session read and drive your browser. Needs the Chrome extension, and the first run may ask for your say-so in the browser."
+msgstr "Lets the session read and drive your browser. Needs the Chrome extension, and the first run may ask for your say-so in the browser."
 
 #: src/entities/connector/lib/refusal-why/refusal-why.ts:14
 msgid "Letters, numbers, hyphens and underscores only"
@@ -1445,19 +1491,19 @@ msgstr "Library guide"
 msgid "Linked from"
 msgstr "Linked from"
 
-#: src/entities/settings/config/choices/choices.ts:35
+#: src/entities/settings/config/choices/choices.ts:36
 msgid "Low"
 msgstr "Low"
 
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:191
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:209
 msgid "Manage"
 msgstr "Manage"
 
-#: src/pages/workspace/model/session/agent-events/agent-events.ts:191
+#: src/pages/workspace/model/session/agent-events/agent-events.ts:184
 msgid "manual"
 msgstr "manual"
 
-#: src/entities/settings/config/choices/choices.ts:39
+#: src/entities/settings/config/choices/choices.ts:40
 msgid "Max"
 msgstr "Max"
 
@@ -1465,11 +1511,11 @@ msgstr "Max"
 msgid "MCP server"
 msgstr "MCP server"
 
-#: src/entities/settings/config/choices/choices.ts:36
+#: src/entities/settings/config/choices/choices.ts:37
 msgid "Medium"
 msgstr "Medium"
 
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:32
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:33
 msgid "Memory"
 msgstr "Memory"
 
@@ -1499,7 +1545,7 @@ msgid "Message your team"
 msgstr "Message your team"
 
 #: src/widgets/conversation/ui/Composer/Composer.tsx:203
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:156
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:157
 #: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:109
 #: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:181
 msgid "Model"
@@ -1541,6 +1587,10 @@ msgstr "Name"
 msgid "Name the folder for these two chats"
 msgstr "Name the folder for these two chats"
 
+#: src/widgets/setup/ui/EnvField/EnvField.tsx:72
+msgid "Named variables are carried from the shell Zetrem started in into every session, which is how a connector finds its token. Zetrem keeps the names, never the values."
+msgstr "Named variables are carried from the shell Zetrem started in into every session, which is how a connector finds its token. Zetrem keeps the names, never the values."
+
 #: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:193
 msgid "Needs auth"
 msgstr "Needs auth"
@@ -1549,7 +1599,7 @@ msgstr "Needs auth"
 msgid "Needs you"
 msgstr "Needs you"
 
-#: src/entities/settings/config/choices/choices.ts:17
+#: src/entities/settings/config/choices/choices.ts:18
 msgid "Never asks. Anything can run"
 msgstr "Never asks. Anything can run"
 
@@ -1693,8 +1743,8 @@ msgstr "Nothing written yet."
 msgid "Nothing yet"
 msgstr "Nothing yet"
 
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:133
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:142
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:134
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:143
 msgid "Notifications"
 msgstr "Notifications"
 
@@ -1767,7 +1817,7 @@ msgid "Permission"
 msgstr "Permission"
 
 #: src/widgets/conversation/ui/Composer/Composer.tsx:176
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:150
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:151
 msgid "Permissions"
 msgstr "Permissions"
 
@@ -1791,6 +1841,10 @@ msgstr "Pick a project first"
 msgid "Picked up where they left off"
 msgstr "Picked up where they left off"
 
+#: src/entities/settings/config/choices/choices.ts:11
+msgid "Plan first"
+msgstr "Plan first"
+
 #: src/entities/tool/lib/tool-verb/tool-verb.ts:28
 msgid "Planning"
 msgstr "Planning"
@@ -1800,7 +1854,7 @@ msgid "Plugin"
 msgstr "Plugin"
 
 #: src/widgets/setup/ui/PluginShelf/InstalledTab.tsx:37
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:187
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:205
 msgid "Plugins"
 msgstr "Plugins"
 
@@ -1821,7 +1875,7 @@ msgid "Previous 7 days"
 msgstr "Previous 7 days"
 
 #: src/widgets/setup/ui/MemoryField/MemoryField.tsx:27
-#: src/widgets/setup/ui/ProjectField/ProjectField.tsx:9
+#: src/widgets/setup/ui/ProjectField/ProjectField.tsx:10
 msgid "Project"
 msgstr "Project"
 
@@ -1841,7 +1895,7 @@ msgstr "Push"
 msgid "Pushed."
 msgstr "Pushed."
 
-#: src/entities/settings/config/choices/choices.ts:35
+#: src/entities/settings/config/choices/choices.ts:36
 msgid "Quick answers. Least thinking, cheapest"
 msgstr "Quick answers. Least thinking, cheapest"
 
@@ -1857,7 +1911,7 @@ msgstr "Rate limited"
 msgid "Re-authenticate"
 msgstr "Re-authenticate"
 
-#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:111
+#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:130
 msgid "Reach out to the web?"
 msgstr "Reach out to the web?"
 
@@ -1903,7 +1957,7 @@ msgstr "Reading what this session offers. The list fills in a moment."
 msgid "Reading which agents Claude Code brings. They will be listed here."
 msgstr "Reading which agents Claude Code brings. They will be listed here."
 
-#: src/widgets/setup/ui/ProjectField/ProjectField.tsx:27
+#: src/widgets/setup/ui/ProjectField/ProjectField.tsx:28
 msgid "Recent"
 msgstr "Recent"
 
@@ -1954,6 +2008,14 @@ msgstr "Remove {0}?"
 #: src/widgets/team-sidebar/ui/MemberMenu/MemberMenu.tsx:60
 msgid "Remove {name}?"
 msgstr "Remove {name}?"
+
+#: src/widgets/setup/ui/EnvField/EnvField.tsx:61
+msgid "Remove {one}"
+msgstr "Remove {one}"
+
+#: src/widgets/setup/ui/ProjectField/ProjectField.tsx:68
+msgid "Remove {path}"
+msgstr "Remove {path}"
 
 #: src/widgets/team-sidebar/ui/MemberMenu/MemberMenu.tsx:51
 msgid "Remove from team"
@@ -2046,7 +2108,7 @@ msgstr "Roll back"
 msgid "run {0} of {1}"
 msgstr "run {0} of {1}"
 
-#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:103
+#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:122
 msgid "Run this command?"
 msgstr "Run this command?"
 
@@ -2130,12 +2192,12 @@ msgstr "See what they did"
 msgid "Send"
 msgstr "Send"
 
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:119
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:128
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:120
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:129
 msgid "Send with Enter"
 msgstr "Send with Enter"
 
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:31
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:32
 msgid "Session"
 msgstr "Session"
 
@@ -2147,7 +2209,7 @@ msgstr "Session details"
 msgid "Session restarted. The next message picks the conversation back up with your team as it is now."
 msgstr "Session restarted. The next message picks the conversation back up with your team as it is now."
 
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:71
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:72
 msgid "Set a few things and your agents get to work!"
 msgstr "Set a few things and your agents get to work!"
 
@@ -2159,7 +2221,7 @@ msgstr "Set for everyone on your account. They cannot be removed or turned off h
 msgid "Settings"
 msgstr "Settings"
 
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:76
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:77
 msgid "Settings sections"
 msgstr "Settings sections"
 
@@ -2175,11 +2237,11 @@ msgstr "Shared"
 msgid "Shared across projects"
 msgstr "Shared across projects"
 
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:121
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:122
 msgid "Shift+Enter starts a new line. Off, sending takes the modifier key with Enter."
 msgstr "Shift+Enter starts a new line. Off, sending takes the modifier key with Enter."
 
-#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:194
+#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:195
 msgid "Show team sidebar"
 msgstr "Show team sidebar"
 
@@ -2285,8 +2347,8 @@ msgstr "Stage {0}"
 msgid "Star it"
 msgstr "Star it"
 
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:29
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:219
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:30
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:237
 msgid "Start"
 msgstr "Start"
 
@@ -2399,7 +2461,7 @@ msgstr "Team board width"
 msgid "Teammates are reusable"
 msgstr "Teammates are reusable"
 
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:135
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:136
 msgid "Tells you when the work is done or something needs your say-so, and only while Zetrem is behind another window."
 msgstr "Tells you when the work is done or something needs your say-so, and only while Zetrem is behind another window."
 
@@ -2443,7 +2505,7 @@ msgstr "The <0>claude</0> command was not found. Zetrem can install it for you."
 msgid "The address has to be http or https"
 msgstr "The address has to be http or https"
 
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:180
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:195
 msgid "The agents Claude Code brings. Each can be switched off."
 msgstr "The agents Claude Code brings. Each can be switched off."
 
@@ -2476,7 +2538,7 @@ msgstr "The empty folder is removed from the library."
 msgid "The file is deleted and its line leaves the index the agents load. This cannot be undone."
 msgstr "The file is deleted and its line leaves the index the agents load. This cannot be undone."
 
-#: src/entities/settings/config/choices/choices.ts:25
+#: src/entities/settings/config/choices/choices.ts:26
 msgid "The hardest problems. Slowest and priciest of these"
 msgstr "The hardest problems. Slowest and priciest of these"
 
@@ -2591,7 +2653,7 @@ msgstr "They read fast and they never get bored."
 msgid "Thinking"
 msgstr "Thinking"
 
-#: src/entities/settings/config/choices/choices.ts:37
+#: src/entities/settings/config/choices/choices.ts:38
 msgid "Thinks longer. Slower and pricier"
 msgstr "Thinks longer. Slower and pricier"
 
@@ -2690,7 +2752,7 @@ msgstr "This teammate changed no files."
 msgid "This teammate has no branch Zetrem can look up."
 msgstr "This teammate has no branch Zetrem can look up."
 
-#: src/pages/workspace/model/session/agent-events/agent-events.ts:198
+#: src/pages/workspace/model/session/agent-events/agent-events.ts:191
 msgid "This turn: {out} out · {seconds}s"
 msgstr "This turn: {out} out · {seconds}s"
 
@@ -2790,7 +2852,11 @@ msgstr "Updating…"
 msgid "Use https, or http only for a server on this machine"
 msgstr "Use https, or http only for a server on this machine"
 
-#: src/entities/settings/config/choices/choices.ts:38
+#: src/widgets/setup/ui/EnvField/EnvField.tsx:37
+msgid "Variable name"
+msgstr "Variable name"
+
+#: src/entities/settings/config/choices/choices.ts:39
 msgid "Very high"
 msgstr "Very high"
 
@@ -2916,6 +2982,10 @@ msgstr "Working"
 msgid "Works in a git worktree of its own; changes come back as a branch."
 msgstr "Works in a git worktree of its own; changes come back as a branch."
 
+#: src/entities/settings/config/choices/choices.ts:11
+msgid "Works out a plan and asks before doing it"
+msgstr "Works out a plan and asks before doing it"
+
 #: src/widgets/tile-deck/lib/leading/leading.ts:13
 msgid "Wrapped up"
 msgstr "Wrapped up"
@@ -2932,7 +3002,7 @@ msgstr "Write the first note"
 msgid "Write their instructions once and the orchestrator can call them in any project."
 msgstr "Write their instructions once and the orchestrator can call them in any project."
 
-#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:105
+#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:124
 msgid "Write this file?"
 msgstr "Write this file?"
 
@@ -2983,11 +3053,11 @@ msgstr "You talk on the left"
 msgid "Your account"
 msgstr "Your account"
 
-#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:261
+#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:262
 msgid "Your account changed before the reply finished, so it stops here."
 msgstr "Your account changed before the reply finished, so it stops here."
 
-#: src/entities/settings/config/choices/choices.ts:51
+#: src/entities/settings/config/choices/choices.ts:52
 msgid "Your account turned this one down. Try it again if your plan changed."
 msgstr "Your account turned this one down. Try it again if your plan changed."
 

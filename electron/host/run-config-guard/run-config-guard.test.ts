@@ -20,14 +20,25 @@ describe('runConfigOf', () => {
       resume: null,
       people: sound.people,
       lock: null,
+      chrome: false,
     })
   })
 
+  it('carries the browser choice through, or the toggle in settings does nothing', () => {
+    expect(runConfigOf({ ...sound, chrome: true })?.chrome).toBe(true)
+  })
+
+  it('reads anything but true as no browser, rather than refusing the run', () => {
+    expect(runConfigOf({ ...sound, chrome: 'yes' })?.chrome).toBe(false)
+    expect(runConfigOf({ ...sound, chrome: 1 })?.chrome).toBe(false)
+    expect(runConfigOf(sound)?.chrome).toBe(false)
+  })
+
   it('takes every permission mode the CLI knows and nothing else', () => {
-    for (const permissionMode of ['ask', 'acceptEdits', 'bypass']) {
+    for (const permissionMode of ['plan', 'ask', 'acceptEdits', 'bypass']) {
       expect(runConfigOf({ ...sound, permissionMode })?.permissionMode).toBe(permissionMode)
     }
-    expect(runConfigOf({ ...sound, permissionMode: 'plan' })).toBeNull()
+    expect(runConfigOf({ ...sound, permissionMode: 'dontAsk' })).toBeNull()
     expect(runConfigOf({ ...sound, permissionMode: '--dangerously-skip-permissions' })).toBeNull()
   })
 

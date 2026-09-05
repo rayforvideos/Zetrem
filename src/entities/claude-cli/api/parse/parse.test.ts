@@ -123,6 +123,27 @@ describe('parseClaudeLine', () => {
     ])
   })
 
+  it('carries the plan a plan-mode request is asking about, so the card can show it', () => {
+    const plan = '## Steps\n\n1. Read the config\n2. Add the flag'
+    const events = parseClaudeLine(
+      line({
+        type: 'control_request',
+        request_id: 'req-3',
+        request: {
+          subtype: 'can_use_tool',
+          tool_name: 'ExitPlanMode',
+          input: { plan, planFilePath: '/tmp/plan.md' },
+          tool_use_id: 'toolu_2',
+        },
+      }),
+    )
+    expect(events).toEqual([
+      expect.objectContaining({ type: 'permission', toolName: 'ExitPlanMode', plan }),
+    ])
+    // The plan is prose, and the tile line stays the short thing it is.
+    expect(events[0]).toMatchObject({ line: 'ExitPlanMode', detail: '' })
+  })
+
   it('ignores a control request that is not asking about a tool, rather than answering blind', () => {
     const events = parseClaudeLine(
       line({ type: 'control_request', request_id: 'req-2', request: { subtype: 'interrupt' } }),

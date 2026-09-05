@@ -25,6 +25,13 @@ export type Settings = {
   enterSends: boolean
   theme: 'system' | 'dark' | 'light'
   notify: boolean
+  // Whether a session may drive the person's browser through the Claude in Chrome
+  // extension. Off unless asked for, so no run reaches the browser by surprise.
+  chrome: boolean
+  // Names of environment variables to carry from the shell Zetrem was started in
+  // into every session it starts. Names only: the values are read from the shell
+  // at spawn time, so a token never lands in this file.
+  passEnv: string[]
   sidebarOpen: boolean
   sidebarWidth: number
   // How wide each draggable column of the git history was left, in px, keyed by

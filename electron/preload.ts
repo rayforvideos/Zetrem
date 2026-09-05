@@ -37,6 +37,8 @@ const desk: DeskBridge = {
   openProject: invoke('project:open'),
   forgetProject: invoke('project:forget'),
   repathProject: invoke('project:repath'),
+  addProjectDir: invoke('project:addDir'),
+  removeProjectDir: invoke('project:removeDir'),
 
   startAgent: invoke('agent:start'),
   sendToAgent: send('agent:send'),

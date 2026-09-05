@@ -40,7 +40,7 @@ export const DEFAULT_SETTINGS: Settings = {
   starred: false,
 }
 
-const MODE_IDS: PermissionMode[] = ['ask', 'acceptEdits', 'bypass']
+const MODE_IDS: PermissionMode[] = ['plan', 'ask', 'acceptEdits', 'bypass']
 const MODEL_IDS: ModelChoice[] = ['default', 'fable', 'opus', 'sonnet', 'haiku']
 
 function oneOf<T extends string>(known: readonly T[], saved: unknown, fallback: T): T {

@@ -8,7 +8,7 @@ import type { Person, RosterLock } from '@/entities/claude-cli/api/roster-lock/r
 import { NAMED_MODELS } from '@/entities/claude-cli/model/model-choice/model-choice'
 import { NAMED_EFFORTS } from '@/entities/claude-cli/model/effort-choice/effort-choice'
 
-const PERMISSION_MODES: readonly PermissionMode[] = ['ask', 'acceptEdits', 'bypass']
+const PERMISSION_MODES: readonly PermissionMode[] = ['plan', 'ask', 'acceptEdits', 'bypass']
 const MODELS: readonly ModelChoice[] = ['default', ...NAMED_MODELS]
 const EFFORTS: readonly EffortChoice[] = ['default', ...NAMED_EFFORTS]
 

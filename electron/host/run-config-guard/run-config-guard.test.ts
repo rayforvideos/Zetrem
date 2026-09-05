@@ -35,10 +35,10 @@ describe('runConfigOf', () => {
   })
 
   it('takes every permission mode the CLI knows and nothing else', () => {
-    for (const permissionMode of ['ask', 'acceptEdits', 'bypass']) {
+    for (const permissionMode of ['plan', 'ask', 'acceptEdits', 'bypass']) {
       expect(runConfigOf({ ...sound, permissionMode })?.permissionMode).toBe(permissionMode)
     }
-    expect(runConfigOf({ ...sound, permissionMode: 'plan' })).toBeNull()
+    expect(runConfigOf({ ...sound, permissionMode: 'dontAsk' })).toBeNull()
     expect(runConfigOf({ ...sound, permissionMode: '--dangerously-skip-permissions' })).toBeNull()
   })
 

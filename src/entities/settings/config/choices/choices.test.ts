@@ -16,7 +16,7 @@ describe('the ids the settings accept are the ones the pickers offer', () => {
   })
 
   it('has as many of each as the settings know about', () => {
-    expect(PERMISSION_MODES).toHaveLength(3)
+    expect(PERMISSION_MODES).toHaveLength(4)
     expect(MODELS).toHaveLength(5)
   })
 })

@@ -19,6 +19,7 @@ import { accountWorkInFlight } from '../../spawn/account-work/account-work'
 import { errorTail } from '../../spawn/error-tail/error-tail'
 import { tell } from '../tell/tell'
 import { runConfigOf } from '../run-config-guard/run-config-guard'
+import { loadSettings } from '../../store/settings-store/settings-store'
 import { launchFor } from '../../spawn/spawn-claude/spawn-claude'
 import { scratchWorkspace } from '../../shell/workspace-dir/workspace-dir'
 import { isGitWorkspace } from '../../shell/git-workspace/git-workspace'
@@ -179,7 +180,9 @@ export function registerAgentHost(): void {
             console.error('[worktree-links] could not follow', workspace, cause)
           })
         }
-        const env = agentEnv(process.env, await loginPath())
+        // The names the person asked to carry through are read here, at the
+        // spawn, so a change in settings reaches the next session with no restart.
+        const env = agentEnv(process.env, await loginPath(), (await loadSettings()).passEnv)
         // The folders this project also works in are the record's to name, not
         // the renderer's: what a session may reach outside its own folder is
         // decided here, as its working folder is.

@@ -192,11 +192,11 @@ msgstr "{n}분 전"
 msgid "{name} can be called this session"
 msgstr "{name}은(는) 이번 세션에서 부를 수 있습니다"
 
-#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:273
+#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:274
 msgid "{name} is off. The running session keeps them until it ends."
 msgstr "{name}을(를) 껐습니다. 실행 중인 세션은 끝날 때까지 그대로 데리고 있습니다."
 
-#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:272
+#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:273
 msgid "{name} is on. The running session cannot call them yet."
 msgstr "{name}을(를) 켰습니다. 실행 중인 세션은 아직 부를 수 없습니다."
 
@@ -422,6 +422,7 @@ msgid "Active"
 msgstr "활성"
 
 #: src/widgets/setup/ui/AddConnector/AddConnector.tsx:95
+#: src/widgets/setup/ui/EnvField/EnvField.tsx:48
 #: src/widgets/setup/ui/PluginShelf/SourcesTab.tsx:61
 msgid "Add"
 msgstr "추가"
@@ -454,6 +455,10 @@ msgstr "주소로 추가하기"
 msgid "Add teammate"
 msgstr "팀원 추가"
 
+#: src/widgets/setup/ui/EnvField/EnvField.tsx:44
+msgid "Add variable"
+msgstr "변수 추가"
+
 #: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:100
 msgid "Add your first teammate"
 msgstr "첫 팀원을 만들어 보세요"
@@ -475,7 +480,7 @@ msgstr "이후"
 msgid "Agent memory"
 msgstr "에이전트 메모리"
 
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:178
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:193
 msgid "Agents"
 msgstr "에이전트"
 
@@ -504,7 +509,7 @@ msgstr "{0}개 모두 연결됨"
 msgid "Allow"
 msgstr "허용"
 
-#: src/entities/settings/config/choices/choices.ts:17
+#: src/entities/settings/config/choices/choices.ts:18
 #: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:47
 msgid "Allow all"
 msgstr "전부 허용"
@@ -538,7 +543,7 @@ msgstr "적용"
 msgid "Approve this plan?"
 msgstr "이 계획을 승인할까요?"
 
-#: src/entities/settings/config/choices/choices.ts:11
+#: src/entities/settings/config/choices/choices.ts:12
 #: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:47
 msgid "Ask first"
 msgstr "먼저 묻기"
@@ -551,7 +556,7 @@ msgstr "일 전체를 맡기세요"
 msgid "Ask for the whole job, not the next step. The orchestrator splits it up, hands out the pieces, and replies when they come back."
 msgstr "다음 단계 말고 일 전체를 맡기세요. 오케스트레이터가 알아서 쪼개서 나눠 주고, 결과가 오면 정리해서 답합니다."
 
-#: src/entities/settings/config/choices/choices.ts:11
+#: src/entities/settings/config/choices/choices.ts:12
 msgid "Asks before editing files or running commands"
 msgstr "파일을 고치거나 명령을 실행하기 전에 묻습니다"
 
@@ -571,7 +576,7 @@ msgstr "작성자"
 msgid "auto"
 msgstr "자동"
 
-#: src/entities/settings/config/choices/choices.ts:14
+#: src/entities/settings/config/choices/choices.ts:15
 #: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:47
 msgid "Auto-edit"
 msgstr "자동 편집"
@@ -590,7 +595,7 @@ msgstr "이전"
 msgid "Back to the list"
 msgstr "목록으로"
 
-#: src/entities/settings/config/choices/choices.ts:28
+#: src/entities/settings/config/choices/choices.ts:29
 msgid "Balanced for most tasks"
 msgstr "대부분의 일에 무난합니다"
 
@@ -629,7 +634,7 @@ msgstr "연결 안 됨"
 
 #: src/widgets/library/ui/NoteList/NoteList.tsx:273
 #: src/widgets/library/ui/NoteReader/NoteReader.tsx:197
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:215
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:233
 #: src/widgets/team-sidebar/ui/ChatList/ChatRow.tsx:246
 #: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:393
 #: src/widgets/team-sidebar/ui/MemberMenu/MemberMenu.tsx:66
@@ -714,6 +719,11 @@ msgstr "Claude Code가 아무 말 없이 멈췄어요 (종료 코드 {code}). �
 msgid "Claude Code, with a screen"
 msgstr "Claude Code에 화면을 붙였습니다"
 
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:170
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:179
+msgid "Claude in Chrome"
+msgstr ""
+
 #: src/widgets/conversation/ui/Composer/Composer.tsx:117
 #: src/widgets/team-sidebar/ui/ToolPicker/ToolPicker.tsx:71
 msgid "Clear"
@@ -755,7 +765,7 @@ msgstr "선택한 파일 커밋"
 msgid "compacting soon"
 msgstr "곧 압축"
 
-#: src/entities/settings/config/choices/choices.ts:27
+#: src/entities/settings/config/choices/choices.ts:28
 msgid "Complex work. Slower and pricier"
 msgstr "복잡한 일에 좋습니다. 느리고 비쌉니다"
 
@@ -935,7 +945,7 @@ msgstr "계정을 제거하지 못했습니다."
 msgid "Could not rename that chat"
 msgstr "대화 이름을 바꾸지 못했습니다"
 
-#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:99
+#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:100
 msgid "Could not reopen your last project"
 msgstr "마지막 프로젝트를 다시 열지 못했습니다"
 
@@ -974,8 +984,8 @@ msgstr "만들기"
 msgid "Create a teammate and they'll show up here."
 msgstr "팀원을 만들면 여기에 나타납니다."
 
-#: src/entities/settings/config/choices/choices.ts:21
-#: src/entities/settings/config/choices/choices.ts:34
+#: src/entities/settings/config/choices/choices.ts:22
+#: src/entities/settings/config/choices/choices.ts:35
 msgid "Default"
 msgstr "기본값"
 
@@ -1051,7 +1061,7 @@ msgstr "이번 세션에서는 다시 묻지 않기"
 #: src/widgets/agent-report/lib/state-word/state-word.ts:12
 #: src/widgets/library/ui/NoteReader/NoteReader.tsx:99
 #: src/widgets/setup/ui/PluginShelf/PluginShelf.tsx:129
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:219
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:237
 #: src/widgets/tile-deck/lib/state-word/state-word.ts:10
 msgid "Done"
 msgstr "완료"
@@ -1108,20 +1118,24 @@ msgstr "수정"
 msgid "Editing"
 msgstr "고치는 중"
 
-#: src/entities/settings/config/choices/choices.ts:15
+#: src/entities/settings/config/choices/choices.ts:16
 msgid "Edits files freely, asks before running commands"
 msgstr "파일은 알아서 고치고, 명령을 실행할 때만 묻습니다"
 
 #: src/widgets/conversation/ui/Composer/Composer.tsx:206
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:162
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:163
 msgid "Effort"
 msgstr "노력"
+
+#: src/widgets/setup/ui/EnvField/EnvField.tsx:26
+msgid "Environment variables"
+msgstr "환경 변수"
 
 #: src/widgets/welcome/lib/slides/slides.ts:26
 msgid "Every command is on screen"
 msgstr "실행한 명령이 전부 보입니다"
 
-#: src/entities/settings/config/choices/choices.ts:36
+#: src/entities/settings/config/choices/choices.ts:37
 msgid "Everyday work"
 msgstr "평소 작업"
 
@@ -1129,7 +1143,7 @@ msgstr "평소 작업"
 msgid "Everyone you send out gets a card: their name, their task, and how long they have been at it. Open one to see what they were asked and what they sent back."
 msgstr "내보낸 팀원마다 카드가 하나씩 생깁니다. 이름, 맡은 일, 걸린 시간이 보입니다. 눌러 보면 무엇을 시켰고 뭐라고 답했는지 볼 수 있습니다."
 
-#: src/entities/settings/config/choices/choices.ts:39
+#: src/entities/settings/config/choices/choices.ts:40
 msgid "Everything it has. Slowest and priciest"
 msgstr "가진 것을 다 씁니다. 가장 느리고 가장 비쌉니다"
 
@@ -1138,7 +1152,7 @@ msgstr "가진 것을 다 씁니다. 가장 느리고 가장 비쌉니다"
 msgid "Everything the session has"
 msgstr "이 세션이 가진 전부"
 
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:33
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:34
 msgid "Extensions"
 msgstr "확장"
 
@@ -1164,7 +1178,7 @@ msgstr "실패"
 msgid "Failed: the run stopped before it was done"
 msgstr "실패: 작업이 끝나기 전에 멈췄습니다"
 
-#: src/entities/settings/config/choices/choices.ts:29
+#: src/entities/settings/config/choices/choices.ts:30
 msgid "Fast and cheap. Good for quick questions"
 msgstr "빠르고 저렴합니다. 간단한 질문에 좋습니다"
 
@@ -1233,11 +1247,11 @@ msgstr "팀원이 함께 읽고 쓸 수 있는, 프로젝트 밖의 폴더입니
 msgid "Follows the language your computer is set to"
 msgstr "컴퓨터에 설정된 언어를 따릅니다"
 
-#: src/entities/settings/config/choices/choices.ts:21
+#: src/entities/settings/config/choices/choices.ts:22
 msgid "Follows your account setting"
 msgstr "계정 설정을 따릅니다"
 
-#: src/entities/settings/config/choices/choices.ts:34
+#: src/entities/settings/config/choices/choices.ts:35
 msgid "Follows your Claude Code setting"
 msgstr "Claude Code 설정을 따릅니다"
 
@@ -1267,7 +1281,7 @@ msgstr "이전에 읽어둔 값"
 msgid "From plugins"
 msgstr "플러그인에서"
 
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:30
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:31
 msgid "General"
 msgstr "일반"
 
@@ -1288,6 +1302,10 @@ msgstr "git이 응답하지 않습니다."
 #: src/widgets/agent-report/lib/review/review.ts:37
 msgid "Git said: {0}"
 msgstr "Git이 이렇게 답했습니다: {0}"
+
+#: src/widgets/setup/ui/EnvField/EnvField.tsx:36
+msgid "GITHUB_TOKEN"
+msgstr ""
 
 #: src/entities/connector/lib/refusal-why/refusal-why.ts:8
 msgid "Give it a name"
@@ -1314,7 +1332,7 @@ msgstr "그래프"
 msgid "Handing off"
 msgstr "넘기는 중"
 
-#: src/entities/settings/config/choices/choices.ts:38
+#: src/entities/settings/config/choices/choices.ts:39
 msgid "Hard problems. Much slower"
 msgstr "어려운 문제용. 훨씬 느립니다"
 
@@ -1322,11 +1340,11 @@ msgstr "어려운 문제용. 훨씬 느립니다"
 msgid "Held up"
 msgstr "멈춰 있음"
 
-#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:194
+#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:195
 msgid "Hide team sidebar"
 msgstr "팀 사이드바 접기"
 
-#: src/entities/settings/config/choices/choices.ts:37
+#: src/entities/settings/config/choices/choices.ts:38
 msgid "High"
 msgstr "높음"
 
@@ -1430,7 +1448,7 @@ msgstr "이름은 {NAME_MAX}자 이내로 지어 주세요"
 msgid "Keep working"
 msgstr "계속 작업"
 
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:112
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:113
 msgid "Language"
 msgstr "언어"
 
@@ -1445,6 +1463,10 @@ msgstr "다음 실행"
 #: src/widgets/conversation/lib/greetings/greetings.ts:7
 msgid "Let's get to work with your cute little agents!"
 msgstr "작고 귀여운 에이전트들과 일을 시작해 볼까요!"
+
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:172
+msgid "Lets the session read and drive your browser. Needs the Chrome extension, and the first run may ask for your say-so in the browser."
+msgstr "세션이 브라우저를 읽고 다룰 수 있게 합니다. Chrome 확장이 필요하고, 처음 실행할 때 브라우저에서 허락을 물을 수 있습니다."
 
 #: src/entities/connector/lib/refusal-why/refusal-why.ts:14
 msgid "Letters, numbers, hyphens and underscores only"
@@ -1469,11 +1491,11 @@ msgstr "라이브러리 안내"
 msgid "Linked from"
 msgstr "이 노트를 가리키는 노트"
 
-#: src/entities/settings/config/choices/choices.ts:35
+#: src/entities/settings/config/choices/choices.ts:36
 msgid "Low"
 msgstr "낮음"
 
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:191
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:209
 msgid "Manage"
 msgstr "관리"
 
@@ -1481,7 +1503,7 @@ msgstr "관리"
 msgid "manual"
 msgstr "수동"
 
-#: src/entities/settings/config/choices/choices.ts:39
+#: src/entities/settings/config/choices/choices.ts:40
 msgid "Max"
 msgstr "최대"
 
@@ -1489,11 +1511,11 @@ msgstr "최대"
 msgid "MCP server"
 msgstr "MCP 서버"
 
-#: src/entities/settings/config/choices/choices.ts:36
+#: src/entities/settings/config/choices/choices.ts:37
 msgid "Medium"
 msgstr "보통"
 
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:32
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:33
 msgid "Memory"
 msgstr "메모리"
 
@@ -1523,7 +1545,7 @@ msgid "Message your team"
 msgstr "팀에게 말하기"
 
 #: src/widgets/conversation/ui/Composer/Composer.tsx:203
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:156
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:157
 #: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:109
 #: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:181
 msgid "Model"
@@ -1565,6 +1587,10 @@ msgstr "이름"
 msgid "Name the folder for these two chats"
 msgstr "두 대화를 담을 폴더 이름"
 
+#: src/widgets/setup/ui/EnvField/EnvField.tsx:72
+msgid "Named variables are carried from the shell Zetrem started in into every session, which is how a connector finds its token. Zetrem keeps the names, never the values."
+msgstr "여기 적은 변수는 Zetrem이 실행된 셸에서 모든 세션으로 전달됩니다. 커넥터가 토큰을 찾는 방법이기도 합니다. Zetrem은 이름만 저장하고 값은 저장하지 않습니다."
+
 #: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:193
 msgid "Needs auth"
 msgstr "로그인 필요"
@@ -1573,7 +1599,7 @@ msgstr "로그인 필요"
 msgid "Needs you"
 msgstr "기다리는 중"
 
-#: src/entities/settings/config/choices/choices.ts:17
+#: src/entities/settings/config/choices/choices.ts:18
 msgid "Never asks. Anything can run"
 msgstr "묻지 않습니다. 무엇이든 실행됩니다"
 
@@ -1717,8 +1743,8 @@ msgstr "아직 쓴 것이 없습니다."
 msgid "Nothing yet"
 msgstr "아직 없음"
 
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:133
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:142
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:134
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:143
 msgid "Notifications"
 msgstr "알림"
 
@@ -1791,7 +1817,7 @@ msgid "Permission"
 msgstr "권한"
 
 #: src/widgets/conversation/ui/Composer/Composer.tsx:176
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:150
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:151
 msgid "Permissions"
 msgstr "권한"
 
@@ -1815,6 +1841,10 @@ msgstr "먼저 프로젝트를 고르세요"
 msgid "Picked up where they left off"
 msgstr "하던 일을 이어받았습니다"
 
+#: src/entities/settings/config/choices/choices.ts:11
+msgid "Plan first"
+msgstr "계획 먼저"
+
 #: src/entities/tool/lib/tool-verb/tool-verb.ts:28
 msgid "Planning"
 msgstr "계획하는 중"
@@ -1824,7 +1854,7 @@ msgid "Plugin"
 msgstr "플러그인"
 
 #: src/widgets/setup/ui/PluginShelf/InstalledTab.tsx:37
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:187
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:205
 msgid "Plugins"
 msgstr "플러그인"
 
@@ -1865,7 +1895,7 @@ msgstr "푸시"
 msgid "Pushed."
 msgstr "푸시했습니다."
 
-#: src/entities/settings/config/choices/choices.ts:35
+#: src/entities/settings/config/choices/choices.ts:36
 msgid "Quick answers. Least thinking, cheapest"
 msgstr "빠른 답. 가장 적게 생각하고 가장 저렴합니다"
 
@@ -1978,6 +2008,10 @@ msgstr "{0} 프로젝트를 뺄까요?"
 #: src/widgets/team-sidebar/ui/MemberMenu/MemberMenu.tsx:60
 msgid "Remove {name}?"
 msgstr "{name}을(를) 내보낼까요?"
+
+#: src/widgets/setup/ui/EnvField/EnvField.tsx:61
+msgid "Remove {one}"
+msgstr "{one} 삭제"
 
 #: src/widgets/setup/ui/ProjectField/ProjectField.tsx:68
 msgid "Remove {path}"
@@ -2158,12 +2192,12 @@ msgstr "무엇을 했는지 보기"
 msgid "Send"
 msgstr "보내기"
 
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:119
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:128
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:120
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:129
 msgid "Send with Enter"
 msgstr "Enter로 전송"
 
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:31
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:32
 msgid "Session"
 msgstr "세션"
 
@@ -2175,7 +2209,7 @@ msgstr "세션 상세"
 msgid "Session restarted. The next message picks the conversation back up with your team as it is now."
 msgstr "세션을 다시 시작했어요. 다음 메시지가 지금의 팀 구성으로 이 대화를 이어서 진행해요."
 
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:71
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:72
 msgid "Set a few things and your agents get to work!"
 msgstr "몇 가지만 정하면 바로 일을 시작합니다"
 
@@ -2187,7 +2221,7 @@ msgstr "계정 전체에 설정된 것입니다. 여기서는 지우거나 끌 �
 msgid "Settings"
 msgstr "설정"
 
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:76
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:77
 msgid "Settings sections"
 msgstr "설정 구역"
 
@@ -2203,11 +2237,11 @@ msgstr "공용"
 msgid "Shared across projects"
 msgstr "모든 프로젝트에서 공용"
 
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:121
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:122
 msgid "Shift+Enter starts a new line. Off, sending takes the modifier key with Enter."
 msgstr "Shift+Enter로 줄을 바꿉니다. 끄면 보조키+Enter로 보냅니다."
 
-#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:194
+#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:195
 msgid "Show team sidebar"
 msgstr "팀 사이드바 펼치기"
 
@@ -2313,8 +2347,8 @@ msgstr "{0} 스테이지"
 msgid "Star it"
 msgstr "스타 주기"
 
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:29
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:219
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:30
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:237
 msgid "Start"
 msgstr "시작"
 
@@ -2427,7 +2461,7 @@ msgstr "팀 보드 너비"
 msgid "Teammates are reusable"
 msgstr "팀원은 한 번 만들면 계속 씁니다"
 
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:135
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:136
 msgid "Tells you when the work is done or something needs your say-so, and only while Zetrem is behind another window."
 msgstr "일이 끝났거나 승인이 필요할 때 알려줍니다. Zetrem이 다른 창에 가려져 있을 때만 알립니다."
 
@@ -2471,7 +2505,7 @@ msgstr "<0>claude</0> 명령을 찾지 못했습니다. Zetrem이 대신 설치�
 msgid "The address has to be http or https"
 msgstr "주소는 http나 https여야 합니다"
 
-#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:180
+#: src/widgets/setup/ui/SetupPane/SetupPane.tsx:195
 msgid "The agents Claude Code brings. Each can be switched off."
 msgstr "Claude Code가 기본으로 제공하는 에이전트입니다. 하나씩 끌 수 있습니다."
 
@@ -2504,7 +2538,7 @@ msgstr "빈 폴더가 라이브러리에서 지워집니다."
 msgid "The file is deleted and its line leaves the index the agents load. This cannot be undone."
 msgstr "파일이 삭제되고 에이전트가 로드하는 색인에서도 빠집니다. 되돌릴 수 없어요."
 
-#: src/entities/settings/config/choices/choices.ts:25
+#: src/entities/settings/config/choices/choices.ts:26
 msgid "The hardest problems. Slowest and priciest of these"
 msgstr "가장 어려운 문제용. 이 중 가장 느리고 가장 비쌉니다"
 
@@ -2619,7 +2653,7 @@ msgstr "빨리 읽고, 지루해하는 법이 없습니다."
 msgid "Thinking"
 msgstr "생각하는 중"
 
-#: src/entities/settings/config/choices/choices.ts:37
+#: src/entities/settings/config/choices/choices.ts:38
 msgid "Thinks longer. Slower and pricier"
 msgstr "더 오래 생각합니다. 느리고 비쌉니다"
 
@@ -2818,7 +2852,11 @@ msgstr "업데이트하는 중…"
 msgid "Use https, or http only for a server on this machine"
 msgstr "https를 쓰세요. http는 이 컴퓨터의 서버일 때만 됩니다"
 
-#: src/entities/settings/config/choices/choices.ts:38
+#: src/widgets/setup/ui/EnvField/EnvField.tsx:37
+msgid "Variable name"
+msgstr "변수 이름"
+
+#: src/entities/settings/config/choices/choices.ts:39
 msgid "Very high"
 msgstr "매우 높음"
 
@@ -2944,6 +2982,10 @@ msgstr "일하는 중"
 msgid "Works in a git worktree of its own; changes come back as a branch."
 msgstr "자기만의 git 워크트리에서 일합니다. 변경은 브랜치로 돌아옵니다."
 
+#: src/entities/settings/config/choices/choices.ts:11
+msgid "Works out a plan and asks before doing it"
+msgstr "계획을 세우고, 실행하기 전에 묻습니다"
+
 #: src/widgets/tile-deck/lib/leading/leading.ts:13
 msgid "Wrapped up"
 msgstr "마무리됨"
@@ -3011,11 +3053,11 @@ msgstr "왼쪽에서 대화합니다"
 msgid "Your account"
 msgstr "내 계정"
 
-#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:261
+#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:262
 msgid "Your account changed before the reply finished, so it stops here."
 msgstr "답변이 끝나기 전에 계정이 바뀌어서, 여기서 멈췄어요."
 
-#: src/entities/settings/config/choices/choices.ts:51
+#: src/entities/settings/config/choices/choices.ts:52
 msgid "Your account turned this one down. Try it again if your plan changed."
 msgstr "계정이 이 모델을 거절했습니다. 요금제가 바뀌었다면 다시 시도해 보세요."
 

@@ -8,7 +8,7 @@ import type { Person, RosterLock } from '@/entities/claude-cli/api/roster-lock/r
 import { NAMED_MODELS } from '@/entities/claude-cli/model/model-choice/model-choice'
 import { NAMED_EFFORTS } from '@/entities/claude-cli/model/effort-choice/effort-choice'
 
-const PERMISSION_MODES: readonly PermissionMode[] = ['ask', 'acceptEdits', 'bypass']
+const PERMISSION_MODES: readonly PermissionMode[] = ['plan', 'ask', 'acceptEdits', 'bypass']
 const MODELS: readonly ModelChoice[] = ['default', ...NAMED_MODELS]
 const EFFORTS: readonly EffortChoice[] = ['default', ...NAMED_EFFORTS]
 
@@ -59,6 +59,10 @@ export function runConfigOf(value: unknown): Omit<RunConfig, 'persona'> | null {
     resume: raw.resume ?? null,
     people: raw.people.map((p) => ({ ...p, isolated: p.isolated ?? true })),
     lock: raw.lock,
+    // Reaching into the browser is a capability, so anything that is not the
+    // word true reads as off rather than as a reason to refuse the whole run:
+    // a session that starts without browser tools is the safe way to be wrong.
+    chrome: raw.chrome === true,
     ...(raw.spoken === undefined ? {} : { spoken: raw.spoken }),
   }
 }

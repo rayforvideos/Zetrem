@@ -68,6 +68,7 @@ export function useWorkspace() {
     permissionMode: settings.permissionMode,
     model: settings.model,
     effort: settings.effort,
+    chrome: settings.chrome,
     people: peopleOf(defs),
     lock: lockOf(settings, defs, authored),
     // Names the language the screen is read in; every teammate's brief opens with it.

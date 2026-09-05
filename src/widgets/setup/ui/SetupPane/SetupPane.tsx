@@ -19,6 +19,7 @@ import { AccountField } from '../AccountField/AccountField'
 import { StockList } from '@/entities/teammate'
 import { YouField } from '../YouField/YouField'
 import { ChoiceField } from '../ChoiceField/ChoiceField'
+import { EnvField } from '../EnvField/EnvField'
 import { MemoryField } from '../MemoryField/MemoryField'
 import { ProjectField } from '../ProjectField/ProjectField'
 import type { SetupPaneProps, SetupTab } from './SetupPane.types'
@@ -164,6 +165,20 @@ export function SetupPane({
                     chosen={defaults.effort}
                     onChoose={(id) => defaults.onEffort(id as EffortChoice)}
                   />
+                  <Field orientation="horizontal" className="rounded-2xl bg-card p-4">
+                    <FieldContent>
+                      <FieldLabel htmlFor="chrome">{t`Claude in Chrome`}</FieldLabel>
+                      <FieldDescription>
+                        {t`Lets the session read and drive your browser. Needs the Chrome extension, and the first run may ask for your say-so in the browser.`}
+                      </FieldDescription>
+                    </FieldContent>
+                    <Switch
+                      id="chrome"
+                      checked={defaults.chrome}
+                      onCheckedChange={defaults.onChrome}
+                      aria-label={t`Claude in Chrome`}
+                    />
+                  </Field>
                 </FieldGroup>
               </section>
               <section hidden={tab !== 'memory'} className="zt-rise">
@@ -181,6 +196,9 @@ export function SetupPane({
                       </FieldDescription>
                     </FieldContent>
                     <StockList {...agents} avatar={24} />
+                  </Field>
+                  <Field className="rounded-2xl bg-card p-4">
+                    <EnvField names={defaults.passEnv} onChange={defaults.onPassEnv} />
                   </Field>
                   <Field orientation="horizontal" className="rounded-2xl bg-card p-4">
                     <FieldContent>

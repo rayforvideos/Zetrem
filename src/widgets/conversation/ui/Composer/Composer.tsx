@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react'
 import type { FormEvent, KeyboardEvent } from 'react'
-import { ArrowUp, Gauge, Library, Paperclip, Shield, Square, X } from 'lucide-react'
+import { ArrowUp, Gauge, Paperclip, Shield, Square, X } from 'lucide-react'
 import { EFFORTS, MODELS, PERMISSION_MODES, modelsWith } from '@/entities/settings'
 import type { EffortChoice, ModelChoice, PermissionMode } from '@/entities/claude-cli'
 import { cn } from '@/shared/lib/cn'
@@ -13,6 +13,8 @@ import {
   InputGroupTextarea,
 } from '@/shared/ui/input-group'
 import { Kbd, KbdGroup } from '@/shared/ui/kbd'
+import { Switch } from '@/shared/ui/switch'
+import { chipOf } from '../../lib/chip/chip'
 import {
   beganComposing,
   endedComposing,
@@ -35,6 +37,8 @@ export function Composer({
   permissionMode,
   model,
   effort,
+  runningPermissionMode,
+  runningModel,
   refusedModels,
   enterSends,
   library,
@@ -49,7 +53,13 @@ export function Composer({
   onModel,
   onEffort,
   onLibrary,
+  onRestart,
 }: ComposerProps) {
+  // The chips have to name what is in force, not what was last picked: a
+  // session started on allow-all goes on allowing everything however the
+  // pickers read, and the chip is the only thing anyone looks at.
+  const permission = chipOf({ wanted: permissionMode, running: runningPermissionMode })
+  const models = chipOf({ wanted: model, running: runningModel })
   const [draft, setDraft] = useState('')
   const [over, setOver] = useState(false)
   const field = useRef<HTMLTextAreaElement>(null)
@@ -171,34 +181,36 @@ export function Composer({
           <ChoicePicker
             icon={<Shield />}
             options={PERMISSION_MODES}
-            selected={permissionMode}
+            selected={permission.pick}
+            inForce={permission.inForce}
+            onRestart={onRestart}
             onSelect={(id) => onPermissionMode(id as PermissionMode)}
             label={t`Permissions`}
           />
-          <InputGroupButton
-            type="button"
-            size="xs"
-            data-library-toggle
-            aria-pressed={library}
-            onClick={() => onLibrary(!library)}
-            title={
-              library
-                ? t`Agents search the library and file what they learn. Click to turn it off.`
-                : t`Agents work without the library. Click to turn it on.`
-            }
+          {/* A switch, not a button: every other control on this row opens
+              something, while this one is a setting whose state has to be
+              legible without pressing it to find out. */}
+          <label
+            title={t`Agents search the library and suggest what they find.`}
             className={cn(
-              'rounded-full transition-colors duration-150',
-              library
-                ? 'bg-card text-foreground hover:bg-card'
-                : 'text-muted-foreground hover:text-foreground',
+              'flex h-6 flex-none select-none items-center gap-1.5 rounded-full px-2 text-sm transition-colors duration-150',
+              library ? 'bg-card text-foreground' : 'text-muted-foreground hover:text-foreground',
             )}
           >
-            <Library />
-            {t`Library`}
-          </InputGroupButton>
+            <Switch
+              data-library-toggle
+              size="sm"
+              checked={library}
+              onCheckedChange={onLibrary}
+              aria-label={library ? t`Library on` : t`Library off`}
+            />
+            {library ? t`Library on` : t`Library off`}
+          </label>
           <ChoicePicker
             options={modelsWith(MODELS, refusedModels)}
-            selected={model}
+            selected={models.pick}
+            inForce={models.inForce}
+            onRestart={onRestart}
             onSelect={(id) => onModel(id as ModelChoice)}
             label={t`Model`}
             sub={{

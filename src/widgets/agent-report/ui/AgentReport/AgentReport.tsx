@@ -1,7 +1,7 @@
 import type { AgentSession } from '@/entities/agent-session'
 import { useScrollState } from '@/shared/lib/measure/scroll-state/useScrollState'
 import { tally } from '@/entities/tool'
-import { modelFromCli } from '@/entities/settings'
+import { modelWordFromCli } from '@/entities/settings'
 import { AgentSprite, personaOf, useModel } from '@/entities/teammate'
 import { cn } from '@/shared/lib/cn'
 import {
@@ -67,7 +67,7 @@ export function AgentReport({
   // crew knows which model this teammate is set to, which is the answer the
   // header was reaching for.
   const crewModel = useModel(session.subagentType)
-  const model = modelFromCli(session.model) ?? modelFromCli(crewModel ?? '')
+  const model = modelWordFromCli(session.model) ?? modelWordFromCli(crewModel ?? '')
   const review = useWorktreeReview(session.agentId, persona.name)
 
   return (

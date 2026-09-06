@@ -1,4 +1,3 @@
-import type { ReactNode } from 'react'
 import { LibraryPane } from '@/widgets/library'
 import type {
   LibraryNotes,
@@ -11,13 +10,13 @@ export function LibraryGate({
   proposals,
   chatTitleOf,
   nowMs,
-  sidebar,
+  onLeave,
 }: {
   library: LibraryNotes
   proposals: LibraryProposals
   chatTitleOf(session: string): string | null
   nowMs: number
-  sidebar: ReactNode
+  onLeave(): void
 }) {
   return (
     <LibraryPane
@@ -38,6 +37,7 @@ export function LibraryGate({
       onOpen={library.openNote}
       onOpenTitle={library.openTitle}
       onClose={library.closeNote}
+      onLeave={onLeave}
       onCreate={library.create}
       onRemove={library.remove}
       onStartEdit={library.startEdit}
@@ -52,7 +52,6 @@ export function LibraryGate({
       chatTitleOf={chatTitleOf}
       onAcceptProposal={proposals.accept}
       onDismissProposal={proposals.dismiss}
-      sidebar={sidebar}
     />
   )
 }

@@ -79,7 +79,6 @@ function working(turns: Turn[]): string {
       project={PROJECT}
       onDecide={() => {}}
       onFileTurn={() => {}}
-      sidebar={null}
       hint={false}
       onHintSeen={() => {}}
       report={null}
@@ -90,6 +89,9 @@ function working(turns: Turn[]): string {
           sessionLive={false}
           addressee={null}
           permissionMode="ask"
+          runningPermissionMode={null}
+          runningModel={null}
+          onRestart={() => {}}
           model="default"
           effort="default"
           refusedModels={[]}
@@ -134,7 +136,6 @@ function pane(
       project={PROJECT}
       onDecide={() => {}}
       onFileTurn={() => {}}
-      sidebar={null}
       hint={false}
       onHintSeen={() => {}}
       report={null}
@@ -145,6 +146,9 @@ function pane(
           sessionLive={false}
           addressee={null}
           permissionMode="ask"
+          runningPermissionMode={null}
+          runningModel={null}
+          onRestart={() => {}}
           model="default"
           effort="default"
           refusedModels={[]}
@@ -406,6 +410,52 @@ describe('approval: the most important moment in this app', () => {
     expect(pane([], ask), 'other tools keep it').toContain('ask again this session')
   })
 
+  it('is allowed most of the window, and scrolls inside it, rather than cutting the body off', () => {
+    const html = pane([], ask)
+    expect(html).toContain('max-h-[60vh]')
+    expect(html, 'the body takes the tab stop, so a cut body can still be scrolled').toMatch(
+      /<section[^>]*tabindex="0"/,
+    )
+  })
+
+  it('shows what a write would put in the file, not only the path', () => {
+    const html = pane([], {
+      requestId: 'r5',
+      toolName: 'Write',
+      line: 'Write src/sub.js',
+      detail: 'src/sub.js',
+      change: [
+        [
+          { kind: 'add' as const, text: 'const a = 1' },
+          { kind: 'add' as const, text: 'const b = 2' },
+        ],
+      ],
+      count: { added: 2, removed: 0 },
+    })
+    expect(html).toContain('Write this file?')
+    expect(html).toContain('src/sub.js')
+    expect(html).toContain('const b = 2')
+    expect(html).toMatch(/data-change[^>]*>[\s\S]*?\+2/)
+  })
+
+  it('folds a long change and offers the whole of it, so the buttons stay in view', () => {
+    const lines = Array.from({ length: 40 }, (_, at) => ({
+      kind: 'add' as const,
+      text: `line ${at}`,
+    }))
+    const html = pane([], {
+      requestId: 'r6',
+      toolName: 'Edit',
+      line: 'Edit src/big.ts',
+      detail: 'src/big.ts',
+      change: [lines],
+      count: { added: 40, removed: 0 },
+    })
+    expect(html).toContain('line 0')
+    expect(html, 'the tail waits behind the button').not.toContain('line 39')
+    expect(html).toContain('Show the whole change')
+  })
+
   it('asks about a tool it does not know, without inventing a name for it', () => {
     const html = pane([], {
       requestId: 'r2',
@@ -431,13 +481,19 @@ const WAITING = {
 describe('an answer can be filed to the library on its own', () => {
   it('offers the per-answer action once the answer is in and settled', () => {
     const html = pane([turn({ text: '다 했다' })])
-    expect(html).toContain('To library')
-    expect(html).toContain('group/answer')
+    expect(html).toContain('data-file-turn')
+    expect(html).toContain('To the library')
+  })
+
+  it('shows that action outright rather than waiting for the pointer to find it', () => {
+    const html = pane([turn({ text: '다 했다' })])
+    const at = html.indexOf('data-file-turn')
+    expect(html.slice(at, at + 400)).not.toContain('opacity-0')
   })
 
   it('keeps the action off the streaming answer, since it is not written yet', () => {
     const html = working([turn({ role: 'user', text: '고쳐줘' }), turn({ text: '쓰는 중' })])
-    expect(html).not.toContain('To library')
+    expect(html).not.toContain('data-file-turn')
   })
 })
 

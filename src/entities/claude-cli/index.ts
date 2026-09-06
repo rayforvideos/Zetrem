@@ -1,4 +1,6 @@
 export type { ModelChoice } from './model/model-choice/model-choice.types'
+export { modelFromCli } from './model/model-choice/model-choice'
+export { modeFromCli } from './api/run-config/run-config'
 export type { EffortChoice } from './model/effort-choice/effort-choice.types'
 export { parseClaudeLine, permissionAlwaysResult, permissionResult } from './api/parse/parse'
 export { saidPlainly } from './api/permission/permission'

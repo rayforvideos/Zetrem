@@ -13,25 +13,29 @@ msgstr ""
 "Language-Team: \n"
 "Plural-Forms: \n"
 
-#: src/pages/workspace/model/session/agent-events/agent-events.ts:165
+#: src/pages/workspace/model/session/agent-events/agent-events.ts:168
 msgid " · on overage"
 msgstr " · on overage"
 
-#: src/pages/workspace/model/session/agent-events/agent-events.ts:163
+#: src/pages/workspace/model/session/agent-events/agent-events.ts:166
 msgid " {pct}% used,"
 msgstr " {pct}% used,"
 
-#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:115
+#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:125
 msgid "· 2 working"
 msgstr "· 2 working"
 
-#: src/widgets/library/ui/LibraryPane/LibraryPane.tsx:158
-msgid "“To library” under an answer files it here."
-msgstr "“To library” under an answer files it here."
+#: src/widgets/library/ui/LibraryPane/LibraryPane.tsx:192
+msgid "“To the library” under an answer files it here."
+msgstr "“To the library” under an answer files it here."
 
-#: src/widgets/library/ui/LibraryPane/LibraryPane.tsx:54
-msgid "“To library” under an answer files it here. You can write here yourself."
-msgstr "“To library” under an answer files it here. You can write here yourself."
+#: src/widgets/library/ui/LibraryPane/LibraryPane.tsx:70
+msgid "“To the library” under an answer files it here. You can write here yourself."
+msgstr "“To the library” under an answer files it here. You can write here yourself."
+
+#: src/widgets/conversation/ui/ChoicePicker/ChoicePicker.tsx:84
+msgid "(next session)"
+msgstr "(next session)"
 
 #: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:121
 msgid "(window unknown)"
@@ -93,7 +97,7 @@ msgid "{0} left"
 msgstr "{0} left"
 
 #. placeholder {0}: limitKindLabel(limit.kind)
-#: src/pages/workspace/model/session/agent-events/agent-events.ts:166
+#: src/pages/workspace/model/session/agent-events/agent-events.ts:169
 msgid "{0} limit{share} resets {when}{overage}"
 msgstr "{0} limit{share} resets {when}{overage}"
 
@@ -149,7 +153,7 @@ msgstr "{0}m ago"
 msgid "{back} teammates"
 msgstr "{back} teammates"
 
-#: src/pages/workspace/model/session/agent-events/agent-events.ts:176
+#: src/pages/workspace/model/session/agent-events/agent-events.ts:179
 msgid "{base}. Earlier turns live on as a summary."
 msgstr "{base}. Earlier turns live on as a summary."
 
@@ -197,8 +201,8 @@ msgstr "{kind} {name} did not load: {why}"
 msgid "{label} column width"
 msgstr "{label} column width"
 
-#: src/widgets/team-sidebar/ui/TeamSidebar/TeamSidebar.tsx:96
-#: src/widgets/team-sidebar/ui/TeamSidebar/TeamSidebar.tsx:97
+#: src/widgets/team-sidebar/ui/TeamSidebar/TeamSidebar.tsx:101
+#: src/widgets/team-sidebar/ui/TeamSidebar/TeamSidebar.tsx:102
 msgid "{libraryPending} suggestions waiting"
 msgstr "{libraryPending} suggestions waiting"
 
@@ -238,14 +242,6 @@ msgstr "{name} is on. The running session cannot call them yet."
 msgid "{name} is over {max}MB, so it cannot be sent as a picture. Point at it by path instead."
 msgstr "{name} is over {max}MB, so it cannot be sent as a picture. Point at it by path instead."
 
-#: src/pages/workspace/model/session/useWaiting.ts:60
-msgid "{named}: Still waiting for you"
-msgstr "{named}: Still waiting for you"
-
-#: src/pages/workspace/model/session/useWaiting.ts:60
-msgid "{named}: Waiting for you"
-msgstr "{named}: Waiting for you"
-
 #: src/widgets/status-bar/lib/strip/strip.ts:47
 msgid "{percent}% used"
 msgstr "{percent}% used"
@@ -260,6 +256,7 @@ msgstr "{reported} reported back"
 
 #: src/entities/tool/ui/ChangeDiff/ChangeDiff.tsx:10
 #: src/widgets/conversation/lib/limits/limits.ts:6
+#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:249
 msgid "{rest, plural, one {# more line} other {# more lines}}"
 msgstr "{rest, plural, one {# more line} other {# more lines}}"
 
@@ -302,7 +299,7 @@ msgid "{tool} was not allowed: {why}"
 msgstr "{tool} was not allowed: {why}"
 
 #. placeholder {0}: agents.stock.length
-#: src/widgets/team-sidebar/ui/TeamSidebar/TeamSidebar.tsx:137
+#: src/widgets/team-sidebar/ui/TeamSidebar/TeamSidebar.tsx:142
 msgid "{using} of {0} agents on"
 msgstr "{using} of {0} agents on"
 
@@ -362,7 +359,7 @@ msgstr "{working} working"
 msgid "{you}, who should take this one?"
 msgstr "{you}, who should take this one?"
 
-#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:164
+#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:174
 msgid "38% · 4h 12m left"
 msgstr "38% · 4h 12m left"
 
@@ -430,7 +427,7 @@ msgstr "A tool"
 msgid "Abort merge"
 msgstr "Abort merge"
 
-#: src/widgets/library/ui/LibraryPane/LibraryPane.tsx:39
+#: src/widgets/library/ui/LibraryPane/LibraryPane.tsx:55
 msgid "About the library"
 msgstr "About the library"
 
@@ -440,6 +437,7 @@ msgstr "About you"
 
 #: src/widgets/conversation/ui/ProposalCard/ProposalCard.tsx:53
 #: src/widgets/library/ui/ProposalRow/ProposalRow.tsx:43
+#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:241
 msgid "Accept"
 msgstr "Accept"
 
@@ -518,17 +516,13 @@ msgstr "Agent memory"
 msgid "Agents"
 msgstr "Agents"
 
-#: src/widgets/conversation/ui/Composer/Composer.tsx:186
-msgid "Agents search the library and file what they learn. Click to turn it off."
-msgstr "Agents search the library and file what they learn. Click to turn it off."
+#: src/widgets/conversation/ui/Composer/Composer.tsx:194
+msgid "Agents search the library and suggest what they find."
+msgstr "Agents search the library and suggest what they find."
 
-#: src/widgets/library/ui/LibraryPane/LibraryPane.tsx:160
+#: src/widgets/library/ui/LibraryPane/LibraryPane.tsx:194
 msgid "Agents suggest what they learn, and nothing lands here until you accept it."
 msgstr "Agents suggest what they learn, and nothing lands here until you accept it."
-
-#: src/widgets/conversation/ui/Composer/Composer.tsx:187
-msgid "Agents work without the library. Click to turn it on."
-msgstr "Agents work without the library. Click to turn it on."
 
 #: src/widgets/setup/ui/MemoryField/MemoryField.tsx:201
 msgid "All"
@@ -539,7 +533,7 @@ msgstr "All"
 msgid "All {0} connected"
 msgstr "All {0} connected"
 
-#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:84
+#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:147
 msgid "Allow"
 msgstr "Allow"
 
@@ -548,7 +542,7 @@ msgstr "Allow"
 msgid "Allow all"
 msgstr "Allow all"
 
-#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:134
+#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:271
 msgid "Allow this?"
 msgstr "Allow this?"
 
@@ -569,7 +563,7 @@ msgid "any moment"
 msgstr "any moment"
 
 #. placeholder {0}: turn.metrics.apiErrorStatus
-#: src/pages/workspace/model/session/agent-events/agent-events.ts:119
+#: src/pages/workspace/model/session/agent-events/agent-events.ts:122
 msgid "API error {0}"
 msgstr "API error {0}"
 
@@ -581,7 +575,7 @@ msgstr "Apply"
 msgid "Approve a plan"
 msgstr "Approve a plan"
 
-#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:132
+#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:269
 msgid "Approve this plan?"
 msgstr "Approve this plan?"
 
@@ -590,7 +584,7 @@ msgstr "Approve this plan?"
 msgid "Ask first"
 msgstr "Ask first"
 
-#: src/widgets/conversation/ui/ConversationPane/ConversationPane.tsx:132
+#: src/widgets/conversation/ui/ConversationPane/ConversationPane.tsx:150
 msgid "Ask for the whole job"
 msgstr "Ask for the whole job"
 
@@ -606,7 +600,7 @@ msgstr "Asks before editing files or running commands"
 msgid "Attach"
 msgstr "Attach"
 
-#: src/widgets/conversation/ui/Composer/Composer.tsx:166
+#: src/widgets/conversation/ui/Composer/Composer.tsx:176
 msgid "Attach a file"
 msgstr "Attach a file"
 
@@ -614,7 +608,7 @@ msgstr "Attach a file"
 msgid "Author"
 msgstr "Author"
 
-#: src/pages/workspace/model/session/agent-events/agent-events.ts:183
+#: src/pages/workspace/model/session/agent-events/agent-events.ts:186
 msgid "auto"
 msgstr "auto"
 
@@ -633,7 +627,7 @@ msgstr "Awaiting approval"
 msgid "Back"
 msgstr "Back"
 
-#: src/widgets/library/ui/LibraryPane/LibraryPane.tsx:138
+#: src/widgets/library/ui/LibraryPane/LibraryPane.tsx:172
 msgid "Back to the list"
 msgstr "Back to the list"
 
@@ -689,6 +683,8 @@ msgid "Cancel sign-in"
 msgstr "Cancel sign-in"
 
 #: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:32
+#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:252
+#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:261
 msgid "Cart totals and rounding"
 msgstr "Cart totals and rounding"
 
@@ -696,7 +692,7 @@ msgstr "Cart totals and rounding"
 msgid "Change"
 msgstr "Change"
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:170
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:178
 msgid "Change account, project, and permissions"
 msgstr "Change account, project, and permissions"
 
@@ -735,7 +731,7 @@ msgstr "Choose folder"
 msgid "Choose project"
 msgstr "Choose project"
 
-#: src/widgets/welcome/lib/slides/slides.ts:39
+#: src/widgets/welcome/lib/slides/slides.ts:45
 msgid "Choose what can run without asking, check your remaining limits along the bottom, and stop anything while it is running."
 msgstr "Choose what can run without asking, check your remaining limits along the bottom, and stop anything while it is running."
 
@@ -766,7 +762,7 @@ msgstr "Claude Code, with a screen"
 msgid "Claude in Chrome"
 msgstr "Claude in Chrome"
 
-#: src/widgets/conversation/ui/Composer/Composer.tsx:117
+#: src/widgets/conversation/ui/Composer/Composer.tsx:127
 #: src/widgets/team-sidebar/ui/ToolPicker/ToolPicker.tsx:71
 msgid "Clear"
 msgstr "Clear"
@@ -784,6 +780,10 @@ msgstr "Close {0}"
 #: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:124
 msgid "Close report"
 msgstr "Close report"
+
+#: src/widgets/library/ui/LibraryPane/LibraryPane.tsx:99
+msgid "Close the library"
+msgstr "Close the library"
 
 #: src/widgets/tile-deck/ui/layers/Headline/Headline.tsx:46
 msgid "Close this tile. The run stays in the sidebar."
@@ -834,7 +834,7 @@ msgstr "Connector name"
 #: src/widgets/setup/ui/PluginShelf/ConnectorsTab.tsx:55
 #: src/widgets/status-bar/lib/format/format.ts:58
 #: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:129
-#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:165
+#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:175
 msgid "Connectors"
 msgstr "Connectors"
 
@@ -850,7 +850,7 @@ msgstr "Context"
 msgid "Continue"
 msgstr "Continue"
 
-#: src/pages/workspace/model/session/agent-events/agent-events.ts:174
+#: src/pages/workspace/model/session/agent-events/agent-events.ts:177
 msgid "Conversation compacted here"
 msgstr "Conversation compacted here"
 
@@ -1073,7 +1073,7 @@ msgstr "Delete the note “{0}”?"
 msgid "Deleted"
 msgstr "Deleted"
 
-#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:98
+#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:161
 msgid "Deny"
 msgstr "Deny"
 
@@ -1087,6 +1087,7 @@ msgstr "Diff"
 
 #: src/widgets/conversation/ui/ProposalCard/ProposalCard.tsx:61
 #: src/widgets/library/ui/ProposalRow/ProposalRow.tsx:51
+#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:244
 msgid "Dismiss"
 msgstr "Dismiss"
 
@@ -1102,7 +1103,7 @@ msgstr "Dismissed \"{title}\""
 msgid "Documents they read first. Long ones cost nothing until they open them."
 msgstr "Documents they read first. Long ones cost nothing until they open them."
 
-#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:111
+#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:174
 msgid "Don't ask again this session"
 msgstr "Don't ask again this session"
 
@@ -1158,7 +1159,7 @@ msgstr "Edit {0}"
 msgid "Edit a file"
 msgstr "Edit a file"
 
-#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:127
+#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:264
 msgid "Edit this file?"
 msgstr "Edit this file?"
 
@@ -1174,7 +1175,7 @@ msgstr "Editing"
 msgid "Edits files freely, asks before running commands"
 msgstr "Edits files freely, asks before running commands"
 
-#: src/widgets/conversation/ui/Composer/Composer.tsx:206
+#: src/widgets/conversation/ui/Composer/Composer.tsx:218
 #: src/widgets/setup/ui/SetupPane/SetupPane.tsx:163
 msgid "Effort"
 msgstr "Effort"
@@ -1217,7 +1218,7 @@ msgid "Extra folders"
 msgstr "Extra folders"
 
 #: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:177
-#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:192
+#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:202
 msgid "Face"
 msgstr "Face"
 
@@ -1247,7 +1248,7 @@ msgstr "Feedback"
 msgid "Fetching"
 msgstr "Fetching"
 
-#: src/widgets/conversation/ui/ConversationPane/ConversationPane.tsx:248
+#: src/widgets/conversation/ui/ConversationPane/ConversationPane.tsx:264
 msgid "File this answer to the library as its own note"
 msgstr "File this answer to the library as its own note"
 
@@ -1273,7 +1274,7 @@ msgstr "Files read, commands run, edits made. Each one shows up as it happens, n
 msgid "Find a chat"
 msgstr "Find a chat"
 
-#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:84
+#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:94
 msgid "Find why checkout drops the last item"
 msgstr "Find why checkout drops the last item"
 
@@ -1409,7 +1410,7 @@ msgstr "Hide team sidebar"
 msgid "High"
 msgstr "High"
 
-#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:212
+#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:222
 msgid "Hire"
 msgstr "Hire"
 
@@ -1486,8 +1487,8 @@ msgstr "It took too long and was stopped"
 msgid "just now"
 msgstr "just now"
 
-#: src/widgets/conversation/ui/Composer/Composer.tsx:154
-#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:95
+#: src/widgets/conversation/ui/Composer/Composer.tsx:164
+#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:105
 msgid "Keep going"
 msgstr "Keep going"
 
@@ -1537,16 +1538,26 @@ msgstr "Letters, numbers, hyphens and underscores only"
 msgid "Letters, numbers, hyphens. Sign in after adding if it asks."
 msgstr "Letters, numbers, hyphens. Sign in after adding if it asks."
 
-#: src/widgets/conversation/ui/Composer/Composer.tsx:197
-#: src/widgets/library/ui/LibraryPane/LibraryPane.tsx:94
-#: src/widgets/library/ui/LibraryPane/LibraryPane.tsx:142
-#: src/widgets/team-sidebar/ui/TeamSidebar/TeamSidebar.tsx:91
+#: src/widgets/library/ui/LibraryPane/LibraryPane.tsx:127
+#: src/widgets/library/ui/LibraryPane/LibraryPane.tsx:176
+#: src/widgets/team-sidebar/ui/TeamSidebar/TeamSidebar.tsx:96
+#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:251
 msgid "Library"
 msgstr "Library"
 
 #: src/widgets/library/ui/NoteReader/NoteReader.tsx:62
 msgid "Library guide"
 msgstr "Library guide"
+
+#: src/widgets/conversation/ui/Composer/Composer.tsx:205
+#: src/widgets/conversation/ui/Composer/Composer.tsx:207
+msgid "Library off"
+msgstr "Library off"
+
+#: src/widgets/conversation/ui/Composer/Composer.tsx:205
+#: src/widgets/conversation/ui/Composer/Composer.tsx:207
+msgid "Library on"
+msgstr "Library on"
 
 #: src/widgets/library/ui/NoteReader/NoteReader.tsx:165
 msgid "Linked from"
@@ -1560,7 +1571,7 @@ msgstr "Low"
 msgid "Manage"
 msgstr "Manage"
 
-#: src/pages/workspace/model/session/agent-events/agent-events.ts:184
+#: src/pages/workspace/model/session/agent-events/agent-events.ts:187
 msgid "manual"
 msgstr "manual"
 
@@ -1597,22 +1608,22 @@ msgstr "Merge a branch into {branchName}"
 msgid "Merged {branch}."
 msgstr "Merged {branch}."
 
-#: src/widgets/conversation/ui/Composer/Composer.tsx:148
+#: src/widgets/conversation/ui/Composer/Composer.tsx:158
 msgid "Message for {addressee}"
 msgstr "Message for {addressee}"
 
-#: src/widgets/conversation/ui/Composer/Composer.tsx:148
+#: src/widgets/conversation/ui/Composer/Composer.tsx:158
 msgid "Message your team"
 msgstr "Message your team"
 
-#: src/widgets/conversation/ui/Composer/Composer.tsx:203
+#: src/widgets/conversation/ui/Composer/Composer.tsx:215
 #: src/widgets/setup/ui/SetupPane/SetupPane.tsx:157
 #: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:116
 #: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:181
 msgid "Model"
 msgstr "Model"
 
-#: src/pages/workspace/ui/gates/ConversationGate.tsx:99
+#: src/pages/workspace/ui/gates/ConversationGate.tsx:106
 msgid "Model changed. The running session keeps its model."
 msgstr "Model changed. The running session keeps its model."
 
@@ -1640,7 +1651,7 @@ msgid "More options for the folder {name}"
 msgstr "More options for the folder {name}"
 
 #: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:156
-#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:177
+#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:187
 msgid "Name"
 msgstr "Name"
 
@@ -1668,7 +1679,7 @@ msgstr "Never asks. Anything can run"
 msgid "Never mind"
 msgstr "Never mind"
 
-#: src/widgets/library/ui/LibraryPane/LibraryPane.tsx:63
+#: src/widgets/library/ui/LibraryPane/LibraryPane.tsx:79
 msgid "New"
 msgstr "New"
 
@@ -1682,7 +1693,7 @@ msgstr "New branch name"
 msgid "New chat"
 msgstr "New chat"
 
-#: src/widgets/library/ui/LibraryPane/LibraryPane.tsx:69
+#: src/widgets/library/ui/LibraryPane/LibraryPane.tsx:85
 msgid "New folder"
 msgstr "New folder"
 
@@ -1690,7 +1701,7 @@ msgstr "New folder"
 msgid "New folder…"
 msgstr "New folder…"
 
-#: src/widgets/library/ui/LibraryPane/LibraryPane.tsx:68
+#: src/widgets/library/ui/LibraryPane/LibraryPane.tsx:84
 msgid "New note"
 msgstr "New note"
 
@@ -1726,7 +1737,7 @@ msgstr "No connectors yet. Add one below, or bring over what Claude Desktop alre
 msgid "No handler registered"
 msgstr "No handler registered"
 
-#: src/widgets/library/ui/LibraryPane/LibraryPane.tsx:156
+#: src/widgets/library/ui/LibraryPane/LibraryPane.tsx:190
 msgid "No notes yet"
 msgstr "No notes yet"
 
@@ -1818,6 +1829,10 @@ msgstr "Notifications"
 msgid "Notifications are off at the system level. Allow Zetrem in the system settings that just opened."
 msgstr "Notifications are off at the system level. Allow Zetrem in the system settings that just opened."
 
+#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:237
+msgid "Nova suggests a note"
+msgstr "Nova suggests a note"
+
 #: src/widgets/team-sidebar/lib/chat-groups/chat-groups.ts:28
 msgid "Older"
 msgstr "Older"
@@ -1838,7 +1853,7 @@ msgstr "One line the agent reads to decide whether this matters"
 msgid "One of you writes, one of you checks. Deal?"
 msgstr "One of you writes, one of you checks. Deal?"
 
-#: src/pages/workspace/model/session/useWaiting.ts:62
+#: src/pages/workspace/model/session/useWaiting.ts:66
 msgid "Open"
 msgstr "Open"
 
@@ -1854,11 +1869,11 @@ msgstr "Open a project to keep someone for it alone."
 msgid "Open folder…"
 msgstr "Open folder…"
 
-#: src/widgets/team-sidebar/ui/TeamSidebar/TeamSidebar.tsx:88
+#: src/widgets/team-sidebar/ui/TeamSidebar/TeamSidebar.tsx:93
 msgid "Open the library"
 msgstr "Open the library"
 
-#: src/widgets/library/ui/LibraryPane/LibraryPane.tsx:162
+#: src/widgets/library/ui/LibraryPane/LibraryPane.tsx:196
 msgid "Or start with one of your own."
 msgstr "Or start with one of your own."
 
@@ -1886,12 +1901,12 @@ msgstr "Paste the server address"
 msgid "Permission"
 msgstr "Permission"
 
-#: src/widgets/conversation/ui/Composer/Composer.tsx:176
+#: src/widgets/conversation/ui/Composer/Composer.tsx:188
 #: src/widgets/setup/ui/SetupPane/SetupPane.tsx:151
 msgid "Permissions"
 msgstr "Permissions"
 
-#: src/pages/workspace/ui/gates/ConversationGate.tsx:95
+#: src/pages/workspace/ui/gates/ConversationGate.tsx:102
 msgid "Permissions changed. The running session follows the old ones."
 msgstr "Permissions changed. The running session follows the old ones."
 
@@ -1899,7 +1914,7 @@ msgstr "Permissions changed. The running session follows the old ones."
 msgid "Pick a branch"
 msgstr "Pick a branch"
 
-#: src/widgets/library/ui/LibraryPane/LibraryPane.tsx:169
+#: src/widgets/library/ui/LibraryPane/LibraryPane.tsx:203
 msgid "Pick a note"
 msgstr "Pick a note"
 
@@ -1981,7 +1996,7 @@ msgstr "Rate limited"
 msgid "Re-authenticate"
 msgstr "Re-authenticate"
 
-#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:130
+#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:267
 msgid "Reach out to the web?"
 msgstr "Reach out to the web?"
 
@@ -1997,7 +2012,7 @@ msgstr "Read"
 msgid "Read a file"
 msgstr "Read a file"
 
-#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:204
+#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:214
 msgid "Read the change before you judge it, and check what it touches."
 msgstr "Read the change before you judge it, and check what it touches."
 
@@ -2018,7 +2033,7 @@ msgstr "Reading reports"
 msgid "Reading the catalog…"
 msgstr "Reading the catalog…"
 
-#: src/widgets/library/ui/LibraryPane/LibraryPane.tsx:148
+#: src/widgets/library/ui/LibraryPane/LibraryPane.tsx:182
 msgid "Reading the library…"
 msgstr "Reading the library…"
 
@@ -2031,7 +2046,7 @@ msgid "Reading what this session offers. The list fills in a moment."
 msgstr "Reading what this session offers. The list fills in a moment."
 
 #: src/entities/teammate/ui/StockList/StockList.tsx:11
-#: src/widgets/team-sidebar/ui/TeamSidebar/TeamSidebar.tsx:124
+#: src/widgets/team-sidebar/ui/TeamSidebar/TeamSidebar.tsx:129
 msgid "Reading which agents Claude Code brings. They will be listed here."
 msgstr "Reading which agents Claude Code brings. They will be listed here."
 
@@ -2162,6 +2177,10 @@ msgstr "resets {when}"
 msgid "Restart"
 msgstr "Restart"
 
+#: src/widgets/conversation/ui/ChoicePicker/ChoicePicker.tsx:114
+msgid "Restart now, on {pick}"
+msgstr "Restart now, on {pick}"
+
 #: src/widgets/conversation/ui/RestartNote/RestartNote.tsx:17
 #: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:148
 msgid "Restart session"
@@ -2171,11 +2190,11 @@ msgstr "Restart session"
 msgid "Restart Zetrem. This version does not know about it yet."
 msgstr "Restart Zetrem. This version does not know about it yet."
 
-#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:178
+#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:188
 msgid "Reviewer"
 msgstr "Reviewer"
 
-#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:184
+#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:194
 msgid "Reviews a change before it ships"
 msgstr "Reviews a change before it ships"
 
@@ -2194,7 +2213,7 @@ msgstr "run {0} of {1}"
 msgid "Run a command"
 msgstr "Run a command"
 
-#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:122
+#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:259
 msgid "Run this command?"
 msgstr "Run this command?"
 
@@ -2229,11 +2248,11 @@ msgstr "Saving…"
 msgid "Say the word and the whole team wakes up."
 msgstr "Say the word and the whole team wakes up."
 
-#: src/widgets/conversation/ui/ConversationPane/ConversationPane.tsx:133
+#: src/widgets/conversation/ui/ConversationPane/ConversationPane.tsx:151
 msgid "Say what you want done, not the next step. The orchestrator splits it up and hands out the pieces."
 msgstr "Say what you want done, not the next step. The orchestrator splits it up and hands out the pieces."
 
-#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:205
+#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:215
 msgid "Say what you would change and why, in that order."
 msgstr "Say what you would change and why, in that order."
 
@@ -2275,7 +2294,7 @@ msgstr "Searching"
 msgid "See what they did"
 msgstr "See what they did"
 
-#: src/widgets/conversation/ui/Composer/Composer.tsx:245
+#: src/widgets/conversation/ui/Composer/Composer.tsx:257
 msgid "Send"
 msgstr "Send"
 
@@ -2304,7 +2323,7 @@ msgstr "Set a few things and your agents get to work!"
 msgid "Set for everyone on your account. They cannot be removed or turned off here."
 msgstr "Set for everyone on your account. They cannot be removed or turned off here."
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:172
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:180
 msgid "Settings"
 msgstr "Settings"
 
@@ -2328,9 +2347,17 @@ msgstr "Shared across projects"
 msgid "Shift+Enter starts a new line. Off, sending takes the modifier key with Enter."
 msgstr "Shift+Enter starts a new line. Off, sending takes the modifier key with Enter."
 
+#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:139
+msgid "Show less"
+msgstr "Show less"
+
 #: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:195
 msgid "Show team sidebar"
 msgstr "Show team sidebar"
+
+#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:139
+msgid "Show the whole change"
+msgstr "Show the whole change"
 
 #: src/widgets/setup/ui/PluginShelf/ConnectorsTab.tsx:91
 msgid "Sign in"
@@ -2471,11 +2498,20 @@ msgstr "Still replying"
 msgid "Still signed in. Sign out did not take effect."
 msgstr "Still signed in. Sign out did not take effect."
 
+#: src/pages/workspace/model/session/waiting/toast/toast.ts:33
+msgid "Still waiting for your answer"
+msgstr "Still waiting for your answer"
+
+#: src/pages/workspace/model/session/waiting/toast/toast.ts:31
+msgid "Still waiting for your permission"
+msgstr "Still waiting for your permission"
+
 #: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:36
+#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:252
 msgid "Stock rules"
 msgstr "Stock rules"
 
-#: src/widgets/conversation/ui/Composer/Composer.tsx:234
+#: src/widgets/conversation/ui/Composer/Composer.tsx:246
 msgid "Stop"
 msgstr "Stop"
 
@@ -2540,7 +2576,7 @@ msgstr "Take everything out"
 msgid "Take out of {0}"
 msgstr "Take out of {0}"
 
-#: src/widgets/conversation/ui/Composer/Composer.tsx:151
+#: src/widgets/conversation/ui/Composer/Composer.tsx:161
 msgid "Task for {addressee}"
 msgstr "Task for {addressee}"
 
@@ -2637,6 +2673,10 @@ msgstr "The hardest problems. Slowest and priciest of these"
 msgid "The kind of work they should get"
 msgstr "The kind of work they should get"
 
+#: src/widgets/welcome/lib/slides/slides.ts:38
+msgid "The library is yours"
+msgstr "The library is yours"
+
 #: src/widgets/setup/ui/PluginShelf/BrowseTab.tsx:80
 msgid "The marketplaces the plugins above come from."
 msgstr "The marketplaces the plugins above come from."
@@ -2670,7 +2710,7 @@ msgid "the orchestrator"
 msgstr "the orchestrator"
 
 #: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:174
-#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:187
+#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:197
 msgid "The orchestrator reads this to pick who gets the job."
 msgstr "The orchestrator reads this to pick who gets the job."
 
@@ -2681,6 +2721,10 @@ msgstr "The picked branch's commits join this one. If the sides collide, the con
 #: src/widgets/team-sidebar/ui/ProjectSwitcher/ProjectSwitcher.tsx:141
 msgid "The project leaves this list. The folder and everything in it stay on disk."
 msgstr "The project leaves this list. The folder and everything in it stay on disk."
+
+#: src/widgets/conversation/ui/ChoicePicker/ChoicePicker.tsx:116
+msgid "The reply in hand is dropped. Nothing already done is undone."
+msgstr "The reply in hand is dropped. Nothing already done is undone."
 
 #: src/entities/claude-cli/lib/failure/failure.ts:93
 msgid "The request failed"
@@ -2694,7 +2738,12 @@ msgstr "The request was rejected"
 msgid "The running session goes on without the library. Agents read it from the next one."
 msgstr "The running session goes on without the library. Agents read it from the next one."
 
-#: src/widgets/conversation/ui/Composer/Composer.tsx:213
+#. placeholder {0}: read(forced.label)
+#: src/widgets/conversation/ui/ChoicePicker/ChoicePicker.tsx:73
+msgid "The running session is on {0}. Restart it to work under {pick}."
+msgstr "The running session is on {0}. Restart it to work under {pick}."
+
+#: src/widgets/conversation/ui/Composer/Composer.tsx:225
 msgid "The running session keeps its model and effort. This applies from the next one."
 msgstr "The running session keeps its model and effort. This applies from the next one."
 
@@ -2736,7 +2785,7 @@ msgid "Their helpers"
 msgstr "Their helpers"
 
 #: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:279
-#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:202
+#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:212
 msgid "Their instructions"
 msgstr "Their instructions"
 
@@ -2753,7 +2802,7 @@ msgid "Thinks longer. Slower and pricier"
 msgstr "Thinks longer. Slower and pricier"
 
 #: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:288
-#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:208
+#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:218
 msgid "This always applies. Write it the way you would explain the job to a person."
 msgstr "This always applies. Write it the way you would explain the job to a person."
 
@@ -2768,10 +2817,6 @@ msgstr "This changes which account the Claude Code CLI uses everywhere on this c
 #: src/widgets/status-bar/lib/format/format.ts:46
 msgid "this chat"
 msgstr "this chat"
-
-#: src/pages/workspace/model/session/useWaiting.ts:57
-msgid "This chat"
-msgstr "This chat"
 
 #: src/widgets/status-bar/lib/strip/strip.ts:67
 msgid "this chat {percent}%"
@@ -2847,7 +2892,7 @@ msgstr "This teammate changed no files."
 msgid "This teammate has no branch Zetrem can look up."
 msgstr "This teammate has no branch Zetrem can look up."
 
-#: src/pages/workspace/model/session/agent-events/agent-events.ts:191
+#: src/pages/workspace/model/session/agent-events/agent-events.ts:194
 msgid "This turn: {out} out · {seconds}s"
 msgstr "This turn: {out} out · {seconds}s"
 
@@ -2863,7 +2908,7 @@ msgstr "This work never reached the working tree. Zetrem deletes the branch it i
 msgid "Thought · {paragraphs} paragraphs"
 msgstr "Thought · {paragraphs} paragraphs"
 
-#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:87
+#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:97
 msgid "Three teammates are on it: the checkout flow, the cart totals and the stock rules. I'll put their reports together into one answer."
 msgstr "Three teammates are on it: the checkout flow, the cart totals and the stock rules. I'll put their reports together into one answer."
 
@@ -2879,13 +2924,13 @@ msgstr "Time"
 msgid "Title"
 msgstr "Title"
 
-#: src/widgets/conversation/ui/Composer/Composer.tsx:111
+#: src/widgets/conversation/ui/Composer/Composer.tsx:121
 msgid "To {addressee}"
 msgstr "To {addressee}"
 
-#: src/widgets/conversation/ui/ConversationPane/ConversationPane.tsx:251
-msgid "To library"
-msgstr "To library"
+#: src/widgets/conversation/ui/ConversationPane/ConversationPane.tsx:267
+msgid "To the library"
+msgstr "To the library"
 
 #: src/widgets/setup/ui/MemoryField/MemoryField.tsx:64
 #: src/widgets/team-sidebar/lib/chat-groups/chat-groups.ts:9
@@ -2968,6 +3013,7 @@ msgid "Waiting for you"
 msgstr "Waiting for you"
 
 #: src/entities/agent-session/model/nudge/nudge.ts:16
+#: src/pages/workspace/model/session/waiting/toast/toast.ts:33
 #: src/widgets/team-sidebar/lib/live-mark/live-mark.ts:9
 msgid "Waiting for your answer"
 msgstr "Waiting for your answer"
@@ -2976,6 +3022,7 @@ msgstr "Waiting for your answer"
 msgid "Waiting for your approval"
 msgstr "Waiting for your approval"
 
+#: src/pages/workspace/model/session/waiting/toast/toast.ts:31
 #: src/widgets/team-sidebar/lib/live-mark/live-mark.ts:8
 msgid "Waiting for your permission"
 msgstr "Waiting for your permission"
@@ -2998,6 +3045,10 @@ msgstr "Waiting on you"
 msgid "Waiting to run {0}"
 msgstr "Waiting to run {0}"
 
+#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:263
+msgid "We weighed both ways and kept the second: the totals stay in one place."
+msgstr "We weighed both ways and kept the second: the totals stay in one place."
+
 #: src/shared/lib/units/units.ts:13
 msgid "Weekly"
 msgstr "Weekly"
@@ -3010,11 +3061,15 @@ msgstr "Weekly {rest}"
 msgid "Weekly overage"
 msgstr "Weekly overage"
 
+#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:228
+msgid "What is being approved"
+msgstr "What is being approved"
+
 #: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:1025
 msgid "What it holds is gone for good. Applying it first keeps the work."
 msgstr "What it holds is gone for good. Applying it first keeps the work."
 
-#: src/widgets/conversation/ui/Composer/Composer.tsx:153
+#: src/widgets/conversation/ui/Composer/Composer.tsx:163
 msgid "What should they work on?"
 msgstr "What should they work on?"
 
@@ -3022,7 +3077,7 @@ msgstr "What should they work on?"
 msgid "What the agents write down about this project shows up here, and is loaded into every new session."
 msgstr "What the agents write down about this project shows up here, and is loaded into every new session."
 
-#: src/widgets/library/ui/LibraryPane/LibraryPane.tsx:46
+#: src/widgets/library/ui/LibraryPane/LibraryPane.tsx:62
 msgid "What the library is"
 msgstr "What the library is"
 
@@ -3037,7 +3092,7 @@ msgstr "What they changed"
 #: src/widgets/agent-report/ui/CallStream/CallStream.tsx:11
 #: src/widgets/tile-deck/ui/AgentTile/AgentTile.tsx:93
 #: src/widgets/tile-deck/ui/CrewBoard/CrewBoard.tsx:145
-#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:142
+#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:152
 msgid "What they did"
 msgstr "What they did"
 
@@ -3049,24 +3104,29 @@ msgstr "What they do, how to go about it, and what to hand back."
 msgid "What they said"
 msgstr "What they said"
 
-#: src/widgets/library/ui/LibraryPane/LibraryPane.tsx:48
+#: src/widgets/library/ui/LibraryPane/LibraryPane.tsx:64
 msgid "What this project has learned, kept as notes so nobody has to work it out twice."
 msgstr "What this project has learned, kept as notes so nobody has to work it out twice."
+
+#: src/widgets/welcome/lib/slides/slides.ts:39
+msgid "What this project has settled, kept as notes the next session can read. Agents search it and suggest what they learn, and a suggestion waits for your word before it becomes a note."
+msgstr "What this project has settled, kept as notes the next session can read. Agents search it and suggest what they learn, and a suggestion waits for your word before it becomes a note."
 
 #: src/widgets/setup/ui/PluginShelf/PluginShelf.tsx:86
 msgid "What you have"
 msgstr "What you have"
 
 #: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:167
-#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:182
+#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:192
 msgid "When to call them"
 msgstr "When to call them"
 
-#: src/widgets/library/ui/LibraryPane/LibraryPane.tsx:51
-msgid "While the library button under the message box is on, agents search here and suggest what they find."
-msgstr "While the library button under the message box is on, agents search here and suggest what they find."
+#: src/widgets/library/ui/LibraryPane/LibraryPane.tsx:67
+msgid "While the library switch under the message box is on, agents search here and suggest what they find."
+msgstr "While the library switch under the message box is on, agents search here and suggest what they find."
 
 #: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:25
+#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:238
 msgid "Why the last item drops"
 msgstr "Why the last item drops"
 
@@ -3097,7 +3157,7 @@ msgstr "Write a file"
 msgid "Write in markdown"
 msgstr "Write in markdown"
 
-#: src/widgets/library/ui/LibraryPane/LibraryPane.tsx:165
+#: src/widgets/library/ui/LibraryPane/LibraryPane.tsx:199
 msgid "Write the first note"
 msgstr "Write the first note"
 
@@ -3105,7 +3165,7 @@ msgstr "Write the first note"
 msgid "Write their instructions once and the orchestrator can call them in any project."
 msgstr "Write their instructions once and the orchestrator can call them in any project."
 
-#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:124
+#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:261
 msgid "Write this file?"
 msgstr "Write this file?"
 
@@ -3140,7 +3200,7 @@ msgstr "You"
 msgid "You already have a connector by that name"
 msgstr "You already have a connector by that name"
 
-#: src/widgets/welcome/lib/slides/slides.ts:38
+#: src/widgets/welcome/lib/slides/slides.ts:44
 msgid "You decide what runs"
 msgstr "You decide what runs"
 

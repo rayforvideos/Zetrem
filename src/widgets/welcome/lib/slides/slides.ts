@@ -33,6 +33,12 @@ export const SLIDES: Slide[] = [
     body: msg`Give them a name, say when to call them, and write their instructions. The orchestrator goes by the "when to call them" line to pick who gets the job.`,
   },
   {
+    key: 'library',
+    focus: 'library',
+    title: msg`The library is yours`,
+    body: msg`What this project has settled, kept as notes the next session can read. Agents search it and suggest what they learn, and a suggestion waits for your word before it becomes a note.`,
+  },
+  {
     key: 'keys',
     focus: 'keys',
     title: msg`You decide what runs`,

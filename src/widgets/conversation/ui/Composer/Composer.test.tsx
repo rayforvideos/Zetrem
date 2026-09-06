@@ -36,9 +36,11 @@ function box(props: Partial<Parameters<typeof Composer>[0]> = {}): string {
 
 describe('Composer: the line you type into', () => {
   it('is visible as its own box, whatever ground sits behind it', () => {
-    const html = box()
-    expect(html).toContain('border-border')
-    expect(html).not.toContain('border-transparent')
+    // The box itself, not the controls inside it: the library switch carries a
+    // transparent border of its own and says nothing about the box.
+    const group = /data-slot="input-group"[^>]*class="([^"]*)"/.exec(box())?.[1] ?? ''
+    expect(group).toContain('border-border')
+    expect(group).not.toContain('border-transparent')
   })
 
   it('asks what to work on before there is a conversation', () => {
@@ -71,9 +73,13 @@ describe('Composer: the line you type into', () => {
     expect(html).not.toContain('aria-label="Effort"')
   })
 
-  it('has the library switch where you type, pressed while agents get the library', () => {
-    expect(box()).toMatch(/data-library-toggle[^>]*aria-pressed="true"/)
-    expect(box({ library: false })).toMatch(/data-library-toggle[^>]*aria-pressed="false"/)
+  it('has the library switch where you type, reading on or off without a press', () => {
+    const on = box()
+    expect(on).toMatch(/role="switch"[^>]*aria-checked="true"[^>]*data-library-toggle/)
+    expect(on).toContain('Library on')
+    const off = box({ library: false })
+    expect(off).toMatch(/role="switch"[^>]*aria-checked="false"[^>]*data-library-toggle/)
+    expect(off).toContain('Library off')
   })
 
   it('shows a chosen effort beside the model, and nothing when it is left to the CLI', () => {

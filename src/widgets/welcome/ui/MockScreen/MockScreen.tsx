@@ -66,6 +66,16 @@ export function MockScreen({ focus, scale }: { focus: SlideFocus; scale: number 
     )
   }
 
+  if (focus === 'library') {
+    return (
+      <div style={box}>
+        <div data-mock="library" style={stage}>
+          <MockLibrary />
+        </div>
+      </div>
+    )
+  }
+
   const lit = (part: SlideFocus): boolean =>
     focus === 'all' || focus === part || (part === 'calls' && focus === 'crew')
 
@@ -212,6 +222,47 @@ function MockForm() {
             {t`Hire`}
           </span>
         </span>
+      </div>
+    </div>
+  )
+}
+
+// The library as a person meets it: a suggestion waiting on a word above, the
+// notes that were kept below. The two buttons on the suggestion are the point
+// of the slide, so they sit at the top where the eye lands first.
+function MockLibrary() {
+  return (
+    <div className="flex min-h-0 flex-1 flex-col gap-4">
+      <div className="flex flex-col gap-2 rounded-2xl border border-border bg-card p-4">
+        <span className="text-xs text-muted-foreground">{t`Nova suggests a note`}</span>
+        <span className="text-sm">{t`Why the last item drops`}</span>
+        <span className="mt-1 flex gap-2">
+          <span className="rounded-full px-3 py-1 text-xs" style={hireStyle}>
+            {t`Accept`}
+          </span>
+          <span className="rounded-full border border-border px-3 py-1 text-xs text-muted-foreground">
+            {t`Dismiss`}
+          </span>
+        </span>
+      </div>
+
+      <div className="flex min-h-0 flex-1 gap-4">
+        <div className="flex w-[300px] flex-none flex-col gap-3 rounded-2xl border border-border bg-card p-4">
+          <span className="text-xs tracking-[0.08em] text-muted-foreground">{t`Library`}</span>
+          {[t`Cart totals and rounding`, t`Stock rules`].map((title) => (
+            <span key={title} className="flex flex-col gap-0.5">
+              <span className="truncate text-sm">{title}</span>
+              <span className="truncate font-mono text-xs text-muted-foreground">#checkout</span>
+            </span>
+          ))}
+        </div>
+
+        <div className="flex min-w-0 flex-1 flex-col gap-3 rounded-2xl border border-border bg-card p-5">
+          <span className="text-base font-medium">{t`Cart totals and rounding`}</span>
+          <span className="text-sm leading-relaxed text-muted-foreground">
+            {t`We weighed both ways and kept the second: the totals stay in one place.`}
+          </span>
+        </div>
       </div>
     </div>
   )

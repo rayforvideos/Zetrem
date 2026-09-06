@@ -1,4 +1,3 @@
-import type { ReactNode } from 'react'
 import { t } from '@lingui/core/macro'
 import { helpersOf, topLevel } from '@/entities/agent-session'
 import { modeFromCli, modelFromCli } from '@/entities/claude-cli'
@@ -19,13 +18,11 @@ export function ConversationGate({
   library,
   proposals,
   chatTitleOf,
-  sidebar,
 }: {
   work: Workspace
   library: LibraryNotes
   proposals: LibraryProposals
   chatTitleOf(session: string): string | null
-  sidebar: ReactNode
 }) {
   const { chatting, prefs, team } = work
   const { agent, attach, children, conv, focus, held, nowMs, status } = chatting
@@ -123,7 +120,6 @@ export function ConversationGate({
           />
         )
       }
-      sidebar={sidebar}
     />
   )
 }

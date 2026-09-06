@@ -3,7 +3,10 @@ import type { AgentEventRefs } from './agent-events.types'
 import type { ClaudeTurnEvent, RateLimit, ResultMetrics, StatusEvent } from '@/entities/claude-cli'
 import { formatResetTime } from '@/shared/lib/datetime/datetime'
 import { formatTokens, limitKindLabel } from '@/shared/lib/units/units'
-import { advancePermission, askOf } from '../../chat/conversation/advance-permission'
+import {
+  advancePermission,
+  askOf,
+} from '../../chat/conversation/advance-permission/advance-permission'
 import { agentIdIn } from './agent-id/agent-id'
 import { stirred } from './stirred/stirred'
 import {

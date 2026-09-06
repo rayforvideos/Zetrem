@@ -10,6 +10,9 @@ function box(props: Partial<Parameters<typeof Composer>[0]> = {}): string {
       sessionLive={false}
       addressee={null}
       permissionMode="ask"
+      runningPermissionMode={null}
+      runningModel={null}
+      onRestart={() => {}}
       model="default"
       effort="default"
       refusedModels={[]}
@@ -86,6 +89,45 @@ describe('Composer: the line you type into', () => {
 
   it('shows the shortcut that sends, since the button is not the only way', () => {
     expect(box()).toContain('Enter')
+  })
+})
+
+describe('the chips say what is in force, not what was last picked', () => {
+  it('says the pick alone while the running session agrees with it', () => {
+    const html = box({ permissionMode: 'ask', runningPermissionMode: 'ask' })
+    expect(html).toContain('Ask first')
+    expect(html).not.toContain('data-stale')
+    expect(html).not.toContain('(next session)')
+  })
+
+  it('says the pick alone when there is no session to disagree', () => {
+    expect(box({ permissionMode: 'ask', runningPermissionMode: null })).not.toContain('data-stale')
+  })
+
+  it('names both, running first, while the session is still on the old mode', () => {
+    const html = box({ permissionMode: 'ask', runningPermissionMode: 'bypass' })
+    expect(html).toContain('data-stale')
+    expect(html).toMatch(/Allow all[\s\S]*?→[\s\S]*?Ask first[\s\S]*?\(next session\)/)
+  })
+
+  it('says it in the app words, never in the ones the CLI uses', () => {
+    const html = box({ permissionMode: 'ask', runningPermissionMode: 'bypass' })
+    expect(html).not.toContain('bypassPermissions')
+    expect(html).not.toContain('acceptEdits')
+  })
+
+  it('warns about a model the session is not on either', () => {
+    const html = box({ model: 'opus', runningModel: 'haiku' })
+    expect(html).toMatch(/Haiku[\s\S]*?→[\s\S]*?Opus/)
+  })
+
+  // The menu itself is only in the document once it is opened, so what can be
+  // read off a closed composer is the trigger: its tone, its two values and
+  // the sentence it hands anyone who stops on it.
+  it('says on the chip itself what is running and what would change it', () => {
+    expect(box({ permissionMode: 'ask', runningPermissionMode: 'bypass' })).toContain(
+      'title="The running session is on Allow all. Restart it to work under Ask first."',
+    )
   })
 })
 

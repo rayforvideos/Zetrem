@@ -1,7 +1,7 @@
-import { useEffect, useRef } from 'react'
+import { useCallback, useEffect, useRef } from 'react'
 import { BookmarkPlus, FileText, Image } from 'lucide-react'
 import { Button } from '@/shared/ui/button'
-import type { ReactNode } from 'react'
+import type { ReactNode, RefCallback } from 'react'
 import type { PermissionAsk, SessionStatus, StatusState } from '@/entities/agent-session'
 import type { LibraryProposal } from '@/entities/library'
 import type { Chore } from '@/entities/conversation'
@@ -104,6 +104,28 @@ export function ConversationPane({
     else if (atEnd(el.scrollTop, el.scrollHeight, el.clientHeight)) following.current = true
   }
 
+  // The approval card takes its height out of the transcript's, and a box that
+  // shrinks keeps the scrollTop it had: the message that asked for the card
+  // slides under the fold and cannot be scrolled back to. Re-pinning on the
+  // transcript's own resize is what keeps the last thing said in view, however
+  // tall the card under it grows.
+  const attachTranscript = useCallback<RefCallback<HTMLDivElement>>(
+    (el) => {
+      attachScroll(el)
+      if (el === null) return undefined
+      const watching = new ResizeObserver(() => {
+        if (!following.current) return
+        el.scrollTop = el.scrollHeight
+      })
+      watching.observe(el)
+      return () => {
+        watching.disconnect()
+        attachScroll(null)
+      }
+    },
+    [attachScroll],
+  )
+
   useEffect(() => {
     const el = scrollRef.current
     const before = seen.current
@@ -146,7 +168,7 @@ export function ConversationPane({
       ) : (
         <>
           <div
-            ref={attachScroll}
+            ref={attachTranscript}
             onScroll={watch}
             data-selectable
             className="zt-scroll zt-fade-out -mr-2 flex min-h-0 flex-1 flex-col gap-6 overflow-x-hidden overflow-y-auto pr-5 pb-3"

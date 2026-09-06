@@ -525,6 +525,11 @@ msgstr "Allow all"
 msgid "Allow this?"
 msgstr "Allow this?"
 
+#. placeholder {0}: note.title
+#: src/pages/workspace/model/library/useLibraryNotes.ts:314
+msgid "Already in the library · {0}"
+msgstr "Already in the library · {0}"
+
 #: src/widgets/setup/lib/tongues/tongues.ts:6
 msgid "Always English"
 msgstr "Always English"
@@ -663,7 +668,7 @@ msgstr "Cart totals and rounding"
 msgid "Change"
 msgstr "Change"
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:178
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:182
 msgid "Change account, project, and permissions"
 msgstr "Change account, project, and permissions"
 
@@ -840,7 +845,7 @@ msgstr "Could not bring over Claude Desktop"
 msgid "Could not check for updates."
 msgstr "Could not check for updates."
 
-#: src/pages/workspace/model/library/useLibraryProposals.ts:53
+#: src/pages/workspace/model/library/useLibraryProposals.ts:74
 msgid "Could not file \"{title}\". Check its title and folder in the library."
 msgstr "Could not file \"{title}\". Check its title and folder in the library."
 
@@ -1060,7 +1065,7 @@ msgstr "Dismiss"
 msgid "Dismiss this tip"
 msgstr "Dismiss this tip"
 
-#: src/pages/workspace/model/library/useLibraryProposals.ts:75
+#: src/pages/workspace/model/library/useLibraryProposals.ts:121
 msgid "Dismissed \"{title}\""
 msgstr "Dismissed \"{title}\""
 
@@ -1214,7 +1219,8 @@ msgid "Filed by an agent"
 msgstr "Filed by an agent"
 
 #. placeholder {0}: note.title
-#: src/pages/workspace/model/library/useLibraryNotes.ts:282
+#: src/pages/workspace/model/library/useLibraryNotes.ts:319
+#: src/pages/workspace/model/library/useLibraryProposals.ts:81
 msgid "Filed to the library · {0}"
 msgstr "Filed to the library · {0}"
 
@@ -1809,6 +1815,9 @@ msgstr "One line the agent reads to decide whether this matters"
 msgid "One of you writes, one of you checks. Deal?"
 msgstr "One of you writes, one of you checks. Deal?"
 
+#: src/pages/workspace/model/library/useLibraryNotes.ts:315
+#: src/pages/workspace/model/library/useLibraryNotes.ts:320
+#: src/pages/workspace/model/library/useLibraryProposals.ts:82
 #: src/pages/workspace/model/session/useWaiting.ts:66
 msgid "Open"
 msgstr "Open"
@@ -2262,7 +2271,7 @@ msgstr "Set a few things and your agents get to work!"
 msgid "Set for everyone on your account. They cannot be removed or turned off here."
 msgstr "Set for everyone on your account. They cannot be removed or turned off here."
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:180
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:184
 msgid "Settings"
 msgstr "Settings"
 
@@ -2551,7 +2560,8 @@ msgstr "That model was not found"
 msgid "That name cannot be used"
 msgstr "That name cannot be used"
 
-#: src/pages/workspace/model/library/useLibraryNotes.ts:289
+#: src/pages/workspace/model/library/useLibraryNotes.ts:327
+#: src/pages/workspace/model/library/useLibraryProposals.ts:87
 msgid "That note is in another project now; open it there to remove it."
 msgstr "That note is in another project now; open it there to remove it."
 
@@ -2571,8 +2581,8 @@ msgstr "The address has to be http or https"
 msgid "The agents Claude Code brings. Each can be switched off."
 msgstr "The agents Claude Code brings. Each can be switched off."
 
-#: src/pages/workspace/model/library/useLibraryNotes.ts:279
-#: src/pages/workspace/model/library/useLibraryNotes.ts:298
+#: src/pages/workspace/model/library/useLibraryNotes.ts:309
+#: src/pages/workspace/model/library/useLibraryNotes.ts:336
 msgid "The answer could not be filed"
 msgstr "The answer could not be filed"
 
@@ -2892,8 +2902,9 @@ msgstr "Uncommitted changes"
 msgid "under a minute"
 msgstr "under a minute"
 
-#: src/pages/workspace/model/library/useLibraryNotes.ts:284
-#: src/pages/workspace/model/library/useLibraryProposals.ts:77
+#: src/pages/workspace/model/library/useLibraryNotes.ts:322
+#: src/pages/workspace/model/library/useLibraryProposals.ts:84
+#: src/pages/workspace/model/library/useLibraryProposals.ts:123
 msgid "Undo"
 msgstr "Undo"
 

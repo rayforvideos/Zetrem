@@ -525,6 +525,11 @@ msgstr "전부 허용"
 msgid "Allow this?"
 msgstr "허용할까요?"
 
+#. placeholder {0}: note.title
+#: src/pages/workspace/model/library/useLibraryNotes.ts:314
+msgid "Already in the library · {0}"
+msgstr "이미 라이브러리에 있습니다 · {0}"
+
 #: src/widgets/setup/lib/tongues/tongues.ts:6
 msgid "Always English"
 msgstr "항상 영어로"
@@ -663,7 +668,7 @@ msgstr "장바구니 합계와 반올림"
 msgid "Change"
 msgstr "바꾸기"
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:178
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:182
 msgid "Change account, project, and permissions"
 msgstr "계정과 프로젝트, 권한을 바꿉니다"
 
@@ -840,7 +845,7 @@ msgstr "Claude Desktop에서 가져오지 못했습니다"
 msgid "Could not check for updates."
 msgstr "업데이트를 확인하지 못했습니다."
 
-#: src/pages/workspace/model/library/useLibraryProposals.ts:53
+#: src/pages/workspace/model/library/useLibraryProposals.ts:74
 msgid "Could not file \"{title}\". Check its title and folder in the library."
 msgstr "\"{title}\"을(를) 넣지 못했습니다. 라이브러리에서 제목과 폴더를 확인해 주세요."
 
@@ -1060,7 +1065,7 @@ msgstr "무시"
 msgid "Dismiss this tip"
 msgstr "이 안내 닫기"
 
-#: src/pages/workspace/model/library/useLibraryProposals.ts:75
+#: src/pages/workspace/model/library/useLibraryProposals.ts:121
 msgid "Dismissed \"{title}\""
 msgstr "\"{title}\"을(를) 무시했습니다"
 
@@ -1214,9 +1219,10 @@ msgid "Filed by an agent"
 msgstr "에이전트가 남김"
 
 #. placeholder {0}: note.title
-#: src/pages/workspace/model/library/useLibraryNotes.ts:282
+#: src/pages/workspace/model/library/useLibraryNotes.ts:319
+#: src/pages/workspace/model/library/useLibraryProposals.ts:81
 msgid "Filed to the library · {0}"
-msgstr "라이브러리에 저장됨 · {0}"
+msgstr "라이브러리에 담았습니다 · {0}"
 
 #: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:997
 msgid "Files in this commit"
@@ -1809,6 +1815,9 @@ msgstr "에이전트가 이 메모가 필요한지 판단할 때 읽는 한 줄�
 msgid "One of you writes, one of you checks. Deal?"
 msgstr "한 명은 쓰고 한 명은 검토하고, 어때요?"
 
+#: src/pages/workspace/model/library/useLibraryNotes.ts:315
+#: src/pages/workspace/model/library/useLibraryNotes.ts:320
+#: src/pages/workspace/model/library/useLibraryProposals.ts:82
 #: src/pages/workspace/model/session/useWaiting.ts:66
 msgid "Open"
 msgstr "열기"
@@ -2262,7 +2271,7 @@ msgstr "몇 가지만 정하면 바로 일을 시작합니다"
 msgid "Set for everyone on your account. They cannot be removed or turned off here."
 msgstr "계정 전체에 설정된 것입니다. 여기서는 지우거나 끌 수 없습니다."
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:180
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:184
 msgid "Settings"
 msgstr "설정"
 
@@ -2551,7 +2560,8 @@ msgstr "그 모델을 찾지 못했습니다"
 msgid "That name cannot be used"
 msgstr "그 이름은 쓸 수 없습니다"
 
-#: src/pages/workspace/model/library/useLibraryNotes.ts:289
+#: src/pages/workspace/model/library/useLibraryNotes.ts:327
+#: src/pages/workspace/model/library/useLibraryProposals.ts:87
 msgid "That note is in another project now; open it there to remove it."
 msgstr "그 노트는 다른 프로젝트에 있어요. 거기서 열어 지워 주세요."
 
@@ -2571,8 +2581,8 @@ msgstr "주소는 http나 https여야 합니다"
 msgid "The agents Claude Code brings. Each can be switched off."
 msgstr "Claude Code가 기본으로 제공하는 에이전트입니다. 하나씩 끌 수 있습니다."
 
-#: src/pages/workspace/model/library/useLibraryNotes.ts:279
-#: src/pages/workspace/model/library/useLibraryNotes.ts:298
+#: src/pages/workspace/model/library/useLibraryNotes.ts:309
+#: src/pages/workspace/model/library/useLibraryNotes.ts:336
 msgid "The answer could not be filed"
 msgstr "답변을 라이브러리에 저장하지 못했습니다"
 
@@ -2892,8 +2902,9 @@ msgstr "커밋 전 변경사항"
 msgid "under a minute"
 msgstr "1분 이내"
 
-#: src/pages/workspace/model/library/useLibraryNotes.ts:284
-#: src/pages/workspace/model/library/useLibraryProposals.ts:77
+#: src/pages/workspace/model/library/useLibraryNotes.ts:322
+#: src/pages/workspace/model/library/useLibraryProposals.ts:84
+#: src/pages/workspace/model/library/useLibraryProposals.ts:123
 msgid "Undo"
 msgstr "되돌리기"
 

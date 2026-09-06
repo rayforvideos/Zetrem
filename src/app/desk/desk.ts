@@ -109,6 +109,7 @@ export type DeskBridge = {
   listLibraryProposals: Invoke<'library:proposals'>
   acceptLibraryProposal: Invoke<'library:proposal-accept'>
   dismissLibraryProposal: Invoke<'library:proposal-dismiss'>
+  restoreLibraryProposal: Invoke<'library:proposal-restore'>
   onLibraryChanged: Listen<'library:changed'>
   onLibraryProposed: Listen<'library:proposed'>
   onGitChanged: Listen<'git:changed'>

@@ -41,6 +41,9 @@ type ConversationPaneProps = {
   away: Waiting | null
   chores: Chore[]
   nowMs: number
+  // Where the work is happening, so a tool row can show a path the way the
+  // project speaks it rather than from the root of the disk.
+  project: string | null
   onDecide(allow: boolean, always?: boolean): void
   onAcceptProposal(id: string): void
   onDismissProposal(id: string): void
@@ -65,6 +68,7 @@ export function ConversationPane({
   away,
   chores,
   nowMs,
+  project,
   onDecide,
   onAcceptProposal,
   onDismissProposal,
@@ -232,7 +236,7 @@ export function ConversationPane({
                       </div>
                     )}
                     {turn.tools.length > 0 && (
-                      <ToolRun tools={turn.tools} live={live} nowMs={nowMs} />
+                      <ToolRun tools={turn.tools} live={live} nowMs={nowMs} project={project} />
                     )}
                     {turn.text.length > 0 && !live && (
                       <div className="flex">

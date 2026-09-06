@@ -41,6 +41,8 @@ function tool(overrides: Partial<ToolActivity> = {}): ToolActivity {
   }
 }
 
+const PROJECT = '/work/app'
+
 let seq = 0
 
 function turn(overrides: Partial<Turn> = {}): Turn {
@@ -74,6 +76,7 @@ function working(turns: Turn[]): string {
       you={{ name: 'Ray', face: 'onigiri' }}
       away={null}
       nowMs={12_000}
+      project={PROJECT}
       onDecide={() => {}}
       onFileTurn={() => {}}
       sidebar={null}
@@ -128,6 +131,7 @@ function pane(
       you={{ name: 'Ray', face: 'onigiri' }}
       away={null}
       nowMs={0}
+      project={PROJECT}
       onDecide={() => {}}
       onFileTurn={() => {}}
       sidebar={null}
@@ -185,6 +189,7 @@ function tick(overrides: Partial<ToolActivity> = {}): string {
     <Tick
       tool={tool({ line: 'Bash set -e', input: { command: SCRIPT }, ...overrides })}
       live={false}
+      project={PROJECT}
     />,
   )
 }
@@ -232,6 +237,22 @@ describe('a quiet run keeps its log to itself', () => {
     ])
     expect(html).toContain('3 lines')
     expect(html).not.toContain('하나')
+  })
+
+  it('says how much is held back once, not once in each language', () => {
+    const stdout = ['하나', '둘', '셋'].join('\n')
+    const html = pane([
+      turn({
+        tools: [
+          tool({
+            line: 'Read /work/app/a.ts',
+            input: { file_path: '/work/app/a.ts' },
+            result: { stdout, stderr: '', isError: false, interrupted: false },
+          }),
+        ],
+      }),
+    ])
+    expect(html.match(/3 lines/g), 'one count, in the language the app speaks').toHaveLength(1)
   })
 
   it('lays a failed run open on arrival', () => {

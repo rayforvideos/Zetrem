@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import type { ToolActivity } from '@/entities/conversation'
-import { marksOfTools, splitRun, summarise } from './tool-run'
+import { marksOfTools, runFailed, splitRun, summarise } from './tool-run'
 
 function tool(line: string, overrides: Partial<ToolActivity> = {}): ToolActivity {
   return {
@@ -55,6 +55,32 @@ describe('summarise: what a folded stretch amounts to', () => {
 
   it('falls back to a count when it cannot name the work', () => {
     expect(summarise([tool('TodoWrite'), tool('TodoWrite')])).toBe('2 steps')
+  })
+
+  const broke = (line: string): ToolActivity =>
+    tool(line, { result: { stdout: 'boom', stderr: '', isError: true, interrupted: false } })
+
+  it('does not count an attempt as a thing done when every one of them failed', () => {
+    expect(summarise([broke('Read a.ts'), broke('Read b.ts')])).toBe('2 files read, all failed')
+  })
+
+  it('says how many failed when the rest of the stretch went through', () => {
+    expect(summarise([broke('Read a.ts'), tool('Read b.ts'), tool('Read c.ts')])).toBe(
+      '3 files read, 1 failed',
+    )
+  })
+})
+
+describe('runFailed: whether a stretch has anything wrong in it', () => {
+  it('finds the one failure among the runs that went fine', () => {
+    const bad = tool('Read a.ts', {
+      result: { stdout: '', stderr: 'boom', isError: true, interrupted: false },
+    })
+    expect(runFailed([tool('Read b.ts'), bad])).toBe(true)
+  })
+
+  it('is quiet about a stretch that has not come back yet', () => {
+    expect(runFailed(many(3))).toBe(false)
   })
 })
 

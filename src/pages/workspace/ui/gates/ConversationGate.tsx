@@ -48,6 +48,7 @@ export function ConversationGate({
       away={agent.running ? awayOf(teammates, spokeAtMs(conv.turns)) : null}
       chores={conv.chores}
       nowMs={nowMs}
+      project={work.projects.current?.path ?? null}
       hint={hintDue('ask-whole-job', settings.hintsSeen, conv.turns.length === 0)}
       onHintSeen={() => update({ hintsSeen: hintSeen('ask-whole-job', settings.hintsSeen) })}
       onDecide={agent.decide}

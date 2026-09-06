@@ -1,22 +1,20 @@
 import { AgentSprite, personaOf } from '@/entities/teammate'
-import { resultNote, toolShape } from '@/entities/tool'
+import { toolShape } from '@/entities/tool'
 import type { ToolShape } from '@/entities/tool'
 import type { ToolActivity } from '@/entities/conversation'
 import { ToolIcon, changeCount, firstLineOf } from '@/entities/tool'
 import { cn } from '@/shared/lib/cn'
 import { Item, ItemContent, ItemMedia } from '@/shared/ui/item'
-import { noteParts } from '../../lib/tool-note/tool-note'
+import { failureNote } from '../../lib/tool-note/tool-note'
+import { nearShape } from '../../lib/tool-path/tool-path'
 import { toolNameOf } from '@/entities/tool'
 import { t } from '@lingui/core/macro'
 
-export function ToolLine({ tool }: { tool: ToolActivity }) {
+export function ToolLine({ tool, project }: { tool: ToolActivity; project: string | null }) {
   const name = toolNameOf(tool.line)
-  const shape = toolShape(name, tool.input)
+  const shape = nearShape(toolShape(name, tool.input), project)
   const failed = tool.result?.isError === true
-  const { note, failure } = noteParts(
-    resultNote(shape, tool.result ? tool.result.stdout : null),
-    failed,
-  )
+  const said = tool.result === null ? '' : [tool.result.stdout, tool.result.stderr].join('\n')
   const changed = changeCount(tool)
 
   return (
@@ -28,7 +26,14 @@ export function ToolLine({ tool }: { tool: ToolActivity }) {
           <ToolIcon shape={shape} />
         )}
       </ItemMedia>
-      <ItemContent className="min-w-0 flex-row flex-wrap items-baseline gap-x-1.5 gap-y-0.5">
+      <ItemContent
+        className={cn(
+          'min-w-0 flex-row flex-wrap items-baseline gap-x-1.5 gap-y-0.5',
+          // Handing work to a teammate is a different order of thing from
+          // running ls, so the row it makes is read a step above a tool row.
+          shape.kind === 'agent' && 'font-sans text-sm font-medium text-foreground',
+        )}
+      >
         <span
           className={cn(
             'min-w-0',
@@ -50,10 +55,9 @@ export function ToolLine({ tool }: { tool: ToolActivity }) {
             )}
           </span>
         )}
-        {note && <span className="flex-none text-muted-foreground">{note}</span>}
-        {failure && (
+        {failed && (
           <span data-failed className="min-w-0 text-removed [overflow-wrap:anywhere]">
-            {failure}
+            {failureNote(said)}
           </span>
         )}
         {tool.result?.interrupted && (

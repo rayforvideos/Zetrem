@@ -1,4 +1,3 @@
-import type { ReactNode } from 'react'
 import type {
   LibraryFolder,
   LibraryHit,
@@ -31,6 +30,8 @@ export type LibraryPaneProps = {
   onOpenTitle(title: string): void
   // Puts the open note down so the list has the pane to itself.
   onClose(): void
+  // Leaves the library altogether, giving the screen back to the conversation.
+  onLeave(): void
   onCreate(folder: string): void
   onRemove(id: string): void
   onStartEdit(): void
@@ -46,5 +47,4 @@ export type LibraryPaneProps = {
   chatTitleOf(session: string): string | null
   onAcceptProposal(id: string): void
   onDismissProposal(id: string): void
-  sidebar: ReactNode
 }

@@ -70,7 +70,12 @@ export function TeamSidebar({
 
         <Heading>{t`Claude Code`}</Heading>
         <BuiltinAgents agents={agents} />
+      </div>
 
+      {/* Under the column rather than in it: a roster long enough to scroll
+          used to carry the only way into the library past the bottom of the
+          screen, where nobody could find it. */}
+      <div data-sidebar-footer className="flex flex-none flex-col border-t border-border pt-2 pr-5">
         <Button
           data-library-row
           variant="ghost"
@@ -78,7 +83,7 @@ export function TeamSidebar({
           aria-current={libraryOpen ? 'true' : undefined}
           onClick={onOpenLibrary}
           className={cn(
-            'mt-auto justify-start gap-2 rounded-lg px-2',
+            'justify-start gap-2 rounded-lg px-2',
             libraryOpen
               ? 'bg-card text-foreground'
               : libraryUnseen || libraryPending > 0

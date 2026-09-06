@@ -79,7 +79,6 @@ function working(turns: Turn[]): string {
       project={PROJECT}
       onDecide={() => {}}
       onFileTurn={() => {}}
-      sidebar={null}
       hint={false}
       onHintSeen={() => {}}
       report={null}
@@ -134,7 +133,6 @@ function pane(
       project={PROJECT}
       onDecide={() => {}}
       onFileTurn={() => {}}
-      sidebar={null}
       hint={false}
       onHintSeen={() => {}}
       report={null}

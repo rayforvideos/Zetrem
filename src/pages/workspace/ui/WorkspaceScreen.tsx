@@ -97,22 +97,30 @@ export function WorkspaceScreen() {
                 </div>
               ) : layout.gate === 'setup' ? (
                 <SetupGate work={work} onOpenProject={openProject} />
-              ) : layout.libraryOpen ? (
-                <LibraryGate
-                  library={library}
-                  proposals={proposals}
-                  chatTitleOf={chatTitleOf}
-                  nowMs={nowMs}
-                  sidebar={sidebar}
-                />
               ) : (
-                <ConversationGate
-                  work={work}
-                  library={library}
-                  proposals={proposals}
-                  chatTitleOf={chatTitleOf}
-                  sidebar={sidebar}
-                />
+                // The sidebar stands beside the gate rather than inside it.
+                // Held by whichever gate was showing, it was torn down and
+                // built again on the way into the library, which put the
+                // roster back at the top and lost where you were reading.
+                <div className="relative z-[3] flex h-full gap-7">
+                  {sidebar}
+                  {layout.libraryOpen ? (
+                    <LibraryGate
+                      library={library}
+                      proposals={proposals}
+                      chatTitleOf={chatTitleOf}
+                      nowMs={nowMs}
+                      onLeave={layout.leaveLibrary}
+                    />
+                  ) : (
+                    <ConversationGate
+                      work={work}
+                      library={library}
+                      proposals={proposals}
+                      chatTitleOf={chatTitleOf}
+                    />
+                  )}
+                </div>
               )
             }
           />

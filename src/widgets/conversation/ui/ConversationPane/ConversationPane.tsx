@@ -48,7 +48,6 @@ type ConversationPaneProps = {
   onAcceptProposal(id: string): void
   onDismissProposal(id: string): void
   onFileTurn(text: string): void
-  sidebar: ReactNode
   report: ReactNode
   composer: ReactNode
   hint: boolean
@@ -73,7 +72,6 @@ export function ConversationPane({
   onAcceptProposal,
   onDismissProposal,
   onFileTurn,
-  sidebar,
   report,
   composer,
   hint,
@@ -121,164 +119,158 @@ export function ConversationPane({
 
   if (turns.length === 0 && !permission) {
     return (
-      <div className="relative z-[3] flex h-full gap-7">
-        {sidebar}
-        <div className="flex min-w-0 flex-1 flex-col items-center justify-center">
-          <Wordmark width={196} />
-          <Greeting name={you.name} />
-          {hint && (
-            <div className="mt-7 w-full max-w-md">
-              <FirstHint
-                title={t`Ask for the whole job`}
-                body={t`Say what you want done, not the next step. The orchestrator splits it up and hands out the pieces.`}
-                onClose={onHintSeen}
-              />
-            </div>
-          )}
-          <div className="mt-9 flex w-full max-w-3xl flex-col gap-4">
-            {card}
-            {composer}
+      <div className="flex min-w-0 flex-1 flex-col items-center justify-center">
+        <Wordmark width={196} />
+        <Greeting name={you.name} />
+        {hint && (
+          <div className="mt-7 w-full max-w-md">
+            <FirstHint
+              title={t`Ask for the whole job`}
+              body={t`Say what you want done, not the next step. The orchestrator splits it up and hands out the pieces.`}
+              onClose={onHintSeen}
+            />
           </div>
+        )}
+        <div className="mt-9 flex w-full max-w-3xl flex-col gap-4">
+          {card}
+          {composer}
         </div>
       </div>
     )
   }
 
   return (
-    <div className="relative z-[3] flex h-full gap-7">
-      {sidebar}
-      <div className="mx-auto flex w-full min-w-0 max-w-3xl flex-1 flex-col gap-4 px-2">
-        {report !== null ? (
-          report
-        ) : (
-          <>
-            <div
-              ref={attachScroll}
-              onScroll={watch}
-              data-selectable
-              className="zt-scroll zt-fade-out -mr-2 flex min-h-0 flex-1 flex-col gap-6 overflow-x-hidden overflow-y-auto pr-5 pb-3"
-            >
-              {turns.map((turn, index) => {
-                const live = busy && index === lastIndex && turn.role === 'assistant'
-                if (turn.role === 'system') {
-                  return (
-                    <div
-                      key={turn.id}
-                      className="zt-rise self-center font-mono text-xs leading-normal tracking-wide text-muted-foreground [overflow-wrap:anywhere]"
-                    >
-                      {turn.text}
-                    </div>
-                  )
-                }
-                if (turn.role === 'user') {
-                  return (
-                    <div
-                      key={turn.id}
-                      className="zt-rise flex max-w-[80%] flex-col items-end gap-1 self-end"
-                    >
-                      {turn.to !== undefined && (
-                        <span
-                          data-said-to
-                          className="flex items-center gap-1.5 pr-1 text-xs text-muted-foreground"
-                        >
-                          <span aria-hidden>→</span>
-                          <AgentSprite subagentType={turn.to} size={14} />
-                          {personaOf(turn.to).name}
-                        </span>
-                      )}
-                      {(turn.files ?? []).length > 0 && (
-                        <span data-sent-files className="flex flex-wrap justify-end gap-1.5">
-                          {(turn.files ?? []).map((file) => (
-                            <span
-                              key={file.path}
-                              data-file={file.kind}
-                              className="flex items-center gap-1.5 rounded-lg bg-muted px-2 py-1 text-xs text-muted-foreground"
-                            >
-                              {file.kind === 'image' ? (
-                                <Image className="size-3.5" />
-                              ) : (
-                                <FileText className="size-3.5" />
-                              )}
-                              <span className="max-w-[180px] truncate">{file.name}</span>
-                            </span>
-                          ))}
-                        </span>
-                      )}
-                      {turn.text.length > 0 && (
-                        <div
-                          className={cn(
-                            BUBBLE,
-                            'text-sm leading-relaxed whitespace-pre-wrap [overflow-wrap:anywhere]',
-                          )}
-                        >
-                          {turn.text}
-                        </div>
-                      )}
-                    </div>
-                  )
-                }
+    <div className="mx-auto flex w-full min-w-0 max-w-3xl flex-1 flex-col gap-4 px-2">
+      {report !== null ? (
+        report
+      ) : (
+        <>
+          <div
+            ref={attachScroll}
+            onScroll={watch}
+            data-selectable
+            className="zt-scroll zt-fade-out -mr-2 flex min-h-0 flex-1 flex-col gap-6 overflow-x-hidden overflow-y-auto pr-5 pb-3"
+          >
+            {turns.map((turn, index) => {
+              const live = busy && index === lastIndex && turn.role === 'assistant'
+              if (turn.role === 'system') {
                 return (
-                  <article
+                  <div
                     key={turn.id}
-                    className={cn(
-                      'group/answer zt-rail zt-rise flex flex-col gap-2.5',
-                      live && 'zt-rail--live',
-                    )}
+                    className="zt-rise self-center font-mono text-xs leading-normal tracking-wide text-muted-foreground [overflow-wrap:anywhere]"
                   >
-                    {turn.thinking.length > 0 && <Thinking text={turn.thinking} />}
-                    {turn.text.length > 0 && (
-                      <Markdown text={turn.text} className="text-base leading-[1.72]" />
-                    )}
-                    {turn.draft.length > 0 && (
-                      <div className="text-base leading-[1.72] whitespace-pre-wrap [overflow-wrap:anywhere]">
-                        {turn.draft}
-                        <span className="ml-0.5 inline-block h-[1em] w-[0.5ch] translate-y-[0.1em] bg-muted-foreground align-baseline" />
-                      </div>
-                    )}
-                    {turn.tools.length > 0 && (
-                      <ToolRun tools={turn.tools} live={live} nowMs={nowMs} project={project} />
-                    )}
-                    {turn.text.length > 0 && !live && (
-                      <div className="flex">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => onFileTurn(turn.text)}
-                          className="h-7 rounded-lg px-2 text-xs text-muted-foreground opacity-0 transition-opacity group-hover/answer:opacity-100 group-focus-within/answer:opacity-100"
-                          title={t`File this answer to the library as its own note`}
-                        >
-                          <BookmarkPlus className="size-3" />
-                          {t`To library`}
-                        </Button>
-                      </div>
-                    )}
-                  </article>
+                    {turn.text}
+                  </div>
                 )
-              })}
-            </div>
-            <Chores chores={chores} nowMs={nowMs} />
-            {!busy && away !== null && <Away away={away} face={you.face} nowMs={nowMs} />}
-            {busy && (
-              <Working
-                turns={turns}
-                face={you.face}
-                nowMs={nowMs}
-                startedAtMs={askedAtMs(turns, nowMs)}
-                tokensOut={statusState.cost.tokens.out}
-              />
-            )}
-          </>
-        )}
+              }
+              if (turn.role === 'user') {
+                return (
+                  <div
+                    key={turn.id}
+                    className="zt-rise flex max-w-[80%] flex-col items-end gap-1 self-end"
+                  >
+                    {turn.to !== undefined && (
+                      <span
+                        data-said-to
+                        className="flex items-center gap-1.5 pr-1 text-xs text-muted-foreground"
+                      >
+                        <span aria-hidden>→</span>
+                        <AgentSprite subagentType={turn.to} size={14} />
+                        {personaOf(turn.to).name}
+                      </span>
+                    )}
+                    {(turn.files ?? []).length > 0 && (
+                      <span data-sent-files className="flex flex-wrap justify-end gap-1.5">
+                        {(turn.files ?? []).map((file) => (
+                          <span
+                            key={file.path}
+                            data-file={file.kind}
+                            className="flex items-center gap-1.5 rounded-lg bg-muted px-2 py-1 text-xs text-muted-foreground"
+                          >
+                            {file.kind === 'image' ? (
+                              <Image className="size-3.5" />
+                            ) : (
+                              <FileText className="size-3.5" />
+                            )}
+                            <span className="max-w-[180px] truncate">{file.name}</span>
+                          </span>
+                        ))}
+                      </span>
+                    )}
+                    {turn.text.length > 0 && (
+                      <div
+                        className={cn(
+                          BUBBLE,
+                          'text-sm leading-relaxed whitespace-pre-wrap [overflow-wrap:anywhere]',
+                        )}
+                      >
+                        {turn.text}
+                      </div>
+                    )}
+                  </div>
+                )
+              }
+              return (
+                <article
+                  key={turn.id}
+                  className={cn(
+                    'group/answer zt-rail zt-rise flex flex-col gap-2.5',
+                    live && 'zt-rail--live',
+                  )}
+                >
+                  {turn.thinking.length > 0 && <Thinking text={turn.thinking} />}
+                  {turn.text.length > 0 && (
+                    <Markdown text={turn.text} className="text-base leading-[1.72]" />
+                  )}
+                  {turn.draft.length > 0 && (
+                    <div className="text-base leading-[1.72] whitespace-pre-wrap [overflow-wrap:anywhere]">
+                      {turn.draft}
+                      <span className="ml-0.5 inline-block h-[1em] w-[0.5ch] translate-y-[0.1em] bg-muted-foreground align-baseline" />
+                    </div>
+                  )}
+                  {turn.tools.length > 0 && (
+                    <ToolRun tools={turn.tools} live={live} nowMs={nowMs} project={project} />
+                  )}
+                  {turn.text.length > 0 && !live && (
+                    <div className="flex">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => onFileTurn(turn.text)}
+                        className="h-7 rounded-lg px-2 text-xs text-muted-foreground opacity-0 transition-opacity group-hover/answer:opacity-100 group-focus-within/answer:opacity-100"
+                        title={t`File this answer to the library as its own note`}
+                      >
+                        <BookmarkPlus className="size-3" />
+                        {t`To library`}
+                      </Button>
+                    </div>
+                  )}
+                </article>
+              )
+            })}
+          </div>
+          <Chores chores={chores} nowMs={nowMs} />
+          {!busy && away !== null && <Away away={away} face={you.face} nowMs={nowMs} />}
+          {busy && (
+            <Working
+              turns={turns}
+              face={you.face}
+              nowMs={nowMs}
+              startedAtMs={askedAtMs(turns, nowMs)}
+              tokensOut={statusState.cost.tokens.out}
+            />
+          )}
+        </>
+      )}
 
-        {permission ? (
-          <Approval ask={permission} onDecide={onDecide} />
-        ) : (
-          <>
-            {card}
-            {composer}
-          </>
-        )}
-      </div>
+      {permission ? (
+        <Approval ask={permission} onDecide={onDecide} />
+      ) : (
+        <>
+          {card}
+          {composer}
+        </>
+      )}
     </div>
   )
 }

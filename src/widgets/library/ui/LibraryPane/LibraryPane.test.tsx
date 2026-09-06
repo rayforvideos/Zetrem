@@ -72,7 +72,7 @@ function pane(over: Partial<Parameters<typeof LibraryPane>[0]> = {}): string {
       chatTitleOf={() => null}
       onAcceptProposal={() => {}}
       onDismissProposal={() => {}}
-      sidebar={null}
+      onLeave={() => {}}
       {...over}
     />,
   )
@@ -128,6 +128,12 @@ describe('LibraryPane', () => {
     const out = pane()
     expect(out).toContain('data-guide-button')
     expect(out).not.toContain('data-guide-row')
+  })
+
+  it('has a way out in the header, since the library covers the conversation whole', () => {
+    const out = pane()
+    expect(out).toContain('data-leave-library')
+    expect(out).toContain('aria-label="Close the library"')
   })
 
   it('renders the open note as markdown with wikilinks resolved, and one meta line', () => {

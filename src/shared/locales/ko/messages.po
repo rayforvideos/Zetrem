@@ -13,11 +13,11 @@ msgstr ""
 "Language-Team: \n"
 "Plural-Forms: \n"
 
-#: src/pages/workspace/model/session/agent-events/agent-events.ts:165
+#: src/pages/workspace/model/session/agent-events/agent-events.ts:168
 msgid " · on overage"
 msgstr " · 초과분 사용 중"
 
-#: src/pages/workspace/model/session/agent-events/agent-events.ts:163
+#: src/pages/workspace/model/session/agent-events/agent-events.ts:166
 msgid " {pct}% used,"
 msgstr " {pct}% 사용,"
 
@@ -32,6 +32,10 @@ msgstr "답변 아래 「라이브러리에」를 누르면 여기에 담겨요.
 #: src/widgets/library/ui/LibraryPane/LibraryPane.tsx:54
 msgid "“To library” under an answer files it here. You can write here yourself."
 msgstr "답변 아래 「라이브러리에」를 누르면 여기에 담기고, 직접 쓸 수도 있어요."
+
+#: src/widgets/conversation/ui/ChoicePicker/ChoicePicker.tsx:84
+msgid "(next session)"
+msgstr "(다음 세션)"
 
 #. placeholder {0}: counted.ran
 #: src/widgets/conversation/lib/tool-run/tool-run.ts:50
@@ -84,7 +88,7 @@ msgid "{0} left"
 msgstr "{0} 남음"
 
 #. placeholder {0}: limitKindLabel(limit.kind)
-#: src/pages/workspace/model/session/agent-events/agent-events.ts:166
+#: src/pages/workspace/model/session/agent-events/agent-events.ts:169
 msgid "{0} limit{share} resets {when}{overage}"
 msgstr "{0} 한도{share} {when} 초기화{overage}"
 
@@ -140,7 +144,7 @@ msgstr "{0}분 전"
 msgid "{back} teammates"
 msgstr "팀원 {back}명"
 
-#: src/pages/workspace/model/session/agent-events/agent-events.ts:176
+#: src/pages/workspace/model/session/agent-events/agent-events.ts:179
 msgid "{base}. Earlier turns live on as a summary."
 msgstr "{base}. 앞선 대화는 요약으로 남습니다."
 
@@ -231,6 +235,7 @@ msgstr "{reported}명 보고 완료"
 
 #: src/entities/tool/ui/ChangeDiff/ChangeDiff.tsx:10
 #: src/widgets/conversation/lib/limits/limits.ts:6
+#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:249
 msgid "{rest, plural, one {# more line} other {# more lines}}"
 msgstr "{rest, plural, other {#줄 더}}"
 
@@ -489,7 +494,7 @@ msgstr "에이전트 메모리"
 msgid "Agents"
 msgstr "에이전트"
 
-#: src/widgets/conversation/ui/Composer/Composer.tsx:186
+#: src/widgets/conversation/ui/Composer/Composer.tsx:197
 msgid "Agents search the library and file what they learn. Click to turn it off."
 msgstr "에이전트가 라이브러리를 검색하고 알게 된 것을 기록해요. 누르면 꺼져요."
 
@@ -497,7 +502,7 @@ msgstr "에이전트가 라이브러리를 검색하고 알게 된 것을 기록
 msgid "Agents suggest what they learn, and nothing lands here until you accept it."
 msgstr "에이전트는 알게 된 것을 제안만 하고, 받아들이기 전에는 여기에 아무것도 들어오지 않습니다."
 
-#: src/widgets/conversation/ui/Composer/Composer.tsx:187
+#: src/widgets/conversation/ui/Composer/Composer.tsx:198
 msgid "Agents work without the library. Click to turn it on."
 msgstr "에이전트가 라이브러리 없이 일해요. 누르면 켜져요."
 
@@ -510,7 +515,7 @@ msgstr "전체"
 msgid "All {0} connected"
 msgstr "{0}개 모두 연결됨"
 
-#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:84
+#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:147
 msgid "Allow"
 msgstr "허용"
 
@@ -519,7 +524,7 @@ msgstr "허용"
 msgid "Allow all"
 msgstr "전부 허용"
 
-#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:134
+#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:271
 msgid "Allow this?"
 msgstr "허용할까요?"
 
@@ -536,7 +541,7 @@ msgid "any moment"
 msgstr "곧"
 
 #. placeholder {0}: turn.metrics.apiErrorStatus
-#: src/pages/workspace/model/session/agent-events/agent-events.ts:119
+#: src/pages/workspace/model/session/agent-events/agent-events.ts:122
 msgid "API error {0}"
 msgstr "API 오류 {0}"
 
@@ -544,7 +549,7 @@ msgstr "API 오류 {0}"
 msgid "Apply"
 msgstr "적용"
 
-#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:132
+#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:269
 msgid "Approve this plan?"
 msgstr "이 계획을 승인할까요?"
 
@@ -553,7 +558,7 @@ msgstr "이 계획을 승인할까요?"
 msgid "Ask first"
 msgstr "먼저 묻기"
 
-#: src/widgets/conversation/ui/ConversationPane/ConversationPane.tsx:132
+#: src/widgets/conversation/ui/ConversationPane/ConversationPane.tsx:154
 msgid "Ask for the whole job"
 msgstr "일 전체를 맡기세요"
 
@@ -569,7 +574,7 @@ msgstr "파일을 고치거나 명령을 실행하기 전에 묻습니다"
 msgid "Attach"
 msgstr "첨부"
 
-#: src/widgets/conversation/ui/Composer/Composer.tsx:166
+#: src/widgets/conversation/ui/Composer/Composer.tsx:175
 msgid "Attach a file"
 msgstr "파일 첨부"
 
@@ -577,7 +582,7 @@ msgstr "파일 첨부"
 msgid "Author"
 msgstr "작성자"
 
-#: src/pages/workspace/model/session/agent-events/agent-events.ts:183
+#: src/pages/workspace/model/session/agent-events/agent-events.ts:186
 msgid "auto"
 msgstr "자동"
 
@@ -729,7 +734,7 @@ msgstr "Claude Code에 화면을 붙였습니다"
 msgid "Claude in Chrome"
 msgstr ""
 
-#: src/widgets/conversation/ui/Composer/Composer.tsx:117
+#: src/widgets/conversation/ui/Composer/Composer.tsx:126
 #: src/widgets/team-sidebar/ui/ToolPicker/ToolPicker.tsx:71
 msgid "Clear"
 msgstr "지우기"
@@ -807,7 +812,7 @@ msgstr "컨텍스트"
 msgid "Continue"
 msgstr "계속"
 
-#: src/pages/workspace/model/session/agent-events/agent-events.ts:174
+#: src/pages/workspace/model/session/agent-events/agent-events.ts:177
 msgid "Conversation compacted here"
 msgstr "여기서 대화가 압축됐습니다"
 
@@ -1030,7 +1035,7 @@ msgstr "“{0}” 노트를 삭제할까요?"
 msgid "Deleted"
 msgstr "삭제됨"
 
-#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:98
+#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:161
 msgid "Deny"
 msgstr "거부"
 
@@ -1059,7 +1064,7 @@ msgstr "\"{title}\"을(를) 무시했습니다"
 msgid "Documents they read first. Long ones cost nothing until they open them."
 msgstr "이 팀원이 먼저 읽을 문서입니다. 길어도 열기 전까지는 비용이 들지 않습니다."
 
-#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:111
+#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:174
 msgid "Don't ask again this session"
 msgstr "이번 세션에서는 다시 묻지 않기"
 
@@ -1111,7 +1116,7 @@ msgstr "수정"
 msgid "Edit {0}"
 msgstr "{0} 수정"
 
-#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:127
+#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:264
 msgid "Edit this file?"
 msgstr "이 파일을 고칠까요?"
 
@@ -1127,7 +1132,7 @@ msgstr "고치는 중"
 msgid "Edits files freely, asks before running commands"
 msgstr "파일은 알아서 고치고, 명령을 실행할 때만 묻습니다"
 
-#: src/widgets/conversation/ui/Composer/Composer.tsx:206
+#: src/widgets/conversation/ui/Composer/Composer.tsx:219
 #: src/widgets/setup/ui/SetupPane/SetupPane.tsx:163
 msgid "Effort"
 msgstr "노력"
@@ -1196,7 +1201,7 @@ msgstr "피드백"
 msgid "Fetching"
 msgstr "가져오는 중"
 
-#: src/widgets/conversation/ui/ConversationPane/ConversationPane.tsx:248
+#: src/widgets/conversation/ui/ConversationPane/ConversationPane.tsx:270
 msgid "File this answer to the library as its own note"
 msgstr "이 답변을 별도 노트로 라이브러리에 넣기"
 
@@ -1431,7 +1436,7 @@ msgstr "너무 오래 걸려 중단했습니다"
 msgid "just now"
 msgstr "방금"
 
-#: src/widgets/conversation/ui/Composer/Composer.tsx:154
+#: src/widgets/conversation/ui/Composer/Composer.tsx:163
 #: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:95
 msgid "Keep going"
 msgstr "이어서 말하세요"
@@ -1482,7 +1487,7 @@ msgstr "영문, 숫자, 하이픈, 밑줄만 쓸 수 있습니다"
 msgid "Letters, numbers, hyphens. Sign in after adding if it asks."
 msgstr "영문, 숫자, 하이픈. 추가한 뒤 로그인을 요구하면 로그인하세요."
 
-#: src/widgets/conversation/ui/Composer/Composer.tsx:197
+#: src/widgets/conversation/ui/Composer/Composer.tsx:208
 #: src/widgets/library/ui/LibraryPane/LibraryPane.tsx:94
 #: src/widgets/library/ui/LibraryPane/LibraryPane.tsx:142
 #: src/widgets/team-sidebar/ui/TeamSidebar/TeamSidebar.tsx:91
@@ -1505,7 +1510,7 @@ msgstr "낮음"
 msgid "Manage"
 msgstr "관리"
 
-#: src/pages/workspace/model/session/agent-events/agent-events.ts:184
+#: src/pages/workspace/model/session/agent-events/agent-events.ts:187
 msgid "manual"
 msgstr "수동"
 
@@ -1542,22 +1547,22 @@ msgstr "{branchName}(으)로 브랜치 머지"
 msgid "Merged {branch}."
 msgstr "{branch}을(를) 머지했습니다."
 
-#: src/widgets/conversation/ui/Composer/Composer.tsx:148
+#: src/widgets/conversation/ui/Composer/Composer.tsx:157
 msgid "Message for {addressee}"
 msgstr "{addressee}에게 보낼 말"
 
-#: src/widgets/conversation/ui/Composer/Composer.tsx:148
+#: src/widgets/conversation/ui/Composer/Composer.tsx:157
 msgid "Message your team"
 msgstr "팀에게 말하기"
 
-#: src/widgets/conversation/ui/Composer/Composer.tsx:203
+#: src/widgets/conversation/ui/Composer/Composer.tsx:216
 #: src/widgets/setup/ui/SetupPane/SetupPane.tsx:157
 #: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:109
 #: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:181
 msgid "Model"
 msgstr "모델"
 
-#: src/pages/workspace/ui/gates/ConversationGate.tsx:99
+#: src/pages/workspace/ui/gates/ConversationGate.tsx:109
 msgid "Model changed. The running session keeps its model."
 msgstr "모델을 바꿨습니다. 실행 중인 세션은 기존 모델을 유지합니다."
 
@@ -1830,12 +1835,12 @@ msgstr "서버 주소를 붙여넣으세요"
 msgid "Permission"
 msgstr "권한"
 
-#: src/widgets/conversation/ui/Composer/Composer.tsx:176
+#: src/widgets/conversation/ui/Composer/Composer.tsx:187
 #: src/widgets/setup/ui/SetupPane/SetupPane.tsx:151
 msgid "Permissions"
 msgstr "권한"
 
-#: src/pages/workspace/ui/gates/ConversationGate.tsx:95
+#: src/pages/workspace/ui/gates/ConversationGate.tsx:105
 msgid "Permissions changed. The running session follows the old ones."
 msgstr "권한을 바꿨습니다. 실행 중인 세션은 기존 권한을 따릅니다."
 
@@ -1925,7 +1930,7 @@ msgstr "요청이 너무 잦습니다"
 msgid "Re-authenticate"
 msgstr "재인증"
 
-#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:130
+#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:267
 msgid "Reach out to the web?"
 msgstr "웹에 접속할까요?"
 
@@ -2098,6 +2103,10 @@ msgstr "{when} 초기화"
 msgid "Restart"
 msgstr "다시 시작"
 
+#: src/widgets/conversation/ui/ChoicePicker/ChoicePicker.tsx:114
+msgid "Restart now, on {pick}"
+msgstr "지금 {pick}(으)로 다시 시작"
+
 #: src/widgets/conversation/ui/RestartNote/RestartNote.tsx:17
 #: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:148
 msgid "Restart session"
@@ -2126,7 +2135,7 @@ msgstr "되돌리기"
 msgid "run {0} of {1}"
 msgstr "{1}회 중 {0}번째"
 
-#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:122
+#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:259
 msgid "Run this command?"
 msgstr "이 명령을 실행할까요?"
 
@@ -2161,7 +2170,7 @@ msgstr "저장 중…"
 msgid "Say the word and the whole team wakes up."
 msgstr "말 한마디면 팀 전체가 깨어납니다."
 
-#: src/widgets/conversation/ui/ConversationPane/ConversationPane.tsx:133
+#: src/widgets/conversation/ui/ConversationPane/ConversationPane.tsx:155
 msgid "Say what you want done, not the next step. The orchestrator splits it up and hands out the pieces."
 msgstr "다음 단계 말고 원하는 결과를 말하세요. 오케스트레이터가 알아서 쪼개서 나눠 줍니다."
 
@@ -2206,7 +2215,7 @@ msgstr "찾는 중"
 msgid "See what they did"
 msgstr "무엇을 했는지 보기"
 
-#: src/widgets/conversation/ui/Composer/Composer.tsx:245
+#: src/widgets/conversation/ui/Composer/Composer.tsx:258
 msgid "Send"
 msgstr "보내기"
 
@@ -2259,9 +2268,17 @@ msgstr "모든 프로젝트에서 공용"
 msgid "Shift+Enter starts a new line. Off, sending takes the modifier key with Enter."
 msgstr "Shift+Enter로 줄을 바꿉니다. 끄면 보조키+Enter로 보냅니다."
 
+#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:139
+msgid "Show less"
+msgstr "접기"
+
 #: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:195
 msgid "Show team sidebar"
 msgstr "팀 사이드바 펼치기"
+
+#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:139
+msgid "Show the whole change"
+msgstr "변경 전체 보기"
 
 #: src/widgets/setup/ui/PluginShelf/ConnectorsTab.tsx:91
 msgid "Sign in"
@@ -2410,7 +2427,7 @@ msgstr "아직 허가를 기다리는 중"
 msgid "Stock rules"
 msgstr "재고 규칙"
 
-#: src/widgets/conversation/ui/Composer/Composer.tsx:234
+#: src/widgets/conversation/ui/Composer/Composer.tsx:247
 msgid "Stop"
 msgstr "멈추기"
 
@@ -2475,7 +2492,7 @@ msgstr "전부 빼기"
 msgid "Take out of {0}"
 msgstr "{0}에서 빼기"
 
-#: src/widgets/conversation/ui/Composer/Composer.tsx:151
+#: src/widgets/conversation/ui/Composer/Composer.tsx:160
 msgid "Task for {addressee}"
 msgstr "{addressee}에게 맡길 일"
 
@@ -2613,6 +2630,10 @@ msgstr "고른 브랜치의 커밋이 이 브랜치에 합쳐집니다. 양쪽�
 msgid "The project leaves this list. The folder and everything in it stay on disk."
 msgstr "프로젝트가 목록에서 빠집니다. 폴더와 그 안의 모든 것은 디스크에 그대로 남습니다."
 
+#: src/widgets/conversation/ui/ChoicePicker/ChoicePicker.tsx:116
+msgid "The reply in hand is dropped. Nothing already done is undone."
+msgstr "쓰던 답변은 버려집니다. 이미 한 일은 되돌리지 않습니다."
+
 #: src/entities/claude-cli/lib/failure/failure.ts:93
 msgid "The request failed"
 msgstr "요청이 실패했습니다"
@@ -2625,7 +2646,12 @@ msgstr "요청이 거부됐습니다"
 msgid "The running session goes on without the library. Agents read it from the next one."
 msgstr "지금 세션은 라이브러리 없이 이어져요. 다음 세션부터 참고해요."
 
-#: src/widgets/conversation/ui/Composer/Composer.tsx:213
+#. placeholder {0}: read(forced.label)
+#: src/widgets/conversation/ui/ChoicePicker/ChoicePicker.tsx:73
+msgid "The running session is on {0}. Restart it to work under {pick}."
+msgstr "지금 세션은 {0}(으)로 돌고 있어요. 다시 시작하면 {pick}(으)로 일합니다."
+
+#: src/widgets/conversation/ui/Composer/Composer.tsx:226
 msgid "The running session keeps its model and effort. This applies from the next one."
 msgstr "실행 중인 세션은 모델과 노력 수준을 그대로 씁니다. 다음 세션부터 적용됩니다."
 
@@ -2774,7 +2800,7 @@ msgstr "이 팀원은 파일을 하나도 바꾸지 않았습니다."
 msgid "This teammate has no branch Zetrem can look up."
 msgstr "Zetrem이 찾아볼 수 있는 브랜치가 이 팀원에게 없습니다."
 
-#: src/pages/workspace/model/session/agent-events/agent-events.ts:191
+#: src/pages/workspace/model/session/agent-events/agent-events.ts:194
 msgid "This turn: {out} out · {seconds}s"
 msgstr "이번 턴: {out} 출력 · {seconds}초"
 
@@ -2806,11 +2832,11 @@ msgstr "시각"
 msgid "Title"
 msgstr "제목"
 
-#: src/widgets/conversation/ui/Composer/Composer.tsx:111
+#: src/widgets/conversation/ui/Composer/Composer.tsx:120
 msgid "To {addressee}"
 msgstr "{addressee}에게"
 
-#: src/widgets/conversation/ui/ConversationPane/ConversationPane.tsx:251
+#: src/widgets/conversation/ui/ConversationPane/ConversationPane.tsx:273
 msgid "To library"
 msgstr "라이브러리에"
 
@@ -2935,11 +2961,15 @@ msgstr "주간 {rest}"
 msgid "Weekly overage"
 msgstr "주간 초과분"
 
+#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:228
+msgid "What is being approved"
+msgstr "승인할 내용"
+
 #: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:1025
 msgid "What it holds is gone for good. Applying it first keeps the work."
 msgstr "담긴 내용이 완전히 사라집니다. 먼저 적용하면 작업은 남습니다."
 
-#: src/widgets/conversation/ui/Composer/Composer.tsx:153
+#: src/widgets/conversation/ui/Composer/Composer.tsx:162
 msgid "What should they work on?"
 msgstr "무슨 일을 맡길까요?"
 
@@ -3026,7 +3056,7 @@ msgstr "첫 노트 쓰기"
 msgid "Write their instructions once and the orchestrator can call them in any project."
 msgstr "지침을 한 번 써두면 어느 프로젝트에서든 부를 수 있습니다."
 
-#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:124
+#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:261
 msgid "Write this file?"
 msgstr "이 파일을 쓸까요?"
 

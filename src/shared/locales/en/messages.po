@@ -13,11 +13,11 @@ msgstr ""
 "Language-Team: \n"
 "Plural-Forms: \n"
 
-#: src/pages/workspace/model/session/agent-events/agent-events.ts:165
+#: src/pages/workspace/model/session/agent-events/agent-events.ts:168
 msgid " · on overage"
 msgstr " · on overage"
 
-#: src/pages/workspace/model/session/agent-events/agent-events.ts:163
+#: src/pages/workspace/model/session/agent-events/agent-events.ts:166
 msgid " {pct}% used,"
 msgstr " {pct}% used,"
 
@@ -32,6 +32,10 @@ msgstr "“To library” under an answer files it here."
 #: src/widgets/library/ui/LibraryPane/LibraryPane.tsx:54
 msgid "“To library” under an answer files it here. You can write here yourself."
 msgstr "“To library” under an answer files it here. You can write here yourself."
+
+#: src/widgets/conversation/ui/ChoicePicker/ChoicePicker.tsx:84
+msgid "(next session)"
+msgstr "(next session)"
 
 #. placeholder {0}: counted.ran
 #: src/widgets/conversation/lib/tool-run/tool-run.ts:50
@@ -84,7 +88,7 @@ msgid "{0} left"
 msgstr "{0} left"
 
 #. placeholder {0}: limitKindLabel(limit.kind)
-#: src/pages/workspace/model/session/agent-events/agent-events.ts:166
+#: src/pages/workspace/model/session/agent-events/agent-events.ts:169
 msgid "{0} limit{share} resets {when}{overage}"
 msgstr "{0} limit{share} resets {when}{overage}"
 
@@ -140,7 +144,7 @@ msgstr "{0}m ago"
 msgid "{back} teammates"
 msgstr "{back} teammates"
 
-#: src/pages/workspace/model/session/agent-events/agent-events.ts:176
+#: src/pages/workspace/model/session/agent-events/agent-events.ts:179
 msgid "{base}. Earlier turns live on as a summary."
 msgstr "{base}. Earlier turns live on as a summary."
 
@@ -231,6 +235,7 @@ msgstr "{reported} reported back"
 
 #: src/entities/tool/ui/ChangeDiff/ChangeDiff.tsx:10
 #: src/widgets/conversation/lib/limits/limits.ts:6
+#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:249
 msgid "{rest, plural, one {# more line} other {# more lines}}"
 msgstr "{rest, plural, one {# more line} other {# more lines}}"
 
@@ -489,7 +494,7 @@ msgstr "Agent memory"
 msgid "Agents"
 msgstr "Agents"
 
-#: src/widgets/conversation/ui/Composer/Composer.tsx:186
+#: src/widgets/conversation/ui/Composer/Composer.tsx:197
 msgid "Agents search the library and file what they learn. Click to turn it off."
 msgstr "Agents search the library and file what they learn. Click to turn it off."
 
@@ -497,7 +502,7 @@ msgstr "Agents search the library and file what they learn. Click to turn it off
 msgid "Agents suggest what they learn, and nothing lands here until you accept it."
 msgstr "Agents suggest what they learn, and nothing lands here until you accept it."
 
-#: src/widgets/conversation/ui/Composer/Composer.tsx:187
+#: src/widgets/conversation/ui/Composer/Composer.tsx:198
 msgid "Agents work without the library. Click to turn it on."
 msgstr "Agents work without the library. Click to turn it on."
 
@@ -510,7 +515,7 @@ msgstr "All"
 msgid "All {0} connected"
 msgstr "All {0} connected"
 
-#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:84
+#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:147
 msgid "Allow"
 msgstr "Allow"
 
@@ -519,7 +524,7 @@ msgstr "Allow"
 msgid "Allow all"
 msgstr "Allow all"
 
-#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:134
+#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:271
 msgid "Allow this?"
 msgstr "Allow this?"
 
@@ -536,7 +541,7 @@ msgid "any moment"
 msgstr "any moment"
 
 #. placeholder {0}: turn.metrics.apiErrorStatus
-#: src/pages/workspace/model/session/agent-events/agent-events.ts:119
+#: src/pages/workspace/model/session/agent-events/agent-events.ts:122
 msgid "API error {0}"
 msgstr "API error {0}"
 
@@ -544,7 +549,7 @@ msgstr "API error {0}"
 msgid "Apply"
 msgstr "Apply"
 
-#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:132
+#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:269
 msgid "Approve this plan?"
 msgstr "Approve this plan?"
 
@@ -553,7 +558,7 @@ msgstr "Approve this plan?"
 msgid "Ask first"
 msgstr "Ask first"
 
-#: src/widgets/conversation/ui/ConversationPane/ConversationPane.tsx:132
+#: src/widgets/conversation/ui/ConversationPane/ConversationPane.tsx:154
 msgid "Ask for the whole job"
 msgstr "Ask for the whole job"
 
@@ -569,7 +574,7 @@ msgstr "Asks before editing files or running commands"
 msgid "Attach"
 msgstr "Attach"
 
-#: src/widgets/conversation/ui/Composer/Composer.tsx:166
+#: src/widgets/conversation/ui/Composer/Composer.tsx:175
 msgid "Attach a file"
 msgstr "Attach a file"
 
@@ -577,7 +582,7 @@ msgstr "Attach a file"
 msgid "Author"
 msgstr "Author"
 
-#: src/pages/workspace/model/session/agent-events/agent-events.ts:183
+#: src/pages/workspace/model/session/agent-events/agent-events.ts:186
 msgid "auto"
 msgstr "auto"
 
@@ -729,7 +734,7 @@ msgstr "Claude Code, with a screen"
 msgid "Claude in Chrome"
 msgstr "Claude in Chrome"
 
-#: src/widgets/conversation/ui/Composer/Composer.tsx:117
+#: src/widgets/conversation/ui/Composer/Composer.tsx:126
 #: src/widgets/team-sidebar/ui/ToolPicker/ToolPicker.tsx:71
 msgid "Clear"
 msgstr "Clear"
@@ -807,7 +812,7 @@ msgstr "Context"
 msgid "Continue"
 msgstr "Continue"
 
-#: src/pages/workspace/model/session/agent-events/agent-events.ts:174
+#: src/pages/workspace/model/session/agent-events/agent-events.ts:177
 msgid "Conversation compacted here"
 msgstr "Conversation compacted here"
 
@@ -1030,7 +1035,7 @@ msgstr "Delete the note “{0}”?"
 msgid "Deleted"
 msgstr "Deleted"
 
-#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:98
+#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:161
 msgid "Deny"
 msgstr "Deny"
 
@@ -1059,7 +1064,7 @@ msgstr "Dismissed \"{title}\""
 msgid "Documents they read first. Long ones cost nothing until they open them."
 msgstr "Documents they read first. Long ones cost nothing until they open them."
 
-#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:111
+#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:174
 msgid "Don't ask again this session"
 msgstr "Don't ask again this session"
 
@@ -1111,7 +1116,7 @@ msgstr "Edit"
 msgid "Edit {0}"
 msgstr "Edit {0}"
 
-#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:127
+#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:264
 msgid "Edit this file?"
 msgstr "Edit this file?"
 
@@ -1127,7 +1132,7 @@ msgstr "Editing"
 msgid "Edits files freely, asks before running commands"
 msgstr "Edits files freely, asks before running commands"
 
-#: src/widgets/conversation/ui/Composer/Composer.tsx:206
+#: src/widgets/conversation/ui/Composer/Composer.tsx:219
 #: src/widgets/setup/ui/SetupPane/SetupPane.tsx:163
 msgid "Effort"
 msgstr "Effort"
@@ -1196,7 +1201,7 @@ msgstr "Feedback"
 msgid "Fetching"
 msgstr "Fetching"
 
-#: src/widgets/conversation/ui/ConversationPane/ConversationPane.tsx:248
+#: src/widgets/conversation/ui/ConversationPane/ConversationPane.tsx:270
 msgid "File this answer to the library as its own note"
 msgstr "File this answer to the library as its own note"
 
@@ -1431,7 +1436,7 @@ msgstr "It took too long and was stopped"
 msgid "just now"
 msgstr "just now"
 
-#: src/widgets/conversation/ui/Composer/Composer.tsx:154
+#: src/widgets/conversation/ui/Composer/Composer.tsx:163
 #: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:95
 msgid "Keep going"
 msgstr "Keep going"
@@ -1482,7 +1487,7 @@ msgstr "Letters, numbers, hyphens and underscores only"
 msgid "Letters, numbers, hyphens. Sign in after adding if it asks."
 msgstr "Letters, numbers, hyphens. Sign in after adding if it asks."
 
-#: src/widgets/conversation/ui/Composer/Composer.tsx:197
+#: src/widgets/conversation/ui/Composer/Composer.tsx:208
 #: src/widgets/library/ui/LibraryPane/LibraryPane.tsx:94
 #: src/widgets/library/ui/LibraryPane/LibraryPane.tsx:142
 #: src/widgets/team-sidebar/ui/TeamSidebar/TeamSidebar.tsx:91
@@ -1505,7 +1510,7 @@ msgstr "Low"
 msgid "Manage"
 msgstr "Manage"
 
-#: src/pages/workspace/model/session/agent-events/agent-events.ts:184
+#: src/pages/workspace/model/session/agent-events/agent-events.ts:187
 msgid "manual"
 msgstr "manual"
 
@@ -1542,22 +1547,22 @@ msgstr "Merge a branch into {branchName}"
 msgid "Merged {branch}."
 msgstr "Merged {branch}."
 
-#: src/widgets/conversation/ui/Composer/Composer.tsx:148
+#: src/widgets/conversation/ui/Composer/Composer.tsx:157
 msgid "Message for {addressee}"
 msgstr "Message for {addressee}"
 
-#: src/widgets/conversation/ui/Composer/Composer.tsx:148
+#: src/widgets/conversation/ui/Composer/Composer.tsx:157
 msgid "Message your team"
 msgstr "Message your team"
 
-#: src/widgets/conversation/ui/Composer/Composer.tsx:203
+#: src/widgets/conversation/ui/Composer/Composer.tsx:216
 #: src/widgets/setup/ui/SetupPane/SetupPane.tsx:157
 #: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:109
 #: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:181
 msgid "Model"
 msgstr "Model"
 
-#: src/pages/workspace/ui/gates/ConversationGate.tsx:99
+#: src/pages/workspace/ui/gates/ConversationGate.tsx:109
 msgid "Model changed. The running session keeps its model."
 msgstr "Model changed. The running session keeps its model."
 
@@ -1830,12 +1835,12 @@ msgstr "Paste the server address"
 msgid "Permission"
 msgstr "Permission"
 
-#: src/widgets/conversation/ui/Composer/Composer.tsx:176
+#: src/widgets/conversation/ui/Composer/Composer.tsx:187
 #: src/widgets/setup/ui/SetupPane/SetupPane.tsx:151
 msgid "Permissions"
 msgstr "Permissions"
 
-#: src/pages/workspace/ui/gates/ConversationGate.tsx:95
+#: src/pages/workspace/ui/gates/ConversationGate.tsx:105
 msgid "Permissions changed. The running session follows the old ones."
 msgstr "Permissions changed. The running session follows the old ones."
 
@@ -1925,7 +1930,7 @@ msgstr "Rate limited"
 msgid "Re-authenticate"
 msgstr "Re-authenticate"
 
-#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:130
+#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:267
 msgid "Reach out to the web?"
 msgstr "Reach out to the web?"
 
@@ -2098,6 +2103,10 @@ msgstr "resets {when}"
 msgid "Restart"
 msgstr "Restart"
 
+#: src/widgets/conversation/ui/ChoicePicker/ChoicePicker.tsx:114
+msgid "Restart now, on {pick}"
+msgstr "Restart now, on {pick}"
+
 #: src/widgets/conversation/ui/RestartNote/RestartNote.tsx:17
 #: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:148
 msgid "Restart session"
@@ -2126,7 +2135,7 @@ msgstr "Roll back"
 msgid "run {0} of {1}"
 msgstr "run {0} of {1}"
 
-#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:122
+#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:259
 msgid "Run this command?"
 msgstr "Run this command?"
 
@@ -2161,7 +2170,7 @@ msgstr "Saving…"
 msgid "Say the word and the whole team wakes up."
 msgstr "Say the word and the whole team wakes up."
 
-#: src/widgets/conversation/ui/ConversationPane/ConversationPane.tsx:133
+#: src/widgets/conversation/ui/ConversationPane/ConversationPane.tsx:155
 msgid "Say what you want done, not the next step. The orchestrator splits it up and hands out the pieces."
 msgstr "Say what you want done, not the next step. The orchestrator splits it up and hands out the pieces."
 
@@ -2206,7 +2215,7 @@ msgstr "Searching"
 msgid "See what they did"
 msgstr "See what they did"
 
-#: src/widgets/conversation/ui/Composer/Composer.tsx:245
+#: src/widgets/conversation/ui/Composer/Composer.tsx:258
 msgid "Send"
 msgstr "Send"
 
@@ -2259,9 +2268,17 @@ msgstr "Shared across projects"
 msgid "Shift+Enter starts a new line. Off, sending takes the modifier key with Enter."
 msgstr "Shift+Enter starts a new line. Off, sending takes the modifier key with Enter."
 
+#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:139
+msgid "Show less"
+msgstr "Show less"
+
 #: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:195
 msgid "Show team sidebar"
 msgstr "Show team sidebar"
+
+#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:139
+msgid "Show the whole change"
+msgstr "Show the whole change"
 
 #: src/widgets/setup/ui/PluginShelf/ConnectorsTab.tsx:91
 msgid "Sign in"
@@ -2410,7 +2427,7 @@ msgstr "Still waiting for your permission"
 msgid "Stock rules"
 msgstr "Stock rules"
 
-#: src/widgets/conversation/ui/Composer/Composer.tsx:234
+#: src/widgets/conversation/ui/Composer/Composer.tsx:247
 msgid "Stop"
 msgstr "Stop"
 
@@ -2475,7 +2492,7 @@ msgstr "Take everything out"
 msgid "Take out of {0}"
 msgstr "Take out of {0}"
 
-#: src/widgets/conversation/ui/Composer/Composer.tsx:151
+#: src/widgets/conversation/ui/Composer/Composer.tsx:160
 msgid "Task for {addressee}"
 msgstr "Task for {addressee}"
 
@@ -2613,6 +2630,10 @@ msgstr "The picked branch's commits join this one. If the sides collide, the con
 msgid "The project leaves this list. The folder and everything in it stay on disk."
 msgstr "The project leaves this list. The folder and everything in it stay on disk."
 
+#: src/widgets/conversation/ui/ChoicePicker/ChoicePicker.tsx:116
+msgid "The reply in hand is dropped. Nothing already done is undone."
+msgstr "The reply in hand is dropped. Nothing already done is undone."
+
 #: src/entities/claude-cli/lib/failure/failure.ts:93
 msgid "The request failed"
 msgstr "The request failed"
@@ -2625,7 +2646,12 @@ msgstr "The request was rejected"
 msgid "The running session goes on without the library. Agents read it from the next one."
 msgstr "The running session goes on without the library. Agents read it from the next one."
 
-#: src/widgets/conversation/ui/Composer/Composer.tsx:213
+#. placeholder {0}: read(forced.label)
+#: src/widgets/conversation/ui/ChoicePicker/ChoicePicker.tsx:73
+msgid "The running session is on {0}. Restart it to work under {pick}."
+msgstr "The running session is on {0}. Restart it to work under {pick}."
+
+#: src/widgets/conversation/ui/Composer/Composer.tsx:226
 msgid "The running session keeps its model and effort. This applies from the next one."
 msgstr "The running session keeps its model and effort. This applies from the next one."
 
@@ -2774,7 +2800,7 @@ msgstr "This teammate changed no files."
 msgid "This teammate has no branch Zetrem can look up."
 msgstr "This teammate has no branch Zetrem can look up."
 
-#: src/pages/workspace/model/session/agent-events/agent-events.ts:191
+#: src/pages/workspace/model/session/agent-events/agent-events.ts:194
 msgid "This turn: {out} out · {seconds}s"
 msgstr "This turn: {out} out · {seconds}s"
 
@@ -2806,11 +2832,11 @@ msgstr "Time"
 msgid "Title"
 msgstr "Title"
 
-#: src/widgets/conversation/ui/Composer/Composer.tsx:111
+#: src/widgets/conversation/ui/Composer/Composer.tsx:120
 msgid "To {addressee}"
 msgstr "To {addressee}"
 
-#: src/widgets/conversation/ui/ConversationPane/ConversationPane.tsx:251
+#: src/widgets/conversation/ui/ConversationPane/ConversationPane.tsx:273
 msgid "To library"
 msgstr "To library"
 
@@ -2935,11 +2961,15 @@ msgstr "Weekly {rest}"
 msgid "Weekly overage"
 msgstr "Weekly overage"
 
+#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:228
+msgid "What is being approved"
+msgstr "What is being approved"
+
 #: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:1025
 msgid "What it holds is gone for good. Applying it first keeps the work."
 msgstr "What it holds is gone for good. Applying it first keeps the work."
 
-#: src/widgets/conversation/ui/Composer/Composer.tsx:153
+#: src/widgets/conversation/ui/Composer/Composer.tsx:162
 msgid "What should they work on?"
 msgstr "What should they work on?"
 
@@ -3026,7 +3056,7 @@ msgstr "Write the first note"
 msgid "Write their instructions once and the orchestrator can call them in any project."
 msgstr "Write their instructions once and the orchestrator can call them in any project."
 
-#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:124
+#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:261
 msgid "Write this file?"
 msgstr "Write this file?"
 

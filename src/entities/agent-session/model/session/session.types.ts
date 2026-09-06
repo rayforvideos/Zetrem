@@ -12,6 +12,13 @@ export type PermissionAsk = {
   // The prose the tool is asking about, as markdown. A plan is what is being
   // approved, so the card shows it whole rather than in the one-line slot.
   plan?: string
+  // The edit the tool wants to make, cut into diff groups when the ask
+  // arrived. As with a stored call, the raw input is not kept: a whole file's
+  // contents would sit here for as long as the person took to answer, and the
+  // card wanted the diff out of it anyway.
+  change?: DiffLine[][]
+  // What that edit adds and takes away, counted alongside it.
+  count?: ChangeCount
 }
 
 export type AgentSession = {

@@ -87,6 +87,9 @@ function working(turns: Turn[]): string {
           sessionLive={false}
           addressee={null}
           permissionMode="ask"
+          runningPermissionMode={null}
+          runningModel={null}
+          onRestart={() => {}}
           model="default"
           effort="default"
           refusedModels={[]}
@@ -141,6 +144,9 @@ function pane(
           sessionLive={false}
           addressee={null}
           permissionMode="ask"
+          runningPermissionMode={null}
+          runningModel={null}
+          onRestart={() => {}}
           model="default"
           effort="default"
           refusedModels={[]}

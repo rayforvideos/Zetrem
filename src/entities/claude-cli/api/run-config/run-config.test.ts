@@ -1,5 +1,24 @@
 import { describe, expect, it } from 'vitest'
-import { agentArgs, isReady, PROBE_BUDGET_USD, PROBE_PROMPT, probeArgs } from './run-config'
+import type { PermissionMode } from './run-config.types'
+import {
+  agentArgs,
+  isReady,
+  modeFromCli,
+  PROBE_BUDGET_USD,
+  PROBE_PROMPT,
+  probeArgs,
+} from './run-config'
+
+// A session started the way the app starts one, so the reading below is taken
+// off the same flags a real run is given.
+const ROUND_TRIP = {
+  permissionMode: 'ask' as const,
+  lock: null,
+  people: [],
+  model: 'default' as const,
+  effort: 'default' as const,
+  persona: '',
+}
 
 describe('agentArgs: what claude is started with', () => {
   const base = {
@@ -274,5 +293,37 @@ describe('a teammate is given a working tree of its own where git can hold one',
     const args = probeArgs({ ...base, isolated: true })
     expect(args[args.indexOf('--settings') + 1]).toBe('{"worktree":{"baseRef":"head"}}')
     expect(probeArgs(base)).not.toContain('--settings')
+  })
+})
+
+describe('modeFromCli: reading a running session back into the app words', () => {
+  it('reads the CLI default as ask mode, which is the mode that passes no flag', () => {
+    expect(modeFromCli('default')).toBe('ask')
+  })
+
+  it('reads the skip-permissions run as allow-all, under the name the CLI gives it', () => {
+    expect(modeFromCli('bypassPermissions')).toBe('bypass')
+  })
+
+  it('reads back the two modes the CLI is handed by name', () => {
+    expect(modeFromCli('acceptEdits')).toBe('acceptEdits')
+    expect(modeFromCli('plan')).toBe('plan')
+  })
+
+  it('says nothing about a mode this app never asks for', () => {
+    expect(modeFromCli('')).toBeNull()
+    expect(modeFromCli('ask'), 'the CLI has no mode by that name').toBeNull()
+  })
+
+  it('reads back every mode the app can start a session in', () => {
+    const modes: PermissionMode[] = ['plan', 'ask', 'acceptEdits', 'bypass']
+    for (const mode of modes) {
+      const args = agentArgs({ ...ROUND_TRIP, permissionMode: mode })
+      const at = args.indexOf('--permission-mode')
+      // What the CLI would report for that run: the mode it was handed, or
+      // its own word for the run that was handed no mode flag at all.
+      const said = mode === 'bypass' ? 'bypassPermissions' : at === -1 ? 'default' : args[at + 1]
+      expect(modeFromCli(said as string), mode).toBe(mode)
+    }
   })
 })

@@ -497,17 +497,13 @@ msgstr "Agent memory"
 msgid "Agents"
 msgstr "Agents"
 
-#: src/widgets/conversation/ui/Composer/Composer.tsx:186
-msgid "Agents search the library and file what they learn. Click to turn it off."
-msgstr "Agents search the library and file what they learn. Click to turn it off."
+#: src/widgets/conversation/ui/Composer/Composer.tsx:183
+msgid "Agents search the library and suggest what they find."
+msgstr "Agents search the library and suggest what they find."
 
 #: src/widgets/library/ui/LibraryPane/LibraryPane.tsx:160
 msgid "Agents suggest what they learn, and nothing lands here until you accept it."
 msgstr "Agents suggest what they learn, and nothing lands here until you accept it."
-
-#: src/widgets/conversation/ui/Composer/Composer.tsx:187
-msgid "Agents work without the library. Click to turn it on."
-msgstr "Agents work without the library. Click to turn it on."
 
 #: src/widgets/setup/ui/MemoryField/MemoryField.tsx:201
 msgid "All"
@@ -577,7 +573,7 @@ msgstr "Asks before editing files or running commands"
 msgid "Attach"
 msgstr "Attach"
 
-#: src/widgets/conversation/ui/Composer/Composer.tsx:166
+#: src/widgets/conversation/ui/Composer/Composer.tsx:167
 msgid "Attach a file"
 msgstr "Attach a file"
 
@@ -737,7 +733,7 @@ msgstr "Claude Code, with a screen"
 msgid "Claude in Chrome"
 msgstr "Claude in Chrome"
 
-#: src/widgets/conversation/ui/Composer/Composer.tsx:117
+#: src/widgets/conversation/ui/Composer/Composer.tsx:118
 #: src/widgets/team-sidebar/ui/ToolPicker/ToolPicker.tsx:71
 msgid "Clear"
 msgstr "Clear"
@@ -1135,7 +1131,7 @@ msgstr "Editing"
 msgid "Edits files freely, asks before running commands"
 msgstr "Edits files freely, asks before running commands"
 
-#: src/widgets/conversation/ui/Composer/Composer.tsx:206
+#: src/widgets/conversation/ui/Composer/Composer.tsx:205
 #: src/widgets/setup/ui/SetupPane/SetupPane.tsx:163
 msgid "Effort"
 msgstr "Effort"
@@ -1439,7 +1435,7 @@ msgstr "It took too long and was stopped"
 msgid "just now"
 msgstr "just now"
 
-#: src/widgets/conversation/ui/Composer/Composer.tsx:154
+#: src/widgets/conversation/ui/Composer/Composer.tsx:155
 #: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:95
 msgid "Keep going"
 msgstr "Keep going"
@@ -1490,7 +1486,6 @@ msgstr "Letters, numbers, hyphens and underscores only"
 msgid "Letters, numbers, hyphens. Sign in after adding if it asks."
 msgstr "Letters, numbers, hyphens. Sign in after adding if it asks."
 
-#: src/widgets/conversation/ui/Composer/Composer.tsx:197
 #: src/widgets/library/ui/LibraryPane/LibraryPane.tsx:94
 #: src/widgets/library/ui/LibraryPane/LibraryPane.tsx:142
 #: src/widgets/team-sidebar/ui/TeamSidebar/TeamSidebar.tsx:91
@@ -1500,6 +1495,16 @@ msgstr "Library"
 #: src/widgets/library/ui/NoteReader/NoteReader.tsx:62
 msgid "Library guide"
 msgstr "Library guide"
+
+#: src/widgets/conversation/ui/Composer/Composer.tsx:194
+#: src/widgets/conversation/ui/Composer/Composer.tsx:196
+msgid "Library off"
+msgstr "Library off"
+
+#: src/widgets/conversation/ui/Composer/Composer.tsx:194
+#: src/widgets/conversation/ui/Composer/Composer.tsx:196
+msgid "Library on"
+msgstr "Library on"
 
 #: src/widgets/library/ui/NoteReader/NoteReader.tsx:165
 msgid "Linked from"
@@ -1550,15 +1555,15 @@ msgstr "Merge a branch into {branchName}"
 msgid "Merged {branch}."
 msgstr "Merged {branch}."
 
-#: src/widgets/conversation/ui/Composer/Composer.tsx:148
+#: src/widgets/conversation/ui/Composer/Composer.tsx:149
 msgid "Message for {addressee}"
 msgstr "Message for {addressee}"
 
-#: src/widgets/conversation/ui/Composer/Composer.tsx:148
+#: src/widgets/conversation/ui/Composer/Composer.tsx:149
 msgid "Message your team"
 msgstr "Message your team"
 
-#: src/widgets/conversation/ui/Composer/Composer.tsx:203
+#: src/widgets/conversation/ui/Composer/Composer.tsx:202
 #: src/widgets/setup/ui/SetupPane/SetupPane.tsx:157
 #: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:109
 #: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:181
@@ -1838,7 +1843,7 @@ msgstr "Paste the server address"
 msgid "Permission"
 msgstr "Permission"
 
-#: src/widgets/conversation/ui/Composer/Composer.tsx:176
+#: src/widgets/conversation/ui/Composer/Composer.tsx:177
 #: src/widgets/setup/ui/SetupPane/SetupPane.tsx:151
 msgid "Permissions"
 msgstr "Permissions"
@@ -2214,7 +2219,7 @@ msgstr "Searching"
 msgid "See what they did"
 msgstr "See what they did"
 
-#: src/widgets/conversation/ui/Composer/Composer.tsx:245
+#: src/widgets/conversation/ui/Composer/Composer.tsx:244
 msgid "Send"
 msgstr "Send"
 
@@ -2410,7 +2415,7 @@ msgstr "Still signed in. Sign out did not take effect."
 msgid "Stock rules"
 msgstr "Stock rules"
 
-#: src/widgets/conversation/ui/Composer/Composer.tsx:234
+#: src/widgets/conversation/ui/Composer/Composer.tsx:233
 msgid "Stop"
 msgstr "Stop"
 
@@ -2475,7 +2480,7 @@ msgstr "Take everything out"
 msgid "Take out of {0}"
 msgstr "Take out of {0}"
 
-#: src/widgets/conversation/ui/Composer/Composer.tsx:151
+#: src/widgets/conversation/ui/Composer/Composer.tsx:152
 msgid "Task for {addressee}"
 msgstr "Task for {addressee}"
 
@@ -2625,7 +2630,7 @@ msgstr "The request was rejected"
 msgid "The running session goes on without the library. Agents read it from the next one."
 msgstr "The running session goes on without the library. Agents read it from the next one."
 
-#: src/widgets/conversation/ui/Composer/Composer.tsx:213
+#: src/widgets/conversation/ui/Composer/Composer.tsx:212
 msgid "The running session keeps its model and effort. This applies from the next one."
 msgstr "The running session keeps its model and effort. This applies from the next one."
 
@@ -2810,7 +2815,7 @@ msgstr "Time"
 msgid "Title"
 msgstr "Title"
 
-#: src/widgets/conversation/ui/Composer/Composer.tsx:111
+#: src/widgets/conversation/ui/Composer/Composer.tsx:112
 msgid "To {addressee}"
 msgstr "To {addressee}"
 
@@ -2941,7 +2946,7 @@ msgstr "Weekly overage"
 msgid "What it holds is gone for good. Applying it first keeps the work."
 msgstr "What it holds is gone for good. Applying it first keeps the work."
 
-#: src/widgets/conversation/ui/Composer/Composer.tsx:153
+#: src/widgets/conversation/ui/Composer/Composer.tsx:154
 msgid "What should they work on?"
 msgstr "What should they work on?"
 

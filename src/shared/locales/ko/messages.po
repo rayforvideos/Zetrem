@@ -497,17 +497,13 @@ msgstr "에이전트 메모리"
 msgid "Agents"
 msgstr "에이전트"
 
-#: src/widgets/conversation/ui/Composer/Composer.tsx:186
-msgid "Agents search the library and file what they learn. Click to turn it off."
-msgstr "에이전트가 라이브러리를 검색하고 알게 된 것을 기록해요. 누르면 꺼져요."
+#: src/widgets/conversation/ui/Composer/Composer.tsx:183
+msgid "Agents search the library and suggest what they find."
+msgstr "에이전트가 라이브러리를 찾아보고, 알아낸 것을 제안해요."
 
 #: src/widgets/library/ui/LibraryPane/LibraryPane.tsx:160
 msgid "Agents suggest what they learn, and nothing lands here until you accept it."
 msgstr "에이전트는 알게 된 것을 제안만 하고, 받아들이기 전에는 여기에 아무것도 들어오지 않습니다."
-
-#: src/widgets/conversation/ui/Composer/Composer.tsx:187
-msgid "Agents work without the library. Click to turn it on."
-msgstr "에이전트가 라이브러리 없이 일해요. 누르면 켜져요."
 
 #: src/widgets/setup/ui/MemoryField/MemoryField.tsx:201
 msgid "All"
@@ -577,7 +573,7 @@ msgstr "파일을 고치거나 명령을 실행하기 전에 묻습니다"
 msgid "Attach"
 msgstr "첨부"
 
-#: src/widgets/conversation/ui/Composer/Composer.tsx:166
+#: src/widgets/conversation/ui/Composer/Composer.tsx:167
 msgid "Attach a file"
 msgstr "파일 첨부"
 
@@ -737,7 +733,7 @@ msgstr "Claude Code에 화면을 붙였습니다"
 msgid "Claude in Chrome"
 msgstr ""
 
-#: src/widgets/conversation/ui/Composer/Composer.tsx:117
+#: src/widgets/conversation/ui/Composer/Composer.tsx:118
 #: src/widgets/team-sidebar/ui/ToolPicker/ToolPicker.tsx:71
 msgid "Clear"
 msgstr "지우기"
@@ -1135,7 +1131,7 @@ msgstr "고치는 중"
 msgid "Edits files freely, asks before running commands"
 msgstr "파일은 알아서 고치고, 명령을 실행할 때만 묻습니다"
 
-#: src/widgets/conversation/ui/Composer/Composer.tsx:206
+#: src/widgets/conversation/ui/Composer/Composer.tsx:205
 #: src/widgets/setup/ui/SetupPane/SetupPane.tsx:163
 msgid "Effort"
 msgstr "노력"
@@ -1439,7 +1435,7 @@ msgstr "너무 오래 걸려 중단했습니다"
 msgid "just now"
 msgstr "방금"
 
-#: src/widgets/conversation/ui/Composer/Composer.tsx:154
+#: src/widgets/conversation/ui/Composer/Composer.tsx:155
 #: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:95
 msgid "Keep going"
 msgstr "이어서 말하세요"
@@ -1490,7 +1486,6 @@ msgstr "영문, 숫자, 하이픈, 밑줄만 쓸 수 있습니다"
 msgid "Letters, numbers, hyphens. Sign in after adding if it asks."
 msgstr "영문, 숫자, 하이픈. 추가한 뒤 로그인을 요구하면 로그인하세요."
 
-#: src/widgets/conversation/ui/Composer/Composer.tsx:197
 #: src/widgets/library/ui/LibraryPane/LibraryPane.tsx:94
 #: src/widgets/library/ui/LibraryPane/LibraryPane.tsx:142
 #: src/widgets/team-sidebar/ui/TeamSidebar/TeamSidebar.tsx:91
@@ -1500,6 +1495,16 @@ msgstr "라이브러리"
 #: src/widgets/library/ui/NoteReader/NoteReader.tsx:62
 msgid "Library guide"
 msgstr "라이브러리 안내"
+
+#: src/widgets/conversation/ui/Composer/Composer.tsx:194
+#: src/widgets/conversation/ui/Composer/Composer.tsx:196
+msgid "Library off"
+msgstr "라이브러리 참고 끔"
+
+#: src/widgets/conversation/ui/Composer/Composer.tsx:194
+#: src/widgets/conversation/ui/Composer/Composer.tsx:196
+msgid "Library on"
+msgstr "라이브러리 참고 켬"
 
 #: src/widgets/library/ui/NoteReader/NoteReader.tsx:165
 msgid "Linked from"
@@ -1550,15 +1555,15 @@ msgstr "{branchName}(으)로 브랜치 머지"
 msgid "Merged {branch}."
 msgstr "{branch}을(를) 머지했습니다."
 
-#: src/widgets/conversation/ui/Composer/Composer.tsx:148
+#: src/widgets/conversation/ui/Composer/Composer.tsx:149
 msgid "Message for {addressee}"
 msgstr "{addressee}에게 보낼 말"
 
-#: src/widgets/conversation/ui/Composer/Composer.tsx:148
+#: src/widgets/conversation/ui/Composer/Composer.tsx:149
 msgid "Message your team"
 msgstr "팀에게 말하기"
 
-#: src/widgets/conversation/ui/Composer/Composer.tsx:203
+#: src/widgets/conversation/ui/Composer/Composer.tsx:202
 #: src/widgets/setup/ui/SetupPane/SetupPane.tsx:157
 #: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:109
 #: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:181
@@ -1838,7 +1843,7 @@ msgstr "서버 주소를 붙여넣으세요"
 msgid "Permission"
 msgstr "권한"
 
-#: src/widgets/conversation/ui/Composer/Composer.tsx:176
+#: src/widgets/conversation/ui/Composer/Composer.tsx:177
 #: src/widgets/setup/ui/SetupPane/SetupPane.tsx:151
 msgid "Permissions"
 msgstr "권한"
@@ -2214,7 +2219,7 @@ msgstr "찾는 중"
 msgid "See what they did"
 msgstr "무엇을 했는지 보기"
 
-#: src/widgets/conversation/ui/Composer/Composer.tsx:245
+#: src/widgets/conversation/ui/Composer/Composer.tsx:244
 msgid "Send"
 msgstr "보내기"
 
@@ -2410,7 +2415,7 @@ msgstr "아직 로그인 상태입니다. 로그아웃이 되지 않았습니다
 msgid "Stock rules"
 msgstr "재고 규칙"
 
-#: src/widgets/conversation/ui/Composer/Composer.tsx:234
+#: src/widgets/conversation/ui/Composer/Composer.tsx:233
 msgid "Stop"
 msgstr "멈추기"
 
@@ -2475,7 +2480,7 @@ msgstr "전부 빼기"
 msgid "Take out of {0}"
 msgstr "{0}에서 빼기"
 
-#: src/widgets/conversation/ui/Composer/Composer.tsx:151
+#: src/widgets/conversation/ui/Composer/Composer.tsx:152
 msgid "Task for {addressee}"
 msgstr "{addressee}에게 맡길 일"
 
@@ -2625,7 +2630,7 @@ msgstr "요청이 거부됐습니다"
 msgid "The running session goes on without the library. Agents read it from the next one."
 msgstr "지금 세션은 라이브러리 없이 이어져요. 다음 세션부터 참고해요."
 
-#: src/widgets/conversation/ui/Composer/Composer.tsx:213
+#: src/widgets/conversation/ui/Composer/Composer.tsx:212
 msgid "The running session keeps its model and effort. This applies from the next one."
 msgstr "실행 중인 세션은 모델과 노력 수준을 그대로 씁니다. 다음 세션부터 적용됩니다."
 
@@ -2810,7 +2815,7 @@ msgstr "시각"
 msgid "Title"
 msgstr "제목"
 
-#: src/widgets/conversation/ui/Composer/Composer.tsx:111
+#: src/widgets/conversation/ui/Composer/Composer.tsx:112
 msgid "To {addressee}"
 msgstr "{addressee}에게"
 
@@ -2941,7 +2946,7 @@ msgstr "주간 초과분"
 msgid "What it holds is gone for good. Applying it first keeps the work."
 msgstr "담긴 내용이 완전히 사라집니다. 먼저 적용하면 작업은 남습니다."
 
-#: src/widgets/conversation/ui/Composer/Composer.tsx:153
+#: src/widgets/conversation/ui/Composer/Composer.tsx:154
 msgid "What should they work on?"
 msgstr "무슨 일을 맡길까요?"
 

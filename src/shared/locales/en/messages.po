@@ -217,14 +217,6 @@ msgstr "{name} is on. The running session cannot call them yet."
 msgid "{name} is over {max}MB, so it cannot be sent as a picture. Point at it by path instead."
 msgstr "{name} is over {max}MB, so it cannot be sent as a picture. Point at it by path instead."
 
-#: src/pages/workspace/model/session/useWaiting.ts:60
-msgid "{named}: Still waiting for you"
-msgstr "{named}: Still waiting for you"
-
-#: src/pages/workspace/model/session/useWaiting.ts:60
-msgid "{named}: Waiting for you"
-msgstr "{named}: Waiting for you"
-
 #: src/widgets/status-bar/lib/strip/strip.ts:47
 msgid "{percent}% used"
 msgstr "{percent}% used"
@@ -1794,7 +1786,7 @@ msgstr "One line the agent reads to decide whether this matters"
 msgid "One of you writes, one of you checks. Deal?"
 msgstr "One of you writes, one of you checks. Deal?"
 
-#: src/pages/workspace/model/session/useWaiting.ts:62
+#: src/pages/workspace/model/session/useWaiting.ts:66
 msgid "Open"
 msgstr "Open"
 
@@ -2406,6 +2398,14 @@ msgstr "Still replying"
 msgid "Still signed in. Sign out did not take effect."
 msgstr "Still signed in. Sign out did not take effect."
 
+#: src/pages/workspace/model/session/waiting/toast/toast.ts:33
+msgid "Still waiting for your answer"
+msgstr "Still waiting for your answer"
+
+#: src/pages/workspace/model/session/waiting/toast/toast.ts:31
+msgid "Still waiting for your permission"
+msgstr "Still waiting for your permission"
+
 #: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:36
 msgid "Stock rules"
 msgstr "Stock rules"
@@ -2700,10 +2700,6 @@ msgstr "This changes which account the Claude Code CLI uses everywhere on this c
 msgid "this chat"
 msgstr "this chat"
 
-#: src/pages/workspace/model/session/useWaiting.ts:57
-msgid "This chat"
-msgstr "This chat"
-
 #: src/widgets/status-bar/lib/strip/strip.ts:67
 msgid "this chat {percent}%"
 msgstr "this chat {percent}%"
@@ -2895,6 +2891,7 @@ msgid "Waiting for you"
 msgstr "Waiting for you"
 
 #: src/entities/agent-session/model/nudge/nudge.ts:16
+#: src/pages/workspace/model/session/waiting/toast/toast.ts:33
 #: src/widgets/team-sidebar/lib/live-mark/live-mark.ts:9
 msgid "Waiting for your answer"
 msgstr "Waiting for your answer"
@@ -2903,6 +2900,7 @@ msgstr "Waiting for your answer"
 msgid "Waiting for your approval"
 msgstr "Waiting for your approval"
 
+#: src/pages/workspace/model/session/waiting/toast/toast.ts:31
 #: src/widgets/team-sidebar/lib/live-mark/live-mark.ts:8
 msgid "Waiting for your permission"
 msgstr "Waiting for your permission"

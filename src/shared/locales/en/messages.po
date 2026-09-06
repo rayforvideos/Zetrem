@@ -2797,7 +2797,7 @@ msgstr "To library"
 msgid "Today"
 msgstr "Today"
 
-#: src/widgets/conversation/ui/ToolLine/ToolLine.tsx:94
+#: src/widgets/conversation/ui/ToolLine/ToolLine.tsx:104
 msgid "Todo list"
 msgstr "Todo list"
 

@@ -2,7 +2,8 @@ import { AgentSprite, personaOf } from '@/entities/teammate'
 import { resultNote, toolShape } from '@/entities/tool'
 import type { ToolShape } from '@/entities/tool'
 import type { ToolActivity } from '@/entities/conversation'
-import { ToolIcon, changeCount } from '@/entities/tool'
+import { ToolIcon, changeCount, firstLineOf } from '@/entities/tool'
+import { cn } from '@/shared/lib/cn'
 import { Item, ItemContent, ItemMedia } from '@/shared/ui/item'
 import { noteParts } from '../../lib/tool-note/tool-note'
 import { toolNameOf } from '@/entities/tool'
@@ -28,7 +29,16 @@ export function ToolLine({ tool }: { tool: ToolActivity }) {
         )}
       </ItemMedia>
       <ItemContent className="min-w-0 flex-row flex-wrap items-baseline gap-x-1.5 gap-y-0.5">
-        <span className="min-w-0 [overflow-wrap:anywhere]">{body(shape)}</span>
+        <span
+          className={cn(
+            'min-w-0',
+            // A command is the one input with no length to it, so its row is
+            // held to a single line and opened when the whole of it is wanted.
+            shape.kind === 'command' ? 'truncate' : '[overflow-wrap:anywhere]',
+          )}
+        >
+          {body(shape)}
+        </span>
         {changed !== null && (
           <span data-change className="flex-none tabular-nums">
             {changed.added > 0 && <span className="text-added">+{changed.added}</span>}
@@ -67,7 +77,7 @@ function body(shape: ToolShape) {
       return (
         <>
           <span className="text-muted-foreground">$ </span>
-          <span>{shape.command}</span>
+          <span>{firstLineOf(shape.command)}</span>
         </>
       )
     case 'search':

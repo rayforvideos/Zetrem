@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import type { ToolActivity } from '@/entities/conversation'
+import { heldCommand, toolNameOf, toolShape } from '@/entities/tool'
 import { cn } from '@/shared/lib/cn'
 import { Button } from '@/shared/ui/button'
 import { TOOL_OUTPUT_LINES, heldLine, moreLine } from '../../lib/limits/limits'
@@ -21,7 +22,11 @@ export function Tick({ tool, live }: { tool: ToolActivity; live: boolean }) {
   const shown = lines.slice(0, TOOL_OUTPUT_LINES).join('\n')
   const rest = lines.length - TOOL_OUTPUT_LINES
   const detail = ToolDetail({ tool })
-  const expandable = tool.result !== null || detail !== null
+  const shape = toolShape(toolNameOf(tool.line), tool.input)
+  // The row shows a command's first line and nothing more, so the rest of a
+  // script is only readable by opening the row, result or no result yet.
+  const command = shape.kind === 'command' ? heldCommand(shape.command) : null
+  const expandable = tool.result !== null || detail !== null || command !== null
   const held = output.length > 0 ? lines.length : 0
 
   return (
@@ -47,6 +52,14 @@ export function Tick({ tool, live }: { tool: ToolActivity; live: boolean }) {
       </Button>
       {open && (
         <div className="flex flex-col gap-1">
+          {command !== null && (
+            <pre
+              data-command
+              className="rounded-lg bg-card p-2.5 font-mono text-xs leading-normal whitespace-pre-wrap [overflow-wrap:anywhere]"
+            >
+              {command}
+            </pre>
+          )}
           {detail}
           {output.length > 0 && (
             <pre className="rounded-lg bg-card p-2.5 font-mono text-xs leading-normal whitespace-pre-wrap [overflow-wrap:anywhere] text-muted-foreground">

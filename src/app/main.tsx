@@ -5,7 +5,8 @@ import { I18nProvider } from '@lingui/react'
 import { WorkspaceScreen } from '@/pages/workspace'
 import { Boundary } from './Boundary'
 import { Toaster } from '@/shared/ui/sonner'
-import { USAGE_BAR } from '@/shared/config/theme'
+import { TOAST_FLOOR, TOAST_LIFT_VAR } from '@/shared/lib/measure/toast-lift/toast-lift'
+import { useToastLift } from '@/shared/lib/measure/toast-lift/useToastLift'
 import { loadTongue } from '@/shared/lib/say/load'
 import { chosenTongue, watchTongue } from '@/shared/lib/say/say'
 import './styles/global.css'
@@ -26,6 +27,20 @@ function Root() {
   return <WorkspaceScreen key={tongue} />
 }
 
+// The toaster and the measurement that keeps it off the composer stand
+// together, so the screen itself never renders for a toast moving.
+function Toasts() {
+  useToastLift()
+  return (
+    <Toaster
+      position="bottom-right"
+      offset={{ bottom: `var(${TOAST_LIFT_VAR}, ${TOAST_FLOOR}px)`, right: 16 }}
+      richColors
+      closeButton
+    />
+  )
+}
+
 async function firstTongue(): Promise<'en' | 'ko'> {
   const saved = await window.desk.readSettings().catch(() => null)
   return chosenTongue(saved?.tongue ?? 'system', navigator.languages ?? [navigator.language])
@@ -43,12 +58,7 @@ void firstTongue()
         <I18nProvider i18n={i18n}>
           <Boundary>
             <Root />
-            <Toaster
-              position="bottom-right"
-              offset={{ bottom: USAGE_BAR.height + 12, right: 16 }}
-              richColors
-              closeButton
-            />
+            <Toasts />
           </Boundary>
         </I18nProvider>
       </StrictMode>,

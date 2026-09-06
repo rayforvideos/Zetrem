@@ -1,3 +1,4 @@
+import { i18n } from '@lingui/core'
 import type { CSSProperties } from 'react'
 import { metrics } from '@/entities/agent-session'
 import type { AgentSession } from '@/entities/agent-session'
@@ -19,7 +20,7 @@ export function Gauge({ session, nowMs }: GaugeProps) {
         {spent.map((metric, at) => (
           <span key={metric.id} className={at === 0 ? undefined : '@max-[220px]:hidden'}>
             {at === 0 ? '' : ' · '}
-            {metric.format(metric.read(session, nowMs))} {metric.label}
+            {metric.format(metric.read(session, nowMs))} {i18n._(metric.label)}
           </span>
         ))}
       </span>

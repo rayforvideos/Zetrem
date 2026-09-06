@@ -162,7 +162,7 @@ export function MockScreen({ focus, scale }: { focus: SlideFocus; scale: number 
             <span style={fillStyle} />
           </span>
           {t`38% · 4h 12m left`}
-          <span className="ml-auto">MCP 3/3</span>
+          <span className="ml-auto">{t`Connectors`} 3/3</span>
         </div>
       </div>
     </div>

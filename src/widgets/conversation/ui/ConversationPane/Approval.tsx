@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react'
 import type { PermissionAsk } from '@/entities/agent-session'
-import { toolShape } from '@/entities/tool'
+import { toolShape, toolWord } from '@/entities/tool'
 import { modifierKey } from '@/shared/lib/platform/platform'
 import { layerOver } from '@/shared/lib/modal/modal'
 import { armed } from '@/widgets/conversation/lib/arming/arming'
@@ -56,7 +56,7 @@ export function Approval({
     >
       <div className="flex items-baseline gap-2">
         <span className="text-base">{verbOf(ask.toolName)}</span>
-        <span className="font-mono text-xs text-muted-foreground">{ask.toolName}</span>
+        <span className="text-xs text-muted-foreground">{toolWord(ask.toolName)}</span>
       </div>
 
       {plan ? (

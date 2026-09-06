@@ -33,6 +33,10 @@ msgstr "“To library” under an answer files it here."
 msgid "“To library” under an answer files it here. You can write here yourself."
 msgstr "“To library” under an answer files it here. You can write here yourself."
 
+#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:121
+msgid "(window unknown)"
+msgstr "(window unknown)"
+
 #. placeholder {0}: counted.ran
 #: src/widgets/conversation/lib/tool-run/tool-run.ts:50
 msgid "{0, plural, one {# command run} other {# commands run}}"
@@ -57,6 +61,11 @@ msgstr "{0, plural, one {# hit} other {# hits}}"
 #: src/widgets/setup/ui/PluginShelf/BrowseTab.tsx:64
 msgid "{0, plural, one {# install} other {# installs}}"
 msgstr "{0, plural, one {# install} other {# installs}}"
+
+#. placeholder {0}: lines.length
+#: src/entities/tool/lib/tool-shape/tool-shape.ts:97
+msgid "{0, plural, one {# line} other {# lines}}"
+msgstr "{0, plural, one {# line} other {# lines}}"
 
 #. placeholder {0}: counted.searched
 #: src/widgets/conversation/lib/tool-run/tool-run.ts:52
@@ -95,7 +104,7 @@ msgstr "{0} memories about this project. Each one is loaded into every new sessi
 
 #. placeholder {0}: n(reached)
 #. placeholder {1}: n(wired.length)
-#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:147
+#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:152
 msgid "{0} of {1} connected"
 msgstr "{0} of {1} connected"
 
@@ -156,6 +165,10 @@ msgstr "{body}, {failed} failed"
 msgid "{body}, all failed"
 msgstr "{body}, all failed"
 
+#: src/widgets/conversation/lib/working/working.ts:106
+msgid "{count} written"
+msgstr "{count} written"
+
 #: src/entities/claude-cli/api/aside/aside.ts:23
 msgid "{from} declined this, so {to} took it"
 msgstr "{from} declined this, so {to} took it"
@@ -167,6 +180,10 @@ msgstr "{gap} days ago"
 #: src/widgets/conversation/lib/limits/limits.ts:10
 msgid "{held, plural, one {# line} other {# lines}}"
 msgstr "{held, plural, one {# line} other {# lines}}"
+
+#: src/entities/tool/lib/tool-shape/tool-shape.ts:89
+msgid "{hits, plural, one {# hit} other {# hits}}"
+msgstr "{hits, plural, one {# hit} other {# hits}}"
 
 #: src/pages/workspace/model/team/workspace-config/workspace-config.ts:43
 msgid "{installed} installed from {sources, plural, one {# source} other {# sources}}"
@@ -184,6 +201,10 @@ msgstr "{label} column width"
 #: src/widgets/team-sidebar/ui/TeamSidebar/TeamSidebar.tsx:97
 msgid "{libraryPending} suggestions waiting"
 msgstr "{libraryPending} suggestions waiting"
+
+#: src/entities/tool/lib/tool-shape/tool-shape.ts:84
+msgid "{lines, plural, one {# line} other {# lines}}"
+msgstr "{lines, plural, one {# line} other {# lines}}"
 
 #: src/widgets/status-bar/lib/format/format.ts:62
 msgid "{n} need auth"
@@ -514,7 +535,7 @@ msgid "All"
 msgstr "All"
 
 #. placeholder {0}: n(reached)
-#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:146
+#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:151
 msgid "All {0} connected"
 msgstr "All {0} connected"
 
@@ -539,6 +560,10 @@ msgstr "Always English"
 msgid "Always Korean"
 msgstr "Always Korean"
 
+#: src/entities/tool/lib/tool-verb/tool-verb.ts:64
+msgid "Answer a question"
+msgstr "Answer a question"
+
 #: src/shared/lib/datetime/datetime.ts:21
 msgid "any moment"
 msgstr "any moment"
@@ -551,6 +576,10 @@ msgstr "API error {0}"
 #: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:957
 msgid "Apply"
 msgstr "Apply"
+
+#: src/entities/tool/lib/tool-verb/tool-verb.ts:66
+msgid "Approve a plan"
+msgstr "Approve a plan"
 
 #: src/widgets/conversation/ui/ConversationPane/Approval.tsx:132
 msgid "Approve this plan?"
@@ -684,13 +713,13 @@ msgstr "Character"
 msgid "Check again"
 msgstr "Check again"
 
-#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:164
+#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:169
 msgid "Check for updates"
 msgstr "Check for updates"
 
-#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:133
-#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:144
-#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:164
+#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:138
+#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:149
+#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:169
 msgid "Checking…"
 msgstr "Checking…"
 
@@ -742,21 +771,21 @@ msgstr "Claude in Chrome"
 msgid "Clear"
 msgstr "Clear"
 
-#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:118
+#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:125
 #: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:566
 msgid "Close"
 msgstr "Close"
 
 #. placeholder {0}: persona ? persona.name : session.label
-#: src/widgets/tile-deck/ui/layers/Headline/Headline.tsx:42
+#: src/widgets/tile-deck/ui/layers/Headline/Headline.tsx:45
 msgid "Close {0}"
 msgstr "Close {0}"
 
-#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:117
+#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:124
 msgid "Close report"
 msgstr "Close report"
 
-#: src/widgets/tile-deck/ui/layers/Headline/Headline.tsx:43
+#: src/widgets/tile-deck/ui/layers/Headline/Headline.tsx:46
 msgid "Close this tile. The run stays in the sidebar."
 msgstr "Close this tile. The run stays in the sidebar."
 
@@ -790,7 +819,7 @@ msgstr "Conflicted"
 msgid "Connected"
 msgstr "Connected"
 
-#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:195
+#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:200
 msgid "Connecting"
 msgstr "Connecting"
 
@@ -803,11 +832,17 @@ msgid "Connector name"
 msgstr "Connector name"
 
 #: src/widgets/setup/ui/PluginShelf/ConnectorsTab.tsx:55
-#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:124
+#: src/widgets/status-bar/lib/format/format.ts:58
+#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:129
+#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:165
 msgid "Connectors"
 msgstr "Connectors"
 
-#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:114
+#: src/entities/agent-session/lib/metrics/context.ts:6
+msgid "context"
+msgstr "context"
+
+#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:119
 msgid "Context"
 msgstr "Context"
 
@@ -1046,7 +1081,7 @@ msgstr "Deny"
 msgid "Description"
 msgstr "Description"
 
-#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:173
+#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:180
 msgid "Diff"
 msgstr "Diff"
 
@@ -1105,7 +1140,7 @@ msgstr "Drop this stash"
 msgid "Drop this stash?"
 msgstr "Drop this stash?"
 
-#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:99
+#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:106
 msgid "Earlier run"
 msgstr "Earlier run"
 
@@ -1119,11 +1154,15 @@ msgstr "Edit"
 msgid "Edit {0}"
 msgstr "Edit {0}"
 
+#: src/entities/tool/lib/tool-verb/tool-verb.ts:48
+msgid "Edit a file"
+msgstr "Edit a file"
+
 #: src/widgets/conversation/ui/ConversationPane/Approval.tsx:127
 msgid "Edit this file?"
 msgstr "Edit this file?"
 
-#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:128
+#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:135
 msgid "Edited"
 msgstr "Edited"
 
@@ -1139,6 +1178,10 @@ msgstr "Edits files freely, asks before running commands"
 #: src/widgets/setup/ui/SetupPane/SetupPane.tsx:163
 msgid "Effort"
 msgstr "Effort"
+
+#: src/entities/agent-session/lib/metrics/elapsed.ts:8
+msgid "elapsed"
+msgstr "elapsed"
 
 #: src/widgets/setup/ui/EnvField/EnvField.tsx:26
 msgid "Environment variables"
@@ -1184,11 +1227,11 @@ msgstr "Face"
 msgid "failed"
 msgstr "failed"
 
-#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:199
+#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:204
 msgid "Failed"
 msgstr "Failed"
 
-#: src/pages/workspace/model/session/agent-events/crew/crew.ts:129
+#: src/pages/workspace/model/session/agent-events/crew/crew.ts:130
 msgid "Failed: the run stopped before it was done"
 msgstr "Failed: the run stopped before it was done"
 
@@ -1238,7 +1281,7 @@ msgstr "Find why checkout drops the last item"
 msgid "Finish signing in to {name} in the browser. The next session picks it up."
 msgstr "Finish signing in to {name} in the browser. The next session picks it up."
 
-#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:108
+#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:115
 msgid "Folder"
 msgstr "Folder"
 
@@ -1313,7 +1356,7 @@ msgid "Git is not answering here."
 msgstr "Git is not answering here."
 
 #. placeholder {0}: why.said
-#: src/widgets/agent-report/lib/review/review.ts:37
+#: src/widgets/agent-report/lib/review/review.ts:40
 msgid "Git said: {0}"
 msgstr "Git said: {0}"
 
@@ -1340,6 +1383,10 @@ msgstr "Give them a task"
 #: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:717
 msgid "Graph"
 msgstr "Graph"
+
+#: src/entities/tool/lib/tool-verb/tool-verb.ts:60
+msgid "Hand off to a teammate"
+msgstr "Hand off to a teammate"
 
 #: src/entities/tool/lib/tool-verb/tool-verb.ts:26
 #: src/widgets/conversation/lib/working/working.ts:62
@@ -1448,7 +1495,7 @@ msgstr "Keep going"
 msgid "Keep in"
 msgstr "Keep in"
 
-#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:211
+#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:218
 #: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:1029
 #: src/widgets/setup/ui/MemoryField/MemoryField.tsx:154
 msgid "Keep it"
@@ -1470,7 +1517,7 @@ msgstr "Language"
 msgid "Later"
 msgstr "Later"
 
-#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:110
+#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:117
 msgid "Later run"
 msgstr "Later run"
 
@@ -1560,7 +1607,7 @@ msgstr "Message your team"
 
 #: src/widgets/conversation/ui/Composer/Composer.tsx:203
 #: src/widgets/setup/ui/SetupPane/SetupPane.tsx:157
-#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:109
+#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:116
 #: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:181
 msgid "Model"
 msgstr "Model"
@@ -1605,7 +1652,7 @@ msgstr "Name the folder for these two chats"
 msgid "Named variables are carried from the shell Zetrem started in into every session, which is how a connector finds its token. Zetrem keeps the names, never the values."
 msgstr "Named variables are carried from the shell Zetrem started in into every session, which is how a connector finds its token. Zetrem keeps the names, never the values."
 
-#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:193
+#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:198
 msgid "Needs auth"
 msgstr "Needs auth"
 
@@ -1687,6 +1734,7 @@ msgstr "No notes yet"
 msgid "No one here yet"
 msgstr "No one here yet"
 
+#: src/entities/tool/lib/tool-shape/tool-shape.ts:93
 #: src/widgets/conversation/lib/tool-note/tool-note.ts:21
 msgid "no output"
 msgstr "no output"
@@ -1695,6 +1743,7 @@ msgstr "no output"
 msgid "No tool by that name."
 msgstr "No tool by that name."
 
+#: src/entities/tool/lib/tool-shape/tool-shape.ts:89
 #: src/widgets/conversation/lib/tool-note/tool-note.ts:18
 msgid "none"
 msgstr "none"
@@ -1739,11 +1788,6 @@ msgstr "Nothing matches"
 #: src/widgets/setup/ui/PluginShelf/BrowseTab.tsx:49
 msgid "Nothing matches “{needle}”."
 msgstr "Nothing matches “{needle}”."
-
-#. placeholder {0}: why.said
-#: src/widgets/agent-report/lib/review/review.ts:38
-msgid "Nothing of this work is left to find: {0}"
-msgstr "Nothing of this work is left to find: {0}"
 
 #: src/widgets/setup/ui/MemoryField/MemoryField.tsx:186
 msgid "Nothing remembered for this project yet."
@@ -1822,6 +1866,10 @@ msgstr "Or start with one of your own."
 msgid "Orchestrating"
 msgstr "Orchestrating"
 
+#: src/shared/lib/units/units.ts:31
+msgid "Overage"
+msgstr "Overage"
+
 #: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:248
 msgid "Own workspace"
 msgstr "Own workspace"
@@ -1834,7 +1882,7 @@ msgstr "owner/repo, a URL, or a folder"
 msgid "Paste the server address"
 msgstr "Paste the server address"
 
-#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:111
+#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:117
 msgid "Permission"
 msgstr "Permission"
 
@@ -1859,7 +1907,7 @@ msgstr "Pick a note"
 msgid "Pick a project first"
 msgstr "Pick a project first"
 
-#: src/pages/workspace/model/session/agent-events/crew/crew.ts:226
+#: src/pages/workspace/model/session/agent-events/crew/crew.ts:227
 msgid "Picked up where they left off"
 msgstr "Picked up where they left off"
 
@@ -1921,7 +1969,7 @@ msgstr "Pushed."
 msgid "Quick answers. Least thinking, cheapest"
 msgstr "Quick answers. Least thinking, cheapest"
 
-#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:129
+#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:136
 msgid "Ran"
 msgstr "Ran"
 
@@ -1937,9 +1985,17 @@ msgstr "Re-authenticate"
 msgid "Reach out to the web?"
 msgstr "Reach out to the web?"
 
-#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:127
+#: src/entities/tool/lib/tool-verb/tool-verb.ts:57
+msgid "Reach the web"
+msgstr "Reach the web"
+
+#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:134
 msgid "Read"
 msgstr "Read"
+
+#: src/entities/tool/lib/tool-verb/tool-verb.ts:42
+msgid "Read a file"
+msgstr "Read a file"
 
 #: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:204
 msgid "Read the change before you judge it, and check what it touches."
@@ -1987,7 +2043,7 @@ msgstr "Recent"
 msgid "Recent first"
 msgstr "Recent first"
 
-#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:133
+#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:138
 msgid "Recheck"
 msgstr "Recheck"
 
@@ -2123,16 +2179,20 @@ msgstr "Reviewer"
 msgid "Reviews a change before it ships"
 msgstr "Reviews a change before it ships"
 
-#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:182
-#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:212
+#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:189
+#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:219
 msgid "Roll back"
 msgstr "Roll back"
 
 #. placeholder {0}: at + 1
 #. placeholder {1}: runs.length
-#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:104
+#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:111
 msgid "run {0} of {1}"
 msgstr "run {0} of {1}"
+
+#: src/entities/tool/lib/tool-verb/tool-verb.ts:51
+msgid "Run a command"
+msgstr "Run a command"
 
 #: src/widgets/conversation/ui/ConversationPane/Approval.tsx:122
 msgid "Run this command?"
@@ -2181,6 +2241,7 @@ msgstr "Say what you would change and why, in that order."
 msgid "Scope"
 msgstr "Scope"
 
+#: src/entities/tool/lib/tool-verb/tool-verb.ts:54
 #: src/widgets/library/ui/NoteList/NoteList.tsx:111
 msgid "Search"
 msgstr "Search"
@@ -2202,7 +2263,7 @@ msgstr "Search the library"
 msgid "Search tools"
 msgstr "Search tools"
 
-#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:130
+#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:137
 msgid "Searched"
 msgstr "Searched"
 
@@ -2355,6 +2416,10 @@ msgstr "Something went wrong"
 #: src/entities/claude-cli/lib/failure/failure.ts:8
 msgid "Something went wrong while it was working"
 msgstr "Something went wrong while it was working"
+
+#: src/entities/tool/lib/tool-verb/tool-verb.ts:62
+msgid "Sort out the next steps"
+msgstr "Sort out the next steps"
 
 #: src/widgets/setup/ui/PluginShelf/BrowseTab.tsx:78
 msgid "Sources"
@@ -2592,11 +2657,15 @@ msgstr "The model declined this"
 msgid "The model is overloaded"
 msgstr "The model is overloaded"
 
+#: src/entities/tool/lib/tool-verb/tool-verb.ts:85
+msgid "the next steps"
+msgstr "the next steps"
+
 #: src/widgets/library/ui/NoteReader/NoteReader.tsx:193
 msgid "The note is deleted from the library. This cannot be undone."
 msgstr "The note is deleted from the library. This cannot be undone."
 
-#: src/pages/workspace/model/session/agent-events/crew/crew.ts:194
+#: src/pages/workspace/model/session/agent-events/crew/crew.ts:195
 msgid "the orchestrator"
 msgstr "the orchestrator"
 
@@ -2758,7 +2827,7 @@ msgstr "This project is not a git repository."
 msgid "This project only"
 msgstr "This project only"
 
-#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:98
+#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:105
 msgid "This session"
 msgstr "This session"
 
@@ -2774,7 +2843,7 @@ msgstr "This signs out the Claude Code CLI itself, so every terminal, editor and
 msgid "This teammate changed no files."
 msgstr "This teammate changed no files."
 
-#: src/widgets/agent-report/lib/review/review.ts:36
+#: src/widgets/agent-report/lib/review/review.ts:39
 msgid "This teammate has no branch Zetrem can look up."
 msgstr "This teammate has no branch Zetrem can look up."
 
@@ -2823,9 +2892,13 @@ msgstr "To library"
 msgid "Today"
 msgstr "Today"
 
-#: src/widgets/conversation/ui/ToolLine/ToolLine.tsx:108
+#: src/widgets/conversation/ui/ToolLine/ToolLine.tsx:110
 msgid "Todo list"
 msgstr "Todo list"
+
+#: src/entities/agent-session/lib/metrics/tokens.ts:7
+msgid "tokens"
+msgstr "tokens"
 
 #: src/entities/claude-cli/api/turn/turn.ts:54
 msgid "tool"
@@ -2857,12 +2930,12 @@ msgid "Undo the work of this teammate that was already merged?"
 msgstr "Undo the work of this teammate that was already merged?"
 
 #: src/widgets/setup/ui/PluginShelf/ConnectorsTab.tsx:33
-#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:201
+#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:206
 msgid "Unknown"
 msgstr "Unknown"
 
 #: src/widgets/setup/ui/PluginShelf/InstalledTab.tsx:73
-#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:178
+#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:183
 msgid "Update"
 msgstr "Update"
 
@@ -2870,7 +2943,7 @@ msgstr "Update"
 msgid "Update CLI"
 msgstr "Update CLI"
 
-#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:178
+#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:183
 msgid "Updating…"
 msgstr "Updating…"
 
@@ -2886,7 +2959,7 @@ msgstr "Variable name"
 msgid "Very high"
 msgstr "Very high"
 
-#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:197
+#: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:202
 msgid "Waiting for approval"
 msgstr "Waiting for approval"
 
@@ -2957,7 +3030,7 @@ msgstr "What the library is"
 msgid "What the session brings"
 msgstr "What the session brings"
 
-#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:164
+#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:171
 msgid "What they changed"
 msgstr "What they changed"
 
@@ -2972,7 +3045,7 @@ msgstr "What they did"
 msgid "What they do, how to go about it, and what to hand back."
 msgstr "What they do, how to go about it, and what to hand back."
 
-#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:143
+#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:150
 msgid "What they said"
 msgstr "What they said"
 
@@ -3015,6 +3088,10 @@ msgstr "Works out a plan and asks before doing it"
 #: src/widgets/tile-deck/lib/leading/leading.ts:13
 msgid "Wrapped up"
 msgstr "Wrapped up"
+
+#: src/entities/tool/lib/tool-verb/tool-verb.ts:44
+msgid "Write a file"
+msgstr "Write a file"
 
 #: src/widgets/library/ui/NoteEditor/NoteEditor.tsx:94
 msgid "Write in markdown"
@@ -3074,6 +3151,10 @@ msgstr "You stopped this"
 #: src/widgets/welcome/lib/slides/slides.ts:14
 msgid "You talk on the left"
 msgstr "You talk on the left"
+
+#: src/entities/claude-cli/api/permission/permission.ts:25
+msgid "You turned this down."
+msgstr "You turned this down."
 
 #: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:21
 msgid "Your account"
@@ -3136,6 +3217,10 @@ msgstr "Yours"
 #: src/pages/workspace/ui/UpdateCard/UpdateCard.tsx:18
 msgid "Zetrem {version} is ready"
 msgstr "Zetrem {version} is ready"
+
+#: src/widgets/agent-report/lib/review/review.ts:41
+msgid "Zetrem can no longer find the work {who} did."
+msgstr "Zetrem can no longer find the work {who} did."
 
 #: src/shared/lib/ask/ask.ts:25
 msgid "Zetrem cannot do that"

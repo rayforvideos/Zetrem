@@ -640,7 +640,7 @@ msgid "Can't connect"
 msgstr "Can't connect"
 
 #: src/widgets/library/ui/NoteList/NoteList.tsx:273
-#: src/widgets/library/ui/NoteReader/NoteReader.tsx:197
+#: src/widgets/library/ui/NoteReader/NoteReader.tsx:202
 #: src/widgets/setup/ui/SetupPane/SetupPane.tsx:233
 #: src/widgets/team-sidebar/ui/ChatList/ChatRow.tsx:246
 #: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:393
@@ -1002,7 +1002,7 @@ msgstr "Create a teammate and they'll show up here."
 msgid "Default"
 msgstr "Default"
 
-#: src/widgets/library/ui/NoteReader/NoteReader.tsx:111
+#: src/widgets/library/ui/NoteReader/NoteReader.tsx:114
 msgid "Delete"
 msgstr "Delete"
 
@@ -1021,7 +1021,7 @@ msgstr "Delete chat"
 msgid "Delete folder"
 msgstr "Delete folder"
 
-#: src/widgets/library/ui/NoteReader/NoteReader.tsx:200
+#: src/widgets/library/ui/NoteReader/NoteReader.tsx:205
 msgid "Delete note"
 msgstr "Delete note"
 
@@ -1030,7 +1030,7 @@ msgid "Delete the folder “{asking}”?"
 msgstr "Delete the folder “{asking}”?"
 
 #. placeholder {0}: note.title
-#: src/widgets/library/ui/NoteReader/NoteReader.tsx:191
+#: src/widgets/library/ui/NoteReader/NoteReader.tsx:196
 msgid "Delete the note “{0}”?"
 msgstr "Delete the note “{0}”?"
 
@@ -1073,7 +1073,7 @@ msgid "Don't ask again this session"
 msgstr "Don't ask again this session"
 
 #: src/widgets/agent-report/lib/state-word/state-word.ts:12
-#: src/widgets/library/ui/NoteReader/NoteReader.tsx:99
+#: src/widgets/library/ui/NoteReader/NoteReader.tsx:102
 #: src/widgets/setup/ui/PluginShelf/PluginShelf.tsx:129
 #: src/widgets/setup/ui/SetupPane/SetupPane.tsx:237
 #: src/widgets/tile-deck/lib/state-word/state-word.ts:10
@@ -1110,7 +1110,7 @@ msgstr "Drop this stash?"
 msgid "Earlier run"
 msgstr "Earlier run"
 
-#: src/widgets/library/ui/NoteReader/NoteReader.tsx:99
+#: src/widgets/library/ui/NoteReader/NoteReader.tsx:102
 #: src/widgets/team-sidebar/ui/MemberMenu/MemberMenu.tsx:49
 msgid "Edit"
 msgstr "Edit"
@@ -1209,7 +1209,7 @@ msgstr "Fetching"
 msgid "File this answer to the library as its own note"
 msgstr "File this answer to the library as its own note"
 
-#: src/widgets/library/ui/NoteReader/NoteReader.tsx:70
+#: src/widgets/library/ui/NoteReader/NoteReader.tsx:73
 msgid "Filed by an agent"
 msgstr "Filed by an agent"
 
@@ -1498,7 +1498,7 @@ msgstr "Letters, numbers, hyphens. Sign in after adding if it asks."
 msgid "Library"
 msgstr "Library"
 
-#: src/widgets/library/ui/NoteReader/NoteReader.tsx:62
+#: src/widgets/library/ui/NoteReader/NoteReader.tsx:65
 msgid "Library guide"
 msgstr "Library guide"
 
@@ -1512,7 +1512,7 @@ msgstr "Library off"
 msgid "Library on"
 msgstr "Library on"
 
-#: src/widgets/library/ui/NoteReader/NoteReader.tsx:165
+#: src/widgets/library/ui/NoteReader/NoteReader.tsx:170
 msgid "Linked from"
 msgstr "Linked from"
 
@@ -2176,11 +2176,11 @@ msgid "Saved"
 msgstr "Saved"
 
 #. placeholder {0}: sinceOf(savedAtMs ?? nowMs, nowMs)
-#: src/widgets/library/ui/NoteReader/NoteReader.tsx:151
+#: src/widgets/library/ui/NoteReader/NoteReader.tsx:154
 msgid "Saved · {0}"
 msgstr "Saved · {0}"
 
-#: src/widgets/library/ui/NoteReader/NoteReader.tsx:151
+#: src/widgets/library/ui/NoteReader/NoteReader.tsx:154
 msgid "Saving…"
 msgstr "Saving…"
 
@@ -2632,7 +2632,7 @@ msgstr "The model declined this"
 msgid "The model is overloaded"
 msgstr "The model is overloaded"
 
-#: src/widgets/library/ui/NoteReader/NoteReader.tsx:193
+#: src/widgets/library/ui/NoteReader/NoteReader.tsx:198
 msgid "The note is deleted from the library. This cannot be undone."
 msgstr "The note is deleted from the library. This cannot be undone."
 

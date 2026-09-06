@@ -1,7 +1,7 @@
 import type { ToolActivity } from '@/entities/conversation'
 import type { Mark } from '@/entities/tool'
 import { tally } from '@/entities/tool'
-import { plural } from '@lingui/core/macro'
+import { plural, t } from '@lingui/core/macro'
 
 const RUN_TAIL = 4
 
@@ -26,7 +26,21 @@ export function marksOfTools(tools: ToolActivity[], nowMs: number): Mark[] {
   })
 }
 
+export function runFailed(tools: ToolActivity[]): boolean {
+  return tools.some((tool) => tool.result?.isError === true)
+}
+
 export function summarise(tools: ToolActivity[]): string {
+  const failed = tools.filter((tool) => tool.result?.isError === true).length
+  const body = counting(tools)
+  if (failed === 0) return body
+  // A count of what was attempted reads as a count of what was done, so a fold
+  // that says "2 files read" over two failures is the opposite of the truth.
+  if (failed === tools.length) return t`${body}, all failed`
+  return t`${body}, ${failed} failed`
+}
+
+function counting(tools: ToolActivity[]): string {
   const counted = tally(tools.map((tool) => tool.line))
   const parts = [
     counted.read > 0 ? plural(counted.read, { one: '# file read', other: '# files read' }) : null,

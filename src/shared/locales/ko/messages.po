@@ -38,19 +38,24 @@ msgid "(next session)"
 msgstr "(다음 세션)"
 
 #. placeholder {0}: counted.ran
-#: src/widgets/conversation/lib/tool-run/tool-run.ts:36
+#: src/widgets/conversation/lib/tool-run/tool-run.ts:50
 msgid "{0, plural, one {# command run} other {# commands run}}"
 msgstr "{0, plural, other {명령 #개 실행}}"
 
 #. placeholder {0}: counted.wrote
-#: src/widgets/conversation/lib/tool-run/tool-run.ts:34
+#: src/widgets/conversation/lib/tool-run/tool-run.ts:48
 msgid "{0, plural, one {# file changed} other {# files changed}}"
 msgstr "{0, plural, other {파일 #개 변경}}"
 
 #. placeholder {0}: counted.read
-#: src/widgets/conversation/lib/tool-run/tool-run.ts:32
+#: src/widgets/conversation/lib/tool-run/tool-run.ts:46
 msgid "{0, plural, one {# file read} other {# files read}}"
 msgstr "{0, plural, other {파일 #개 읽음}}"
+
+#. placeholder {0}: lines.length
+#: src/widgets/conversation/lib/tool-note/tool-note.ts:18
+msgid "{0, plural, one {# hit} other {# hits}}"
+msgstr "{0, plural, other {#건}}"
 
 #. placeholder {0}: plugin.installCount
 #: src/widgets/setup/ui/PluginShelf/BrowseTab.tsx:64
@@ -58,12 +63,12 @@ msgid "{0, plural, one {# install} other {# installs}}"
 msgstr "{0, plural, other {설치 #회}}"
 
 #. placeholder {0}: counted.searched
-#: src/widgets/conversation/lib/tool-run/tool-run.ts:38
+#: src/widgets/conversation/lib/tool-run/tool-run.ts:52
 msgid "{0, plural, one {# search} other {# searches}}"
 msgstr "{0, plural, other {검색 #회}}"
 
 #. placeholder {0}: tools.length
-#: src/widgets/conversation/lib/tool-run/tool-run.ts:41
+#: src/widgets/conversation/lib/tool-run/tool-run.ts:55
 msgid "{0, plural, one {# step} other {# steps}}"
 msgstr "{0, plural, other {#단계}}"
 
@@ -146,6 +151,14 @@ msgstr "{base}. 앞선 대화는 요약으로 남습니다."
 #: src/widgets/conversation/ui/ProposalCard/ProposalCard.tsx:65
 msgid "{behind} more waiting"
 msgstr "{behind}건 더 기다리는 중"
+
+#: src/widgets/conversation/lib/tool-run/tool-run.ts:40
+msgid "{body}, {failed} failed"
+msgstr "{body}, {failed}개 실패"
+
+#: src/widgets/conversation/lib/tool-run/tool-run.ts:39
+msgid "{body}, all failed"
+msgstr "{body}, 모두 실패"
 
 #: src/entities/claude-cli/api/aside/aside.ts:23
 msgid "{from} declined this, so {to} took it"
@@ -553,7 +566,7 @@ msgstr "이 계획을 승인할까요?"
 msgid "Ask first"
 msgstr "먼저 묻기"
 
-#: src/widgets/conversation/ui/ConversationPane/ConversationPane.tsx:150
+#: src/widgets/conversation/ui/ConversationPane/ConversationPane.tsx:154
 msgid "Ask for the whole job"
 msgstr "일 전체를 맡기세요"
 
@@ -1171,6 +1184,7 @@ msgid "Face"
 msgstr "얼굴"
 
 #: src/widgets/agent-report/ui/CallStream/CallStream.tsx:23
+#: src/widgets/conversation/lib/tool-note/tool-note.ts:32
 #: src/widgets/tile-deck/ui/layers/CallLog/CallLog.tsx:82
 msgid "failed"
 msgstr "실패"
@@ -1195,7 +1209,7 @@ msgstr "피드백"
 msgid "Fetching"
 msgstr "가져오는 중"
 
-#: src/widgets/conversation/ui/ConversationPane/ConversationPane.tsx:266
+#: src/widgets/conversation/ui/ConversationPane/ConversationPane.tsx:270
 msgid "File this answer to the library as its own note"
 msgstr "이 답변을 별도 노트로 라이브러리에 넣기"
 
@@ -1556,7 +1570,7 @@ msgstr "팀에게 말하기"
 msgid "Model"
 msgstr "모델"
 
-#: src/pages/workspace/ui/gates/ConversationGate.tsx:108
+#: src/pages/workspace/ui/gates/ConversationGate.tsx:109
 msgid "Model changed. The running session keeps its model."
 msgstr "모델을 바꿨습니다. 실행 중인 세션은 기존 모델을 유지합니다."
 
@@ -1678,9 +1692,17 @@ msgstr "아직 노트가 없어요"
 msgid "No one here yet"
 msgstr "아직 아무도 없습니다"
 
+#: src/widgets/conversation/lib/tool-note/tool-note.ts:21
+msgid "no output"
+msgstr "출력 없음"
+
 #: src/widgets/team-sidebar/ui/ToolPicker/ToolPicker.tsx:37
 msgid "No tool by that name."
 msgstr "그런 이름의 도구가 없습니다."
+
+#: src/widgets/conversation/lib/tool-note/tool-note.ts:18
+msgid "none"
+msgstr "없음"
 
 #: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:182
 msgid "Not available this session. Unlock it in Settings."
@@ -1826,7 +1848,7 @@ msgstr "권한"
 msgid "Permissions"
 msgstr "권한"
 
-#: src/pages/workspace/ui/gates/ConversationGate.tsx:104
+#: src/pages/workspace/ui/gates/ConversationGate.tsx:105
 msgid "Permissions changed. The running session follows the old ones."
 msgstr "권한을 바꿨습니다. 실행 중인 세션은 기존 권한을 따릅니다."
 
@@ -2065,6 +2087,10 @@ msgstr "실행 중인 세션을 새로 띄워, 다음 메시지부터 바뀐 설
 msgid "Replace the running session so the next message goes on with them on the team"
 msgstr "실행 중인 세션을 새로 띄워, 다음 메시지부터 그들을 팀에 두고 이어서 진행해요"
 
+#: src/widgets/conversation/lib/tool-note/tool-note.ts:40
+msgid "reported"
+msgstr "보고 완료"
+
 #: src/widgets/agent-report/lib/state-word/state-word.ts:11
 #: src/widgets/team-sidebar/lib/row-state/row-state.ts:9
 #: src/widgets/tile-deck/lib/state-word/state-word.ts:9
@@ -2152,7 +2178,7 @@ msgstr "저장 중…"
 msgid "Say the word and the whole team wakes up."
 msgstr "말 한마디면 팀 전체가 깨어납니다."
 
-#: src/widgets/conversation/ui/ConversationPane/ConversationPane.tsx:151
+#: src/widgets/conversation/ui/ConversationPane/ConversationPane.tsx:155
 msgid "Say what you want done, not the next step. The orchestrator splits it up and hands out the pieces."
 msgstr "다음 단계 말고 원하는 결과를 말하세요. 오케스트레이터가 알아서 쪼개서 나눠 줍니다."
 
@@ -2814,7 +2840,7 @@ msgstr "제목"
 msgid "To {addressee}"
 msgstr "{addressee}에게"
 
-#: src/widgets/conversation/ui/ConversationPane/ConversationPane.tsx:269
+#: src/widgets/conversation/ui/ConversationPane/ConversationPane.tsx:273
 msgid "To library"
 msgstr "라이브러리에"
 
@@ -2823,7 +2849,7 @@ msgstr "라이브러리에"
 msgid "Today"
 msgstr "오늘"
 
-#: src/widgets/conversation/ui/ToolLine/ToolLine.tsx:94
+#: src/widgets/conversation/ui/ToolLine/ToolLine.tsx:108
 msgid "Todo list"
 msgstr "할 일 목록"
 

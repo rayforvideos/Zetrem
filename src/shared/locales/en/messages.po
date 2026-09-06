@@ -13,11 +13,11 @@ msgstr ""
 "Language-Team: \n"
 "Plural-Forms: \n"
 
-#: src/pages/workspace/model/session/agent-events/agent-events.ts:165
+#: src/pages/workspace/model/session/agent-events/agent-events.ts:168
 msgid " · on overage"
 msgstr " · on overage"
 
-#: src/pages/workspace/model/session/agent-events/agent-events.ts:163
+#: src/pages/workspace/model/session/agent-events/agent-events.ts:166
 msgid " {pct}% used,"
 msgstr " {pct}% used,"
 
@@ -79,7 +79,7 @@ msgid "{0} left"
 msgstr "{0} left"
 
 #. placeholder {0}: limitKindLabel(limit.kind)
-#: src/pages/workspace/model/session/agent-events/agent-events.ts:166
+#: src/pages/workspace/model/session/agent-events/agent-events.ts:169
 msgid "{0} limit{share} resets {when}{overage}"
 msgstr "{0} limit{share} resets {when}{overage}"
 
@@ -135,7 +135,7 @@ msgstr "{0}m ago"
 msgid "{back} teammates"
 msgstr "{back} teammates"
 
-#: src/pages/workspace/model/session/agent-events/agent-events.ts:176
+#: src/pages/workspace/model/session/agent-events/agent-events.ts:179
 msgid "{base}. Earlier turns live on as a summary."
 msgstr "{base}. Earlier turns live on as a summary."
 
@@ -226,6 +226,7 @@ msgstr "{reported} reported back"
 
 #: src/entities/tool/ui/ChangeDiff/ChangeDiff.tsx:10
 #: src/widgets/conversation/lib/limits/limits.ts:6
+#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:246
 msgid "{rest, plural, one {# more line} other {# more lines}}"
 msgstr "{rest, plural, one {# more line} other {# more lines}}"
 
@@ -505,7 +506,7 @@ msgstr "All"
 msgid "All {0} connected"
 msgstr "All {0} connected"
 
-#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:84
+#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:147
 msgid "Allow"
 msgstr "Allow"
 
@@ -514,7 +515,7 @@ msgstr "Allow"
 msgid "Allow all"
 msgstr "Allow all"
 
-#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:134
+#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:268
 msgid "Allow this?"
 msgstr "Allow this?"
 
@@ -531,7 +532,7 @@ msgid "any moment"
 msgstr "any moment"
 
 #. placeholder {0}: turn.metrics.apiErrorStatus
-#: src/pages/workspace/model/session/agent-events/agent-events.ts:119
+#: src/pages/workspace/model/session/agent-events/agent-events.ts:122
 msgid "API error {0}"
 msgstr "API error {0}"
 
@@ -539,7 +540,7 @@ msgstr "API error {0}"
 msgid "Apply"
 msgstr "Apply"
 
-#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:132
+#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:266
 msgid "Approve this plan?"
 msgstr "Approve this plan?"
 
@@ -548,7 +549,7 @@ msgstr "Approve this plan?"
 msgid "Ask first"
 msgstr "Ask first"
 
-#: src/widgets/conversation/ui/ConversationPane/ConversationPane.tsx:128
+#: src/widgets/conversation/ui/ConversationPane/ConversationPane.tsx:150
 msgid "Ask for the whole job"
 msgstr "Ask for the whole job"
 
@@ -572,7 +573,7 @@ msgstr "Attach a file"
 msgid "Author"
 msgstr "Author"
 
-#: src/pages/workspace/model/session/agent-events/agent-events.ts:183
+#: src/pages/workspace/model/session/agent-events/agent-events.ts:186
 msgid "auto"
 msgstr "auto"
 
@@ -802,7 +803,7 @@ msgstr "Context"
 msgid "Continue"
 msgstr "Continue"
 
-#: src/pages/workspace/model/session/agent-events/agent-events.ts:174
+#: src/pages/workspace/model/session/agent-events/agent-events.ts:177
 msgid "Conversation compacted here"
 msgstr "Conversation compacted here"
 
@@ -1025,7 +1026,7 @@ msgstr "Delete the note “{0}”?"
 msgid "Deleted"
 msgstr "Deleted"
 
-#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:98
+#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:161
 msgid "Deny"
 msgstr "Deny"
 
@@ -1054,7 +1055,7 @@ msgstr "Dismissed \"{title}\""
 msgid "Documents they read first. Long ones cost nothing until they open them."
 msgstr "Documents they read first. Long ones cost nothing until they open them."
 
-#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:111
+#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:174
 msgid "Don't ask again this session"
 msgstr "Don't ask again this session"
 
@@ -1106,7 +1107,7 @@ msgstr "Edit"
 msgid "Edit {0}"
 msgstr "Edit {0}"
 
-#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:127
+#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:261
 msgid "Edit this file?"
 msgstr "Edit this file?"
 
@@ -1190,7 +1191,7 @@ msgstr "Feedback"
 msgid "Fetching"
 msgstr "Fetching"
 
-#: src/widgets/conversation/ui/ConversationPane/ConversationPane.tsx:244
+#: src/widgets/conversation/ui/ConversationPane/ConversationPane.tsx:266
 msgid "File this answer to the library as its own note"
 msgstr "File this answer to the library as its own note"
 
@@ -1499,7 +1500,7 @@ msgstr "Low"
 msgid "Manage"
 msgstr "Manage"
 
-#: src/pages/workspace/model/session/agent-events/agent-events.ts:184
+#: src/pages/workspace/model/session/agent-events/agent-events.ts:187
 msgid "manual"
 msgstr "manual"
 
@@ -1911,7 +1912,7 @@ msgstr "Rate limited"
 msgid "Re-authenticate"
 msgstr "Re-authenticate"
 
-#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:130
+#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:264
 msgid "Reach out to the web?"
 msgstr "Reach out to the web?"
 
@@ -2108,7 +2109,7 @@ msgstr "Roll back"
 msgid "run {0} of {1}"
 msgstr "run {0} of {1}"
 
-#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:122
+#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:256
 msgid "Run this command?"
 msgstr "Run this command?"
 
@@ -2143,7 +2144,7 @@ msgstr "Saving…"
 msgid "Say the word and the whole team wakes up."
 msgstr "Say the word and the whole team wakes up."
 
-#: src/widgets/conversation/ui/ConversationPane/ConversationPane.tsx:129
+#: src/widgets/conversation/ui/ConversationPane/ConversationPane.tsx:151
 msgid "Say what you want done, not the next step. The orchestrator splits it up and hands out the pieces."
 msgstr "Say what you want done, not the next step. The orchestrator splits it up and hands out the pieces."
 
@@ -2241,9 +2242,17 @@ msgstr "Shared across projects"
 msgid "Shift+Enter starts a new line. Off, sending takes the modifier key with Enter."
 msgstr "Shift+Enter starts a new line. Off, sending takes the modifier key with Enter."
 
+#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:139
+msgid "Show less"
+msgstr "Show less"
+
 #: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:195
 msgid "Show team sidebar"
 msgstr "Show team sidebar"
+
+#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:139
+msgid "Show the whole change"
+msgstr "Show the whole change"
 
 #: src/widgets/setup/ui/PluginShelf/ConnectorsTab.tsx:91
 msgid "Sign in"
@@ -2752,7 +2761,7 @@ msgstr "This teammate changed no files."
 msgid "This teammate has no branch Zetrem can look up."
 msgstr "This teammate has no branch Zetrem can look up."
 
-#: src/pages/workspace/model/session/agent-events/agent-events.ts:191
+#: src/pages/workspace/model/session/agent-events/agent-events.ts:194
 msgid "This turn: {out} out · {seconds}s"
 msgstr "This turn: {out} out · {seconds}s"
 
@@ -2788,7 +2797,7 @@ msgstr "Title"
 msgid "To {addressee}"
 msgstr "To {addressee}"
 
-#: src/widgets/conversation/ui/ConversationPane/ConversationPane.tsx:247
+#: src/widgets/conversation/ui/ConversationPane/ConversationPane.tsx:269
 msgid "To library"
 msgstr "To library"
 
@@ -2911,6 +2920,10 @@ msgstr "Weekly {rest}"
 msgid "Weekly overage"
 msgstr "Weekly overage"
 
+#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:228
+msgid "What is being approved"
+msgstr "What is being approved"
+
 #: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:1025
 msgid "What it holds is gone for good. Applying it first keeps the work."
 msgstr "What it holds is gone for good. Applying it first keeps the work."
@@ -3002,7 +3015,7 @@ msgstr "Write the first note"
 msgid "Write their instructions once and the orchestrator can call them in any project."
 msgstr "Write their instructions once and the orchestrator can call them in any project."
 
-#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:124
+#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:258
 msgid "Write this file?"
 msgstr "Write this file?"
 

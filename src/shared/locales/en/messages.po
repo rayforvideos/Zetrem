@@ -230,7 +230,7 @@ msgstr "{reported} reported back"
 
 #: src/entities/tool/ui/ChangeDiff/ChangeDiff.tsx:10
 #: src/widgets/conversation/lib/limits/limits.ts:6
-#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:246
+#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:249
 msgid "{rest, plural, one {# more line} other {# more lines}}"
 msgstr "{rest, plural, one {# more line} other {# more lines}}"
 
@@ -519,7 +519,7 @@ msgstr "Allow"
 msgid "Allow all"
 msgstr "Allow all"
 
-#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:268
+#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:271
 msgid "Allow this?"
 msgstr "Allow this?"
 
@@ -544,7 +544,7 @@ msgstr "API error {0}"
 msgid "Apply"
 msgstr "Apply"
 
-#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:266
+#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:269
 msgid "Approve this plan?"
 msgstr "Approve this plan?"
 
@@ -1111,7 +1111,7 @@ msgstr "Edit"
 msgid "Edit {0}"
 msgstr "Edit {0}"
 
-#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:261
+#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:264
 msgid "Edit this file?"
 msgstr "Edit this file?"
 
@@ -1916,7 +1916,7 @@ msgstr "Rate limited"
 msgid "Re-authenticate"
 msgstr "Re-authenticate"
 
-#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:264
+#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:267
 msgid "Reach out to the web?"
 msgstr "Reach out to the web?"
 
@@ -2117,7 +2117,7 @@ msgstr "Roll back"
 msgid "run {0} of {1}"
 msgstr "run {0} of {1}"
 
-#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:256
+#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:259
 msgid "Run this command?"
 msgstr "Run this command?"
 
@@ -3032,7 +3032,7 @@ msgstr "Write the first note"
 msgid "Write their instructions once and the orchestrator can call them in any project."
 msgstr "Write their instructions once and the orchestrator can call them in any project."
 
-#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:258
+#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:261
 msgid "Write this file?"
 msgstr "Write this file?"
 

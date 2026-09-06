@@ -230,7 +230,7 @@ msgstr "{reported}명 보고 완료"
 
 #: src/entities/tool/ui/ChangeDiff/ChangeDiff.tsx:10
 #: src/widgets/conversation/lib/limits/limits.ts:6
-#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:246
+#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:249
 msgid "{rest, plural, one {# more line} other {# more lines}}"
 msgstr "{rest, plural, other {#줄 더}}"
 
@@ -519,7 +519,7 @@ msgstr "허용"
 msgid "Allow all"
 msgstr "전부 허용"
 
-#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:268
+#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:271
 msgid "Allow this?"
 msgstr "허용할까요?"
 
@@ -544,7 +544,7 @@ msgstr "API 오류 {0}"
 msgid "Apply"
 msgstr "적용"
 
-#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:266
+#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:269
 msgid "Approve this plan?"
 msgstr "이 계획을 승인할까요?"
 
@@ -1111,7 +1111,7 @@ msgstr "수정"
 msgid "Edit {0}"
 msgstr "{0} 수정"
 
-#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:261
+#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:264
 msgid "Edit this file?"
 msgstr "이 파일을 고칠까요?"
 
@@ -1916,7 +1916,7 @@ msgstr "요청이 너무 잦습니다"
 msgid "Re-authenticate"
 msgstr "재인증"
 
-#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:264
+#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:267
 msgid "Reach out to the web?"
 msgstr "웹에 접속할까요?"
 
@@ -2117,7 +2117,7 @@ msgstr "되돌리기"
 msgid "run {0} of {1}"
 msgstr "{1}회 중 {0}번째"
 
-#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:256
+#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:259
 msgid "Run this command?"
 msgstr "이 명령을 실행할까요?"
 
@@ -3032,7 +3032,7 @@ msgstr "첫 노트 쓰기"
 msgid "Write their instructions once and the orchestrator can call them in any project."
 msgstr "지침을 한 번 써두면 어느 프로젝트에서든 부를 수 있습니다."
 
-#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:258
+#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:261
 msgid "Write this file?"
 msgstr "이 파일을 쓸까요?"
 

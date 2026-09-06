@@ -235,13 +235,16 @@ function Fold({
         {children}
       </section>
       {folded && (
+        // It sits over the faded last line, so it carries the card's own
+        // background rather than the outline variant's translucent one: a
+        // badge you have to read the text through says nothing.
         <Button
           type="button"
           variant="outline"
           size="xs"
           data-more-lines
           onClick={onOpen}
-          className="absolute right-3 bottom-1 rounded-full text-muted-foreground"
+          className="absolute right-3 bottom-1 rounded-full bg-card text-muted-foreground shadow-sm dark:bg-card"
         >
           {plural(rest, { one: '# more line', other: '# more lines' })}
         </Button>

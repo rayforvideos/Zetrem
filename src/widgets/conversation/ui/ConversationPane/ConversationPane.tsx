@@ -213,10 +213,7 @@ export function ConversationPane({
               return (
                 <article
                   key={turn.id}
-                  className={cn(
-                    'group/answer zt-rail zt-rise flex flex-col gap-2.5',
-                    live && 'zt-rail--live',
-                  )}
+                  className={cn('zt-rail zt-rise flex flex-col gap-2.5', live && 'zt-rail--live')}
                 >
                   {turn.thinking.length > 0 && <Thinking text={turn.thinking} />}
                   {turn.text.length > 0 && (
@@ -232,16 +229,20 @@ export function ConversationPane({
                     <ToolRun tools={turn.tools} live={live} nowMs={nowMs} project={project} />
                   )}
                   {turn.text.length > 0 && !live && (
+                    // On show, not on hover: an answer worth keeping is worth
+                    // keeping the moment it lands, and a button that appears
+                    // only under the pointer is one nobody knows about.
                     <div className="flex">
                       <Button
+                        data-file-turn
                         variant="ghost"
                         size="sm"
                         onClick={() => onFileTurn(turn.text)}
-                        className="h-7 rounded-lg px-2 text-xs text-muted-foreground opacity-0 transition-opacity group-hover/answer:opacity-100 group-focus-within/answer:opacity-100"
+                        className="h-7 rounded-lg px-2 text-xs text-muted-foreground"
                         title={t`File this answer to the library as its own note`}
                       >
                         <BookmarkPlus className="size-3" />
-                        {t`To library`}
+                        {t`To the library`}
                       </Button>
                     </div>
                   )}

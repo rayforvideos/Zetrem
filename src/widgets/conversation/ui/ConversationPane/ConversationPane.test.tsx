@@ -429,13 +429,19 @@ const WAITING = {
 describe('an answer can be filed to the library on its own', () => {
   it('offers the per-answer action once the answer is in and settled', () => {
     const html = pane([turn({ text: '다 했다' })])
-    expect(html).toContain('To library')
-    expect(html).toContain('group/answer')
+    expect(html).toContain('data-file-turn')
+    expect(html).toContain('To the library')
+  })
+
+  it('shows that action outright rather than waiting for the pointer to find it', () => {
+    const html = pane([turn({ text: '다 했다' })])
+    const at = html.indexOf('data-file-turn')
+    expect(html.slice(at, at + 400)).not.toContain('opacity-0')
   })
 
   it('keeps the action off the streaming answer, since it is not written yet', () => {
     const html = working([turn({ role: 'user', text: '고쳐줘' }), turn({ text: '쓰는 중' })])
-    expect(html).not.toContain('To library')
+    expect(html).not.toContain('data-file-turn')
   })
 })
 

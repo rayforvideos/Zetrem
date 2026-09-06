@@ -21,17 +21,17 @@ msgstr " · on overage"
 msgid " {pct}% used,"
 msgstr " {pct}% used,"
 
-#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:115
+#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:125
 msgid "· 2 working"
 msgstr "· 2 working"
 
 #: src/widgets/library/ui/LibraryPane/LibraryPane.tsx:192
-msgid "“To library” under an answer files it here."
-msgstr "“To library” under an answer files it here."
+msgid "“To the library” under an answer files it here."
+msgstr "“To the library” under an answer files it here."
 
 #: src/widgets/library/ui/LibraryPane/LibraryPane.tsx:70
-msgid "“To library” under an answer files it here. You can write here yourself."
-msgstr "“To library” under an answer files it here. You can write here yourself."
+msgid "“To the library” under an answer files it here. You can write here yourself."
+msgstr "“To the library” under an answer files it here. You can write here yourself."
 
 #. placeholder {0}: counted.ran
 #: src/widgets/conversation/lib/tool-run/tool-run.ts:50
@@ -341,7 +341,7 @@ msgstr "{working} working"
 msgid "{you}, who should take this one?"
 msgstr "{you}, who should take this one?"
 
-#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:164
+#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:174
 msgid "38% · 4h 12m left"
 msgstr "38% · 4h 12m left"
 
@@ -419,6 +419,7 @@ msgstr "About you"
 
 #: src/widgets/conversation/ui/ProposalCard/ProposalCard.tsx:53
 #: src/widgets/library/ui/ProposalRow/ProposalRow.tsx:43
+#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:241
 msgid "Accept"
 msgstr "Accept"
 
@@ -656,6 +657,8 @@ msgid "Cancel sign-in"
 msgstr "Cancel sign-in"
 
 #: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:32
+#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:252
+#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:261
 msgid "Cart totals and rounding"
 msgstr "Cart totals and rounding"
 
@@ -702,7 +705,7 @@ msgstr "Choose folder"
 msgid "Choose project"
 msgstr "Choose project"
 
-#: src/widgets/welcome/lib/slides/slides.ts:39
+#: src/widgets/welcome/lib/slides/slides.ts:45
 msgid "Choose what can run without asking, check your remaining limits along the bottom, and stop anything while it is running."
 msgstr "Choose what can run without asking, check your remaining limits along the bottom, and stop anything while it is running."
 
@@ -1052,6 +1055,7 @@ msgstr "Diff"
 
 #: src/widgets/conversation/ui/ProposalCard/ProposalCard.tsx:61
 #: src/widgets/library/ui/ProposalRow/ProposalRow.tsx:51
+#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:244
 msgid "Dismiss"
 msgstr "Dismiss"
 
@@ -1174,7 +1178,7 @@ msgid "Extra folders"
 msgstr "Extra folders"
 
 #: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:177
-#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:192
+#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:202
 msgid "Face"
 msgstr "Face"
 
@@ -1204,7 +1208,7 @@ msgstr "Feedback"
 msgid "Fetching"
 msgstr "Fetching"
 
-#: src/widgets/conversation/ui/ConversationPane/ConversationPane.tsx:241
+#: src/widgets/conversation/ui/ConversationPane/ConversationPane.tsx:242
 msgid "File this answer to the library as its own note"
 msgstr "File this answer to the library as its own note"
 
@@ -1230,7 +1234,7 @@ msgstr "Files read, commands run, edits made. Each one shows up as it happens, n
 msgid "Find a chat"
 msgstr "Find a chat"
 
-#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:84
+#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:94
 msgid "Find why checkout drops the last item"
 msgstr "Find why checkout drops the last item"
 
@@ -1362,7 +1366,7 @@ msgstr "Hide team sidebar"
 msgid "High"
 msgstr "High"
 
-#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:212
+#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:222
 msgid "Hire"
 msgstr "Hire"
 
@@ -1440,7 +1444,7 @@ msgid "just now"
 msgstr "just now"
 
 #: src/widgets/conversation/ui/Composer/Composer.tsx:155
-#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:95
+#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:105
 msgid "Keep going"
 msgstr "Keep going"
 
@@ -1493,6 +1497,7 @@ msgstr "Letters, numbers, hyphens. Sign in after adding if it asks."
 #: src/widgets/library/ui/LibraryPane/LibraryPane.tsx:127
 #: src/widgets/library/ui/LibraryPane/LibraryPane.tsx:176
 #: src/widgets/team-sidebar/ui/TeamSidebar/TeamSidebar.tsx:96
+#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:251
 msgid "Library"
 msgstr "Library"
 
@@ -1602,7 +1607,7 @@ msgid "More options for the folder {name}"
 msgstr "More options for the folder {name}"
 
 #: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:156
-#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:177
+#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:187
 msgid "Name"
 msgstr "Name"
 
@@ -1783,6 +1788,10 @@ msgstr "Notifications"
 msgid "Notifications are off at the system level. Allow Zetrem in the system settings that just opened."
 msgstr "Notifications are off at the system level. Allow Zetrem in the system settings that just opened."
 
+#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:237
+msgid "Nova suggests a note"
+msgstr "Nova suggests a note"
+
 #: src/widgets/team-sidebar/lib/chat-groups/chat-groups.ts:28
 msgid "Older"
 msgstr "Older"
@@ -1950,7 +1959,7 @@ msgstr "Reach out to the web?"
 msgid "Read"
 msgstr "Read"
 
-#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:204
+#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:214
 msgid "Read the change before you judge it, and check what it touches."
 msgstr "Read the change before you judge it, and check what it touches."
 
@@ -2124,11 +2133,11 @@ msgstr "Restart session"
 msgid "Restart Zetrem. This version does not know about it yet."
 msgstr "Restart Zetrem. This version does not know about it yet."
 
-#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:178
+#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:188
 msgid "Reviewer"
 msgstr "Reviewer"
 
-#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:184
+#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:194
 msgid "Reviews a change before it ships"
 msgstr "Reviews a change before it ships"
 
@@ -2182,7 +2191,7 @@ msgstr "Say the word and the whole team wakes up."
 msgid "Say what you want done, not the next step. The orchestrator splits it up and hands out the pieces."
 msgstr "Say what you want done, not the next step. The orchestrator splits it up and hands out the pieces."
 
-#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:205
+#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:215
 msgid "Say what you would change and why, in that order."
 msgstr "Say what you would change and why, in that order."
 
@@ -2416,6 +2425,7 @@ msgid "Still signed in. Sign out did not take effect."
 msgstr "Still signed in. Sign out did not take effect."
 
 #: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:36
+#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:252
 msgid "Stock rules"
 msgstr "Stock rules"
 
@@ -2581,6 +2591,10 @@ msgstr "The hardest problems. Slowest and priciest of these"
 msgid "The kind of work they should get"
 msgstr "The kind of work they should get"
 
+#: src/widgets/welcome/lib/slides/slides.ts:38
+msgid "The library is yours"
+msgstr "The library is yours"
+
 #: src/widgets/setup/ui/PluginShelf/BrowseTab.tsx:80
 msgid "The marketplaces the plugins above come from."
 msgstr "The marketplaces the plugins above come from."
@@ -2610,7 +2624,7 @@ msgid "the orchestrator"
 msgstr "the orchestrator"
 
 #: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:174
-#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:187
+#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:197
 msgid "The orchestrator reads this to pick who gets the job."
 msgstr "The orchestrator reads this to pick who gets the job."
 
@@ -2676,7 +2690,7 @@ msgid "Their helpers"
 msgstr "Their helpers"
 
 #: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:279
-#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:202
+#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:212
 msgid "Their instructions"
 msgstr "Their instructions"
 
@@ -2693,7 +2707,7 @@ msgid "Thinks longer. Slower and pricier"
 msgstr "Thinks longer. Slower and pricier"
 
 #: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:288
-#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:208
+#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:218
 msgid "This always applies. Write it the way you would explain the job to a person."
 msgstr "This always applies. Write it the way you would explain the job to a person."
 
@@ -2803,7 +2817,7 @@ msgstr "This work never reached the working tree. Zetrem deletes the branch it i
 msgid "Thought · {paragraphs} paragraphs"
 msgstr "Thought · {paragraphs} paragraphs"
 
-#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:87
+#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:97
 msgid "Three teammates are on it: the checkout flow, the cart totals and the stock rules. I'll put their reports together into one answer."
 msgstr "Three teammates are on it: the checkout flow, the cart totals and the stock rules. I'll put their reports together into one answer."
 
@@ -2823,9 +2837,9 @@ msgstr "Title"
 msgid "To {addressee}"
 msgstr "To {addressee}"
 
-#: src/widgets/conversation/ui/ConversationPane/ConversationPane.tsx:244
-msgid "To library"
-msgstr "To library"
+#: src/widgets/conversation/ui/ConversationPane/ConversationPane.tsx:245
+msgid "To the library"
+msgstr "To the library"
 
 #: src/widgets/setup/ui/MemoryField/MemoryField.tsx:64
 #: src/widgets/team-sidebar/lib/chat-groups/chat-groups.ts:9
@@ -2934,6 +2948,10 @@ msgstr "Waiting on you"
 msgid "Waiting to run {0}"
 msgstr "Waiting to run {0}"
 
+#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:263
+msgid "We weighed both ways and kept the second: the totals stay in one place."
+msgstr "We weighed both ways and kept the second: the totals stay in one place."
+
 #: src/shared/lib/units/units.ts:13
 msgid "Weekly"
 msgstr "Weekly"
@@ -2973,7 +2991,7 @@ msgstr "What they changed"
 #: src/widgets/agent-report/ui/CallStream/CallStream.tsx:11
 #: src/widgets/tile-deck/ui/AgentTile/AgentTile.tsx:93
 #: src/widgets/tile-deck/ui/CrewBoard/CrewBoard.tsx:145
-#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:142
+#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:152
 msgid "What they did"
 msgstr "What they did"
 
@@ -2989,20 +3007,25 @@ msgstr "What they said"
 msgid "What this project has learned, kept as notes so nobody has to work it out twice."
 msgstr "What this project has learned, kept as notes so nobody has to work it out twice."
 
+#: src/widgets/welcome/lib/slides/slides.ts:39
+msgid "What this project has settled, kept as notes the next session can read. Agents search it and suggest what they learn, and a suggestion waits for your word before it becomes a note."
+msgstr "What this project has settled, kept as notes the next session can read. Agents search it and suggest what they learn, and a suggestion waits for your word before it becomes a note."
+
 #: src/widgets/setup/ui/PluginShelf/PluginShelf.tsx:86
 msgid "What you have"
 msgstr "What you have"
 
 #: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:167
-#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:182
+#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:192
 msgid "When to call them"
 msgstr "When to call them"
 
 #: src/widgets/library/ui/LibraryPane/LibraryPane.tsx:67
-msgid "While the library button under the message box is on, agents search here and suggest what they find."
-msgstr "While the library button under the message box is on, agents search here and suggest what they find."
+msgid "While the library switch under the message box is on, agents search here and suggest what they find."
+msgstr "While the library switch under the message box is on, agents search here and suggest what they find."
 
 #: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:25
+#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:238
 msgid "Why the last item drops"
 msgstr "Why the last item drops"
 
@@ -3072,7 +3095,7 @@ msgstr "You"
 msgid "You already have a connector by that name"
 msgstr "You already have a connector by that name"
 
-#: src/widgets/welcome/lib/slides/slides.ts:38
+#: src/widgets/welcome/lib/slides/slides.ts:44
 msgid "You decide what runs"
 msgstr "You decide what runs"
 

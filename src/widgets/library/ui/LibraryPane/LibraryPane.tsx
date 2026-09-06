@@ -64,10 +64,10 @@ export function LibraryPane(props: LibraryPaneProps) {
           {t`What this project has learned, kept as notes so nobody has to work it out twice.`}
         </p>
         <p className="mt-2 text-muted-foreground">
-          {t`While the library button under the message box is on, agents search here and suggest what they find.`}
+          {t`While the library switch under the message box is on, agents search here and suggest what they find.`}
         </p>
         <p className="mt-2 text-muted-foreground">
-          {t`“To library” under an answer files it here. You can write here yourself.`}
+          {t`“To the library” under an answer files it here. You can write here yourself.`}
         </p>
       </PopoverContent>
     </Popover>
@@ -189,7 +189,7 @@ export function LibraryPane(props: LibraryPaneProps) {
                 <div className="flex flex-col gap-2">
                   <p className="text-base font-medium">{t`No notes yet`}</p>
                   <p className="text-sm leading-6 text-muted-foreground">
-                    {t`“To library” under an answer files it here.`}
+                    {t`“To the library” under an answer files it here.`}
                     <br />
                     {t`Agents suggest what they learn, and nothing lands here until you accept it.`}
                     <br />

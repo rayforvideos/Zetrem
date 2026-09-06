@@ -21,17 +21,17 @@ msgstr " · 초과분 사용 중"
 msgid " {pct}% used,"
 msgstr " {pct}% 사용,"
 
-#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:115
+#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:125
 msgid "· 2 working"
 msgstr "· 2명 작업 중"
 
 #: src/widgets/library/ui/LibraryPane/LibraryPane.tsx:192
-msgid "“To library” under an answer files it here."
-msgstr "답변 아래 「라이브러리에」를 누르면 여기에 담겨요."
+msgid "“To the library” under an answer files it here."
+msgstr "답변 아래 「라이브러리에 담기」를 누르면 여기에 담겨요."
 
 #: src/widgets/library/ui/LibraryPane/LibraryPane.tsx:70
-msgid "“To library” under an answer files it here. You can write here yourself."
-msgstr "답변 아래 「라이브러리에」를 누르면 여기에 담기고, 직접 쓸 수도 있어요."
+msgid "“To the library” under an answer files it here. You can write here yourself."
+msgstr "답변 아래 「라이브러리에 담기」를 누르면 여기에 담기고, 직접 쓸 수도 있어요."
 
 #. placeholder {0}: counted.ran
 #: src/widgets/conversation/lib/tool-run/tool-run.ts:50
@@ -341,7 +341,7 @@ msgstr "{working}명 작업 중"
 msgid "{you}, who should take this one?"
 msgstr "{you}, 이건 누구한테 맡길까요?"
 
-#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:164
+#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:174
 msgid "38% · 4h 12m left"
 msgstr "38% · 4시간 12분 남음"
 
@@ -419,6 +419,7 @@ msgstr "사용자"
 
 #: src/widgets/conversation/ui/ProposalCard/ProposalCard.tsx:53
 #: src/widgets/library/ui/ProposalRow/ProposalRow.tsx:43
+#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:241
 msgid "Accept"
 msgstr "받아들이기"
 
@@ -656,6 +657,8 @@ msgid "Cancel sign-in"
 msgstr "로그인 취소"
 
 #: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:32
+#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:252
+#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:261
 msgid "Cart totals and rounding"
 msgstr "장바구니 합계와 반올림"
 
@@ -702,7 +705,7 @@ msgstr "폴더 고르기"
 msgid "Choose project"
 msgstr "프로젝트 고르기"
 
-#: src/widgets/welcome/lib/slides/slides.ts:39
+#: src/widgets/welcome/lib/slides/slides.ts:45
 msgid "Choose what can run without asking, check your remaining limits along the bottom, and stop anything while it is running."
 msgstr "묻지 않고 실행해도 되는 범위를 정하고, 남은 사용량은 아래쪽에서 확인하고, 실행 중인 작업은 언제든 멈출 수 있습니다."
 
@@ -1052,6 +1055,7 @@ msgstr "변경 내용"
 
 #: src/widgets/conversation/ui/ProposalCard/ProposalCard.tsx:61
 #: src/widgets/library/ui/ProposalRow/ProposalRow.tsx:51
+#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:244
 msgid "Dismiss"
 msgstr "무시"
 
@@ -1174,7 +1178,7 @@ msgid "Extra folders"
 msgstr "추가 폴더"
 
 #: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:177
-#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:192
+#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:202
 msgid "Face"
 msgstr "얼굴"
 
@@ -1204,7 +1208,7 @@ msgstr "피드백"
 msgid "Fetching"
 msgstr "가져오는 중"
 
-#: src/widgets/conversation/ui/ConversationPane/ConversationPane.tsx:241
+#: src/widgets/conversation/ui/ConversationPane/ConversationPane.tsx:242
 msgid "File this answer to the library as its own note"
 msgstr "이 답변을 별도 노트로 라이브러리에 넣기"
 
@@ -1230,7 +1234,7 @@ msgstr "읽은 파일, 실행한 명령, 고친 내용이 그때그때 올라옵
 msgid "Find a chat"
 msgstr "대화 찾기"
 
-#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:84
+#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:94
 msgid "Find why checkout drops the last item"
 msgstr "결제 단계에서 마지막 항목이 빠지는 이유를 찾아줘"
 
@@ -1362,7 +1366,7 @@ msgstr "팀 사이드바 접기"
 msgid "High"
 msgstr "높음"
 
-#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:212
+#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:222
 msgid "Hire"
 msgstr "채용"
 
@@ -1440,7 +1444,7 @@ msgid "just now"
 msgstr "방금"
 
 #: src/widgets/conversation/ui/Composer/Composer.tsx:155
-#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:95
+#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:105
 msgid "Keep going"
 msgstr "이어서 말하세요"
 
@@ -1493,6 +1497,7 @@ msgstr "영문, 숫자, 하이픈. 추가한 뒤 로그인을 요구하면 로�
 #: src/widgets/library/ui/LibraryPane/LibraryPane.tsx:127
 #: src/widgets/library/ui/LibraryPane/LibraryPane.tsx:176
 #: src/widgets/team-sidebar/ui/TeamSidebar/TeamSidebar.tsx:96
+#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:251
 msgid "Library"
 msgstr "라이브러리"
 
@@ -1602,7 +1607,7 @@ msgid "More options for the folder {name}"
 msgstr "{name} 폴더 메뉴"
 
 #: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:156
-#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:177
+#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:187
 msgid "Name"
 msgstr "이름"
 
@@ -1783,6 +1788,10 @@ msgstr "알림"
 msgid "Notifications are off at the system level. Allow Zetrem in the system settings that just opened."
 msgstr "시스템에서 알림이 꺼져 있어요. 방금 열린 시스템 설정에서 Zetrem을 허용해 주세요."
 
+#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:237
+msgid "Nova suggests a note"
+msgstr "Nova가 노트를 제안했습니다"
+
 #: src/widgets/team-sidebar/lib/chat-groups/chat-groups.ts:28
 msgid "Older"
 msgstr "그 이전"
@@ -1950,7 +1959,7 @@ msgstr "웹에 접속할까요?"
 msgid "Read"
 msgstr "읽음"
 
-#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:204
+#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:214
 msgid "Read the change before you judge it, and check what it touches."
 msgstr "판단하기 전에 변경 내용을 먼저 읽고, 어디에 영향을 주는지 확인하세요."
 
@@ -2124,11 +2133,11 @@ msgstr "세션 다시 시작"
 msgid "Restart Zetrem. This version does not know about it yet."
 msgstr "Zetrem을 다시 시작하세요. 지금 버전은 아직 이 변경을 모릅니다."
 
-#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:178
+#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:188
 msgid "Reviewer"
 msgstr "검토 담당"
 
-#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:184
+#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:194
 msgid "Reviews a change before it ships"
 msgstr "배포 전에 변경을 검토합니다"
 
@@ -2182,7 +2191,7 @@ msgstr "말 한마디면 팀 전체가 깨어납니다."
 msgid "Say what you want done, not the next step. The orchestrator splits it up and hands out the pieces."
 msgstr "다음 단계 말고 원하는 결과를 말하세요. 오케스트레이터가 알아서 쪼개서 나눠 줍니다."
 
-#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:205
+#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:215
 msgid "Say what you would change and why, in that order."
 msgstr "무엇을 바꿀지, 왜인지 순서대로 적으세요."
 
@@ -2416,6 +2425,7 @@ msgid "Still signed in. Sign out did not take effect."
 msgstr "아직 로그인 상태입니다. 로그아웃이 되지 않았습니다."
 
 #: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:36
+#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:252
 msgid "Stock rules"
 msgstr "재고 규칙"
 
@@ -2581,6 +2591,10 @@ msgstr "가장 어려운 문제용. 이 중 가장 느리고 가장 비쌉니다
 msgid "The kind of work they should get"
 msgstr "어떤 일을 맡길지"
 
+#: src/widgets/welcome/lib/slides/slides.ts:38
+msgid "The library is yours"
+msgstr "라이브러리는 당신 것입니다"
+
 #: src/widgets/setup/ui/PluginShelf/BrowseTab.tsx:80
 msgid "The marketplaces the plugins above come from."
 msgstr "위 플러그인을 제공하는 마켓플레이스입니다."
@@ -2610,7 +2624,7 @@ msgid "the orchestrator"
 msgstr "오케스트레이터"
 
 #: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:174
-#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:187
+#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:197
 msgid "The orchestrator reads this to pick who gets the job."
 msgstr "오케스트레이터가 이 줄을 읽고 누구에게 맡길지 정합니다."
 
@@ -2676,7 +2690,7 @@ msgid "Their helpers"
 msgstr "이 팀원이 부른 도우미"
 
 #: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:279
-#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:202
+#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:212
 msgid "Their instructions"
 msgstr "지침"
 
@@ -2693,7 +2707,7 @@ msgid "Thinks longer. Slower and pricier"
 msgstr "더 오래 생각합니다. 느리고 비쌉니다"
 
 #: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:288
-#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:208
+#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:218
 msgid "This always applies. Write it the way you would explain the job to a person."
 msgstr "항상 적용되는 내용입니다. 사람에게 일을 설명하듯 적으세요."
 
@@ -2803,7 +2817,7 @@ msgstr "이 작업은 작업 트리에 닿은 적이 없습니다. Zetrem이 그
 msgid "Thought · {paragraphs} paragraphs"
 msgstr "생각 · {paragraphs}단락"
 
-#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:87
+#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:97
 msgid "Three teammates are on it: the checkout flow, the cart totals and the stock rules. I'll put their reports together into one answer."
 msgstr "팀원 셋이 붙었습니다. 결제 흐름, 장바구니 합계, 재고 규칙을 각각 봅니다. 결과가 오면 하나로 정리해 드리겠습니다."
 
@@ -2823,9 +2837,9 @@ msgstr "제목"
 msgid "To {addressee}"
 msgstr "{addressee}에게"
 
-#: src/widgets/conversation/ui/ConversationPane/ConversationPane.tsx:244
-msgid "To library"
-msgstr "라이브러리에"
+#: src/widgets/conversation/ui/ConversationPane/ConversationPane.tsx:245
+msgid "To the library"
+msgstr "라이브러리에 담기"
 
 #: src/widgets/setup/ui/MemoryField/MemoryField.tsx:64
 #: src/widgets/team-sidebar/lib/chat-groups/chat-groups.ts:9
@@ -2934,6 +2948,10 @@ msgstr "응답을 기다리는 중"
 msgid "Waiting to run {0}"
 msgstr "{0} 실행을 기다립니다"
 
+#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:263
+msgid "We weighed both ways and kept the second: the totals stay in one place."
+msgstr "두 가지를 견줘 보고 두 번째를 택했습니다. 합계 계산이 한곳에 모입니다."
+
 #: src/shared/lib/units/units.ts:13
 msgid "Weekly"
 msgstr "주간"
@@ -2973,7 +2991,7 @@ msgstr "무엇을 바꿨는지"
 #: src/widgets/agent-report/ui/CallStream/CallStream.tsx:11
 #: src/widgets/tile-deck/ui/AgentTile/AgentTile.tsx:93
 #: src/widgets/tile-deck/ui/CrewBoard/CrewBoard.tsx:145
-#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:142
+#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:152
 msgid "What they did"
 msgstr "무엇을 했는지"
 
@@ -2989,20 +3007,25 @@ msgstr "무엇이라 했는지"
 msgid "What this project has learned, kept as notes so nobody has to work it out twice."
 msgstr "이 프로젝트가 알게 된 것을 노트로 모아 둔 곳이에요. 같은 걸 두 번 알아내지 않도록요."
 
+#: src/widgets/welcome/lib/slides/slides.ts:39
+msgid "What this project has settled, kept as notes the next session can read. Agents search it and suggest what they learn, and a suggestion waits for your word before it becomes a note."
+msgstr "이 프로젝트가 정한 것을 노트로 남겨 두면 다음 세션이 읽습니다. 에이전트는 라이브러리를 찾아보고 알게 된 것을 제안하며, 제안은 당신이 받아들이기 전까지 노트가 되지 않습니다."
+
 #: src/widgets/setup/ui/PluginShelf/PluginShelf.tsx:86
 msgid "What you have"
 msgstr "설치됨"
 
 #: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:167
-#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:182
+#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:192
 msgid "When to call them"
 msgstr "언제 부를지"
 
 #: src/widgets/library/ui/LibraryPane/LibraryPane.tsx:67
-msgid "While the library button under the message box is on, agents search here and suggest what they find."
-msgstr "메시지 창 아래 라이브러리 버튼이 켜져 있으면 에이전트가 여기서 찾아보고, 알아낸 것을 제안합니다."
+msgid "While the library switch under the message box is on, agents search here and suggest what they find."
+msgstr "메시지 창 아래 라이브러리 스위치가 켜져 있으면 에이전트가 여기서 찾아보고, 알아낸 것을 제안합니다."
 
 #: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:25
+#: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:238
 msgid "Why the last item drops"
 msgstr "마지막 항목이 사라지는 이유"
 
@@ -3072,7 +3095,7 @@ msgstr "나"
 msgid "You already have a connector by that name"
 msgstr "같은 이름의 커넥터가 이미 있습니다"
 
-#: src/widgets/welcome/lib/slides/slides.ts:38
+#: src/widgets/welcome/lib/slides/slides.ts:44
 msgid "You decide what runs"
 msgstr "무엇을 실행할지 직접 정합니다"
 

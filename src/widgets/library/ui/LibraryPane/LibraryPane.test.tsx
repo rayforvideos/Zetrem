@@ -82,7 +82,7 @@ describe('LibraryPane', () => {
   it('says what the library is for when it is empty, and offers the first note', () => {
     const out = pane({ notes: [] })
     expect(out).toContain('No notes yet')
-    expect(out).toContain('“To library” under an answer files it here.')
+    expect(out).toContain('“To the library” under an answer files it here.')
     expect(out).toContain(
       'Agents suggest what they learn, and nothing lands here until you accept it.',
     )

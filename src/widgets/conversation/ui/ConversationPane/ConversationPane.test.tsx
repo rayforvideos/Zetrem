@@ -9,7 +9,7 @@ import { ConversationPane } from './ConversationPane'
 import { Composer } from '../Composer/Composer'
 import { Away } from './Away'
 import { Working } from './Working'
-import { tickOpen } from './Tick'
+import { Tick, tickOpen } from './Tick'
 
 const STATUS: StatusState = {
   usage: 'read',
@@ -40,6 +40,8 @@ function tool(overrides: Partial<ToolActivity> = {}): ToolActivity {
     ...overrides,
   }
 }
+
+const PROJECT = '/work/app'
 
 let seq = 0
 
@@ -74,6 +76,7 @@ function working(turns: Turn[]): string {
       you={{ name: 'Ray', face: 'onigiri' }}
       away={null}
       nowMs={12_000}
+      project={PROJECT}
       onDecide={() => {}}
       onFileTurn={() => {}}
       sidebar={null}
@@ -128,6 +131,7 @@ function pane(
       you={{ name: 'Ray', face: 'onigiri' }}
       away={null}
       nowMs={0}
+      project={PROJECT}
       onDecide={() => {}}
       onFileTurn={() => {}}
       sidebar={null}
@@ -178,6 +182,51 @@ describe('tickOpen: a run that went fine folds away', () => {
   })
 })
 
+const SCRIPT = 'set -e\nnpm run build\nnpm test'
+
+function tick(overrides: Partial<ToolActivity> = {}): string {
+  return renderToStaticMarkup(
+    <Tick
+      tool={tool({ line: 'Bash set -e', input: { command: SCRIPT }, ...overrides })}
+      live={false}
+      project={PROJECT}
+    />,
+  )
+}
+
+describe('a long command does not take the conversation over', () => {
+  it('keeps a folded row to the first line of a script', () => {
+    const html = tick()
+    expect(html).toContain('set -e …')
+    expect(html).not.toContain('npm run build')
+  })
+
+  it('holds that line to one line rather than wrapping it down the page', () => {
+    expect(tick()).toContain('truncate')
+  })
+
+  it('can be opened before the command comes back, since the row is all there is', () => {
+    expect(tick()).not.toContain('disabled=""')
+  })
+
+  it('shows the command whole above the output once the row is open', () => {
+    const html = tick({ result: { stdout: 'boom', stderr: '', isError: true, interrupted: false } })
+    expect(html).toContain('data-command')
+    expect(html).toContain('npm run build')
+    expect(html.indexOf('data-command'), 'the command reads before its output').toBeLessThan(
+      html.lastIndexOf('boom'),
+    )
+  })
+
+  it('leaves a command the row already showed whole out of the opened part', () => {
+    const html = tick({
+      input: { command: 'npm test' },
+      result: { stdout: 'boom', stderr: '', isError: true, interrupted: false },
+    })
+    expect(html).not.toContain('data-command')
+  })
+})
+
 describe('a quiet run keeps its log to itself', () => {
   it('shows a line count instead of the log, until somebody asks', () => {
     const stdout = ['하나', '둘', '셋'].join('\n')
@@ -188,6 +237,22 @@ describe('a quiet run keeps its log to itself', () => {
     ])
     expect(html).toContain('3 lines')
     expect(html).not.toContain('하나')
+  })
+
+  it('says how much is held back once, not once in each language', () => {
+    const stdout = ['하나', '둘', '셋'].join('\n')
+    const html = pane([
+      turn({
+        tools: [
+          tool({
+            line: 'Read /work/app/a.ts',
+            input: { file_path: '/work/app/a.ts' },
+            result: { stdout, stderr: '', isError: false, interrupted: false },
+          }),
+        ],
+      }),
+    ])
+    expect(html.match(/3 lines/g), 'one count, in the language the app speaks').toHaveLength(1)
   })
 
   it('lays a failed run open on arrival', () => {

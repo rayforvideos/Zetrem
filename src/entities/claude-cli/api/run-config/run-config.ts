@@ -1,4 +1,4 @@
-import type { RunConfig } from './run-config.types'
+import type { PermissionMode, RunConfig } from './run-config.types'
 
 import { agentsArgs } from '@/entities/claude-cli/api/roster-lock/roster-lock'
 
@@ -55,6 +55,27 @@ export function agentArgs(config: RunConfig): string[] {
   if (config.permissionMode !== 'ask') args.push('--permission-mode', config.permissionMode)
   args.push('--permission-prompt-tool', 'stdio')
   return args
+}
+
+// The mode a running session reports, read back as the app's own word for it.
+// This is the inverse of what agentArgs writes above: ask mode passes no
+// --permission-mode at all, so the CLI answers with its own 'default', and
+// allow-all goes through a separate flag the CLI names 'bypassPermissions'.
+// A word from outside that set is a mode this app did not ask for, and is
+// reported as unknown rather than shown to the person in the CLI's spelling.
+export function modeFromCli(said: string): PermissionMode | null {
+  switch (said) {
+    case 'default':
+      return 'ask'
+    case 'bypassPermissions':
+      return 'bypass'
+    case 'acceptEdits':
+      return 'acceptEdits'
+    case 'plan':
+      return 'plan'
+    default:
+      return null
+  }
 }
 
 export const PROBE_PROMPT = 'hi'

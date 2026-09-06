@@ -13,6 +13,7 @@ import {
   InputGroupTextarea,
 } from '@/shared/ui/input-group'
 import { Kbd, KbdGroup } from '@/shared/ui/kbd'
+import { chipOf } from '../../lib/chip/chip'
 import {
   beganComposing,
   endedComposing,
@@ -35,6 +36,8 @@ export function Composer({
   permissionMode,
   model,
   effort,
+  runningPermissionMode,
+  runningModel,
   refusedModels,
   enterSends,
   library,
@@ -49,7 +52,13 @@ export function Composer({
   onModel,
   onEffort,
   onLibrary,
+  onRestart,
 }: ComposerProps) {
+  // The chips have to name what is in force, not what was last picked: a
+  // session started on allow-all goes on allowing everything however the
+  // pickers read, and the chip is the only thing anyone looks at.
+  const permission = chipOf({ wanted: permissionMode, running: runningPermissionMode })
+  const models = chipOf({ wanted: model, running: runningModel })
   const [draft, setDraft] = useState('')
   const [over, setOver] = useState(false)
   const field = useRef<HTMLTextAreaElement>(null)
@@ -171,7 +180,9 @@ export function Composer({
           <ChoicePicker
             icon={<Shield />}
             options={PERMISSION_MODES}
-            selected={permissionMode}
+            selected={permission.pick}
+            inForce={permission.inForce}
+            onRestart={onRestart}
             onSelect={(id) => onPermissionMode(id as PermissionMode)}
             label={t`Permissions`}
           />
@@ -198,7 +209,9 @@ export function Composer({
           </InputGroupButton>
           <ChoicePicker
             options={modelsWith(MODELS, refusedModels)}
-            selected={model}
+            selected={models.pick}
+            inForce={models.inForce}
+            onRestart={onRestart}
             onSelect={(id) => onModel(id as ModelChoice)}
             label={t`Model`}
             sub={{

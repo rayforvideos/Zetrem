@@ -4,8 +4,10 @@ import type { Turn } from '@/entities/conversation'
 type WaitKind = 'permission' | 'question'
 
 // What the run stopped for, and the one line worth repeating back: the tool a
-// permission ask names, or the question that was put to the person.
-export type WaitingOn = { kind: WaitKind; said: string }
+// permission ask names, or the question that was put to the person. A
+// permission also carries what the tool would act on, the file or the command,
+// which is what the person is actually deciding about.
+export type WaitingOn = { kind: WaitKind; said: string; target: string }
 
 // A wait as the chat itself knows it. The mark is what this particular wait
 // is, so it stays the same however the screen happens to be looking at the

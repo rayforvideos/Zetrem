@@ -1,13 +1,10 @@
 import { useEffect, useEffectEvent, useRef } from 'react'
 import { toast } from 'sonner'
 import { nudgeFor } from '@/entities/agent-session'
+import { toastNoteOf, toastTitleOf } from './waiting/toast/toast'
 import { tellings } from './waiting/waiting'
 import type { Ledger, Telling, Wait } from './waiting/waiting.types'
 import { t } from '@lingui/core/macro'
-
-// The in-app cue is a passing word, not a card to be dismissed: the sidebar
-// row is what carries the state for as long as it stands.
-const TOAST_MS = 8_000
 
 function watching(): boolean {
   return document.visibilityState === 'visible' && document.hasFocus()
@@ -52,13 +49,20 @@ export function useWaiting(
       if (nudge !== null) window.desk.nudge(nudge.title, nudge.body)
       return
     }
+    // The reminder lands on the toast already standing rather than beside it,
+    // which is what keeps one wait to one toast however often it is raised.
     const held = raised.current.get(one.wait.chatId)
-    if (held !== undefined) toast.dismiss(held)
-    const named = one.wait.title.length > 0 ? one.wait.title : t`This chat`
+    const note = toastNoteOf(one.wait)
     raised.current.set(
       one.wait.chatId,
-      toast(one.again ? t`${named}: Still waiting for you` : t`${named}: Waiting for you`, {
-        duration: TOAST_MS,
+      toast(toastTitleOf(one.wait, one.again), {
+        // A run stopped for a person waits as long as they take, and a toast
+        // that leaves before they answer leaves the app saying nothing about a
+        // session that has stopped (#107). It goes when the ask is answered,
+        // which is what the clearing above does, or when they close it.
+        duration: Number.POSITIVE_INFINITY,
+        ...(note === undefined ? {} : { description: note }),
+        ...(held === undefined ? {} : { id: held }),
         action: { label: t`Open`, onClick: () => onOpen(one.wait.chatId) },
       }),
     )

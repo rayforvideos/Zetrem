@@ -23,7 +23,15 @@ const ENDERS = new Set(['.', '!', '?', '\n'])
 // flight, not a question left standing. A permission ask is explicit and holds
 // whatever anyone else is doing.
 export function waitingOn(conv: Settled, atWork: boolean): WaitingOn | null {
-  if (conv.permission !== null) return { kind: 'permission', said: conv.permission.toolName }
+  if (conv.permission !== null) {
+    return {
+      kind: 'permission',
+      said: conv.permission.toolName,
+      // What the card itself shows under the tool's name: the path or the
+      // command, and the whole line when the tool named neither.
+      target: conv.permission.detail || conv.permission.line,
+    }
+  }
   if (atWork) return null
   // 'waiting' is the one settled state with a live session behind it. A
   // restored transcript reads 'done', and a question inside one was either
@@ -35,10 +43,14 @@ export function waitingOn(conv: Settled, atWork: boolean): WaitingOn | null {
     (tool) => tool.line === ASK_TOOL || tool.line.startsWith(`${ASK_TOOL} `),
   )
   if (asked !== undefined) {
-    return { kind: 'question', said: questionIn(asked.input) || firstLine(last.text) }
+    return {
+      kind: 'question',
+      said: questionIn(asked.input) || firstLine(last.text),
+      target: '',
+    }
   }
   const said = questionEnding(last.text)
-  return said === null ? null : { kind: 'question', said }
+  return said === null ? null : { kind: 'question', said, target: '' }
 }
 
 // What names this particular wait. A permission carries the runtime's own

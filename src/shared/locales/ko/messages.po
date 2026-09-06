@@ -221,14 +221,6 @@ msgstr "{name}을(를) 켰습니다. 실행 중인 세션은 아직 부를 수 �
 msgid "{name} is over {max}MB, so it cannot be sent as a picture. Point at it by path instead."
 msgstr "{name}이(가) {max}MB를 넘어서 이미지로 보낼 수 없습니다. 대신 파일 경로로 알려 주세요."
 
-#: src/pages/workspace/model/session/useWaiting.ts:60
-msgid "{named}: Still waiting for you"
-msgstr "{named}: 아직 기다리는 중"
-
-#: src/pages/workspace/model/session/useWaiting.ts:60
-msgid "{named}: Waiting for you"
-msgstr "{named}: 당신을 기다리는 중"
-
 #: src/widgets/status-bar/lib/strip/strip.ts:47
 msgid "{percent}% used"
 msgstr "{percent}% 사용"
@@ -1817,7 +1809,7 @@ msgstr "에이전트가 이 메모가 필요한지 판단할 때 읽는 한 줄�
 msgid "One of you writes, one of you checks. Deal?"
 msgstr "한 명은 쓰고 한 명은 검토하고, 어때요?"
 
-#: src/pages/workspace/model/session/useWaiting.ts:62
+#: src/pages/workspace/model/session/useWaiting.ts:66
 msgid "Open"
 msgstr "열기"
 
@@ -2441,6 +2433,14 @@ msgstr "아직 답하는 중"
 msgid "Still signed in. Sign out did not take effect."
 msgstr "아직 로그인 상태입니다. 로그아웃이 되지 않았습니다."
 
+#: src/pages/workspace/model/session/waiting/toast/toast.ts:33
+msgid "Still waiting for your answer"
+msgstr "아직 답을 기다리는 중"
+
+#: src/pages/workspace/model/session/waiting/toast/toast.ts:31
+msgid "Still waiting for your permission"
+msgstr "아직 허가를 기다리는 중"
+
 #: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:36
 #: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:252
 msgid "Stock rules"
@@ -2749,10 +2749,6 @@ msgstr "이 컴퓨터의 모든 Claude Code CLI가 쓰는 계정이 바뀝니다
 msgid "this chat"
 msgstr "이 대화"
 
-#: src/pages/workspace/model/session/useWaiting.ts:57
-msgid "This chat"
-msgstr "이 대화"
-
 #: src/widgets/status-bar/lib/strip/strip.ts:67
 msgid "this chat {percent}%"
 msgstr "이 대화 {percent}%"
@@ -2944,6 +2940,7 @@ msgid "Waiting for you"
 msgstr "기다리는 제안"
 
 #: src/entities/agent-session/model/nudge/nudge.ts:16
+#: src/pages/workspace/model/session/waiting/toast/toast.ts:33
 #: src/widgets/team-sidebar/lib/live-mark/live-mark.ts:9
 msgid "Waiting for your answer"
 msgstr "답을 기다리는 중"
@@ -2952,6 +2949,7 @@ msgstr "답을 기다리는 중"
 msgid "Waiting for your approval"
 msgstr "승인을 기다리는 중입니다"
 
+#: src/pages/workspace/model/session/waiting/toast/toast.ts:31
 #: src/widgets/team-sidebar/lib/live-mark/live-mark.ts:8
 msgid "Waiting for your permission"
 msgstr "허가를 기다리는 중"

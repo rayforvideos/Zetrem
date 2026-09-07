@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { saidPlainly } from '@/entities/claude-cli'
 import type { ToolActivity } from '@/entities/conversation'
 import { heldCommand, toolNameOf, toolShape } from '@/entities/tool'
 import { cn } from '@/shared/lib/cn'
@@ -19,7 +20,7 @@ export function Tick({ tool, live, project }: TickProps) {
   const [override, setOverride] = useState<boolean | null>(null)
   const failed = tool.result?.isError === true
   const open = tickOpen(override, failed)
-  const said = [tool.result?.stdout, tool.result?.stderr].filter(Boolean).join('\n')
+  const said = saidPlainly([tool.result?.stdout, tool.result?.stderr].filter(Boolean).join('\n'))
   const output = spawnResult(tool.line) ? withoutPlumbing(said) : said
   const lines = output.split('\n')
   const shown = lines.slice(0, TOOL_OUTPUT_LINES).join('\n')

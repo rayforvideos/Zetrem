@@ -22,6 +22,12 @@
   --accent-foreground: oklch(0.15 0 0);
   --destructive: oklch(0.42 0.2 25);
 
+  /* Which permission, model and effort are set has to be legible across the
+     room, and the hover tint that used to mark them stood at 1.10:1 against
+     the track. This fill is picked to clear 3:1 on card in either scheme. */
+  --chosen: oklch(0.42 0 0);
+  --chosen-foreground: oklch(0.99 0 0);
+
   /* At L 0.93 the reddish hue leaves sRGB gamut around C 0.035, which caps how
      pink --removed-surface can get. */
   --added: oklch(0.48 0.13 150);
@@ -94,6 +100,9 @@
     --accent-foreground: oklch(0.97 0 0);
     --destructive: oklch(0.58 0.2 25);
 
+    --chosen: oklch(0.72 0 0);
+    --chosen-foreground: oklch(0.15 0 0);
+
     --added: oklch(0.78 0.16 150);
     --added-surface: oklch(0.28 0.07 150);
     --removed: oklch(0.72 0.17 20);
@@ -144,6 +153,8 @@
   --color-muted-foreground: var(--muted-foreground);
   --color-accent: var(--accent);
   --color-accent-foreground: var(--accent-foreground);
+  --color-chosen: var(--chosen);
+  --color-chosen-foreground: var(--chosen-foreground);
   --color-destructive: var(--destructive);
   --color-added: var(--added);
   --color-added-surface: var(--added-surface);

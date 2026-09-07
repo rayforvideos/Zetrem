@@ -19,8 +19,11 @@ const buttonVariants = cva(
         ghost:
           "hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50",
         link: "text-primary underline-offset-4 hover:underline",
+        // Quiet is a tone, not a veil: at 45% opacity a tool row came to
+        // 3.1:1, under what body text has to hold at rest. The muted token
+        // stays quiet and stays readable, and hover still lifts it.
         quiet:
-          "font-normal opacity-45 hover:opacity-100 focus-visible:opacity-100",
+          "font-normal text-muted-foreground hover:text-foreground focus-visible:text-foreground",
       },
       size: {
         default: "h-9 px-4 py-2 has-[>svg]:px-3",

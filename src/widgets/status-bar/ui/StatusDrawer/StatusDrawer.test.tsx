@@ -52,7 +52,8 @@ describe('StatusDrawer says where you are and what it costs', () => {
   it('names the folder and the model, the two things nothing else on screen says', () => {
     const html = draw()
     expect(html).toContain('/Users/sam/workspace/zetrem')
-    expect(html).toContain('claude-opus-5[1m]')
+    expect(html, 'the family, not the dated id the account resolved to').toContain('Opus')
+    expect(html).not.toContain('claude-opus-5[1m]')
   })
 
   it('gives context as plain numbers, since the bar hides them on a narrow window', () => {
@@ -82,13 +83,15 @@ describe('StatusDrawer says where you are and what it costs', () => {
     const html = draw(fresh)
     expect(html).not.toContain('Context')
     expect(html).not.toContain('Cost')
-    expect(html, 'the place stays where it was').toContain('claude-opus-5[1m]')
+    expect(html, 'the place stays where it was').toContain('Opus')
   })
 })
 
 describe('permission mode speaks only when it is not the ordinary one', () => {
   it('names a mode that lets the agent act without asking', () => {
-    expect(draw()).toContain('bypassPermissions')
+    const html = draw()
+    expect(html, "the app's word for it, not the flag the CLI answered with").toContain('Allow all')
+    expect(html).not.toContain('bypassPermissions')
   })
 
   it('stays quiet on the default, which is what the reader already assumes', () => {

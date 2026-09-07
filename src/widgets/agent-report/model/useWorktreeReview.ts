@@ -20,7 +20,7 @@ type Review = {
   cancel(): void
 }
 
-export function useWorktreeReview(agentId: string | undefined): Review {
+export function useWorktreeReview(agentId: string | undefined, who: string): Review {
   const [rows, setRows] = useState<DiffRow[] | null>(null)
   const [note, setNote] = useState('')
   const [landed, setLanded] = useState<Landed | null>(null)
@@ -47,7 +47,7 @@ export function useWorktreeReview(agentId: string | undefined): Review {
     }
     if (!found.ok) {
       setRows(null)
-      setNote(troubleLine(found.why))
+      setNote(troubleLine(found.why, who))
       return null
     }
     const shown = diffRows(found.value.diff)
@@ -89,7 +89,7 @@ export function useWorktreeReview(agentId: string | undefined): Review {
             return
           }
           if (!done.ok) {
-            setNote(troubleLine(done.why))
+            setNote(troubleLine(done.why, who))
             return
           }
           setRows(null)

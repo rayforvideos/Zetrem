@@ -1,5 +1,6 @@
 import { AgentSprite, personaOf } from '@/entities/teammate'
-import { toolShape } from '@/entities/tool'
+import { saidPlainly } from '@/entities/claude-cli'
+import { toolShape, toolWord } from '@/entities/tool'
 import type { ToolShape } from '@/entities/tool'
 import type { ToolActivity } from '@/entities/conversation'
 import { ToolIcon, changeCount, firstLineOf } from '@/entities/tool'
@@ -14,7 +15,8 @@ export function ToolLine({ tool, project }: { tool: ToolActivity; project: strin
   const name = toolNameOf(tool.line)
   const shape = nearShape(toolShape(name, tool.input), project)
   const failed = tool.result?.isError === true
-  const said = tool.result === null ? '' : [tool.result.stdout, tool.result.stderr].join('\n')
+  const said =
+    tool.result === null ? '' : saidPlainly([tool.result.stdout, tool.result.stderr].join('\n'))
   const changed = changeCount(tool)
 
   return (
@@ -107,6 +109,6 @@ function body(shape: ToolShape) {
     case 'todo':
       return <span className="text-muted-foreground">{t`Todo list`}</span>
     default:
-      return <span>{shape.name}</span>
+      return <span>{toolWord(shape.name)}</span>
   }
 }

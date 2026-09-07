@@ -3,6 +3,7 @@ import { isOutdated, updateCommand } from '@/entities/agent-session'
 import type { StatusState } from '@/entities/agent-session'
 import { Button } from '@/shared/ui/button'
 import { shortName } from '@/entities/connector'
+import { modeWordFromCli, modelWordFromCli } from '@/entities/settings'
 import type { Connector } from '@/entities/connector'
 import { useScrollState } from '@/shared/lib/measure/scroll-state/useScrollState'
 import { useAppUpdateCheck } from '../../model/useAppUpdateCheck'
@@ -87,6 +88,14 @@ export function StatusDrawer({
   const stale = isOutdated(update?.current ?? null, update?.latest ?? null)
   const byHand = updateCommand(update?.managedBy ?? null)
   const hasRun = cost.usd > 0 || context.used > 0
+  // The CLI's own words for these two were reaching the screen beside labels
+  // the app had already translated. A value it has no word for is left out
+  // rather than shown raw.
+  const model = session === null ? null : modelWordFromCli(session.model)
+  const mode =
+    session === null || !loud(session.permissionMode)
+      ? null
+      : modeWordFromCli(session.permissionMode)
 
   const wired = checked ? [...reachable(statusState, connectors)] : []
   const trouble = wired.filter(([, state]) => state !== 'connected')
@@ -106,14 +115,12 @@ export function StatusDrawer({
         {(session !== null || hasRun) && (
           <Card>
             {session && known(session.cwd) && <Row label={t`Folder`}>{session.cwd}</Row>}
-            {session && <Row label={t`Model`}>{session.model}</Row>}
-            {session && loud(session.permissionMode) && (
-              <Row label={t`Permission`}>{session.permissionMode}</Row>
-            )}
+            {model !== null && <Row label={t`Model`}>{model}</Row>}
+            {mode !== null && <Row label={t`Permission`}>{mode}</Row>}
             {hasRun && (
               <Row label={t`Context`}>
                 {n(context.used)}
-                {context.window ? ` / ${n(context.window)}` : ' (window unknown)'}
+                {context.window ? ` / ${n(context.window)}` : ` ${t`(window unknown)`}`}
               </Row>
             )}
           </Card>

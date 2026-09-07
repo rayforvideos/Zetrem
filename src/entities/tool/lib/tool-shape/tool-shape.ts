@@ -1,3 +1,4 @@
+import { plural, t } from '@lingui/core/macro'
 import type { ToolShape } from './tool-shape.types'
 
 function str(value: unknown): string | null {
@@ -70,24 +71,30 @@ export function toolShape(name: string, input: unknown): ToolShape {
   return plain
 }
 
+// A count is only half a note; the unit is the other half, and it was left in
+// English while the row around it was translated. The same wording the
+// conversation uses is repeated here rather than shared, because an entity
+// cannot reach into a widget for it, and one message id serves both.
 export function resultNote(shape: ToolShape, stdout: string | null): string | null {
   if (stdout === null) return null
   if (shape.kind === 'file' && shape.verb === 'read') {
     // A file that ends in a newline has no empty last line to count.
     const body = stdout.replace(/\n$/, '')
     const lines = body.length === 0 ? 0 : body.split('\n').length
-    return lines > 0 ? `${lines} lines` : null
+    return lines > 0 ? plural(lines, { one: '# line', other: '# lines' }) : null
   }
   if (shape.kind === 'search') {
     const body = stdout.trim()
     const hits = body.length === 0 ? 0 : body.split('\n').length
-    return hits === 0 ? 'none' : `${hits} hits`
+    return hits === 0 ? t`none` : plural(hits, { one: '# hit', other: '# hits' })
   }
   if (shape.kind === 'command') {
     const body = stdout.trim()
-    if (body.length === 0) return 'no output'
+    if (body.length === 0) return t`no output`
     const lines = body.split('\n')
-    return lines.length === 1 ? clipNote(lines[0]!) : `${lines.length} lines`
+    return lines.length === 1
+      ? clipNote(lines[0]!)
+      : plural(lines.length, { one: '# line', other: '# lines' })
   }
   return null
 }

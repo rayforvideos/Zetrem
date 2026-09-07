@@ -34,14 +34,22 @@ describe('what the report says when there is nothing to show', () => {
   })
 
   it('hands git its own words on, rather than a guess at what went wrong', () => {
-    expect(troubleLine({ code: 'cli', said: 'fatal: bad revision' })).toContain(
+    expect(troubleLine({ code: 'cli', said: 'fatal: bad revision' }, 'Explore')).toContain(
       'fatal: bad revision',
     )
   })
 
-  it('names the branch it looked for when nothing of the work is left', () => {
-    expect(troubleLine({ code: 'failed', said: 'worktree-agent-abc123' })).toContain(
-      'worktree-agent-abc123',
+  it('names the teammate, not the branch, when nothing of the work is left', () => {
+    const said = troubleLine({ code: 'failed', said: 'worktree-agent-abc123' }, 'Explore')
+    expect(said).toContain('Explore')
+    expect(said, 'a branch nobody named is not how the reader knows this work').not.toContain(
+      'worktree-agent',
+    )
+  })
+
+  it('keeps an internal code out of the sentence the same way', () => {
+    expect(troubleLine({ code: 'failed', said: 'no-project' }, 'Explore')).not.toContain(
+      'no-project',
     )
   })
 
@@ -50,7 +58,7 @@ describe('what the report says when there is nothing to show', () => {
   })
 
   it('says plainly that an id it will not act on is one it will not act on', () => {
-    const said = troubleLine({ code: 'refused', said: 'agent-id' })
+    const said = troubleLine({ code: 'refused', said: 'agent-id' }, 'Explore')
     expect(said.length).toBeGreaterThan(0)
     expect(said).not.toContain('agent-id')
   })

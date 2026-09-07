@@ -1,7 +1,8 @@
 import type { AgentSession } from '@/entities/agent-session'
 import { useScrollState } from '@/shared/lib/measure/scroll-state/useScrollState'
 import { tally } from '@/entities/tool'
-import { AgentSprite, personaOf } from '@/entities/teammate'
+import { modelWordFromCli } from '@/entities/settings'
+import { AgentSprite, personaOf, useModel } from '@/entities/teammate'
 import { cn } from '@/shared/lib/cn'
 import {
   AlertDialog,
@@ -61,7 +62,13 @@ export function AgentReport({
   const counted = tally(session.stream.map((call) => call.line))
   const ranMs = (session.endedAtMs ?? nowMs) - session.startedAtMs
   const lead = leadOf(session.headline, session.transcript)
-  const review = useWorktreeReview(session.agentId)
+  // A teammate's run carries the placeholder the crew store puts there, not a
+  // model id, so the header said "subagent" where it meant to name a model. The
+  // crew knows which model this teammate is set to, which is the answer the
+  // header was reaching for.
+  const crewModel = useModel(session.subagentType)
+  const model = modelWordFromCli(session.model) ?? modelWordFromCli(crewModel ?? '')
+  const review = useWorktreeReview(session.agentId, persona.name)
 
   return (
     <div
@@ -80,8 +87,8 @@ export function AgentReport({
           <span className="flex flex-col">
             <span className="text-base leading-tight">{persona.name}</span>
             <span className="font-mono text-xs text-muted-foreground">
-              {stateWord(session.status)} · {Math.max(0, Math.round(ranMs / 1000))}s ·{' '}
-              {session.model}
+              {stateWord(session.status)} · {Math.max(0, Math.round(ranMs / 1000))}s
+              {model !== null && ` · ${model}`}
             </span>
           </span>
         </div>

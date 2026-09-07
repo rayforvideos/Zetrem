@@ -28,6 +28,9 @@ export type AgentEventRefs = {
   ownedBash: Map<string, string>
   // toolUseId → taskId announced before the child opened (was module state in crew).
   pendingTasks: Map<string, string>
+  // Children whose done notice arrived while a shell of theirs still ran: the
+  // tile was kept working for the shell, and is parked when the shell ends.
+  heldReports: Set<string>
   onModelRefused(model: ModelChoice): void
   onLimit(limit: RateLimit): void
 }

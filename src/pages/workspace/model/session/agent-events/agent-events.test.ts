@@ -1930,3 +1930,87 @@ describe('a teammate whose run failed or was killed is over, not still working',
     expect(held?.headline).toContain('Failed')
   })
 })
+
+describe('a teammate that reports while its shell still runs (#119)', () => {
+  function hire(refs: AgentEventRefs): void {
+    applyAgentEvent({ type: 'stream', line: 'Agent verify', toolUseId: 'toolu_v', input: {} }, refs)
+    applyAgentEvent(
+      {
+        type: 'childOpen',
+        toolUseId: 'toolu_v',
+        label: 'Verify',
+        subagentType: 'general-purpose',
+        prompt: 'Verify it',
+        background: true,
+      },
+      refs,
+    )
+    applyAgentEvent(
+      {
+        type: 'childStream',
+        toolUseId: 'toolu_v',
+        callId: 'call_sh',
+        line: 'Bash gh run watch',
+        input: null,
+      },
+      refs,
+    )
+    applyAgentEvent(
+      {
+        type: 'childStarted',
+        toolUseId: 'call_sh',
+        taskId: 'bash-1',
+        taskType: 'local_bash',
+        description: 'gh run watch',
+      },
+      refs,
+    )
+  }
+
+  it('is parked the moment its last shell ends, since nothing else will come', () => {
+    const refs = fakeRefs()
+    hire(refs)
+    applyAgentEvent(
+      {
+        type: 'childNotified',
+        toolUseId: 'toolu_v',
+        taskId: 'task-v',
+        summary: 'waiting on the run',
+        done: true,
+        failed: false,
+      },
+      refs,
+    )
+    expect(refs.stores.children.get().find((s) => s.id === 'toolu_v')?.status).toBe('working')
+
+    applyAgentEvent(
+      {
+        type: 'childNotified',
+        toolUseId: 'call_sh',
+        taskId: 'bash-1',
+        summary: '',
+        done: true,
+        failed: false,
+      },
+      refs,
+    )
+    expect(refs.stores.children.get().find((s) => s.id === 'toolu_v')?.status).toBe('reported')
+  })
+
+  it('stays working when the shell ends before the report, as before', () => {
+    const refs = fakeRefs()
+    hire(refs)
+    applyAgentEvent(
+      {
+        type: 'childNotified',
+        toolUseId: 'call_sh',
+        taskId: 'bash-1',
+        summary: '',
+        done: true,
+        failed: false,
+      },
+      refs,
+    )
+    expect(refs.stores.children.get().find((s) => s.id === 'toolu_v')?.status).toBe('working')
+  })
+})

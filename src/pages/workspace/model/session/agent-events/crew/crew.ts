@@ -1,6 +1,6 @@
 import { wake } from './wake'
 import { ownsRunningBash } from './crew-bash'
-export { adoptChildBash, releaseChildBash } from './crew-bash'
+export { adoptChildBash, ownsRunningBash, releaseChildBash } from './crew-bash'
 import { addressee, whose } from './addressee'
 import { absorbs, resumedAgent } from '@/entities/claude-cli'
 import type { AgentSession, SessionStore, TranscriptEntry } from '@/entities/agent-session'
@@ -133,6 +133,10 @@ export function applyCrewEvent(turn: ClaudeTurnEvent, refs: AgentEventRefs): voi
       // Done while the agent's own shell still runs would let the silence rule
       // close its tile mid-job.
       const parked = turn.done && !ownsRunningBash(refs, id)
+      // A report held back for a running shell is remembered, so the shell's
+      // end can park the tile: no further word about this child will come.
+      if (turn.done && !parked) refs.heldReports.add(id)
+      if (parked) refs.heldReports.delete(id)
       children.patch(id, { status: parked ? 'reported' : 'working' })
       return
     }
@@ -268,6 +272,7 @@ function note(children: SessionStore, toolUseId: string, tool: string): void {
 export function forgetCrew(refs: AgentEventRefs): void {
   refs.ownedBash.clear()
   refs.pendingTasks.clear()
+  refs.heldReports.clear()
 }
 
 // Done plus a task id means the CLI itself said this child ended. Without a

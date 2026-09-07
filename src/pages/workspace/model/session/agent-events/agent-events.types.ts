@@ -1,6 +1,7 @@
 import type { ChatStatus, SessionStore } from '@/entities/agent-session'
 import type { ModelChoice, RateLimit } from '@/entities/claude-cli'
 import type { Conversation } from '../../chat/conversation/conversation.types'
+import type { CrewLog } from './crew-log/crew-log.types'
 
 type Sent = { to: string; message: string }
 
@@ -31,6 +32,10 @@ export type AgentEventRefs = {
   // Children whose done notice arrived while a shell of theirs still ran: the
   // tile was kept working for the shell, and is parked when the shell ends.
   heldReports: Set<string>
+  // Every decision the crew rules took about a tile, in memory, for as long as
+  // the chat lives. A tile that stayed working after the work was done is then
+  // a paste rather than a guess.
+  crewLog: CrewLog
   onModelRefused(model: ModelChoice): void
   onLimit(limit: RateLimit): void
 }

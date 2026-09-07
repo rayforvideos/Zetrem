@@ -17,6 +17,7 @@ function bar(props: Partial<Parameters<typeof TeamSidebar>[0]> = {}): string {
         onRename: () => {},
         onFile: () => {},
         onFileMany: () => {},
+        onCopyDiagnostics: () => {},
       }}
       team={{
         members: [],
@@ -146,6 +147,7 @@ describe('chats gathered into folders, without hiding the rest', () => {
         onRename: () => {},
         onFile: () => {},
         onFileMany: () => {},
+        onCopyDiagnostics: () => {},
       },
     })
     expect(html).toContain('data-folder="출고"')
@@ -164,6 +166,7 @@ describe('chats gathered into folders, without hiding the rest', () => {
         onRename: () => {},
         onFile: () => {},
         onFileMany: () => {},
+        onCopyDiagnostics: () => {},
       },
     })
     expect(html).toContain('loose')
@@ -181,6 +184,7 @@ describe('chats gathered into folders, without hiding the rest', () => {
         onRename: () => {},
         onFile: () => {},
         onFileMany: () => {},
+        onCopyDiagnostics: () => {},
       },
     })
     expect(html).toContain('aria-expanded="true"')
@@ -198,6 +202,7 @@ describe('chats gathered into folders, without hiding the rest', () => {
         onRename: () => {},
         onFile: () => {},
         onFileMany: () => {},
+        onCopyDiagnostics: () => {},
       },
     })
     expect(html).not.toContain('data-folder')
@@ -224,6 +229,7 @@ describe('a way out when the folders stop helping', () => {
         onRename: () => {},
         onFile: () => {},
         onFileMany: () => {},
+        onCopyDiagnostics: () => {},
       },
     })
   const many = (folder = '') => Array.from({ length: ROOMY + 1 }, (_, at) => chat(`c${at}`, folder))
@@ -268,6 +274,7 @@ describe('carrying a chat onto another to make a place for both', () => {
         onRename: () => {},
         onFile: () => {},
         onFileMany: () => {},
+        onCopyDiagnostics: () => {},
       },
     })
 
@@ -300,6 +307,7 @@ describe('a chat says what it is doing without being opened', () => {
         onRename: () => {},
         onFile: () => {},
         onFileMany: () => {},
+        onCopyDiagnostics: () => {},
       },
     })
 

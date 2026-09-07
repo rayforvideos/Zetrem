@@ -13,11 +13,11 @@ msgstr ""
 "Language-Team: \n"
 "Plural-Forms: \n"
 
-#: src/pages/workspace/model/session/agent-events/agent-events.ts:181
+#: src/pages/workspace/model/session/agent-events/agent-events.ts:220
 msgid " · on overage"
 msgstr " · on overage"
 
-#: src/pages/workspace/model/session/agent-events/agent-events.ts:179
+#: src/pages/workspace/model/session/agent-events/agent-events.ts:218
 msgid " {pct}% used,"
 msgstr " {pct}% used,"
 
@@ -97,7 +97,7 @@ msgid "{0} left"
 msgstr "{0} left"
 
 #. placeholder {0}: limitKindLabel(limit.kind)
-#: src/pages/workspace/model/session/agent-events/agent-events.ts:182
+#: src/pages/workspace/model/session/agent-events/agent-events.ts:221
 msgid "{0} limit{share} resets {when}{overage}"
 msgstr "{0} limit{share} resets {when}{overage}"
 
@@ -153,7 +153,7 @@ msgstr "{0}m ago"
 msgid "{back} teammates"
 msgstr "{back} teammates"
 
-#: src/pages/workspace/model/session/agent-events/agent-events.ts:192
+#: src/pages/workspace/model/session/agent-events/agent-events.ts:231
 msgid "{base}. Earlier turns live on as a summary."
 msgstr "{base}. Earlier turns live on as a summary."
 
@@ -230,11 +230,11 @@ msgstr "{n}m ago"
 msgid "{name} can be called this session"
 msgstr "{name} can be called this session"
 
-#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:274
+#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:276
 msgid "{name} is off. The running session keeps them until it ends."
 msgstr "{name} is off. The running session keeps them until it ends."
 
-#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:273
+#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:275
 msgid "{name} is on. The running session cannot call them yet."
 msgstr "{name} is on. The running session cannot call them yet."
 
@@ -568,7 +568,7 @@ msgid "any moment"
 msgstr "any moment"
 
 #. placeholder {0}: turn.metrics.apiErrorStatus
-#: src/pages/workspace/model/session/agent-events/agent-events.ts:135
+#: src/pages/workspace/model/session/agent-events/agent-events.ts:174
 msgid "API error {0}"
 msgstr "API error {0}"
 
@@ -613,7 +613,7 @@ msgstr "Attach a file"
 msgid "Author"
 msgstr "Author"
 
-#: src/pages/workspace/model/session/agent-events/agent-events.ts:199
+#: src/pages/workspace/model/session/agent-events/agent-events.ts:238
 msgid "auto"
 msgstr "auto"
 
@@ -676,7 +676,7 @@ msgstr "Can't connect"
 #: src/widgets/library/ui/NoteList/NoteList.tsx:273
 #: src/widgets/library/ui/NoteReader/NoteReader.tsx:202
 #: src/widgets/setup/ui/SetupPane/SetupPane.tsx:233
-#: src/widgets/team-sidebar/ui/ChatList/ChatRow.tsx:246
+#: src/widgets/team-sidebar/ui/ChatList/ChatRow.tsx:250
 #: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:393
 #: src/widgets/team-sidebar/ui/MemberMenu/MemberMenu.tsx:66
 #: src/widgets/team-sidebar/ui/ProjectSwitcher/ProjectSwitcher.tsx:145
@@ -697,7 +697,7 @@ msgstr "Cart totals and rounding"
 msgid "Change"
 msgstr "Change"
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:182
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:183
 msgid "Change account, project, and permissions"
 msgstr "Change account, project, and permissions"
 
@@ -776,17 +776,17 @@ msgstr "Claude in Chrome"
 msgid "Clear"
 msgstr "Clear"
 
-#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:125
+#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:140
 #: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:566
 msgid "Close"
 msgstr "Close"
 
 #. placeholder {0}: persona ? persona.name : session.label
-#: src/widgets/tile-deck/ui/layers/Headline/Headline.tsx:45
+#: src/widgets/tile-deck/ui/layers/Headline/Headline.tsx:81
 msgid "Close {0}"
 msgstr "Close {0}"
 
-#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:124
+#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:139
 msgid "Close report"
 msgstr "Close report"
 
@@ -794,7 +794,7 @@ msgstr "Close report"
 msgid "Close the library"
 msgstr "Close the library"
 
-#: src/widgets/tile-deck/ui/layers/Headline/Headline.tsx:46
+#: src/widgets/tile-deck/ui/layers/Headline/Headline.tsx:82
 msgid "Close this tile. The run stays in the sidebar."
 msgstr "Close this tile. The run stays in the sidebar."
 
@@ -859,9 +859,15 @@ msgstr "Context"
 msgid "Continue"
 msgstr "Continue"
 
-#: src/pages/workspace/model/session/agent-events/agent-events.ts:190
+#: src/pages/workspace/model/session/agent-events/agent-events.ts:229
 msgid "Conversation compacted here"
 msgstr "Conversation compacted here"
+
+#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:136
+#: src/widgets/team-sidebar/ui/ChatList/ChatRow.tsx:232
+#: src/widgets/tile-deck/ui/layers/Headline/Headline.tsx:70
+msgid "Copy diagnostics"
+msgstr "Copy diagnostics"
 
 #. placeholder {0}: said(verb)
 #: src/pages/workspace/model/extensions/usePlugins.ts:72
@@ -883,6 +889,10 @@ msgstr "Could not bring over Claude Desktop"
 #: src/widgets/status-bar/model/useAppUpdateCheck.ts:29
 msgid "Could not check for updates."
 msgstr "Could not check for updates."
+
+#: src/pages/workspace/model/session/useDiagnostics.ts:27
+msgid "Could not copy the diagnostics"
+msgstr "Could not copy the diagnostics"
 
 #: src/pages/workspace/model/library/useLibraryProposals.ts:74
 msgid "Could not file \"{title}\". Check its title and folder in the library."
@@ -1002,7 +1012,7 @@ msgstr "Could not remove the account."
 msgid "Could not rename that chat"
 msgstr "Could not rename that chat"
 
-#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:100
+#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:101
 msgid "Could not reopen your last project"
 msgstr "Could not reopen your last project"
 
@@ -1051,12 +1061,12 @@ msgid "Delete"
 msgstr "Delete"
 
 #. placeholder {0}: named(chat.title)
-#: src/widgets/team-sidebar/ui/ChatList/ChatRow.tsx:240
+#: src/widgets/team-sidebar/ui/ChatList/ChatRow.tsx:244
 msgid "Delete “{0}”?"
 msgstr "Delete “{0}”?"
 
-#: src/widgets/team-sidebar/ui/ChatList/ChatRow.tsx:231
-#: src/widgets/team-sidebar/ui/ChatList/ChatRow.tsx:248
+#: src/widgets/team-sidebar/ui/ChatList/ChatRow.tsx:235
+#: src/widgets/team-sidebar/ui/ChatList/ChatRow.tsx:252
 msgid "Delete chat"
 msgstr "Delete chat"
 
@@ -1090,7 +1100,11 @@ msgstr "Deny"
 msgid "Description"
 msgstr "Description"
 
-#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:180
+#: src/pages/workspace/model/session/useDiagnostics.ts:26
+msgid "Diagnostics copied"
+msgstr "Diagnostics copied"
+
+#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:195
 msgid "Diff"
 msgstr "Diff"
 
@@ -1150,7 +1164,7 @@ msgstr "Drop this stash"
 msgid "Drop this stash?"
 msgstr "Drop this stash?"
 
-#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:106
+#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:110
 msgid "Earlier run"
 msgstr "Earlier run"
 
@@ -1172,7 +1186,7 @@ msgstr "Edit a file"
 msgid "Edit this file?"
 msgstr "Edit this file?"
 
-#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:135
+#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:150
 msgid "Edited"
 msgstr "Edited"
 
@@ -1241,7 +1255,7 @@ msgstr "failed"
 msgid "Failed"
 msgstr "Failed"
 
-#: src/pages/workspace/model/session/agent-events/crew/crew.ts:135
+#: src/pages/workspace/model/session/agent-events/crew/crew.ts:210
 msgid "Failed: the run stopped before it was done"
 msgstr "Failed: the run stopped before it was done"
 
@@ -1279,8 +1293,8 @@ msgstr "Files in this commit"
 msgid "Files read, commands run, edits made. Each one shows up as it happens, not as a summary afterwards."
 msgstr "Files read, commands run, edits made. Each one shows up as it happens, not as a summary afterwards."
 
-#: src/widgets/team-sidebar/ui/ChatList/ChatList.tsx:92
-#: src/widgets/team-sidebar/ui/ChatList/ChatList.tsx:93
+#: src/widgets/team-sidebar/ui/ChatList/ChatList.tsx:94
+#: src/widgets/team-sidebar/ui/ChatList/ChatList.tsx:95
 msgid "Find a chat"
 msgstr "Find a chat"
 
@@ -1296,14 +1310,14 @@ msgstr "Finish signing in to {name} in the browser. The next session picks it up
 msgid "Folder"
 msgstr "Folder"
 
-#: src/widgets/team-sidebar/ui/ChatList/ChatRow.tsx:68
+#: src/widgets/team-sidebar/ui/ChatList/ChatRow.tsx:69
 msgid "Folder for both"
 msgstr "Folder for both"
 
 #: src/widgets/library/ui/NoteList/NoteList.tsx:129
 #: src/widgets/library/ui/NoteList/NoteList.tsx:130
-#: src/widgets/team-sidebar/ui/ChatList/ChatRow.tsx:86
 #: src/widgets/team-sidebar/ui/ChatList/ChatRow.tsx:87
+#: src/widgets/team-sidebar/ui/ChatList/ChatRow.tsx:88
 msgid "Folder name"
 msgstr "Folder name"
 
@@ -1412,7 +1426,7 @@ msgstr "Hard problems. Much slower"
 msgid "Held up"
 msgstr "Held up"
 
-#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:195
+#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:197
 msgid "Hide team sidebar"
 msgstr "Hide team sidebar"
 
@@ -1502,11 +1516,11 @@ msgstr "just now"
 msgid "Keep going"
 msgstr "Keep going"
 
-#: src/widgets/team-sidebar/ui/ChatList/ChatRow.tsx:208
+#: src/widgets/team-sidebar/ui/ChatList/ChatRow.tsx:209
 msgid "Keep in"
 msgstr "Keep in"
 
-#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:218
+#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:233
 #: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:1029
 #: src/widgets/setup/ui/MemoryField/MemoryField.tsx:154
 msgid "Keep it"
@@ -1528,7 +1542,7 @@ msgstr "Language"
 msgid "Later"
 msgstr "Later"
 
-#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:117
+#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:121
 msgid "Later run"
 msgstr "Later run"
 
@@ -1581,7 +1595,7 @@ msgstr "Low"
 msgid "Manage"
 msgstr "Manage"
 
-#: src/pages/workspace/model/session/agent-events/agent-events.ts:200
+#: src/pages/workspace/model/session/agent-events/agent-events.ts:239
 msgid "manual"
 msgstr "manual"
 
@@ -1633,7 +1647,7 @@ msgstr "Message your team"
 msgid "Model"
 msgstr "Model"
 
-#: src/pages/workspace/ui/gates/ConversationGate.tsx:106
+#: src/pages/workspace/ui/gates/ConversationGate.tsx:107
 msgid "Model changed. The running session keeps its model."
 msgstr "Model changed. The running session keeps its model."
 
@@ -1646,9 +1660,10 @@ msgstr "Modified"
 #. placeholder {0}: named(chat.title)
 #: src/widgets/setup/ui/PluginShelf/ConnectorsTab.tsx:101
 #: src/widgets/setup/ui/PluginShelf/InstalledTab.tsx:65
-#: src/widgets/team-sidebar/ui/ChatList/ChatRow.tsx:199
+#: src/widgets/team-sidebar/ui/ChatList/ChatRow.tsx:200
 #: src/widgets/team-sidebar/ui/ChatList/FolderSection.tsx:121
 #: src/widgets/team-sidebar/ui/ProjectSwitcher/ProjectSwitcher.tsx:88
+#: src/widgets/tile-deck/ui/layers/Headline/Headline.tsx:61
 msgid "More for {0}"
 msgstr "More for {0}"
 
@@ -1665,7 +1680,7 @@ msgstr "More options for the folder {name}"
 msgid "Name"
 msgstr "Name"
 
-#: src/widgets/team-sidebar/ui/ChatList/ChatRow.tsx:67
+#: src/widgets/team-sidebar/ui/ChatList/ChatRow.tsx:68
 msgid "Name the folder for these two chats"
 msgstr "Name the folder for these two chats"
 
@@ -1699,7 +1714,7 @@ msgid "New branch name"
 msgstr "New branch name"
 
 #: src/widgets/team-sidebar/lib/named/named.ts:4
-#: src/widgets/team-sidebar/ui/ChatList/ChatList.tsx:80
+#: src/widgets/team-sidebar/ui/ChatList/ChatList.tsx:82
 msgid "New chat"
 msgstr "New chat"
 
@@ -1707,7 +1722,7 @@ msgstr "New chat"
 msgid "New folder"
 msgstr "New folder"
 
-#: src/widgets/team-sidebar/ui/ChatList/ChatRow.tsx:219
+#: src/widgets/team-sidebar/ui/ChatList/ChatRow.tsx:220
 msgid "New folder…"
 msgstr "New folder…"
 
@@ -1731,7 +1746,7 @@ msgstr "Next"
 msgid "No account limits reported"
 msgstr "No account limits reported"
 
-#: src/widgets/team-sidebar/ui/ChatList/ChatList.tsx:118
+#: src/widgets/team-sidebar/ui/ChatList/ChatList.tsx:120
 msgid "No chat by that name"
 msgstr "No chat by that name"
 
@@ -1742,6 +1757,10 @@ msgstr "No commits here yet. The graph starts with the first one."
 #: src/widgets/setup/ui/PluginShelf/ConnectorsTab.tsx:58
 msgid "No connectors yet. Add one below, or bring over what Claude Desktop already has."
 msgstr "No connectors yet. Add one below, or bring over what Claude Desktop already has."
+
+#: src/pages/workspace/model/session/useDiagnostics.ts:20
+msgid "No diagnostics for that chat: it is not open"
+msgstr "No diagnostics for that chat: it is not open"
 
 #: src/pages/workspace/model/team/useAgentDefs.ts:117
 msgid "No handler registered"
@@ -1919,7 +1938,7 @@ msgstr "Permission"
 msgid "Permissions"
 msgstr "Permissions"
 
-#: src/pages/workspace/ui/gates/ConversationGate.tsx:102
+#: src/pages/workspace/ui/gates/ConversationGate.tsx:103
 msgid "Permissions changed. The running session follows the old ones."
 msgstr "Permissions changed. The running session follows the old ones."
 
@@ -1935,7 +1954,7 @@ msgstr "Pick a note"
 msgid "Pick a project first"
 msgstr "Pick a project first"
 
-#: src/pages/workspace/model/session/agent-events/crew/crew.ts:243
+#: src/pages/workspace/model/session/agent-events/crew/crew.ts:363
 msgid "Picked up where they left off"
 msgstr "Picked up where they left off"
 
@@ -1997,7 +2016,7 @@ msgstr "Pushed."
 msgid "Quick answers. Least thinking, cheapest"
 msgstr "Quick answers. Least thinking, cheapest"
 
-#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:136
+#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:151
 msgid "Ran"
 msgstr "Ran"
 
@@ -2017,7 +2036,7 @@ msgstr "Reach out to the web?"
 msgid "Reach the web"
 msgstr "Reach the web"
 
-#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:134
+#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:149
 msgid "Read"
 msgstr "Read"
 
@@ -2140,12 +2159,12 @@ msgid "Removed"
 msgstr "Removed"
 
 #: src/widgets/library/ui/NoteList/NoteList.tsx:238
-#: src/widgets/team-sidebar/ui/ChatList/ChatRow.tsx:206
+#: src/widgets/team-sidebar/ui/ChatList/ChatRow.tsx:207
 #: src/widgets/team-sidebar/ui/ChatList/FolderSection.tsx:128
 msgid "Rename"
 msgstr "Rename"
 
-#: src/widgets/team-sidebar/ui/ChatList/ChatRow.tsx:108
+#: src/widgets/team-sidebar/ui/ChatList/ChatRow.tsx:109
 msgid "Rename chat"
 msgstr "Rename chat"
 
@@ -2211,14 +2230,14 @@ msgstr "Reviewer"
 msgid "Reviews a change before it ships"
 msgstr "Reviews a change before it ships"
 
-#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:189
-#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:219
+#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:204
+#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:234
 msgid "Roll back"
 msgstr "Roll back"
 
 #. placeholder {0}: at + 1
 #. placeholder {1}: runs.length
-#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:111
+#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:115
 msgid "run {0} of {1}"
 msgstr "run {0} of {1}"
 
@@ -2295,7 +2314,7 @@ msgstr "Search the library"
 msgid "Search tools"
 msgstr "Search tools"
 
-#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:137
+#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:152
 msgid "Searched"
 msgstr "Searched"
 
@@ -2324,7 +2343,7 @@ msgstr "Session"
 msgid "Session details"
 msgstr "Session details"
 
-#: src/pages/workspace/model/session/chat-sessions/chat-session/chat-session.ts:236
+#: src/pages/workspace/model/session/chat-sessions/chat-session/chat-session.ts:240
 msgid "Session restarted. The next message picks the conversation back up with your team as it is now."
 msgstr "Session restarted. The next message picks the conversation back up with your team as it is now."
 
@@ -2336,7 +2355,7 @@ msgstr "Set a few things and your agents get to work!"
 msgid "Set for everyone on your account. They cannot be removed or turned off here."
 msgstr "Set for everyone on your account. They cannot be removed or turned off here."
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:184
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:185
 msgid "Settings"
 msgstr "Settings"
 
@@ -2364,7 +2383,7 @@ msgstr "Shift+Enter starts a new line. Off, sending takes the modifier key with 
 msgid "Show less"
 msgstr "Show less"
 
-#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:195
+#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:197
 msgid "Show team sidebar"
 msgstr "Show team sidebar"
 
@@ -2483,7 +2502,7 @@ msgstr "Star it"
 msgid "Start"
 msgstr "Start"
 
-#: src/widgets/team-sidebar/ui/ChatList/ChatList.tsx:77
+#: src/widgets/team-sidebar/ui/ChatList/ChatList.tsx:79
 msgid "Start a conversation from scratch"
 msgstr "Start a conversation from scratch"
 
@@ -2506,6 +2525,11 @@ msgstr "Stay here"
 #: src/widgets/team-sidebar/lib/live-mark/live-mark.ts:7
 msgid "Still replying"
 msgstr "Still replying"
+
+#. placeholder {0}: runningFor(elapsedMs)
+#: src/widgets/tile-deck/ui/layers/NowStage/NowStage.tsx:50
+msgid "still running · {0}"
+msgstr "still running · {0}"
 
 #: src/pages/workspace/model/account/useAuth.ts:168
 msgid "Still signed in. Sign out did not take effect."
@@ -2585,7 +2609,7 @@ msgid "Take everything out"
 msgstr "Take everything out"
 
 #. placeholder {0}: chat.folder
-#: src/widgets/team-sidebar/ui/ChatList/ChatRow.tsx:224
+#: src/widgets/team-sidebar/ui/ChatList/ChatRow.tsx:225
 msgid "Take out of {0}"
 msgstr "Take out of {0}"
 
@@ -2719,7 +2743,7 @@ msgstr "the next steps"
 msgid "The note is deleted from the library. This cannot be undone."
 msgstr "The note is deleted from the library. This cannot be undone."
 
-#: src/pages/workspace/model/session/agent-events/crew/crew.ts:209
+#: src/pages/workspace/model/session/agent-events/crew/crew.ts:319
 msgid "the orchestrator"
 msgstr "the orchestrator"
 
@@ -2765,7 +2789,7 @@ msgstr "The running session keeps its model and effort. This applies from the ne
 msgid "The running session keeps the library. Agents stop seeing it from the next one."
 msgstr "The running session keeps the library. Agents stop seeing it from the next one."
 
-#: src/widgets/team-sidebar/ui/ChatList/ChatRow.tsx:242
+#: src/widgets/team-sidebar/ui/ChatList/ChatRow.tsx:246
 msgid "The saved conversation is deleted. This cannot be undone."
 msgstr "The saved conversation is deleted. This cannot be undone."
 
@@ -2906,7 +2930,7 @@ msgstr "This teammate changed no files."
 msgid "This teammate has no branch Zetrem can look up."
 msgstr "This teammate has no branch Zetrem can look up."
 
-#: src/pages/workspace/model/session/agent-events/agent-events.ts:207
+#: src/pages/workspace/model/session/agent-events/agent-events.ts:246
 msgid "This turn: {out} out · {seconds}s"
 msgstr "This turn: {out} out · {seconds}s"
 
@@ -3100,12 +3124,12 @@ msgstr "What the library is"
 msgid "What the session brings"
 msgstr "What the session brings"
 
-#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:171
+#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:186
 msgid "What they changed"
 msgstr "What they changed"
 
 #: src/widgets/agent-report/ui/CallStream/CallStream.tsx:11
-#: src/widgets/tile-deck/ui/AgentTile/AgentTile.tsx:93
+#: src/widgets/tile-deck/ui/AgentTile/AgentTile.tsx:112
 #: src/widgets/tile-deck/ui/CrewBoard/CrewBoard.tsx:145
 #: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:152
 msgid "What they did"
@@ -3115,7 +3139,7 @@ msgstr "What they did"
 msgid "What they do, how to go about it, and what to hand back."
 msgstr "What they do, how to go about it, and what to hand back."
 
-#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:150
+#: src/widgets/agent-report/ui/AgentReport/AgentReport.tsx:165
 msgid "What they said"
 msgstr "What they said"
 
@@ -3235,7 +3259,7 @@ msgstr "You turned this down."
 msgid "Your account"
 msgstr "Your account"
 
-#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:262
+#: src/pages/workspace/model/screen/useWorkspace/useWorkspace.ts:264
 msgid "Your account changed before the reply finished, so it stops here."
 msgstr "Your account changed before the reply finished, so it stops here."
 

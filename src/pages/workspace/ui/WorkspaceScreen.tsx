@@ -86,6 +86,7 @@ export function WorkspaceScreen() {
             held={chatting.waiting !== null}
             viewport={layout.viewport}
             onDismiss={layout.deck.closeOne}
+            onCopyDiagnostics={chatting.diagnostics.copyTeammate}
             nowMs={nowMs}
             sidebarW={layout.deckSidebarW}
             roster={layout.sidebar.open}

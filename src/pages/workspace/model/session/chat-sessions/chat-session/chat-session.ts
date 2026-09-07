@@ -153,6 +153,9 @@ export function createChatSession(
 
   function reset(): void {
     const id = hostId
+    // The log outlives the run on purpose: a tile that went wrong is asked
+    // about after the session that held it was let go.
+    refs.crewLog.note({ event: 'session', decision: 'reset: every seat let go' })
     hostId = null
     attempt = null
     refs.asks.length = 0
@@ -175,6 +178,7 @@ export function createChatSession(
     chatId,
     project,
     stores,
+    crewLog: refs.crewLog,
     meta,
     running(): boolean {
       return hostId !== null

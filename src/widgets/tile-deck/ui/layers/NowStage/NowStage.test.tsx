@@ -2,6 +2,7 @@ import { renderToStaticMarkup } from 'react-dom/server'
 import { describe, expect, it } from 'vitest'
 import type { Call } from '@/entities/agent-session'
 import { NowStage } from './NowStage'
+import { LONG_CALL_MS } from '../../../lib/long-call/long-call'
 
 function call(line: string, overrides: Partial<Call> = {}): Call {
   return { id: 'c1', line, startedAtMs: 0, endedAtMs: null, failed: false, note: '', ...overrides }
@@ -51,5 +52,40 @@ describe('NowStage: the act the agent is in the middle of', () => {
     expect(draw('Read')).toContain('data-now-stage="read"')
     expect(draw('Read')).toContain('Reading')
     expect(draw('Bash')).toContain('Running')
+  })
+})
+
+function running(line: string, nowMs: number): string {
+  return renderToStaticMarkup(<NowStage call={call(line)} live nowMs={nowMs} />)
+}
+
+describe('a call that keeps running says so, rather than leaving a clock to be watched', () => {
+  it('shows the plain clock while the call is still an ordinary one', () => {
+    const html = running('Bash npm run dev', 30_000)
+    expect(html).toContain('data-elapsed')
+    expect(html).not.toContain('data-still-running')
+  })
+
+  it('puts up a chip once the call has run for minutes', () => {
+    const html = running('Bash npm run dev', LONG_CALL_MS)
+    expect(html).toContain('data-still-running')
+    expect(html).toContain('still running')
+    expect(html).toContain('3m')
+  })
+
+  it('counts on in whole minutes, so the chip settles between them', () => {
+    expect(running('Bash npm run dev', 12 * 60_000)).toContain('12m')
+    expect(running('Bash npm run dev', 12 * 60_000 + 30_000)).toContain('12m')
+  })
+
+  it('drops the clock rather than saying the same thing twice', () => {
+    expect(running('Bash npm run dev', LONG_CALL_MS)).not.toContain('data-elapsed')
+  })
+
+  it('says nothing on a tile nobody is running, however old the call looks', () => {
+    const html = renderToStaticMarkup(
+      <NowStage call={call('Bash npm run dev')} live={false} nowMs={LONG_CALL_MS * 10} />,
+    )
+    expect(html).not.toContain('data-still-running')
   })
 })

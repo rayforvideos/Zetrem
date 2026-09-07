@@ -102,7 +102,12 @@ export function useAgent(
   useEffect(() => {
     if (session === null) return
     const at = { nowMs, parentWorking: convStatus === 'working' }
-    for (const id of settled(children, at)) session.stores.children.patch(id, { status: 'done' })
+    const say = (seat: string, rule: string): void => {
+      session.crewLog.note({ event: 'settle', seat, decision: `closed: ${rule}` })
+    }
+    for (const id of settled(children, at, say)) {
+      session.stores.children.patch(id, { status: 'done' })
+    }
   }, [session, children, nowMs, convStatus])
 
   return {

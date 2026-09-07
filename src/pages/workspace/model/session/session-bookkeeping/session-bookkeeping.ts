@@ -14,13 +14,20 @@ export function closeSession(refs: AgentEventRefs, { reason, stopped }: SessionC
   refs.asks.length = 0
   status.apply({ type: 'activity', activity: 'idle' })
   conversation.clearChores()
-  for (const childId of refs.childIds) children.patch(childId, { status: 'done' })
+  for (const childId of refs.childIds) {
+    children.patch(childId, { status: 'done' })
+    refs.crewLog.note({ event: 'session', seat: childId, decision: 'closed: the session exited' })
+  }
   refs.childIds.clear()
   forgetCrew(refs)
 }
 
 export function beginSession(refs: AgentEventRefs, resumed: boolean): void {
   const { conversation, status, children } = refs.stores
+  refs.crewLog.note({
+    event: 'session',
+    decision: resumed ? 'began: picked the conversation back up' : 'began: a new conversation',
+  })
   status.reset(resumed)
   children.clear()
   forgetCrew(refs)

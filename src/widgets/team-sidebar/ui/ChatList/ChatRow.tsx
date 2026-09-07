@@ -39,6 +39,7 @@ export function Row({ chat, kit }: { chat: ChatSummary; kit: RowKit }) {
     onRemove,
     onRename,
     onFile,
+    onCopyDiagnostics,
     onCarry,
     carried,
     onPickUp,
@@ -227,6 +228,9 @@ export function Row({ chat, kit }: { chat: ChatSummary; kit: RowKit }) {
                 )}
               </DropdownMenuSubContent>
             </DropdownMenuSub>
+            <DropdownMenuItem onSelect={() => onCopyDiagnostics(chat.id)}>
+              {t`Copy diagnostics`}
+            </DropdownMenuItem>
             <DropdownMenuItem variant="destructive" onSelect={() => setAsking(true)}>
               {t`Delete chat`}
             </DropdownMenuItem>

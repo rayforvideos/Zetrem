@@ -31,6 +31,8 @@ type AgentTileProps = {
   // work lands nowhere until that is answered.
   held?: boolean
   onDismiss?: () => void
+  // Puts this teammate's crew log on the clipboard.
+  onCopyDiagnostics?: () => void
 }
 
 export function AgentTile({
@@ -44,6 +46,7 @@ export function AgentTile({
   attention = false,
   held = false,
   onDismiss,
+  onCopyDiagnostics,
 }: AgentTileProps) {
   const transcriptOpen = session.transcript.length > 0
   const durationMs = closing ? MOTION.mergeMs : MOTION.fanMs
@@ -71,13 +74,24 @@ export function AgentTile({
           {session.status === 'waiting' && <div data-waiting style={waitingMarkStyle(attention)} />}
           <div style={bodyStyle}>
             {transcriptOpen && (
-              <Headline session={session} withText={false} held={held} onDismiss={onDismiss} />
+              <Headline
+                session={session}
+                withText={false}
+                held={held}
+                onDismiss={onDismiss}
+                onCopyDiagnostics={onCopyDiagnostics}
+              />
             )}
             {sweep ? (
               transcriptOpen ? (
                 <Timeline session={session} />
               ) : (
-                <Headline session={session} held={held} onDismiss={onDismiss} />
+                <Headline
+                  session={session}
+                  held={held}
+                  onDismiss={onDismiss}
+                  onCopyDiagnostics={onCopyDiagnostics}
+                />
               )
             ) : (
               <div data-split style={splitStyle}>
@@ -85,7 +99,12 @@ export function AgentTile({
                   {transcriptOpen ? (
                     <Timeline session={session} />
                   ) : (
-                    <Headline session={session} held={held} onDismiss={onDismiss} />
+                    <Headline
+                      session={session}
+                      held={held}
+                      onDismiss={onDismiss}
+                      onCopyDiagnostics={onCopyDiagnostics}
+                    />
                   )}
                 </div>
                 <div data-log style={logPaneStyle}>

@@ -1,5 +1,6 @@
 import type { AgentEventRefs, AgentStores } from '../agent-events.types'
 import type { ModelChoice, RateLimit } from '@/entities/claude-cli'
+import { createCrewLog } from '../crew-log/crew-log'
 
 export function freshRefs(
   stores: AgentStores,
@@ -14,6 +15,7 @@ export function freshRefs(
     ownedBash: new Map(),
     pendingTasks: new Map(),
     heldReports: new Set(),
+    crewLog: createCrewLog(),
     onModelRefused: hooks.onModelRefused,
     onLimit: hooks.onLimit,
   }

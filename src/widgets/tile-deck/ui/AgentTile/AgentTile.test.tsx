@@ -305,3 +305,25 @@ describe('AgentTile', () => {
     expect(html).not.toContain('고치는 중 b.ts')
   })
 })
+
+describe('the tile carries a menu of its own once there is something in it', () => {
+  function withMenu(handed: boolean): string {
+    return renderToStaticMarkup(
+      <AgentTile
+        session={session()}
+        rect={rect}
+        delayMs={0}
+        nowMs={0}
+        {...(handed ? { onCopyDiagnostics: () => {} } : {})}
+      />,
+    )
+  }
+
+  it('puts up the menu where the crew log can be asked for', () => {
+    expect(withMenu(true)).toContain('data-tile-menu')
+  })
+
+  it('puts up nothing where nobody is listening', () => {
+    expect(withMenu(false)).not.toContain('data-tile-menu')
+  })
+})

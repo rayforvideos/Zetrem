@@ -94,6 +94,7 @@ export function WorkspaceSidebar({
             onRename: chat.rename,
             onFile: chat.file,
             onFileMany: chat.fileMany,
+            onCopyDiagnostics: chatting.diagnostics.copyChat,
           }}
           team={{
             members: team.members,

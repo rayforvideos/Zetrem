@@ -32,6 +32,9 @@ type CrewLayerProps = {
   held?: boolean
   onOpen(id: string | null): void
   onDismiss?: (id: string) => void
+  // Puts one teammate's crew log on the clipboard. The whole session is handed
+  // over, because the log is filtered by the ids that teammate answers to.
+  onCopyDiagnostics?: (session: AgentSession) => void
 }
 
 // The crew side of the deck: tiles, or the board, or — for the length of a
@@ -52,6 +55,7 @@ export function CrewLayer({
   held = false,
   onOpen,
   onDismiss,
+  onCopyDiagnostics,
 }: CrewLayerProps) {
   const presence = boardPresence(phase)
 
@@ -84,6 +88,9 @@ export function CrewLayer({
           attention={!tile.closing && tile.session.id === attention}
           held={held}
           onDismiss={onDismiss === undefined ? undefined : () => onDismiss(tile.session.id)}
+          onCopyDiagnostics={
+            onCopyDiagnostics === undefined ? undefined : () => onCopyDiagnostics(tile.session)
+          }
         />
       ))}
     </>

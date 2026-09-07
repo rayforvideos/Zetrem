@@ -15,6 +15,7 @@ import {
   applyCrewEvent,
   isCrewEvent,
   releaseChildBash,
+  ownsRunningBash,
   remember,
   wakeResumed,
 } from './crew/crew'
@@ -52,13 +53,25 @@ function chore(turn: ClaudeTurnEvent, refs: AgentEventRefs): boolean {
   }
   if (turn.type === 'childNotified') {
     conversation.endChore(turn.taskId)
-    releaseChildBash(refs, turn.taskId)
+    releaseShell(refs, turn.taskId)
   }
   if (turn.type === 'childStateKnown' && OVER.includes(turn.state)) {
     conversation.endChore(turn.taskId)
-    releaseChildBash(refs, turn.taskId)
+    releaseShell(refs, turn.taskId)
   }
   return false
+}
+
+// The end of a child's shell is the last event that child will cause. If its
+// report was already in and only the shell kept the tile working, this is
+// where the tile is parked; nothing else would come along to do it.
+function releaseShell(refs: AgentEventRefs, taskId: string): void {
+  const owner = refs.ownedBash.get(taskId)
+  releaseChildBash(refs, taskId)
+  if (owner === undefined || !refs.heldReports.has(owner)) return
+  if (ownsRunningBash(refs, owner)) return
+  refs.heldReports.delete(owner)
+  refs.stores.children.patch(owner, { status: 'reported', heldAtMs: undefined })
 }
 
 function announce(turn: ClaudeTurnEvent, refs: AgentEventRefs): void {

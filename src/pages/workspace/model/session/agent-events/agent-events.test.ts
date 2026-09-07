@@ -1997,6 +1997,46 @@ describe('a teammate that reports while its shell still runs (#119)', () => {
     expect(refs.stores.children.get().find((s) => s.id === 'toolu_v')?.status).toBe('reported')
   })
 
+  it('is parked when its end came as a task update rather than a notice', () => {
+    const refs = fakeRefs()
+    hire(refs)
+    // A task update names the task alone, so the seat has to know its task id.
+    applyAgentEvent(
+      {
+        type: 'childStarted',
+        toolUseId: 'toolu_v',
+        taskId: 'task-v',
+        taskType: 'local_agent',
+        description: 'Verify',
+      },
+      refs,
+    )
+    applyAgentEvent(
+      {
+        type: 'childStateKnown',
+        toolUseId: null,
+        taskId: 'task-v',
+        state: 'completed',
+        error: '',
+      },
+      refs,
+    )
+    expect(refs.stores.children.get().find((s) => s.id === 'toolu_v')?.status).toBe('working')
+
+    applyAgentEvent(
+      {
+        type: 'childNotified',
+        toolUseId: 'call_sh',
+        taskId: 'bash-1',
+        summary: '',
+        done: true,
+        failed: false,
+      },
+      refs,
+    )
+    expect(refs.stores.children.get().find((s) => s.id === 'toolu_v')?.status).toBe('reported')
+  })
+
   it('stays working when the shell ends before the report, as before', () => {
     const refs = fakeRefs()
     hire(refs)

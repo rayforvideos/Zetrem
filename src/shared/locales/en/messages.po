@@ -1189,7 +1189,7 @@ msgstr "failed"
 msgid "Failed"
 msgstr "Failed"
 
-#: src/pages/workspace/model/session/agent-events/crew/crew.ts:129
+#: src/pages/workspace/model/session/agent-events/crew/crew.ts:133
 msgid "Failed: the run stopped before it was done"
 msgstr "Failed: the run stopped before it was done"
 
@@ -1874,7 +1874,7 @@ msgstr "Pick a note"
 msgid "Pick a project first"
 msgstr "Pick a project first"
 
-#: src/pages/workspace/model/session/agent-events/crew/crew.ts:230
+#: src/pages/workspace/model/session/agent-events/crew/crew.ts:234
 msgid "Picked up where they left off"
 msgstr "Picked up where they left off"
 
@@ -2636,7 +2636,7 @@ msgstr "The model is overloaded"
 msgid "The note is deleted from the library. This cannot be undone."
 msgstr "The note is deleted from the library. This cannot be undone."
 
-#: src/pages/workspace/model/session/agent-events/crew/crew.ts:198
+#: src/pages/workspace/model/session/agent-events/crew/crew.ts:202
 msgid "the orchestrator"
 msgstr "the orchestrator"
 

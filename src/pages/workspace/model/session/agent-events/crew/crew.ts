@@ -72,9 +72,13 @@ export function applyCrewEvent(turn: ClaudeTurnEvent, refs: AgentEventRefs): voi
         return
       }
       if (turn.state === 'completed' && ownsRunningBash(refs, id)) {
+        // The same held report as a notification's: the shell's end has to
+        // find it, or a child whose end came only this way never closes.
+        refs.heldReports.add(id)
         wake(children, id)
         return
       }
+      refs.heldReports.delete(id)
       children.patch(id, { status: 'done' })
       return
     }

@@ -14,26 +14,44 @@ function silenceOf(session: AgentSession, nowMs: number): number {
   return nowMs - (session.lastSeenAtMs ?? session.startedAtMs)
 }
 
-function told(session: AgentSession): boolean {
+function tracked(session: AgentSession): boolean {
   return session.taskId !== undefined && session.taskId.length > 0
 }
 
-export function settled(children: AgentSession[], at: Quiet): string[] {
-  return children
-    .filter((session) => session.status !== 'done')
-    .filter((session) => {
-      if (session.status === 'reported') {
-        return silenceOf(session, at.nowMs) >= REPORTED_QUIET_MS
-      }
-      if (session.status !== 'working') return false
-      if (session.heldAtMs !== undefined) {
-        const since = Math.max(session.heldAtMs, session.lastSeenAtMs ?? 0)
-        return at.nowMs - since >= HELD_QUIET_MS
-      }
-      // A child the CLI tracks by task id gets an explicit end (childStateKnown);
-      // guessing from silence would close one merely between notifications.
-      if (told(session)) return false
-      return !at.parentWorking && silenceOf(session, at.nowMs) >= LOST_QUIET_MS
-    })
-    .map((session) => session.id)
+// `say` hears which rule closed each tile, so the chat's diagnostics can name
+// it. It is not what decides anything: the rules are the same either way.
+export function settled(
+  children: AgentSession[],
+  at: Quiet,
+  say: (id: string, rule: string) => void = () => undefined,
+): string[] {
+  const closing: string[] = []
+  for (const session of children) {
+    const rule = ruleFor(session, at)
+    if (rule === null) continue
+    say(session.id, rule)
+    closing.push(session.id)
+  }
+  return closing
+}
+
+// Which silence rule, if any, says this tile is finished. In English: it is
+// written into the diagnostics log, not onto the screen.
+function ruleFor(session: AgentSession, at: Quiet): string | null {
+  if (session.status === 'done') return null
+  if (session.status === 'reported') {
+    if (silenceOf(session, at.nowMs) < REPORTED_QUIET_MS) return null
+    return 'the report stood and nothing more was said'
+  }
+  if (session.status !== 'working') return null
+  if (session.heldAtMs !== undefined) {
+    const since = Math.max(session.heldAtMs, session.lastSeenAtMs ?? 0)
+    if (at.nowMs - since < HELD_QUIET_MS) return null
+    return 'the held report stood: no end ever came for its shell'
+  }
+  // A child the CLI tracks by task id gets an explicit end (childStateKnown);
+  // guessing from silence would close one merely between notifications.
+  if (tracked(session)) return null
+  if (at.parentWorking || silenceOf(session, at.nowMs) < LOST_QUIET_MS) return null
+  return 'lost: the runtime never named it and it went quiet'
 }

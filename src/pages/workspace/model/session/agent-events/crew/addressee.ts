@@ -1,11 +1,13 @@
 import type { AgentEventRefs } from '../agent-events.types'
 
-import type { Addressed } from './addressee.types'
+import type { Addressed, Match } from './addressee.types'
 
-export function whose(event: Addressed, refs: AgentEventRefs): string | null {
-  if (event.toolUseId !== null && refs.childIds.has(event.toolUseId)) return event.toolUseId
+export function matched(event: Addressed, refs: AgentEventRefs): Match | null {
+  if (event.toolUseId !== null && refs.childIds.has(event.toolUseId)) {
+    return { id: event.toolUseId, by: 'tool id' }
+  }
   const byTask = refs.stores.children.findByTask(event.taskId)
-  if (byTask !== null && refs.childIds.has(byTask.id)) return byTask.id
+  if (byTask !== null && refs.childIds.has(byTask.id)) return { id: byTask.id, by: 'task id' }
   return null
 }
 

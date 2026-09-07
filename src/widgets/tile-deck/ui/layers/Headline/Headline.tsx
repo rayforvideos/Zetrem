@@ -3,8 +3,14 @@ import { AgentSprite, personaOf, useModel } from '@/entities/teammate'
 import type { AgentSession } from '@/entities/agent-session'
 import { modelWordFromCli } from '@/entities/settings'
 import { modelLabel } from '@/shared/lib/model-label/model-label'
-import { X } from 'lucide-react'
+import { MoreHorizontal, X } from 'lucide-react'
 import { Button } from '@/shared/ui/button'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/shared/ui/dropdown-menu'
 import { Markdown } from '@/shared/markdown/Markdown/Markdown'
 import { StateChip } from '../StateChip/StateChip'
 import { t } from '@lingui/core/macro'
@@ -15,9 +21,18 @@ type HeadlineProps = {
   // The run this teammate belongs to has stopped for the person.
   held?: boolean
   onDismiss?: () => void
+  // Puts this teammate's crew log on the clipboard, so a tile that will not
+  // move is a paste rather than a reproduction attempt.
+  onCopyDiagnostics?: () => void
 }
 
-export function Headline({ session, withText = true, held = false, onDismiss }: HeadlineProps) {
+export function Headline({
+  session,
+  withText = true,
+  held = false,
+  onDismiss,
+  onCopyDiagnostics,
+}: HeadlineProps) {
   const persona = session.subagentType ? personaOf(session.subagentType) : null
   const model = modelLabel(useModel(session.subagentType))
   return (
@@ -36,6 +51,27 @@ export function Headline({ session, withText = true, held = false, onDismiss }: 
           </span>
         </div>
         <StateChip status={session.status} held={held} />
+        {onCopyDiagnostics !== undefined && (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="quiet"
+                size="bare"
+                data-tile-menu
+                aria-label={t`More for ${persona ? persona.name : session.label}`}
+                className="zt-hit"
+                style={tileButtonStyle}
+              >
+                <MoreHorizontal className="size-3.5" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-48">
+              <DropdownMenuItem onSelect={onCopyDiagnostics}>
+                {t`Copy diagnostics`}
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        )}
         {onDismiss !== undefined && (
           <Button
             variant="quiet"
@@ -45,7 +81,7 @@ export function Headline({ session, withText = true, held = false, onDismiss }: 
             aria-label={t`Close ${persona ? persona.name : session.label}`}
             title={t`Close this tile. The run stays in the sidebar.`}
             className="zt-hit"
-            style={dismissStyle}
+            style={tileButtonStyle}
           >
             <X className="size-3.5" />
           </Button>
@@ -88,7 +124,8 @@ const stackStyle: CSSProperties = {
   flex: '1 1 auto',
 }
 
-const dismissStyle: CSSProperties = {
+// The small round buttons in the tile header: the menu, and the close.
+const tileButtonStyle: CSSProperties = {
   flex: '0 0 auto',
   display: 'flex',
   alignItems: 'center',

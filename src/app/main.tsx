@@ -5,8 +5,7 @@ import { I18nProvider } from '@lingui/react'
 import { WorkspaceScreen } from '@/pages/workspace'
 import { Boundary } from './Boundary'
 import { Toaster } from '@/shared/ui/sonner'
-import { TOAST_FLOOR, TOAST_LIFT_VAR } from '@/shared/lib/measure/toast-lift/toast-lift'
-import { useToastLift } from '@/shared/lib/measure/toast-lift/useToastLift'
+import { CHROME_TOP } from '@/shared/config/theme'
 import { loadTongue } from '@/shared/lib/say/load'
 import { chosenTongue, watchTongue } from '@/shared/lib/say/say'
 import './styles/global.css'
@@ -27,14 +26,16 @@ function Root() {
   return <WorkspaceScreen key={tongue} />
 }
 
-// The toaster and the measurement that keeps it off the composer stand
-// together, so the screen itself never renders for a toast moving.
+// A toast has one place: the top-right corner, just under the titlebar. Nothing
+// is pressed there and nothing scrolls under it, so it never covers the send
+// button or the last line of a reply, and it never moves with the composer.
+const TOAST_GAP = 12
+
 function Toasts() {
-  useToastLift()
   return (
     <Toaster
-      position="bottom-right"
-      offset={{ bottom: `var(${TOAST_LIFT_VAR}, ${TOAST_FLOOR}px)`, right: 16 }}
+      position="top-right"
+      offset={{ top: CHROME_TOP + TOAST_GAP, right: 16 }}
       richColors
       closeButton
     />

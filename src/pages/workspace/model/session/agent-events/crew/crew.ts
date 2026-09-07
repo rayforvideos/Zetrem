@@ -1,7 +1,7 @@
 import { unhold, wake } from './wake'
-import { ownsRunningBash } from './crew-bash'
-export { adoptChildBash, ownsRunningBash, releaseChildBash } from './crew-bash'
-import { addressee, whose } from './addressee'
+import { ownsRunningBash, shellsOwnedBy } from './crew-bash'
+export { adoptChildBash, ownsRunningBash, releaseChildBash, shellsOwnedBy } from './crew-bash'
+import { addressee, matched } from './addressee'
 import { absorbs, resumedAgent } from '@/entities/claude-cli'
 import type { AgentSession, SessionStore, TranscriptEntry } from '@/entities/agent-session'
 import type { ClaudeTurnEvent } from '@/entities/claude-cli'
@@ -9,11 +9,42 @@ import { saidPlainly } from '@/entities/claude-cli'
 import { changeBadge, changeLines, resultNote, shapeOfLine, toolNameOf } from '@/entities/tool'
 import { clip } from '@/pages/workspace/model/session/agent-events/clip/clip'
 import type { AgentEventRefs } from '../agent-events.types'
+import type { Match } from './addressee.types'
 import { t } from '@lingui/core/macro'
 
 const NOTE_MAX = 48
 
 export const SEND_TOOL = 'SendMessage'
+
+// The diagnostic log the tiles are explained from. Its words are English
+// wherever they are written: a log line is read in a bug report, not in the
+// app, and a translated one would only make a stuck tile harder to explain.
+function log(
+  refs: AgentEventRefs,
+  event: string,
+  shown: { toolUseId?: string | null; taskId?: string | null; seat?: string | null },
+  decision: string,
+): void {
+  refs.crewLog.note({ event, ...shown, decision })
+}
+
+function named(
+  turn: { toolUseId: string | null; taskId: string },
+  seat: string | null = null,
+): { toolUseId: string | null; taskId: string; seat: string | null } {
+  return { toolUseId: turn.toolUseId, taskId: turn.taskId, seat }
+}
+
+// Which of the two ids found the tile is half the answer when a tile goes
+// wrong, so every decision that landed on a seat says how it got there.
+function by(decision: string, seat: Match): string {
+  return `${decision} · matched by ${seat.by}`
+}
+
+function shellHold(refs: AgentEventRefs, id: string): string {
+  const shells = shellsOwnedBy(refs, id)
+  return shells.length === 0 ? 'held: owns a shell' : `held: owns shell ${shells.join(', ')}`
+}
 
 export function isCrewEvent(turn: ClaudeTurnEvent): boolean {
   return turn.type.startsWith('child')
@@ -26,19 +57,40 @@ export function applyCrewEvent(turn: ClaudeTurnEvent, refs: AgentEventRefs): voi
       // A grandchild named under a parent we never opened has nothing to hang
       // off. Seating it anyway would put it on the board as a teammate of its
       // own, which is exactly what a helper is not, so it is let go.
-      if (turn.parentId !== undefined && !refs.childIds.has(turn.parentId)) return
+      if (turn.parentId !== undefined && !refs.childIds.has(turn.parentId)) {
+        log(
+          refs,
+          turn.type,
+          { toolUseId: turn.toolUseId },
+          `dropped: parent ${turn.parentId} is not ours`,
+        )
+        return
+      }
       refs.childIds.add(turn.toolUseId)
       // The CLI can register the task before the tool_use block streams in, so
       // the id it announced early is claimed here or the child reads untracked.
       const early = refs.pendingTasks.get(turn.toolUseId)
       refs.pendingTasks.delete(turn.toolUseId)
+      const claimed = early === undefined ? '' : ', matched by task id announced early'
       if (children.find(turn.toolUseId) !== null) {
         children.patch(turn.toolUseId, {
           status: 'working',
           ...(early === undefined ? {} : { taskId: early }),
         })
+        log(
+          refs,
+          turn.type,
+          { toolUseId: turn.toolUseId, taskId: early ?? null, seat: turn.toolUseId },
+          `reopened seat ${turn.toolUseId}${claimed}`,
+        )
         return
       }
+      log(
+        refs,
+        turn.type,
+        { toolUseId: turn.toolUseId, taskId: early ?? null, seat: turn.toolUseId },
+        `opened seat ${turn.toolUseId}${claimed}`,
+      )
       children.open({
         id: turn.toolUseId,
         runnerId: 'subagent',
@@ -59,17 +111,26 @@ export function applyCrewEvent(turn: ClaudeTurnEvent, refs: AgentEventRefs): voi
       return
     }
     case 'childStateKnown': {
-      const id = whose(turn, refs)
-      if (id === null) return
+      const seat = matched(turn, refs)
+      if (seat === null) {
+        log(refs, turn.type, named(turn), `dropped: no seat, state ${turn.state}`)
+        return
+      }
+      const id = seat.id
       // completed also fires when an agent merely idles waiting on its own
       // backgrounded shell, so that case stays working rather than closing.
       if (turn.state === 'running' || turn.state === 'pending') {
         wake(children, id)
+        log(refs, turn.type, named(turn, id), by(`woken: state ${turn.state}`, seat))
         return
       }
-      if (turn.state === 'paused') return
+      if (turn.state === 'paused') {
+        log(refs, turn.type, named(turn, id), by('left alone: paused', seat))
+        return
+      }
       if (turn.error.length > 0) {
         children.patch(id, { status: 'done', headline: `Failed: ${turn.error.trim()}` })
+        log(refs, turn.type, named(turn, id), by('closed: the runtime reported an error', seat))
         return
       }
       if (turn.state === 'completed' && ownsRunningBash(refs, id)) {
@@ -78,10 +139,12 @@ export function applyCrewEvent(turn: ClaudeTurnEvent, refs: AgentEventRefs): voi
         refs.heldReports.add(id)
         wake(children, id)
         children.patch(id, { heldAtMs: Date.now() })
+        log(refs, turn.type, named(turn, id), by(shellHold(refs, id), seat))
         return
       }
       refs.heldReports.delete(id)
       children.patch(id, { status: 'done', heldAtMs: undefined })
+      log(refs, turn.type, named(turn, id), by(`closed: state ${turn.state}`, seat))
       return
     }
     case 'childSay':
@@ -121,10 +184,22 @@ export function applyCrewEvent(turn: ClaudeTurnEvent, refs: AgentEventRefs): voi
       closeCall(children, turn.toolUseId, turn.callId, turn.failed, turn.text)
       return
     case 'childNotified': {
-      const id = whose(turn, refs)
-      if (id === null) return
+      const seat = matched(turn, refs)
+      if (seat === null) {
+        log(
+          refs,
+          turn.type,
+          named(turn),
+          `dropped: no seat${turn.done ? ' for a done notice' : ''}`,
+        )
+        return
+      }
+      const id = seat.id
       if (turn.summary) children.patch(id, { headline: turn.summary.trim(), doing: '' })
-      if (closedForGood(children, id)) return
+      if (closedForGood(children, id)) {
+        log(refs, turn.type, named(turn, id), by('left alone: already closed for good', seat))
+        return
+      }
       // A run that failed or was killed is over as surely as one that
       // completed; left as working, its tile would never close.
       if (turn.failed) {
@@ -134,6 +209,7 @@ export function applyCrewEvent(turn: ClaudeTurnEvent, refs: AgentEventRefs): voi
           doing: '',
           headline: said.length > 0 ? said : t`Failed: the run stopped before it was done`,
         })
+        log(refs, turn.type, named(turn, id), by('closed: the run failed or was killed', seat))
         return
       }
       // Done while the agent's own shell still runs would let the silence rule
@@ -147,22 +223,45 @@ export function applyCrewEvent(turn: ClaudeTurnEvent, refs: AgentEventRefs): voi
         status: parked ? 'reported' : 'working',
         heldAtMs: turn.done && !parked ? Date.now() : undefined,
       })
+      log(
+        refs,
+        turn.type,
+        named(turn, id),
+        by(parked ? 'parked' : turn.done ? shellHold(refs, id) : 'working: progress notice', seat),
+      )
       return
     }
     case 'childStarted': {
-      const id = whose(turn, refs)
-      if (id === null) {
-        if (turn.toolUseId !== null) refs.pendingTasks.set(turn.toolUseId, turn.taskId)
+      const seat = matched(turn, refs)
+      if (seat === null) {
+        if (turn.toolUseId === null) {
+          log(refs, turn.type, named(turn), 'dropped: no seat and no tool id to keep it under')
+          return
+        }
+        refs.pendingTasks.set(turn.toolUseId, turn.taskId)
+        log(refs, turn.type, named(turn), 'kept the task id: no seat open for it yet')
         return
       }
+      const id = seat.id
       wake(children, id)
       unhold(children, id)
-      children.patch(id, { taskId: turn.taskId, ...namedBy(children, id, turn) })
+      const naming = namedBy(children, id, turn)
+      children.patch(id, { taskId: turn.taskId, ...naming })
+      const renamed = Object.keys(naming).length > 0
+      log(refs, turn.type, named(turn, id), by(renamed ? 'named by runtime' : 'started', seat))
       return
     }
     case 'childProgress': {
-      const id = whose(turn, refs)
-      if (id === null || closedForGood(children, id)) return
+      const seat = matched(turn, refs)
+      if (seat === null) {
+        log(refs, turn.type, named(turn), 'dropped: no seat')
+        return
+      }
+      const id = seat.id
+      if (closedForGood(children, id)) {
+        log(refs, turn.type, named(turn, id), by('left alone: already closed for good', seat))
+        return
+      }
       wake(children, id)
       unhold(children, id)
       note(children, id, turn.lastTool)
@@ -171,22 +270,33 @@ export function applyCrewEvent(turn: ClaudeTurnEvent, refs: AgentEventRefs): voi
         ...(turn.tokens === null ? {} : { tokens: turn.tokens }),
         lastSeenAtMs: Date.now(),
       })
+      const tool = turn.lastTool.length === 0 ? '' : `: ${turn.lastTool}`
+      log(refs, turn.type, named(turn, id), by(`working${tool}`, seat))
       return
     }
     case 'childClosed': {
-      if (!refs.childIds.has(turn.toolUseId)) return
+      if (!refs.childIds.has(turn.toolUseId)) {
+        log(refs, turn.type, { toolUseId: turn.toolUseId }, 'dropped: no seat')
+        return
+      }
+      const shown = { toolUseId: turn.toolUseId, seat: turn.toolUseId }
       if (turn.error) {
         children.patch(turn.toolUseId, {
           status: 'done',
           headline: `Failed: ${turn.error.trim()}`,
         })
+        log(refs, turn.type, shown, 'closed: the tool call came back with an error')
         return
       }
       // The CLI hands the Task tool_result back while the child is still running
       // and reports its real end through task events.
       const held = children.find(turn.toolUseId)
-      if (held?.detached === true || (held?.taskId ?? '').length > 0) return
+      if (held?.detached === true || (held?.taskId ?? '').length > 0) {
+        log(refs, turn.type, shown, 'left alone: the runtime tracks this one by task id')
+        return
+      }
       children.patch(turn.toolUseId, { status: 'done' })
+      log(refs, turn.type, shown, 'closed: the tool call came back')
       return
     }
     default:
@@ -221,16 +331,26 @@ export function wakeResumed(toolUseId: string, stdout: string, refs: AgentEventR
   if (called === undefined) return
   refs.sends.delete(toolUseId)
   const agent = resumedAgent(stdout)
-  if (agent === null) return
+  if (agent === null) {
+    log(refs, 'wakeResumed', { toolUseId }, `dropped: the reply named no agent for ${called.to}`)
+    return
+  }
   const children = refs.stores.children
   const held = seatOf(children, agent.id) ?? seatOf(children, called.to)
   if (held !== null) {
     refs.childIds.add(held.id)
     children.patch(held.id, { status: 'working' })
+    log(refs, 'wakeResumed', { toolUseId, taskId: agent.id, seat: held.id }, 'woken: seat stood')
     return
   }
   refs.childIds.add(agent.id)
   const name = called.to.length > 0 ? called.to : agent.name
+  log(
+    refs,
+    'wakeResumed',
+    { toolUseId, taskId: agent.id, seat: agent.id },
+    `opened seat ${agent.id} for ${name}, resumed`,
+  )
   children.open({
     id: agent.id,
     // The runtime re-announces a resumed teammate under this same task id.

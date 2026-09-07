@@ -2,6 +2,7 @@ import type { Attached } from '@/entities/attachment'
 import type { ExitReason, ModelChoice, RunConfig } from '@/entities/claude-cli'
 import type { ChatSpend, Transcript } from '@/entities/conversation'
 import type { AgentStores } from '../../agent-events/agent-events.types'
+import type { CrewLog } from '../../agent-events/crew-log/crew-log.types'
 import type { Held } from '../../waiting/waiting.types'
 
 // 'asking' and 'question' are both the run stopped for the person: one on a
@@ -23,7 +24,13 @@ export type ChatRunConfig = Omit<RunConfig, 'persona' | 'resume'>
 
 // The slice of window.desk a session touches, so tests hand in a fake.
 export type ChatSessionDeps = {
-  startAgent(id: string, prompt: string, config: RunConfig, files: Attached[]): Promise<unknown>
+  startAgent(
+    id: string,
+    prompt: string,
+    config: RunConfig,
+    files: Attached[],
+    chatId: string,
+  ): Promise<unknown>
   sendToAgent(id: string, text: string, files: Attached[]): void
   stopAgent(id: string): void
   respondPermission(id: string, requestId: string, result: unknown): void
@@ -33,13 +40,25 @@ export type ChatSessionDeps = {
 
 export type AgentEvent =
   | { id: string; kind: 'line'; line: string }
-  | { id: string; kind: 'exit'; code: number | null; reason: ExitReason | null }
+  | {
+      id: string
+      kind: 'exit'
+      code: number | null
+      signal: string | null
+      reason: ExitReason | null
+      // Zetrem asked for this end, which only main knows in full: an account
+      // change stops a session the chat itself never told to go.
+      asked: boolean
+    }
   | { id: string; kind: 'workspace'; cwd: string }
 
 export type ChatSession = {
   chatId: string
   project: string
   stores: AgentStores
+  // What the crew rules decided about this chat's tiles, for as long as the
+  // chat is held. Memory only: nothing here reaches disk.
+  crewLog: CrewLog
   meta: ChatMeta
   running(): boolean
   owns(hostId: string): boolean

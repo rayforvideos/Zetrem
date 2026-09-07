@@ -14,6 +14,7 @@ import { layerOver } from '@/shared/lib/modal/modal'
 import { screenGate } from '../screen-gate/screen-gate'
 import { anySessionLive, sessionLive, stirring } from '../../session/live/live'
 import { useAgent } from '../../session/useAgent'
+import { useDiagnostics } from '../../session/useDiagnostics'
 import { chatSessions } from '../../session/chat-sessions/chat-sessions'
 import { useChatSessions } from '../../session/chat-sessions/useChatSessions'
 import { useAgentDefs } from '../../team/useAgentDefs'
@@ -173,6 +174,7 @@ export function useWorkspace() {
     })
   }, [settings.wasStockOn, stock, update])
 
+  const diagnostics = useDiagnostics(chat.chats, chat.openId)
   const live = sessionLive(status, conv.status)
   const working = useSyncExternalStore(chatSessions.subscribe, chatSessions.live, chatSessions.live)
   const stopped = useSyncExternalStore(
@@ -299,6 +301,7 @@ export function useWorkspace() {
       waiting,
       nowMs,
       attach,
+      diagnostics,
       focus,
       openAgent,
       pendingRestart,

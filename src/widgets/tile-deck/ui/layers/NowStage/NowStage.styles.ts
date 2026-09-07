@@ -72,6 +72,25 @@ export const elapsedStyle: CSSProperties = {
   opacity: 0.5,
 }
 
+// The same slot the clock stands in, said in words instead. It reads a little
+// louder than the clock did, because a call this long is the thing on the tile
+// worth noticing.
+export const chipStyle: CSSProperties = {
+  flex: '0 0 auto',
+  marginLeft: 'auto',
+  marginRight: 2,
+  padding: '1px 6px',
+  borderRadius: 999,
+  border: '1px solid var(--color-border)',
+  background: 'var(--color-card)',
+  fontFamily: 'var(--zt-mono)',
+  fontVariantNumeric: 'tabular-nums',
+  fontSize: 10,
+  letterSpacing: '0.02em',
+  whiteSpace: 'nowrap',
+  opacity: 0.8,
+}
+
 export const wordsStyle: CSSProperties = {
   display: 'flex',
   alignItems: 'baseline',

@@ -49,6 +49,7 @@ const boundary = vi.hoisted(() => ({
   releaseLogin: null as (() => void) | null,
   laid: [] as string[],
   libraryFails: false,
+  logged: [] as string[],
 }))
 
 vi.mock('electron', () => ({
@@ -125,6 +126,10 @@ vi.mock('../../library/library', () => ({
   },
 }))
 
+vi.mock('../../shell/app-log/app-log', () => ({
+  logLine: (area: string, said: string) => boundary.logged.push(`[${area}] ${said}`),
+}))
+
 vi.mock('../../spawn/kill-tree/kill-tree', () => ({
   killTree: (pid: number) => boundary.killed.push(pid),
   killTreeSync: (pid: number) => boundary.killedSync.push(pid),
@@ -169,8 +174,9 @@ async function startAgent(
   id: unknown,
   prompt: unknown,
   files: unknown = [],
+  chatId: unknown = 'chat-mfx12-a7b3c1',
 ): Promise<void> {
-  await fire('agent:start', one, id, prompt, config, files)
+  await fire('agent:start', one, id, prompt, config, files, chatId)
 }
 
 function childAt(at: number): FakeChild {
@@ -212,6 +218,7 @@ beforeEach(async () => {
   boundary.releaseLogin = null
   boundary.laid.length = 0
   boundary.libraryFails = false
+  boundary.logged.length = 0
   boundary.userData = mkdtempSync(join(tmpdir(), 'zetrem-agent-host-'))
   vi.spyOn(console, 'error').mockImplementation(() => undefined)
   vi.resetModules()
@@ -246,10 +253,12 @@ describe('what the child says reaches the renderer, and its death is told once',
     await startAgent(one, 'a1', 'hello')
     const child = childAt(0)
 
-    child.emit('close', 0)
+    child.emit('close', 0, null)
     fire('agent:send', one, 'a1', 'anyone there')
 
-    expect(of(one, 'exit')).toEqual([{ id: 'a1', kind: 'exit', code: 0, reason: null }])
+    expect(of(one, 'exit')).toEqual([
+      { id: 'a1', kind: 'exit', code: 0, signal: null, reason: null, asked: false },
+    ])
     expect(child.stdin.written).toHaveLength(1)
   })
 
@@ -260,7 +269,7 @@ describe('what the child says reaches the renderer, and its death is told once',
 
     child.stderr.emit('data', 'Error: the model refused\n')
     child.stderr.emit('data', '\n   \n')
-    child.emit('close', 1)
+    child.emit('close', 1, null)
 
     expect(of(one, 'exit')[0]).toMatchObject({
       code: 1,
@@ -274,10 +283,119 @@ describe('what the child says reaches the renderer, and its death is told once',
     const child = childAt(0)
 
     child.emit('error', new Error('the pipe broke'))
-    child.emit('close', 1)
+    child.emit('close', 1, null)
 
     expect(of(one, 'exit')).toHaveLength(1)
     expect(of(one, 'exit')[0]).toMatchObject({ code: -1, reason: { code: 'start-failed' } })
+  })
+})
+
+const exitLog = (): string => {
+  const found = boundary.logged.filter((line) => line.startsWith('[agent] '))
+  if (found.length !== 1) throw new Error(`the log holds ${found.length} exits, not one`)
+  return found[0] as string
+}
+
+describe('every session process leaves one line in the app log when it ends', () => {
+  it('names the chat, the host, how long it was up, how it ended and the stderr tail', async () => {
+    const one = renderer()
+    await startAgent(one, 'agent-77', 'hello')
+    const child = childAt(0)
+
+    child.stderr.emit('data', 'warming up\nError: connect ECONNREFUSED\n')
+    child.emit('close', 1, null)
+
+    expect(exitLog()).toMatch(
+      /^\[agent] chat=chat-mfx12-a7b3c1 host=agent-77 up=\d+s ended=exit 1 asked=no stderr=warming up \| Error: connect ECONNREFUSED$/,
+    )
+  })
+
+  it('names the signal where one ended it, in the log and in the pane alike', async () => {
+    const one = renderer()
+    await startAgent(one, 'a1', 'hello')
+
+    childAt(0).emit('close', null, 'SIGKILL')
+
+    expect(exitLog()).toContain('ended=SIGKILL asked=no')
+    expect(of(one, 'exit')[0]).toMatchObject({
+      code: null,
+      signal: 'SIGKILL',
+      asked: false,
+      reason: { code: 'signalled', said: 'SIGKILL', ended: 'SIGKILL' },
+    })
+  })
+
+  it('writes the line for a stop the app asked for too, saying who asked', async () => {
+    const one = renderer()
+    await startAgent(one, 'a1', 'hello')
+
+    fire('agent:stop', one, 'a1')
+    childAt(0).emit('close', null, 'SIGTERM')
+
+    expect(exitLog()).toContain('ended=SIGTERM asked=yes')
+    // Asked for, so the pane says nothing: the person is the one who asked.
+    expect(of(one, 'exit')[0]).toMatchObject({ asked: true, reason: null })
+  })
+
+  it('counts an account change as asked, though the chat never asked for it', async () => {
+    const one = renderer()
+    await startAgent(one, 'a1', 'hello')
+    const child = childAt(0)
+
+    const stopping = host.stopAllAgents(10)
+    child.emit('close', null, 'SIGTERM')
+    await stopping
+
+    expect(exitLog()).toContain('asked=yes')
+    expect(of(one, 'exit')[0]).toMatchObject({ asked: true, reason: null })
+  })
+
+  it('counts a quit as asked, so shutting down is never read as trouble', async () => {
+    const one = renderer()
+    await startAgent(one, 'a1', 'hello')
+    const child = childAt(0)
+
+    host.killAllAgents()
+    child.emit('close', null, 'SIGKILL')
+
+    expect(exitLog()).toContain('asked=yes')
+  })
+
+  it('quotes the newest stderr lines only, and never a secret among them', async () => {
+    const one = renderer()
+    await startAgent(one, 'a1', 'hello')
+    const child = childAt(0)
+
+    for (let at = 0; at < 25; at += 1) child.stderr.emit('data', `line ${at}\n`)
+    child.stderr.emit('data', 'giving up: token=abcdef123456\n')
+    child.emit('close', 1, null)
+
+    const line = exitLog()
+    expect(line).toContain('giving up: token=[redacted]')
+    expect(line).not.toContain('abcdef123456')
+    expect(line).not.toContain('line 5 ')
+    expect(line).toContain('line 24')
+    expect(line.slice(line.indexOf('stderr=')).split(' | ')).toHaveLength(20)
+  })
+
+  it('writes one line only, whichever of error and close arrives first', async () => {
+    const one = renderer()
+    await startAgent(one, 'a1', 'hello')
+    const child = childAt(0)
+
+    child.emit('error', new Error('the pipe broke'))
+    child.emit('close', 1, null)
+
+    expect(exitLog()).toContain('ended=? asked=no')
+  })
+
+  it('admits the chat is unknown rather than writing down what the renderer sent', async () => {
+    const one = renderer()
+    await startAgent(one, 'a1', 'hello', [], '../../etc/passwd')
+
+    childAt(0).emit('close', 0, null)
+
+    expect(exitLog()).toContain('chat=?')
   })
 })
 
@@ -313,7 +431,9 @@ describe('a stop that lands while the agent is still starting', () => {
     await releaseStart(started)
 
     expect(boundary.spawns).toHaveLength(0)
-    expect(of(one, 'exit')).toEqual([{ id: 'a1', kind: 'exit', code: -1, reason: null }])
+    expect(of(one, 'exit')).toEqual([
+      { id: 'a1', kind: 'exit', code: -1, signal: null, reason: null, asked: false },
+    ])
   })
 
   it('throws away the text typed in that window, so the next agent does not read it', async () => {
@@ -347,7 +467,7 @@ describe('a stop that the child ignores', () => {
 
       await startAgent(one, 'a2', 'again')
       fire('agent:stop', one, 'a2')
-      childAt(1).emit('close', 0)
+      childAt(1).emit('close', 0, null)
       await vi.advanceTimersByTimeAsync(5000)
       expect(boundary.killedSync).toEqual([childAt(0).pid])
     } finally {
@@ -379,7 +499,7 @@ describe('stopping every session before the account underneath them moves', () =
     expect(answered).toBe(false)
     expect(boundary.killed).toEqual([childAt(0).pid])
 
-    childAt(0).emit('close', 0)
+    childAt(0).emit('close', 0, null)
     expect(await stopped).toBe(true)
   })
 
@@ -393,12 +513,12 @@ describe('stopping every session before the account underneath them moves', () =
       return gone
     })
 
-    childAt(0).emit('close', 0)
+    childAt(0).emit('close', 0, null)
     await Promise.resolve()
     await Promise.resolve()
     expect(answered).toBe(false)
 
-    childAt(1).emit('close', 0)
+    childAt(1).emit('close', 0, null)
     expect(await stopped).toBe(true)
   })
 
@@ -444,7 +564,7 @@ describe('stopping every session before the account underneath them moves', () =
       await vi.advanceTimersByTimeAsync(5000)
       expect(boundary.killedSync).toEqual([child.pid])
 
-      child.emit('close', 0)
+      child.emit('close', 0, null)
       expect(await host.stopAllAgents(1000)).toBe(true)
     } finally {
       vi.useRealTimers()
@@ -514,7 +634,7 @@ describe('an id that is already running', () => {
     await startAgent(one, 'a1', 'hello again')
     const second = childAt(1)
 
-    first.emit('close', 0)
+    first.emit('close', 0, null)
     fire('agent:send', one, 'a1', 'still listening')
 
     expect(second.stdin.written).toHaveLength(2)
@@ -590,7 +710,9 @@ describe('a start asked for while the account underneath it is moving', () => {
         id: 'a1',
         kind: 'exit',
         code: -1,
-        reason: { code: 'start-failed', said: 'an account change is in progress' },
+        signal: null,
+        reason: { code: 'start-failed', said: 'an account change is in progress', ended: '' },
+        asked: false,
       },
     ])
   })
@@ -615,7 +737,9 @@ describe('a start that was never going to work', () => {
     const one = renderer()
     await startAgent(one, 'a1', null)
 
-    expect(one.heard).toEqual([{ id: 'a1', kind: 'exit', code: -1, reason: null }])
+    expect(one.heard).toEqual([
+      { id: 'a1', kind: 'exit', code: -1, signal: null, reason: null, asked: false },
+    ])
     expect(boundary.spawns).toEqual([])
   })
 
@@ -623,7 +747,9 @@ describe('a start that was never going to work', () => {
     const one = renderer()
     await startAgent(one, '../../etc/passwd', 'hello')
 
-    expect(one.heard).toEqual([{ id: '../../etc/passwd', kind: 'exit', code: -1, reason: null }])
+    expect(one.heard).toEqual([
+      { id: '../../etc/passwd', kind: 'exit', code: -1, signal: null, reason: null, asked: false },
+    ])
     expect(boundary.spawns).toEqual([])
   })
 })

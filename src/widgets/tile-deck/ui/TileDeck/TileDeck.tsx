@@ -40,6 +40,8 @@ type TileDeckProps = {
   held?: boolean
   terminal: ReactNode
   onDismiss?: (id: string) => void
+  // Puts one teammate's crew log on the clipboard, from that tile's own menu.
+  onCopyDiagnostics?: (session: AgentSession) => void
 }
 
 export function TileDeck({
@@ -54,6 +56,7 @@ export function TileDeck({
   held = false,
   terminal,
   onDismiss,
+  onCopyDiagnostics,
 }: TileDeckProps) {
   const solo = soloRect(viewport)
   const advanced = useAdvancedFrame(state.kind)
@@ -208,6 +211,7 @@ export function TileDeck({
           held={held}
           onOpen={setOpenLane}
           onDismiss={onDismiss}
+          onCopyDiagnostics={onCopyDiagnostics}
         />
       )}
     </div>

@@ -31,6 +31,7 @@ export function ConversationGate({
   // The subagents a teammate called in belong to that teammate's report, not
   // to the row of teammates the conversation is waiting on.
   const teammates = topLevel(children)
+  const open = chatting.openAgent
 
   function restart(): void {
     chatting.setPendingRestart(null)
@@ -109,14 +110,15 @@ export function ConversationGate({
         </>
       }
       report={
-        chatting.openAgent === null ? null : (
+        open === null ? null : (
           <AgentReport
-            session={chatting.openAgent}
+            session={open}
             sessions={teammates}
-            helpers={helpersOf(children, chatting.openAgent.id)}
+            helpers={helpersOf(children, open.id)}
             nowMs={nowMs}
             onClose={() => focus.pick(null)}
             onPick={focus.pick}
+            onCopyDiagnostics={() => chatting.diagnostics.copyTeammate(open)}
           />
         )
       }

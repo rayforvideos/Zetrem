@@ -16,6 +16,8 @@ export type ChatListProps = {
   // '' files it back out into the loose list.
   onFile(id: string, folder: string): void
   onFileMany(ids: string[], folder: string): void
+  // Puts this chat's whole crew log on the clipboard.
+  onCopyDiagnostics(id: string): void
 }
 
 export type RowKit = {
@@ -27,6 +29,7 @@ export type RowKit = {
   onRemove(id: string): void
   onRename(id: string, wanted: string): void
   onFile(id: string, folder: string): void
+  onCopyDiagnostics(id: string): void
   onCarry(draggedId: string, target: ChatSummary): void
   carried: ChatSummary | null
   onPickUp(chat: ChatSummary | null): void

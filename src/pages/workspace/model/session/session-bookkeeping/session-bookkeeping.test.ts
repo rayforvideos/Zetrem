@@ -39,7 +39,7 @@ function child(id: string): AgentSession {
   }
 }
 
-const crashed: ExitReason = { code: 'cli-said', said: 'the CLI fell over' }
+const crashed: ExitReason = { code: 'cli-said', said: 'the CLI fell over', ended: 'exit 1' }
 
 describe('closeSession: what the exit leaves behind', () => {
   it('drops an ask nobody can answer any more, card and queue alike', () => {

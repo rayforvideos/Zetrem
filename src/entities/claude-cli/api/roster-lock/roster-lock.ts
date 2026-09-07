@@ -26,9 +26,11 @@ const GENERIC_HELPER = {
 // A fresh worktree has no node_modules of its own; main links the checkout's in
 // (symlinked, not copied) where there is one to link. Said as a condition because
 // a project may have none, and the link can be skipped or fail - a flat claim
-// would then be a lie, while the rule it carries holds either way.
+// would then be a lie, while the rule it carries holds either way. The last
+// sentence is there because two teammates in a row read a missing node_modules
+// as a folder to fill themselves, and linked or installed one of their own.
 const WORKTREE_NODE_MODULES_NOTICE =
-  '\n\nYou work in a git worktree of your own. If a node_modules folder is present there, it is linked from the main checkout: never install, update or remove dependencies inside the worktree.'
+  '\n\nYou work in a git worktree of your own. If a node_modules folder is present there, it is linked from the main checkout: never install, update or remove dependencies inside the worktree. If it is missing, wait a moment and look again rather than making one: it is linked in as the worktree appears.'
 
 // A teammate's own definition is what it speaks, and the stock ones are
 // English, so its running narration drifts to English whatever the person
@@ -39,6 +41,13 @@ const WORKTREE_NODE_MODULES_NOTICE =
 function spoken(prompt: string, line: string | undefined): string {
   return line === undefined || line.length === 0 ? prompt : `${line}\n\n${prompt}`
 }
+
+// A teammate told to build and run an app started the dev server and then
+// waited for it, which it never stops doing: one task spent two hours saying
+// "(waiting)" at a command that had nothing left to say. True of every
+// teammate, worktree or not, so it is added to each brief either way.
+const LONG_RUNNING_NOTICE =
+  '\n\nA command that does not end on its own, meaning a dev server, a watcher, expo run:* or npm run dev, is started in the background and left there: read whether it is ready from its log or its port, never from its exit. Never wait for one to end; say what you are waiting on and stop instead.'
 
 type Spec = Record<
   string,
@@ -51,8 +60,12 @@ type Spec = Record<
   }
 >
 
-function withNotice(prompt: string): string {
-  return `${prompt}${WORKTREE_NODE_MODULES_NOTICE}`
+// What every brief carries beyond the person's own words. The worktree notice
+// is only true behind a fence and is left off where there is none; the command
+// that never ends is waited on from anywhere.
+function briefed(prompt: string, fenced: boolean): string {
+  const fence = fenced ? WORKTREE_NODE_MODULES_NOTICE : ''
+  return `${prompt}${fence}${LONG_RUNNING_NOTICE}`
 }
 
 // Declared on the definition rather than asked for at the call: the runtime then
@@ -67,7 +80,7 @@ export function peopleSpec(people: Person[], isolated: boolean, spokenLine?: str
     // empty pick is left off entirely.
     spec[person.name] = {
       description: person.description.length > 0 ? person.description : person.name,
-      prompt: spoken(fenced ? withNotice(person.prompt) : person.prompt, spokenLine),
+      prompt: spoken(briefed(person.prompt, fenced), spokenLine),
       ...(person.model === null ? {} : { model: person.model }),
       ...(person.tools.length === 0 ? {} : { tools: person.tools }),
       ...(fenced ? { isolation: 'worktree' as const } : {}),
@@ -96,7 +109,7 @@ export function agentsArgs(
       if (name in spec) continue
       spec[name] = {
         ...GENERIC_HELPER,
-        prompt: spoken(withNotice(GENERIC_HELPER.prompt), spokenLine),
+        prompt: spoken(briefed(GENERIC_HELPER.prompt, true), spokenLine),
         isolation: 'worktree' as const,
       }
     }

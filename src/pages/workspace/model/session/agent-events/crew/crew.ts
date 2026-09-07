@@ -157,7 +157,7 @@ export function applyCrewEvent(turn: ClaudeTurnEvent, refs: AgentEventRefs): voi
       }
       wake(children, id)
       unhold(children, id)
-      children.patch(id, { taskId: turn.taskId })
+      children.patch(id, { taskId: turn.taskId, ...namedBy(children, id, turn) })
       return
     }
     case 'childProgress': {
@@ -233,6 +233,8 @@ export function wakeResumed(toolUseId: string, stdout: string, refs: AgentEventR
   const name = called.to.length > 0 ? called.to : agent.name
   children.open({
     id: agent.id,
+    // The runtime re-announces a resumed teammate under this same task id.
+    taskId: agent.id,
     runnerId: 'subagent',
     label: name,
     subagentType: name,
@@ -245,6 +247,25 @@ export function wakeResumed(toolUseId: string, stdout: string, refs: AgentEventR
     contextUsed: 0,
     startedAtMs: Date.now(),
   })
+}
+
+// A teammate woken by name after the board was cleared (a restarted session)
+// opened its seat knowing only the id it was called by. The runtime names it
+// again when it starts, and that name, not the id, is what the tile shows.
+function namedBy(
+  children: SessionStore,
+  id: string,
+  turn: { subagentType?: string; description: string },
+): Partial<AgentSession> {
+  const held = children.find(id)
+  if (held === null) return {}
+  // Opened by wakeResumed: the id stands in for both the name and the type.
+  const nameless = held.subagentType === held.label && held.label === held.id
+  if (!nameless) return {}
+  return {
+    ...(turn.subagentType ? { subagentType: turn.subagentType } : {}),
+    ...(turn.description.length > 0 ? { label: turn.description } : {}),
+  }
 }
 
 function assignment(prompt: string): TranscriptEntry[] {

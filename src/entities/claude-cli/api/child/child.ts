@@ -96,6 +96,9 @@ export function childStarted(event: Record<string, unknown>): ChildTurnEvent[] {
     ...task,
     taskType: str(event.task_type),
     description: str(event.description).trim(),
+    ...(typeof event.subagent_type === 'string' && event.subagent_type.length > 0
+      ? { subagentType: event.subagent_type }
+      : {}),
   }))
 }
 

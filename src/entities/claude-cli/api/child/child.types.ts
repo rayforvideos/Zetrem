@@ -37,6 +37,8 @@ export type ChildTurnEvent =
       taskId: string
       taskType: string
       description: string
+      // The teammate's definition name, when the runtime says it.
+      subagentType?: string
     }
   | {
       type: 'childNotified'

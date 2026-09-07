@@ -193,7 +193,7 @@ export function Composer({
           <label
             title={t`Agents search the library and suggest what they find.`}
             className={cn(
-              'flex h-6 flex-none select-none items-center gap-1.5 rounded-full px-2 text-sm transition-colors duration-150',
+              'flex h-6 min-w-0 flex-none select-none items-center gap-1.5 rounded-full px-2 text-sm transition-colors duration-150',
               library ? 'bg-card text-foreground' : 'text-muted-foreground hover:text-foreground',
             )}
           >
@@ -204,7 +204,11 @@ export function Composer({
               onCheckedChange={onLibrary}
               aria-label={library ? t`Library on` : t`Library off`}
             />
-            {library ? t`Library on` : t`Library off`}
+            {/* The words go first when the row runs short: the switch still says
+                on or off by itself, and the button at the end must stay in the box. */}
+            <span data-library-words className="hidden @[34rem]/composer:inline">
+              {library ? t`Library on` : t`Library off`}
+            </span>
           </label>
           <ChoicePicker
             options={modelsWith(MODELS, refusedModels)}

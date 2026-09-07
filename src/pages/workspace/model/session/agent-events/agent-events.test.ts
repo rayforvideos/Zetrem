@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { createChatStatus, createSessionStore } from '@/entities/agent-session'
-import type { RateLimit, ResultMetrics } from '@/entities/claude-cli'
+import { type RateLimit, type ResultMetrics, parseClaudeLine } from '@/entities/claude-cli'
 import type { AgentEventRefs } from './agent-events.types'
 import { applyAgentEvent, compactedLine, limitLine, turnLine } from './agent-events'
 import { createConversation } from '../../chat/conversation/conversation'
@@ -1822,6 +1822,61 @@ describe('the orchestrator speaking to a teammate', () => {
     expect(board[0]?.id).toBe('toolu_x')
     expect(board[0]?.status).toBe('reported')
     expect(board[0]?.headline).toBe('two lines')
+  })
+
+  it('names a tile opened by id after the runtime says who it is', () => {
+    const refs = fakeRefs()
+    remember('call_send', { to: 'a09c971daa19be27d', message: 'go on' }, refs)
+    wakeResumed(
+      'call_send',
+      JSON.stringify({ success: true, resumedAgentId: 'a09c971daa19be27d' }),
+      refs,
+    )
+    applyAgentEvent(
+      {
+        type: 'childStarted',
+        toolUseId: 'call_send',
+        taskId: 'a09c971daa19be27d',
+        taskType: 'local_agent',
+        description: '#105 대비 + #108 문자열 누출',
+        subagentType: 'React 개발자',
+      },
+      refs,
+    )
+    const seat = refs.stores.children.get().find((s) => s.id === 'a09c971daa19be27d')
+    expect(seat?.subagentType).toBe('React 개발자')
+    expect(seat?.label).toBe('#105 대비 + #108 문자열 누출')
+  })
+
+  // Captured from the CLI (2.1.263) after killing the session and resuming it in
+  // a new process: the orphan notice comes first, then SendMessage re-announces
+  // the teammate under its old task id with its type and description.
+  it('takes the name the runtime repeats when a teammate is woken after a restart', () => {
+    const refs = fakeRefs()
+    const stoppedLine =
+      '{"type":"system","subtype":"task_notification","task_id":"ad4664a473df96560","status":"stopped","output_file":"/tmp/x.output","summary":"No completion record was found for background agent \\"Slow scout\\" from the previous session.","uuid":"u1","session_id":"s"}'
+    for (const turn of parseClaudeLine(stoppedLine)) applyAgentEvent(turn, refs)
+    remember(
+      'toolu_01L1u3zSoo4wWmRJ4FERXmGY',
+      { to: 'ad4664a473df96560', message: 'finish up' },
+      refs,
+    )
+    wakeResumed(
+      'toolu_01L1u3zSoo4wWmRJ4FERXmGY',
+      '{"success":true,"message":"Resuming agent ad4664a","resumedAgentId":"ad4664a473df96560","pin":{"id":"ad4664a473df96560","name":"ad4664a473df96560","ref":"60265b"}}',
+      refs,
+    )
+    const startedLine =
+      '{"type":"system","subtype":"task_started","task_id":"ad4664a473df96560","tool_use_id":"toolu_01L1u3zSoo4wWmRJ4FERXmGY","description":"Slow scout","subagent_type":"scout","is_backgrounded":true,"spawn_depth":1,"task_type":"local_agent","prompt":"finish up and report","uuid":"u2","session_id":"s"}'
+    for (const turn of parseClaudeLine(startedLine)) applyAgentEvent(turn, refs)
+    const board = refs.stores.children.get()
+    expect(board).toHaveLength(1)
+    expect(board[0]).toMatchObject({
+      id: 'ad4664a473df96560',
+      subagentType: 'scout',
+      label: 'Slow scout',
+      status: 'working',
+    })
   })
 
   it('still opens a tile for an agent the board has never seen', () => {

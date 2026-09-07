@@ -1180,7 +1180,7 @@ msgstr "Editing"
 msgid "Edits files freely, asks before running commands"
 msgstr "Edits files freely, asks before running commands"
 
-#: src/widgets/conversation/ui/Composer/Composer.tsx:218
+#: src/widgets/conversation/ui/Composer/Composer.tsx:222
 #: src/widgets/setup/ui/SetupPane/SetupPane.tsx:163
 msgid "Effort"
 msgstr "Effort"
@@ -1556,12 +1556,12 @@ msgid "Library guide"
 msgstr "Library guide"
 
 #: src/widgets/conversation/ui/Composer/Composer.tsx:205
-#: src/widgets/conversation/ui/Composer/Composer.tsx:207
+#: src/widgets/conversation/ui/Composer/Composer.tsx:210
 msgid "Library off"
 msgstr "Library off"
 
 #: src/widgets/conversation/ui/Composer/Composer.tsx:205
-#: src/widgets/conversation/ui/Composer/Composer.tsx:207
+#: src/widgets/conversation/ui/Composer/Composer.tsx:210
 msgid "Library on"
 msgstr "Library on"
 
@@ -1622,7 +1622,7 @@ msgstr "Message for {addressee}"
 msgid "Message your team"
 msgstr "Message your team"
 
-#: src/widgets/conversation/ui/Composer/Composer.tsx:215
+#: src/widgets/conversation/ui/Composer/Composer.tsx:219
 #: src/widgets/setup/ui/SetupPane/SetupPane.tsx:157
 #: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:118
 #: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:181
@@ -1931,7 +1931,7 @@ msgstr "Pick a note"
 msgid "Pick a project first"
 msgstr "Pick a project first"
 
-#: src/pages/workspace/model/session/agent-events/crew/crew.ts:241
+#: src/pages/workspace/model/session/agent-events/crew/crew.ts:243
 msgid "Picked up where they left off"
 msgstr "Picked up where they left off"
 
@@ -2303,7 +2303,7 @@ msgstr "Searching"
 msgid "See what they did"
 msgstr "See what they did"
 
-#: src/widgets/conversation/ui/Composer/Composer.tsx:257
+#: src/widgets/conversation/ui/Composer/Composer.tsx:261
 msgid "Send"
 msgstr "Send"
 
@@ -2520,7 +2520,7 @@ msgstr "Still waiting for your permission"
 msgid "Stock rules"
 msgstr "Stock rules"
 
-#: src/widgets/conversation/ui/Composer/Composer.tsx:246
+#: src/widgets/conversation/ui/Composer/Composer.tsx:250
 msgid "Stop"
 msgstr "Stop"
 
@@ -2753,7 +2753,7 @@ msgstr "The running session goes on without the library. Agents read it from the
 msgid "The running session is on {0}. Restart it to work under {pick}."
 msgstr "The running session is on {0}. Restart it to work under {pick}."
 
-#: src/widgets/conversation/ui/Composer/Composer.tsx:225
+#: src/widgets/conversation/ui/Composer/Composer.tsx:229
 msgid "The running session keeps its model and effort. This applies from the next one."
 msgstr "The running session keeps its model and effort. This applies from the next one."
 

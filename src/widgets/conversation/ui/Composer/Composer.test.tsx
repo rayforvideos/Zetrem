@@ -189,4 +189,10 @@ describe('the send hint matches the key that actually sends', () => {
     const html = box({ enterSends: false })
     expect(/>⌘<|>Ctrl</.test(html)).toBe(true)
   })
+
+  it('drops the library words, not the button, when the row runs short', () => {
+    const html = box({ library: true })
+    expect(html).toMatch(/data-library-words[^>]*hidden @\[34rem\]\/composer:inline/)
+    expect(html).toContain('aria-label="Library on"')
+  })
 })

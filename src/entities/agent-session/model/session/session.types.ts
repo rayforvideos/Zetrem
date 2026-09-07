@@ -39,6 +39,9 @@ export type AgentSession = {
   taskId?: string
   lastSeenAtMs?: number
   endedAtMs?: number
+  // Set when the runtime said this child was done while a shell of its own
+  // still ran: the tile is kept working for the shell, and this is when.
+  heldAtMs?: number
   waitingSinceMs?: number
   permission?: PermissionAsk | null
   // Set for a teammate the runtime fenced into a worktree of its own: its work

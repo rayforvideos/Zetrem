@@ -1,4 +1,4 @@
-import { wake } from './wake'
+import { unhold, wake } from './wake'
 import { ownsRunningBash } from './crew-bash'
 export { adoptChildBash, ownsRunningBash, releaseChildBash } from './crew-bash'
 import { addressee, whose } from './addressee'
@@ -76,10 +76,11 @@ export function applyCrewEvent(turn: ClaudeTurnEvent, refs: AgentEventRefs): voi
         // find it, or a child whose end came only this way never closes.
         refs.heldReports.add(id)
         wake(children, id)
+        children.patch(id, { heldAtMs: Date.now() })
         return
       }
       refs.heldReports.delete(id)
-      children.patch(id, { status: 'done' })
+      children.patch(id, { status: 'done', heldAtMs: undefined })
       return
     }
     case 'childSay':
@@ -141,7 +142,10 @@ export function applyCrewEvent(turn: ClaudeTurnEvent, refs: AgentEventRefs): voi
       // end can park the tile: no further word about this child will come.
       if (turn.done && !parked) refs.heldReports.add(id)
       if (parked) refs.heldReports.delete(id)
-      children.patch(id, { status: parked ? 'reported' : 'working' })
+      children.patch(id, {
+        status: parked ? 'reported' : 'working',
+        heldAtMs: turn.done && !parked ? Date.now() : undefined,
+      })
       return
     }
     case 'childStarted': {
@@ -151,6 +155,7 @@ export function applyCrewEvent(turn: ClaudeTurnEvent, refs: AgentEventRefs): voi
         return
       }
       wake(children, id)
+      unhold(children, id)
       children.patch(id, { taskId: turn.taskId })
       return
     }
@@ -158,6 +163,7 @@ export function applyCrewEvent(turn: ClaudeTurnEvent, refs: AgentEventRefs): voi
       const id = whose(turn, refs)
       if (id === null || closedForGood(children, id)) return
       wake(children, id)
+      unhold(children, id)
       note(children, id, turn.lastTool)
       children.patch(id, {
         ...(turn.doing ? { doing: turn.doing.trim() } : {}),

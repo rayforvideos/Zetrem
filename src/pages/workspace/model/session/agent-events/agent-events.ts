@@ -71,7 +71,7 @@ function releaseShell(refs: AgentEventRefs, taskId: string): void {
   if (owner === undefined || !refs.heldReports.has(owner)) return
   if (ownsRunningBash(refs, owner)) return
   refs.heldReports.delete(owner)
-  refs.stores.children.patch(owner, { status: 'reported' })
+  refs.stores.children.patch(owner, { status: 'reported', heldAtMs: undefined })
 }
 
 function announce(turn: ClaudeTurnEvent, refs: AgentEventRefs): void {

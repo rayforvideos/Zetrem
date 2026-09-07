@@ -1,6 +1,7 @@
 import type { CSSProperties } from 'react'
 import { AgentSprite, personaOf, useModel } from '@/entities/teammate'
 import type { AgentSession } from '@/entities/agent-session'
+import { modelWordFromCli } from '@/entities/settings'
 import { modelLabel } from '@/shared/lib/model-label/model-label'
 import { X } from 'lucide-react'
 import { Button } from '@/shared/ui/button'
@@ -30,7 +31,9 @@ export function Headline({ session, withText = true, held = false, onDismiss }: 
             {persona ? persona.name : session.label}
             {model !== null && <span style={modelStyle}>{model}</span>}
           </span>
-          <span style={assignmentStyle}>{persona ? session.label : session.model}</span>
+          <span style={assignmentStyle}>
+            {persona ? session.label : (modelWordFromCli(session.model) ?? session.label)}
+          </span>
         </div>
         <StateChip status={session.status} held={held} />
         {onDismiss !== undefined && (

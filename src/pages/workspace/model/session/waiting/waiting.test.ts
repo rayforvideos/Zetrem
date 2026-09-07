@@ -37,7 +37,18 @@ describe('waitingOn: whether the run has stopped for the person', () => {
     expect(waitingOn(conv({ permission: ASK }), false)).toEqual({
       kind: 'permission',
       said: 'Bash',
+      target: 'Bash ls',
     })
+  })
+
+  it('carries what the tool would touch, which is what is being decided', () => {
+    const write = {
+      requestId: 'req-2',
+      toolName: 'Write',
+      line: 'Write src/mul.js',
+      detail: 'src/mul.js',
+    }
+    expect(waitingOn(conv({ permission: write }), false)?.target).toBe('src/mul.js')
   })
 
   it('holds a permission ask even while a teammate is still going', () => {
@@ -50,6 +61,7 @@ describe('waitingOn: whether the run has stopped for the person', () => {
     ).toEqual({
       kind: 'question',
       said: '어느 쪽으로 할까요?',
+      target: '',
     })
   })
 
@@ -101,6 +113,7 @@ describe('waitingOn: whether the run has stopped for the person', () => {
     expect(waitingOn(conv({ turns: [asked] }), false)).toEqual({
       kind: 'question',
       said: 'Rename or copy?',
+      target: '',
     })
   })
 
@@ -157,6 +170,7 @@ function wait(over: Partial<Wait> = {}): Wait {
     chatId: 'chat-1',
     kind: 'permission',
     said: 'Bash',
+    target: 'ls',
     title: 'Shop',
     mark: 'req-1',
     onScreen: false,
@@ -270,8 +284,8 @@ describe('waitsOf: every chat that has stopped, not only the one on screen', () 
   it('names each chat and says which one the person is looking at', () => {
     const out = waitsOf({
       held: {
-        'chat-1': { kind: 'question', said: 'Rename or copy?', mark: 'turn-9' },
-        'chat-2': { kind: 'permission', said: 'Bash', mark: 'req-3' },
+        'chat-1': { kind: 'question', said: 'Rename or copy?', target: '', mark: 'turn-9' },
+        'chat-2': { kind: 'permission', said: 'Bash', target: 'ls', mark: 'req-3' },
       },
       titles,
       onScreenId: 'chat-1',
@@ -281,6 +295,7 @@ describe('waitsOf: every chat that has stopped, not only the one on screen', () 
         chatId: 'chat-1',
         kind: 'question',
         said: 'Rename or copy?',
+        target: '',
         mark: 'turn-9',
         title: 'Shop',
         onScreen: true,
@@ -289,6 +304,7 @@ describe('waitsOf: every chat that has stopped, not only the one on screen', () 
         chatId: 'chat-2',
         kind: 'permission',
         said: 'Bash',
+        target: 'ls',
         mark: 'req-3',
         title: 'Invoices',
         onScreen: false,
@@ -298,7 +314,7 @@ describe('waitsOf: every chat that has stopped, not only the one on screen', () 
 
   it('counts nothing as on screen while the library covers the chat', () => {
     const out = waitsOf({
-      held: { 'chat-1': { kind: 'permission', said: 'Bash', mark: 'req-3' } },
+      held: { 'chat-1': { kind: 'permission', said: 'Bash', target: 'ls', mark: 'req-3' } },
       titles,
       onScreenId: null,
     })
@@ -307,7 +323,7 @@ describe('waitsOf: every chat that has stopped, not only the one on screen', () 
 
   it('leaves a chat it has no name for still worth raising', () => {
     const out = waitsOf({
-      held: { 'chat-9': { kind: 'permission', said: 'Bash', mark: 'req-3' } },
+      held: { 'chat-9': { kind: 'permission', said: 'Bash', target: 'ls', mark: 'req-3' } },
       titles,
       onScreenId: null,
     })

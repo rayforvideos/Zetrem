@@ -1,9 +1,12 @@
 import { useState } from 'react'
+import { saidPlainly } from '@/entities/claude-cli'
 import type { ToolActivity } from '@/entities/conversation'
+import { heldCommand, toolNameOf, toolShape } from '@/entities/tool'
 import { cn } from '@/shared/lib/cn'
 import { Button } from '@/shared/ui/button'
-import { TOOL_OUTPUT_LINES, heldLine, moreLine } from '../../lib/limits/limits'
+import { TOOL_OUTPUT_LINES, moreLine } from '../../lib/limits/limits'
 import { spawnResult, withoutPlumbing } from '../../lib/plumbing/plumbing'
+import { saidNote } from '../../lib/tool-note/tool-note'
 import { ToolDetail } from '../ToolDetail/ToolDetail'
 import { ToolLine } from '../ToolLine/ToolLine'
 
@@ -11,18 +14,26 @@ export function tickOpen(override: boolean | null, failed: boolean): boolean {
   return override ?? failed
 }
 
-export function Tick({ tool, live }: { tool: ToolActivity; live: boolean }) {
+type TickProps = { tool: ToolActivity; live: boolean; project: string | null }
+
+export function Tick({ tool, live, project }: TickProps) {
   const [override, setOverride] = useState<boolean | null>(null)
   const failed = tool.result?.isError === true
   const open = tickOpen(override, failed)
-  const said = [tool.result?.stdout, tool.result?.stderr].filter(Boolean).join('\n')
+  const said = saidPlainly([tool.result?.stdout, tool.result?.stderr].filter(Boolean).join('\n'))
   const output = spawnResult(tool.line) ? withoutPlumbing(said) : said
   const lines = output.split('\n')
   const shown = lines.slice(0, TOOL_OUTPUT_LINES).join('\n')
   const rest = lines.length - TOOL_OUTPUT_LINES
   const detail = ToolDetail({ tool })
-  const expandable = tool.result !== null || detail !== null
-  const held = output.length > 0 ? lines.length : 0
+  const shape = toolShape(toolNameOf(tool.line), tool.input)
+  // The row shows a command's first line and nothing more, so the rest of a
+  // script is only readable by opening the row, result or no result yet.
+  const command = shape.kind === 'command' ? heldCommand(shape.command) : null
+  const expandable = tool.result !== null || detail !== null || command !== null
+  // One note at the edge of a folded row, and it is the only place the row says
+  // what came back.
+  const note = tool.result === null ? null : saidNote(shape, output)
 
   return (
     <div className="flex flex-col gap-1">
@@ -38,15 +49,29 @@ export function Tick({ tool, live }: { tool: ToolActivity; live: boolean }) {
           live && 'text-foreground',
         )}
       >
-        <ToolLine tool={tool} />
-        {!open && held > 0 && (
-          <span className="ml-auto flex-none pl-2 text-muted-foreground/70 tabular-nums">
-            {heldLine(held)}
+        <ToolLine tool={tool} project={project} />
+        {!open && note !== null && !failed && (
+          <span
+            data-note
+            className={cn(
+              'ml-auto pl-2 text-muted-foreground/70',
+              shape.kind === 'agent' ? 'min-w-0 truncate font-sans' : 'flex-none tabular-nums',
+            )}
+          >
+            {note}
           </span>
         )}
       </Button>
       {open && (
         <div className="flex flex-col gap-1">
+          {command !== null && (
+            <pre
+              data-command
+              className="rounded-lg bg-card p-2.5 font-mono text-xs leading-normal whitespace-pre-wrap [overflow-wrap:anywhere]"
+            >
+              {command}
+            </pre>
+          )}
           {detail}
           {output.length > 0 && (
             <pre className="rounded-lg bg-card p-2.5 font-mono text-xs leading-normal whitespace-pre-wrap [overflow-wrap:anywhere] text-muted-foreground">

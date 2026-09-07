@@ -1,3 +1,4 @@
+import { Check } from 'lucide-react'
 import { read } from '@/shared/lib/say/read'
 import type { Said } from '@/shared/lib/say/read.types'
 import { Field, FieldDescription, FieldLabel } from '@/shared/ui/field'
@@ -34,8 +35,14 @@ export function ChoiceField({ label, options, chosen, onChoose }: ChoiceFieldPro
             <ToggleGroupItem
               key={option.id}
               value={option.id}
-              className="rounded-full border-transparent px-4"
+              className="gap-1.5 rounded-full border-transparent px-4 data-[state=on]:bg-chosen data-[state=on]:text-chosen-foreground"
             >
+              {/* The tick is held in a slot the same width whether it shows or
+                  not, so choosing does not shuffle the row along. It is here
+                  because a fill alone leaves the choice to colour. */}
+              <span className="inline-flex size-3.5 flex-none items-center justify-center">
+                {option.id === chosen && <Check className="size-3.5" aria-hidden="true" />}
+              </span>
               {read(option.label)}
             </ToggleGroupItem>
           ))}

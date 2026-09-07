@@ -138,8 +138,8 @@ describe('numbers are set in words a person can read', () => {
   })
 
   it('folds thousands into k', () => {
-    expect(tokenLabel(240)).toBe('240 out')
-    expect(tokenLabel(1240)).toBe('1.2k out')
+    expect(tokenLabel(240)).toBe('240 written')
+    expect(tokenLabel(1240)).toBe('1.2k written')
   })
 })
 

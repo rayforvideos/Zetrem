@@ -1,10 +1,11 @@
-import { wake } from './wake'
+import { unhold, wake } from './wake'
 import { ownsRunningBash } from './crew-bash'
-export { adoptChildBash, releaseChildBash } from './crew-bash'
+export { adoptChildBash, ownsRunningBash, releaseChildBash } from './crew-bash'
 import { addressee, whose } from './addressee'
 import { absorbs, resumedAgent } from '@/entities/claude-cli'
 import type { AgentSession, SessionStore, TranscriptEntry } from '@/entities/agent-session'
 import type { ClaudeTurnEvent } from '@/entities/claude-cli'
+import { saidPlainly } from '@/entities/claude-cli'
 import { changeBadge, changeLines, resultNote, shapeOfLine, toolNameOf } from '@/entities/tool'
 import { clip } from '@/pages/workspace/model/session/agent-events/clip/clip'
 import type { AgentEventRefs } from '../agent-events.types'
@@ -72,10 +73,15 @@ export function applyCrewEvent(turn: ClaudeTurnEvent, refs: AgentEventRefs): voi
         return
       }
       if (turn.state === 'completed' && ownsRunningBash(refs, id)) {
+        // The same held report as a notification's: the shell's end has to
+        // find it, or a child whose end came only this way never closes.
+        refs.heldReports.add(id)
         wake(children, id)
+        children.patch(id, { heldAtMs: Date.now() })
         return
       }
-      children.patch(id, { status: 'done' })
+      refs.heldReports.delete(id)
+      children.patch(id, { status: 'done', heldAtMs: undefined })
       return
     }
     case 'childSay':
@@ -133,7 +139,14 @@ export function applyCrewEvent(turn: ClaudeTurnEvent, refs: AgentEventRefs): voi
       // Done while the agent's own shell still runs would let the silence rule
       // close its tile mid-job.
       const parked = turn.done && !ownsRunningBash(refs, id)
-      children.patch(id, { status: parked ? 'reported' : 'working' })
+      // A report held back for a running shell is remembered, so the shell's
+      // end can park the tile: no further word about this child will come.
+      if (turn.done && !parked) refs.heldReports.add(id)
+      if (parked) refs.heldReports.delete(id)
+      children.patch(id, {
+        status: parked ? 'reported' : 'working',
+        heldAtMs: turn.done && !parked ? Date.now() : undefined,
+      })
       return
     }
     case 'childStarted': {
@@ -143,6 +156,7 @@ export function applyCrewEvent(turn: ClaudeTurnEvent, refs: AgentEventRefs): voi
         return
       }
       wake(children, id)
+      unhold(children, id)
       children.patch(id, { taskId: turn.taskId })
       return
     }
@@ -150,6 +164,7 @@ export function applyCrewEvent(turn: ClaudeTurnEvent, refs: AgentEventRefs): voi
       const id = whose(turn, refs)
       if (id === null || closedForGood(children, id)) return
       wake(children, id)
+      unhold(children, id)
       note(children, id, turn.lastTool)
       children.patch(id, {
         ...(turn.doing ? { doing: turn.doing.trim() } : {}),
@@ -247,7 +262,7 @@ function closeCall(
   const call = children.find(toolUseId)?.stream.findLast((held) => held.id === callId)
   if (call === undefined) return
   const note = failed
-    ? clip(text.trim(), NOTE_MAX)
+    ? clip(saidPlainly(text).trim(), NOTE_MAX)
     : (resultNote(shapeOfLine(call.line), text) ?? '')
   children.endCall(toolUseId, callId, { failed, note })
 }
@@ -268,6 +283,7 @@ function note(children: SessionStore, toolUseId: string, tool: string): void {
 export function forgetCrew(refs: AgentEventRefs): void {
   refs.ownedBash.clear()
   refs.pendingTasks.clear()
+  refs.heldReports.clear()
 }
 
 // Done plus a task id means the CLI itself said this child ended. Without a

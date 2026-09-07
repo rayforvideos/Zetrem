@@ -9,7 +9,7 @@ import { ConversationPane } from './ConversationPane'
 import { Composer } from '../Composer/Composer'
 import { Away } from './Away'
 import { Working } from './Working'
-import { tickOpen } from './Tick'
+import { Tick, tickOpen } from './Tick'
 
 const STATUS: StatusState = {
   usage: 'read',
@@ -40,6 +40,8 @@ function tool(overrides: Partial<ToolActivity> = {}): ToolActivity {
     ...overrides,
   }
 }
+
+const PROJECT = '/work/app'
 
 let seq = 0
 
@@ -74,9 +76,9 @@ function working(turns: Turn[]): string {
       you={{ name: 'Ray', face: 'onigiri' }}
       away={null}
       nowMs={12_000}
+      project={PROJECT}
       onDecide={() => {}}
       onFileTurn={() => {}}
-      sidebar={null}
       hint={false}
       onHintSeen={() => {}}
       report={null}
@@ -87,6 +89,9 @@ function working(turns: Turn[]): string {
           sessionLive={false}
           addressee={null}
           permissionMode="ask"
+          runningPermissionMode={null}
+          runningModel={null}
+          onRestart={() => {}}
           model="default"
           effort="default"
           refusedModels={[]}
@@ -128,9 +133,9 @@ function pane(
       you={{ name: 'Ray', face: 'onigiri' }}
       away={null}
       nowMs={0}
+      project={PROJECT}
       onDecide={() => {}}
       onFileTurn={() => {}}
-      sidebar={null}
       hint={false}
       onHintSeen={() => {}}
       report={null}
@@ -141,6 +146,9 @@ function pane(
           sessionLive={false}
           addressee={null}
           permissionMode="ask"
+          runningPermissionMode={null}
+          runningModel={null}
+          onRestart={() => {}}
           model="default"
           effort="default"
           refusedModels={[]}
@@ -178,6 +186,51 @@ describe('tickOpen: a run that went fine folds away', () => {
   })
 })
 
+const SCRIPT = 'set -e\nnpm run build\nnpm test'
+
+function tick(overrides: Partial<ToolActivity> = {}): string {
+  return renderToStaticMarkup(
+    <Tick
+      tool={tool({ line: 'Bash set -e', input: { command: SCRIPT }, ...overrides })}
+      live={false}
+      project={PROJECT}
+    />,
+  )
+}
+
+describe('a long command does not take the conversation over', () => {
+  it('keeps a folded row to the first line of a script', () => {
+    const html = tick()
+    expect(html).toContain('set -e …')
+    expect(html).not.toContain('npm run build')
+  })
+
+  it('holds that line to one line rather than wrapping it down the page', () => {
+    expect(tick()).toContain('truncate')
+  })
+
+  it('can be opened before the command comes back, since the row is all there is', () => {
+    expect(tick()).not.toContain('disabled=""')
+  })
+
+  it('shows the command whole above the output once the row is open', () => {
+    const html = tick({ result: { stdout: 'boom', stderr: '', isError: true, interrupted: false } })
+    expect(html).toContain('data-command')
+    expect(html).toContain('npm run build')
+    expect(html.indexOf('data-command'), 'the command reads before its output').toBeLessThan(
+      html.lastIndexOf('boom'),
+    )
+  })
+
+  it('leaves a command the row already showed whole out of the opened part', () => {
+    const html = tick({
+      input: { command: 'npm test' },
+      result: { stdout: 'boom', stderr: '', isError: true, interrupted: false },
+    })
+    expect(html).not.toContain('data-command')
+  })
+})
+
 describe('a quiet run keeps its log to itself', () => {
   it('shows a line count instead of the log, until somebody asks', () => {
     const stdout = ['하나', '둘', '셋'].join('\n')
@@ -188,6 +241,22 @@ describe('a quiet run keeps its log to itself', () => {
     ])
     expect(html).toContain('3 lines')
     expect(html).not.toContain('하나')
+  })
+
+  it('says how much is held back once, not once in each language', () => {
+    const stdout = ['하나', '둘', '셋'].join('\n')
+    const html = pane([
+      turn({
+        tools: [
+          tool({
+            line: 'Read /work/app/a.ts',
+            input: { file_path: '/work/app/a.ts' },
+            result: { stdout, stderr: '', isError: false, interrupted: false },
+          }),
+        ],
+      }),
+    ])
+    expect(html.match(/3 lines/g), 'one count, in the language the app speaks').toHaveLength(1)
   })
 
   it('lays a failed run open on arrival', () => {
@@ -341,6 +410,52 @@ describe('approval: the most important moment in this app', () => {
     expect(pane([], ask), 'other tools keep it').toContain('ask again this session')
   })
 
+  it('is allowed most of the window, and scrolls inside it, rather than cutting the body off', () => {
+    const html = pane([], ask)
+    expect(html).toContain('max-h-[60vh]')
+    expect(html, 'the body takes the tab stop, so a cut body can still be scrolled').toMatch(
+      /<section[^>]*tabindex="0"/,
+    )
+  })
+
+  it('shows what a write would put in the file, not only the path', () => {
+    const html = pane([], {
+      requestId: 'r5',
+      toolName: 'Write',
+      line: 'Write src/sub.js',
+      detail: 'src/sub.js',
+      change: [
+        [
+          { kind: 'add' as const, text: 'const a = 1' },
+          { kind: 'add' as const, text: 'const b = 2' },
+        ],
+      ],
+      count: { added: 2, removed: 0 },
+    })
+    expect(html).toContain('Write this file?')
+    expect(html).toContain('src/sub.js')
+    expect(html).toContain('const b = 2')
+    expect(html).toMatch(/data-change[^>]*>[\s\S]*?\+2/)
+  })
+
+  it('folds a long change and offers the whole of it, so the buttons stay in view', () => {
+    const lines = Array.from({ length: 40 }, (_, at) => ({
+      kind: 'add' as const,
+      text: `line ${at}`,
+    }))
+    const html = pane([], {
+      requestId: 'r6',
+      toolName: 'Edit',
+      line: 'Edit src/big.ts',
+      detail: 'src/big.ts',
+      change: [lines],
+      count: { added: 40, removed: 0 },
+    })
+    expect(html).toContain('line 0')
+    expect(html, 'the tail waits behind the button').not.toContain('line 39')
+    expect(html).toContain('Show the whole change')
+  })
+
   it('asks about a tool it does not know, without inventing a name for it', () => {
     const html = pane([], {
       requestId: 'r2',
@@ -366,13 +481,19 @@ const WAITING = {
 describe('an answer can be filed to the library on its own', () => {
   it('offers the per-answer action once the answer is in and settled', () => {
     const html = pane([turn({ text: '다 했다' })])
-    expect(html).toContain('To library')
-    expect(html).toContain('group/answer')
+    expect(html).toContain('data-file-turn')
+    expect(html).toContain('To the library')
+  })
+
+  it('shows that action outright rather than waiting for the pointer to find it', () => {
+    const html = pane([turn({ text: '다 했다' })])
+    const at = html.indexOf('data-file-turn')
+    expect(html.slice(at, at + 400)).not.toContain('opacity-0')
   })
 
   it('keeps the action off the streaming answer, since it is not written yet', () => {
     const html = working([turn({ role: 'user', text: '고쳐줘' }), turn({ text: '쓰는 중' })])
-    expect(html).not.toContain('To library')
+    expect(html).not.toContain('data-file-turn')
   })
 })
 

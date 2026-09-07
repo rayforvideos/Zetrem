@@ -11,7 +11,7 @@ import {
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import type { LibraryListing, LibraryNote } from '@/entities/library/model/note'
+import type { LibraryFiling, LibraryListing, LibraryNote } from '@/entities/library/model/note'
 
 const boundary = vi.hoisted(() => ({
   userData: '',
@@ -20,7 +20,7 @@ const boundary = vi.hoisted(() => ({
 }))
 
 vi.mock('electron', () => ({
-  app: { getPath: () => boundary.userData },
+  app: { getPath: () => boundary.userData, getLocale: () => 'en' },
   BrowserWindow: { getAllWindows: () => [{ webContents: {} }] },
 }))
 vi.mock('../ipc/ipc', () => ({
@@ -362,8 +362,13 @@ describe('what the screen asks for', () => {
     expect(
       (await ask<{ id: string }[]>('library:backlinks', 'Target.md')).map((one) => one.id),
     ).toEqual(['Source.md'])
-    const filed = await ask<LibraryNote | null>('library:file', '## Found\n\nThe probe runs empty.')
-    expect(filed).toMatchObject({ id: 'Found.md', summary: 'The probe runs empty.' })
+    const text = '## Found\n\nThe probe runs empty.'
+    const filed = await ask<LibraryFiling | null>('library:file', text)
+    expect(filed?.already).toBe(false)
+    expect(filed?.note).toMatchObject({ id: 'Found.md', summary: 'The probe runs empty.' })
+    // The same answer filed again is the same note, not a second one beside it.
+    const again = await ask<LibraryFiling | null>('library:file', text)
+    expect(again).toMatchObject({ already: true, note: { id: 'Found.md' } })
   })
 
   it('adds, renames and removes a folder, and removes a note', async () => {

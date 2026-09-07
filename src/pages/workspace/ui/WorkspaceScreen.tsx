@@ -39,8 +39,12 @@ export function WorkspaceScreen() {
     layout.libraryOpen,
     conv.status !== 'working',
     projects.current?.path ?? null,
+    layout.openLibrary,
   )
-  const proposals = useLibraryProposals(projects.current?.path ?? null)
+  // A suggestion is answered from over the conversation, so the note an accept
+  // makes is reached the same way an answer filed by hand is: the library
+  // comes up on that note.
+  const proposals = useLibraryProposals(projects.current?.path ?? null, library.reveal)
   useStarAsk(conv.status === 'working', chatting.chat.chats.length, settings, update)
 
   // A proposal names the host that raised it; the title it shows is the chat
@@ -97,22 +101,30 @@ export function WorkspaceScreen() {
                 </div>
               ) : layout.gate === 'setup' ? (
                 <SetupGate work={work} onOpenProject={openProject} />
-              ) : layout.libraryOpen ? (
-                <LibraryGate
-                  library={library}
-                  proposals={proposals}
-                  chatTitleOf={chatTitleOf}
-                  nowMs={nowMs}
-                  sidebar={sidebar}
-                />
               ) : (
-                <ConversationGate
-                  work={work}
-                  library={library}
-                  proposals={proposals}
-                  chatTitleOf={chatTitleOf}
-                  sidebar={sidebar}
-                />
+                // The sidebar stands beside the gate rather than inside it.
+                // Held by whichever gate was showing, it was torn down and
+                // built again on the way into the library, which put the
+                // roster back at the top and lost where you were reading.
+                <div className="relative z-[3] flex h-full gap-7">
+                  {sidebar}
+                  {layout.libraryOpen ? (
+                    <LibraryGate
+                      library={library}
+                      proposals={proposals}
+                      chatTitleOf={chatTitleOf}
+                      nowMs={nowMs}
+                      onLeave={layout.leaveLibrary}
+                    />
+                  ) : (
+                    <ConversationGate
+                      work={work}
+                      library={library}
+                      proposals={proposals}
+                      chatTitleOf={chatTitleOf}
+                    />
+                  )}
+                </div>
               )
             }
           />

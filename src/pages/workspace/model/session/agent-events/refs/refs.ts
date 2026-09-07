@@ -13,6 +13,7 @@ export function freshRefs(
     limits: new Map(),
     ownedBash: new Map(),
     pendingTasks: new Map(),
+    heldReports: new Set(),
     onModelRefused: hooks.onModelRefused,
     onLimit: hooks.onLimit,
   }

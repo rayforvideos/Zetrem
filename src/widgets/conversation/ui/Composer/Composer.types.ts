@@ -9,6 +9,10 @@ export type ComposerProps = {
   permissionMode: PermissionMode
   model: ModelChoice
   effort: EffortChoice
+  // What the running session is actually on, as it reported itself. Null where
+  // nothing is running, or where the session said nothing this app recognises.
+  runningPermissionMode: PermissionMode | null
+  runningModel: ModelChoice | null
   refusedModels: ModelChoice[]
   enterSends: boolean
   // Whether sessions in this project are handed the library to search.
@@ -24,4 +28,6 @@ export type ComposerProps = {
   onModel(model: ModelChoice): void
   onEffort(effort: EffortChoice): void
   onLibrary(open: boolean): void
+  // Replaces the running session with one started on what is picked now.
+  onRestart(): void
 }

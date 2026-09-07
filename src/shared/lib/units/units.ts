@@ -28,7 +28,7 @@ export function limitTag(kind: string): string {
     case 'seven_day_oauth':
       return ''
     case 'seven_day_overage':
-      return 'Overage'
+      return t`Overage`
     default:
       return kind.startsWith('seven_day_') ? titled(kind.slice('seven_day_'.length)) : kind
   }

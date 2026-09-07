@@ -1,6 +1,6 @@
 import type { AgentSession } from '@/entities/agent-session'
 import { saidBack } from '@/entities/agent-session'
-import { AgentSprite } from '@/entities/teammate'
+import { AgentSprite, personaOf } from '@/entities/teammate'
 import { Markdown } from '@/shared/markdown/Markdown/Markdown'
 import { stateWord } from '../../lib/state-word/state-word'
 import { t } from '@lingui/core/macro'
@@ -17,7 +17,7 @@ export function HelperList({ helpers }: { helpers: AgentSession[] }) {
         <div key={helper.id} data-helper={helper.id} className="flex flex-col gap-1.5">
           <span className="flex items-center gap-2 font-mono text-xs text-muted-foreground">
             <AgentSprite subagentType={helper.subagentType || helper.label} size={16} />
-            <span className="flex-none">{helper.subagentType || helper.label}</span>
+            <span className="flex-none">{personaOf(helper.subagentType || helper.label).name}</span>
             <span className="truncate">{helper.label}</span>
             <span className="ml-auto flex-none">{stateWord(helper.status)}</span>
           </span>

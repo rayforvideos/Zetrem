@@ -1,10 +1,15 @@
+import { bodyEchoesTitle } from '@/entities/library'
 import { cn } from '@/shared/lib/cn'
 import { Button } from '@/shared/ui/button'
 import { sinceOf } from '../../lib/since/since'
 import type { NoteRowProps } from './NoteRow.types'
 
 export function NoteRow({ note, snippet, open, nowMs, onOpen }: NoteRowProps) {
-  const line = snippet ?? note.summary
+  // A note short enough to be its own title has a summary that repeats it, and
+  // a row that prints both says one thing twice. A search snippet is not that:
+  // it is there to show where the words were found.
+  const echo = bodyEchoesTitle(note.title, note.summary)
+  const line = snippet ?? (echo ? '' : note.summary)
   return (
     <Button
       data-note-row={note.id}

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import type { AgentSession } from '@/entities/agent-session'
-import { LOST_QUIET_MS, REPORTED_QUIET_MS, settled } from './settle'
+import { HELD_QUIET_MS, LOST_QUIET_MS, REPORTED_QUIET_MS, settled } from './settle'
 
 function session(id: string, overrides: Partial<AgentSession> = {}): AgentSession {
   return {
@@ -77,5 +77,18 @@ describe('settled: who has gone quiet long enough to call finished', () => {
   it('picks up an agent resumed by a message, which the CLI never reports a task for', () => {
     const resumed = session('a', { headline: 'Picked up where they left off', lastSeenAtMs: 0 })
     expect(settled([resumed], { nowMs: LOST_QUIET_MS, ...idle })).toEqual(['a'])
+  })
+
+  it('lets a report held for a shell stand once nothing has been heard for a while', () => {
+    const held = session('a', { taskId: 't', heldAtMs: 0 })
+    expect(settled([held], { nowMs: HELD_QUIET_MS - 1, ...idle })).toEqual([])
+    expect(settled([held], { nowMs: HELD_QUIET_MS, ...idle })).toEqual(['a'])
+    expect(settled([held], { nowMs: HELD_QUIET_MS, ...busy })).toEqual(['a'])
+  })
+
+  it('counts the hold from the last thing heard, not from the hold alone', () => {
+    const held = session('a', { taskId: 't', heldAtMs: 0, lastSeenAtMs: 30_000 })
+    expect(settled([held], { nowMs: HELD_QUIET_MS + 10_000, ...idle })).toEqual([])
+    expect(settled([held], { nowMs: HELD_QUIET_MS + 30_000, ...idle })).toEqual(['a'])
   })
 })

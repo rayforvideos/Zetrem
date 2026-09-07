@@ -4,6 +4,15 @@ const HEADING = /^#{1,6}\s+(.+?)\s*#*\s*$/
 const FENCE = /^(```|~~~)/
 const SENTENCE_END = /[.!?。！？]/
 const FORBIDDEN_IN_NAME = /[/\\:*?"<>|]/g
+const ELLIPSIS = '…'
+// Trailing punctuation left dangling by the cut: it belonged to the words that
+// were dropped, so it reads as damage rather than as writing.
+const DANGLING = /[\s,;:·、，]+$/
+const TRAILING_STOPS = /\.+$/
+// A space nearer the start than this leaves too little of the sentence to be
+// worth reading, so a run that long without one is cut where it must be. The
+// mark still says it was cut, whichever of the two happened.
+const BOUNDARY_FLOOR = 0.5
 
 function plain(text: string): string {
   return text
@@ -19,11 +28,15 @@ function plain(text: string): string {
     .trim()
 }
 
+// Ends on a word wherever the text gives one to end on, and always says that
+// it ended early. A cut with nothing to mark it reads as a sentence someone
+// forgot to finish, which is what a title is least able to afford.
 function cut(text: string, max: number): string {
   if (text.length <= max) return text
-  const room = text.slice(0, max - 1)
+  const room = text.slice(0, max - ELLIPSIS.length)
   const space = room.lastIndexOf(' ')
-  return `${(space > max / 2 ? room.slice(0, space) : room).trimEnd()}…`
+  const kept = space > max * BOUNDARY_FLOOR ? room.slice(0, space) : room
+  return `${kept.replace(DANGLING, '')}${ELLIPSIS}`
 }
 
 function paragraphs(body: string): string[] {
@@ -70,5 +83,17 @@ export function titleFrom(text: string): string {
     .replace(/\s+/g, ' ')
     .trim()
   if (named.length === 0) return 'Untitled'
-  return cut(named, TITLE_MAX).replace(/…$/, '').replace(/\.+$/, '').trim() || 'Untitled'
+  // The mark the cut left stays: a title that ends mid-thought has to say so,
+  // or every long answer is filed under a sentence that looks broken. Only a
+  // full stop is taken off, and only when the title was short enough to keep
+  // whole, since a name ending in one could not be typed back in.
+  return cut(named, TITLE_MAX).replace(TRAILING_STOPS, '').trim() || 'Untitled'
+}
+
+// Whether the body would only repeat the title. A short answer filed to the
+// library becomes a note whose title is the whole of it, and a reader that
+// prints both shows the same sentence twice with nothing between them.
+export function bodyEchoesTitle(title: string, body: string): boolean {
+  const said = plain(body).replace(TRAILING_STOPS, '').trim()
+  return said.length > 0 && said === title.replace(TRAILING_STOPS, '').trim()
 }

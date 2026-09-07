@@ -20,4 +20,12 @@ export type ChoicePickerProps = {
   label: string
   note?: string | null
   sub?: SubChoice
+  // What the running session is on, when the person has picked something else.
+  // The chip names it first, because it is the one that decides, and turns to
+  // a warning until a new session catches the pick up.
+  inForce?: string | null
+  // Replaces the running session with one on the pick. Offered at the top of
+  // the menu whenever `inForce` is set: with the two apart, restarting is the
+  // only thing this picker can do that changes anything now.
+  onRestart?(): void
 }

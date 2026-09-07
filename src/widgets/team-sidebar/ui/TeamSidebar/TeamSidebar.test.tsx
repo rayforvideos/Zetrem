@@ -334,6 +334,19 @@ describe('the sidebar ends with a way into the library', () => {
     expect(out).toContain('Library')
   })
 
+  it('holds that row under the scrolling column, where a long roster cannot push it off', () => {
+    const out = bar()
+    const column = out.lastIndexOf('<div', out.indexOf('zt-scroll'))
+    const footer = out.lastIndexOf('<div', out.indexOf('data-sidebar-footer'))
+    expect(column).toBeGreaterThan(-1)
+    expect(footer).toBeGreaterThan(column)
+    // Every div opened since the column started has closed again by the time
+    // the footer opens, which is to say the two are siblings.
+    const between = out.slice(column, footer)
+    expect(between.split('<div').length).toBe(between.split('</div>').length)
+    expect(out.indexOf('data-library-row')).toBeGreaterThan(footer)
+  })
+
   it('lights the row with a dot only once a note has been filed unseen', () => {
     expect(bar()).not.toContain('data-library-unseen')
     const lit = bar({ libraryUnseen: true })

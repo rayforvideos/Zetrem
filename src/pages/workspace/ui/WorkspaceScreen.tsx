@@ -39,8 +39,12 @@ export function WorkspaceScreen() {
     layout.libraryOpen,
     conv.status !== 'working',
     projects.current?.path ?? null,
+    layout.openLibrary,
   )
-  const proposals = useLibraryProposals(projects.current?.path ?? null)
+  // A suggestion is answered from over the conversation, so the note an accept
+  // makes is reached the same way an answer filed by hand is: the library
+  // comes up on that note.
+  const proposals = useLibraryProposals(projects.current?.path ?? null, library.reveal)
   useStarAsk(conv.status === 'working', chatting.chat.chats.length, settings, update)
 
   // A proposal names the host that raised it; the title it shows is the chat

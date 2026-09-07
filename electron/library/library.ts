@@ -16,6 +16,7 @@ import {
   addProposal,
   dismissProposal,
   listProposals,
+  restoreProposal,
 } from './library-proposals/library-proposals'
 import {
   addFolder,
@@ -237,7 +238,13 @@ export function registerLibrary(): void {
   handle('library:rename', async (_event, id, title) =>
     told(renameNote(await currentDb(), id, title)),
   )
-  handle('library:file', async (_event, text) => told(fileNote(await currentDb(), text)))
+  handle('library:file', async (_event, text) => {
+    const filed = fileNote(await currentDb(), text, Date.now(), app.getLocale())
+    // Opening the note that was already there changed nothing, so the windows
+    // are only told when a note was actually written.
+    if (filed !== null && !filed.already) tellRenderers()
+    return filed
+  })
   handle('library:search', async (_event, query) =>
     typeof query === 'string' ? searchNotes(await currentDb(), query) : [],
   )
@@ -248,10 +255,17 @@ export function registerLibrary(): void {
   })
   handle('library:proposals', async () => listProposals(await currentDb()))
   handle('library:proposal-accept', async (_event, id) => {
-    const note = acceptProposal(await currentDb(), id)
+    const note = acceptProposal(await currentDb(), id, app.getLocale())
     if (note !== null) tellRenderers()
     tellProposed()
     return note
+  })
+  // Undoing an accept: the note is removed through 'library:remove', and this
+  // puts the suggestion back so the person is left exactly where they were.
+  handle('library:proposal-restore', async (_event, proposal) => {
+    const back = restoreProposal(await currentDb(), proposal)
+    tellProposed()
+    return back
   })
   handle('library:proposal-dismiss', async (_event, id) => {
     dismissProposal(await currentDb(), id)

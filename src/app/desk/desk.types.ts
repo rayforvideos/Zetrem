@@ -20,6 +20,7 @@ import type {
 import type { Project } from '@/entities/project/model/project'
 import type {
   LibraryHit,
+  LibraryFiling,
   LibraryListing,
   LibraryNote,
   LibraryNoteSummary,
@@ -158,13 +159,15 @@ export type Invokes = {
   ) => LibraryNote | null
   'library:create': (folder: string | null, title: string) => LibraryNote | null
   'library:rename': (id: string, title: string) => LibraryNote | null
-  'library:file': (text: string) => LibraryNote | null
+  'library:file': (text: string) => LibraryFiling | null
   'library:search': (query: string) => LibraryHit[]
   'library:backlinks': (id: string) => LibraryNoteSummary[]
   // What agents have suggested and nobody has answered yet, oldest first.
   'library:proposals': () => LibraryProposal[]
   'library:proposal-accept': (id: string) => LibraryNote | null
   'library:proposal-dismiss': (id: string) => void
+  // Undo of an accept: the suggestion goes back to waiting, under its own id.
+  'library:proposal-restore': (proposal: LibraryProposal) => LibraryProposal | null
   'library:folder-add': (name: string) => LibraryListing
   'library:folder-rename': (name: string, next: string) => LibraryListing
   'library:folder-remove': (name: string) => LibraryListing

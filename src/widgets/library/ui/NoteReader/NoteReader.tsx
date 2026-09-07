@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import type { MouseEvent } from 'react'
 import { t } from '@lingui/core/macro'
 import { Check, Pencil, Trash2 } from 'lucide-react'
-import { linked, noteTitleOf } from '@/entities/library'
+import { bodyEchoesTitle, linked, noteTitleOf } from '@/entities/library'
 import { Markdown } from '@/shared/markdown/Markdown/Markdown'
 import {
   AlertDialog,
@@ -39,6 +39,9 @@ export function NoteReader({
 }: NoteReaderProps) {
   const [asking, setAsking] = useState(false)
   const [saving, setSaving] = useState(false)
+  // A note short enough to be its own title has already been read by the time
+  // the eye leaves the heading, so the body under it would only say it again.
+  const echo = bodyEchoesTitle(note.title, note.body)
 
   // The write is debounced; savedAtMs advancing is when it actually landed.
   useEffect(() => {
@@ -154,11 +157,13 @@ export function NoteReader({
         </div>
         {!editing && (
           <>
-            {/* biome-ignore lint/a11y/noStaticElementInteractions: the anchors inside the markdown are the real controls, this only reroutes their clicks */}
-            {/* biome-ignore lint/a11y/useKeyWithClickEvents: a keyboard reaches the anchors themselves, which need no help from this */}
-            <div className="text-base leading-7" onClick={follow}>
-              <Markdown text={linked(note.body, titles)} />
-            </div>
+            {!echo && (
+              // biome-ignore lint/a11y/noStaticElementInteractions: the anchors inside the markdown are the real controls, this only reroutes their clicks
+              // biome-ignore lint/a11y/useKeyWithClickEvents: a keyboard reaches the anchors themselves, which need no help from this
+              <div data-note-body className="text-base leading-7" onClick={follow}>
+                <Markdown text={linked(note.body, titles)} />
+              </div>
+            )}
             {backlinks.length > 0 && (
               <section data-backlinks className="mt-14 flex flex-col gap-1.5 border-t pt-6">
                 <h3 className="px-1 pb-1 text-xs font-medium tracking-[0.06em] text-muted-foreground">

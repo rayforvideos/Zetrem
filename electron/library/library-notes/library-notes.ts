@@ -1,6 +1,6 @@
 import type { DatabaseSync } from 'node:sqlite'
 import { summaryOf, titleFrom } from '@/entities/library/lib/summary/summary'
-import type { LibraryListing, LibraryNote } from '@/entities/library/model/note'
+import type { LibraryFiling, LibraryListing, LibraryNote } from '@/entities/library/model/note'
 import type { FolderRow, NoteRow } from '../library-db/library-db.types'
 import { dropNote, headOf, noteOf, putNote, replaceNote } from '../library-db/library-db'
 import type { NotePatch } from './library-notes.types'
@@ -8,6 +8,7 @@ import type { NotePatch } from './library-notes.types'
 const FOLDER_MAX = 60
 const TITLE_MAX = 80
 const SEGMENT = /^[^/\\]+$/
+const NOT_IN_SEGMENT = /[/\\]/g
 
 export function isFolderName(name: unknown): name is string {
   return (
@@ -115,9 +116,36 @@ export function writeNote(
   })
 }
 
-function freeTitle(db: DatabaseSync, folder: string, title: string): string {
-  let candidate = title
-  for (let n = 2; taken(db, idOf(folder, candidate)); n += 1) candidate = `${title} ${n}`
+// The day a note arrived, in the reader's own language, and safe to put in a
+// name: a locale that writes the date with a slash would otherwise make an id
+// that reads as a folder.
+function dayOf(nowMs: number, locale: string | undefined): string {
+  const said = new Intl.DateTimeFormat(locale, { month: 'long', day: 'numeric' }).format(
+    new Date(nowMs),
+  )
+  return said.replace(NOT_IN_SEGMENT, ' ').replace(/\s+/g, ' ').trim()
+}
+
+// Two notes wanting one name are told apart by the day the second was written.
+// A counter says nothing about either of them, and an id says less: a person
+// reading their library should be able to see at a glance which is which.
+function freeTitle(
+  db: DatabaseSync,
+  folder: string,
+  title: string,
+  nowMs: number,
+  locale: string | undefined,
+): string {
+  if (!taken(db, idOf(folder, title))) return title
+  const day = dayOf(nowMs, locale)
+  // The date has to fit within what a title may hold, so the words give way
+  // to it rather than the other way round.
+  const room = TITLE_MAX - ` (${day})`.length
+  const dated = `${title.length <= room ? title : title.slice(0, room).trim()} (${day})`
+  let candidate = dated
+  // Two notes of a name on one day are still two notes; the count is the last
+  // thing left to tell them apart, not the first.
+  for (let n = 2; taken(db, idOf(folder, candidate)); n += 1) candidate = `${dated} ${n}`
   return candidate
 }
 
@@ -127,9 +155,10 @@ function begin(
   title: string,
   body: string,
   nowMs: number,
+  locale?: string,
 ): LibraryNote | null {
   if (folder.length > 0 && !hasFolder(db, folder)) return null
-  const name = freeTitle(db, folder, title)
+  const name = freeTitle(db, folder, title, nowMs, locale)
   // Nothing may be written under an id that cannot be read back: a note only
   // its own writer can name is a note nobody can open or remove.
   if (!isNoteId(idOf(folder, name))) return null
@@ -151,10 +180,11 @@ export function createNote(
   folder: unknown,
   title: unknown,
   nowMs: number = Date.now(),
+  locale?: string,
 ): LibraryNote | null {
   const where = folder === null || folder === '' ? '' : folder
   if ((where !== '' && !isFolderName(where)) || !isTitle(title)) return null
-  return begin(db, where, title, '', nowMs)
+  return begin(db, where, title, '', nowMs, locale)
 }
 
 // Words become a title the library can name a note by. An answer that opens
@@ -167,15 +197,32 @@ function named(text: string): string {
   return isTitle(plain) ? plain : 'Untitled'
 }
 
+// The note that already says exactly this, oldest first, or null. An answer
+// carries its own words with it, so the same words are the same answer.
+function sameBody(db: DatabaseSync, body: string): LibraryNote | null {
+  const row = db
+    .prepare('SELECT * FROM notes WHERE body = ? ORDER BY created_at_ms ASC, id ASC LIMIT 1')
+    .get(body) as NoteRow | undefined
+  return row === undefined ? null : noteOf(row)
+}
+
 // The bolt on an answer: the answer becomes a note at the root, titled from
-// its own words.
+// its own words. Filing the same answer again is not a second note — one run
+// can show the same passage in several turns, and a person who files each of
+// them meant to keep the passage, not to keep it four times. The note that is
+// already there is handed back instead, and the screen opens it.
 export function fileNote(
   db: DatabaseSync,
   text: unknown,
   nowMs: number = Date.now(),
-): LibraryNote | null {
+  locale?: string,
+): LibraryFiling | null {
   if (typeof text !== 'string' || text.trim().length === 0) return null
-  return begin(db, '', named(text), text.trim(), nowMs)
+  const body = text.trim()
+  const already = sameBody(db, body)
+  if (already !== null) return { note: already, already: true }
+  const note = begin(db, '', named(body), body, nowMs, locale)
+  return note === null ? null : { note, already: false }
 }
 
 export function renameNote(

@@ -112,9 +112,35 @@ describe('createChatSession: one chat, its own process and stores', () => {
     const deps = fakeDeps()
     const { session, id } = running(deps)
     await Promise.resolve()
-    session.handle({ id, kind: 'exit', code: 0, reason: null })
+    session.handle({ id, kind: 'exit', code: 0, signal: null, reason: null, asked: false })
     expect(session.running()).toBe(false)
     expect(session.stores.conversation.get().status).toBe('done')
+  })
+
+  it('raises trouble and names the signal when something ended the process unasked', async () => {
+    const deps = fakeDeps()
+    const { session, id } = running(deps)
+    await Promise.resolve()
+    session.handle({
+      id,
+      kind: 'exit',
+      code: null,
+      signal: 'SIGKILL',
+      reason: { code: 'signalled', said: 'SIGKILL', ended: 'SIGKILL' },
+      asked: false,
+    })
+    const conv = session.stores.conversation.get()
+    expect(conv.trouble).toBe(true)
+    expect(conv.turns.map((turn) => turn.text).join(' ')).toContain('SIGKILL')
+  })
+
+  it('stays quiet about an end Zetrem asked for behind the chat back', async () => {
+    const deps = fakeDeps()
+    const { session, id } = running(deps)
+    await Promise.resolve()
+    // An account change stops the process in main; this chat never called stop.
+    session.handle({ id, kind: 'exit', code: null, signal: 'SIGTERM', reason: null, asked: true })
+    expect(session.stores.conversation.get().trouble).toBe(false)
   })
 
   it('saves by itself once a turn settles, under its own project', async () => {
@@ -122,7 +148,7 @@ describe('createChatSession: one chat, its own process and stores', () => {
     const { session, id } = running(deps)
     await Promise.resolve()
     expect(deps.written).toHaveLength(0)
-    session.handle({ id, kind: 'exit', code: 0, reason: null })
+    session.handle({ id, kind: 'exit', code: 0, signal: null, reason: null, asked: false })
     await Promise.resolve()
     expect(deps.written).toHaveLength(1)
     expect(deps.written[0]?.id).toBe('c1')
@@ -220,7 +246,14 @@ describe('createChatSession: one chat, its own process and stores', () => {
     })
     session.send('다시 이어서', null, [])
     await Promise.resolve()
-    session.handle({ id: deps.started[0] as string, kind: 'exit', code: 1, reason: null })
+    session.handle({
+      id: deps.started[0] as string,
+      kind: 'exit',
+      code: 1,
+      signal: null,
+      reason: null,
+      asked: false,
+    })
     expect(deps.started).toHaveLength(2)
     expect(session.running()).toBe(true)
     const texts = session.stores.conversation.get().turns.map((turn) => turn.text)

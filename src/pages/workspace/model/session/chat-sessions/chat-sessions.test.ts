@@ -73,10 +73,24 @@ describe('chatSessions: every chat keeps its own process', () => {
     await Promise.resolve()
     const [ida, idb] = deps.started
     expect(ida).not.toBe(idb)
-    chatSessions.handle({ id: ida as string, kind: 'exit', code: 0, reason: null })
+    chatSessions.handle({
+      id: ida as string,
+      kind: 'exit',
+      code: 0,
+      signal: null,
+      reason: null,
+      asked: false,
+    })
     expect(a.running()).toBe(false)
     expect(b.running()).toBe(true)
-    chatSessions.handle({ id: idb as string, kind: 'exit', code: 0, reason: null })
+    chatSessions.handle({
+      id: idb as string,
+      kind: 'exit',
+      code: 0,
+      signal: null,
+      reason: null,
+      asked: false,
+    })
     expect(b.running()).toBe(false)
   })
 
@@ -230,7 +244,14 @@ describe('the registry says when a chat has been written back', () => {
     a.configure(config, () => {})
     a.send('가자', null, [])
     await Promise.resolve()
-    chatSessions.handle({ id: deps.started[0] as string, kind: 'exit', code: 0, reason: null })
+    chatSessions.handle({
+      id: deps.started[0] as string,
+      kind: 'exit',
+      code: 0,
+      signal: null,
+      reason: null,
+      asked: false,
+    })
     await settle()
     expect(saved).toEqual(['a@p'])
     stop()
@@ -245,7 +266,14 @@ describe('the registry says when a chat has been written back', () => {
     a.configure(config, () => {})
     a.send('가자', null, [])
     await Promise.resolve()
-    chatSessions.handle({ id: deps.started[0] as string, kind: 'exit', code: 0, reason: null })
+    chatSessions.handle({
+      id: deps.started[0] as string,
+      kind: 'exit',
+      code: 0,
+      signal: null,
+      reason: null,
+      asked: false,
+    })
     await settle()
     expect(saved).toEqual([])
   })
@@ -286,8 +314,22 @@ describe('a session goes once its process has exited and its last save is writte
     b.send('가자', null, [])
     await Promise.resolve()
     const [ida, idb] = deps.started
-    chatSessions.handle({ id: ida as string, kind: 'exit', code: 0, reason: null })
-    chatSessions.handle({ id: idb as string, kind: 'exit', code: 0, reason: null })
+    chatSessions.handle({
+      id: ida as string,
+      kind: 'exit',
+      code: 0,
+      signal: null,
+      reason: null,
+      asked: false,
+    })
+    chatSessions.handle({
+      id: idb as string,
+      kind: 'exit',
+      code: 0,
+      signal: null,
+      reason: null,
+      asked: false,
+    })
     await settle()
     expect(chatSessions.find('b')).toBeNull()
     expect(chatSessions.find('a')).toBe(a)

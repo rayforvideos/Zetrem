@@ -58,7 +58,16 @@ type UpdaterCheck = {
 type AgentHostEvent =
   | { id: string; kind: 'line'; line: string }
   | { id: string; kind: 'workspace'; cwd: string }
-  | { id: string; kind: 'exit'; code: number | null; reason: ExitReason | null }
+  // `asked` is main's word on whether Zetrem itself ended the process: only it
+  // knows about an account change, and an end nobody asked for is trouble.
+  | {
+      id: string
+      kind: 'exit'
+      code: number | null
+      signal: string | null
+      reason: ExitReason | null
+      asked: boolean
+    }
 
 // A usage reading kept on disk, with the account it was taken for: the
 // renderer shows it only to that account.
@@ -94,7 +103,15 @@ export type Invokes = {
   'project:addDir': (id: string, path: string) => Project | null
   'project:removeDir': (id: string, path: string) => Project | null
 
-  'agent:start': (id: string, prompt: string, config: RunConfig, files?: Attached[]) => void
+  // The chat rides along so the app log can name it at the exit. It is never a
+  // run argument: main quotes it and nothing else.
+  'agent:start': (
+    id: string,
+    prompt: string,
+    config: RunConfig,
+    files?: Attached[],
+    chatId?: string,
+  ) => void
 
   'session:probe': (config: Omit<RunConfig, 'persona'>) => string | null
   'session:usage': () => string | null

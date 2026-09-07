@@ -754,9 +754,13 @@ msgstr "Claude Code가 로그인 상태를 알려주지 않았습니다."
 msgid "Claude Code reports {0}"
 msgstr "Claude Code가 보고: {0}"
 
-#: src/entities/claude-cli/lib/exit-line/exit-line.ts:11
-msgid "Claude Code stopped without a word (exit {code}). Your next message picks the conversation back up."
-msgstr "Claude Code가 아무 말 없이 멈췄어요 (종료 코드 {code}). 다음 메시지가 이 대화를 이어서 진행해요."
+#: src/entities/claude-cli/lib/exit-line/exit-line.ts:15
+msgid "Claude Code stopped without a word ({ended}). Your next message picks the conversation back up."
+msgstr "Claude Code가 아무 말 없이 멈췄어요 ({ended}). 다음 메시지가 이 대화를 이어서 진행해요."
+
+#: src/entities/claude-cli/lib/exit-line/exit-line.ts:19
+msgid "Claude Code was ended from outside ({signal}). Your next message picks the conversation back up."
+msgstr "Claude Code가 바깥에서 종료됐어요 ({signal}). 다음 메시지가 이 대화를 이어서 진행해요."
 
 #: src/widgets/welcome/lib/slides/slides.ts:8
 msgid "Claude Code, with a screen"
@@ -915,7 +919,7 @@ msgstr "그 폴더를 열지 못했습니다"
 msgid "Could not open the file picker"
 msgstr "파일 선택 창을 열지 못했습니다"
 
-#: src/pages/workspace/model/session/chat-sessions/chat-session/chat-session.ts:131
+#: src/pages/workspace/model/session/chat-sessions/chat-session/chat-session.ts:133
 msgid "Could not pick that conversation back up. Starting a new one."
 msgstr "그 대화를 이어받지 못했습니다. 새로 시작합니다."
 
@@ -1011,11 +1015,11 @@ msgstr "그 메모리를 저장하지 못했어요"
 msgid "Could not save your settings"
 msgstr "설정을 저장하지 못했습니다"
 
-#: src/entities/claude-cli/lib/exit-line/exit-line.ts:13
+#: src/entities/claude-cli/lib/exit-line/exit-line.ts:21
 msgid "Could not start Claude Code"
 msgstr "Claude Code를 실행하지 못했습니다"
 
-#: src/entities/claude-cli/lib/exit-line/exit-line.ts:15
+#: src/entities/claude-cli/lib/exit-line/exit-line.ts:23
 #: src/pages/workspace/model/session/chat-sessions/chat-session/chat-session.ts:118
 msgid "Could not start Claude Code: {said}"
 msgstr "Claude Code를 실행하지 못했습니다: {said}"
@@ -2320,7 +2324,7 @@ msgstr "세션"
 msgid "Session details"
 msgstr "세션 상세"
 
-#: src/pages/workspace/model/session/chat-sessions/chat-session/chat-session.ts:234
+#: src/pages/workspace/model/session/chat-sessions/chat-session/chat-session.ts:236
 msgid "Session restarted. The next message picks the conversation back up with your team as it is now."
 msgstr "세션을 다시 시작했어요. 다음 메시지가 지금의 팀 구성으로 이 대화를 이어서 진행해요."
 

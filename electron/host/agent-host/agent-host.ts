@@ -202,11 +202,14 @@ export function registerAgentHost(): void {
         const anyFenced =
           isolated && (run.lock !== null || run.people.some((person) => person.isolated))
         // A teammate fenced into a worktree gets a fresh checkout with no
-        // node_modules of its own; this links the main checkout's in, never
-        // blocking the spawn below on it. Nothing fenced means no worktree
-        // folder to make, let alone follow.
+        // node_modules of its own; this links the main checkout's in. The
+        // spawn waits for the folder to be under watch, because the session
+        // spawned below is what makes those worktrees: a watcher opened after
+        // it is one that can miss the first teammate of the run, and that
+        // teammate then works in a checkout with no dependencies at all.
+        // Nothing fenced means no worktree folder to make, let alone follow.
         if (anyFenced) {
-          followWorktrees(workspace, worktreeLinkDeps).catch((cause: unknown) => {
+          await followWorktrees(workspace, worktreeLinkDeps).catch((cause: unknown) => {
             console.error('[worktree-links] could not follow', workspace, cause)
           })
         }

@@ -14,3 +14,7 @@ docs/superpowers/
 
 # coverage, written by npm run coverage
 coverage/
+
+# a teammate's own checkout of this repository, made by the session it runs
+# in. Biome reads this file, so without the line it lints every copy again.
+.claude/worktrees/

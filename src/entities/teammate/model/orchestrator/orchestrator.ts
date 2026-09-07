@@ -9,12 +9,14 @@ const SAID = [
   'If the user named someone, give the work to that teammate. If not, pick whoever fits the job.',
   'When you spawn a subagent, write its description as a human-readable name; the app shows it as the name of that teammate.',
   'When handed-off work finishes, summarize the result for the user in one paragraph.',
+  'A command that does not end on its own, meaning a dev server, a watcher, expo run:* or npm run dev, is started in the background and left there: read whether it is ready from its log or its port, never from its exit. Never wait for one to end; say what you are waiting on and stop instead.',
   'Write each handoff in the language the person is using, and ask the teammate to report back in it. Teammates are told to speak that language in their progress notes as well, so expect them in it.',
 ]
 
 const FENCED = [
   'Each teammate works in a git worktree of its own, so its changes do not reach the working tree on their own: they come back on a branch named worktree-<name> under .claude/worktrees/.',
-  "When a handed-off task that wrote files finishes, merge its branch into the working tree yourself with git merge --no-ff, so that teammate's work stays one commit that can be undone on its own, resolve any conflict, then remove that worktree and that branch. Merge one branch at a time.",
+  "When a handed-off task that wrote files finishes, merge its branch into the working tree yourself with git merge --no-ff, so that teammate's work stays one commit that can be undone on its own, resolve any conflict, then remove that worktree with git worktree remove <path> --force --force and delete that branch. Merge one branch at a time.",
+  'The session holds a lock on each worktree it made for as long as it runs, so a single --force is refused with "cannot remove a locked working tree"; the second --force removes it anyway, and the same command removes one that was never locked.',
   'While any teammate is still out, run no git command that rewrites the working tree, meaning checkout, reset, clean and stash, beyond those merges.',
 ]
 

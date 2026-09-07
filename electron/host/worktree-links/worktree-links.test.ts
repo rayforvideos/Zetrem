@@ -1,6 +1,6 @@
 import { execFileSync } from 'node:child_process'
-import { mkdtemp, mkdir, rm, writeFile } from 'node:fs/promises'
-import { existsSync, lstatSync } from 'node:fs'
+import { mkdtemp, mkdir, readFile, rm, writeFile } from 'node:fs/promises'
+import { existsSync, lstatSync, mkdirSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { afterEach, describe, expect, it, vi } from 'vitest'
@@ -56,6 +56,16 @@ async function waitFor(seen: () => boolean): Promise<void> {
     if (Date.now() > until) throw new Error('the link never appeared')
     await new Promise((resolve) => setTimeout(resolve, 25))
   }
+}
+
+// Waiting without a clock: setImmediate is a turn of the event loop rather
+// than a timer, so this keeps polling with setTimeout faked and frozen.
+async function settle(seen: () => boolean): Promise<boolean> {
+  for (let turn = 0; turn < 2000; turn += 1) {
+    if (seen()) return true
+    await new Promise((resolve) => setImmediate(resolve))
+  }
+  return seen()
 }
 
 // A real symlink/junction dep, so the "already linked" behaviour of the
@@ -222,7 +232,7 @@ describe('followWorktrees', () => {
       heard.push(listener)
       return { close: vi.fn() }
     })
-    // The debounce collapses two events into one pass, which is what a
+    // The pass in flight collapses two events into one, which is what a
     // symlink call count of exactly one - not the directory's mere presence,
     // which linkNodeModules would leave looking identical either way - proves.
     const symlink = vi.fn(async (target: string, path: string, type: 'dir' | 'junction') => {
@@ -240,6 +250,58 @@ describe('followWorktrees', () => {
     await waitFor(() => existsSync(join(worktreesDir, 'agent-2', 'node_modules')))
 
     expect(symlink).toHaveBeenCalledTimes(1)
+  })
+
+  it('links a worktree the moment it is seen, with no timer to wait out first', async () => {
+    // Everything on the link path below is synchronous git and fs promises, so
+    // with setTimeout faked and never advanced the link can only land if
+    // nothing on that path is waiting one out. The debounce that used to stand
+    // here was a fifth of a second the teammate spent in an empty checkout.
+    const root = await repoWithNodeModules('ignored')
+    const worktreesDir = join(root, '.claude', 'worktrees')
+    await mkdir(worktreesDir, { recursive: true })
+
+    type Listener = (eventType: string, filename: string | null) => void
+    const heard: Listener[] = []
+    const watch = vi.fn((_path: string, listener: Listener) => {
+      heard.push(listener)
+      return { close: vi.fn() }
+    })
+    const deps = realDeps({ watch })
+    await followWorktrees(root, deps)
+    await mkdir(join(worktreesDir, 'agent-3'))
+    // The deps reach node:fs/promises through a dynamic import, which is one
+    // more thing that must already be resolved before the clock is taken away.
+    await deps.stat(worktreesDir)
+    await deps.readdir(worktreesDir)
+
+    vi.useFakeTimers({ toFake: ['setTimeout'] })
+    heard[0]?.('rename', 'agent-3')
+
+    expect(await settle(() => existsSync(join(worktreesDir, 'agent-3', 'node_modules')))).toBe(true)
+  })
+
+  it('opens the watcher before it reads the folder, so nothing lands in between', async () => {
+    // A worktree made while the watcher is going up is one no event reports,
+    // the listener not being hooked up yet, and one an earlier reading would
+    // already have missed. Only the reading coming last catches it.
+    const root = await repoWithNodeModules('ignored')
+    const worktreesDir = join(root, '.claude', 'worktrees')
+    const watch = vi.fn(() => {
+      mkdirSync(join(worktreesDir, 'agent-4'))
+      return { close: vi.fn() }
+    })
+
+    await followWorktrees(root, realDeps({ watch }))
+
+    expect(existsSync(join(worktreesDir, 'agent-4', 'node_modules'))).toBe(true)
+  })
+
+  it('is waited for by the main process before it spawns a session', async () => {
+    // The session spawned there is what makes the worktrees, so a watcher
+    // opened after it is one that can miss the first teammate of the run.
+    const host = await readFile('electron/host/agent-host/agent-host.ts', 'utf8')
+    expect(host).toContain('await followWorktrees(')
   })
 
   it('does not create a second watcher for the same root', async () => {

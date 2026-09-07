@@ -754,9 +754,13 @@ msgstr "Claude Code did not say whether you are signed in."
 msgid "Claude Code reports {0}"
 msgstr "Claude Code reports {0}"
 
-#: src/entities/claude-cli/lib/exit-line/exit-line.ts:11
-msgid "Claude Code stopped without a word (exit {code}). Your next message picks the conversation back up."
-msgstr "Claude Code stopped without a word (exit {code}). Your next message picks the conversation back up."
+#: src/entities/claude-cli/lib/exit-line/exit-line.ts:15
+msgid "Claude Code stopped without a word ({ended}). Your next message picks the conversation back up."
+msgstr "Claude Code stopped without a word ({ended}). Your next message picks the conversation back up."
+
+#: src/entities/claude-cli/lib/exit-line/exit-line.ts:19
+msgid "Claude Code was ended from outside ({signal}). Your next message picks the conversation back up."
+msgstr "Claude Code was ended from outside ({signal}). Your next message picks the conversation back up."
 
 #: src/widgets/welcome/lib/slides/slides.ts:8
 msgid "Claude Code, with a screen"
@@ -915,7 +919,7 @@ msgstr "Could not open that folder"
 msgid "Could not open the file picker"
 msgstr "Could not open the file picker"
 
-#: src/pages/workspace/model/session/chat-sessions/chat-session/chat-session.ts:131
+#: src/pages/workspace/model/session/chat-sessions/chat-session/chat-session.ts:133
 msgid "Could not pick that conversation back up. Starting a new one."
 msgstr "Could not pick that conversation back up. Starting a new one."
 
@@ -1011,11 +1015,11 @@ msgstr "Could not save that memory"
 msgid "Could not save your settings"
 msgstr "Could not save your settings"
 
-#: src/entities/claude-cli/lib/exit-line/exit-line.ts:13
+#: src/entities/claude-cli/lib/exit-line/exit-line.ts:21
 msgid "Could not start Claude Code"
 msgstr "Could not start Claude Code"
 
-#: src/entities/claude-cli/lib/exit-line/exit-line.ts:15
+#: src/entities/claude-cli/lib/exit-line/exit-line.ts:23
 #: src/pages/workspace/model/session/chat-sessions/chat-session/chat-session.ts:118
 msgid "Could not start Claude Code: {said}"
 msgstr "Could not start Claude Code: {said}"
@@ -2320,7 +2324,7 @@ msgstr "Session"
 msgid "Session details"
 msgstr "Session details"
 
-#: src/pages/workspace/model/session/chat-sessions/chat-session/chat-session.ts:234
+#: src/pages/workspace/model/session/chat-sessions/chat-session/chat-session.ts:236
 msgid "Session restarted. The next message picks the conversation back up with your team as it is now."
 msgstr "Session restarted. The next message picks the conversation back up with your team as it is now."
 

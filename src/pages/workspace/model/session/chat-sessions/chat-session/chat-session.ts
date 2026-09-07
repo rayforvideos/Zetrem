@@ -109,7 +109,7 @@ export function createChatSession(
     stopping = false
     attempt = { prompt: text, files, resumed: resume !== null, spoke: false }
     void deps
-      .startAgent(id, text, { ...config, persona: '', resume }, files)
+      .startAgent(id, text, { ...config, persona: '', resume }, files, chatId)
       .catch((cause: unknown) => {
         if (hostId !== id) return
         hostId = null
@@ -122,7 +122,9 @@ export function createChatSession(
   }
 
   function exited(event: Extract<AgentEvent, { kind: 'exit' }>): void {
-    const stopped = stopping
+    // What this chat asked for, plus what Zetrem asked for behind its back: an
+    // account change stops the process without the chat ever hearing of it.
+    const stopped = stopping || event.asked
     hostId = null
     stopping = false
     const failed = attempt

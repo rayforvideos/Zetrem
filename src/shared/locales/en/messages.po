@@ -546,6 +546,11 @@ msgstr "Allow all"
 msgid "Allow this?"
 msgstr "Allow this?"
 
+#. placeholder {0}: note.title
+#: src/pages/workspace/model/library/useLibraryNotes.ts:314
+msgid "Already in the library · {0}"
+msgstr "Already in the library · {0}"
+
 #: src/widgets/setup/lib/tongues/tongues.ts:6
 msgid "Always English"
 msgstr "Always English"
@@ -669,7 +674,7 @@ msgid "Can't connect"
 msgstr "Can't connect"
 
 #: src/widgets/library/ui/NoteList/NoteList.tsx:273
-#: src/widgets/library/ui/NoteReader/NoteReader.tsx:197
+#: src/widgets/library/ui/NoteReader/NoteReader.tsx:202
 #: src/widgets/setup/ui/SetupPane/SetupPane.tsx:233
 #: src/widgets/team-sidebar/ui/ChatList/ChatRow.tsx:246
 #: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:393
@@ -692,7 +697,7 @@ msgstr "Cart totals and rounding"
 msgid "Change"
 msgstr "Change"
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:178
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:182
 msgid "Change account, project, and permissions"
 msgstr "Change account, project, and permissions"
 
@@ -875,7 +880,7 @@ msgstr "Could not bring over Claude Desktop"
 msgid "Could not check for updates."
 msgstr "Could not check for updates."
 
-#: src/pages/workspace/model/library/useLibraryProposals.ts:53
+#: src/pages/workspace/model/library/useLibraryProposals.ts:74
 msgid "Could not file \"{title}\". Check its title and folder in the library."
 msgstr "Could not file \"{title}\". Check its title and folder in the library."
 
@@ -1037,7 +1042,7 @@ msgstr "Create a teammate and they'll show up here."
 msgid "Default"
 msgstr "Default"
 
-#: src/widgets/library/ui/NoteReader/NoteReader.tsx:111
+#: src/widgets/library/ui/NoteReader/NoteReader.tsx:114
 msgid "Delete"
 msgstr "Delete"
 
@@ -1056,7 +1061,7 @@ msgstr "Delete chat"
 msgid "Delete folder"
 msgstr "Delete folder"
 
-#: src/widgets/library/ui/NoteReader/NoteReader.tsx:200
+#: src/widgets/library/ui/NoteReader/NoteReader.tsx:205
 msgid "Delete note"
 msgstr "Delete note"
 
@@ -1065,7 +1070,7 @@ msgid "Delete the folder “{asking}”?"
 msgstr "Delete the folder “{asking}”?"
 
 #. placeholder {0}: note.title
-#: src/widgets/library/ui/NoteReader/NoteReader.tsx:191
+#: src/widgets/library/ui/NoteReader/NoteReader.tsx:196
 msgid "Delete the note “{0}”?"
 msgstr "Delete the note “{0}”?"
 
@@ -1095,7 +1100,7 @@ msgstr "Dismiss"
 msgid "Dismiss this tip"
 msgstr "Dismiss this tip"
 
-#: src/pages/workspace/model/library/useLibraryProposals.ts:75
+#: src/pages/workspace/model/library/useLibraryProposals.ts:121
 msgid "Dismissed \"{title}\""
 msgstr "Dismissed \"{title}\""
 
@@ -1108,7 +1113,7 @@ msgid "Don't ask again this session"
 msgstr "Don't ask again this session"
 
 #: src/widgets/agent-report/lib/state-word/state-word.ts:12
-#: src/widgets/library/ui/NoteReader/NoteReader.tsx:99
+#: src/widgets/library/ui/NoteReader/NoteReader.tsx:102
 #: src/widgets/setup/ui/PluginShelf/PluginShelf.tsx:129
 #: src/widgets/setup/ui/SetupPane/SetupPane.tsx:237
 #: src/widgets/tile-deck/lib/state-word/state-word.ts:10
@@ -1145,7 +1150,7 @@ msgstr "Drop this stash?"
 msgid "Earlier run"
 msgstr "Earlier run"
 
-#: src/widgets/library/ui/NoteReader/NoteReader.tsx:99
+#: src/widgets/library/ui/NoteReader/NoteReader.tsx:102
 #: src/widgets/team-sidebar/ui/MemberMenu/MemberMenu.tsx:49
 msgid "Edit"
 msgstr "Edit"
@@ -1252,12 +1257,13 @@ msgstr "Fetching"
 msgid "File this answer to the library as its own note"
 msgstr "File this answer to the library as its own note"
 
-#: src/widgets/library/ui/NoteReader/NoteReader.tsx:70
+#: src/widgets/library/ui/NoteReader/NoteReader.tsx:73
 msgid "Filed by an agent"
 msgstr "Filed by an agent"
 
 #. placeholder {0}: note.title
-#: src/pages/workspace/model/library/useLibraryNotes.ts:282
+#: src/pages/workspace/model/library/useLibraryNotes.ts:319
+#: src/pages/workspace/model/library/useLibraryProposals.ts:81
 msgid "Filed to the library · {0}"
 msgstr "Filed to the library · {0}"
 
@@ -1545,7 +1551,7 @@ msgstr "Letters, numbers, hyphens. Sign in after adding if it asks."
 msgid "Library"
 msgstr "Library"
 
-#: src/widgets/library/ui/NoteReader/NoteReader.tsx:62
+#: src/widgets/library/ui/NoteReader/NoteReader.tsx:65
 msgid "Library guide"
 msgstr "Library guide"
 
@@ -1559,7 +1565,7 @@ msgstr "Library off"
 msgid "Library on"
 msgstr "Library on"
 
-#: src/widgets/library/ui/NoteReader/NoteReader.tsx:165
+#: src/widgets/library/ui/NoteReader/NoteReader.tsx:170
 msgid "Linked from"
 msgstr "Linked from"
 
@@ -1853,6 +1859,9 @@ msgstr "One line the agent reads to decide whether this matters"
 msgid "One of you writes, one of you checks. Deal?"
 msgstr "One of you writes, one of you checks. Deal?"
 
+#: src/pages/workspace/model/library/useLibraryNotes.ts:315
+#: src/pages/workspace/model/library/useLibraryNotes.ts:320
+#: src/pages/workspace/model/library/useLibraryProposals.ts:82
 #: src/pages/workspace/model/session/useWaiting.ts:66
 msgid "Open"
 msgstr "Open"
@@ -2236,11 +2245,11 @@ msgid "Saved"
 msgstr "Saved"
 
 #. placeholder {0}: sinceOf(savedAtMs ?? nowMs, nowMs)
-#: src/widgets/library/ui/NoteReader/NoteReader.tsx:151
+#: src/widgets/library/ui/NoteReader/NoteReader.tsx:154
 msgid "Saved · {0}"
 msgstr "Saved · {0}"
 
-#: src/widgets/library/ui/NoteReader/NoteReader.tsx:151
+#: src/widgets/library/ui/NoteReader/NoteReader.tsx:154
 msgid "Saving…"
 msgstr "Saving…"
 
@@ -2323,7 +2332,7 @@ msgstr "Set a few things and your agents get to work!"
 msgid "Set for everyone on your account. They cannot be removed or turned off here."
 msgstr "Set for everyone on your account. They cannot be removed or turned off here."
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:180
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:184
 msgid "Settings"
 msgstr "Settings"
 
@@ -2616,7 +2625,8 @@ msgstr "That model was not found"
 msgid "That name cannot be used"
 msgstr "That name cannot be used"
 
-#: src/pages/workspace/model/library/useLibraryNotes.ts:289
+#: src/pages/workspace/model/library/useLibraryNotes.ts:327
+#: src/pages/workspace/model/library/useLibraryProposals.ts:87
 msgid "That note is in another project now; open it there to remove it."
 msgstr "That note is in another project now; open it there to remove it."
 
@@ -2636,8 +2646,8 @@ msgstr "The address has to be http or https"
 msgid "The agents Claude Code brings. Each can be switched off."
 msgstr "The agents Claude Code brings. Each can be switched off."
 
-#: src/pages/workspace/model/library/useLibraryNotes.ts:279
-#: src/pages/workspace/model/library/useLibraryNotes.ts:298
+#: src/pages/workspace/model/library/useLibraryNotes.ts:309
+#: src/pages/workspace/model/library/useLibraryNotes.ts:336
 msgid "The answer could not be filed"
 msgstr "The answer could not be filed"
 
@@ -2701,7 +2711,7 @@ msgstr "The model is overloaded"
 msgid "the next steps"
 msgstr "the next steps"
 
-#: src/widgets/library/ui/NoteReader/NoteReader.tsx:193
+#: src/widgets/library/ui/NoteReader/NoteReader.tsx:198
 msgid "The note is deleted from the library. This cannot be undone."
 msgstr "The note is deleted from the library. This cannot be undone."
 
@@ -2965,8 +2975,9 @@ msgstr "Uncommitted changes"
 msgid "under a minute"
 msgstr "under a minute"
 
-#: src/pages/workspace/model/library/useLibraryNotes.ts:284
-#: src/pages/workspace/model/library/useLibraryProposals.ts:77
+#: src/pages/workspace/model/library/useLibraryNotes.ts:322
+#: src/pages/workspace/model/library/useLibraryProposals.ts:84
+#: src/pages/workspace/model/library/useLibraryProposals.ts:123
 msgid "Undo"
 msgstr "Undo"
 

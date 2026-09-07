@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { summaryOf, titleFrom } from './summary'
+import { bodyEchoesTitle, summaryOf, titleFrom } from './summary'
 
 describe('the summary is the first paragraph, said plainly', () => {
   it('never ends a title in a period, since that file could not be named again', () => {
@@ -59,5 +59,56 @@ describe('a filed answer gets a title from its own words', () => {
 
   it('falls back when there are no words', () => {
     expect(titleFrom('   \n```\ncode\n```')).toBe('Untitled')
+  })
+
+  it('says a long title was cut instead of stopping mid-thought', () => {
+    const title = titleFrom(
+      'Zetrem Dev는 개발자들이 여러 도구와 기능을 시험해 볼 수 있는 개발 플랫폼이고, 이 프로젝트는 그 위에서 돈다.',
+    )
+    expect(title.endsWith('…')).toBe(true)
+    expect(title.length).toBeLessThanOrEqual(60)
+  })
+
+  it('ends a cut title on a word, with no half word before the mark', () => {
+    const title = titleFrom(`${'word '.repeat(30)}end`)
+    expect(title).toBe(`${'word '.repeat(10)}word…`)
+  })
+
+  it('cuts inside a run that has no space to cut on, and still marks it', () => {
+    const title = titleFrom('x'.repeat(200))
+    expect(title).toBe(`${'x'.repeat(59)}…`)
+  })
+
+  it('leaves no comma or space stranded before the mark', () => {
+    const title = titleFrom(`${'word '.repeat(11)}tail, ${'x'.repeat(80)}`)
+    expect(title.endsWith(', …')).toBe(false)
+    expect(title.endsWith(' …')).toBe(false)
+    expect(title.endsWith('…')).toBe(true)
+  })
+
+  it('keeps a short title whole, with no mark to explain', () => {
+    expect(titleFrom('놀이터 규칙')).toBe('놀이터 규칙')
+  })
+})
+
+describe('a note whose body is its own title is read once', () => {
+  it('is an echo when the body says exactly what the title says', () => {
+    expect(bodyEchoesTitle('놀이터 규칙', '놀이터 규칙')).toBe(true)
+    expect(bodyEchoesTitle('Ship it', 'Ship it.')).toBe(true)
+    expect(bodyEchoesTitle('Ship it', '**Ship it**')).toBe(true)
+  })
+
+  it('is not an echo when the body has anything more to say', () => {
+    expect(bodyEchoesTitle('놀이터 규칙', '놀이터 규칙\n\n하나만 지킨다.')).toBe(false)
+    expect(bodyEchoesTitle('Ship it', 'Ship it when the tests pass.')).toBe(false)
+  })
+
+  it('is not an echo when a cut title only opens the body', () => {
+    const body = `${'word '.repeat(30)}end`
+    expect(bodyEchoesTitle(titleFrom(body), body)).toBe(false)
+  })
+
+  it('is not an echo when there is no body at all', () => {
+    expect(bodyEchoesTitle('New note', '')).toBe(false)
   })
 })

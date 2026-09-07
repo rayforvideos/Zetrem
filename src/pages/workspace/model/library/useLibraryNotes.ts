@@ -14,7 +14,12 @@ const SAVE_AFTER_MS = 800
 const SEARCH_AFTER_MS = 150
 const FRESH_TITLE = 'New note'
 
-export function useLibraryNotes(active: boolean, idle: boolean, project: string | null) {
+export function useLibraryNotes(
+  active: boolean,
+  idle: boolean,
+  project: string | null,
+  showLibrary: () => void,
+) {
   const [folders, setFolders] = useState<LibraryFolder[]>([])
   const [notes, setNotes] = useState<LibraryNoteSummary[]>([])
   const [open, setOpen] = useState<LibraryNote | null>(null)
@@ -39,6 +44,10 @@ export function useLibraryNotes(active: boolean, idle: boolean, project: string 
   const inFlight = useRef<Promise<void>>(Promise.resolve())
   // The body as last typed, which `open` does not follow while an edit is on.
   const typed = useRef<{ id: string; body: string } | null>(null)
+  // A note asked for by name from a toast raised over the conversation. The
+  // library reloads its list as it comes up, and would otherwise land on the
+  // note it had open before, over the one the person actually asked for.
+  const wanted = useRef<string | null>(null)
 
   useEffect(() => {
     openId.current = open?.id ?? null
@@ -82,6 +91,12 @@ export function useLibraryNotes(active: boolean, idle: boolean, project: string 
       .then(async (listing) => {
         land(listing)
         if (!onScreen.current || writing.current) return
+        const asked = wanted.current
+        if (asked !== null && listing.notes.some((one) => one.id === asked)) {
+          wanted.current = null
+          await show(asked)
+          return
+        }
         const id = openId.current
         // Nothing chosen yet: open the newest so the reader is never blank.
         if (id === null) {
@@ -121,6 +136,7 @@ export function useLibraryNotes(active: boolean, idle: boolean, project: string 
     onScreen.current = active
     if (!active || project !== shownProject.current) {
       writing.current = false
+      if (project !== shownProject.current) wanted.current = null
       setEditing(false)
       setFresh(false)
       setOpen(null)
@@ -145,10 +161,13 @@ export function useLibraryNotes(active: boolean, idle: boolean, project: string 
     return () => window.removeEventListener('beforeunload', leave)
   }, [flush])
 
-  // Agents write notes while the screen is open; main says when they do.
+  // Agents write notes while the screen is open; main says when they do. The
+  // list is followed even with the library shut, because the mark the sidebar
+  // puts on the library row is read from it: a note filed from the
+  // conversation is exactly the one nobody would otherwise be told about.
   useEffect(() => {
     return window.desk.onLibraryChanged(() => {
-      if (onScreen.current && !writing.current) relist()
+      if (!writing.current) relist()
     })
   }, [relist])
 
@@ -264,23 +283,42 @@ export function useLibraryNotes(active: boolean, idle: boolean, project: string 
       .catch(() => undefined)
   }
 
+  // Following a note from a toast over the conversation: the library has to
+  // come up before there is a pane for the note to open in.
+  function reveal(id: string): void {
+    wanted.current = id
+    showLibrary()
+    openNote(id)
+  }
+
   function openTitle(title: string): void {
     const found = notes.find((one) => one.title === title)
     if (found) openNote(found.id)
   }
 
   // The bolt on an answer: the note lands at once, and the toast says where.
+  // Filing an answer that is already in the library is not a second note, so
+  // the toast says it was already there and offers the note rather than an
+  // undo, which would delete a note this filing never wrote.
   function file(text: string): void {
     const filedIn = shownProject.current
     void window.desk
       .fileLibraryNote(text)
-      .then((note) => {
-        if (note === null) {
+      .then((filed) => {
+        if (filed === null) {
           toast.error(t`The answer could not be filed`)
           return
         }
+        const { note, already } = filed
+        if (already) {
+          toast(t`Already in the library · ${note.title}`, {
+            action: { label: t`Open`, onClick: () => reveal(note.id) },
+          })
+          return
+        }
         toast(t`Filed to the library · ${note.title}`, {
-          action: {
+          action: { label: t`Open`, onClick: () => reveal(note.id) },
+          cancel: {
             label: t`Undo`,
             onClick: () => {
               // The note is in the project it was filed to; after a switch the
@@ -362,6 +400,7 @@ export function useLibraryNotes(active: boolean, idle: boolean, project: string 
     setTag,
     openNote,
     openTitle,
+    reveal,
     closeNote,
     remove,
     startEdit,

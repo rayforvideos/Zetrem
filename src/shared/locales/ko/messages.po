@@ -546,6 +546,11 @@ msgstr "전부 허용"
 msgid "Allow this?"
 msgstr "허용할까요?"
 
+#. placeholder {0}: note.title
+#: src/pages/workspace/model/library/useLibraryNotes.ts:314
+msgid "Already in the library · {0}"
+msgstr "이미 라이브러리에 있습니다 · {0}"
+
 #: src/widgets/setup/lib/tongues/tongues.ts:6
 msgid "Always English"
 msgstr "항상 영어로"
@@ -669,7 +674,7 @@ msgid "Can't connect"
 msgstr "연결 안 됨"
 
 #: src/widgets/library/ui/NoteList/NoteList.tsx:273
-#: src/widgets/library/ui/NoteReader/NoteReader.tsx:197
+#: src/widgets/library/ui/NoteReader/NoteReader.tsx:202
 #: src/widgets/setup/ui/SetupPane/SetupPane.tsx:233
 #: src/widgets/team-sidebar/ui/ChatList/ChatRow.tsx:246
 #: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:393
@@ -692,7 +697,7 @@ msgstr "장바구니 합계와 반올림"
 msgid "Change"
 msgstr "바꾸기"
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:178
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:182
 msgid "Change account, project, and permissions"
 msgstr "계정과 프로젝트, 권한을 바꿉니다"
 
@@ -875,7 +880,7 @@ msgstr "Claude Desktop에서 가져오지 못했습니다"
 msgid "Could not check for updates."
 msgstr "업데이트를 확인하지 못했습니다."
 
-#: src/pages/workspace/model/library/useLibraryProposals.ts:53
+#: src/pages/workspace/model/library/useLibraryProposals.ts:74
 msgid "Could not file \"{title}\". Check its title and folder in the library."
 msgstr "\"{title}\"을(를) 넣지 못했습니다. 라이브러리에서 제목과 폴더를 확인해 주세요."
 
@@ -1037,7 +1042,7 @@ msgstr "팀원을 만들면 여기에 나타납니다."
 msgid "Default"
 msgstr "기본값"
 
-#: src/widgets/library/ui/NoteReader/NoteReader.tsx:111
+#: src/widgets/library/ui/NoteReader/NoteReader.tsx:114
 msgid "Delete"
 msgstr "삭제"
 
@@ -1056,7 +1061,7 @@ msgstr "대화 삭제"
 msgid "Delete folder"
 msgstr "폴더 삭제"
 
-#: src/widgets/library/ui/NoteReader/NoteReader.tsx:200
+#: src/widgets/library/ui/NoteReader/NoteReader.tsx:205
 msgid "Delete note"
 msgstr "노트 삭제"
 
@@ -1065,7 +1070,7 @@ msgid "Delete the folder “{asking}”?"
 msgstr "“{asking}” 폴더를 삭제할까요?"
 
 #. placeholder {0}: note.title
-#: src/widgets/library/ui/NoteReader/NoteReader.tsx:191
+#: src/widgets/library/ui/NoteReader/NoteReader.tsx:196
 msgid "Delete the note “{0}”?"
 msgstr "“{0}” 노트를 삭제할까요?"
 
@@ -1095,7 +1100,7 @@ msgstr "무시"
 msgid "Dismiss this tip"
 msgstr "이 안내 닫기"
 
-#: src/pages/workspace/model/library/useLibraryProposals.ts:75
+#: src/pages/workspace/model/library/useLibraryProposals.ts:121
 msgid "Dismissed \"{title}\""
 msgstr "\"{title}\"을(를) 무시했습니다"
 
@@ -1108,7 +1113,7 @@ msgid "Don't ask again this session"
 msgstr "이번 세션에서는 다시 묻지 않기"
 
 #: src/widgets/agent-report/lib/state-word/state-word.ts:12
-#: src/widgets/library/ui/NoteReader/NoteReader.tsx:99
+#: src/widgets/library/ui/NoteReader/NoteReader.tsx:102
 #: src/widgets/setup/ui/PluginShelf/PluginShelf.tsx:129
 #: src/widgets/setup/ui/SetupPane/SetupPane.tsx:237
 #: src/widgets/tile-deck/lib/state-word/state-word.ts:10
@@ -1145,7 +1150,7 @@ msgstr "이 스태시를 버릴까요?"
 msgid "Earlier run"
 msgstr "이전 실행"
 
-#: src/widgets/library/ui/NoteReader/NoteReader.tsx:99
+#: src/widgets/library/ui/NoteReader/NoteReader.tsx:102
 #: src/widgets/team-sidebar/ui/MemberMenu/MemberMenu.tsx:49
 msgid "Edit"
 msgstr "수정"
@@ -1252,14 +1257,15 @@ msgstr "가져오는 중"
 msgid "File this answer to the library as its own note"
 msgstr "이 답변을 별도 노트로 라이브러리에 넣기"
 
-#: src/widgets/library/ui/NoteReader/NoteReader.tsx:70
+#: src/widgets/library/ui/NoteReader/NoteReader.tsx:73
 msgid "Filed by an agent"
 msgstr "에이전트가 남김"
 
 #. placeholder {0}: note.title
-#: src/pages/workspace/model/library/useLibraryNotes.ts:282
+#: src/pages/workspace/model/library/useLibraryNotes.ts:319
+#: src/pages/workspace/model/library/useLibraryProposals.ts:81
 msgid "Filed to the library · {0}"
-msgstr "라이브러리에 저장됨 · {0}"
+msgstr "라이브러리에 담았습니다 · {0}"
 
 #: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:997
 msgid "Files in this commit"
@@ -1545,7 +1551,7 @@ msgstr "영문, 숫자, 하이픈. 추가한 뒤 로그인을 요구하면 로�
 msgid "Library"
 msgstr "라이브러리"
 
-#: src/widgets/library/ui/NoteReader/NoteReader.tsx:62
+#: src/widgets/library/ui/NoteReader/NoteReader.tsx:65
 msgid "Library guide"
 msgstr "라이브러리 안내"
 
@@ -1559,7 +1565,7 @@ msgstr "라이브러리 참고 끔"
 msgid "Library on"
 msgstr "라이브러리 참고 켬"
 
-#: src/widgets/library/ui/NoteReader/NoteReader.tsx:165
+#: src/widgets/library/ui/NoteReader/NoteReader.tsx:170
 msgid "Linked from"
 msgstr "이 노트를 가리키는 노트"
 
@@ -1853,6 +1859,9 @@ msgstr "에이전트가 이 메모가 필요한지 판단할 때 읽는 한 줄�
 msgid "One of you writes, one of you checks. Deal?"
 msgstr "한 명은 쓰고 한 명은 검토하고, 어때요?"
 
+#: src/pages/workspace/model/library/useLibraryNotes.ts:315
+#: src/pages/workspace/model/library/useLibraryNotes.ts:320
+#: src/pages/workspace/model/library/useLibraryProposals.ts:82
 #: src/pages/workspace/model/session/useWaiting.ts:66
 msgid "Open"
 msgstr "열기"
@@ -2236,11 +2245,11 @@ msgid "Saved"
 msgstr "저장했어요"
 
 #. placeholder {0}: sinceOf(savedAtMs ?? nowMs, nowMs)
-#: src/widgets/library/ui/NoteReader/NoteReader.tsx:151
+#: src/widgets/library/ui/NoteReader/NoteReader.tsx:154
 msgid "Saved · {0}"
 msgstr "저장됨 · {0}"
 
-#: src/widgets/library/ui/NoteReader/NoteReader.tsx:151
+#: src/widgets/library/ui/NoteReader/NoteReader.tsx:154
 msgid "Saving…"
 msgstr "저장 중…"
 
@@ -2323,7 +2332,7 @@ msgstr "몇 가지만 정하면 바로 일을 시작합니다"
 msgid "Set for everyone on your account. They cannot be removed or turned off here."
 msgstr "계정 전체에 설정된 것입니다. 여기서는 지우거나 끌 수 없습니다."
 
-#: src/pages/workspace/ui/WorkspaceScreen.tsx:180
+#: src/pages/workspace/ui/WorkspaceScreen.tsx:184
 msgid "Settings"
 msgstr "설정"
 
@@ -2616,7 +2625,8 @@ msgstr "그 모델을 찾지 못했습니다"
 msgid "That name cannot be used"
 msgstr "그 이름은 쓸 수 없습니다"
 
-#: src/pages/workspace/model/library/useLibraryNotes.ts:289
+#: src/pages/workspace/model/library/useLibraryNotes.ts:327
+#: src/pages/workspace/model/library/useLibraryProposals.ts:87
 msgid "That note is in another project now; open it there to remove it."
 msgstr "그 노트는 다른 프로젝트에 있어요. 거기서 열어 지워 주세요."
 
@@ -2636,8 +2646,8 @@ msgstr "주소는 http나 https여야 합니다"
 msgid "The agents Claude Code brings. Each can be switched off."
 msgstr "Claude Code가 기본으로 제공하는 에이전트입니다. 하나씩 끌 수 있습니다."
 
-#: src/pages/workspace/model/library/useLibraryNotes.ts:279
-#: src/pages/workspace/model/library/useLibraryNotes.ts:298
+#: src/pages/workspace/model/library/useLibraryNotes.ts:309
+#: src/pages/workspace/model/library/useLibraryNotes.ts:336
 msgid "The answer could not be filed"
 msgstr "답변을 라이브러리에 저장하지 못했습니다"
 
@@ -2701,7 +2711,7 @@ msgstr "모델에 부하가 걸렸습니다"
 msgid "the next steps"
 msgstr "다음 할 일"
 
-#: src/widgets/library/ui/NoteReader/NoteReader.tsx:193
+#: src/widgets/library/ui/NoteReader/NoteReader.tsx:198
 msgid "The note is deleted from the library. This cannot be undone."
 msgstr "라이브러리에서 노트가 지워집니다. 되돌릴 수 없습니다."
 
@@ -2965,8 +2975,9 @@ msgstr "커밋 전 변경사항"
 msgid "under a minute"
 msgstr "1분 이내"
 
-#: src/pages/workspace/model/library/useLibraryNotes.ts:284
-#: src/pages/workspace/model/library/useLibraryProposals.ts:77
+#: src/pages/workspace/model/library/useLibraryNotes.ts:322
+#: src/pages/workspace/model/library/useLibraryProposals.ts:84
+#: src/pages/workspace/model/library/useLibraryProposals.ts:123
 msgid "Undo"
 msgstr "되돌리기"
 

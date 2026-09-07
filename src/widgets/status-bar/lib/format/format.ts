@@ -55,7 +55,7 @@ function mcpGauge(wired: Wired): Gauge {
   const n = wired.needsAuth
   return {
     key: 'mcp',
-    label: 'MCP',
+    label: t`Connectors`,
     value: `${wired.connected}/${wired.total}`,
     percent: wired.total > 0 ? Math.round((wired.connected / wired.total) * 100) : null,
     warn: n > 0,

@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import type { ReactNode, RefCallback } from 'react'
 import type { PermissionAsk } from '@/entities/agent-session'
-import { toolShape } from '@/entities/tool'
+import { toolShape, toolWord } from '@/entities/tool'
 import { modifierKey } from '@/shared/lib/platform/platform'
 import { layerOver } from '@/shared/lib/modal/modal'
 import { cn } from '@/shared/lib/cn'
@@ -75,7 +75,7 @@ export function Approval({
     >
       <div className="flex flex-none items-baseline gap-2">
         <span className="text-base">{verbOf(ask.toolName)}</span>
-        <span className="font-mono text-xs text-muted-foreground">{ask.toolName}</span>
+        <span className="text-xs text-muted-foreground">{toolWord(ask.toolName)}</span>
         {count !== null && (
           <span data-change className="ml-auto flex-none font-mono text-xs tabular-nums">
             {count.added > 0 && <span className="text-added">+{count.added}</span>}

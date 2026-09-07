@@ -16,6 +16,14 @@ export type LibraryNote = LibraryNoteSummary & { body: string }
 
 export type LibraryHit = LibraryNoteSummary & { snippet: string }
 
+// The answer to filing an answer. The same words filed twice are one note, so
+// the second filing opens the first rather than making a copy of it; `already`
+// is how the screen knows which of the two happened and what to offer for it.
+export type LibraryFiling = {
+  note: LibraryNote
+  already: boolean
+}
+
 export type LibraryFolder = {
   name: string
 }

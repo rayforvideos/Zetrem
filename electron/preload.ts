@@ -141,6 +141,7 @@ const desk: DeskBridge = {
   listLibraryProposals: invoke('library:proposals'),
   acceptLibraryProposal: invoke('library:proposal-accept'),
   dismissLibraryProposal: invoke('library:proposal-dismiss'),
+  restoreLibraryProposal: invoke('library:proposal-restore'),
   onLibraryChanged: listen('library:changed'),
   onLibraryProposed: listen('library:proposed'),
   onGitChanged: listen('git:changed'),

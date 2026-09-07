@@ -135,7 +135,7 @@ describe('the gauges in the status bar', () => {
     const found = gauges(state({ session })).find((c) => c.key === 'mcp')
     expect(found).toEqual({
       key: 'mcp',
-      label: 'MCP',
+      label: 'Connectors',
       value: '2/4',
       percent: 50,
       warn: true,

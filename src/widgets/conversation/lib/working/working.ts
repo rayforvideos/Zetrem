@@ -98,8 +98,10 @@ export function elapsedLabel(ms: number): string {
   return `${Math.floor(seconds / 60)}m ${seconds % 60}s`
 }
 
+// The count is what a run has written back so far. "out" was the CLI's
+// shorthand for that and read as English on a Korean screen.
 export function tokenLabel(tokens: number): string {
   if (tokens <= 0) return ''
-  if (tokens < 1000) return `${tokens} out`
-  return `${(tokens / 1000).toFixed(1)}k out`
+  const count = tokens < 1000 ? `${tokens}` : `${(tokens / 1000).toFixed(1)}k`
+  return t`${count} written`
 }

@@ -32,8 +32,11 @@ export function askTrouble(): string {
   return t`Zetrem could not ask Git about this work.`
 }
 
-export function troubleLine(why: Why): string {
+// What could not be found was named by the branch it lives on, a
+// worktree-agent-<id> nobody chose and nobody reads. The teammate has a name,
+// and that is what the reader knows this work by.
+export function troubleLine(why: Why, who: string): string {
   if (why.code === 'refused') return t`This teammate has no branch Zetrem can look up.`
   if (why.code === 'cli') return t`Git said: ${why.said}`
-  return t`Nothing of this work is left to find: ${why.said}`
+  return t`Zetrem can no longer find the work ${who} did.`
 }

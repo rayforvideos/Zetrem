@@ -3,7 +3,13 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { openLibraryDb } from '../library-db/library-db'
 import * as libraryNotes from '../library-notes/library-notes'
 import { addFolder, listNotes } from '../library-notes/library-notes'
-import { acceptProposal, addProposal, dismissProposal, listProposals } from './library-proposals'
+import {
+  acceptProposal,
+  addProposal,
+  dismissProposal,
+  listProposals,
+  restoreProposal,
+} from './library-proposals'
 
 let db: DatabaseSync
 const NOW = Date.parse('2026-08-28T03:00:00.000Z')
@@ -142,5 +148,69 @@ describe('dismissing one', () => {
     addProposal(db, { title: 'Two', body: 'Second.', session: '', by: '' }, NOW + 1)
     dismissProposal(db, first.id)
     expect(listProposals(db).map((one) => one.title)).toEqual(['Two'])
+  })
+})
+
+describe('the same suggestion, made twice, waits once', () => {
+  it('gives back the ask already waiting instead of adding a second', () => {
+    const same = {
+      title: '팀원별 README.md 요약',
+      body: '셋을 한 번에 불렀다.',
+      session: '',
+      by: '',
+    }
+    const first = addProposal(db, same, NOW)
+    const again = addProposal(db, same, NOW + 5)
+    expect(again.id).toBe(first.id)
+    expect(again.proposedAtMs).toBe(NOW)
+    expect(listProposals(db)).toHaveLength(1)
+  })
+
+  it('still keeps asks that differ in title, body or folder apart', () => {
+    addFolder(db, 'plans')
+    addProposal(db, { title: 'One', body: 'Same.', session: '', by: '' }, NOW)
+    addProposal(db, { title: 'Two', body: 'Same.', session: '', by: '' }, NOW + 1)
+    addProposal(db, { title: 'One', body: 'Other.', session: '', by: '' }, NOW + 2)
+    addProposal(db, { title: 'One', body: 'Same.', folder: 'plans', session: '', by: '' }, NOW + 3)
+    expect(listProposals(db)).toHaveLength(4)
+  })
+})
+
+describe('taking an accept back', () => {
+  it('puts the suggestion back under the id it had', () => {
+    const asked = addProposal(db, { title: 'Idea', body: 'Body.', session: 's', by: '나' }, NOW)
+    expect(acceptProposal(db, asked.id)).not.toBeNull()
+    expect(listProposals(db)).toEqual([])
+    expect(restoreProposal(db, asked)).toMatchObject({ id: asked.id, by: '나' })
+    expect(listProposals(db)).toEqual([asked])
+  })
+
+  it('leaves one card however many times the undo runs', () => {
+    const asked = addProposal(db, { title: 'Idea', body: 'Body.', session: '', by: '' }, NOW)
+    acceptProposal(db, asked.id)
+    restoreProposal(db, asked)
+    restoreProposal(db, asked)
+    expect(listProposals(db)).toHaveLength(1)
+  })
+
+  it('refuses anything that is not a suggestion the library could hold', () => {
+    expect(restoreProposal(db, null)).toBeNull()
+    expect(restoreProposal(db, 'Idea')).toBeNull()
+    expect(restoreProposal(db, { id: 'x', body: 'b' })).toBeNull()
+    expect(restoreProposal(db, { id: '', title: 'x', body: 'b' })).toBeNull()
+    expect(restoreProposal(db, { id: 'x', title: 'y', body: 'b', folder: '../up' })).toBeNull()
+    expect(listProposals(db)).toEqual([])
+  })
+
+  it('reads what the screen sent rather than trusting it', () => {
+    const back = restoreProposal(db, {
+      id: 'x',
+      title: 'Idea',
+      body: 'Body.',
+      tags: ['keep', 7],
+      session: 12,
+      by: null,
+    })
+    expect(back).toMatchObject({ id: 'x', folder: '', tags: ['keep'], session: '', by: '' })
   })
 })

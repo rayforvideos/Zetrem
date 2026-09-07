@@ -1,10 +1,11 @@
+import { msg } from '@lingui/core/macro'
 import type { Metric } from './metric'
 
 import { formatClock } from '@/shared/lib/units/units'
 
 export const elapsedMetric: Metric = {
   id: 'elapsed',
-  label: 'elapsed',
+  label: msg`elapsed`,
   unit: 's',
   known: () => true,
   read: (session, nowMs) =>

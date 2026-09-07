@@ -3,6 +3,7 @@ export { modelFromCli } from './model/model-choice/model-choice'
 export { modeFromCli } from './api/run-config/run-config'
 export type { EffortChoice } from './model/effort-choice/effort-choice.types'
 export { parseClaudeLine, permissionAlwaysResult, permissionResult } from './api/parse/parse'
+export { saidPlainly } from './api/permission/permission'
 export type { ClaudeTurnEvent } from './api/parse/parse.types'
 export { resumedAgent } from './api/resumed/resumed'
 export type {

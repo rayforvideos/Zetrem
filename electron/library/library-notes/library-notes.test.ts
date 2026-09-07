@@ -105,10 +105,15 @@ describe('writing', () => {
     expect(writeNote(db, 'one.md', 42 as unknown as string)).toBeNull()
   })
 
-  it('creates an empty note at the root or in a folder, numbering a collision', () => {
+  it('creates an empty note at the root or in a folder, dating a collision', () => {
     const one = createNote(db, null, 'Idea', NOW)
     expect(one).toMatchObject({ id: 'Idea.md', title: 'Idea', body: '' })
-    expect(createNote(db, '', 'Idea', NOW)?.id).toBe('Idea 2.md')
+    // A clash is told apart by the day it arrived: a number says nothing about
+    // either note, and the id it used to borrow said less.
+    expect(createNote(db, '', 'Idea', NOW, 'en')?.id).toBe('Idea (August 28).md')
+    expect(createNote(db, '', 'Idea', NOW, 'ko')?.id).toBe('Idea (8월 28일).md')
+    // Two of a name on one day are still two notes; the count is what is left.
+    expect(createNote(db, '', 'Idea', NOW, 'en')?.id).toBe('Idea (August 28) 2.md')
     addFolder(db, 'plans')
     expect(createNote(db, 'plans', 'Idea', NOW)?.id).toBe('plans/Idea.md')
     expect(createNote(db, 'nowhere', 'Idea')).toBeNull()
@@ -116,8 +121,9 @@ describe('writing', () => {
   })
 
   it('files an answer as a note titled from its words', () => {
-    const note = fileNote(db, '## What we found\n\nThe probe runs empty.', NOW)
-    expect(note).toMatchObject({
+    const filed = fileNote(db, '## What we found\n\nThe probe runs empty.', NOW)
+    expect(filed?.already).toBe(false)
+    expect(filed?.note).toMatchObject({
       id: 'What we found.md',
       title: 'What we found',
       summary: 'The probe runs empty.',
@@ -128,14 +134,42 @@ describe('writing', () => {
 
   it('files an answer whose own words would name a note nobody could open', () => {
     const hidden = fileNote(db, '## .env 를 손대지 말 것\n\n키가 들어 있다.', NOW)
-    expect(hidden?.id).toBe('env 를 손대지 말 것.md')
-    expect(readNote(db, hidden?.id)).not.toBeNull()
+    expect(hidden?.note.id).toBe('env 를 손대지 말 것.md')
+    expect(readNote(db, hidden?.note.id)).not.toBeNull()
     const climbing = fileNote(db, '# a..b 정리\n\n둘을 나눴다.', NOW)
-    expect(climbing?.id).toBe('a.b 정리.md')
-    expect(readNote(db, climbing?.id)).not.toBeNull()
+    expect(climbing?.note.id).toBe('a.b 정리.md')
+    expect(readNote(db, climbing?.note.id)).not.toBeNull()
     const nameless = fileNote(db, '...', NOW)
-    expect(nameless?.id).toBe('Untitled.md')
-    expect(readNote(db, nameless?.id)).not.toBeNull()
+    expect(nameless?.note.id).toBe('Untitled.md')
+    expect(readNote(db, nameless?.note.id)).not.toBeNull()
+  })
+
+  it('files the same answer once, and hands back the note already there', () => {
+    const text = '## 팀원별 README.md 요약\n\n셋을 한 번에 불렀다.'
+    const first = fileNote(db, text, NOW)
+    expect(first).toMatchObject({ already: false, note: { id: '팀원별 README.md 요약.md' } })
+    // One run can show the same passage in several turns; filing each of them
+    // meant to keep the passage, not to keep it three times.
+    const again = fileNote(db, text, NOW + 1000)
+    expect(again).toMatchObject({ already: true, note: { id: '팀원별 README.md 요약.md' } })
+    expect(listNotes(db).notes).toHaveLength(1)
+  })
+
+  it('reads the same answer through its own whitespace', () => {
+    fileNote(db, '한 줄.', NOW)
+    expect(fileNote(db, '  한 줄.\n\n  ', NOW)?.already).toBe(true)
+    expect(listNotes(db).notes).toHaveLength(1)
+  })
+
+  it('files two answers that only look alike as two notes, dating the second', () => {
+    expect(fileNote(db, '# 놀이터 규칙\n\n하나만 지킨다.', NOW, 'ko')?.note.id).toBe(
+      '놀이터 규칙.md',
+    )
+    // A clash gets the day it arrived; the raw id it used to borrow named
+    // nothing a person reading their library could place.
+    expect(fileNote(db, '# 놀이터 규칙\n\n둘을 지킨다.', NOW, 'ko')?.note.id).toBe(
+      '놀이터 규칙 (8월 28일).md',
+    )
   })
 
   it('marks who wrote the note, and keeps that mark on a later write', () => {

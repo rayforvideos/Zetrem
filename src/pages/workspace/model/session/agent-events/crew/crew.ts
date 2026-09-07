@@ -5,6 +5,7 @@ import { addressee, whose } from './addressee'
 import { absorbs, resumedAgent } from '@/entities/claude-cli'
 import type { AgentSession, SessionStore, TranscriptEntry } from '@/entities/agent-session'
 import type { ClaudeTurnEvent } from '@/entities/claude-cli'
+import { saidPlainly } from '@/entities/claude-cli'
 import { changeBadge, changeLines, resultNote, shapeOfLine, toolNameOf } from '@/entities/tool'
 import { clip } from '@/pages/workspace/model/session/agent-events/clip/clip'
 import type { AgentEventRefs } from '../agent-events.types'
@@ -261,7 +262,7 @@ function closeCall(
   const call = children.find(toolUseId)?.stream.findLast((held) => held.id === callId)
   if (call === undefined) return
   const note = failed
-    ? clip(text.trim(), NOTE_MAX)
+    ? clip(saidPlainly(text).trim(), NOTE_MAX)
     : (resultNote(shapeOfLine(call.line), text) ?? '')
   children.endCall(toolUseId, callId, { failed, note })
 }

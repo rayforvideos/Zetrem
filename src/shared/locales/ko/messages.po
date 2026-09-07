@@ -1180,7 +1180,7 @@ msgstr "고치는 중"
 msgid "Edits files freely, asks before running commands"
 msgstr "파일은 알아서 고치고, 명령을 실행할 때만 묻습니다"
 
-#: src/widgets/conversation/ui/Composer/Composer.tsx:218
+#: src/widgets/conversation/ui/Composer/Composer.tsx:222
 #: src/widgets/setup/ui/SetupPane/SetupPane.tsx:163
 msgid "Effort"
 msgstr "노력"
@@ -1556,12 +1556,12 @@ msgid "Library guide"
 msgstr "라이브러리 안내"
 
 #: src/widgets/conversation/ui/Composer/Composer.tsx:205
-#: src/widgets/conversation/ui/Composer/Composer.tsx:207
+#: src/widgets/conversation/ui/Composer/Composer.tsx:210
 msgid "Library off"
 msgstr "라이브러리 참고 끔"
 
 #: src/widgets/conversation/ui/Composer/Composer.tsx:205
-#: src/widgets/conversation/ui/Composer/Composer.tsx:207
+#: src/widgets/conversation/ui/Composer/Composer.tsx:210
 msgid "Library on"
 msgstr "라이브러리 참고 켬"
 
@@ -1622,7 +1622,7 @@ msgstr "{addressee}에게 보낼 말"
 msgid "Message your team"
 msgstr "팀에게 말하기"
 
-#: src/widgets/conversation/ui/Composer/Composer.tsx:215
+#: src/widgets/conversation/ui/Composer/Composer.tsx:219
 #: src/widgets/setup/ui/SetupPane/SetupPane.tsx:157
 #: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:118
 #: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:181
@@ -1931,7 +1931,7 @@ msgstr "노트를 고르세요"
 msgid "Pick a project first"
 msgstr "먼저 프로젝트를 고르세요"
 
-#: src/pages/workspace/model/session/agent-events/crew/crew.ts:241
+#: src/pages/workspace/model/session/agent-events/crew/crew.ts:243
 msgid "Picked up where they left off"
 msgstr "하던 일을 이어받았습니다"
 
@@ -2303,7 +2303,7 @@ msgstr "찾는 중"
 msgid "See what they did"
 msgstr "무엇을 했는지 보기"
 
-#: src/widgets/conversation/ui/Composer/Composer.tsx:257
+#: src/widgets/conversation/ui/Composer/Composer.tsx:261
 msgid "Send"
 msgstr "보내기"
 
@@ -2520,7 +2520,7 @@ msgstr "아직 허가를 기다리는 중"
 msgid "Stock rules"
 msgstr "재고 규칙"
 
-#: src/widgets/conversation/ui/Composer/Composer.tsx:246
+#: src/widgets/conversation/ui/Composer/Composer.tsx:250
 msgid "Stop"
 msgstr "멈추기"
 
@@ -2753,7 +2753,7 @@ msgstr "지금 세션은 라이브러리 없이 이어져요. 다음 세션부�
 msgid "The running session is on {0}. Restart it to work under {pick}."
 msgstr "지금 세션은 {0}(으)로 돌고 있어요. 다시 시작하면 {pick}(으)로 일합니다."
 
-#: src/widgets/conversation/ui/Composer/Composer.tsx:225
+#: src/widgets/conversation/ui/Composer/Composer.tsx:229
 msgid "The running session keeps its model and effort. This applies from the next one."
 msgstr "실행 중인 세션은 모델과 노력 수준을 그대로 씁니다. 다음 세션부터 적용됩니다."
 

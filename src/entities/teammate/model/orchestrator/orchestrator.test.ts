@@ -116,6 +116,15 @@ describe('what the orchestrator is told about the tree everyone is working in', 
     expect(isolated).toContain('--no-ff')
   })
 
+  it('names the command that gets past the lock the session holds on a worktree', () => {
+    // Checked against git 2.39 on a worktree locked the way the session locks
+    // one: `remove --force` is refused with the message below, and a second
+    // --force removes it. Told without the command, the cleanup step fails
+    // and the worktree is left behind.
+    expect(isolated).toContain('git worktree remove <path> --force --force')
+    expect(isolated).toContain('cannot remove a locked working tree')
+  })
+
   it('takes away the commands that wiped the last run, while anyone is out', () => {
     for (const command of ['checkout', 'reset', 'clean', 'stash']) {
       expect(isolated, command).toContain(command)

@@ -3,8 +3,6 @@ import { join } from 'node:path'
 import { runGit } from '../../shell/git-run/git-run'
 import type { LinkDeps, LinkResult, LinkWatcher } from './worktree-links.types'
 
-const DEBOUNCE_MS = 200
-
 export const liveDeps: LinkDeps = {
   exists: async (path) => {
     try {
@@ -79,14 +77,33 @@ async function linkIfDirectory(
 
 // One root's turn at being followed. The claim is taken before the first await
 // and answers for the whole run, so what a caller gets back is the pass that is
-// already under way rather than a second one. `watcher` arrives late, at the end
-// of that pass; `dropped` says the claim was given up before it got there.
+// already under way rather than a second one. `done` is kept until the folder
+// is under watch and everything already in it is linked, which is what a caller
+// waits on before it lets anything make a worktree; `running` holds the link
+// pass each name has in flight; `dropped` says the claim was given up.
 type Claim = {
   root: string
   done: Promise<void>
   watcher: LinkWatcher | null
-  timers: Map<string, ReturnType<typeof setTimeout>>
+  running: Map<string, Promise<void>>
   dropped: boolean
+}
+
+// A worktree is linked the moment it is first seen. A name whose pass is still
+// in flight is left to that pass, which is all the debounce timer that used to
+// stand here ever did - and it did it by waiting a fifth of a second first,
+// which is a fifth of a second in which a teammate runs its first command in a
+// worktree that has no node_modules yet.
+function linkOnce(claim: Claim, worktreesDir: string, name: string, deps: LinkDeps): void {
+  if (claim.running.has(name)) return
+  const pass = linkIfDirectory(claim.root, worktreesDir, name, deps)
+    .catch((cause: unknown) => {
+      deps.log('[worktree-links] could not link', name, cause)
+    })
+    .finally(() => {
+      claim.running.delete(name)
+    })
+  claim.running.set(name, pass)
 }
 
 // The project's own worktrees folder is followed for as long as one project
@@ -106,7 +123,7 @@ export function followWorktrees(root: string, deps: LinkDeps): Promise<void> {
     root,
     done: Promise.resolve(),
     watcher: null,
-    timers: new Map(),
+    running: new Map(),
     dropped: false,
   }
   held = claim
@@ -125,6 +142,25 @@ async function follow(root: string, deps: LinkDeps, claim: Claim): Promise<void>
   }
   if (claim.dropped) return
 
+  // The watcher goes up before the folder is read, not after it. A worktree
+  // that lands in between is one no event ever reports and no reading ever
+  // sees, and the moment a session starts handing out work is exactly when
+  // worktrees land. Anything the two both catch is collapsed by linkOnce.
+  let watching = true
+  try {
+    claim.watcher = deps.watch(worktreesDir, (_eventType, filename) => {
+      if (filename === null || filename.startsWith('.')) return
+      linkOnce(claim, worktreesDir, filename, deps)
+    })
+  } catch (cause: unknown) {
+    deps.log('[worktree-links] could not watch', worktreesDir, cause)
+    watching = false
+  }
+  if (claim.dropped) {
+    release(claim)
+    return
+  }
+
   let names: string[]
   try {
     names = await deps.readdir(worktreesDir)
@@ -133,30 +169,13 @@ async function follow(root: string, deps: LinkDeps, claim: Claim): Promise<void>
     names = []
   }
   for (const name of names) {
-    if (claim.dropped) return
+    if (claim.dropped) break
     if (name.startsWith('.')) continue
-    await linkIfDirectory(root, worktreesDir, name, deps)
+    linkOnce(claim, worktreesDir, name, deps)
   }
-  if (claim.dropped) return
+  await Promise.all([...claim.running.values()])
 
-  const timers = claim.timers
-  try {
-    claim.watcher = deps.watch(worktreesDir, (_eventType, filename) => {
-      if (filename === null || filename.startsWith('.')) return
-      const already = timers.get(filename)
-      if (already !== undefined) clearTimeout(already)
-      timers.set(
-        filename,
-        setTimeout(() => {
-          timers.delete(filename)
-          linkIfDirectory(root, worktreesDir, filename, deps).catch((cause: unknown) => {
-            deps.log('[worktree-links] could not link', filename, cause)
-          })
-        }, DEBOUNCE_MS),
-      )
-    })
-  } catch (cause: unknown) {
-    deps.log('[worktree-links] could not watch', worktreesDir, cause)
+  if (!watching) {
     giveUp(claim)
     return
   }
@@ -173,9 +192,9 @@ function giveUp(claim: Claim): void {
   if (held === claim) held = null
 }
 
+// A link pass already in flight is left to finish: it is one symlink into a
+// folder that wants it either way, and there is no timer left to cancel.
 function release(claim: Claim): void {
-  for (const timer of claim.timers.values()) clearTimeout(timer)
-  claim.timers.clear()
   claim.watcher?.close()
   claim.watcher = null
 }

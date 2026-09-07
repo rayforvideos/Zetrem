@@ -26,9 +26,11 @@ const GENERIC_HELPER = {
 // A fresh worktree has no node_modules of its own; main links the checkout's in
 // (symlinked, not copied) where there is one to link. Said as a condition because
 // a project may have none, and the link can be skipped or fail - a flat claim
-// would then be a lie, while the rule it carries holds either way.
+// would then be a lie, while the rule it carries holds either way. The last
+// sentence is there because two teammates in a row read a missing node_modules
+// as a folder to fill themselves, and linked or installed one of their own.
 const WORKTREE_NODE_MODULES_NOTICE =
-  '\n\nYou work in a git worktree of your own. If a node_modules folder is present there, it is linked from the main checkout: never install, update or remove dependencies inside the worktree.'
+  '\n\nYou work in a git worktree of your own. If a node_modules folder is present there, it is linked from the main checkout: never install, update or remove dependencies inside the worktree. If it is missing, wait a moment and look again rather than making one: it is linked in as the worktree appears.'
 
 // A teammate's own definition is what it speaks, and the stock ones are
 // English, so its running narration drifts to English whatever the person

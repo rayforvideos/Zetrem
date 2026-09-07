@@ -16,7 +16,7 @@ function person(overrides: Partial<Parameters<typeof peopleSpec>[0][number]> = {
 }
 
 const NOTICE =
-  '\n\nYou work in a git worktree of your own. If a node_modules folder is present there, it is linked from the main checkout: never install, update or remove dependencies inside the worktree.'
+  '\n\nYou work in a git worktree of your own. If a node_modules folder is present there, it is linked from the main checkout: never install, update or remove dependencies inside the worktree. If it is missing, wait a moment and look again rather than making one: it is linked in as the worktree appears.'
 
 describe('peopleSpec: handing the people we hired to the session', () => {
   it('carries the name, description, brief and model as they are', () => {
@@ -205,6 +205,14 @@ describe('a teammate is fenced into a worktree by the definition itself', () => 
   it('says nothing about node_modules to a teammate that never gets a worktree', () => {
     const spec = peopleSpec([person()], false)
     expect(spec.scout?.prompt).not.toContain(NOTICE)
+  })
+
+  it('tells one that finds no node_modules to wait for it, not to make one', () => {
+    // The link is put in by main as the worktree appears, so a teammate that
+    // looks first sees nothing there and used to fill the folder itself.
+    const said = peopleSpec([person()], true).scout?.prompt ?? ''
+    expect(said).toContain('wait a moment and look again')
+    expect(said).toContain('it is linked in as the worktree appears')
   })
 })
 

@@ -14,8 +14,8 @@ export function useChatSessions(): void {
     if (!attached) {
       attached = true
       chatSessions.attach({
-        startAgent: (id, prompt, config, files) =>
-          window.desk.startAgent(id, prompt, config, files),
+        startAgent: (id, prompt, config, files, chatId) =>
+          window.desk.startAgent(id, prompt, config, files, chatId),
         sendToAgent: (id, text, files) => window.desk.sendToAgent(id, text, files),
         stopAgent: (id) => window.desk.stopAgent(id),
         respondPermission: (id, requestId, result) =>

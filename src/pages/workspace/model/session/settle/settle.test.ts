@@ -92,3 +92,43 @@ describe('settled: who has gone quiet long enough to call finished', () => {
     expect(settled([held], { nowMs: HELD_QUIET_MS + 30_000, ...idle })).toEqual(['a'])
   })
 })
+
+describe('settled: the rule that closed a tile is said out loud, for the diagnostics', () => {
+  function rules(children: AgentSession[], at: { nowMs: number; parentWorking: boolean }) {
+    const said: string[] = []
+    settled(children, at, (id, rule) => said.push(`${id}: ${rule}`))
+    return said
+  }
+
+  it('names the rule when a report stood and nothing more came', () => {
+    const done = session('a', { status: 'reported', lastSeenAtMs: 1000 })
+    expect(rules([done], { nowMs: 1000 + REPORTED_QUIET_MS, ...busy })).toEqual([
+      'a: the report stood and nothing more was said',
+    ])
+  })
+
+  it('names the rule when a held report was never released by its shell', () => {
+    const held = session('a', { heldAtMs: 1000, lastSeenAtMs: 1000, taskId: 'task_a' })
+    expect(rules([held], { nowMs: 1000 + HELD_QUIET_MS, ...busy })).toEqual([
+      'a: the held report stood: no end ever came for its shell',
+    ])
+  })
+
+  it('names the rule when a tile the runtime never claimed simply went quiet', () => {
+    const lost = session('a', { lastSeenAtMs: 1000 })
+    expect(rules([lost], { nowMs: 1000 + LOST_QUIET_MS, ...idle })).toEqual([
+      'a: lost: the runtime never named it and it went quiet',
+    ])
+  })
+
+  it('says nothing about a tile it is leaving alone', () => {
+    const busyOne = session('a', { taskId: 'task_a', lastSeenAtMs: 0 })
+    expect(rules([busyOne], { nowMs: 99_999_999, ...idle })).toEqual([])
+  })
+
+  it('closes the same tiles whether or not anybody is listening', () => {
+    const lost = session('a', { lastSeenAtMs: 1000 })
+    const at = { nowMs: 1000 + LOST_QUIET_MS, ...idle }
+    expect(settled([lost], at)).toEqual(settled([lost], at, () => undefined))
+  })
+})

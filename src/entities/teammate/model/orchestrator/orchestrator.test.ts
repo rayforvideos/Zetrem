@@ -72,6 +72,30 @@ describe('what the orchestrator is told', () => {
   })
 })
 
+describe('what the orchestrator is told about a command that never ends', () => {
+  it('names the kinds that do not end, whether or not anyone is behind a fence', () => {
+    for (const one of briefs) {
+      for (const kind of ['dev server', 'watcher', 'expo run:*', 'npm run dev']) {
+        expect(one, kind).toContain(kind)
+      }
+    }
+  })
+
+  it('says to start one in the background and read its readiness elsewhere', () => {
+    for (const one of briefs) {
+      expect(one).toContain('started in the background and left there')
+      expect(one).toContain('from its log or its port, never from its exit')
+    }
+  })
+
+  it('says to stop and speak rather than wait, which is where the hours went', () => {
+    for (const one of briefs) {
+      expect(one).toContain('Never wait for one to end')
+      expect(one).toContain('say what you are waiting on and stop instead')
+    }
+  })
+})
+
 describe('the app does not shape the answer itself', () => {
   const said = `${PERSONA} ${briefs.join(' ')}`.toLowerCase()
 
@@ -114,6 +138,15 @@ describe('what the orchestrator is told about the tree everyone is working in', 
 
   it('asks for a merge commit of its own, so one teammate can be undone alone', () => {
     expect(isolated).toContain('--no-ff')
+  })
+
+  it('names the command that gets past the lock the session holds on a worktree', () => {
+    // Checked against git 2.39 on a worktree locked the way the session locks
+    // one: `remove --force` is refused with the message below, and a second
+    // --force removes it. Told without the command, the cleanup step fails
+    // and the worktree is left behind.
+    expect(isolated).toContain('git worktree remove <path> --force --force')
+    expect(isolated).toContain('cannot remove a locked working tree')
   })
 
   it('takes away the commands that wiped the last run, while anyone is out', () => {

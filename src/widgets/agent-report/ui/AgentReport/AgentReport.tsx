@@ -43,6 +43,9 @@ type AgentReportProps = {
   nowMs: number
   onClose(): void
   onPick(id: string): void
+  // Puts this teammate's crew log on the clipboard, so a run that went wrong
+  // is a paste rather than a reproduction attempt.
+  onCopyDiagnostics?: () => void
 }
 
 export function AgentReport({
@@ -52,6 +55,7 @@ export function AgentReport({
   nowMs,
   onClose,
   onPick,
+  onCopyDiagnostics,
 }: AgentReportProps) {
   const [body] = useScrollState<HTMLDivElement>()
   const runs = runsOf(sessions, session)
@@ -120,6 +124,17 @@ export function AgentReport({
                 <ChevronRight className="size-3.5" />
               </Button>
             </span>
+          )}
+          {onCopyDiagnostics !== undefined && (
+            <Button
+              variant="quiet"
+              size="bare"
+              data-copy-diagnostics
+              onClick={onCopyDiagnostics}
+              className="text-muted-foreground"
+            >
+              {t`Copy diagnostics`}
+            </Button>
           )}
           <Button variant="quiet" size="bare" onClick={onClose} aria-label={t`Close report`}>
             {t`Close`}

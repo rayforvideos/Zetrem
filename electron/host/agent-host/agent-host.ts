@@ -6,8 +6,10 @@ import { agentEnv } from '../../spawn/shell-env/shell-env'
 import { agentArgs } from '@/entities/claude-cli/api/run-config/run-config'
 import { PERSONA, orchestratorPrompt } from '@/entities/teammate/model/orchestrator/orchestrator'
 import { claudeBin, loginPath } from '../../cli/login-path/login-path'
-import { exitReason, startTrouble } from '../../spawn/exit-reason/exit-reason'
+import { endedWith, exitReason, startTrouble } from '../../spawn/exit-reason/exit-reason'
+import { errorLines, exitNoteLine, redacted } from '../../spawn/exit-note/exit-note'
 import type { ExitReason } from '@/entities/claude-cli/lib/exit-line/exit-line.types'
+import { logLine } from '../../shell/app-log/app-log'
 import { recallProject } from '../../store/project-memory/project-memory'
 import { extraDirArgs } from '../../projects/projects'
 import { librarySessionArgs } from '../../library/library'
@@ -36,6 +38,11 @@ const dying = new Set<ChildProcessWithoutNullStreams>()
 // The grace period a stop for its own sake is counting, kept per child so that
 // a later stop can start counting for one an earlier stop only asked.
 const hardStops = new Map<ChildProcessWithoutNullStreams, ReturnType<typeof setTimeout>>()
+// Every child Zetrem itself asked to end: a stop, a restart, an account change,
+// a window that went away, a quit. Nothing is ever taken out of it, so the
+// answer is the same whether close() arrives first or last, and a child that
+// is collected takes its entry with it.
+const asked = new WeakSet<ChildProcessWithoutNullStreams>()
 const STOP_GRACE_MS = 5000
 const quiet = goneWatch()
 
@@ -68,7 +75,9 @@ function permissionResponse(requestId: string, result: unknown): string {
 
 export function killAllAgents(): void {
   for (const agent of agents.values()) {
-    if (agent === 'starting' || agent.pid === undefined) continue
+    if (agent === 'starting') continue
+    asked.add(agent)
+    if (agent.pid === undefined) continue
     killTreeSync(agent.pid)
   }
   for (const child of dying) {
@@ -86,6 +95,7 @@ export function killAllAgents(): void {
 // way for is refused itself, and the turn goes on living rather than being
 // killed for a change that then did not happen.
 function stopChild(child: ChildProcessWithoutNullStreams, escalate: boolean): void {
+  asked.add(child)
   if (child.pid === undefined) return
   const { pid } = child
   if (!dying.has(child)) {
@@ -131,11 +141,31 @@ export async function stopAllAgents(waitMs: number): Promise<boolean> {
 export function registerAgentHost(): void {
   handle(
     'agent:start',
-    async (event, id: unknown, prompt: unknown, config: unknown, files: unknown = []) => {
+    async (
+      event,
+      id: unknown,
+      prompt: unknown,
+      config: unknown,
+      files: unknown = [],
+      chatId: unknown = null,
+    ) => {
       const sender = event.sender
+      // The chat is the renderer's to name and the log's to quote, never an
+      // argument of the run: anything but a plain id is written down as unknown.
+      const chat =
+        typeof chatId === 'string' && /^[A-Za-z0-9-]+$/.test(chatId) && chatId.length <= 64
+          ? chatId
+          : null
       const fail = (reason: ExitReason | null): void => {
         if (typeof id === 'string')
-          push(sender, 'agent:event', { id, kind: 'exit', code: -1, reason })
+          push(sender, 'agent:event', {
+            id,
+            kind: 'exit',
+            code: -1,
+            reason,
+            signal: null,
+            asked: false,
+          })
       }
       if (typeof id !== 'string' || typeof prompt !== 'string') return fail(null)
       if (agents.has(id)) return
@@ -172,11 +202,14 @@ export function registerAgentHost(): void {
         const anyFenced =
           isolated && (run.lock !== null || run.people.some((person) => person.isolated))
         // A teammate fenced into a worktree gets a fresh checkout with no
-        // node_modules of its own; this links the main checkout's in, never
-        // blocking the spawn below on it. Nothing fenced means no worktree
-        // folder to make, let alone follow.
+        // node_modules of its own; this links the main checkout's in. The
+        // spawn waits for the folder to be under watch, because the session
+        // spawned below is what makes those worktrees: a watcher opened after
+        // it is one that can miss the first teammate of the run, and that
+        // teammate then works in a checkout with no dependencies at all.
+        // Nothing fenced means no worktree folder to make, let alone follow.
         if (anyFenced) {
-          followWorktrees(workspace, worktreeLinkDeps).catch((cause: unknown) => {
+          await followWorktrees(workspace, worktreeLinkDeps).catch((cause: unknown) => {
             console.error('[worktree-links] could not follow', workspace, cause)
           })
         }
@@ -213,6 +246,9 @@ export function registerAgentHost(): void {
         dropSends(waiting, id)
         return fail(startTrouble(cause instanceof Error ? cause.message : String(cause)))
       }
+      // What the log calls uptime is counted from the spawn, not from the ask:
+      // a start that waited on the login path is not time the session was up.
+      const startedAt = Date.now()
       child.stdin.on('error', () => undefined)
       child.stdout.setEncoding('utf8')
       child.stderr.setEncoding('utf8')
@@ -232,26 +268,61 @@ export function registerAgentHost(): void {
         }
       })
       let lastError = ''
+      // Two readings of the same stream: the tail is what the pane's sentence
+      // is cut from, the ring is what the log keeps, redacted and cropped.
+      const errors = errorLines()
       child.stderr.on('data', (chunk: string) => {
         lastError = errorTail(lastError, chunk)
+        errors.take(chunk)
       })
 
       // 'error' and 'close' can both fire for one child, and the id may already
       // belong to a later agent by the time either does.
       let reported = false
-      const reportExit = (code: number | null, reason: ExitReason | null): void => {
+      const reportExit = (
+        code: number | null,
+        signal: string | null,
+        ended: string,
+        reason: ExitReason | null,
+      ): void => {
         if (reported) return
         reported = true
+        const wanted = asked.has(child)
+        // One line per process, whichever event brought the news: without it
+        // nothing on disk says why a session the person was mid-sentence with
+        // went away.
+        logLine(
+          'agent',
+          exitNoteLine({
+            chat,
+            host: id,
+            upMs: Date.now() - startedAt,
+            ended,
+            asked: wanted,
+            stderr: errors.lines(),
+          }),
+        )
         if (agents.get(id) === child) agents.delete(id)
-        push(sender, 'agent:event', { id, kind: 'exit', code, reason })
+        push(sender, 'agent:event', { id, kind: 'exit', code, reason, signal, asked: wanted })
       }
       // 'close' rather than 'exit': stdio has flushed by then, so the last lines
       // and the stderr that explains the exit are in hand.
-      child.on('close', (code) => {
+      child.on('close', (code, signal) => {
         if (code !== 0 && lastError) console.error(`[agent ${id}] stderr:`, lastError)
-        reportExit(code, exitReason(code, lastError, ''))
+        // Redacted here too: the pane's sentence is written into the chat's
+        // transcript on disk, so a key the CLI echoed back would live there.
+        const ending = {
+          code,
+          signal,
+          stderr: redacted(lastError),
+          spawnError: '',
+          asked: asked.has(child),
+        }
+        reportExit(code, signal, endedWith(code, signal), exitReason(ending))
       })
-      child.on('error', (cause: Error) => reportExit(-1, startTrouble(cause.message)))
+      // Nothing ran, so there is no code or signal to name: the trouble the
+      // spawn itself reported is the whole story.
+      child.on('error', (cause: Error) => reportExit(-1, null, '', startTrouble(cause.message)))
 
       tell(child.stdin, userMessage(prompt, files))
       for (const send of releaseSends(waiting, id)) {

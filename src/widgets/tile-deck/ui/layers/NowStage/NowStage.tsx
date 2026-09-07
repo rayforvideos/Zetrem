@@ -5,6 +5,8 @@ import { reachOf } from '@/shared/lib/reach/reach'
 import { formatClock } from '@/shared/lib/units/units'
 import type { Scene } from '../../../lib/now/now.types'
 import { sceneOf, shapeOfCall } from '../../../lib/now/now'
+import { longRunning, runningFor } from '../../../lib/long-call/long-call'
+import { t } from '@lingui/core/macro'
 
 const W = 52
 const H = 34
@@ -28,6 +30,10 @@ export function NowStage({ call, live, nowMs }: NowStageProps) {
   const scene = sceneOf(shape)
   const target = shape.kind === 'plain' ? call.line : targetOf(shape)
   const elapsedMs = live && nowMs !== undefined ? nowMs - call.startedAtMs : null
+  // A call that has gone on for minutes says so in words. The clock it stands
+  // in for is the same clock, counted the same way: what changes is that the
+  // number settles to the minute, so it can be read rather than watched.
+  const stillRunning = live && nowMs !== undefined && longRunning(call, nowMs)
 
   return (
     <div data-now-stage={scene} data-live={live || undefined} style={rootStyle}>
@@ -39,10 +45,16 @@ export function NowStage({ call, live, nowMs }: NowStageProps) {
         <span style={verbStyle}>{verbOf(shape)}</span>
         <span style={targetStyle}>{target}</span>
       </span>
-      {elapsedMs !== null && (
-        <span data-elapsed style={elapsedStyle}>
-          {formatClock(elapsedMs / 1000)}
+      {stillRunning && elapsedMs !== null ? (
+        <span data-still-running style={chipStyle}>
+          {t`still running · ${runningFor(elapsedMs)}`}
         </span>
+      ) : (
+        elapsedMs !== null && (
+          <span data-elapsed style={elapsedStyle}>
+            {formatClock(elapsedMs / 1000)}
+          </span>
+        )
       )}
     </div>
   )
@@ -75,6 +87,7 @@ function Picture({ scene, shape, live }: PictureProps) {
 
 import { Drawing } from './Drawing'
 import {
+  chipStyle,
   elapsedStyle,
   frameStyle,
   ringStyle,

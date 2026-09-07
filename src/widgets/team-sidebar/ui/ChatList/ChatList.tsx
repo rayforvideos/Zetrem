@@ -21,6 +21,7 @@ export function ChatList({
   onRename,
   onFile,
   onFileMany,
+  onCopyDiagnostics,
 }: ChatListProps) {
   const [query, setQuery] = useState('')
   const looking = query.trim().length > 0
@@ -60,6 +61,7 @@ export function ChatList({
     onRemove,
     onRename,
     onFile,
+    onCopyDiagnostics,
     onCarry: carry,
     carried,
     onPickUp: setCarried,

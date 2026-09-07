@@ -151,3 +151,29 @@ describe('AgentReport: the helpers the teammate called in', () => {
     expect(report()).not.toContain('Their helpers')
   })
 })
+
+describe('the report offers the crew log for a paste', () => {
+  function withCopy(handed: boolean): string {
+    return renderToStaticMarkup(
+      <AgentReport
+        session={session()}
+        sessions={[session()]}
+        helpers={[]}
+        nowMs={61000}
+        onClose={() => {}}
+        onPick={() => {}}
+        {...(handed ? { onCopyDiagnostics: () => {} } : {})}
+      />,
+    )
+  }
+
+  it('offers it where there is somewhere for it to go', () => {
+    const html = withCopy(true)
+    expect(html).toContain('data-copy-diagnostics')
+    expect(html).toContain('Copy diagnostics')
+  })
+
+  it('offers nothing where nobody is listening, rather than a button that does nothing', () => {
+    expect(withCopy(false)).not.toContain('data-copy-diagnostics')
+  })
+})

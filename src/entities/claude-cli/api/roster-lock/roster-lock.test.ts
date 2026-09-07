@@ -16,12 +16,16 @@ function person(overrides: Partial<Parameters<typeof peopleSpec>[0][number]> = {
 }
 
 const NOTICE =
-  '\n\nYou work in a git worktree of your own. If a node_modules folder is present there, it is linked from the main checkout: never install, update or remove dependencies inside the worktree.'
+  '\n\nYou work in a git worktree of your own. If a node_modules folder is present there, it is linked from the main checkout: never install, update or remove dependencies inside the worktree. If it is missing, wait a moment and look again rather than making one: it is linked in as the worktree appears.'
+
+// Added to every brief, worktree or not, so the prompts below carry it too.
+const WAITING =
+  '\n\nA command that does not end on its own, meaning a dev server, a watcher, expo run:* or npm run dev, is started in the background and left there: read whether it is ready from its log or its port, never from its exit. Never wait for one to end; say what you are waiting on and stop instead.'
 
 describe('peopleSpec: handing the people we hired to the session', () => {
   it('carries the name, description, brief and model as they are', () => {
     expect(peopleSpec([person()], false)).toEqual({
-      scout: { description: '찾아본다', prompt: '당신은 찾습니다.', model: 'haiku' },
+      scout: { description: '찾아본다', prompt: `당신은 찾습니다.${WAITING}`, model: 'haiku' },
     })
   })
 
@@ -182,7 +186,7 @@ describe('a teammate is fenced into a worktree by the definition itself', () => 
     expect(JSON.parse(args[1] as string)).toEqual({
       scout: {
         description: '찾아본다',
-        prompt: `당신은 찾습니다.${NOTICE}`,
+        prompt: `당신은 찾습니다.${NOTICE}${WAITING}`,
         model: 'haiku',
         isolation: 'worktree',
       },
@@ -206,6 +210,47 @@ describe('a teammate is fenced into a worktree by the definition itself', () => 
     const spec = peopleSpec([person()], false)
     expect(spec.scout?.prompt).not.toContain(NOTICE)
   })
+
+  it('tells one that finds no node_modules to wait for it, not to make one', () => {
+    // The link is put in by main as the worktree appears, so a teammate that
+    // looks first sees nothing there and used to fill the folder itself.
+    const said = peopleSpec([person()], true).scout?.prompt ?? ''
+    expect(said).toContain('wait a moment and look again')
+    expect(said).toContain('it is linked in as the worktree appears')
+  })
+})
+
+describe('a command that never ends is one no teammate is left waiting on', () => {
+  it('names the kinds of command that do not end, since guessing is what went wrong', () => {
+    const said = peopleSpec([person()], true).scout?.prompt ?? ''
+    for (const kind of ['dev server', 'watcher', 'expo run:*', 'npm run dev']) {
+      expect(said, kind).toContain(kind)
+    }
+  })
+
+  it('says to start one in the background and read its readiness elsewhere', () => {
+    const said = peopleSpec([person()], true).scout?.prompt ?? ''
+    expect(said).toContain('started in the background and left there')
+    expect(said).toContain('from its log or its port, never from its exit')
+  })
+
+  it('says to stop and speak rather than wait, which is where the hours went', () => {
+    const said = peopleSpec([person()], true).scout?.prompt ?? ''
+    expect(said).toContain('Never wait for one to end')
+    expect(said).toContain('say what you are waiting on and stop instead')
+  })
+
+  it('tells the one that never gets a worktree the same, since it runs commands too', () => {
+    expect(peopleSpec([person()], false).scout?.prompt).toContain(WAITING)
+    expect(peopleSpec([person({ isolated: false })], true).scout?.prompt).toContain(WAITING)
+  })
+
+  it('tells the generic helper the same, being spawned by name like anyone else', () => {
+    const args = agentsArgs([], { blockedAgents: [] }, boss, true)
+    const spec = JSON.parse(args[1] ?? '{}') as Record<string, { prompt: string }>
+    expect(spec.claude?.prompt).toContain(WAITING)
+    expect(spec['general-purpose']?.prompt).toContain(WAITING)
+  })
 })
 
 describe('only a teammate that opted in is fenced, even when the workspace can hold one', () => {
@@ -214,9 +259,10 @@ describe('only a teammate that opted in is fenced, even when the workspace can h
     expect(spec.scout).not.toHaveProperty('isolation')
   })
 
-  it('leaves their prompt untouched, since they never enter a worktree', () => {
+  it('leaves their prompt free of the worktree notice, since they never enter one', () => {
     const spec = peopleSpec([person({ isolated: false })], true)
-    expect(spec.scout?.prompt).toBe('당신은 찾습니다.')
+    expect(spec.scout?.prompt).toBe(`당신은 찾습니다.${WAITING}`)
+    expect(spec.scout?.prompt).not.toContain(NOTICE)
   })
 
   it('still fences a person marked isolated: true beside them', () => {
@@ -232,7 +278,7 @@ describe('only a teammate that opted in is fenced, even when the workspace can h
     const spec = peopleSpec([person({ isolated: false, tools: ['Read'] })], true)
     expect(spec.scout).toEqual({
       description: '찾아본다',
-      prompt: '당신은 찾습니다.',
+      prompt: `당신은 찾습니다.${WAITING}`,
       model: 'haiku',
       tools: ['Read'],
     })
@@ -283,7 +329,7 @@ describe('the generic helper is fenced too, since it is spawned by name like any
     const given = spec(agentsArgs([mine], lock, boss, true))
     expect(given.claude).toEqual({
       description: '내 사람',
-      prompt: `내 것${NOTICE}`,
+      prompt: `내 것${NOTICE}${WAITING}`,
       model: 'haiku',
       tools: ['Read'],
       isolation: 'worktree',
@@ -312,7 +358,8 @@ describe('every teammate is told to speak the language the app is read in', () =
   })
 
   it('adds nothing when the screen handed over no line', () => {
-    expect(peopleSpec([person()], false).scout?.prompt).toBe(person().prompt)
-    expect(peopleSpec([person()], false, '').scout?.prompt).toBe(person().prompt)
+    const said = peopleSpec([person()], false).scout?.prompt
+    expect(said).toBe(`${person().prompt}${WAITING}`)
+    expect(peopleSpec([person()], false, '').scout?.prompt).toBe(said)
   })
 })

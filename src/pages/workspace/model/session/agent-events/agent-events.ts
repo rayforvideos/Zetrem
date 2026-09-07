@@ -17,6 +17,7 @@ import {
   releaseChildBash,
   ownsRunningBash,
   remember,
+  shellsOwnedBy,
   wakeResumed,
 } from './crew/crew'
 import { t } from '@lingui/core/macro'
@@ -47,17 +48,22 @@ const OVER = ['completed', 'failed', 'killed']
 function chore(turn: ClaudeTurnEvent, refs: AgentEventRefs): boolean {
   const conversation = refs.stores.conversation
   if (turn.type === 'childStarted' && turn.taskType === BACKGROUND) {
-    if (adoptChildBash(refs, turn.taskId, turn.toolUseId)) return true
+    const owner = adoptChildBash(refs, turn.taskId, turn.toolUseId)
+    if (owner !== null) {
+      note(refs, turn.type, turn, owner, `adopted shell ${turn.taskId}, held for its owner`)
+      return true
+    }
     conversation.startChore(turn.taskId, turn.description)
+    note(refs, turn.type, turn, null, `chore: shell ${turn.taskId} is the orchestrator's own`)
     return true
   }
   if (turn.type === 'childNotified') {
     conversation.endChore(turn.taskId)
-    releaseShell(refs, turn.taskId)
+    releaseShell(refs, turn.taskId, turn.type)
   }
   if (turn.type === 'childStateKnown' && OVER.includes(turn.state)) {
     conversation.endChore(turn.taskId)
-    releaseShell(refs, turn.taskId)
+    releaseShell(refs, turn.taskId, turn.type)
   }
   return false
 }
@@ -65,13 +71,46 @@ function chore(turn: ClaudeTurnEvent, refs: AgentEventRefs): boolean {
 // The end of a child's shell is the last event that child will cause. If its
 // report was already in and only the shell kept the tile working, this is
 // where the tile is parked; nothing else would come along to do it.
-function releaseShell(refs: AgentEventRefs, taskId: string): void {
+function releaseShell(refs: AgentEventRefs, taskId: string, event: string): void {
   const owner = refs.ownedBash.get(taskId)
   releaseChildBash(refs, taskId)
-  if (owner === undefined || !refs.heldReports.has(owner)) return
-  if (ownsRunningBash(refs, owner)) return
+  if (owner === undefined) return
+  if (!refs.heldReports.has(owner)) {
+    refs.crewLog.note({
+      event,
+      taskId,
+      seat: owner,
+      decision: `released shell ${taskId}, no report was held for it`,
+    })
+    return
+  }
+  if (ownsRunningBash(refs, owner)) {
+    refs.crewLog.note({
+      event,
+      taskId,
+      seat: owner,
+      decision: `released shell ${taskId}, still held: owns shell ${shellsOwnedBy(refs, owner).join(', ')}`,
+    })
+    return
+  }
   refs.heldReports.delete(owner)
   refs.stores.children.patch(owner, { status: 'reported', heldAtMs: undefined })
+  refs.crewLog.note({
+    event,
+    taskId,
+    seat: owner,
+    decision: `parked: shell ${taskId} ended and the report was already in`,
+  })
+}
+
+function note(
+  refs: AgentEventRefs,
+  event: string,
+  turn: { toolUseId: string | null; taskId: string },
+  seat: string | null,
+  decision: string,
+): void {
+  refs.crewLog.note({ event, toolUseId: turn.toolUseId, taskId: turn.taskId, seat, decision })
 }
 
 function announce(turn: ClaudeTurnEvent, refs: AgentEventRefs): void {

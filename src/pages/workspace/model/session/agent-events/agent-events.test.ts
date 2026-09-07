@@ -6,6 +6,7 @@ import { applyAgentEvent, compactedLine, limitLine, turnLine } from './agent-eve
 import { createConversation } from '../../chat/conversation/conversation'
 import { freshRefs } from './refs/refs'
 import { remember, wakeResumed } from './crew/crew'
+import { closeSession } from '../session-bookkeeping/session-bookkeeping'
 
 function fakeMetrics(costUsd: number, overrides: Partial<ResultMetrics> = {}): ResultMetrics {
   return {
@@ -2107,5 +2108,238 @@ describe('a teammate that reports while its shell still runs (#119)', () => {
       refs,
     )
     expect(refs.stores.children.get().find((s) => s.id === 'toolu_v')?.status).toBe('working')
+  })
+})
+
+describe('every decision about a tile is written down, so a stuck one can be explained', () => {
+  function seat(refs: AgentEventRefs, id: string): void {
+    applyAgentEvent(
+      {
+        type: 'childOpen',
+        toolUseId: id,
+        label: 'Look into it',
+        subagentType: 'Explore',
+        prompt: 'Look into it',
+        background: false,
+      },
+      refs,
+    )
+  }
+
+  function decisions(refs: AgentEventRefs): string[] {
+    return refs.crewLog.entries().map((one) => one.decision)
+  }
+
+  it('says which seat was opened, and for which tool call', () => {
+    const refs = fakeRefs()
+    seat(refs, 'toolu_a')
+    const [one] = refs.crewLog.entries()
+    expect(one?.event).toBe('childOpen')
+    expect(one?.decision).toBe('opened seat toolu_a')
+    expect(one?.seat).toBe('toolu_a')
+    expect(one?.toolUseId).toBe('toolu_a')
+  })
+
+  it('says a task id was matched when it was announced before the seat opened', () => {
+    const refs = fakeRefs()
+    applyAgentEvent(
+      {
+        type: 'childStarted',
+        toolUseId: 'toolu_b',
+        taskId: 'task_b',
+        taskType: 'local_agent',
+        description: '',
+      },
+      refs,
+    )
+    expect(decisions(refs)).toContain('kept the task id: no seat open for it yet')
+    seat(refs, 'toolu_b')
+    expect(decisions(refs).at(-1)).toBe('opened seat toolu_b, matched by task id announced early')
+  })
+
+  it('says an event was dropped for want of a seat, which is what a lost tile looks like', () => {
+    const refs = fakeRefs()
+    applyAgentEvent(
+      {
+        type: 'childNotified',
+        toolUseId: 'toolu_ghost',
+        taskId: 'task_ghost',
+        summary: 'done',
+        done: true,
+        failed: false,
+      },
+      refs,
+    )
+    expect(decisions(refs)).toEqual(['dropped: no seat for a done notice'])
+  })
+
+  it('names which of the two ids found the tile', () => {
+    const refs = fakeRefs()
+    seat(refs, 'toolu_c')
+    applyAgentEvent(
+      {
+        type: 'childStarted',
+        toolUseId: 'toolu_c',
+        taskId: 'task_c',
+        taskType: 'local_agent',
+        description: '',
+      },
+      refs,
+    )
+    applyAgentEvent(
+      {
+        type: 'childProgress',
+        toolUseId: null,
+        taskId: 'task_c',
+        doing: 'reading',
+        lastTool: 'Read',
+        tokens: 10,
+      },
+      refs,
+    )
+    expect(decisions(refs).at(-1)).toBe('working: Read · matched by task id')
+  })
+
+  it('names the shell a report is being held for, which is what #119 is about', () => {
+    const refs = fakeRefs()
+    seat(refs, 'toolu_d')
+    applyAgentEvent(
+      {
+        type: 'childStream',
+        toolUseId: 'toolu_d',
+        callId: 'toolu_sh',
+        line: 'Bash npm run dev',
+        input: null,
+      },
+      refs,
+    )
+    applyAgentEvent(
+      {
+        type: 'childStarted',
+        toolUseId: 'toolu_sh',
+        taskId: 'bash-1',
+        taskType: 'local_bash',
+        description: 'npm run dev',
+      },
+      refs,
+    )
+    expect(decisions(refs)).toContain('adopted shell bash-1, held for its owner')
+
+    applyAgentEvent(
+      {
+        type: 'childNotified',
+        toolUseId: 'toolu_d',
+        taskId: 'task_d',
+        summary: 'all done',
+        done: true,
+        failed: false,
+      },
+      refs,
+    )
+    expect(decisions(refs).at(-1)).toBe('held: owns shell bash-1 · matched by tool id')
+  })
+
+  it('says the shell ended and the tile was parked, which is the other half of that story', () => {
+    const refs = fakeRefs()
+    seat(refs, 'toolu_e')
+    applyAgentEvent(
+      {
+        type: 'childStream',
+        toolUseId: 'toolu_e',
+        callId: 'toolu_sh',
+        line: 'Bash npm run dev',
+        input: null,
+      },
+      refs,
+    )
+    applyAgentEvent(
+      {
+        type: 'childStarted',
+        toolUseId: 'toolu_sh',
+        taskId: 'bash-1',
+        taskType: 'local_bash',
+        description: 'npm run dev',
+      },
+      refs,
+    )
+    applyAgentEvent(
+      {
+        type: 'childNotified',
+        toolUseId: 'toolu_e',
+        taskId: 'task_e',
+        summary: 'all done',
+        done: true,
+        failed: false,
+      },
+      refs,
+    )
+    applyAgentEvent(
+      {
+        type: 'childStateKnown',
+        toolUseId: 'toolu_sh',
+        taskId: 'bash-1',
+        state: 'completed',
+        error: '',
+      },
+      refs,
+    )
+    expect(decisions(refs)).toContain('parked: shell bash-1 ended and the report was already in')
+  })
+
+  it('says a tile was parked when nothing was holding it back', () => {
+    const refs = fakeRefs()
+    seat(refs, 'toolu_f')
+    applyAgentEvent(
+      {
+        type: 'childNotified',
+        toolUseId: 'toolu_f',
+        taskId: 'task_f',
+        summary: 'all done',
+        done: true,
+        failed: false,
+      },
+      refs,
+    )
+    expect(decisions(refs).at(-1)).toBe('parked · matched by tool id')
+  })
+
+  it('says when the runtime named a teammate that only knew the id it was called by', () => {
+    const refs = fakeRefs()
+    refs.childIds.add('agent_x')
+    refs.stores.children.open({
+      id: 'agent_x',
+      taskId: 'agent_x',
+      runnerId: 'subagent',
+      label: 'agent_x',
+      subagentType: 'agent_x',
+      model: 'subagent',
+      status: 'working',
+      headline: '',
+      stream: [],
+      transcript: [],
+      tokens: 0,
+      contextUsed: 0,
+      startedAtMs: 0,
+    })
+    applyAgentEvent(
+      {
+        type: 'childStarted',
+        toolUseId: null,
+        taskId: 'agent_x',
+        taskType: 'local_agent',
+        description: 'Look into the crash',
+        subagentType: 'Explore',
+      },
+      refs,
+    )
+    expect(decisions(refs).at(-1)).toBe('named by runtime · matched by task id')
+  })
+
+  it('keeps writing after the session ends, because that is when the tile is asked about', () => {
+    const refs = fakeRefs()
+    seat(refs, 'toolu_g')
+    closeSession(refs, { reason: null, stopped: true })
+    expect(decisions(refs).at(-1)).toBe('closed: the session exited')
+    expect(refs.crewLog.entries().at(-1)?.seat).toBe('toolu_g')
   })
 })

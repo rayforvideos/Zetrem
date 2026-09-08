@@ -1271,7 +1271,7 @@ msgstr "피드백"
 msgid "Fetching"
 msgstr "가져오는 중"
 
-#: src/widgets/conversation/ui/ConversationPane/ConversationPane.tsx:264
+#: src/widgets/conversation/ui/ConversationPane/ConversationPane.tsx:261
 msgid "File this answer to the library as its own note"
 msgstr "이 답변을 별도 노트로 라이브러리에 넣기"
 
@@ -2966,7 +2966,7 @@ msgstr "제목"
 msgid "To {addressee}"
 msgstr "{addressee}에게"
 
-#: src/widgets/conversation/ui/ConversationPane/ConversationPane.tsx:267
+#: src/widgets/conversation/ui/ConversationPane/ConversationPane.tsx:264
 msgid "To the library"
 msgstr "라이브러리에 담기"
 

@@ -241,12 +241,9 @@ export function ConversationPane({
                   {turn.text.length > 0 && (
                     <Markdown text={turn.text} className="text-base leading-[1.72]" />
                   )}
-                  {turn.draft.length > 0 && (
-                    <div className="text-base leading-[1.72] whitespace-pre-wrap [overflow-wrap:anywhere]">
-                      {turn.draft}
-                      <span className="ml-0.5 inline-block h-[1em] w-[0.5ch] translate-y-[0.1em] bg-muted-foreground align-baseline" />
-                    </div>
-                  )}
+                  {/* A reply being written is not drawn: the draft only moves
+                      the status line to "Writing", and the reply lands whole,
+                      as Markdown, when the turn settles it. (#140) */}
                   {turn.tools.length > 0 && (
                     <ToolRun tools={turn.tools} live={live} nowMs={nowMs} project={project} />
                   )}

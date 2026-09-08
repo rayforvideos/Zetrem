@@ -270,6 +270,20 @@ describe('a quiet run keeps its log to itself', () => {
   })
 })
 
+describe('a reply being written lands whole', () => {
+  it('does not draw the draft while it streams; the status line says Writing', () => {
+    const turns = [turn({ role: 'assistant', draft: '지금 반쯤 쓴 문장' })]
+    const html = working(turns)
+    expect(html).not.toContain('지금 반쯤 쓴 문장')
+    expect(html).toContain('Writing')
+  })
+
+  it('draws the reply once the draft has settled into text', () => {
+    const html = pane([turn({ role: 'assistant', text: '다 쓴 답' })])
+    expect(html).toContain('다 쓴 답')
+  })
+})
+
 describe('ConversationPane: the screen does not lie', () => {
   it('stops tool output at the cap and counts what was left out', () => {
     const stdout = Array.from({ length: TOOL_OUTPUT_LINES + 60 }, (_, i) => `줄${i}`).join('\n')

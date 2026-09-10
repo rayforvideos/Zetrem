@@ -353,6 +353,30 @@ describe('the screen is not blank while an answer is on its way', () => {
   it('takes the line away when the work is done', () => {
     expect(pane([turn({ text: '다 했다' })])).not.toContain('data-working')
   })
+
+  it('keeps the words to itself while they are still being written', () => {
+    const html = working([turn({ role: 'user', text: '고쳐줘' }), turn({ draft: '반쯤 쓴 답' })])
+    expect(html).not.toContain('반쯤 쓴 답')
+    expect(html).toContain('data-doing="writing"')
+  })
+
+  it('hangs no empty rail on a turn that is only a draft so far', () => {
+    const html = working([turn({ role: 'user', text: '고쳐줘' }), turn({ draft: '반쯤 쓴 답' })])
+    expect(html).not.toContain('zt-rail')
+  })
+
+  it('still shows what was thought before the words started', () => {
+    const html = working([
+      turn({ role: 'user', text: '고쳐줘' }),
+      turn({ thinking: '먼저 확인', draft: '반쯤 쓴 답' }),
+    ])
+    expect(html).toContain('Thought')
+    expect(html).not.toContain('반쯤 쓴 답')
+  })
+
+  it('shows the answer whole once it has landed', () => {
+    expect(pane([turn({ text: '다 쓴 답' })])).toContain('다 쓴 답')
+  })
 })
 
 describe('approval: the most important moment in this app', () => {

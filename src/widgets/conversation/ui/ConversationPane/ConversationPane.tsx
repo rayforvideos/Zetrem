@@ -232,6 +232,14 @@ export function ConversationPane({
                   </div>
                 )
               }
+              // The draft is not drawn. Words arriving one at a time move and
+              // reflow under the eye while the person is still reading the
+              // turn before; the working row says "Writing" until they land,
+              // and then the answer appears once, whole, as Markdown. A turn
+              // that is only a draft so far has nothing to hang a rail on.
+              if (turn.thinking.length === 0 && turn.text.length === 0 && turn.tools.length === 0) {
+                return null
+              }
               return (
                 <article
                   key={turn.id}
@@ -240,12 +248,6 @@ export function ConversationPane({
                   {turn.thinking.length > 0 && <Thinking text={turn.thinking} />}
                   {turn.text.length > 0 && (
                     <Markdown text={turn.text} className="text-base leading-[1.72]" />
-                  )}
-                  {turn.draft.length > 0 && (
-                    <div className="text-base leading-[1.72] whitespace-pre-wrap [overflow-wrap:anywhere]">
-                      {turn.draft}
-                      <span className="ml-0.5 inline-block h-[1em] w-[0.5ch] translate-y-[0.1em] bg-muted-foreground align-baseline" />
-                    </div>
                   )}
                   {turn.tools.length > 0 && (
                     <ToolRun tools={turn.tools} live={live} nowMs={nowMs} project={project} />

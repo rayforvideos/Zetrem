@@ -14,13 +14,12 @@ import { useScrollState } from '@/shared/lib/measure/scroll-state/useScrollState
 import { shouldFollow } from '../../lib/follow/follow'
 import { askedAtMs } from '../../lib/working/working'
 import { Wordmark } from '@/shared/graphics/Wordmark/Wordmark'
-import { Markdown } from '@/shared/markdown/Markdown/Markdown'
+import { Answer } from './Answer'
 import { Approval } from './Approval'
 import { ProposalCard } from '../ProposalCard/ProposalCard'
 import { FirstHint } from '@/shared/parts/FirstHint/FirstHint'
 import { Greeting } from './Greeting'
 import { Thinking } from './Thinking'
-import { ToolRun } from '../ToolRun/ToolRun'
 import { Working } from './Working'
 import { Away } from './Away'
 import { Chores } from './Chores'
@@ -238,17 +237,18 @@ export function ConversationPane({
                   className={cn('zt-rail zt-rise flex flex-col gap-2.5', live && 'zt-rail--live')}
                 >
                   {turn.thinking.length > 0 && <Thinking text={turn.thinking} />}
-                  {turn.text.length > 0 && (
-                    <Markdown text={turn.text} className="text-base leading-[1.72]" />
-                  )}
+                  <Answer
+                    text={turn.text}
+                    tools={turn.tools}
+                    live={live}
+                    nowMs={nowMs}
+                    project={project}
+                  />
                   {turn.draft.length > 0 && (
                     <div className="text-base leading-[1.72] whitespace-pre-wrap [overflow-wrap:anywhere]">
                       {turn.draft}
                       <span className="ml-0.5 inline-block h-[1em] w-[0.5ch] translate-y-[0.1em] bg-muted-foreground align-baseline" />
                     </div>
-                  )}
-                  {turn.tools.length > 0 && (
-                    <ToolRun tools={turn.tools} live={live} nowMs={nowMs} project={project} />
                   )}
                   {turn.text.length > 0 && !live && (
                     // On show, not on hover: an answer worth keeping is worth

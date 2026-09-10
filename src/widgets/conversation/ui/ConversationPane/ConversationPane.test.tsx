@@ -315,6 +315,32 @@ describe('ConversationPane: the screen does not lie', () => {
     expect(tickButton(html, 'tk2')).not.toContain('disabled=""')
   })
 
+  it('draws a tool run where it happened, between the words before and after it', () => {
+    const before = '읽어 보겠습니다'
+    const html = pane([
+      turn({
+        text: `${before}\n\n고쳤습니다`,
+        tools: [tool({ line: 'Read /work/app/a.ts', toolUseId: 'tk3', at: before.length })],
+      }),
+    ])
+    const saidBefore = html.indexOf(before)
+    const ran = html.indexOf('data-tick="tk3"')
+    const saidAfter = html.indexOf('고쳤습니다')
+    expect(saidBefore).toBeGreaterThan(-1)
+    expect(ran).toBeGreaterThan(saidBefore)
+    expect(saidAfter).toBeGreaterThan(ran)
+  })
+
+  it('hangs one library button on a reply, however many tools ran inside it', () => {
+    const html = pane([
+      turn({
+        text: '하나\n\n둘\n\n셋',
+        tools: [tool({ toolUseId: 'tk4', at: 2 }), tool({ toolUseId: 'tk5', at: 6 })],
+      }),
+    ])
+    expect(html.match(/data-file-turn/g)).toHaveLength(1)
+  })
+
   it('folds thinking away and says how long it is, because the answer comes first', () => {
     const html = pane([turn({ thinking: '첫 문단\n\n둘째 문단\n\n셋째 문단' })])
     expect(html).toContain('Thought · 3 paragraphs')

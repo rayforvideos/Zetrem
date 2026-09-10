@@ -14,6 +14,12 @@ export type ToolActivity = {
   result: ToolResult | null
   startedAtMs: number
   endedAtMs: number | null
+  /**
+   * How much of the turn's text had been said when this tool ran, so the
+   * screen can put the run back where it happened. Missing on turns saved
+   * before a tool could sit mid-text: those all ran after the text.
+   */
+  at?: number
 }
 
 export type Turn = {

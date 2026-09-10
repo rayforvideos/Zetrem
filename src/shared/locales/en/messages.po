@@ -589,7 +589,7 @@ msgstr "Approve this plan?"
 msgid "Ask first"
 msgstr "Ask first"
 
-#: src/widgets/conversation/ui/ConversationPane/ConversationPane.tsx:150
+#: src/widgets/conversation/ui/ConversationPane/ConversationPane.tsx:149
 msgid "Ask for the whole job"
 msgstr "Ask for the whole job"
 
@@ -2280,7 +2280,7 @@ msgstr "Saving…"
 msgid "Say the word and the whole team wakes up."
 msgstr "Say the word and the whole team wakes up."
 
-#: src/widgets/conversation/ui/ConversationPane/ConversationPane.tsx:151
+#: src/widgets/conversation/ui/ConversationPane/ConversationPane.tsx:150
 msgid "Say what you want done, not the next step. The orchestrator splits it up and hands out the pieces."
 msgstr "Say what you want done, not the next step. The orchestrator splits it up and hands out the pieces."
 

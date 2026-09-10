@@ -243,6 +243,38 @@ describe('readTranscript: reading what was saved without trusting it', () => {
     })
   })
 
+  it('brings back where in the words a tool ran, so the answer reads in order', () => {
+    const saved = packTranscript(
+      [
+        turn({
+          text: '읽어 보겠습니다\n\n고쳤습니다',
+          tools: [
+            {
+              line: 'Read a.ts',
+              toolUseId: 't1',
+              input: null,
+              result: null,
+              startedAtMs: 0,
+              endedAtMs: 1,
+              at: 8,
+            },
+          ],
+        }),
+      ],
+      summary,
+    )
+    const back = readBack(JSON.parse(JSON.stringify(saved)))
+    expect(back.turns[0]!.tools[0]!.at).toBe(8)
+  })
+
+  it('reads a tool saved before its place was kept as one with no place', () => {
+    const back = readBack({
+      id: summary.id,
+      turns: [turn({ tools: [{ line: 'Bash ls', startedAtMs: 0, at: '앞' }] as never })],
+    })
+    expect(back.turns[0]!.tools[0]).not.toHaveProperty('at')
+  })
+
   it('normalizes a malformed tool result instead of dropping the tool', () => {
     const back = readBack({
       id: summary.id,

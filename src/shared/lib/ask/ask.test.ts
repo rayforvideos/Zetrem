@@ -38,6 +38,12 @@ describe('outcomeLine', () => {
     ).toBe('name-taken')
   })
 
+  it('says a cancel was a cancel, there being nothing else to explain', () => {
+    expect(outcomeLine({ ok: false, why: { code: 'cancelled', said: '' } }, 'Added nx')).toBe(
+      'It was cancelled',
+    )
+  })
+
   it('quotes the complaint when it did not', () => {
     expect(
       outcomeLine({ ok: false, why: { code: 'cli', said: 'boom\nno such plugin' } }, 'Added nx'),

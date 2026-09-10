@@ -31,6 +31,8 @@ function whyLine(why: Why): string {
       return lastLine(why.said)
     case 'busy':
       return t`Zetrem is changing your account. Try again in a moment.`
+    case 'cancelled':
+      return t`It was cancelled`
   }
 }
 

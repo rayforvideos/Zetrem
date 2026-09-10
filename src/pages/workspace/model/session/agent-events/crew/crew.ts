@@ -5,7 +5,7 @@ import { addressee, matched } from './addressee'
 import { absorbs, resumedAgent } from '@/entities/claude-cli'
 import type { AgentSession, SessionStore, TranscriptEntry } from '@/entities/agent-session'
 import type { ClaudeTurnEvent } from '@/entities/claude-cli'
-import { saidPlainly } from '@/entities/claude-cli'
+import { saidPlainly, withoutHarnessNote } from '@/entities/claude-cli'
 import { changeBadge, changeLines, resultNote, shapeOfLine, toolNameOf } from '@/entities/tool'
 import { clip } from '@/pages/workspace/model/session/agent-events/clip/clip'
 import type { AgentEventRefs } from '../agent-events.types'
@@ -195,7 +195,10 @@ export function applyCrewEvent(turn: ClaudeTurnEvent, refs: AgentEventRefs): voi
         return
       }
       const id = seat.id
-      if (turn.summary) children.patch(id, { headline: turn.summary.trim(), doing: '' })
+      // The summary is the tile's headline and a helper row's words, so the
+      // CLI's guard note comes off here, before either is made from it.
+      const said = withoutHarnessNote(turn.summary).trim()
+      if (said.length > 0) children.patch(id, { headline: said, doing: '' })
       if (closedForGood(children, id)) {
         log(refs, turn.type, named(turn, id), by('left alone: already closed for good', seat))
         return
@@ -203,7 +206,6 @@ export function applyCrewEvent(turn: ClaudeTurnEvent, refs: AgentEventRefs): voi
       // A run that failed or was killed is over as surely as one that
       // completed; left as working, its tile would never close.
       if (turn.failed) {
-        const said = turn.summary.trim()
         children.patch(id, {
           status: 'done',
           doing: '',

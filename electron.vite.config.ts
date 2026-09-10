@@ -59,8 +59,11 @@ export default defineConfig({
       react({
         babel: {
           plugins: [
-            ['babel-plugin-react-compiler', { target: '19' }],
+            // The macro hashes the message text into its id, so it must see the
+            // source `lingui extract` saw: the compiler renames the locals it
+            // hoists (title becomes title_0) and would hash an id no catalogue has.
             '@lingui/babel-plugin-lingui-macro',
+            ['babel-plugin-react-compiler', { target: '19' }],
           ],
         },
       }),

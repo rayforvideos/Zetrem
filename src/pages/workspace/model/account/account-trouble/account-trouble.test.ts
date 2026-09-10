@@ -13,8 +13,24 @@ describe('accountTroubleLine: what the pane says when a change was refused', () 
 
   it('shows the CLI’s last word when there is one', () => {
     expect(
-      accountTroubleLine({ code: 'failed', said: 'login did not sign in' }, FAILED, RUNNING),
-    ).toBe('login did not sign in')
+      accountTroubleLine({ code: 'failed', said: 'no credentials kept for a1' }, FAILED, RUNNING),
+    ).toBe('no credentials kept for a1')
+  })
+
+  it('says a cancelled sign-in was cancelled, in the pane’s own words', () => {
+    expect(accountTroubleLine({ code: 'cancelled', said: '' }, FAILED, RUNNING)).toBe(
+      'Sign-in was cancelled.',
+    )
+  })
+
+  it('says a login that ended without an account did so, rather than naming it', () => {
+    const line = accountTroubleLine(
+      { code: 'failed', said: 'login-not-signed-in' },
+      FAILED,
+      RUNNING,
+    )
+    expect(line).not.toBe('login-not-signed-in')
+    expect(line).toBe('Sign-in ended without an account, so nothing was changed.')
   })
 
   it('turns a named trouble into a sentence, since the name means nothing', () => {

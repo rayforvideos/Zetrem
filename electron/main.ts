@@ -33,8 +33,13 @@ import { handle } from './ipc/ipc'
 import { reloadAsk } from './shell/reload-keys/reload-keys'
 import { loadTroubleLine, troublePage } from './shell/window-trouble/window-trouble'
 import { isPackagedRun } from './shell/packaged/packaged'
+import { logLine } from './shell/app-log/app-log'
+import { quitSettle } from './shell/quit-settle/quit-settle'
 
 const isMac = process.platform === 'darwin'
+
+// How long a quit is held for queued chat writes and the MCP servers to settle.
+const QUIT_DEADLINE_MS = 5_000
 
 app.setName('Zetrem')
 
@@ -297,19 +302,22 @@ if (!primary) {
   })
 
   // The first before-quit is held while queued chat writes and the MCP
-  // servers settle; the quit it then asks for goes straight through.
-  let settledForQuit = false
+  // servers settle, or until the deadline; the quit it then asks for goes
+  // straight through.
+  const settling = quitSettle({
+    settle: () => Promise.allSettled([settleTranscripts(), closeLibraryMcp()]),
+    deadlineMs: QUIT_DEADLINE_MS,
+    late: () => logLine('quit', `still settling after ${QUIT_DEADLINE_MS}ms, quitting anyway`),
+    quit: () => {
+      // The libraries are closed after the servers that reach into them, or a
+      // tool call landing on the way out would open one nobody will close.
+      closeLibraries()
+      app.quit()
+    },
+  })
   app.on('before-quit', (event) => {
     dropChildren()
-    if (settledForQuit) return
-    event.preventDefault()
-    // The libraries are closed after the servers that reach into them, or a
-    // tool call landing on the way out would open one nobody will close.
-    Promise.allSettled([settleTranscripts(), closeLibraryMcp()]).then(() => {
-      closeLibraries()
-      settledForQuit = true
-      app.quit()
-    })
+    if (settling.hold()) event.preventDefault()
   })
 
   process.on('uncaughtException', (cause) => {

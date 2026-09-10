@@ -57,7 +57,7 @@ msgid "{0, plural, one {# file read} other {# files read}}"
 msgstr "{0, plural, one {# file read} other {# files read}}"
 
 #. placeholder {0}: lines.length
-#: src/widgets/conversation/lib/tool-note/tool-note.ts:18
+#: src/widgets/conversation/lib/tool-note/tool-note.ts:19
 msgid "{0, plural, one {# hit} other {# hits}}"
 msgstr "{0, plural, one {# hit} other {# hits}}"
 
@@ -1246,7 +1246,7 @@ msgid "Face"
 msgstr "Face"
 
 #: src/widgets/agent-report/ui/CallStream/CallStream.tsx:23
-#: src/widgets/conversation/lib/tool-note/tool-note.ts:32
+#: src/widgets/conversation/lib/tool-note/tool-note.ts:33
 #: src/widgets/tile-deck/ui/layers/CallLog/CallLog.tsx:82
 msgid "failed"
 msgstr "failed"
@@ -1255,7 +1255,7 @@ msgstr "failed"
 msgid "Failed"
 msgstr "Failed"
 
-#: src/pages/workspace/model/session/agent-events/crew/crew.ts:210
+#: src/pages/workspace/model/session/agent-events/crew/crew.ts:212
 msgid "Failed: the run stopped before it was done"
 msgstr "Failed: the run stopped before it was done"
 
@@ -1775,7 +1775,7 @@ msgid "No one here yet"
 msgstr "No one here yet"
 
 #: src/entities/tool/lib/tool-shape/tool-shape.ts:93
-#: src/widgets/conversation/lib/tool-note/tool-note.ts:21
+#: src/widgets/conversation/lib/tool-note/tool-note.ts:22
 msgid "no output"
 msgstr "no output"
 
@@ -1784,7 +1784,7 @@ msgid "No tool by that name."
 msgstr "No tool by that name."
 
 #: src/entities/tool/lib/tool-shape/tool-shape.ts:89
-#: src/widgets/conversation/lib/tool-note/tool-note.ts:18
+#: src/widgets/conversation/lib/tool-note/tool-note.ts:19
 msgid "none"
 msgstr "none"
 
@@ -1954,7 +1954,7 @@ msgstr "Pick a note"
 msgid "Pick a project first"
 msgstr "Pick a project first"
 
-#: src/pages/workspace/model/session/agent-events/crew/crew.ts:363
+#: src/pages/workspace/model/session/agent-events/crew/crew.ts:365
 msgid "Picked up where they left off"
 msgstr "Picked up where they left off"
 
@@ -2185,7 +2185,7 @@ msgstr "Replace the running session so the next message goes on with the change"
 msgid "Replace the running session so the next message goes on with them on the team"
 msgstr "Replace the running session so the next message goes on with them on the team"
 
-#: src/widgets/conversation/lib/tool-note/tool-note.ts:40
+#: src/widgets/conversation/lib/tool-note/tool-note.ts:42
 msgid "reported"
 msgstr "reported"
 
@@ -2743,7 +2743,7 @@ msgstr "the next steps"
 msgid "The note is deleted from the library. This cannot be undone."
 msgstr "The note is deleted from the library. This cannot be undone."
 
-#: src/pages/workspace/model/session/agent-events/crew/crew.ts:319
+#: src/pages/workspace/model/session/agent-events/crew/crew.ts:321
 msgid "the orchestrator"
 msgstr "the orchestrator"
 

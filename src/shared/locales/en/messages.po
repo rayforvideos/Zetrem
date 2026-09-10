@@ -1506,6 +1506,10 @@ msgstr "It reached the spending limit set for this run"
 msgid "It took too long and was stopped"
 msgstr "It took too long and was stopped"
 
+#: src/shared/lib/ask/ask.ts:35
+msgid "It was cancelled"
+msgstr "It was cancelled"
+
 #: src/widgets/library/lib/since/since.ts:11
 #: src/widgets/team-sidebar/lib/when/when.ts:12
 msgid "just now"
@@ -2439,6 +2443,14 @@ msgstr "Sign out of Claude Code everywhere?"
 #: src/pages/workspace/model/account/useAuth.ts:136
 msgid "Sign-in did not finish."
 msgstr "Sign-in did not finish."
+
+#: src/pages/workspace/model/account/account-trouble/account-trouble.ts:15
+msgid "Sign-in ended without an account, so nothing was changed."
+msgstr "Sign-in ended without an account, so nothing was changed."
+
+#: src/pages/workspace/model/account/account-trouble/account-trouble.ts:32
+msgid "Sign-in was cancelled."
+msgstr "Sign-in was cancelled."
 
 #: src/entities/connector/lib/groups/groups.ts:14
 msgid "Signed in and out here. To remove one, go to claude.ai."

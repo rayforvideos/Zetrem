@@ -9,6 +9,8 @@ export type WhyCode =
   | 'failed'
   // The account on this machine is being moved, so nothing new may run yet.
   | 'busy'
+  // The person called it off, so there is nothing to explain and nothing to fix.
+  | 'cancelled'
 
 export type Why = { code: WhyCode; said: string }
 

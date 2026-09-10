@@ -6,6 +6,7 @@ import type { AuthStatus } from '@/entities/auth'
 import { lost, won } from '@/shared/lib/outcome/outcome'
 import type { Outcome } from '@/shared/lib/outcome/outcome.types'
 import { claudeBin, loginPath } from '../login-path/login-path'
+import type { LoginEnd } from './auth.types'
 import { accountWork } from '../accounts/account-guard/account-guard'
 import { authFailureOf, authStatusOf } from './auth-status/auth-status'
 import { handle, on, push } from '../../ipc/ipc'
@@ -91,10 +92,13 @@ function loginArgs(email: string | null): string[] {
   return email === null ? ['auth', 'login'] : ['auth', 'login', '--email', email]
 }
 
-export async function runLogin(sender: WebContents, email: string | null = null): Promise<void> {
+export async function runLogin(
+  sender: WebContents,
+  email: string | null = null,
+): Promise<LoginEnd> {
   const env = agentEnv(process.env, await loginPath())
   const bin = await claudeBin()
-  await new Promise<void>((resolve) => {
+  return new Promise<LoginEnd>((resolve) => {
     const launch = launchFor(bin, loginArgs(email))
     const child = spawn(launch.command, launch.args, {
       env,
@@ -105,30 +109,32 @@ export async function runLogin(sender: WebContents, email: string | null = null)
     child.stderr.setEncoding('utf8')
     if (child.pid !== undefined) trackChild(child.pid)
     let settled = false
-    const stop = (): void => {
+    const stop = (end: LoginEnd): void => {
       if (settled) return
       settled = true
       clearTimeout(timer)
       stopCurrentLogin = null
       if (child.pid !== undefined) untrackChild(child.pid)
-      resolve()
+      resolve(end)
     }
     // The browser page can hang for as long as it likes; the child is killed
     // here rather than waited on, so runLogin answers and the operation around
-    // it takes its ordinary did-not-sign-in path.
-    const halt = (): void => {
+    // it says the sign-in never happened. Only the person cancelling is told
+    // apart: a deadline passing is a login that ended without an account,
+    // which is what the operation finds when it looks.
+    const halt = (end: LoginEnd): void => {
       if (child.pid !== undefined) killTree(child.pid)
       else child.kill()
-      stop()
+      stop(end)
     }
-    stopCurrentLogin = halt
-    const timer = setTimeout(halt, LOGIN_TIMEOUT_MS)
+    stopCurrentLogin = () => halt('cancelled')
+    const timer = setTimeout(() => halt('ended'), LOGIN_TIMEOUT_MS)
     const relay = (chunk: string): void => push(sender, 'auth:progress', chunk)
     child.stdout.on('data', relay)
     child.stderr.on('data', relay)
     // 'close' rather than 'exit': stdio has flushed by then, so the last
     // progress line reaches the renderer before the status check answers.
-    child.on('close', stop)
-    child.on('error', stop)
+    child.on('close', () => stop('ended'))
+    child.on('error', () => stop('ended'))
   })
 }

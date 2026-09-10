@@ -2343,7 +2343,7 @@ msgstr "Session"
 msgid "Session details"
 msgstr "Session details"
 
-#: src/pages/workspace/model/session/chat-sessions/chat-session/chat-session.ts:240
+#: src/pages/workspace/model/session/chat-sessions/chat-session/chat-session.ts:251
 msgid "Session restarted. The next message picks the conversation back up with your team as it is now."
 msgstr "Session restarted. The next message picks the conversation back up with your team as it is now."
 
@@ -2796,6 +2796,10 @@ msgstr "The saved conversation is deleted. This cannot be undone."
 #: src/entities/claude-cli/lib/failure/failure.ts:79
 msgid "The server had a problem"
 msgstr "The server had a problem"
+
+#: src/pages/workspace/model/session/chat-sessions/chat-session/chat-session.ts:227
+msgid "The session ended before your answer could be sent."
+msgstr "The session ended before your answer could be sent."
 
 #: src/entities/claude-cli/api/aside/aside.ts:39
 msgid "The session is closing"

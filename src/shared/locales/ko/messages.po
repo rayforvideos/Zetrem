@@ -2343,7 +2343,7 @@ msgstr "세션"
 msgid "Session details"
 msgstr "세션 상세"
 
-#: src/pages/workspace/model/session/chat-sessions/chat-session/chat-session.ts:240
+#: src/pages/workspace/model/session/chat-sessions/chat-session/chat-session.ts:251
 msgid "Session restarted. The next message picks the conversation back up with your team as it is now."
 msgstr "세션을 다시 시작했어요. 다음 메시지가 지금의 팀 구성으로 이 대화를 이어서 진행해요."
 
@@ -2796,6 +2796,10 @@ msgstr "저장된 대화가 삭제됩니다. 되돌릴 수 없습니다."
 #: src/entities/claude-cli/lib/failure/failure.ts:79
 msgid "The server had a problem"
 msgstr "서버에 문제가 있었습니다"
+
+#: src/pages/workspace/model/session/chat-sessions/chat-session/chat-session.ts:227
+msgid "The session ended before your answer could be sent."
+msgstr "세션이 먼저 끝나 답을 보내지 못했습니다"
 
 #: src/entities/claude-cli/api/aside/aside.ts:39
 msgid "The session is closing"

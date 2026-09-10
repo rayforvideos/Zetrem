@@ -151,6 +151,7 @@ function readTool(value: unknown): ToolActivity | null {
   if (typeof value !== 'object' || value === null) return null
   const tool = value as Record<string, unknown>
   if (typeof tool.line !== 'string') return null
+  const at = num(tool.at)
   return {
     line: tool.line,
     toolUseId: typeof tool.toolUseId === 'string' ? tool.toolUseId : null,
@@ -158,6 +159,7 @@ function readTool(value: unknown): ToolActivity | null {
     result: readToolResult(tool.result),
     startedAtMs: num(tool.startedAtMs) ?? 0,
     endedAtMs: num(tool.endedAtMs),
+    ...(at === null ? {} : { at }),
   }
 }
 

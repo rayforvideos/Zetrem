@@ -54,11 +54,15 @@ export function createConversation(): Conversation {
     for (const listener of listeners) listener()
   }
 
+  // One reply is one turn. A tool call does not end it: the words after the
+  // call join the same turn, and the tool remembers where in the text it ran,
+  // so the screen can put it back there. Only a turn of another role, or a
+  // system line landing between, starts a new one.
   function appendable(role: Turn['role']): Turn | null {
     if (role === 'system') return null
     const last = state.turns.at(-1)
     if (!last || last.role !== role) return null
-    return last.tools.length === 0 ? last : null
+    return last
   }
 
   function added(turn: Turn): void {
@@ -100,6 +104,7 @@ export function createConversation(): Conversation {
         result: null,
         startedAtMs: Date.now(),
         endedAtMs: null,
+        at: last?.role === 'assistant' ? last.text.length : 0,
       }
       if (last?.role !== 'assistant') {
         added(fresh('assistant', { tools: [activity] }))
@@ -127,7 +132,7 @@ export function createConversation(): Conversation {
     },
     think(text: string): void {
       const last = state.turns.at(-1)
-      if (last?.role !== 'assistant' || last.tools.length > 0) {
+      if (last?.role !== 'assistant') {
         added(fresh('assistant', { thinking: text }))
         return
       }
@@ -138,7 +143,7 @@ export function createConversation(): Conversation {
     },
     delta(text: string): void {
       const last = state.turns.at(-1)
-      if (last?.role !== 'assistant' || last.tools.length > 0) {
+      if (last?.role !== 'assistant') {
         added(fresh('assistant', { draft: text }))
         return
       }

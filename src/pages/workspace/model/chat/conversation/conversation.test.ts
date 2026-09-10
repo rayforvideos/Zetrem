@@ -43,12 +43,41 @@ describe('conversation: what our screen draws', () => {
     expect(store.get().turns[0]!.text).toBe('첫 문단\n\n둘째 문단')
   })
 
-  it('opens a new turn for words after a tool, so order is kept', () => {
+  it('keeps words after a tool on the same turn, so one reply is one bubble', () => {
     store.say('assistant', '읽어 보겠습니다')
     store.tool('Read a.ts', null)
     store.say('assistant', '고쳤습니다')
-    expect(store.get().turns).toHaveLength(2)
-    expect(store.get().turns.at(-1)!.tools).toEqual([])
+    const turns = store.get().turns
+    expect(turns).toHaveLength(1)
+    expect(turns[0]!.text).toBe('읽어 보겠습니다\n\n고쳤습니다')
+    expect(turns[0]!.tools.map((tool) => tool.line)).toEqual(['Read a.ts'])
+  })
+
+  it('remembers where in the words each tool ran, so order is kept', () => {
+    store.say('assistant', '읽어 보겠습니다')
+    store.tool('Read a.ts', null)
+    store.say('assistant', '고쳤습니다')
+    store.tool('Bash npm test', null)
+    const turn = store.get().turns[0]!
+    expect(turn.tools.map((tool) => tool.at)).toEqual([
+      '읽어 보겠습니다'.length,
+      '읽어 보겠습니다\n\n고쳤습니다'.length,
+    ])
+  })
+
+  it('places a tool used before any words at the start', () => {
+    store.tool('Bash ls', null)
+    expect(store.get().turns[0]!.tools[0]!.at).toBe(0)
+  })
+
+  it('keeps thinking that comes after a tool on the same turn', () => {
+    store.think('먼저 본다')
+    store.tool('Read a.ts', null)
+    store.think('이제 고친다')
+    store.say('assistant', '고쳤습니다')
+    const turns = store.get().turns
+    expect(turns).toHaveLength(1)
+    expect(turns[0]!.thinking).toBe('먼저 본다\n\n이제 고친다')
   })
 
   it('attaches a result to its own tool, so it is clear whose output it is', () => {
@@ -143,12 +172,20 @@ describe('conversation: what our screen draws', () => {
     stop()
   })
 
-  it('opens a new turn for a delta that follows a tool', () => {
+  it('keeps a delta that follows a tool on the same turn', () => {
     store.say('assistant', '읽습니다')
     store.tool('Read a.ts', null)
     store.delta('고쳤')
-    expect(store.get().turns).toHaveLength(2)
-    expect(store.get().turns.at(-1)!.draft).toBe('고쳤')
+    expect(store.get().turns).toHaveLength(1)
+    expect(store.get().turns[0]!.draft).toBe('고쳤')
+  })
+
+  it('does not join a reply onto the one before a system line, so two replies stay two', () => {
+    store.say('assistant', '첫 답')
+    store.tool('Read a.ts', null)
+    store.system('This turn: 100 out · 1.0s')
+    store.say('assistant', '둘째 답')
+    expect(store.get().turns.map((turn) => turn.role)).toEqual(['assistant', 'system', 'assistant'])
   })
 
   it('holds the status and the permission ask, so the screen has one place to look', () => {

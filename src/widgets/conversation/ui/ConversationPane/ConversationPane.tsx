@@ -14,13 +14,12 @@ import { useScrollState } from '@/shared/lib/measure/scroll-state/useScrollState
 import { shouldFollow, swapped } from '../../lib/follow/follow'
 import { askedAtMs } from '../../lib/working/working'
 import { Wordmark } from '@/shared/graphics/Wordmark/Wordmark'
-import { Markdown } from '@/shared/markdown/Markdown/Markdown'
+import { Answer } from './Answer'
 import { Approval } from './Approval'
 import { ProposalCard } from '../ProposalCard/ProposalCard'
 import { FirstHint } from '@/shared/parts/FirstHint/FirstHint'
 import { Greeting } from './Greeting'
 import { Thinking } from './Thinking'
-import { ToolRun } from '../ToolRun/ToolRun'
 import { Working } from './Working'
 import { Away } from './Away'
 import { Chores } from './Chores'
@@ -281,12 +280,13 @@ export function ConversationPane({
                   className={cn('zt-rail zt-rise flex flex-col gap-2.5', live && 'zt-rail--live')}
                 >
                   {turn.thinking.length > 0 && <Thinking text={turn.thinking} />}
-                  {turn.text.length > 0 && (
-                    <Markdown text={turn.text} className="text-base leading-[1.72]" />
-                  )}
-                  {turn.tools.length > 0 && (
-                    <ToolRun tools={turn.tools} live={live} nowMs={nowMs} project={project} />
-                  )}
+                  <Answer
+                    text={turn.text}
+                    tools={turn.tools}
+                    live={live}
+                    nowMs={nowMs}
+                    project={project}
+                  />
                   {turn.text.length > 0 && !live && (
                     // On show, not on hover: an answer worth keeping is worth
                     // keeping the moment it lands, and a button that appears

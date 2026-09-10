@@ -138,6 +138,7 @@ export function closeLibraries(): void {
 // One server per library, so a tool call from a session lands in that session's
 // workspace whatever project the screen is showing.
 const servers = new Map<string, LibraryMcp>()
+const starting = new Map<string, Promise<LibraryMcp>>()
 
 function toolsFor(workspace: string): LibraryTools {
   return {
@@ -173,9 +174,19 @@ function toolsFor(workspace: string): LibraryTools {
 async function serverFor(file: string, workspace: string): Promise<LibraryMcp> {
   const running = servers.get(file)
   if (running !== undefined) return running
-  const server = await startLibraryMcp(toolsFor(workspace))
-  servers.set(file, server)
-  return server
+  // Two sessions starting together must not start two servers: the second
+  // set would bury the first, still listening, where closeLibraryMcp never
+  // looks. The second caller waits on the first start instead.
+  let pending = starting.get(file)
+  if (pending === undefined) {
+    pending = startLibraryMcp(toolsFor(workspace)).then((server) => {
+      servers.set(file, server)
+      return server
+    })
+    starting.set(file, pending)
+    pending.finally(() => starting.delete(file)).catch(() => undefined)
+  }
+  return pending
 }
 
 // What a session is handed so its agent can search and write the library. The

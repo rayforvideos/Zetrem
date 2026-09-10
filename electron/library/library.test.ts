@@ -32,8 +32,14 @@ vi.mock('../ipc/ipc', () => ({
   },
 }))
 vi.mock('../store/project-memory/project-memory', () => ({ recallProject: async () => null }))
+// The real server, watched: the tests below count how often one is started.
+vi.mock('./library-mcp/library-mcp', async (importActual) => {
+  const actual = await importActual<typeof import('./library-mcp/library-mcp')>()
+  return { ...actual, startLibraryMcp: vi.fn(actual.startLibraryMcp) }
+})
 
 import { libraryDbFile, openLibraryDb } from './library-db/library-db'
+import { startLibraryMcp } from './library-mcp/library-mcp'
 import { listNotes } from './library-notes/library-notes'
 import { closeLibraries, closeLibraryMcp, librarySessionArgs, registerLibrary } from './library'
 
@@ -99,6 +105,7 @@ beforeEach(() => {
   boundary.userData = userData
   boundary.told = 0
   boundary.handlers.clear()
+  vi.mocked(startLibraryMcp).mockClear()
   registerLibrary()
 })
 
@@ -334,6 +341,22 @@ describe('what a session is handed', () => {
     const first = await librarySessionArgs(workspace, '')
     const second = await librarySessionArgs(workspace, '')
     expect(second[1]).toBe(first[1])
+    expect(startLibraryMcp).toHaveBeenCalledTimes(1)
+  })
+
+  it('starts one server when two sessions arrive together, and hands both the same', async () => {
+    const [first, second] = await Promise.all([
+      librarySessionArgs(workspace, ''),
+      librarySessionArgs(workspace, ''),
+    ])
+    expect(second[1]).toBe(first[1])
+    expect(startLibraryMcp).toHaveBeenCalledTimes(1)
+    // And nothing is left listening once the app lets go of it.
+    await closeLibraryMcp()
+    const reply = await call(serverIn(first), { jsonrpc: '2.0', id: 1, method: 'ping' }).catch(
+      () => null,
+    )
+    expect(reply).toBeNull()
   })
 })
 

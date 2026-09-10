@@ -1271,7 +1271,7 @@ msgstr "Feedback"
 msgid "Fetching"
 msgstr "Fetching"
 
-#: src/widgets/conversation/ui/ConversationPane/ConversationPane.tsx:299
+#: src/widgets/conversation/ui/ConversationPane/ConversationPane.tsx:301
 msgid "File this answer to the library as its own note"
 msgstr "File this answer to the library as its own note"
 
@@ -2982,7 +2982,7 @@ msgstr "Title"
 msgid "To {addressee}"
 msgstr "To {addressee}"
 
-#: src/widgets/conversation/ui/ConversationPane/ConversationPane.tsx:302
+#: src/widgets/conversation/ui/ConversationPane/ConversationPane.tsx:304
 msgid "To the library"
 msgstr "To the library"
 

@@ -139,8 +139,8 @@ export function useAuth(): Auth {
     run('remove', { id }, () => window.desk.removeAccount(id), t`Could not remove the account.`)
   }
 
-  // The child is killed and the operation waiting on it fails the way a login
-  // nobody finished always has, so there is nothing here to answer or undo.
+  // The child is killed and the operation waiting on it comes back saying the
+  // sign-in was cancelled, so there is nothing here to answer or undo.
   function cancelLogin(): void {
     window.desk.cancelLogin()
   }

@@ -156,9 +156,17 @@ describe('a login the person gave up waiting for', () => {
     const pid = fake.spawns[0]?.child.pid
 
     cancelLogin()
-    await login
+    const end = await login
 
     expect(fake.killed).toEqual([pid])
+    expect(end).toBe('cancelled')
+  })
+
+  it('is told apart from a child that went on its own, which is merely over', async () => {
+    const login = runLogin({} as never)
+    await vi.waitFor(() => expect(fake.spawns).toHaveLength(1))
+    fake.spawns[0]?.child.emit('close', 0)
+    expect(await login).toBe('ended')
   })
 
   it('does nothing at all when no login is running', () => {

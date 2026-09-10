@@ -1506,6 +1506,10 @@ msgstr "이번 실행에 정해둔 지출 한도에 도달했습니다"
 msgid "It took too long and was stopped"
 msgstr "너무 오래 걸려 중단했습니다"
 
+#: src/shared/lib/ask/ask.ts:35
+msgid "It was cancelled"
+msgstr "취소되었습니다"
+
 #: src/widgets/library/lib/since/since.ts:11
 #: src/widgets/team-sidebar/lib/when/when.ts:12
 msgid "just now"
@@ -2439,6 +2443,14 @@ msgstr "이 컴퓨터의 Claude Code를 전부 로그아웃할까요?"
 #: src/pages/workspace/model/account/useAuth.ts:136
 msgid "Sign-in did not finish."
 msgstr "로그인이 끝나지 않았습니다."
+
+#: src/pages/workspace/model/account/account-trouble/account-trouble.ts:15
+msgid "Sign-in ended without an account, so nothing was changed."
+msgstr "로그인이 계정 없이 끝나 아무것도 바뀌지 않았습니다."
+
+#: src/pages/workspace/model/account/account-trouble/account-trouble.ts:32
+msgid "Sign-in was cancelled."
+msgstr "로그인이 취소되었습니다."
 
 #: src/entities/connector/lib/groups/groups.ts:14
 msgid "Signed in and out here. To remove one, go to claude.ai."

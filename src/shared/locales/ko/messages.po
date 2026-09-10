@@ -57,7 +57,7 @@ msgid "{0, plural, one {# file read} other {# files read}}"
 msgstr "{0, plural, other {파일 #개 읽음}}"
 
 #. placeholder {0}: lines.length
-#: src/widgets/conversation/lib/tool-note/tool-note.ts:18
+#: src/widgets/conversation/lib/tool-note/tool-note.ts:19
 msgid "{0, plural, one {# hit} other {# hits}}"
 msgstr "{0, plural, other {#건}}"
 
@@ -1246,7 +1246,7 @@ msgid "Face"
 msgstr "얼굴"
 
 #: src/widgets/agent-report/ui/CallStream/CallStream.tsx:23
-#: src/widgets/conversation/lib/tool-note/tool-note.ts:32
+#: src/widgets/conversation/lib/tool-note/tool-note.ts:33
 #: src/widgets/tile-deck/ui/layers/CallLog/CallLog.tsx:82
 msgid "failed"
 msgstr "실패"
@@ -1255,7 +1255,7 @@ msgstr "실패"
 msgid "Failed"
 msgstr "실패"
 
-#: src/pages/workspace/model/session/agent-events/crew/crew.ts:210
+#: src/pages/workspace/model/session/agent-events/crew/crew.ts:212
 msgid "Failed: the run stopped before it was done"
 msgstr "실패: 작업이 끝나기 전에 멈췄습니다"
 
@@ -1775,7 +1775,7 @@ msgid "No one here yet"
 msgstr "아직 아무도 없습니다"
 
 #: src/entities/tool/lib/tool-shape/tool-shape.ts:93
-#: src/widgets/conversation/lib/tool-note/tool-note.ts:21
+#: src/widgets/conversation/lib/tool-note/tool-note.ts:22
 msgid "no output"
 msgstr "출력 없음"
 
@@ -1784,7 +1784,7 @@ msgid "No tool by that name."
 msgstr "그런 이름의 도구가 없습니다."
 
 #: src/entities/tool/lib/tool-shape/tool-shape.ts:89
-#: src/widgets/conversation/lib/tool-note/tool-note.ts:18
+#: src/widgets/conversation/lib/tool-note/tool-note.ts:19
 msgid "none"
 msgstr "없음"
 
@@ -1954,7 +1954,7 @@ msgstr "노트를 고르세요"
 msgid "Pick a project first"
 msgstr "먼저 프로젝트를 고르세요"
 
-#: src/pages/workspace/model/session/agent-events/crew/crew.ts:363
+#: src/pages/workspace/model/session/agent-events/crew/crew.ts:365
 msgid "Picked up where they left off"
 msgstr "하던 일을 이어받았습니다"
 
@@ -2185,7 +2185,7 @@ msgstr "실행 중인 세션을 새로 띄워, 다음 메시지부터 바뀐 설
 msgid "Replace the running session so the next message goes on with them on the team"
 msgstr "실행 중인 세션을 새로 띄워, 다음 메시지부터 그들을 팀에 두고 이어서 진행해요"
 
-#: src/widgets/conversation/lib/tool-note/tool-note.ts:40
+#: src/widgets/conversation/lib/tool-note/tool-note.ts:42
 msgid "reported"
 msgstr "보고 완료"
 
@@ -2743,7 +2743,7 @@ msgstr "다음 할 일"
 msgid "The note is deleted from the library. This cannot be undone."
 msgstr "라이브러리에서 노트가 지워집니다. 되돌릴 수 없습니다."
 
-#: src/pages/workspace/model/session/agent-events/crew/crew.ts:319
+#: src/pages/workspace/model/session/agent-events/crew/crew.ts:321
 msgid "the orchestrator"
 msgstr "오케스트레이터"
 

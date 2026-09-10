@@ -287,4 +287,31 @@ describe('createChatSession: one chat, its own process and stores', () => {
     session.keep()
     expect(deps.written).toHaveLength(0)
   })
+
+  it('clears a card the host left behind and says the answer had nowhere to go', async () => {
+    const deps = fakeDeps()
+    // The process goes away (start rejects) after an ask has already reached
+    // the screen: the card is up, the host is gone, and no exit event follows.
+    let fail: (cause: unknown) => void = () => undefined
+    deps.startAgent = (id) => {
+      deps.started.push(id)
+      return new Promise((_resolve, reject) => {
+        fail = reject
+      })
+    }
+    const { session, id } = running(deps)
+    session.handle({ id, kind: 'line', line: asked('req-1') })
+    expect(session.stores.conversation.get().permission?.requestId).toBe('req-1')
+    fail(new Error('spawn ENOENT'))
+    await Promise.resolve()
+    await Promise.resolve()
+    expect(session.running()).toBe(false)
+    session.decide(true)
+    const conv = session.stores.conversation.get()
+    expect(deps.answered).toEqual([])
+    expect(conv.permission).toBeNull()
+    expect(session.live()).toBe('idle')
+    const texts = conv.turns.map((turn) => turn.text).join(' ')
+    expect(texts).toContain('The session ended before your answer could be sent.')
+  })
 })

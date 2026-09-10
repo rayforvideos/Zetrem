@@ -216,7 +216,18 @@ export function createChatSession(
     },
     decide(allow: boolean, always = false): void {
       const id = hostId
-      if (id === null || refs.asks.length === 0) return
+      if (id === null) {
+        // The exit that would have cleared the card came late or never came:
+        // there is nobody left to answer, and the screen should say so rather
+        // than keep a card that ignores every click.
+        if (conversation.get().permission === null && refs.asks.length === 0) return
+        refs.asks.length = 0
+        conversation.setPermission(null)
+        conversation.setStatus('done')
+        conversation.system(t`The session ended before your answer could be sent.`)
+        return
+      }
+      if (refs.asks.length === 0) return
       const current = refs.asks.shift() as (typeof refs.asks)[number]
       deps.respondPermission(
         id,

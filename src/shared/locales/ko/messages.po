@@ -57,7 +57,7 @@ msgid "{0, plural, one {# file read} other {# files read}}"
 msgstr "{0, plural, other {파일 #개 읽음}}"
 
 #. placeholder {0}: lines.length
-#: src/widgets/conversation/lib/tool-note/tool-note.ts:18
+#: src/widgets/conversation/lib/tool-note/tool-note.ts:19
 msgid "{0, plural, one {# hit} other {# hits}}"
 msgstr "{0, plural, other {#건}}"
 
@@ -589,7 +589,7 @@ msgstr "이 계획을 승인할까요?"
 msgid "Ask first"
 msgstr "먼저 묻기"
 
-#: src/widgets/conversation/ui/ConversationPane/ConversationPane.tsx:149
+#: src/widgets/conversation/ui/ConversationPane/ConversationPane.tsx:184
 msgid "Ask for the whole job"
 msgstr "일 전체를 맡기세요"
 
@@ -1246,7 +1246,7 @@ msgid "Face"
 msgstr "얼굴"
 
 #: src/widgets/agent-report/ui/CallStream/CallStream.tsx:23
-#: src/widgets/conversation/lib/tool-note/tool-note.ts:32
+#: src/widgets/conversation/lib/tool-note/tool-note.ts:33
 #: src/widgets/tile-deck/ui/layers/CallLog/CallLog.tsx:82
 msgid "failed"
 msgstr "실패"
@@ -1255,7 +1255,7 @@ msgstr "실패"
 msgid "Failed"
 msgstr "실패"
 
-#: src/pages/workspace/model/session/agent-events/crew/crew.ts:210
+#: src/pages/workspace/model/session/agent-events/crew/crew.ts:212
 msgid "Failed: the run stopped before it was done"
 msgstr "실패: 작업이 끝나기 전에 멈췄습니다"
 
@@ -1271,7 +1271,7 @@ msgstr "피드백"
 msgid "Fetching"
 msgstr "가져오는 중"
 
-#: src/widgets/conversation/ui/ConversationPane/ConversationPane.tsx:264
+#: src/widgets/conversation/ui/ConversationPane/ConversationPane.tsx:301
 msgid "File this answer to the library as its own note"
 msgstr "이 답변을 별도 노트로 라이브러리에 넣기"
 
@@ -1505,6 +1505,10 @@ msgstr "이번 실행에 정해둔 지출 한도에 도달했습니다"
 #: src/shared/lib/ask/ask.ts:21
 msgid "It took too long and was stopped"
 msgstr "너무 오래 걸려 중단했습니다"
+
+#: src/shared/lib/ask/ask.ts:35
+msgid "It was cancelled"
+msgstr "취소되었습니다"
 
 #: src/widgets/library/lib/since/since.ts:11
 #: src/widgets/team-sidebar/lib/when/when.ts:12
@@ -1775,7 +1779,7 @@ msgid "No one here yet"
 msgstr "아직 아무도 없습니다"
 
 #: src/entities/tool/lib/tool-shape/tool-shape.ts:93
-#: src/widgets/conversation/lib/tool-note/tool-note.ts:21
+#: src/widgets/conversation/lib/tool-note/tool-note.ts:22
 msgid "no output"
 msgstr "출력 없음"
 
@@ -1784,7 +1788,7 @@ msgid "No tool by that name."
 msgstr "그런 이름의 도구가 없습니다."
 
 #: src/entities/tool/lib/tool-shape/tool-shape.ts:89
-#: src/widgets/conversation/lib/tool-note/tool-note.ts:18
+#: src/widgets/conversation/lib/tool-note/tool-note.ts:19
 msgid "none"
 msgstr "없음"
 
@@ -1954,7 +1958,7 @@ msgstr "노트를 고르세요"
 msgid "Pick a project first"
 msgstr "먼저 프로젝트를 고르세요"
 
-#: src/pages/workspace/model/session/agent-events/crew/crew.ts:363
+#: src/pages/workspace/model/session/agent-events/crew/crew.ts:365
 msgid "Picked up where they left off"
 msgstr "하던 일을 이어받았습니다"
 
@@ -2185,7 +2189,7 @@ msgstr "실행 중인 세션을 새로 띄워, 다음 메시지부터 바뀐 설
 msgid "Replace the running session so the next message goes on with them on the team"
 msgstr "실행 중인 세션을 새로 띄워, 다음 메시지부터 그들을 팀에 두고 이어서 진행해요"
 
-#: src/widgets/conversation/lib/tool-note/tool-note.ts:40
+#: src/widgets/conversation/lib/tool-note/tool-note.ts:42
 msgid "reported"
 msgstr "보고 완료"
 
@@ -2280,7 +2284,7 @@ msgstr "저장 중…"
 msgid "Say the word and the whole team wakes up."
 msgstr "말 한마디면 팀 전체가 깨어납니다."
 
-#: src/widgets/conversation/ui/ConversationPane/ConversationPane.tsx:150
+#: src/widgets/conversation/ui/ConversationPane/ConversationPane.tsx:185
 msgid "Say what you want done, not the next step. The orchestrator splits it up and hands out the pieces."
 msgstr "다음 단계 말고 원하는 결과를 말하세요. 오케스트레이터가 알아서 쪼개서 나눠 줍니다."
 
@@ -2343,7 +2347,7 @@ msgstr "세션"
 msgid "Session details"
 msgstr "세션 상세"
 
-#: src/pages/workspace/model/session/chat-sessions/chat-session/chat-session.ts:240
+#: src/pages/workspace/model/session/chat-sessions/chat-session/chat-session.ts:251
 msgid "Session restarted. The next message picks the conversation back up with your team as it is now."
 msgstr "세션을 다시 시작했어요. 다음 메시지가 지금의 팀 구성으로 이 대화를 이어서 진행해요."
 
@@ -2439,6 +2443,14 @@ msgstr "이 컴퓨터의 Claude Code를 전부 로그아웃할까요?"
 #: src/pages/workspace/model/account/useAuth.ts:136
 msgid "Sign-in did not finish."
 msgstr "로그인이 끝나지 않았습니다."
+
+#: src/pages/workspace/model/account/account-trouble/account-trouble.ts:15
+msgid "Sign-in ended without an account, so nothing was changed."
+msgstr "로그인이 계정 없이 끝나 아무것도 바뀌지 않았습니다."
+
+#: src/pages/workspace/model/account/account-trouble/account-trouble.ts:32
+msgid "Sign-in was cancelled."
+msgstr "로그인이 취소되었습니다."
 
 #: src/entities/connector/lib/groups/groups.ts:14
 msgid "Signed in and out here. To remove one, go to claude.ai."
@@ -2743,7 +2755,7 @@ msgstr "다음 할 일"
 msgid "The note is deleted from the library. This cannot be undone."
 msgstr "라이브러리에서 노트가 지워집니다. 되돌릴 수 없습니다."
 
-#: src/pages/workspace/model/session/agent-events/crew/crew.ts:319
+#: src/pages/workspace/model/session/agent-events/crew/crew.ts:321
 msgid "the orchestrator"
 msgstr "오케스트레이터"
 
@@ -2796,6 +2808,10 @@ msgstr "저장된 대화가 삭제됩니다. 되돌릴 수 없습니다."
 #: src/entities/claude-cli/lib/failure/failure.ts:79
 msgid "The server had a problem"
 msgstr "서버에 문제가 있었습니다"
+
+#: src/pages/workspace/model/session/chat-sessions/chat-session/chat-session.ts:227
+msgid "The session ended before your answer could be sent."
+msgstr "세션이 먼저 끝나 답을 보내지 못했습니다"
 
 #: src/entities/claude-cli/api/aside/aside.ts:39
 msgid "The session is closing"
@@ -2966,7 +2982,7 @@ msgstr "제목"
 msgid "To {addressee}"
 msgstr "{addressee}에게"
 
-#: src/widgets/conversation/ui/ConversationPane/ConversationPane.tsx:267
+#: src/widgets/conversation/ui/ConversationPane/ConversationPane.tsx:304
 msgid "To the library"
 msgstr "라이브러리에 담기"
 

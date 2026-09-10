@@ -1,4 +1,5 @@
 import { plural, t } from '@lingui/core/macro'
+import { withoutHarnessNote } from '@/entities/claude-cli'
 import type { ToolShape } from '@/entities/tool'
 import { heldLine } from '../limits/limits'
 
@@ -34,9 +35,10 @@ export function failureNote(said: string | null): string {
 
 // A teammate comes back with prose, and a report's first sentence is the
 // report's own summary. How many lines it ran to says nothing about what was
-// found or decided.
+// found or decided. When the CLI's guard flagged the report, its note stands
+// in front of that first sentence, so it comes off before the sentence is read.
 function reportNote(said: string): string {
-  const first = firstSentence(said)
+  const first = firstSentence(withoutHarnessNote(said))
   return first.length === 0 ? t`reported` : first
 }
 

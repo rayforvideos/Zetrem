@@ -14,6 +14,7 @@ export type {
 export { withRefused, withoutRefused } from './api/refused/refused'
 export { absorbs } from './lib/call-line/call-line'
 export { exitLine } from './lib/exit-line/exit-line'
+export { withoutHarnessNote } from './lib/harness-note/harness-note'
 export type { ExitReason } from './lib/exit-line/exit-line.types'
 export type { PermissionMode, RunConfig } from './api/run-config/run-config.types'
 export { ORCHESTRATOR } from './api/roster-lock/roster-lock'

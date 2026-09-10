@@ -33,7 +33,11 @@ export type AccountList = {
 // What an account operation could not do, named rather than said: `said`
 // carries the name across the bridge and the pane is where it becomes words.
 // A CLI's own last line still travels as itself.
-export type AccountTroubleCode = 'switch-not-confirmed' | 'credentials-unreadable'
+export type AccountTroubleCode =
+  | 'switch-not-confirmed'
+  | 'credentials-unreadable'
+  // The login child came and went and left no account on this computer.
+  | 'login-not-signed-in'
 
 export type AccountBusy = 'add' | 'switch' | 'reauth' | 'remove' | 'signout' | null
 

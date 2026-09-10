@@ -11,7 +11,7 @@ import type { Turn } from '@/entities/conversation'
 import { cn } from '@/shared/lib/cn'
 import { atEnd } from '@/shared/lib/measure/scroll-state/scroll-state'
 import { useScrollState } from '@/shared/lib/measure/scroll-state/useScrollState'
-import { shouldFollow } from '../../lib/follow/follow'
+import { shouldFollow, swapped } from '../../lib/follow/follow'
 import { askedAtMs } from '../../lib/working/working'
 import { Wordmark } from '@/shared/graphics/Wordmark/Wordmark'
 import { Answer } from './Answer'
@@ -78,6 +78,7 @@ export function ConversationPane({
 }: ConversationPaneProps) {
   const [attachScroll, scrollRef] = useScrollState<HTMLDivElement>()
   const seen = useRef(0)
+  const first = useRef<string | null>(null)
   const following = useRef(true)
   const lastTop = useRef(0)
   const busy = status === 'working'
@@ -103,21 +104,49 @@ export function ConversationPane({
     else if (atEnd(el.scrollTop, el.scrollHeight, el.clientHeight)) following.current = true
   }
 
+  // A pin the code makes is not the reader scrolling: the scroll event it
+  // fires must not read as "went up" when the new bottom is above the old
+  // scrollTop, or following would switch itself off the moment a shorter
+  // chat lands.
+  function pin(el: HTMLDivElement): void {
+    el.scrollTop = el.scrollHeight
+    lastTop.current = el.scrollTop
+  }
+
   // The approval card takes its height out of the transcript's, and a box that
   // shrinks keeps the scrollTop it had: the message that asked for the card
   // slides under the fold and cannot be scrolled back to. Re-pinning on the
   // transcript's own resize is what keeps the last thing said in view, however
   // tall the card under it grows.
+  //
+  // The box is not enough, though. A chat that comes back arrives whole, and
+  // its Markdown, code, diffs and images lay out for a while after the pin
+  // that met it; that only grows scrollHeight, and a box whose own size did
+  // not change never hears of it. So the turns are watched too, and any turn
+  // that joins later along with them, and the pin follows every growth for as
+  // long as the reader has not scrolled away.
   const attachTranscript = useCallback<RefCallback<HTMLDivElement>>(
     (el) => {
       attachScroll(el)
       if (el === null) return undefined
       const watching = new ResizeObserver(() => {
-        if (!following.current) return
-        el.scrollTop = el.scrollHeight
+        if (following.current) pin(el)
       })
       watching.observe(el)
+      for (const child of el.children) watching.observe(child)
+      const joined = new MutationObserver((records) => {
+        for (const record of records) {
+          for (const node of record.removedNodes) {
+            if (node instanceof Element) watching.unobserve(node)
+          }
+          for (const node of record.addedNodes) {
+            if (node instanceof Element) watching.observe(node)
+          }
+        }
+      })
+      joined.observe(el, { childList: true })
       return () => {
+        joined.disconnect()
         watching.disconnect()
         attachScroll(null)
       }
@@ -128,12 +157,18 @@ export function ConversationPane({
   useEffect(() => {
     const el = scrollRef.current
     const before = seen.current
+    const nowFirst = turns[0]?.id ?? null
+    const other = swapped(first.current, nowFirst)
     seen.current = turns.length
+    first.current = nowFirst
     if (el === null) return undefined
-    if (!shouldFollow(before, turns.length, following.current)) return undefined
-    el.scrollTop = el.scrollHeight
+    if (!shouldFollow(before, turns.length, following.current, other)) return undefined
+    // Landing at the end is following again, whatever the reader had done in
+    // the chat before; it is the flag that lets the observer keep the pin.
+    following.current = true
+    pin(el)
     const frame = requestAnimationFrame(() => {
-      if (following.current) el.scrollTop = el.scrollHeight
+      if (following.current) pin(el)
     })
     return () => cancelAnimationFrame(frame)
   }, [turns, permission, chores, scrollRef])
@@ -231,6 +266,14 @@ export function ConversationPane({
                   </div>
                 )
               }
+              // The draft is not drawn. Words arriving one at a time move and
+              // reflow under the eye while the person is still reading the
+              // turn before; the working row says "Writing" until they land,
+              // and then the answer appears once, whole, as Markdown. A turn
+              // that is only a draft so far has nothing to hang a rail on.
+              if (turn.thinking.length === 0 && turn.text.length === 0 && turn.tools.length === 0) {
+                return null
+              }
               return (
                 <article
                   key={turn.id}
@@ -244,12 +287,6 @@ export function ConversationPane({
                     nowMs={nowMs}
                     project={project}
                   />
-                  {turn.draft.length > 0 && (
-                    <div className="text-base leading-[1.72] whitespace-pre-wrap [overflow-wrap:anywhere]">
-                      {turn.draft}
-                      <span className="ml-0.5 inline-block h-[1em] w-[0.5ch] translate-y-[0.1em] bg-muted-foreground align-baseline" />
-                    </div>
-                  )}
                   {turn.text.length > 0 && !live && (
                     // On show, not on hover: an answer worth keeping is worth
                     // keeping the moment it lands, and a button that appears

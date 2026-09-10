@@ -7,6 +7,7 @@ import type {
 } from '@/entities/auth'
 import { lost, won } from '@/shared/lib/outcome/outcome'
 import type { Outcome } from '@/shared/lib/outcome/outcome.types'
+import type { LoginEnd } from '../auth/auth.types'
 import type { AccountsIndex, KeptAccount } from '../../store/accounts-store/accounts-store.types'
 import { rowOf } from '../credentials/claude-json/claude-json'
 import type { CredentialSnapshot } from '../credentials/credentials.types'
@@ -249,20 +250,26 @@ async function settled(
 }
 
 // A login that never signed in leaves one of two machines behind, and only one
-// of them is Zetrem's to undo. Nothing at all is the cancelled login, which the
+// of them is Zetrem's to undo. Nothing at all is the abandoned login, which the
 // machine is put back from; the account that was already here needs no putting
 // back, and writing it again would spend the tokens the CLI has renewed since.
+//
+// What is said about it is a name, never a sentence: the person calling the
+// login off is its own case, and the pane has its own words for each.
 async function giveBack(
   deps: AccountsDeps,
   index: AccountsIndex,
   before: CredentialSnapshot,
   wasActive: string | null,
   look: Look,
+  end: LoginEnd,
 ): Promise<Outcome<AccountList>> {
   if (look.held.credentials === null && before.credentials !== null) await deps.write(before)
   index.activeId = wasActive
   await deps.store.save(index)
-  return lost('failed', 'login did not sign in')
+  if (end === 'cancelled') return lost('cancelled')
+  const notSignedIn: AccountTroubleCode = 'login-not-signed-in'
+  return lost('failed', notSignedIn)
 }
 
 // Which row this login is. Credentials that match a slot are that row and no
@@ -332,12 +339,17 @@ async function capture(
   before: CredentialSnapshot,
   wasActive: string | null,
   refreshing: KeptAccount | null,
+  end: LoginEnd,
 ): Promise<Outcome<AccountList>> {
   const look = await settled(deps, index, before, refreshing)
   // The login may well have happened; with the machine unreadable there is no
   // saying so, and nothing is written back over it on a guess.
   if (!look.ok) return look
-  if (!look.value.landed) return giveBack(deps, index, before, wasActive, look.value)
+  // A cancel is the one login known for certain not to have happened, so the
+  // re-auth allowance — unchanged bytes taken as a login that rotated nothing —
+  // is not extended to it: only credentials that moved say it landed anyway.
+  const landed = look.value.landed && (end !== 'cancelled' || moved(before, look.value.held))
+  if (!landed) return giveBack(deps, index, before, wasActive, look.value, end)
   return record(deps, index, look.value, refreshing)
 }
 
@@ -347,8 +359,8 @@ export async function addAccount(deps: AccountsDeps): Promise<Outcome<AccountLis
   const wasActive = index.activeId
   const before = await keepCurrent(deps, index)
   if (!before.ok) return before
-  await deps.login(null)
-  return capture(deps, index, before.value.held, wasActive, null)
+  const end = await deps.login(null)
+  return capture(deps, index, before.value.held, wasActive, null, end)
 }
 
 async function moveTo(
@@ -411,8 +423,8 @@ export async function reauthAccount(deps: AccountsDeps, id: string): Promise<Out
   // A row still waiting for its name has none to steer the page with, and the
   // person picks the account there as they would for an add.
   const asking = refreshing !== null && refreshing.email.length > 0 ? refreshing.email : null
-  await deps.login(asking)
-  return capture(deps, index, before.value, wasActive, refreshing)
+  const end = await deps.login(asking)
+  return capture(deps, index, before.value, wasActive, refreshing, end)
 }
 
 // Forgetting a row takes nothing off the machine, active or not: the login it

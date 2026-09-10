@@ -1,5 +1,6 @@
 import type { AuthStatus } from '@/entities/auth'
 import type { Outcome } from '@/shared/lib/outcome/outcome.types'
+import type { LoginEnd } from '../auth/auth.types'
 import type { AccountsStore } from '../../store/accounts-store/accounts-store.types'
 import type { CredentialSnapshot } from '../credentials/credentials.types'
 
@@ -10,8 +11,10 @@ export type AccountsDeps = {
   read(): Promise<Outcome<CredentialSnapshot>>
   write(snapshot: CredentialSnapshot): Promise<void>
   // The account the login page should open on, or nobody when there is no
-  // saying yet which account this login will turn out to be.
-  login(email: string | null): Promise<void>
+  // saying yet which account this login will turn out to be. Answers with
+  // how the login child came to be over, not whether it signed in: the
+  // credentials on this computer are the only word on that.
+  login(email: string | null): Promise<LoginEnd>
   // Every claude this app spawned, told to stop and seen to go. Asked only by
   // an operation that is about to write credentials, and only once.
   stop(): Promise<boolean>

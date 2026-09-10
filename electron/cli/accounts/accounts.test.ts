@@ -109,7 +109,7 @@ function world(one: Who | null): World {
           ? null
           : nameOf(account.emailAddress, snapshot)
     },
-    login: async () => undefined,
+    login: async () => 'ended',
     status: async () =>
       machine.file === null
         ? { state: 'signed-out' }
@@ -138,24 +138,26 @@ function lands(w: World, one: Who, credsAfterMs = 0, namesAfterMs: number | null
   w.deps.login = async () => {
     if (credsAfterMs === 0) w.machine.credentials = tokens(one.name)
     if (namesAfterMs === 0) w.machine.file = one
-    if (credsAfterMs === 0 && namesAfterMs === 0) return
+    if (credsAfterMs === 0 && namesAfterMs === 0) return 'ended'
     const credsAt = w.clock.waited + credsAfterMs
     const namesAt = namesAfterMs === null ? null : w.clock.waited + namesAfterMs
     w.clock.onWait = (waited) => {
       if (credsAfterMs > 0 && waited >= credsAt) w.machine.credentials = tokens(one.name)
       if (namesAt !== null && waited >= namesAt) w.machine.file = one
     }
+    return 'ended'
   }
 }
 
 function landsNowhere(w: World): void {
-  w.deps.login = async () => undefined
+  w.deps.login = async () => 'ended'
 }
 
 function signsOut(w: World): void {
   w.deps.login = async () => {
     w.machine.credentials = null
     w.machine.file = null
+    return 'ended'
   }
 }
 
@@ -288,11 +290,40 @@ describe('addAccount', () => {
     expect(w.store.slots.get('a2')).toEqual(snap(U2))
   })
 
-  it('fails without changing the list when login did not sign in', async () => {
+  it('names a login that ended without an account, and changes nothing', async () => {
     const w = world(null)
     const result = await addAccount(w.deps)
-    expect(result).toEqual({ ok: false, why: { code: 'failed', said: 'login did not sign in' } })
+    expect(result).toEqual({ ok: false, why: { code: 'failed', said: 'login-not-signed-in' } })
     expect(w.store.index.accounts).toEqual([])
+  })
+
+  // The pane has its own words for a cancel, so the code is all that crosses.
+  it('says the person cancelled it, in a code and not a sentence', async () => {
+    const w = world(null)
+    w.deps.login = async () => 'cancelled'
+    const result = await addAccount(w.deps)
+    expect(result).toEqual({ ok: false, why: { code: 'cancelled', said: '' } })
+    expect(w.store.index.accounts).toEqual([])
+  })
+
+  it('puts the previous account back after a cancel, the same as after any login that never landed', async () => {
+    const w = await twoAccounts()
+    w.deps.login = async () => {
+      w.machine.credentials = null
+      w.machine.file = null
+      return 'cancelled'
+    }
+    const result = await addAccount(w.deps)
+    expect(result).toEqual({ ok: false, why: { code: 'cancelled', said: '' } })
+    expect(held(w.machine)).toEqual(snap(U2))
+    expect(w.store.index.activeId).toBe('a2')
+  })
+
+  it('says a cancelled re-auth was cancelled too', async () => {
+    const w = await twoAccounts()
+    w.deps.login = async () => 'cancelled'
+    const result = await reauthAccount(w.deps, 'a1')
+    expect(result).toEqual({ ok: false, why: { code: 'cancelled', said: '' } })
   })
 
   it('a cancelled login after two accounts leaves the previous account intact, even twice in a row', async () => {
@@ -406,7 +437,7 @@ describe('addAccount', () => {
     const w = world(SYS)
     lands(w, U1, 5250, 5250)
     const result = await addAccount(w.deps)
-    expect(result).toEqual({ ok: false, why: { code: 'failed', said: 'login did not sign in' } })
+    expect(result).toEqual({ ok: false, why: { code: 'failed', said: 'login-not-signed-in' } })
     expect(w.store.index.accounts).toEqual([])
   })
 
@@ -527,6 +558,7 @@ describe('a login the file has not caught up with', () => {
     // byte-matches, and the file goes on naming u2 for the whole wait.
     w.deps.login = async () => {
       w.machine.credentials = tokens('u1-again')
+      return 'ended'
     }
     expect((await addAccount(w.deps)).ok).toBe(true)
     expect(w.store.index.accounts.map((one) => one.email)).toEqual([
@@ -551,6 +583,7 @@ describe('a login the file has not caught up with', () => {
     w.deps.login = async () => {
       w.machine.credentials = tokens('u1')
       w.machine.file = null
+      return 'ended'
     }
     const result = await addAccount(w.deps)
     expect(result.ok).toBe(true)
@@ -724,6 +757,7 @@ describe('reauthAccount', () => {
     w.deps.login = async () => {
       w.machine.credentials = tokens('u1-fresh')
       w.machine.file = U1
+      return 'ended'
     }
     const result = await reauthAccount(w.deps, 'a1')
     expect(result.ok && result.value.here).toEqual({ kind: 'row', id: 'a1' })
@@ -742,6 +776,7 @@ describe('reauthAccount', () => {
     // answer it asked for, not the file lagging.
     w.deps.login = async () => {
       w.machine.credentials = tokens('u1-rotated')
+      return 'ended'
     }
     const result = await reauthAccount(w.deps, 'a1')
     expect(result.ok && result.value.accounts.map((one) => one.email)).toEqual(['u1@example.com'])
@@ -764,6 +799,7 @@ describe('reauthAccount', () => {
           w.machine.file = U1
         }
       }
+      return 'ended'
     }
     const result = await reauthAccount(w.deps, 'a1')
     expect(result.ok && result.value.here).toEqual({ kind: 'row', id: 'a1' })
@@ -782,6 +818,7 @@ describe('reauthAccount', () => {
       w.clock.onWait = (waited) => {
         if (waited >= 750) w.machine.credentials = tokens('u1-rotated')
       }
+      return 'ended'
     }
     const result = await reauthAccount(w.deps, 'a1')
     expect(result.ok).toBe(true)
@@ -930,6 +967,7 @@ describe('what a live turn costs, which is nothing unless credentials move', () 
     const w = await running()
     w.deps.login = async () => {
       w.machine.credentials = tokens('u2-fresh')
+      return 'ended'
     }
     await reauthAccount(w.deps, 'a2')
     expect(w.child.running).toBe(false)

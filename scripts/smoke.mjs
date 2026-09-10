@@ -1,5 +1,6 @@
 import { spawn } from 'node:child_process'
-import { existsSync } from 'node:fs'
+import { existsSync, readFileSync, readdirSync } from 'node:fs'
+import { join } from 'node:path'
 import electron from 'electron'
 
 const PORT = 9222
@@ -9,6 +10,39 @@ const WANT = /[A-Za-z가-힣]/
 if (!existsSync('out/main/index.js')) {
   console.error('smoke: out/main/index.js is missing. Run npm run build first.')
   process.exit(1)
+}
+
+// The renderer names each message by a hash of its text and the catalogue is
+// compiled apart from it: a Babel plugin that rewrites the text between the
+// two ships an id no catalogue knows, and the toast reads Dos3Nd instead of
+// words. The window opens fine either way, so the bundle is read before it is.
+// A compiled message is `i18n._({ id })` or, from <Trans> and useLingui, an
+// object the macro marks /*i18n*/; the same key on any other object is not one.
+const ASSETS = 'out/renderer/assets'
+const shipped = readdirSync(ASSETS)
+const bundleName = shipped.find((one) => /^index-.*\.js$/.test(one))
+const bundle = readFileSync(join(ASSETS, bundleName), 'utf8')
+const asked = [...bundle.matchAll(/(?:_\(|\/\*i18n\*\/\s*)\{\s*id:\s*"([^"]+)"/g)].map(
+  (one) => one[1],
+)
+if (asked.length === 0) {
+  console.error('smoke: the renderer bundle asks for no messages at all')
+  process.exit(1)
+}
+const catalogues = shipped
+  .filter((one) => /^messages-.*\.js$/.test(one))
+  .map((one) => [one, readFileSync(join(ASSETS, one), 'utf8')])
+  .concat([...bundle.matchAll(/JSON\.parse\(`(\{"[^`]*)`\)/g)].map((one) => ['the bundle', one[1]]))
+for (const [name, text] of catalogues) {
+  const known = new Set([...text.matchAll(/"([A-Za-z0-9+/]{6})":\[/g)].map((one) => one[1]))
+  const orphans = [...new Set(asked)].filter((id) => !known.has(id))
+  if (orphans.length > 0) {
+    console.error(
+      `smoke: ${name} has no words for ${orphans.join(', ')}. A Babel plugin is rewriting ` +
+        'the message text before the Lingui macro hashes it; see electron.vite.config.ts',
+    )
+    process.exit(1)
+  }
 }
 
 // A CI Linux box has no display of its own and no user namespaces for the

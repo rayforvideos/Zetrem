@@ -57,7 +57,7 @@ msgid "{0, plural, one {# file read} other {# files read}}"
 msgstr "{0, plural, one {# file read} other {# files read}}"
 
 #. placeholder {0}: lines.length
-#: src/widgets/conversation/lib/tool-note/tool-note.ts:18
+#: src/widgets/conversation/lib/tool-note/tool-note.ts:19
 msgid "{0, plural, one {# hit} other {# hits}}"
 msgstr "{0, plural, one {# hit} other {# hits}}"
 
@@ -589,7 +589,7 @@ msgstr "Approve this plan?"
 msgid "Ask first"
 msgstr "Ask first"
 
-#: src/widgets/conversation/ui/ConversationPane/ConversationPane.tsx:149
+#: src/widgets/conversation/ui/ConversationPane/ConversationPane.tsx:184
 msgid "Ask for the whole job"
 msgstr "Ask for the whole job"
 
@@ -1246,7 +1246,7 @@ msgid "Face"
 msgstr "Face"
 
 #: src/widgets/agent-report/ui/CallStream/CallStream.tsx:23
-#: src/widgets/conversation/lib/tool-note/tool-note.ts:32
+#: src/widgets/conversation/lib/tool-note/tool-note.ts:33
 #: src/widgets/tile-deck/ui/layers/CallLog/CallLog.tsx:82
 msgid "failed"
 msgstr "failed"
@@ -1255,7 +1255,7 @@ msgstr "failed"
 msgid "Failed"
 msgstr "Failed"
 
-#: src/pages/workspace/model/session/agent-events/crew/crew.ts:210
+#: src/pages/workspace/model/session/agent-events/crew/crew.ts:212
 msgid "Failed: the run stopped before it was done"
 msgstr "Failed: the run stopped before it was done"
 
@@ -1271,7 +1271,7 @@ msgstr "Feedback"
 msgid "Fetching"
 msgstr "Fetching"
 
-#: src/widgets/conversation/ui/ConversationPane/ConversationPane.tsx:264
+#: src/widgets/conversation/ui/ConversationPane/ConversationPane.tsx:301
 msgid "File this answer to the library as its own note"
 msgstr "File this answer to the library as its own note"
 
@@ -1505,6 +1505,10 @@ msgstr "It reached the spending limit set for this run"
 #: src/shared/lib/ask/ask.ts:21
 msgid "It took too long and was stopped"
 msgstr "It took too long and was stopped"
+
+#: src/shared/lib/ask/ask.ts:35
+msgid "It was cancelled"
+msgstr "It was cancelled"
 
 #: src/widgets/library/lib/since/since.ts:11
 #: src/widgets/team-sidebar/lib/when/when.ts:12
@@ -1775,7 +1779,7 @@ msgid "No one here yet"
 msgstr "No one here yet"
 
 #: src/entities/tool/lib/tool-shape/tool-shape.ts:93
-#: src/widgets/conversation/lib/tool-note/tool-note.ts:21
+#: src/widgets/conversation/lib/tool-note/tool-note.ts:22
 msgid "no output"
 msgstr "no output"
 
@@ -1784,7 +1788,7 @@ msgid "No tool by that name."
 msgstr "No tool by that name."
 
 #: src/entities/tool/lib/tool-shape/tool-shape.ts:89
-#: src/widgets/conversation/lib/tool-note/tool-note.ts:18
+#: src/widgets/conversation/lib/tool-note/tool-note.ts:19
 msgid "none"
 msgstr "none"
 
@@ -1954,7 +1958,7 @@ msgstr "Pick a note"
 msgid "Pick a project first"
 msgstr "Pick a project first"
 
-#: src/pages/workspace/model/session/agent-events/crew/crew.ts:363
+#: src/pages/workspace/model/session/agent-events/crew/crew.ts:365
 msgid "Picked up where they left off"
 msgstr "Picked up where they left off"
 
@@ -2185,7 +2189,7 @@ msgstr "Replace the running session so the next message goes on with the change"
 msgid "Replace the running session so the next message goes on with them on the team"
 msgstr "Replace the running session so the next message goes on with them on the team"
 
-#: src/widgets/conversation/lib/tool-note/tool-note.ts:40
+#: src/widgets/conversation/lib/tool-note/tool-note.ts:42
 msgid "reported"
 msgstr "reported"
 
@@ -2280,7 +2284,7 @@ msgstr "Saving…"
 msgid "Say the word and the whole team wakes up."
 msgstr "Say the word and the whole team wakes up."
 
-#: src/widgets/conversation/ui/ConversationPane/ConversationPane.tsx:150
+#: src/widgets/conversation/ui/ConversationPane/ConversationPane.tsx:185
 msgid "Say what you want done, not the next step. The orchestrator splits it up and hands out the pieces."
 msgstr "Say what you want done, not the next step. The orchestrator splits it up and hands out the pieces."
 
@@ -2343,7 +2347,7 @@ msgstr "Session"
 msgid "Session details"
 msgstr "Session details"
 
-#: src/pages/workspace/model/session/chat-sessions/chat-session/chat-session.ts:240
+#: src/pages/workspace/model/session/chat-sessions/chat-session/chat-session.ts:251
 msgid "Session restarted. The next message picks the conversation back up with your team as it is now."
 msgstr "Session restarted. The next message picks the conversation back up with your team as it is now."
 
@@ -2439,6 +2443,14 @@ msgstr "Sign out of Claude Code everywhere?"
 #: src/pages/workspace/model/account/useAuth.ts:136
 msgid "Sign-in did not finish."
 msgstr "Sign-in did not finish."
+
+#: src/pages/workspace/model/account/account-trouble/account-trouble.ts:15
+msgid "Sign-in ended without an account, so nothing was changed."
+msgstr "Sign-in ended without an account, so nothing was changed."
+
+#: src/pages/workspace/model/account/account-trouble/account-trouble.ts:32
+msgid "Sign-in was cancelled."
+msgstr "Sign-in was cancelled."
 
 #: src/entities/connector/lib/groups/groups.ts:14
 msgid "Signed in and out here. To remove one, go to claude.ai."
@@ -2743,7 +2755,7 @@ msgstr "the next steps"
 msgid "The note is deleted from the library. This cannot be undone."
 msgstr "The note is deleted from the library. This cannot be undone."
 
-#: src/pages/workspace/model/session/agent-events/crew/crew.ts:319
+#: src/pages/workspace/model/session/agent-events/crew/crew.ts:321
 msgid "the orchestrator"
 msgstr "the orchestrator"
 
@@ -2796,6 +2808,10 @@ msgstr "The saved conversation is deleted. This cannot be undone."
 #: src/entities/claude-cli/lib/failure/failure.ts:79
 msgid "The server had a problem"
 msgstr "The server had a problem"
+
+#: src/pages/workspace/model/session/chat-sessions/chat-session/chat-session.ts:227
+msgid "The session ended before your answer could be sent."
+msgstr "The session ended before your answer could be sent."
 
 #: src/entities/claude-cli/api/aside/aside.ts:39
 msgid "The session is closing"
@@ -2966,7 +2982,7 @@ msgstr "Title"
 msgid "To {addressee}"
 msgstr "To {addressee}"
 
-#: src/widgets/conversation/ui/ConversationPane/ConversationPane.tsx:267
+#: src/widgets/conversation/ui/ConversationPane/ConversationPane.tsx:304
 msgid "To the library"
 msgstr "To the library"
 

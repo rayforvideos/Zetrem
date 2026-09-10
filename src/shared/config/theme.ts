@@ -45,3 +45,19 @@ export const GIT_TABLE = { pad: 16, gap: 12, message: 64, gutter: 8 } as const
 // their floors. The author goes first and the change bars next, because those are
 // the two a commit still reads without. The graph and the message never leave.
 export const GIT_COLUMN_GIVEWAY = ['author', 'changes', 'refs', 'when', 'sha'] as const
+
+// The composer's box at its tallest, taken apart into the pieces it is built
+// from. Each number is the pixel value of a Tailwind class the Composer wears,
+// so the two can be checked against each other instead of drifting: `edge` is
+// the InputGroup's border, `pad` its `p-1.5` at one end, `attached` the file row
+// (`pt-1.5` over a chip of `py-1` around a `size-7` thumb), `field` the
+// textarea's `max-h-40` ceiling, and `controls` the block-end addon (`py-1.5`
+// around an `icon-sm` button, which is the row the send button stands in).
+export const COMPOSER = { edge: 1, pad: 6, attached: 42, field: 160, controls: 44 } as const
+
+// Every piece at once: a draft grown to its ceiling with files hanging off it.
+// Nothing reads this to lay the composer out; it exists so something drawn over
+// the conversation can stay off the composer without measuring the live element,
+// which is a measurement that moves and so gives the drawn thing no fixed place.
+export const COMPOSER_MAX =
+  (COMPOSER.edge + COMPOSER.pad) * 2 + COMPOSER.attached + COMPOSER.field + COMPOSER.controls

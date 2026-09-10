@@ -119,3 +119,30 @@ describe('the ring that says where the keyboard is', () => {
     expect(stray).toEqual([])
   })
 })
+
+// The toast is lifted off the composer by a constant rather than a measurement,
+// which only holds while the constant still describes the composer. These pin
+// the classes the numbers in COMPOSER were read off, so a change to one side
+// fails here instead of quietly putting a toast back over the send button.
+describe('the composer keeps the shape the toast was lifted over', () => {
+  it('still grows to the ceiling COMPOSER.field names', async () => {
+    const composer = await readFile(
+      join('src', 'widgets', 'conversation', 'ui', 'Composer', 'Composer.tsx'),
+      'utf8',
+    )
+    expect(composer, 'COMPOSER.field is max-h-40 in pixels').toContain('max-h-40')
+    expect(composer, 'COMPOSER.pad is the InputGroup p-1.5').toContain('p-1.5 shadow-none')
+    expect(composer, 'COMPOSER.controls stands an icon-sm button').toContain('size="icon-sm"')
+  })
+
+  it('still hangs its file row above the field', async () => {
+    const row = await readFile(
+      join('src', 'widgets', 'conversation', 'ui', 'Composer', 'AttachedRow.tsx'),
+      'utf8',
+    )
+    expect(row, 'COMPOSER.attached is pt-1.5 over a py-1 chip around a size-7 thumb').toContain(
+      'px-1.5 pt-1.5',
+    )
+    expect(row).toContain('size-7')
+  })
+})

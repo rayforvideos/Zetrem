@@ -589,7 +589,7 @@ msgstr "이 계획을 승인할까요?"
 msgid "Ask first"
 msgstr "먼저 묻기"
 
-#: src/widgets/conversation/ui/ConversationPane/ConversationPane.tsx:150
+#: src/widgets/conversation/ui/ConversationPane/ConversationPane.tsx:185
 msgid "Ask for the whole job"
 msgstr "일 전체를 맡기세요"
 
@@ -1271,7 +1271,7 @@ msgstr "피드백"
 msgid "Fetching"
 msgstr "가져오는 중"
 
-#: src/widgets/conversation/ui/ConversationPane/ConversationPane.tsx:264
+#: src/widgets/conversation/ui/ConversationPane/ConversationPane.tsx:299
 msgid "File this answer to the library as its own note"
 msgstr "이 답변을 별도 노트로 라이브러리에 넣기"
 
@@ -2284,7 +2284,7 @@ msgstr "저장 중…"
 msgid "Say the word and the whole team wakes up."
 msgstr "말 한마디면 팀 전체가 깨어납니다."
 
-#: src/widgets/conversation/ui/ConversationPane/ConversationPane.tsx:151
+#: src/widgets/conversation/ui/ConversationPane/ConversationPane.tsx:186
 msgid "Say what you want done, not the next step. The orchestrator splits it up and hands out the pieces."
 msgstr "다음 단계 말고 원하는 결과를 말하세요. 오케스트레이터가 알아서 쪼개서 나눠 줍니다."
 
@@ -2982,7 +2982,7 @@ msgstr "제목"
 msgid "To {addressee}"
 msgstr "{addressee}에게"
 
-#: src/widgets/conversation/ui/ConversationPane/ConversationPane.tsx:267
+#: src/widgets/conversation/ui/ConversationPane/ConversationPane.tsx:302
 msgid "To the library"
 msgstr "라이브러리에 담기"
 

@@ -92,7 +92,7 @@ function press(...selectors: string[]): void {
 function markAsDemo(): void {
   const mark = document.createElement('div')
   mark.className =
-    'pointer-events-none fixed top-2 left-1/2 z-[60] -translate-x-1/2 rounded-full border border-border/70 bg-card/90 px-3 py-1 text-xs text-muted-foreground shadow-sm backdrop-blur'
+    'pointer-events-none fixed top-2 left-1/2 z-[80] -translate-x-1/2 rounded-full border border-border/70 bg-card/90 px-3 py-1 text-xs text-muted-foreground shadow-sm backdrop-blur'
   const said = document.createElement('span')
   said.textContent =
     '\ub370\ubaa8 \u00b7 \uae30\ub85d\ub41c \uc138\uc158\uc744 \uc7ac\uc0dd\ud569\ub2c8\ub2e4'
@@ -112,15 +112,32 @@ markAsDemo()
 // way back is offered rather than taken: a reload is the only honest restart,
 // since the recorded run has already been spent.
 function offerAgain(): void {
+  const row = document.createElement('div')
+  // Clear of the status bar along the bottom edge, which a plain bottom-4
+  // would sit on top of.
+  row.className = 'fixed right-4 bottom-11 z-[80] flex items-center gap-2'
+
   const again = document.createElement('button')
   again.type = 'button'
   again.textContent = '\ucc98\uc74c\ubd80\ud130 \ub2e4\uc2dc \ubcf4\uae30'
   again.className =
-    'fixed right-4 bottom-4 z-50 rounded-full border border-border bg-card px-4 py-2 text-sm text-foreground shadow-lg hover:bg-accent focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none'
+    'rounded-full border border-border bg-card px-4 py-2 text-sm text-foreground shadow-lg hover:bg-accent focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none'
   again.addEventListener('click', () => {
     window.location.reload()
   })
-  document.body.append(again)
+
+  // The last word of the tour points at the homepage, so the way there is a
+  // button and not a sentence the visitor has to go looking for.
+  const home = document.createElement('a')
+  home.href = ZETREM_HOME
+  home.target = '_blank'
+  home.rel = 'noreferrer'
+  home.textContent = 'Zetrem \ud648\ud398\uc774\uc9c0'
+  home.className =
+    'rounded-full bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow-lg hover:opacity-90 focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none'
+
+  row.append(again, home)
+  document.body.append(row)
 }
 
 const root = createRoot(stage)

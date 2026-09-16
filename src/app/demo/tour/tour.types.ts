@@ -19,6 +19,11 @@ export type TourStep = {
   // three has arrived, an answer is still being written. Naming the finished
   // state here keeps the card from speaking too early.
   waitFor?: string
+  // What must be off the screen before the step says anything. The panel a run
+  // works under stays a few seconds past the answer and the conversation
+  // widens the moment it goes: a card placed before that slides out from under
+  // the reader.
+  waitGone?: string
   title: string
   body: string
   advance: TourAdvance

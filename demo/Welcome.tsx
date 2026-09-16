@@ -26,14 +26,17 @@ const PARTS = [
 export function Welcome({ onStart }: { onStart: () => void }) {
   return (
     <div className="zt-scroll fixed inset-0 z-[70] overflow-y-auto bg-background">
-      <div className="mx-auto flex min-h-full w-full max-w-4xl flex-col items-center justify-center gap-8 px-6 py-10 text-center">
+      {/* The opening has to fit a laptop without scrolling: the button is the
+          one thing a visitor must find, and one below the fold is one nobody
+          presses. On a short screen the hero and the spacing give way first. */}
+      <div className="mx-auto flex min-h-full w-full max-w-4xl flex-col items-center justify-center gap-8 px-6 py-10 text-center [@media(max-height:800px)]:gap-5 [@media(max-height:800px)]:py-6">
         <img
           src={SPRITES.bunny.relax}
           alt=""
           width={128}
           height={128}
           draggable={false}
-          className="zt-sprite object-contain"
+          className="zt-sprite h-32 w-32 object-contain [@media(max-height:800px)]:h-20 [@media(max-height:800px)]:w-20"
         />
 
         <div className="flex flex-col items-center gap-4">

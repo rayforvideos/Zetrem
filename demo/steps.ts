@@ -44,6 +44,10 @@ export const DEMO_STEPS: TourStep[] = [
     id: 'report',
     target: 'article',
     waitFor: '[data-system-line]',
+    // The teammate panel stands a few seconds past the answer, and the
+    // conversation widens the instant it goes. Waiting it out is what lets the
+    // card be placed once, where it stays.
+    waitGone: '[data-crew-board]',
     title: '보고가 한 답변으로 합쳐집니다',
     body: '세 팀원이 각자 올린 결론을 오케스트레이터가 받아 하나로 정리했습니다. 위의 명령 줄을 누르면 그때 실제로 돌아온 출력도 그대로 열립니다.',
     advance: 'manual',

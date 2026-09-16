@@ -44,6 +44,9 @@ export function TourOverlay({
   // Held apart from the target: the step waits on this before it speaks, and
   // lights the target once it does.
   const settled = useTarget(step?.waitFor ?? null, waitMs)
+  // The same wait from the other side: something that has to be gone, not
+  // there. Read every frame, since nothing announces an element leaving.
+  const gone = useGone(step?.waitGone ?? null)
 
   function send(signal: TourSignal): void {
     const next = stepAfter(steps, at, signal)
@@ -97,18 +100,27 @@ export function TourOverlay({
 
   useEffect(() => {
     if (node === null || !onClickStep || wanted === null) return
-    // Capture, so the step moves on even when the control stops the click on
-    // its way up, and the control still gets the click of its own.
+    // Capture, so the step is answered even when the control stops the click
+    // on its way up.
     //
     // Matched by the selector rather than against the one element that was
     // measured: a step may point at a row of things, and pressing the second
     // of them is as much an answer as pressing the first.
+    let timer: ReturnType<typeof setTimeout> | null = null
     function onClick(event: MouseEvent): void {
       if (!(event.target instanceof Element)) return
-      if (event.target.closest(wanted as string) !== null) raise('target-click')
+      if (event.target.closest(wanted as string) === null) return
+      // Answered on the next tick, not here. The step that follows often
+      // closes the pane the control lives in, and moving on while the click
+      // is still on its way down unmounts the button before its own handler
+      // ever runs: the visitor presses "file it" and nothing is filed.
+      timer = setTimeout(() => raise('target-click'), 0)
     }
     document.addEventListener('click', onClick, true)
-    return () => document.removeEventListener('click', onClick, true)
+    return () => {
+      document.removeEventListener('click', onClick, true)
+      if (timer !== null) clearTimeout(timer)
+    }
   }, [node, onClickStep, wanted])
 
   useEffect(() => {
@@ -126,6 +138,10 @@ export function TourOverlay({
   // No grace on this one: what it waits for is the thing the step is about,
   // and speaking early is the fault it was added to fix.
   if (step.waitFor !== undefined && settled.node === null && !settled.missing) return null
+
+  // While the run's panel is still on screen the layout under it is still
+  // going to move, and a card placed against it now is a card that jumps.
+  if (!gone) return null
 
   // Nothing is shown until what the step points at has arrived and stopped
   // moving. A card that appears in the middle and then slides to its place is
@@ -153,7 +169,10 @@ export function TourOverlay({
   return (
     // Nothing here takes a click by default: only the dark bands and the card
     // do, which leaves the spotlit control answering to the pointer as usual.
-    <div className="pointer-events-none fixed inset-0 z-50" data-tour={step.id}>
+    // Above every portal the app puts up. Dialogs and sheets mount at the end
+    // of <body> at z-50, after this root, so a tour at the same level loses the
+    // tie and its card stops taking clicks the moment a form opens.
+    <div className="pointer-events-none fixed inset-0 z-[70]" data-tour={step.id}>
       {hole === null ? (
         <div className="pointer-events-auto absolute inset-0 bg-black/60" />
       ) : (
@@ -230,6 +249,25 @@ export function TourOverlay({
       </div>
     </div>
   )
+}
+
+// Whether nothing on screen answers to a selector.
+function useGone(selector: string | null): boolean {
+  const [gone, setGone] = useState(true)
+  useEffect(() => {
+    if (selector === null) {
+      setGone(true)
+      return undefined
+    }
+    let frame = 0
+    const look = (): void => {
+      setGone(document.querySelector(selector) === null)
+      frame = requestAnimationFrame(look)
+    }
+    look()
+    return () => cancelAnimationFrame(frame)
+  }, [selector])
+  return gone
 }
 
 // Frames a box must hold still before the step is allowed to speak.

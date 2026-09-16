@@ -28,7 +28,8 @@
     "test:contract": "vitest run --config vitest.contract.config.ts",
     "i18n:extract": "lingui extract",
     "i18n:compile": "lingui compile",
-    "smoke": "node --experimental-websocket scripts/smoke.mjs"
+    "smoke": "node --experimental-websocket scripts/smoke.mjs",
+    "build:demo": "vite build --config vite.web.config.ts"
   },
   "devDependencies": {
     "@babel/parser": "^7.29.8",

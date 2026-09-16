@@ -1130,6 +1130,7 @@ msgstr "Documents they read first. Long ones cost nothing until they open them."
 msgid "Don't ask again this session"
 msgstr "Don't ask again this session"
 
+#: src/app/demo/tour/TourOverlay.tsx:201
 #: src/widgets/agent-report/lib/state-word/state-word.ts:12
 #: src/widgets/library/ui/NoteReader/NoteReader.tsx:102
 #: src/widgets/setup/ui/PluginShelf/PluginShelf.tsx:129
@@ -1742,6 +1743,7 @@ msgstr "New note in {name}"
 msgid "New teammate"
 msgstr "New teammate"
 
+#: src/app/demo/tour/TourOverlay.tsx:201
 #: src/widgets/welcome/ui/WelcomePane/WelcomePane.tsx:137
 msgid "Next"
 msgstr "Next"
@@ -2476,6 +2478,10 @@ msgstr "Signing in through your browser…"
 msgid "Skip"
 msgstr "Skip"
 
+#: src/app/demo/tour/TourOverlay.tsx:197
+msgid "Skip tour"
+msgstr "Skip tour"
+
 #: src/app/Boundary.tsx:41
 msgid "Something broke. Here is what happened."
 msgstr "Something broke. Here is what happened."
@@ -2533,6 +2539,10 @@ msgstr "Stash changes"
 #: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:1091
 msgid "Stay here"
 msgstr "Stay here"
+
+#: src/app/demo/tour/TourOverlay.tsx:190
+msgid "Step {shown} of {total}"
+msgstr "Step {shown} of {total}"
 
 #: src/widgets/team-sidebar/lib/live-mark/live-mark.ts:7
 msgid "Still replying"
@@ -3006,6 +3016,10 @@ msgstr "tool"
 #: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:218
 msgid "Tools"
 msgstr "Tools"
+
+#: src/app/demo/tour/TourOverlay.tsx:204
+msgid "Try the highlighted control"
+msgstr "Try the highlighted control"
 
 #: src/entities/teammate/ui/StockList/StockList.tsx:31
 msgid "Turn on to let the team call {name}"

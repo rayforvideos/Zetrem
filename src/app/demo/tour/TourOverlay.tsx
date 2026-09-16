@@ -12,7 +12,6 @@ import { MOTION } from '@/shared/config/motion/motion'
 import { Button } from '@/shared/ui/button'
 import { cn } from '@/shared/lib/cn'
 import {
-  SETTLE_FRAMES,
   TOUR,
   delayFor,
   isOnScreen,
@@ -240,6 +239,17 @@ export function TourOverlay({
   )
 }
 
+// Two readings are the same when nothing moved worth redrawing for.
+function same(was: Box | null, now: Box): boolean {
+  if (was === null) return false
+  return (
+    Math.abs(was.top - now.top) < 0.5 &&
+    Math.abs(was.left - now.left) < 0.5 &&
+    Math.abs(was.width - now.width) < 0.5 &&
+    Math.abs(was.height - now.height) < 0.5
+  )
+}
+
 // The smallest box covering them all, in viewport coordinates.
 function covering(nodes: Element[]): Box | null {
   let top = Number.POSITIVE_INFINITY
@@ -335,11 +345,14 @@ function useTarget(selector: string | null, waitMs: number): Spotted {
     // A step may point at a row of things rather than one thing, and the box
     // that holds them is usually wider than they are. Every match is measured
     // and the light is cut to what they cover between them.
+    let last: Box | null = null
+
     function read(): void {
       if (node === null) return
       const all = [...document.querySelectorAll(wanted)]
       const rect = covering(all.length > 0 ? all : [node])
-      if (rect === null) return
+      if (rect === null || same(last, rect)) return
+      last = rect
       setFound({ wanted, node, box: rect, missing: false })
     }
 
@@ -352,15 +365,13 @@ function useTarget(selector: string | null, waitMs: number): Spotted {
       if (late !== null) take(late)
     })
 
-    // A target that has just arrived is usually still moving: the app slides
-    // and fades it into place, and a transform changes nothing a size observer
-    // would wake for. So it is measured again on every frame until the entrance
-    // is over, or the light would keep the shape the thing had while landing.
-    let settling = 0
+    // Measured every frame for as long as the step lasts. A target moves for
+    // reasons no observer reports: it slides in under a transform, or a panel
+    // above it opens and pushes it down without changing its own size. The
+    // reading is only handed on when it has actually changed, so the cost is a
+    // rectangle a frame and nothing re-renders for standing still.
     function settle(): void {
       read()
-      if (settling >= SETTLE_FRAMES) return
-      settling += 1
       frame = requestAnimationFrame(settle)
     }
 
@@ -369,14 +380,16 @@ function useTarget(selector: string | null, waitMs: number): Spotted {
       clearTimeout(waiting)
       arriving.disconnect()
       for (const one of document.querySelectorAll(wanted)) sizes.observe(one)
-      settling = 0
       settle()
     }
 
     const first = document.querySelector(wanted)
     if (first !== null) take(first)
     else {
-      arriving.observe(document.body, { childList: true, subtree: true })
+      // Attributes too: a step may wait on a state rather than an arrival, and
+      // a panel that is already in the tree and merely stops being hidden
+      // changes no child of anything.
+      arriving.observe(document.body, { childList: true, subtree: true, attributes: true })
       waiting = setTimeout(() => setFound({ wanted, node: null, box: null, missing: true }), waitMs)
     }
 

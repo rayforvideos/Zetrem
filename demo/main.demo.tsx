@@ -55,6 +55,10 @@ function onStepChange(step: { id: string }): void {
   // A stop that is about a screen the visitor is not on opens it for them, and
   // one that has moved past a screen closes it behind them: the tour is the
   // only thing steering, so nothing is left ajar for the next stop to fight.
+  // The library has had its turn by now; the next stop is about the sidebar,
+  // and a pane still covering the conversation behind it only confuses what
+  // the light is pointing at.
+  if (step.id === 'hire') press('[data-leave-library]')
   if (step.id === 'git-open') press('[data-member-cancel]')
   if (step.id === 'settings-open') press('[data-git-drawer] [data-git-close]', '[data-git-button]')
   if (step.id === 'settings-session') press('[data-setup-tab="session"]')

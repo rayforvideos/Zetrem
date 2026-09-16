@@ -269,7 +269,6 @@ export const DEMO_SCRIPT: DemoBeat[] = [
         interrupted: false,
       },
     },
-    holds: true,
   },
   {
     afterMs: 900,
@@ -283,10 +282,15 @@ export const DEMO_SCRIPT: DemoBeat[] = [
   {
     afterMs: 600,
     event: progress('task_3', REVIEWER, '규약과 실제 코드의 어긋남을 대조하는 중', 'Grep', 17300),
+    // Parked on the last thing that only touches the teammates' own panel. The
+    // stop that is up now asks for a press on a row in the conversation, and
+    // the reports that come next are what pushes that row up out from under
+    // the aim.
+    holds: true,
   },
 
   {
-    afterMs: 1100,
+    afterMs: 500,
     event: notified(
       'task_3',
       REVIEWER,
@@ -295,7 +299,7 @@ export const DEMO_SCRIPT: DemoBeat[] = [
   },
   { afterMs: 150, event: finished('task_3') },
   {
-    afterMs: 900,
+    afterMs: 500,
     event: notified(
       'task_2',
       REACT,
@@ -304,7 +308,7 @@ export const DEMO_SCRIPT: DemoBeat[] = [
   },
   { afterMs: 150, event: finished('task_2') },
   {
-    afterMs: 800,
+    afterMs: 500,
     event: notified(
       'task_1',
       ELECTRON,
@@ -312,7 +316,7 @@ export const DEMO_SCRIPT: DemoBeat[] = [
     ),
     raises: 'proposal',
   },
-  { afterMs: 150, event: finished('task_1'), holds: true },
+  { afterMs: 150, event: finished('task_1') },
 
   { afterMs: 500, event: delta('세 팀원의 보고를 합쳐 정리했습니다.\n\n') },
   {
@@ -349,6 +353,37 @@ export const DEMO_SCRIPT: DemoBeat[] = [
       result: '',
       duration_ms: 38_140,
       usage: { input_tokens: 48210, output_tokens: 2615 },
+    },
+  },
+]
+
+// What the page says to anything asked after the recording has played. It is
+// not an answer to the question: this demo has one session in it, and pretending
+// otherwise by replaying the same run under a new question would be the one
+// dishonest thing on the page.
+export const DEMO_ENCORE: DemoBeat[] = [
+  {
+    afterMs: 500,
+    event: delta(
+      '여기에 담긴 기록은 앞서 보신 세션 하나뿐이라, 이 질문에는 답해 드릴 수 없습니다.\n\n',
+    ),
+  },
+  {
+    afterMs: 400,
+    event: delta(
+      '실제 Zetrem 은 여러분 컴퓨터의 Claude Code 를 그대로 실행합니다. 방금 보신 화면이 그대로 앱이고, 대화도 팀원도 라이브러리도 전부 로컬에 남습니다. 내려받기는 ',
+    ),
+  },
+  { afterMs: 300, event: delta('**zetrem.org** 에 있습니다.') },
+  {
+    afterMs: 400,
+    event: {
+      type: 'result',
+      subtype: 'success',
+      is_error: false,
+      result: '',
+      duration_ms: 1_600,
+      usage: { input_tokens: 0, output_tokens: 96 },
     },
   },
 ]

@@ -66,7 +66,7 @@ export const DEMO_STEPS: TourStep[] = [
     face: 'bunny',
     target: '[data-usage-bar]',
     title: '얼마를 썼는지는 계속 보입니다',
-    body: '남은 사용량과 언제 다시 차는지가 아래에 늘 붙어 있습니다. 읽는 동안에도 팀원들은 계속 일하고 있습니다.',
+    body: '남은 사용량과 언제 다시 차는지가 아래에 늘 붙어 있습니다. 모델마다 따로, 남은 시간까지 함께 나옵니다. 답변 끝에는 이번 턴이 쓴 토큰과 걸린 시간이 적힙니다. 읽는 동안에도 팀원들은 계속 일하고 있습니다.',
     advance: 'manual',
     placement: 'top',
   },

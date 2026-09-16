@@ -20,7 +20,7 @@ import {
   stepAfter,
   wantsNextButton,
 } from './tour'
-import type { Box, Size, TourProps, TourSignal } from './tour.types'
+import type { Box, Size, TourPlacement, TourProps, TourSignal } from './tour.types'
 
 // The card is measured as soon as it is on screen; this is only what the very
 // first frame is placed against, and it matches the w-80 card below.
@@ -177,6 +177,7 @@ export function TourOverlay({
         )}
         style={spot === null ? moving : { ...moving, top: spot.top, left: spot.left }}
       >
+        {spot !== null && <Arrow placement={spot.placement} />}
         <p id={titleId} className="text-sm leading-tight font-medium">
           {step.title}
         </p>
@@ -212,6 +213,34 @@ export function TourOverlay({
 
 function Band({ style }: { style: CSSProperties }) {
   return <div aria-hidden className="pointer-events-auto absolute bg-black/60" style={style} />
+}
+
+// The card says which way it is pointing. A tip is a square turned on its
+// corner and pushed half out of the card, so the two borders that show are the
+// card's own and it reads as one shape rather than a badge stuck on the side.
+function Arrow({ placement }: { placement: TourPlacement }) {
+  const side = OPPOSITE[placement]
+  return (
+    <span
+      aria-hidden
+      className={cn(
+        'absolute size-3 rotate-45 border-b border-r bg-card',
+        side === 'bottom' && 'bottom-0 left-1/2 -ml-1.5 -mb-1.5',
+        side === 'top' && 'top-0 left-1/2 -ml-1.5 -mt-1.5 rotate-225',
+        side === 'right' && 'top-1/2 right-0 -mt-1.5 -mr-1.5 -rotate-45',
+        side === 'left' && 'top-1/2 left-0 -mt-1.5 -ml-1.5 rotate-135',
+      )}
+    />
+  )
+}
+
+// Where the tip sits is the side facing the target, which is the far side from
+// where the card was placed.
+const OPPOSITE: Record<TourPlacement, TourPlacement> = {
+  top: 'bottom',
+  bottom: 'top',
+  left: 'right',
+  right: 'left',
 }
 
 // What the app's own resize listeners see, read through the store hook so the

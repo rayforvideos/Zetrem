@@ -186,9 +186,8 @@ export const DEMO_PROPOSALS: LibraryProposal[] = [
     folder: '구조',
     title: '팀원은 자기 worktree 에서 일하고 브랜치로 돌아온다',
     body: [
-      '**결론:** 팀원마다 `.claude/worktrees/` 아래 자기 git worktree 를 받는다.',
-      '변경은 working tree 에 바로 닿지 않고 `worktree-<이름>` 브랜치로 돌아오며,',
-      '오케스트레이터가 `git merge --no-ff` 로 하나씩 합친다.',
+      '팀원마다 자기 git worktree 를 받는다. 변경은 working tree 에 바로 닿지 않고',
+      '브랜치로 돌아오며, 오케스트레이터가 하나씩 합친다.',
       '',
       '새 worktree 에는 `node_modules` 가 없으므로 메인 체크아웃의 것을 심볼릭 링크로 걸어 준다.',
       '팀원 브리프에 "없으면 기다려라, 직접 설치하지 마라" 가 들어가는 이유다.',

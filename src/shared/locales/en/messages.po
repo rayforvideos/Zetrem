@@ -1130,7 +1130,7 @@ msgstr "Documents they read first. Long ones cost nothing until they open them."
 msgid "Don't ask again this session"
 msgstr "Don't ask again this session"
 
-#: src/app/demo/tour/TourOverlay.tsx:201
+#: src/app/demo/tour/TourOverlay.tsx:202
 #: src/widgets/agent-report/lib/state-word/state-word.ts:12
 #: src/widgets/library/ui/NoteReader/NoteReader.tsx:102
 #: src/widgets/setup/ui/PluginShelf/PluginShelf.tsx:129
@@ -1272,7 +1272,7 @@ msgstr "Feedback"
 msgid "Fetching"
 msgstr "Fetching"
 
-#: src/widgets/conversation/ui/ConversationPane/ConversationPane.tsx:301
+#: src/widgets/conversation/ui/ConversationPane/ConversationPane.tsx:302
 msgid "File this answer to the library as its own note"
 msgstr "File this answer to the library as its own note"
 
@@ -1743,7 +1743,7 @@ msgstr "New note in {name}"
 msgid "New teammate"
 msgstr "New teammate"
 
-#: src/app/demo/tour/TourOverlay.tsx:201
+#: src/app/demo/tour/TourOverlay.tsx:202
 #: src/widgets/welcome/ui/WelcomePane/WelcomePane.tsx:137
 msgid "Next"
 msgstr "Next"
@@ -1847,7 +1847,7 @@ msgstr "Nothing stashed."
 msgid "Nothing to merge: already up to date."
 msgstr "Nothing to merge: already up to date."
 
-#: src/widgets/tile-deck/ui/CrewBoard/CrewBoard.tsx:141
+#: src/widgets/tile-deck/ui/CrewBoard/CrewBoard.tsx:142
 msgid "Nothing written yet."
 msgstr "Nothing written yet."
 
@@ -2478,7 +2478,7 @@ msgstr "Signing in through your browser…"
 msgid "Skip"
 msgstr "Skip"
 
-#: src/app/demo/tour/TourOverlay.tsx:197
+#: src/app/demo/tour/TourOverlay.tsx:198
 msgid "Skip tour"
 msgstr "Skip tour"
 
@@ -2540,7 +2540,7 @@ msgstr "Stash changes"
 msgid "Stay here"
 msgstr "Stay here"
 
-#: src/app/demo/tour/TourOverlay.tsx:190
+#: src/app/demo/tour/TourOverlay.tsx:191
 msgid "Step {shown} of {total}"
 msgstr "Step {shown} of {total}"
 
@@ -2992,7 +2992,7 @@ msgstr "Title"
 msgid "To {addressee}"
 msgstr "To {addressee}"
 
-#: src/widgets/conversation/ui/ConversationPane/ConversationPane.tsx:304
+#: src/widgets/conversation/ui/ConversationPane/ConversationPane.tsx:305
 msgid "To the library"
 msgstr "To the library"
 
@@ -3017,7 +3017,7 @@ msgstr "tool"
 msgid "Tools"
 msgstr "Tools"
 
-#: src/app/demo/tour/TourOverlay.tsx:204
+#: src/app/demo/tour/TourOverlay.tsx:205
 msgid "Try the highlighted control"
 msgstr "Try the highlighted control"
 
@@ -3160,7 +3160,7 @@ msgstr "What they changed"
 
 #: src/widgets/agent-report/ui/CallStream/CallStream.tsx:11
 #: src/widgets/tile-deck/ui/AgentTile/AgentTile.tsx:112
-#: src/widgets/tile-deck/ui/CrewBoard/CrewBoard.tsx:145
+#: src/widgets/tile-deck/ui/CrewBoard/CrewBoard.tsx:146
 #: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:152
 msgid "What they did"
 msgstr "What they did"

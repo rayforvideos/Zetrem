@@ -213,6 +213,7 @@ export function ConversationPane({
                 return (
                   <div
                     key={turn.id}
+                    data-system-line
                     className="zt-rise self-center font-mono text-xs leading-normal tracking-wide text-muted-foreground [overflow-wrap:anywhere]"
                   >
                     {turn.text}

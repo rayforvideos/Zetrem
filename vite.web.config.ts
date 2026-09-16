@@ -48,6 +48,7 @@ function indexOut(): Plugin {
 
 export default defineConfig({
   root: '.',
+  publicDir: resolve('demo/public'),
   base: './',
   resolve: { alias: { '@': resolve('src') } },
   build: {

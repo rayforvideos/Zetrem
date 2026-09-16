@@ -10,10 +10,10 @@ import { I18nProvider } from '@lingui/react'
 import '@/app/styles/global.css'
 import { loadTongue } from '@/shared/lib/say/load'
 import { TourOverlay } from '@/app/demo/tour/TourOverlay'
-import { installDemoDesk } from './desk'
+import { installDemoDesk, releaseTape } from './desk'
 import { DEMO_STEPS } from './steps'
 import { DEMO_PROMPT } from './script'
-import { typeAndSend } from './typing'
+import { sendNow, typeOnly } from './typing'
 
 installDemoDesk()
 
@@ -37,10 +37,39 @@ document.body.append(stage)
 let asked = false
 
 function onStepChange(step: { id: string }): void {
-  if (step.id !== 'ask' || asked) return
-  asked = true
-  void typeAndSend(DEMO_PROMPT)
+  if (step.id === 'ask' && !asked) {
+    asked = true
+    void typeOnly(DEMO_PROMPT)
+    return
+  }
+  // The tape is parked between stops, and arriving at one is what lets it run
+  // to the next, so the screen moves when the visitor does and never before
+  // they have read why it is about to.
+  if (step.id === 'crew') sendNow()
+  if (step.id === 'approval') releaseTape()
 }
+
+// A badge that stays put for the whole visit. The opening card says this is a
+// recording, but a card is read once and then dismissed, and somebody who
+// lands mid-tour should still never mistake this for their own session.
+function markAsDemo(): void {
+  const mark = document.createElement('div')
+  mark.className =
+    'pointer-events-none fixed top-2 left-1/2 z-[60] -translate-x-1/2 rounded-full border border-border/70 bg-card/90 px-3 py-1 text-xs text-muted-foreground shadow-sm backdrop-blur'
+  const said = document.createElement('span')
+  said.textContent =
+    '\ub370\ubaa8 \u00b7 \uae30\ub85d\ub41c \uc138\uc158\uc744 \uc7ac\uc0dd\ud569\ub2c8\ub2e4'
+  const to = document.createElement('a')
+  to.href = 'https://github.com/rayforvideos/Zetrem'
+  to.target = '_blank'
+  to.rel = 'noreferrer'
+  to.textContent = '\uc2e4\uc81c \uc571 \ubcf4\uae30'
+  to.className = 'pointer-events-auto ml-2 underline underline-offset-2 hover:text-foreground'
+  mark.append(said, to)
+  document.body.append(mark)
+}
+
+markAsDemo()
 
 // The tour is over but the screen it ran on is still there to poke at, so the
 // way back is offered rather than taken: a reload is the only honest restart,

@@ -1511,7 +1511,7 @@ msgstr "It took too long and was stopped"
 msgid "It was cancelled"
 msgstr "It was cancelled"
 
-#: src/app/demo/tour/TourOverlay.tsx:293
+#: src/app/demo/tour/TourOverlay.tsx:294
 msgid "Just a moment · {left} chapters left"
 msgstr "Just a moment · {left} chapters left"
 

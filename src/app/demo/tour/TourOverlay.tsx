@@ -176,7 +176,7 @@ export function TourOverlay({
 
   // Said rather than nothing: the walk goes on, and this is how much of it is
   // still to come.
-  if (waitingOn) return saidSo ? <Held left={total - at} /> : null
+  if (waitingOn) return saidSo ? <Held done={at} total={total} /> : null
 
   const hole =
     target.box !== null && isOnScreen(target.box, viewport) ? spotlight(target.box, viewport) : null
@@ -285,12 +285,21 @@ const HELD_SHOWN_MS = 600
 // What stands in for the card while a step waits on the app. It lights nothing
 // and covers nothing, so the visitor watches the run rather than the tour, and
 // it says how much is left so a long wait does not read as the end.
-function Held({ left }: { left: number }) {
+function Held({ done, total }: { done: number; total: number }) {
+  const left = total - done
   return (
     <div className="pointer-events-none fixed inset-0 z-[70]" data-tour-held>
-      <div className="zt-rise absolute bottom-10 left-1/2 flex -translate-x-1/2 items-center gap-2 rounded-full border bg-card/90 px-4 py-2 text-xs text-muted-foreground shadow-lg backdrop-blur">
-        <span aria-hidden className="size-1.5 animate-pulse rounded-full bg-foreground/60" />
-        <span>{t`Just a moment · ${left} chapters left`}</span>
+      <div className="zt-rise absolute bottom-12 left-1/2 flex -translate-x-1/2 items-center gap-3 rounded-full border border-border bg-card px-5 py-2.5 text-sm text-foreground shadow-xl">
+        <span aria-hidden className="size-2 animate-pulse rounded-full bg-primary" />
+        <span className="zt-nums font-medium">{t`Just a moment · ${left} chapters left`}</span>
+        {/* How far along the walk is, so the count is a place in something
+            rather than a number on its own. */}
+        <span aria-hidden className="h-1.5 w-20 overflow-hidden rounded-full bg-muted">
+          <span
+            className="block h-full rounded-full bg-primary transition-all"
+            style={{ width: `${Math.round((done / total) * 100)}%` }}
+          />
+        </span>
       </div>
     </div>
   )

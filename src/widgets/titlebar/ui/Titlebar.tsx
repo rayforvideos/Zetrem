@@ -1,6 +1,6 @@
 import type { CSSProperties, ReactNode } from 'react'
 import { CHROME_TOP, SHELL_PAD, TRAFFIC_LIGHT, WINDOWS_CONTROLS_WIDTH } from '@/shared/config/theme'
-import { isMac } from '@/shared/lib/platform/platform'
+import { inShell, isMac } from '@/shared/lib/platform/platform'
 
 type TitlebarProps = {
   left?: ReactNode
@@ -8,11 +8,13 @@ type TitlebarProps = {
 }
 
 export function Titlebar({ left, children }: TitlebarProps) {
-  const mac = isMac()
+  // Room is left for window buttons only where there are window buttons.
+  const shell = inShell()
+  const mac = isMac() && shell
   return (
     <div
       data-titlebar
-      style={{ ...rootStyle, paddingRight: mac ? SHELL_PAD : WINDOWS_CONTROLS_WIDTH }}
+      style={{ ...rootStyle, paddingRight: shell && !mac ? WINDOWS_CONTROLS_WIDTH : SHELL_PAD }}
     >
       <div
         style={{

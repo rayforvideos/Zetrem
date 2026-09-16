@@ -587,7 +587,7 @@ msgstr "이 계획을 승인할까요?"
 #: src/entities/settings/config/choices/choices.ts:12
 #: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:47
 msgid "Ask first"
-msgstr "먼저 묻기"
+msgstr "바꿀 때 묻기"
 
 #: src/widgets/conversation/ui/ConversationPane/ConversationPane.tsx:184
 msgid "Ask for the whole job"
@@ -599,7 +599,7 @@ msgstr "다음 단계 말고 일 전체를 맡기세요. 오케스트레이터�
 
 #: src/entities/settings/config/choices/choices.ts:12
 msgid "Asks before editing files or running commands"
-msgstr "파일을 고치거나 명령을 실행하기 전에 묻습니다"
+msgstr "읽고 찾는 것은 그냥 합니다. 파일을 고치거나 명령을 실행할 때 묻습니다"
 
 #: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:310
 msgid "Attach"
@@ -1966,7 +1966,7 @@ msgstr "하던 일을 이어받았습니다"
 
 #: src/entities/settings/config/choices/choices.ts:11
 msgid "Plan first"
-msgstr "계획 먼저"
+msgstr "계획부터"
 
 #: src/entities/tool/lib/tool-verb/tool-verb.ts:28
 msgid "Planning"
@@ -3212,7 +3212,7 @@ msgstr "자기만의 git 워크트리에서 일합니다. 변경은 브랜치로
 
 #: src/entities/settings/config/choices/choices.ts:11
 msgid "Works out a plan and asks before doing it"
-msgstr "계획을 세우고, 실행하기 전에 묻습니다"
+msgstr "계획을 먼저 세워 보여주고, 실행은 그다음에 묻습니다"
 
 #: src/widgets/tile-deck/lib/leading/leading.ts:13
 msgid "Wrapped up"

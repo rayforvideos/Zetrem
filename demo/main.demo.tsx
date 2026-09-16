@@ -42,13 +42,31 @@ function onStepChange(step: { id: string }): void {
   void typeAndSend(DEMO_PROMPT)
 }
 
+// The tour is over but the screen it ran on is still there to poke at, so the
+// way back is offered rather than taken: a reload is the only honest restart,
+// since the recorded run has already been spent.
+function offerAgain(): void {
+  const again = document.createElement('button')
+  again.type = 'button'
+  again.textContent = '\ucc98\uc74c\ubd80\ud130 \ub2e4\uc2dc \ubcf4\uae30'
+  again.className =
+    'fixed right-4 bottom-4 z-50 rounded-full border border-border bg-card px-4 py-2 text-sm text-foreground shadow-lg hover:bg-accent focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none'
+  again.addEventListener('click', () => {
+    window.location.reload()
+  })
+  document.body.append(again)
+}
+
 createRoot(stage).render(
   <StrictMode>
     <I18nProvider i18n={i18n}>
       <TourOverlay
         steps={DEMO_STEPS}
         onStepChange={onStepChange}
-        onDone={() => stage.remove()}
+        onDone={() => {
+          stage.remove()
+          offerAgain()
+        }}
         // A step waits on the run, not the other way round: the tiles and the
         // permission card only exist once the recorded session reaches them.
         waitMs={25_000}

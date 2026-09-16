@@ -2,6 +2,10 @@ name: Demo
 
 # The guided demo is a static page: it carries a recorded session and answers
 # every reading from memory, so it needs no server, no key and no account.
+#
+# It publishes by pushing the built site to a branch rather than through the
+# Pages actions, because those reach for actions of their own by tag and this
+# repository runs nothing that is not pinned to a commit.
 on:
   push:
     branches: [master]
@@ -21,8 +25,10 @@ permissions:
   contents: read
 
 jobs:
-  build:
+  publish:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
@@ -31,20 +37,19 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run build:demo
-      - uses: actions/configure-pages@983d7736d9b0ae728b81ab479565c72886d7745b # v5
-      - uses: actions/upload-pages-artifact@56afc609e74202658d3ffba0e8f6dda462b719fa # v3
-        with:
-          path: out/web
 
-  deploy:
-    needs: build
-    runs-on: ubuntu-latest
-    permissions:
-      pages: write
-      id-token: write
-    environment:
-      name: github-pages
-      url: ${{ steps.pages.outputs.page_url }}
-    steps:
-      - id: pages
-        uses: actions/deploy-pages@d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e # v4
+      - name: Push the built page to its branch
+        env:
+          TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          cd out/web
+          # Pages serves what a Jekyll build leaves behind unless told not to,
+          # and a bundler's folders are not Jekyll's to read.
+          touch .nojekyll
+          git init -q
+          git checkout -q -b gh-pages
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A
+          git commit -q -m "demo: built from ${GITHUB_SHA}"
+          git push -qf "https://x-access-token:${TOKEN}@github.com/${GITHUB_REPOSITORY}.git" gh-pages

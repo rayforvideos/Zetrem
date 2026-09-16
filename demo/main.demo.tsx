@@ -49,6 +49,33 @@ function onStepChange(step: { id: string }): void {
   // they have read why it is about to.
   if (step.id === 'crew') sendNow()
   if (step.id === 'approval') releaseTape()
+  // A stop that is about a screen the visitor is not on opens it for them, and
+  // one that has moved past a screen closes it behind them: the tour is the
+  // only thing steering, so nothing is left ajar for the next stop to fight.
+  if (step.id === 'settings-open') press('[data-git-drawer] [data-git-close]', '[data-git-button]')
+  if (step.id === 'settings-session') press('[data-setup-tab="session"]')
+  if (step.id === 'outro') press('[data-setup-cancel]')
+}
+
+// Clicks the first of these that is on screen. The tour opens and closes the
+// app's own panels this way rather than reaching into its state, so what the
+// visitor sees is what any press of that control would have done.
+function press(...selectors: string[]): void {
+  // The panel a stop is about is often mounting as the stop arrives, so the
+  // control is waited for rather than missed by a frame.
+  let left = 40
+  const look = (): void => {
+    for (const selector of selectors) {
+      const found = document.querySelector<HTMLElement>(selector)
+      if (found !== null) {
+        found.click()
+        return
+      }
+    }
+    left -= 1
+    if (left > 0) setTimeout(look, 50)
+  }
+  look()
 }
 
 // A badge that stays put for the whole visit. The opening card says this is a

@@ -78,6 +78,7 @@ export function SetupPane({
               {TABS.map((one) => (
                 <Button
                   key={one.id}
+                  data-setup-tab={one.id}
                   variant="ghost"
                   size="bare"
                   onClick={() => setTab(one.id)}
@@ -95,13 +96,13 @@ export function SetupPane({
             <div className="min-h-[420px] min-w-0 flex-1">
               {/* Tabs stay mounted, hidden rather than gone, so a name someone is typing
                   survives a wander through the tabs. */}
-              <section hidden={tab !== 'start'} className="zt-rise">
+              <section data-setup-section="start" hidden={tab !== 'start'} className="zt-rise">
                 <FieldGroup className="gap-5">
                   <AccountField account={account} />
                   <ProjectField project={project} />
                 </FieldGroup>
               </section>
-              <section hidden={tab !== 'general'} className="zt-rise">
+              <section data-setup-section="general" hidden={tab !== 'general'} className="zt-rise">
                 <FieldGroup className="gap-5">
                   <YouField
                     name={you.name}
@@ -145,7 +146,7 @@ export function SetupPane({
                   </Field>
                 </FieldGroup>
               </section>
-              <section hidden={tab !== 'session'} className="zt-rise">
+              <section data-setup-section="session" hidden={tab !== 'session'} className="zt-rise">
                 <FieldGroup className="gap-5">
                   <ChoiceField
                     label={t`Permissions`}
@@ -181,12 +182,16 @@ export function SetupPane({
                   </Field>
                 </FieldGroup>
               </section>
-              <section hidden={tab !== 'memory'} className="zt-rise">
+              <section data-setup-section="memory" hidden={tab !== 'memory'} className="zt-rise">
                 <FieldGroup className="gap-5">
                   <MemoryField active={tab === 'memory'} />
                 </FieldGroup>
               </section>
-              <section hidden={tab !== 'extensions'} className="zt-rise">
+              <section
+                data-setup-section="extensions"
+                hidden={tab !== 'extensions'}
+                className="zt-rise"
+              >
                 <FieldGroup className="gap-5">
                   <Field className="rounded-2xl bg-card p-4">
                     <FieldContent>
@@ -229,7 +234,7 @@ export function SetupPane({
             <span className="mr-auto text-sm text-muted-foreground">{i18n._(blocker)}</span>
           )}
           {reopened && (
-            <Button variant="ghost" onClick={onCancel} className="rounded-full">
+            <Button data-setup-cancel variant="ghost" onClick={onCancel} className="rounded-full">
               {t`Cancel`}
             </Button>
           )}

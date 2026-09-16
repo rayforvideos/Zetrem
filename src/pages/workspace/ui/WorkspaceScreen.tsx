@@ -176,6 +176,7 @@ export function WorkspaceScreen() {
         )}
         {settings.setupDone && (
           <Button
+            data-settings-button
             variant="quiet"
             size="bare"
             onClick={layout.panel.show}

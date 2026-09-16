@@ -209,6 +209,12 @@ export const DEMO_GIT_STATUS: GitStatus = {
   files: [],
 }
 
+// A short sha is what a person reads; the graph joins commits by the full one,
+// so the parents are written short here and grown the same way the commit is.
+function full(short: string): string {
+  return `${short}${'0'.repeat(40 - short.length)}`
+}
+
 function commit(
   short: string,
   subject: string,
@@ -219,9 +225,9 @@ function commit(
   head = false,
 ): GraphCommit {
   return {
-    sha: `${short}${'0'.repeat(33)}`,
+    sha: full(short),
     short,
-    parents,
+    parents: parents.map(full),
     refs,
     head,
     author: 'Ray',

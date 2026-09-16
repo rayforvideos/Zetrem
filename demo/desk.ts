@@ -228,6 +228,27 @@ const answers: Record<string, (...args: unknown[]) => unknown> = {
         : [],
     ),
 
+  gitShowDiff: () =>
+    won(
+      [
+        'diff --git a/src/widgets/conversation/ui/ConversationPane/ConversationPane.tsx b/src/widgets/conversation/ui/ConversationPane/ConversationPane.tsx',
+        '@@ -232,6 +232,14 @@',
+        '               }',
+        '+              // The draft is not drawn. Words arriving one at a time move and',
+        '+              // reflow under the eye while the person is still reading the turn',
+        '+              // before; the working row says "Writing" until they land.',
+        '+              if (turn.thinking.length === 0 && turn.text.length === 0) {',
+        '+                return null',
+        '+              }',
+        '               return (',
+        '                 <article',
+        '-                  {turn.draft.length > 0 && (',
+        '-                    <span className="zt-caret" />',
+        '-                  )}',
+      ].join('\n'),
+    ),
+  gitDiff: () => won(''),
+
   updaterState: () => null,
   updaterCheck: () => ({ state: 'dev' }),
   updaterRestart: () => undefined,

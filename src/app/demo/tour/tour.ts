@@ -9,8 +9,6 @@ import type {
 } from './tour.types'
 
 export const TOUR = {
-  // How long a step keeps quiet while what it points at is still arriving.
-  graceMs: 700,
   // Air between the target and the card, and between the card and the edge.
   gapPx: 12,
   edgeMarginPx: 16,

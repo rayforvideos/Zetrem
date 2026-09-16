@@ -115,16 +115,6 @@ export function TourOverlay({
     if (target.missing) raise('target-missing')
   }, [target.missing, at])
 
-  // A step says nothing while what it points at is still arriving, but only
-  // for a moment: a tour that has gone dark reads as broken, so past the grace
-  // the card speaks from the middle of the screen and the light catches up.
-  const [patient, setPatient] = useState(false)
-  useEffect(() => {
-    setPatient(false)
-    const timer = setTimeout(() => setPatient(true), TOUR.graceMs)
-    return () => clearTimeout(timer)
-  }, [at])
-
   const titleId = useId()
   const bodyId = useId()
 
@@ -137,7 +127,10 @@ export function TourOverlay({
   // and speaking early is the fault it was added to fix.
   if (step.waitFor !== undefined && settled.node === null && !settled.missing) return null
 
-  if (step.target !== null && target.box === null && !target.missing && !patient) return null
+  // Nothing is shown until what the step points at has arrived and stopped
+  // moving. A card that appears in the middle and then slides to its place is
+  // two appearances, and the second one is the only one that was wanted.
+  if (step.target !== null && !target.steady && !target.missing) return null
 
   const hole =
     target.box !== null && isOnScreen(target.box, viewport) ? spotlight(target.box, viewport) : null
@@ -239,6 +232,9 @@ export function TourOverlay({
   )
 }
 
+// Frames a box must hold still before the step is allowed to speak.
+const STILL_FRAMES = 3
+
 // Two readings are the same when nothing moved worth redrawing for.
 function same(was: Box | null, now: Box): boolean {
   if (was === null) return false
@@ -323,7 +319,15 @@ function readViewport(): string {
 // moved on still renders once with the previous step's reading in hand, and
 // without the selector to check it against, that stale "missing" would skip
 // the step that had only just opened.
-type Spotted = { wanted: string | null; node: Element | null; box: Box | null; missing: boolean }
+type Spotted = {
+  wanted: string | null
+  node: Element | null
+  box: Box | null
+  missing: boolean
+  // True once the box has been the same for a few frames running: the target
+  // has arrived and its entrance is over.
+  steady: boolean
+}
 
 // The element a step points at, and where it is right now. The step may run
 // before the screen it points at has rendered, so the target is waited for
@@ -332,7 +336,7 @@ function useTarget(selector: string | null, waitMs: number): Spotted {
   const [found, setFound] = useState<Spotted>(EMPTY)
 
   useEffect(() => {
-    setFound({ wanted: selector, node: null, box: null, missing: false })
+    setFound({ wanted: selector, node: null, box: null, missing: false, steady: false })
     if (selector === null) return
     // Held apart from the parameter so the narrowing survives into the
     // callbacks below, which run long after this line.
@@ -346,14 +350,23 @@ function useTarget(selector: string | null, waitMs: number): Spotted {
     // that holds them is usually wider than they are. Every match is measured
     // and the light is cut to what they cover between them.
     let last: Box | null = null
+    let still = 0
 
     function read(): void {
       if (node === null) return
       const all = [...document.querySelectorAll(wanted)]
       const rect = covering(all.length > 0 ? all : [node])
-      if (rect === null || same(last, rect)) return
+      if (rect === null) return
+      if (same(last, rect)) {
+        if (still >= STILL_FRAMES) return
+        still += 1
+        if (still < STILL_FRAMES) return
+        setFound({ wanted, node, box: rect, missing: false, steady: true })
+        return
+      }
+      still = 0
       last = rect
-      setFound({ wanted, node, box: rect, missing: false })
+      setFound({ wanted, node, box: rect, missing: false, steady: false })
     }
 
     const sizes = new ResizeObserver(read)
@@ -390,7 +403,10 @@ function useTarget(selector: string | null, waitMs: number): Spotted {
       // a panel that is already in the tree and merely stops being hidden
       // changes no child of anything.
       arriving.observe(document.body, { childList: true, subtree: true, attributes: true })
-      waiting = setTimeout(() => setFound({ wanted, node: null, box: null, missing: true }), waitMs)
+      waiting = setTimeout(
+        () => setFound({ wanted, node: null, box: null, missing: true, steady: false }),
+        waitMs,
+      )
     }
 
     // Capture on scroll: the target may sit in a pane that scrolls on its own,
@@ -410,7 +426,7 @@ function useTarget(selector: string | null, waitMs: number): Spotted {
   return found.wanted === selector ? found : EMPTY
 }
 
-const EMPTY: Spotted = { wanted: null, node: null, box: null, missing: false }
+const EMPTY: Spotted = { wanted: null, node: null, box: null, missing: false, steady: false }
 
 // The card is placed against its own size, so it has to be measured: it grows
 // with the words a step carries, and a guess would leave a long one off screen.

@@ -20,7 +20,7 @@ import {
   stepAfter,
   wantsNextButton,
 } from './tour'
-import type { Box, Size, TourProps, TourSignal } from './tour.types'
+import type { Box, Size, TourPlacement, TourProps, TourSignal } from './tour.types'
 
 // The card is measured as soon as it is on screen; this is only what the very
 // first frame is placed against, and it matches the w-80 card below.
@@ -41,6 +41,12 @@ export function TourOverlay({
   const viewport = useViewport()
   const [card, measureCard] = useMeasured(FIRST_GUESS)
   const target = useTarget(step?.target ?? null, waitMs)
+  // Held apart from the target: the step waits on this before it speaks, and
+  // lights the target once it does.
+  const settled = useTarget(step?.waitFor ?? null, waitMs)
+  // The same wait from the other side: something that has to be gone, not
+  // there. Read every frame, since nothing announces an element leaving.
+  const gone = useGone(step?.waitGone ?? null)
 
   function send(signal: TourSignal): void {
     const next = stepAfter(steps, at, signal)
@@ -90,17 +96,32 @@ export function TourOverlay({
 
   const node = target.node
   const onClickStep = step?.advance === 'click'
+  const wanted = step?.target ?? null
 
   useEffect(() => {
-    if (node === null || !onClickStep) return
-    // Capture, so the step moves on even when the control stops the click on
-    // its way up, and the control still gets the click of its own.
+    if (node === null || !onClickStep || wanted === null) return
+    // Capture, so the step is answered even when the control stops the click
+    // on its way up.
+    //
+    // Matched by the selector rather than against the one element that was
+    // measured: a step may point at a row of things, and pressing the second
+    // of them is as much an answer as pressing the first.
+    let timer: ReturnType<typeof setTimeout> | null = null
     function onClick(event: MouseEvent): void {
-      if (event.target instanceof Node && node?.contains(event.target)) raise('target-click')
+      if (!(event.target instanceof Element)) return
+      if (event.target.closest(wanted as string) === null) return
+      // Answered on the next tick, not here. The step that follows often
+      // closes the pane the control lives in, and moving on while the click
+      // is still on its way down unmounts the button before its own handler
+      // ever runs: the visitor presses "file it" and nothing is filed.
+      timer = setTimeout(() => raise('target-click'), 0)
     }
     document.addEventListener('click', onClick, true)
-    return () => document.removeEventListener('click', onClick, true)
-  }, [node, onClickStep])
+    return () => {
+      document.removeEventListener('click', onClick, true)
+      if (timer !== null) clearTimeout(timer)
+    }
+  }, [node, onClickStep, wanted])
 
   useEffect(() => {
     if (target.missing) raise('target-missing')
@@ -110,6 +131,22 @@ export function TourOverlay({
   const bodyId = useId()
 
   if (step === undefined) return null
+
+  // A step that points at something says nothing until that something is on
+  // screen. The recorded run takes a moment to put the teammates up, and a
+  // card explaining them over an empty corner is worse than no card at all.
+  // No grace on this one: what it waits for is the thing the step is about,
+  // and speaking early is the fault it was added to fix.
+  if (step.waitFor !== undefined && settled.node === null && !settled.missing) return null
+
+  // While the run's panel is still on screen the layout under it is still
+  // going to move, and a card placed against it now is a card that jumps.
+  if (!gone) return null
+
+  // Nothing is shown until what the step points at has arrived and stopped
+  // moving. A card that appears in the middle and then slides to its place is
+  // two appearances, and the second one is the only one that was wanted.
+  if (step.target !== null && !target.steady && !target.missing) return null
 
   const hole =
     target.box !== null && isOnScreen(target.box, viewport) ? spotlight(target.box, viewport) : null
@@ -132,7 +169,10 @@ export function TourOverlay({
   return (
     // Nothing here takes a click by default: only the dark bands and the card
     // do, which leaves the spotlit control answering to the pointer as usual.
-    <div className="pointer-events-none fixed inset-0 z-50" data-tour={step.id}>
+    // Above every portal the app puts up. Dialogs and sheets mount at the end
+    // of <body> at z-50, after this root, so a tour at the same level loses the
+    // tie and its card stops taking clicks the moment a form opens.
+    <div className="pointer-events-none fixed inset-0 z-[70]" data-tour={step.id}>
       {hole === null ? (
         <div className="pointer-events-auto absolute inset-0 bg-black/60" />
       ) : (
@@ -177,6 +217,7 @@ export function TourOverlay({
         )}
         style={spot === null ? moving : { ...moving, top: spot.top, left: spot.left }}
       >
+        {spot !== null && <Arrow placement={spot.placement} />}
         <p id={titleId} className="text-sm leading-tight font-medium">
           {step.title}
         </p>
@@ -210,8 +251,87 @@ export function TourOverlay({
   )
 }
 
+// Whether nothing on screen answers to a selector.
+function useGone(selector: string | null): boolean {
+  const [gone, setGone] = useState(true)
+  useEffect(() => {
+    if (selector === null) {
+      setGone(true)
+      return undefined
+    }
+    let frame = 0
+    const look = (): void => {
+      setGone(document.querySelector(selector) === null)
+      frame = requestAnimationFrame(look)
+    }
+    look()
+    return () => cancelAnimationFrame(frame)
+  }, [selector])
+  return gone
+}
+
+// Frames a box must hold still before the step is allowed to speak.
+const STILL_FRAMES = 3
+
+// Two readings are the same when nothing moved worth redrawing for.
+function same(was: Box | null, now: Box): boolean {
+  if (was === null) return false
+  return (
+    Math.abs(was.top - now.top) < 0.5 &&
+    Math.abs(was.left - now.left) < 0.5 &&
+    Math.abs(was.width - now.width) < 0.5 &&
+    Math.abs(was.height - now.height) < 0.5
+  )
+}
+
+// The smallest box covering them all, in viewport coordinates.
+function covering(nodes: Element[]): Box | null {
+  let top = Number.POSITIVE_INFINITY
+  let left = Number.POSITIVE_INFINITY
+  let right = Number.NEGATIVE_INFINITY
+  let bottom = Number.NEGATIVE_INFINITY
+  for (const node of nodes) {
+    const rect = node.getBoundingClientRect()
+    if (rect.width === 0 && rect.height === 0) continue
+    top = Math.min(top, rect.top)
+    left = Math.min(left, rect.left)
+    right = Math.max(right, rect.right)
+    bottom = Math.max(bottom, rect.bottom)
+  }
+  if (!Number.isFinite(top) || !Number.isFinite(left)) return null
+  return { top, left, width: right - left, height: bottom - top }
+}
+
 function Band({ style }: { style: CSSProperties }) {
   return <div aria-hidden className="pointer-events-auto absolute bg-black/60" style={style} />
+}
+
+// The card says which way it is pointing. A tip is a square turned on its
+// corner and pushed half out of the card, so the two borders that show are the
+// card's own and it reads as one shape rather than a badge stuck on the side.
+function Arrow({ placement }: { placement: TourPlacement }) {
+  const side = OPPOSITE[placement]
+  return (
+    <span
+      aria-hidden
+      className={cn(
+        'absolute size-3 rotate-45 border-b border-r bg-card',
+        side === 'bottom' && 'bottom-0 left-1/2 -ml-1.5 -mb-1.5',
+        side === 'top' && 'top-0 left-1/2 -ml-1.5 -mt-1.5 rotate-225',
+        side === 'right' && 'top-1/2 right-0 -mt-1.5 -mr-1.5 -rotate-45',
+        side === 'left' && 'top-1/2 left-0 -mt-1.5 -ml-1.5 rotate-135',
+      )}
+    />
+  )
+}
+
+// Where the tip sits is the side facing the target, which is the far side from
+// where the card was placed.
+const OPPOSITE: Record<TourPlacement, TourPlacement> = {
+  top: 'bottom',
+  bottom: 'top',
+  left: 'right',
+  right: 'left',
 }
 
 // What the app's own resize listeners see, read through the store hook so the
@@ -237,7 +357,15 @@ function readViewport(): string {
 // moved on still renders once with the previous step's reading in hand, and
 // without the selector to check it against, that stale "missing" would skip
 // the step that had only just opened.
-type Spotted = { wanted: string | null; node: Element | null; box: Box | null; missing: boolean }
+type Spotted = {
+  wanted: string | null
+  node: Element | null
+  box: Box | null
+  missing: boolean
+  // True once the box has been the same for a few frames running: the target
+  // has arrived and its entrance is over.
+  steady: boolean
+}
 
 // The element a step points at, and where it is right now. The step may run
 // before the screen it points at has rendered, so the target is waited for
@@ -246,7 +374,7 @@ function useTarget(selector: string | null, waitMs: number): Spotted {
   const [found, setFound] = useState<Spotted>(EMPTY)
 
   useEffect(() => {
-    setFound({ wanted: selector, node: null, box: null, missing: false })
+    setFound({ wanted: selector, node: null, box: null, missing: false, steady: false })
     if (selector === null) return
     // Held apart from the parameter so the narrowing survives into the
     // callbacks below, which run long after this line.
@@ -254,16 +382,29 @@ function useTarget(selector: string | null, waitMs: number): Spotted {
 
     let node: Element | null = null
     let waiting: ReturnType<typeof setTimeout> | undefined
+    let frame = 0
+
+    // A step may point at a row of things rather than one thing, and the box
+    // that holds them is usually wider than they are. Every match is measured
+    // and the light is cut to what they cover between them.
+    let last: Box | null = null
+    let still = 0
 
     function read(): void {
       if (node === null) return
-      const rect = node.getBoundingClientRect()
-      setFound({
-        wanted,
-        node,
-        box: { top: rect.top, left: rect.left, width: rect.width, height: rect.height },
-        missing: false,
-      })
+      const all = [...document.querySelectorAll(wanted)]
+      const rect = covering(all.length > 0 ? all : [node])
+      if (rect === null) return
+      if (same(last, rect)) {
+        if (still >= STILL_FRAMES) return
+        still += 1
+        if (still < STILL_FRAMES) return
+        setFound({ wanted, node, box: rect, missing: false, steady: true })
+        return
+      }
+      still = 0
+      last = rect
+      setFound({ wanted, node, box: rect, missing: false, steady: false })
     }
 
     const sizes = new ResizeObserver(read)
@@ -275,19 +416,35 @@ function useTarget(selector: string | null, waitMs: number): Spotted {
       if (late !== null) take(late)
     })
 
+    // Measured every frame for as long as the step lasts. A target moves for
+    // reasons no observer reports: it slides in under a transform, or a panel
+    // above it opens and pushes it down without changing its own size. The
+    // reading is only handed on when it has actually changed, so the cost is a
+    // rectangle a frame and nothing re-renders for standing still.
+    function settle(): void {
+      read()
+      frame = requestAnimationFrame(settle)
+    }
+
     function take(candidate: Element): void {
       node = candidate
       clearTimeout(waiting)
       arriving.disconnect()
-      sizes.observe(candidate)
-      read()
+      for (const one of document.querySelectorAll(wanted)) sizes.observe(one)
+      settle()
     }
 
     const first = document.querySelector(wanted)
     if (first !== null) take(first)
     else {
-      arriving.observe(document.body, { childList: true, subtree: true })
-      waiting = setTimeout(() => setFound({ wanted, node: null, box: null, missing: true }), waitMs)
+      // Attributes too: a step may wait on a state rather than an arrival, and
+      // a panel that is already in the tree and merely stops being hidden
+      // changes no child of anything.
+      arriving.observe(document.body, { childList: true, subtree: true, attributes: true })
+      waiting = setTimeout(
+        () => setFound({ wanted, node: null, box: null, missing: true, steady: false }),
+        waitMs,
+      )
     }
 
     // Capture on scroll: the target may sit in a pane that scrolls on its own,
@@ -296,6 +453,7 @@ function useTarget(selector: string | null, waitMs: number): Spotted {
     window.addEventListener('scroll', read, true)
     return () => {
       clearTimeout(waiting)
+      cancelAnimationFrame(frame)
       sizes.disconnect()
       arriving.disconnect()
       window.removeEventListener('resize', read)
@@ -306,7 +464,7 @@ function useTarget(selector: string | null, waitMs: number): Spotted {
   return found.wanted === selector ? found : EMPTY
 }
 
-const EMPTY: Spotted = { wanted: null, node: null, box: null, missing: false }
+const EMPTY: Spotted = { wanted: null, node: null, box: null, missing: false, steady: false }
 
 // The card is placed against its own size, so it has to be measured: it grows
 // with the words a step carries, and a guess would leave a long one off screen.

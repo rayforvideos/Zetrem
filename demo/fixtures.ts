@@ -27,7 +27,9 @@ export const DEMO_SETTINGS: Settings = {
   userFace: 'ghost',
   setupDone: true,
   onboarded: true,
-  hintsSeen: [],
+  // The app's own first-run bubbles are marked read: the tour is the guide
+  // here, and two cards explaining the same box at once is one too many.
+  hintsSeen: ['ask-whole-job', 'hire-first'],
   knownTools: [],
   knownAgents: [],
   stockOff: [],
@@ -83,7 +85,7 @@ export const DEMO_AGENTS: AgentDef[] = [
     worktree: true,
   },
   {
-    character: 'frog',
+    character: 'rock',
     name: 'React Developer',
     description: '렌더러, 컴포넌트, 상태 관리 작업일 때',
     model: null,
@@ -95,7 +97,7 @@ export const DEMO_AGENTS: AgentDef[] = [
     worktree: true,
   },
   {
-    character: 'blob',
+    character: 'star',
     name: 'Code Reviewer',
     description: '코드 리뷰, 테스트, 규약 점검이 필요할 때',
     model: null,
@@ -186,9 +188,8 @@ export const DEMO_PROPOSALS: LibraryProposal[] = [
     folder: '구조',
     title: '팀원은 자기 worktree 에서 일하고 브랜치로 돌아온다',
     body: [
-      '**결론:** 팀원마다 `.claude/worktrees/` 아래 자기 git worktree 를 받는다.',
-      '변경은 working tree 에 바로 닿지 않고 `worktree-<이름>` 브랜치로 돌아오며,',
-      '오케스트레이터가 `git merge --no-ff` 로 하나씩 합친다.',
+      '팀원마다 자기 git worktree 를 받는다. 변경은 working tree 에 바로 닿지 않고',
+      '브랜치로 돌아오며, 오케스트레이터가 하나씩 합친다.',
       '',
       '새 worktree 에는 `node_modules` 가 없으므로 메인 체크아웃의 것을 심볼릭 링크로 걸어 준다.',
       '팀원 브리프에 "없으면 기다려라, 직접 설치하지 마라" 가 들어가는 이유다.',
@@ -208,6 +209,12 @@ export const DEMO_GIT_STATUS: GitStatus = {
   files: [],
 }
 
+// A short sha is what a person reads; the graph joins commits by the full one,
+// so the parents are written short here and grown the same way the commit is.
+function full(short: string): string {
+  return `${short}${'0'.repeat(40 - short.length)}`
+}
+
 function commit(
   short: string,
   subject: string,
@@ -218,9 +225,9 @@ function commit(
   head = false,
 ): GraphCommit {
   return {
-    sha: `${short}${'0'.repeat(33)}`,
+    sha: full(short),
     short,
-    parents,
+    parents: parents.map(full),
     refs,
     head,
     author: 'Ray',

@@ -1,50 +1,57 @@
 import type { TourStep } from '@/app/demo/tour/tour.types'
 
-// What a first-time visitor is walked through. The wording says plainly that
-// this page replays a recorded session, because a demo that pretends to be
-// live is worse than one that says what it is.
+// The walk a first-time visitor is taken on. Every stop waits for them: the
+// recorded run is held between stops, so the next thing on screen happens
+// because they moved on and not because a timer went off while they read.
+// The wording says plainly that this is a recording, since a demo that
+// pretends to be live is worse than one that says what it is.
 export const DEMO_STEPS: TourStep[] = [
-  {
-    id: 'intro',
-    target: null,
-    title: 'Zetrem 둘러보기',
-    body: 'Zetrem 은 Claude Code 에이전트 팀을 화면에서 다루는 데스크톱 앱입니다. 이름을 붙인 팀원에게 일을 맡기고, 각자 무엇을 하는지 보고, 승인이 필요할 때 답합니다. 이 페이지는 실제 세션을 기록해 그대로 재생하며, 화면은 앱 그 자체입니다. 2분이면 끝납니다.',
-    advance: 'manual',
-  },
   {
     id: 'ask',
     target: '[data-talk] textarea',
     title: '일 전체를 맡깁니다',
-    body: '다음 단계를 지시하는 대신 원하는 결과를 말합니다. 지금 입력되고 있는 문장이 그 예입니다. 오케스트레이터가 알아서 쪼개고 누구에게 맡길지 정합니다.',
-    advance: 'auto',
-    delayMs: 4200,
+    body: '다음 단계를 지시하는 대신 원하는 결과를 말합니다. 지금 입력되는 문장이 그 예입니다. 누구에게 맡길지는 오케스트레이터가 정합니다.',
+    advance: 'manual',
     placement: 'top',
   },
   {
     id: 'crew',
     target: '[data-card]',
+    waitFor: '[data-crew-board="3"]',
     title: '팀원마다 타일 하나',
-    body: '세 명이 동시에 움직입니다. 타일에는 이름과 지금 하는 일, 방금 부른 도구가 실시간으로 올라옵니다. 터미널이라면 이 셋의 출력이 한 줄기로 뒤섞였을 자리입니다.',
-    advance: 'auto',
-    delayMs: 6000,
+    body: '세 명이 동시에 붙었습니다. 타일에 이름과 지금 하는 일, 방금 부른 도구가 올라옵니다. 터미널이라면 이 셋의 출력이 한 줄기로 뒤섞였을 자리입니다.',
+    advance: 'manual',
+    placement: 'bottom',
+  },
+  {
+    id: 'crew-open',
+    target: '[data-card]',
+    waitFor: '[data-crew-board="3"]',
+    title: '타일을 열면 더 들어갑니다',
+    body: '팀원 하나를 누르면 무엇을 맡았는지, 지금까지 무슨 도구를 어떤 인자로 불렀는지, 얼마나 썼는지가 아래에 펼쳐집니다. 눌러보세요.',
+    advance: 'click',
     placement: 'bottom',
   },
   {
     id: 'approval',
     target: '[data-approval]',
-    title: '승인이 필요하면 멈춰서 묻습니다',
-    body: '명령을 실행하기 전에 세션이 여기서 멈춰 사용자를 기다립니다. 실제로 눌러보세요. 허용을 누르면 그때부터 다시 움직입니다.',
+    title: '실행 전에 멈춰서 묻습니다',
+    body: '팀원이 명령을 실행하려 합니다. 세션은 여기서 멈춰 답을 기다립니다. 허용을 눌러야 다음이 이어집니다.',
     advance: 'click',
     placement: 'right',
   },
   {
     id: 'report',
-    target: '[data-talk]',
-    title: '보고가 하나로 정리됩니다',
-    body: '팀원들이 각자 끝낸 결론을 오케스트레이터가 받아 한 답변으로 묶습니다. 답변 아래의 「라이브러리에 담기」로 그대로 프로젝트 노트에 넣을 수 있습니다.',
-    advance: 'auto',
-    delayMs: 9000,
-    placement: 'left',
+    target: 'article',
+    waitFor: '[data-system-line]',
+    // The teammate panel stands a few seconds past the answer, and the
+    // conversation widens the instant it goes. Waiting it out is what lets the
+    // card be placed once, where it stays.
+    waitGone: '[data-crew-board]',
+    title: '보고가 한 답변으로 합쳐집니다',
+    body: '세 팀원이 각자 올린 결론을 오케스트레이터가 받아 하나로 정리했습니다. 위의 명령 줄을 누르면 그때 실제로 돌아온 출력도 그대로 열립니다.',
+    advance: 'manual',
+    placement: 'top',
   },
   {
     id: 'library-open',
@@ -57,16 +64,85 @@ export const DEMO_STEPS: TourStep[] = [
   {
     id: 'proposal',
     target: '[data-proposals]',
+    waitFor: '[data-proposals] button',
     title: '받아들일지는 사람이 정합니다',
-    body: '에이전트가 올린 제안입니다. 받아들이면 그때 노트가 되고, 무시하면 사라집니다. 눌러보세요.',
+    body: '팀원이 올린 제안입니다. 저절로 저장되는 것은 없습니다. 받아들이면 그때 노트가 됩니다.',
     advance: 'click',
     placement: 'bottom',
+  },
+  {
+    id: 'hire',
+    target: '[data-hire]',
+    title: '팀원은 직접 만듭니다',
+    body: '이름과 언제 부를지, 그리고 지시문. 이 셋이면 팀원 하나가 생깁니다. 눌러보세요.',
+    advance: 'click',
+    placement: 'right',
+  },
+  {
+    id: 'hire-form',
+    target: '[data-member-form]',
+    waitFor: '#member-prompt',
+    title: '무엇까지 정해 줄 수 있는지',
+    body: '얼굴과 모델을 고르고, 쓸 도구를 제한하고, 먼저 읽을 문서를 붙이고, 자기 worktree 에서 일할지도 여기서 정합니다. 오케스트레이터는 「언제 부를지」를 읽고 누구에게 맡길지 정합니다.',
+    advance: 'manual',
+    placement: 'right',
+  },
+  {
+    id: 'git-open',
+    target: '[data-git-button]',
+    title: '프로젝트의 git 도 여기에',
+    body: '팀원들이 각자 브랜치에서 일하고 돌아온 자리입니다. 눌러서 열어보세요.',
+    advance: 'click',
+    placement: 'bottom',
+  },
+  {
+    id: 'git-graph',
+    target: '[data-git-row]',
+    title: '누가 무엇을 합쳤는지 보입니다',
+    body: '본선 옆으로 갈라졌다 합쳐지는 가지 하나하나가 팀원이 끝내고 돌아온 일입니다. 커밋 하나를 눌러보세요.',
+    advance: 'click',
+    placement: 'right',
+  },
+  {
+    id: 'git-files',
+    target: '[data-git-file] button',
+    waitFor: '[data-git-file] button',
+    title: '그 커밋이 건드린 파일',
+    body: '커밋 하나가 어디를 만졌는지 오른쪽에 섭니다. 파일 하나를 눌러보세요.',
+    advance: 'click',
+    placement: 'left',
+  },
+  {
+    id: 'git-diff',
+    target: '[data-git-diff]',
+    waitFor: '[data-git-diff]',
+    title: '더한 줄과 지운 줄',
+    body: '앱을 떠나지 않고 그 안까지 봅니다. 팀원이 돌려보낸 일을 합치기 전에 여기서 확인합니다.',
+    advance: 'manual',
+    placement: 'right',
+  },
+  {
+    id: 'settings-open',
+    target: '[data-settings-button]',
+    title: '무엇까지 맡길지 정합니다',
+    body: '계정, 프로젝트, 모델, 그리고 묻지 않고 어디까지 해도 되는지. 눌러서 열어보세요.',
+    advance: 'click',
+    placement: 'bottom',
+  },
+  {
+    id: 'settings-session',
+    target: '[data-setup-section="session"]',
+    waitFor: '[data-setup-section="session"]:not([hidden])',
+    title: '권한과 모델은 여기서',
+    body: '계획 먼저 · 먼저 묻기 · 자동 편집 · 전부 허용 중에 고르고, 모델과 노력 수준도 정합니다. 다음 세션부터 그대로 적용됩니다.',
+    advance: 'manual',
+    placement: 'left',
   },
   {
     id: 'outro',
     target: null,
     title: '여기까지입니다',
-    body: '실제 앱은 여러분 컴퓨터의 Claude Code 를 그대로 실행합니다. 대화도 팀원도 라이브러리도 전부 로컬에 저장되고, 로그인은 CLI 가 관리합니다. 소스와 내려받기는 github.com/rayforvideos/Zetrem 에 있습니다.',
+    body: '실제 앱은 여러분 컴퓨터의 Claude Code 를 그대로 실행합니다. 대화도 팀원도 라이브러리도 전부 로컬에 남고, 로그인은 CLI 가 관리합니다. 내려받기와 자세한 소개는 Zetrem 홈페이지에 있습니다.',
     advance: 'manual',
   },
 ]

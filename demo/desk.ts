@@ -56,6 +56,18 @@ function listing(): LibraryListing {
 // person answers, the way a live run waits on them rather than guessing.
 const running = new Set<string>()
 let answerPermission: (() => void) | null = null
+let releaseHold: (() => void) | null = null
+// A visitor can move on before the tape has even reached the stop it is to be
+// held at. The leave is remembered rather than dropped, or the tape would park
+// at a hold nobody is left to lift and the run would stall for good.
+let released = false
+
+// The tour is what starts the tape again, so the next thing on screen happens
+// because the visitor moved on rather than because a timer ran out under them.
+export function releaseTape(): void {
+  released = true
+  releaseHold?.()
+}
 
 function wait(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms))
@@ -64,6 +76,7 @@ function wait(ms: number): Promise<void> {
 async function play(id: string): Promise<void> {
   if (running.has(id)) return
   running.add(id)
+  released = false
   push('agent:event', { id, kind: 'workspace', cwd: DEMO_PROJECT.path })
   for (const beat of DEMO_SCRIPT) {
     if (!running.has(id)) return
@@ -74,6 +87,13 @@ async function play(id: string): Promise<void> {
       proposals = [...DEMO_PROPOSALS]
       push('library:proposed', null)
     }
+    if (beat.holds && !released) {
+      await new Promise<void>((resolve) => {
+        releaseHold = resolve
+      })
+      releaseHold = null
+    }
+    if (beat.holds) released = false
     if (beat.holdForAnswer) {
       await new Promise<void>((resolve) => {
         answerPermission = resolve
@@ -146,6 +166,23 @@ const answers: Record<string, (...args: unknown[]) => unknown> = {
   searchLibrary: () => [],
   libraryOpenToAgents: () => true,
   setLibraryOpenToAgents: () => true,
+  fileLibraryNote: (text) => {
+    const body = String(text)
+    const made: LibraryNote = {
+      id: `${Date.now()}.md`,
+      folder: '',
+      title: '세 갈래 분석의 결론',
+      summary: body.split('\n').find((line) => line.trim().length > 0) ?? '',
+      tags: ['analysis'],
+      source: '',
+      createdAtMs: Date.now(),
+      updatedAtMs: Date.now(),
+      body,
+    }
+    notes = [made, ...notes]
+    push('library:changed', null)
+    return { note: made, already: false }
+  },
   listLibraryProposals: () => proposals,
   acceptLibraryProposal: (id) => {
     const found = proposals.find((one) => one.id === id)
@@ -190,6 +227,27 @@ const answers: Record<string, (...args: unknown[]) => unknown> = {
           ]
         : [],
     ),
+
+  gitShowDiff: () =>
+    won(
+      [
+        'diff --git a/src/widgets/conversation/ui/ConversationPane/ConversationPane.tsx b/src/widgets/conversation/ui/ConversationPane/ConversationPane.tsx',
+        '@@ -232,6 +232,14 @@',
+        '               }',
+        '+              // The draft is not drawn. Words arriving one at a time move and',
+        '+              // reflow under the eye while the person is still reading the turn',
+        '+              // before; the working row says "Writing" until they land.',
+        '+              if (turn.thinking.length === 0 && turn.text.length === 0) {',
+        '+                return null',
+        '+              }',
+        '               return (',
+        '                 <article',
+        '-                  {turn.draft.length > 0 && (',
+        '-                    <span className="zt-caret" />',
+        '-                  )}',
+      ].join('\n'),
+    ),
+  gitDiff: () => won(''),
 
   updaterState: () => null,
   updaterCheck: () => ({ state: 'dev' }),

@@ -92,6 +92,7 @@ export function CrewBoard({
           )}
 
           <div
+            data-crew-cards
             className={lanes ? 'zt-scroll zt-fade-y' : 'zt-scroll'}
             style={lanes ? laneListStyle : cardsStyle}
           >

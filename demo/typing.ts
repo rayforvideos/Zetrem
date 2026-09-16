@@ -31,7 +31,7 @@ export function composer(): HTMLTextAreaElement | null {
   return document.querySelector<HTMLTextAreaElement>('[data-talk] textarea, textarea')
 }
 
-export async function typeAndSend(text: string): Promise<void> {
+export async function typeOnly(text: string): Promise<void> {
   const field = await until(composer)
   if (!field) return
   field.focus()
@@ -39,10 +39,15 @@ export async function typeAndSend(text: string): Promise<void> {
     setValue(field, text.slice(0, Math.min(n, text.length)))
     await wait(TYPE_MS)
   }
-  await wait(500)
-  // The send button rather than a synthetic Enter: a key event the page did
-  // not trust never reaches the box's own handler, and the form's submit is
-  // the one path that is certain to be the app's own.
-  const send = field.closest('form')?.querySelector<HTMLButtonElement>('button[type="submit"]')
-  send?.click()
+}
+
+// Sending is left to the tour, so the ask flies when the visitor moves on and
+// the teammates are on screen by the time the next stop asks about them. The
+// send button rather than a synthetic Enter: a key event the page did not
+// trust never reaches the box's own handler, and the form's submit is the one
+// path that is certain to be the app's own.
+export function sendNow(): void {
+  const field = composer()
+  if (!field || field.value.trim().length === 0) return
+  field.closest('form')?.querySelector<HTMLButtonElement>('button[type="submit"]')?.click()
 }

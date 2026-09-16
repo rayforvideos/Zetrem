@@ -120,10 +120,6 @@ describe('the ring that says where the keyboard is', () => {
   })
 })
 
-// The toast is lifted off the composer by a constant rather than a measurement,
-// which only holds while the constant still describes the composer. These pin
-// the classes the numbers in COMPOSER were read off, so a change to one side
-// fails here instead of quietly putting a toast back over the send button.
 describe('the composer keeps the shape the toast was lifted over', () => {
   it('still grows to the ceiling COMPOSER.field names', async () => {
     const composer = await readFile(

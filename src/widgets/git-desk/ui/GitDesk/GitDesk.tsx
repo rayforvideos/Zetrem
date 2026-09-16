@@ -560,6 +560,7 @@ export function GitDesk({
                 <RefreshCw />
               </Button>
               <Button
+                data-git-close
                 variant="ghost"
                 size="icon-xs"
                 onClick={git.close}

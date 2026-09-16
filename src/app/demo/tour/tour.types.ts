@@ -14,6 +14,16 @@ export type TourPlacement = 'top' | 'bottom' | 'left' | 'right'
 export type TourStep = {
   id: string
   target: string | null
+  // What must be on screen before the step says anything. A target is often
+  // there before the thing the step is about is finished: one teammate of
+  // three has arrived, an answer is still being written. Naming the finished
+  // state here keeps the card from speaking too early.
+  waitFor?: string
+  // What must be off the screen before the step says anything. The panel a run
+  // works under stays a few seconds past the answer and the conversation
+  // widens the moment it goes: a card placed before that slides out from under
+  // the reader.
+  waitGone?: string
   title: string
   body: string
   advance: TourAdvance

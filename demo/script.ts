@@ -11,6 +11,10 @@ export type DemoBeat = {
   // A permission ask stops the tape: the run only goes on once the person has
   // answered, the way a real session waits on them.
   holdForAnswer?: boolean
+  // The tour stops the tape here and the visitor starts it again by moving on,
+  // so what happens next happens because they asked for it rather than because
+  // a timer went off while they were reading.
+  holds?: boolean
 }
 
 const ELECTRON = 'tu_electron'
@@ -160,7 +164,11 @@ export const DEMO_SCRIPT: DemoBeat[] = [
       REVIEWER,
     ),
   },
-  { afterMs: 250, event: progress('task_3', REVIEWER, '규약 테스트를 읽는 중', 'Read', 3100) },
+  {
+    afterMs: 250,
+    event: progress('task_3', REVIEWER, '규약 테스트를 읽는 중', 'Read', 3100),
+    holds: true,
+  },
 
   { afterMs: 500, event: toolResult(ELECTRON, 'c1', '118 files') },
   {
@@ -224,6 +232,31 @@ export const DEMO_SCRIPT: DemoBeat[] = [
         input: { command: 'npm run typecheck && npm test -- tests/conventions --reporter=dot' },
       },
     ]),
+  },
+  {
+    afterMs: 1300,
+    event: {
+      type: 'user',
+      message: {
+        role: 'user',
+        content: [{ type: 'tool_result', tool_use_id: 'c6', content: '' }],
+      },
+      tool_use_result: {
+        stdout: [
+          '> zetrem@1.0.2-beta.5 typecheck',
+          '> tsc --noEmit',
+          '',
+          '> zetrem@1.0.2-beta.5 test',
+          '> vitest run tests/conventions --reporter=dot',
+          '',
+          ' Test Files  22 passed (22)',
+          '      Tests  92 passed (92)',
+          '   Duration  3.41s',
+        ].join('\n'),
+        stderr: '',
+        interrupted: false,
+      },
+    },
   },
   {
     afterMs: 900,
@@ -298,6 +331,7 @@ export const DEMO_SCRIPT: DemoBeat[] = [
       subtype: 'success',
       is_error: false,
       result: '',
+      duration_ms: 38_140,
       usage: { input_tokens: 48210, output_tokens: 2615 },
     },
   },

@@ -246,7 +246,7 @@ export const DEMO_SCRIPT: DemoBeat[] = [
     ]),
   },
   {
-    afterMs: 1300,
+    afterMs: 700,
     event: {
       type: 'user',
       message: {
@@ -269,6 +269,7 @@ export const DEMO_SCRIPT: DemoBeat[] = [
         interrupted: false,
       },
     },
+    holds: true,
   },
   {
     afterMs: 900,
@@ -311,36 +312,36 @@ export const DEMO_SCRIPT: DemoBeat[] = [
     ),
     raises: 'proposal',
   },
-  { afterMs: 150, event: finished('task_1') },
+  { afterMs: 150, event: finished('task_1'), holds: true },
 
-  { afterMs: 1600, event: delta('세 팀원의 보고를 합쳐 정리했습니다.\n\n') },
+  { afterMs: 500, event: delta('세 팀원의 보고를 합쳐 정리했습니다.\n\n') },
   {
-    afterMs: 700,
+    afterMs: 300,
     event: delta(
       '**한 문장:** 메인은 프로세스만 다루고, 해석과 화면은 렌더러가 맡으며, 그 경계를 규약 테스트가 지킵니다.\n\n',
     ),
   },
   {
-    afterMs: 800,
+    afterMs: 350,
     event: delta(
       '- **메인 프로세스** — `claude` 를 자식으로 띄워 stdout 을 줄 단위로 넘길 뿐, JSON 을 해석하지 않습니다. 모든 IPC 채널에 sender 검증이 걸려 있습니다.\n',
     ),
   },
   {
-    afterMs: 800,
+    afterMs: 350,
     event: delta(
       '- **렌더러** — 외부 상태 라이브러리가 없습니다. 클로저 스토어와 `useSyncExternalStore` 로 통일되어 있고, 순수 규칙은 전부 `lib` 으로 빠져 있습니다.\n',
     ),
   },
   {
-    afterMs: 800,
+    afterMs: 350,
     event: delta(
       '- **규약** — 폴더 배치·타입 분리·IPC 계약·커밋 형식까지 22 개의 테스트가 CI 에서 강제합니다. 빈 곳은 커버리지 임계값과 knip 미실행 둘입니다.\n\n',
     ),
   },
-  { afterMs: 700, event: delta('개선 후보를 하나 고르시면 그대로 작업으로 넘기겠습니다.') },
+  { afterMs: 300, event: delta('개선 후보를 하나 고르시면 그대로 작업으로 넘기겠습니다.') },
   {
-    afterMs: 1000,
+    afterMs: 500,
     event: {
       type: 'result',
       subtype: 'success',

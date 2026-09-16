@@ -158,13 +158,17 @@ export function TourOverlay({
   // over and walks away.
   const [saidSo, setSaidSo] = useState(false)
   useEffect(() => {
-    if (!waitingOn) {
-      setSaidSo(false)
-      return undefined
+    if (waitingOn) {
+      const coming = setTimeout(() => setSaidSo(true), HELD_SHOWN_MS)
+      return () => clearTimeout(coming)
     }
-    const timer = setTimeout(() => setSaidSo(true), HELD_SHOWN_MS)
-    return () => clearTimeout(timer)
-  }, [waitingOn])
+    if (!saidSo) return undefined
+    // Once it is up it stays up long enough to be read. A wait that ends just
+    // after the line admitted to it would otherwise be a flash, which is worse
+    // than either saying nothing or saying it.
+    const going = setTimeout(() => setSaidSo(false), HELD_KEPT_MS)
+    return () => clearTimeout(going)
+  }, [waitingOn, saidSo])
 
   const titleId = useId()
   const bodyId = useId()
@@ -176,7 +180,7 @@ export function TourOverlay({
 
   // Said rather than nothing: the walk goes on, and this is how much of it is
   // still to come.
-  if (waitingOn) return saidSo ? <Held done={at} total={total} /> : null
+  if (waitingOn || saidSo) return saidSo ? <Held done={at} total={total} /> : null
 
   const hole =
     target.box !== null && isOnScreen(target.box, viewport) ? spotlight(target.box, viewport) : null
@@ -279,8 +283,12 @@ export function TourOverlay({
   )
 }
 
-// How long a step waits before it admits to waiting.
-const HELD_SHOWN_MS = 600
+// How long a step waits before it admits to waiting, and how long it keeps
+// saying so once it has. Past the run itself the waits are a second or so, and
+// a line that flashed up for the tail of one of those would be worse than the
+// wait it was reporting.
+const HELD_SHOWN_MS = 1200
+const HELD_KEPT_MS = 700
 
 // What stands in for the card while a step waits on the app. It lights nothing
 // and covers nothing, so the visitor watches the run rather than the tour, and

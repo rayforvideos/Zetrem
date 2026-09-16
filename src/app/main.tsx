@@ -5,7 +5,7 @@ import { I18nProvider } from '@lingui/react'
 import { WorkspaceScreen } from '@/pages/workspace'
 import { Boundary } from './Boundary'
 import { Toaster } from '@/shared/ui/sonner'
-import { COMPOSER_MAX, SHELL_PAD, USAGE_BAR } from '@/shared/config/theme'
+import { USAGE_BAR } from '@/shared/config/theme'
 import { loadTongue } from '@/shared/lib/say/load'
 import { chosenTongue, watchTongue } from '@/shared/lib/say/say'
 import './styles/global.css'
@@ -26,19 +26,13 @@ function Root() {
   return <WorkspaceScreen key={tongue} />
 }
 
-// A toast has one place: the bottom-right corner, where the eye already is while
-// a reply lands or a draft is being typed, and where an Undo is a short reach
-// from the card that raised it.
+// A toast has one place: the bottom-right corner, clear of the status bar and
+// nothing else. It was lifted the height of the composer at its tallest, which
+// left it floating in the middle of the screen: the composer is centred and
+// narrower than the window, so a toast at the right edge was never over it.
 const TOAST_GAP = 12
 
-// The lift that keeps it off the composer is arithmetic, not a measurement. The
-// old measured lift moved the toast every time the composer grew or an approval
-// card took its place, which is why the toast was banished to the titlebar; a
-// constant tall enough for the composer's tallest state buys the same clearance
-// and still gives the toast one fixed place of its own. The stack, bottom up:
-// the status bar, the shell's padding under the composer, the composer at full
-// height with files attached, then the gap.
-const TOAST_BOTTOM = USAGE_BAR.height + SHELL_PAD + COMPOSER_MAX + TOAST_GAP
+const TOAST_BOTTOM = USAGE_BAR.height + TOAST_GAP
 
 function Toasts() {
   return (

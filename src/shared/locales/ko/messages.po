@@ -1130,7 +1130,7 @@ msgstr "이 팀원이 먼저 읽을 문서입니다. 길어도 열기 전까지�
 msgid "Don't ask again this session"
 msgstr "이번 세션에서는 다시 묻지 않기"
 
-#: src/app/demo/tour/TourOverlay.tsx:224
+#: src/app/demo/tour/TourOverlay.tsx:231
 #: src/widgets/agent-report/lib/state-word/state-word.ts:12
 #: src/widgets/library/ui/NoteReader/NoteReader.tsx:102
 #: src/widgets/setup/ui/PluginShelf/PluginShelf.tsx:129
@@ -1743,7 +1743,7 @@ msgstr "{name}에 새 노트"
 msgid "New teammate"
 msgstr "새 팀원"
 
-#: src/app/demo/tour/TourOverlay.tsx:224
+#: src/app/demo/tour/TourOverlay.tsx:231
 #: src/widgets/welcome/ui/WelcomePane/WelcomePane.tsx:137
 msgid "Next"
 msgstr "다음"
@@ -2478,7 +2478,7 @@ msgstr "브라우저에서 로그인하는 중…"
 msgid "Skip"
 msgstr "건너뛰기"
 
-#: src/app/demo/tour/TourOverlay.tsx:220
+#: src/app/demo/tour/TourOverlay.tsx:227
 msgid "Skip tour"
 msgstr "건너뛰기"
 
@@ -2540,7 +2540,7 @@ msgstr "스태시에 넣기"
 msgid "Stay here"
 msgstr "여기 있기"
 
-#: src/app/demo/tour/TourOverlay.tsx:213
+#: src/app/demo/tour/TourOverlay.tsx:220
 msgid "Step {shown} of {total}"
 msgstr "{total}단계 중 {shown}"
 
@@ -3017,7 +3017,7 @@ msgstr "도구"
 msgid "Tools"
 msgstr "도구"
 
-#: src/app/demo/tour/TourOverlay.tsx:227
+#: src/app/demo/tour/TourOverlay.tsx:234
 msgid "Try the highlighted control"
 msgstr "표시된 곳을 눌러보세요"
 

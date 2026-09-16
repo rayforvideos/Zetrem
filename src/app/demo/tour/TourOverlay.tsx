@@ -42,6 +42,9 @@ export function TourOverlay({
   const viewport = useViewport()
   const [card, measureCard] = useMeasured(FIRST_GUESS)
   const target = useTarget(step?.target ?? null, waitMs)
+  // Held apart from the target: the step waits on this before it speaks, and
+  // lights the target once it does.
+  const settled = useTarget(step?.waitFor ?? null, waitMs)
 
   function send(signal: TourSignal): void {
     const next = stepAfter(steps, at, signal)
@@ -131,6 +134,10 @@ export function TourOverlay({
   // A step that points at something says nothing until that something is on
   // screen. The recorded run takes a moment to put the teammates up, and a
   // card explaining them over an empty corner is worse than no card at all.
+  // No grace on this one: what it waits for is the thing the step is about,
+  // and speaking early is the fault it was added to fix.
+  if (step.waitFor !== undefined && settled.node === null && !settled.missing) return null
+
   if (step.target !== null && target.box === null && !target.missing && !patient) return null
 
   const hole =

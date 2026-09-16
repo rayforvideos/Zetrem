@@ -17,6 +17,7 @@ export const DEMO_STEPS: TourStep[] = [
   {
     id: 'crew',
     target: '[data-card]',
+    waitFor: '[data-crew-board="3"]',
     title: '팀원마다 타일 하나',
     body: '세 명이 동시에 붙었습니다. 타일에 이름과 지금 하는 일, 방금 부른 도구가 올라옵니다. 터미널이라면 이 셋의 출력이 한 줄기로 뒤섞였을 자리입니다.',
     advance: 'manual',
@@ -25,6 +26,7 @@ export const DEMO_STEPS: TourStep[] = [
   {
     id: 'crew-open',
     target: '[data-card]',
+    waitFor: '[data-crew-board="3"]',
     title: '타일을 열면 더 들어갑니다',
     body: '팀원 하나를 누르면 무엇을 맡았는지, 지금까지 무슨 도구를 어떤 인자로 불렀는지, 얼마나 썼는지가 아래에 펼쳐집니다. 눌러보세요.',
     advance: 'click',
@@ -41,8 +43,9 @@ export const DEMO_STEPS: TourStep[] = [
   {
     id: 'report',
     target: 'article',
+    waitFor: '[data-system-line]',
     title: '보고가 한 답변으로 합쳐집니다',
-    body: '팀원들이 각자 결론을 올리면 오케스트레이터가 받아 하나로 정리합니다. 도착하는 대로 이 자리에 놓입니다.',
+    body: '세 팀원이 각자 올린 결론을 오케스트레이터가 받아 하나로 정리했습니다. 위의 명령 줄을 누르면 그때 실제로 돌아온 출력도 그대로 열립니다.',
     advance: 'manual',
     placement: 'top',
   },
@@ -57,6 +60,7 @@ export const DEMO_STEPS: TourStep[] = [
   {
     id: 'proposal',
     target: '[data-proposals]',
+    waitFor: '[data-proposals] button',
     title: '받아들일지는 사람이 정합니다',
     body: '팀원이 올린 제안입니다. 저절로 저장되는 것은 없습니다. 받아들이면 그때 노트가 됩니다.',
     advance: 'click',
@@ -73,6 +77,7 @@ export const DEMO_STEPS: TourStep[] = [
   {
     id: 'hire-form',
     target: '[data-member-form]',
+    waitFor: '#member-prompt',
     title: '무엇까지 정해 줄 수 있는지',
     body: '얼굴과 모델을 고르고, 쓸 도구를 제한하고, 먼저 읽을 문서를 붙이고, 자기 worktree 에서 일할지도 여기서 정합니다. 오케스트레이터는 「언제 부를지」를 읽고 누구에게 맡길지 정합니다.',
     advance: 'manual',
@@ -97,6 +102,7 @@ export const DEMO_STEPS: TourStep[] = [
   {
     id: 'git-diff',
     target: '[data-git-drawer]',
+    waitFor: '[data-git-files]',
     title: '바뀐 파일과 그 안까지',
     body: '커밋이 건드린 파일이 오른쪽에 섭니다. 파일을 누르면 더한 줄과 지운 줄이 그대로 열립니다.',
     advance: 'manual',
@@ -113,6 +119,7 @@ export const DEMO_STEPS: TourStep[] = [
   {
     id: 'settings-session',
     target: '[data-setup-section="session"]',
+    waitFor: '[data-setup-section="session"]:not([hidden])',
     title: '권한과 모델은 여기서',
     body: '계획 먼저 · 먼저 묻기 · 자동 편집 · 전부 허용 중에 고르고, 모델과 노력 수준도 정합니다. 다음 세션부터 그대로 적용됩니다.',
     advance: 'manual',

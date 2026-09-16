@@ -27,7 +27,9 @@ export const DEMO_SETTINGS: Settings = {
   userFace: 'ghost',
   setupDone: true,
   onboarded: true,
-  hintsSeen: [],
+  // The app's own first-run bubbles are marked read: the tour is the guide
+  // here, and two cards explaining the same box at once is one too many.
+  hintsSeen: ['ask-whole-job', 'hire-first'],
   knownTools: [],
   knownAgents: [],
   stockOff: [],

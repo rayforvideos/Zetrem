@@ -39,7 +39,7 @@ export const DEMO_STEPS: TourStep[] = [
   },
   {
     id: 'report',
-    target: '[data-system-line]',
+    target: 'article',
     title: '보고가 한 답변으로 합쳐집니다',
     body: '팀원들이 각자 결론을 올리면 오케스트레이터가 받아 하나로 정리합니다. 도착하는 대로 이 자리에 놓입니다.',
     advance: 'manual',

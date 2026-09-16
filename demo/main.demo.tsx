@@ -10,8 +10,10 @@ import { I18nProvider } from '@lingui/react'
 import '@/app/styles/global.css'
 import { loadTongue } from '@/shared/lib/say/load'
 import { TourOverlay } from '@/app/demo/tour/TourOverlay'
+import { Welcome } from './Welcome'
 import { installDemoDesk, releaseTape } from './desk'
 import { DEMO_STEPS } from './steps'
+import { ZETREM_HOME } from './links'
 import { DEMO_PROMPT } from './script'
 import { sendNow, typeOnly } from './typing'
 
@@ -60,10 +62,10 @@ function markAsDemo(): void {
   said.textContent =
     '\ub370\ubaa8 \u00b7 \uae30\ub85d\ub41c \uc138\uc158\uc744 \uc7ac\uc0dd\ud569\ub2c8\ub2e4'
   const to = document.createElement('a')
-  to.href = 'https://github.com/rayforvideos/Zetrem'
+  to.href = ZETREM_HOME
   to.target = '_blank'
   to.rel = 'noreferrer'
-  to.textContent = '\uc2e4\uc81c \uc571 \ubcf4\uae30'
+  to.textContent = 'Zetrem \ud648\ud398\uc774\uc9c0'
   to.className = 'pointer-events-auto ml-2 underline underline-offset-2 hover:text-foreground'
   mark.append(said, to)
   document.body.append(mark)
@@ -86,20 +88,32 @@ function offerAgain(): void {
   document.body.append(again)
 }
 
-createRoot(stage).render(
+const root = createRoot(stage)
+
+function showTour(): void {
+  root.render(
+    <StrictMode>
+      <I18nProvider i18n={i18n}>
+        <TourOverlay
+          steps={DEMO_STEPS}
+          onStepChange={onStepChange}
+          onDone={() => {
+            stage.remove()
+            offerAgain()
+          }}
+          // A step waits on the run, not the other way round: the tiles and the
+          // permission card only exist once the recorded session reaches them.
+          waitMs={25_000}
+        />
+      </I18nProvider>
+    </StrictMode>,
+  )
+}
+
+root.render(
   <StrictMode>
     <I18nProvider i18n={i18n}>
-      <TourOverlay
-        steps={DEMO_STEPS}
-        onStepChange={onStepChange}
-        onDone={() => {
-          stage.remove()
-          offerAgain()
-        }}
-        // A step waits on the run, not the other way round: the tiles and the
-        // permission card only exist once the recorded session reaches them.
-        waitMs={25_000}
-      />
+      <Welcome onStart={showTour} />
     </I18nProvider>
   </StrictMode>,
 )

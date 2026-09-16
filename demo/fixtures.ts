@@ -85,7 +85,7 @@ export const DEMO_AGENTS: AgentDef[] = [
     worktree: true,
   },
   {
-    character: 'frog',
+    character: 'rock',
     name: 'React Developer',
     description: '렌더러, 컴포넌트, 상태 관리 작업일 때',
     model: null,
@@ -97,7 +97,7 @@ export const DEMO_AGENTS: AgentDef[] = [
     worktree: true,
   },
   {
-    character: 'blob',
+    character: 'star',
     name: 'Code Reviewer',
     description: '코드 리뷰, 테스트, 규약 점검이 필요할 때',
     model: null,

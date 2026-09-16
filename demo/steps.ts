@@ -7,13 +7,6 @@ import type { TourStep } from '@/app/demo/tour/tour.types'
 // pretends to be live is worse than one that says what it is.
 export const DEMO_STEPS: TourStep[] = [
   {
-    id: 'intro',
-    target: null,
-    title: 'Zetrem 둘러보기',
-    body: 'Claude Code 에이전트 팀을 화면에서 다루는 데스크톱 앱입니다. 이름을 붙인 팀원에게 일을 맡기고, 각자 무엇을 하는지 보고, 승인이 필요할 때 답합니다. 이 페이지는 실제 세션을 기록해 재생하며, 화면은 앱 그 자체입니다.',
-    advance: 'manual',
-  },
-  {
     id: 'ask',
     target: '[data-talk] textarea',
     title: '일 전체를 맡깁니다',
@@ -65,7 +58,7 @@ export const DEMO_STEPS: TourStep[] = [
     id: 'outro',
     target: null,
     title: '여기까지입니다',
-    body: '실제 앱은 여러분 컴퓨터의 Claude Code 를 그대로 실행합니다. 대화도 팀원도 라이브러리도 전부 로컬에 남고, 로그인은 CLI 가 관리합니다. 소스와 내려받기는 github.com/rayforvideos/Zetrem 에 있습니다.',
+    body: '실제 앱은 여러분 컴퓨터의 Claude Code 를 그대로 실행합니다. 대화도 팀원도 라이브러리도 전부 로컬에 남고, 로그인은 CLI 가 관리합니다. 내려받기와 자세한 소개는 Zetrem 홈페이지에 있습니다.',
     advance: 'manual',
   },
 ]

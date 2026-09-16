@@ -16,7 +16,7 @@ import {
   DEMO_SETTINGS,
   demoUsageReport,
 } from './fixtures'
-import { DEMO_SCRIPT } from './script'
+import { DEMO_ENCORE, DEMO_SCRIPT } from './script'
 
 type Listener = (payload: never) => void
 
@@ -79,8 +79,18 @@ function wait(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms))
 }
 
+// The tape is one recorded session and there is only one of it. Anything asked
+// after it has played is answered by saying so: replaying the same run under a
+// different question would put an answer to something nobody asked on screen,
+// which is the one thing a demo must not do.
+let spent = false
+
 async function play(id: string): Promise<void> {
   if (running.has(id)) return
+  if (spent) {
+    await playOut(id)
+    return
+  }
   running.add(id)
   released = false
   push('agent:event', { id, kind: 'workspace', cwd: DEMO_PROJECT.path })
@@ -116,6 +126,30 @@ async function play(id: string): Promise<void> {
         push('agent:event', { id, kind: 'line', line: JSON.stringify(beat.event) })
       }
     }
+  }
+  push('agent:event', {
+    id,
+    kind: 'exit',
+    code: 0,
+    signal: null,
+    reason: null,
+    asked: false,
+  })
+  running.delete(id)
+  spent = true
+}
+
+// The honest end of the recording. Whatever is asked from here on gets the
+// truth rather than the tape: this page has one session in it and it has been
+// played, and the app the visitor just watched runs on their own machine.
+async function playOut(id: string): Promise<void> {
+  running.add(id)
+  push('agent:event', { id, kind: 'workspace', cwd: DEMO_PROJECT.path })
+  for (const beat of DEMO_ENCORE) {
+    if (!running.has(id)) return
+    await wait(beat.afterMs)
+    if (!running.has(id)) return
+    push('agent:event', { id, kind: 'line', line: JSON.stringify(beat.event) })
   }
   push('agent:event', {
     id,

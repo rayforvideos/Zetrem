@@ -52,11 +52,11 @@ function onStepChange(step: { id: string }): void {
   // screen when the visitor gets there: a tour that vanishes while it waits
   // for something reads as broken.
   if (step.id === 'crew-open') releaseTape()
-  // The same one stop early, twice more: the teammates report while the stop
-  // about the command's output is being read, and the answer is written while
-  // the stop about the usage bar is. What used to be a fourteen second wait in
-  // front of a still screen is the run happening behind what is being read.
-  if (step.id === 'output') releaseTape()
+  // The same one stop early, once more. The stop before this one asks for a
+  // press on a row in the conversation, so nothing may arrive while it is up:
+  // new lines push that row off under the aim. From here on the conversation
+  // is not what is being pointed at, and the rest of the run — the teammates
+  // coming back, the answer being written — happens behind the reading.
   if (step.id === 'usage') releaseTape()
   // A stop that is about a screen the visitor is not on opens it for them, and
   // one that has moved past a screen closes it behind them: the tour is the
@@ -95,10 +95,13 @@ function press(...selectors: string[]): void {
 // A badge that stays put for the whole visit. The opening card says this is a
 // recording, but a card is read once and then dismissed, and somebody who
 // lands mid-tour should still never mistake this for their own session.
+//
+// It sits under the walk's own bar rather than beside it: on a narrow window
+// this wraps to two lines, and anything sharing that row would be sat on.
 function markAsDemo(): void {
   const mark = document.createElement('div')
   mark.className =
-    'pointer-events-none fixed top-2 left-1/2 z-[80] -translate-x-1/2 rounded-full border border-border/70 bg-card/90 px-3 py-1 text-xs text-muted-foreground shadow-sm backdrop-blur'
+    'pointer-events-none fixed top-11 left-1/2 z-[80] -translate-x-1/2 rounded-full border border-border/70 bg-card/90 px-3 py-1 text-xs text-muted-foreground shadow-sm backdrop-blur'
   const said = document.createElement('span')
   said.textContent =
     '\ub370\ubaa8 \u00b7 \uae30\ub85d\ub41c \uc138\uc158\uc744 \uc7ac\uc0dd\ud569\ub2c8\ub2e4'

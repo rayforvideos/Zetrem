@@ -324,7 +324,7 @@ const HELD_KEPT_MS = 700
 // that on its own and a wait never reads as the end.
 function Walked({ done, total }: { done: number; total: number }) {
   return (
-    <div className="absolute top-11 left-1/2 flex -translate-x-1/2 items-center gap-2.5">
+    <div className="absolute top-2 left-1/2 flex -translate-x-1/2 items-center gap-2.5">
       <span
         aria-hidden
         className="h-2 w-40 overflow-hidden rounded-full bg-muted ring-1 ring-border/60 sm:w-56"

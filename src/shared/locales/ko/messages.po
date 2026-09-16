@@ -1512,8 +1512,8 @@ msgid "It was cancelled"
 msgstr "취소되었습니다"
 
 #: src/app/demo/tour/TourOverlay.tsx:293
-msgid "Just a moment · {left} more to come"
-msgstr "잠시 기다립니다 · 남은 이야기 {left}개"
+msgid "Just a moment · {left} chapters left"
+msgstr "잠시 기다립니다 · 남은 챕터 {left}개"
 
 #: src/widgets/library/lib/since/since.ts:11
 #: src/widgets/team-sidebar/lib/when/when.ts:12

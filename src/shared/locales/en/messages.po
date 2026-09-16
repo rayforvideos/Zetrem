@@ -1512,8 +1512,8 @@ msgid "It was cancelled"
 msgstr "It was cancelled"
 
 #: src/app/demo/tour/TourOverlay.tsx:293
-msgid "Just a moment · {left} more to come"
-msgstr "Just a moment · {left} more to come"
+msgid "Just a moment · {left} chapters left"
+msgstr "Just a moment · {left} chapters left"
 
 #: src/widgets/library/lib/since/since.ts:11
 #: src/widgets/team-sidebar/lib/when/when.ts:12

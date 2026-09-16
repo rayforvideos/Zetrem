@@ -290,7 +290,7 @@ function Held({ left }: { left: number }) {
     <div className="pointer-events-none fixed inset-0 z-[70]" data-tour-held>
       <div className="zt-rise absolute bottom-10 left-1/2 flex -translate-x-1/2 items-center gap-2 rounded-full border bg-card/90 px-4 py-2 text-xs text-muted-foreground shadow-lg backdrop-blur">
         <span aria-hidden className="size-1.5 animate-pulse rounded-full bg-foreground/60" />
-        <span>{t`Just a moment · ${left} more to come`}</span>
+        <span>{t`Just a moment · ${left} chapters left`}</span>
       </div>
     </div>
   )

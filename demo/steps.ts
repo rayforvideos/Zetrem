@@ -8,6 +8,7 @@ import type { TourStep } from '@/app/demo/tour/tour.types'
 export const DEMO_STEPS: TourStep[] = [
   {
     id: 'ask',
+    face: 'bunny',
     target: '[data-talk] textarea',
     title: '일 전체를 맡깁니다',
     body: '다음 단계를 지시하는 대신 원하는 결과를 말합니다. 지금 입력되는 문장이 그 예입니다. 누구에게 맡길지는 오케스트레이터가 정합니다.',
@@ -16,6 +17,7 @@ export const DEMO_STEPS: TourStep[] = [
   },
   {
     id: 'crew',
+    face: 'bunny',
     target: '[data-card]',
     waitFor: '[data-crew-board="3"]',
     title: '팀원마다 타일 하나',
@@ -25,6 +27,7 @@ export const DEMO_STEPS: TourStep[] = [
   },
   {
     id: 'crew-open',
+    face: 'planet',
     target: '[data-card]',
     waitFor: '[data-crew-board="3"]',
     title: '타일을 열면 더 들어갑니다',
@@ -34,6 +37,7 @@ export const DEMO_STEPS: TourStep[] = [
   },
   {
     id: 'approval',
+    face: 'star',
     target: '[data-approval]',
     // Only allowing carries the recording on. Turning it down is a real answer
     // the app really takes, so the step stays where it is and the question
@@ -46,6 +50,7 @@ export const DEMO_STEPS: TourStep[] = [
   },
   {
     id: 'output',
+    face: 'star',
     target: '[data-tick="c6"]',
     // Enabled is what says the output is in: the row is on screen the moment
     // the command is called, and a stop that asks for a press before there is
@@ -58,6 +63,7 @@ export const DEMO_STEPS: TourStep[] = [
   },
   {
     id: 'usage',
+    face: 'bunny',
     target: '[data-usage-bar]',
     title: '얼마를 썼는지는 계속 보입니다',
     body: '남은 사용량과 언제 다시 차는지가 아래에 늘 붙어 있습니다. 읽는 동안에도 팀원들은 계속 일하고 있습니다.',
@@ -66,6 +72,7 @@ export const DEMO_STEPS: TourStep[] = [
   },
   {
     id: 'report',
+    face: 'bunny',
     target: 'article',
     waitFor: '[data-system-line]',
     // The teammate panel stands a few seconds past the answer, and the
@@ -79,6 +86,7 @@ export const DEMO_STEPS: TourStep[] = [
   },
   {
     id: 'library-open',
+    face: 'star',
     target: '[data-library-row]',
     title: '프로젝트의 라이브러리',
     body: '세션이 일하다 남길 만한 결론을 찾으면 제안으로 올립니다. 저절로 저장되는 것은 없습니다. 눌러서 열어보세요.',
@@ -87,6 +95,7 @@ export const DEMO_STEPS: TourStep[] = [
   },
   {
     id: 'proposal',
+    face: 'star',
     target: '[data-proposals]',
     waitFor: '[data-proposals] button',
     title: '받아들일지는 사람이 정합니다',
@@ -96,6 +105,7 @@ export const DEMO_STEPS: TourStep[] = [
   },
   {
     id: 'hire',
+    face: 'rock',
     target: '[data-hire]',
     title: '팀원은 직접 만듭니다',
     body: '이름과 언제 부를지, 그리고 지시문. 이 셋이면 팀원 하나가 생깁니다. 눌러보세요.',
@@ -104,6 +114,7 @@ export const DEMO_STEPS: TourStep[] = [
   },
   {
     id: 'hire-form',
+    face: 'rock',
     target: '[data-member-form]',
     waitFor: '#member-prompt',
     title: '무엇까지 정해 줄 수 있는지',
@@ -113,6 +124,7 @@ export const DEMO_STEPS: TourStep[] = [
   },
   {
     id: 'git-open',
+    face: 'planet',
     target: '[data-git-button]',
     title: '프로젝트의 git 도 여기에',
     body: '팀원들이 각자 브랜치에서 일하고 돌아온 자리입니다. 눌러서 열어보세요.',
@@ -121,6 +133,7 @@ export const DEMO_STEPS: TourStep[] = [
   },
   {
     id: 'git-graph',
+    face: 'planet',
     target: '[data-git-row]',
     title: '누가 무엇을 합쳤는지 보입니다',
     body: '본선 옆으로 갈라졌다 합쳐지는 가지 하나하나가 팀원이 끝내고 돌아온 일입니다. 커밋 하나를 눌러보세요.',
@@ -129,6 +142,7 @@ export const DEMO_STEPS: TourStep[] = [
   },
   {
     id: 'git-files',
+    face: 'planet',
     target: '[data-git-file] button',
     waitFor: '[data-git-file] button',
     title: '그 커밋이 건드린 파일',
@@ -138,6 +152,7 @@ export const DEMO_STEPS: TourStep[] = [
   },
   {
     id: 'git-diff',
+    face: 'planet',
     target: '[data-git-diff]',
     waitFor: '[data-git-diff]',
     title: '더한 줄과 지운 줄',
@@ -147,6 +162,7 @@ export const DEMO_STEPS: TourStep[] = [
   },
   {
     id: 'settings-open',
+    face: 'bunny',
     target: '[data-settings-button]',
     title: '무엇까지 맡길지 정합니다',
     body: '계정, 프로젝트, 모델, 그리고 묻지 않고 어디까지 해도 되는지. 눌러서 열어보세요.',
@@ -155,6 +171,7 @@ export const DEMO_STEPS: TourStep[] = [
   },
   {
     id: 'settings-session',
+    face: 'bunny',
     target: '[data-setup-section="session"]',
     waitFor: '[data-setup-section="session"]:not([hidden])',
     title: '권한과 모델은 여기서',
@@ -164,6 +181,7 @@ export const DEMO_STEPS: TourStep[] = [
   },
   {
     id: 'outro',
+    face: 'bunny',
     target: null,
     title: '여기까지입니다',
     body: '실제 앱은 여러분 컴퓨터의 Claude Code 를 그대로 실행합니다. 대화도 팀원도 라이브러리도 전부 로컬에 남고, 로그인은 CLI 가 관리합니다. 내려받기와 자세한 소개는 Zetrem 홈페이지에 있습니다.',

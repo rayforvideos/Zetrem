@@ -1130,7 +1130,7 @@ msgstr "Documents they read first. Long ones cost nothing until they open them."
 msgid "Don't ask again this session"
 msgstr "Don't ask again this session"
 
-#: src/app/demo/tour/TourOverlay.tsx:274
+#: src/app/demo/tour/TourOverlay.tsx:299
 #: src/widgets/agent-report/lib/state-word/state-word.ts:12
 #: src/widgets/library/ui/NoteReader/NoteReader.tsx:102
 #: src/widgets/setup/ui/PluginShelf/PluginShelf.tsx:129
@@ -1511,9 +1511,9 @@ msgstr "It took too long and was stopped"
 msgid "It was cancelled"
 msgstr "It was cancelled"
 
-#: src/app/demo/tour/TourOverlay.tsx:302
-msgid "Just a moment · {left} chapters left"
-msgstr "Just a moment · {left} chapters left"
+#: src/app/demo/tour/TourOverlay.tsx:357
+msgid "Just a moment"
+msgstr "Just a moment"
 
 #: src/widgets/library/lib/since/since.ts:11
 #: src/widgets/team-sidebar/lib/when/when.ts:12
@@ -1747,7 +1747,7 @@ msgstr "New note in {name}"
 msgid "New teammate"
 msgstr "New teammate"
 
-#: src/app/demo/tour/TourOverlay.tsx:274
+#: src/app/demo/tour/TourOverlay.tsx:299
 #: src/widgets/welcome/ui/WelcomePane/WelcomePane.tsx:137
 msgid "Next"
 msgstr "Next"
@@ -2482,7 +2482,7 @@ msgstr "Signing in through your browser…"
 msgid "Skip"
 msgstr "Skip"
 
-#: src/app/demo/tour/TourOverlay.tsx:270
+#: src/app/demo/tour/TourOverlay.tsx:291
 msgid "Skip tour"
 msgstr "Skip tour"
 
@@ -2544,7 +2544,7 @@ msgstr "Stash changes"
 msgid "Stay here"
 msgstr "Stay here"
 
-#: src/app/demo/tour/TourOverlay.tsx:263
+#: src/app/demo/tour/TourOverlay.tsx:284
 msgid "Step {shown} of {total}"
 msgstr "Step {shown} of {total}"
 
@@ -3021,7 +3021,7 @@ msgstr "tool"
 msgid "Tools"
 msgstr "Tools"
 
-#: src/app/demo/tour/TourOverlay.tsx:277
+#: src/app/demo/tour/TourOverlay.tsx:303
 msgid "Try the highlighted control"
 msgstr "Try the highlighted control"
 

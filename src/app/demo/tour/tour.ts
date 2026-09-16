@@ -8,6 +8,10 @@ import type {
   TourStep,
 } from './tour.types'
 
+// Frames the light keeps re-measuring after a target first appears, long
+// enough to cover the app's own entrance of it.
+export const SETTLE_FRAMES = 40
+
 export const TOUR = {
   // Air between the target and the card, and between the card and the edge.
   gapPx: 12,

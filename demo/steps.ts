@@ -23,7 +23,7 @@ export const DEMO_STEPS: TourStep[] = [
   },
   {
     id: 'crew',
-    target: '[data-crew-cards]',
+    target: '[data-card]',
     title: '팀원마다 타일 하나',
     body: '세 명이 동시에 붙었습니다. 타일에 이름과 지금 하는 일, 방금 부른 도구가 올라옵니다. 터미널이라면 이 셋의 출력이 한 줄기로 뒤섞였을 자리입니다.',
     advance: 'manual',

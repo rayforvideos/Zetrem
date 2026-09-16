@@ -12,6 +12,7 @@ import { MOTION } from '@/shared/config/motion/motion'
 import { Button } from '@/shared/ui/button'
 import { cn } from '@/shared/lib/cn'
 import {
+  SETTLE_FRAMES,
   TOUR,
   delayFor,
   isOnScreen,
@@ -110,6 +111,11 @@ export function TourOverlay({
   const bodyId = useId()
 
   if (step === undefined) return null
+
+  // A step that points at something says nothing until that something is on
+  // screen. The recorded run takes a moment to put the teammates up, and a
+  // card explaining them over an empty corner is worse than no card at all.
+  if (step.target !== null && target.box === null && !target.missing) return null
 
   const hole =
     target.box !== null && isOnScreen(target.box, viewport) ? spotlight(target.box, viewport) : null
@@ -211,6 +217,24 @@ export function TourOverlay({
   )
 }
 
+// The smallest box covering them all, in viewport coordinates.
+function covering(nodes: Element[]): Box | null {
+  let top = Number.POSITIVE_INFINITY
+  let left = Number.POSITIVE_INFINITY
+  let right = Number.NEGATIVE_INFINITY
+  let bottom = Number.NEGATIVE_INFINITY
+  for (const node of nodes) {
+    const rect = node.getBoundingClientRect()
+    if (rect.width === 0 && rect.height === 0) continue
+    top = Math.min(top, rect.top)
+    left = Math.min(left, rect.left)
+    right = Math.max(right, rect.right)
+    bottom = Math.max(bottom, rect.bottom)
+  }
+  if (!Number.isFinite(top) || !Number.isFinite(left)) return null
+  return { top, left, width: right - left, height: bottom - top }
+}
+
 function Band({ style }: { style: CSSProperties }) {
   return <div aria-hidden className="pointer-events-auto absolute bg-black/60" style={style} />
 }
@@ -283,16 +307,17 @@ function useTarget(selector: string | null, waitMs: number): Spotted {
 
     let node: Element | null = null
     let waiting: ReturnType<typeof setTimeout> | undefined
+    let frame = 0
 
+    // A step may point at a row of things rather than one thing, and the box
+    // that holds them is usually wider than they are. Every match is measured
+    // and the light is cut to what they cover between them.
     function read(): void {
       if (node === null) return
-      const rect = node.getBoundingClientRect()
-      setFound({
-        wanted,
-        node,
-        box: { top: rect.top, left: rect.left, width: rect.width, height: rect.height },
-        missing: false,
-      })
+      const all = [...document.querySelectorAll(wanted)]
+      const rect = covering(all.length > 0 ? all : [node])
+      if (rect === null) return
+      setFound({ wanted, node, box: rect, missing: false })
     }
 
     const sizes = new ResizeObserver(read)
@@ -304,12 +329,25 @@ function useTarget(selector: string | null, waitMs: number): Spotted {
       if (late !== null) take(late)
     })
 
+    // A target that has just arrived is usually still moving: the app slides
+    // and fades it into place, and a transform changes nothing a size observer
+    // would wake for. So it is measured again on every frame until the entrance
+    // is over, or the light would keep the shape the thing had while landing.
+    let settling = 0
+    function settle(): void {
+      read()
+      if (settling >= SETTLE_FRAMES) return
+      settling += 1
+      frame = requestAnimationFrame(settle)
+    }
+
     function take(candidate: Element): void {
       node = candidate
       clearTimeout(waiting)
       arriving.disconnect()
-      sizes.observe(candidate)
-      read()
+      for (const one of document.querySelectorAll(wanted)) sizes.observe(one)
+      settling = 0
+      settle()
     }
 
     const first = document.querySelector(wanted)
@@ -325,6 +363,7 @@ function useTarget(selector: string | null, waitMs: number): Spotted {
     window.addEventListener('scroll', read, true)
     return () => {
       clearTimeout(waiting)
+      cancelAnimationFrame(frame)
       sizes.disconnect()
       arriving.disconnect()
       window.removeEventListener('resize', read)

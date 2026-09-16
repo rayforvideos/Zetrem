@@ -1,3 +1,5 @@
+import type { CharacterId } from '@/entities/teammate'
+
 // How a step hands over to the next one. A click step waits for the reviewer
 // to touch the real control, which is the whole point of a demo that runs the
 // actual UI; an auto step moves on by itself; a manual step waits for the
@@ -28,6 +30,9 @@ export type TourStep = {
   // counts as an answer. A permission card is one box, but only allowing it
   // carries the recording on: turning it down leaves the step where it was.
   advanceOn?: string
+  // Who is saying it. One of the faces the app gives teammates, so the walk is
+  // spoken by somebody rather than printed by the page.
+  face?: CharacterId
   title: string
   body: string
   advance: TourAdvance

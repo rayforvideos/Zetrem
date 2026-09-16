@@ -9,6 +9,7 @@ import {
 } from 'react'
 import { t } from '@lingui/core/macro'
 import { MOTION } from '@/shared/config/motion/motion'
+import { SPRITES } from '@/entities/teammate/ui/AgentSprite/sprites'
 import { Button } from '@/shared/ui/button'
 import { cn } from '@/shared/lib/cn'
 import {
@@ -178,9 +179,15 @@ export function TourOverlay({
   const shown = at + 1
   const total = steps.length
 
-  // Said rather than nothing: the walk goes on, and this is how much of it is
-  // still to come.
-  if (waitingOn || saidSo) return saidSo ? <Held done={at} total={total} /> : null
+  // Said rather than nothing: the bar along the top is up either way, so the
+  // walk is visibly unfinished, and the line says what is being waited for.
+  if (waitingOn || saidSo)
+    return (
+      <div className="pointer-events-none fixed inset-0 z-[70]" data-tour-held>
+        <Walked done={at} total={total} />
+        {saidSo && <Held />}
+      </div>
+    )
 
   const hole =
     target.box !== null && isOnScreen(target.box, viewport) ? spotlight(target.box, viewport) : null
@@ -193,8 +200,11 @@ export function TourOverlay({
           viewport,
           placement: step.placement,
         })
+  // Movement is the thing the eye follows from stop to stop, so it is given
+  // the app's own settling curve rather than a quick one: a card that lands
+  // reads as one that was placed, and one that snaps reads as a redraw.
   const moving = {
-    transitionDuration: `${MOTION.quickMs}ms`,
+    transitionDuration: `${MOTION.baseMs}ms`,
     transitionTimingFunction: MOTION.easing,
   }
 
@@ -222,7 +232,7 @@ export function TourOverlay({
           />
           <div
             aria-hidden
-            className="absolute rounded-lg ring-2 ring-ring/70 transition-all"
+            className="absolute rounded-xl ring-2 ring-primary/80 transition-all"
             style={{
               ...moving,
               top: hole.top,
@@ -233,6 +243,8 @@ export function TourOverlay({
           />
         </>
       )}
+
+      <Walked done={at} total={total} />
 
       <div
         ref={measureCard}
@@ -250,65 +262,99 @@ export function TourOverlay({
         style={spot === null ? moving : { ...moving, top: spot.top, left: spot.left }}
       >
         {spot !== null && <Arrow placement={spot.placement} />}
-        <p id={titleId} className="text-sm leading-tight font-medium">
-          {step.title}
-        </p>
-        <p id={bodyId} className="text-xs leading-relaxed text-muted-foreground">
+        <div className="flex items-start gap-2.5">
+          <img
+            src={SPRITES[step.face ?? 'bunny'].default}
+            alt=""
+            width={36}
+            height={36}
+            draggable={false}
+            className="zt-sprite mt-0.5 size-9 flex-none object-contain"
+          />
+          <p id={titleId} className="min-w-0 flex-1 pt-1 text-sm leading-snug font-semibold">
+            {step.title}
+          </p>
+        </div>
+        <p id={bodyId} className="text-xs leading-relaxed break-keep text-muted-foreground">
           {step.body}
         </p>
-        <div className="flex items-center justify-between gap-3 pt-1">
-          {/* The eye reads 3/8 at a glance; a screen reader is told the whole
-              sentence, which "3/8" on its own does not say. */}
-          <span className="zt-nums text-xs text-muted-foreground">
-            <span className="sr-only">{t`Step ${shown} of ${total}`}</span>
-            <span aria-hidden>
-              {shown}/{total}
-            </span>
-          </span>
-          <div className="flex items-center gap-1">
-            <Button variant="quiet" size="xs" onClick={() => send('skip')}>
-              {t`Skip tour`}
+        <div className="flex items-center justify-end gap-2 pt-1">
+          {/* A screen reader is told the whole sentence, which the bar along
+              the top does not say. */}
+          <span className="sr-only">{t`Step ${shown} of ${total}`}</span>
+          <Button
+            variant="quiet"
+            size="xs"
+            className="mr-auto text-muted-foreground"
+            onClick={() => send('skip')}
+          >
+            {t`Skip tour`}
+          </Button>
+          {wantsNextButton(step) ? (
+            <Button
+              size="sm"
+              className="rounded-full px-5 font-medium"
+              onClick={() => send('next-pressed')}
+            >
+              {shown === total ? t`Done` : t`Next`}
             </Button>
-            {wantsNextButton(step) ? (
-              <Button size="xs" onClick={() => send('next-pressed')}>
-                {shown === total ? t`Done` : t`Next`}
-              </Button>
-            ) : (
-              <span className="text-xs text-muted-foreground">{t`Try the highlighted control`}</span>
-            )}
-          </div>
+          ) : (
+            <span className="rounded-full bg-muted px-3 py-1.5 text-xs font-medium text-foreground">
+              {t`Try the highlighted control`}
+            </span>
+          )}
         </div>
       </div>
     </div>
   )
 }
 
-// How long a step waits before it admits to waiting, and how long it keeps
-// saying so once it has. Past the run itself the waits are a second or so, and
-// a line that flashed up for the tail of one of those would be worse than the
-// wait it was reporting.
-const HELD_SHOWN_MS = 1200
+// How long a step waits before it says so in words, and how long it keeps
+// saying it once it has. The bar along the top is up through every wait
+// already, so the line is for the ones long enough that a bar is not answer
+// enough — the ordinary handover is a second and says nothing.
+const HELD_SHOWN_MS = 2000
 const HELD_KEPT_MS = 700
 
 // What stands in for the card while a step waits on the app. It lights nothing
 // and covers nothing, so the visitor watches the run rather than the tour, and
 // it says how much is left so a long wait does not read as the end.
-function Held({ done, total }: { done: number; total: number }) {
-  const left = total - done
+// How far along the walk is, kept on screen for the whole of it. A visitor
+// always knows there is more and roughly how much, so no stop has to carry
+// that on its own and a wait never reads as the end.
+function Walked({ done, total }: { done: number; total: number }) {
   return (
-    <div className="pointer-events-none fixed inset-0 z-[70]" data-tour-held>
-      <div className="zt-rise absolute bottom-12 left-1/2 flex -translate-x-1/2 items-center gap-3 rounded-full border border-border bg-card px-5 py-2.5 text-sm text-foreground shadow-xl">
-        <span aria-hidden className="size-2 animate-pulse rounded-full bg-primary" />
-        <span className="zt-nums font-medium">{t`Just a moment · ${left} chapters left`}</span>
-        {/* How far along the walk is, so the count is a place in something
-            rather than a number on its own. */}
-        <span aria-hidden className="h-1.5 w-20 overflow-hidden rounded-full bg-muted">
-          <span
-            className="block h-full rounded-full bg-primary transition-all"
-            style={{ width: `${Math.round((done / total) * 100)}%` }}
-          />
-        </span>
-      </div>
+    <div className="absolute top-11 left-1/2 flex -translate-x-1/2 items-center gap-2.5">
+      <span
+        aria-hidden
+        className="h-2 w-40 overflow-hidden rounded-full bg-muted ring-1 ring-border/60 sm:w-56"
+      >
+        <span
+          className="block h-full rounded-full bg-primary"
+          style={{
+            // The stop being read counts as walked, so the bar and the number
+            // beside it say the same thing.
+            width: `${Math.round(((done + 1) / total) * 100)}%`,
+            transitionProperty: 'width',
+            transitionDuration: `${MOTION.moveMs}ms`,
+            transitionTimingFunction: MOTION.easing,
+          }}
+        />
+      </span>
+      <span aria-hidden className="zt-nums text-xs font-medium text-muted-foreground">
+        {done + 1}/{total}
+      </span>
+    </div>
+  )
+}
+
+// What stands in while a stop waits on the app. It lights nothing and covers
+// nothing, so the run itself stays the thing being watched.
+function Held() {
+  return (
+    <div className="zt-rise absolute bottom-12 left-1/2 flex -translate-x-1/2 items-center gap-2.5 rounded-full border border-border bg-card px-5 py-2.5 text-sm font-medium text-foreground shadow-xl">
+      <span aria-hidden className="size-2 animate-pulse rounded-full bg-primary" />
+      <span>{t`Just a moment`}</span>
     </div>
   )
 }

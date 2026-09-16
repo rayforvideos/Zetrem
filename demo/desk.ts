@@ -55,7 +55,7 @@ function listing(): LibraryListing {
 // The tape runs once per session id. A permission ask parks it until the
 // person answers, the way a live run waits on them rather than guessing.
 const running = new Set<string>()
-let answerPermission: (() => void) | null = null
+let answerPermission: ((allowed: boolean) => void) | null = null
 let releaseHold: (() => void) | null = null
 // A visitor can move on before the tape has even reached the stop it is to be
 // held at. The leave is remembered rather than dropped, or the tape would park
@@ -67,6 +67,12 @@ let released = false
 export function releaseTape(): void {
   released = true
   releaseHold?.()
+}
+
+// The CLI's own shape for an answer: allow carries the input on, deny carries
+// a sentence back instead.
+function allowed(result: unknown): boolean {
+  return (result as { behavior?: string } | null)?.behavior === 'allow'
 }
 
 function wait(ms: number): Promise<void> {
@@ -95,10 +101,20 @@ async function play(id: string): Promise<void> {
     }
     if (beat.holds) released = false
     if (beat.holdForAnswer) {
-      await new Promise<void>((resolve) => {
-        answerPermission = resolve
-      })
-      answerPermission = null
+      // Turning it down is a real answer and the app really takes it: the card
+      // goes and nothing runs. But the tape only has the run that was allowed,
+      // so rather than play it anyway the question comes back.
+      for (;;) {
+        const allowed = await new Promise<boolean>((resolve) => {
+          answerPermission = resolve
+        })
+        answerPermission = null
+        if (allowed) break
+        if (!running.has(id)) return
+        await wait(700)
+        if (!running.has(id)) return
+        push('agent:event', { id, kind: 'line', line: JSON.stringify(beat.event) })
+      }
     }
   }
   push('agent:event', {
@@ -292,7 +308,7 @@ export function installDemoDesk(): void {
         if (key in LISTEN) return listen(LISTEN[key] as string)
         if (SENDS.has(key)) {
           return (...args: unknown[]) => {
-            if (key === 'respondPermission') answerPermission?.()
+            if (key === 'respondPermission') answerPermission?.(allowed(args[2]))
             if (key === 'stopAgent') running.delete(args[0] as string)
           }
         }

@@ -256,7 +256,7 @@ msgstr "{reported}명 보고 완료"
 
 #: src/entities/tool/ui/ChangeDiff/ChangeDiff.tsx:10
 #: src/widgets/conversation/lib/limits/limits.ts:6
-#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:249
+#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:250
 msgid "{rest, plural, one {# more line} other {# more lines}}"
 msgstr "{rest, plural, other {#줄 더}}"
 
@@ -542,7 +542,7 @@ msgstr "허용"
 msgid "Allow all"
 msgstr "전부 허용"
 
-#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:271
+#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:272
 msgid "Allow this?"
 msgstr "허용할까요?"
 
@@ -580,7 +580,7 @@ msgstr "적용"
 msgid "Approve a plan"
 msgstr "계획 승인"
 
-#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:269
+#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:270
 msgid "Approve this plan?"
 msgstr "이 계획을 승인할까요?"
 
@@ -1126,11 +1126,11 @@ msgstr "\"{title}\"을(를) 무시했습니다"
 msgid "Documents they read first. Long ones cost nothing until they open them."
 msgstr "이 팀원이 먼저 읽을 문서입니다. 길어도 열기 전까지는 비용이 들지 않습니다."
 
-#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:174
+#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:175
 msgid "Don't ask again this session"
 msgstr "이번 세션에서는 다시 묻지 않기"
 
-#: src/app/demo/tour/TourOverlay.tsx:242
+#: src/app/demo/tour/TourOverlay.tsx:270
 #: src/widgets/agent-report/lib/state-word/state-word.ts:12
 #: src/widgets/library/ui/NoteReader/NoteReader.tsx:102
 #: src/widgets/setup/ui/PluginShelf/PluginShelf.tsx:129
@@ -1183,7 +1183,7 @@ msgstr "{0} 수정"
 msgid "Edit a file"
 msgstr "파일 고치기"
 
-#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:264
+#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:265
 msgid "Edit this file?"
 msgstr "이 파일을 고칠까요?"
 
@@ -1511,6 +1511,10 @@ msgstr "너무 오래 걸려 중단했습니다"
 msgid "It was cancelled"
 msgstr "취소되었습니다"
 
+#: src/app/demo/tour/TourOverlay.tsx:293
+msgid "Just a moment · {left} more to come"
+msgstr "잠시 기다립니다 · 남은 이야기 {left}개"
+
 #: src/widgets/library/lib/since/since.ts:11
 #: src/widgets/team-sidebar/lib/when/when.ts:12
 msgid "just now"
@@ -1743,7 +1747,7 @@ msgstr "{name}에 새 노트"
 msgid "New teammate"
 msgstr "새 팀원"
 
-#: src/app/demo/tour/TourOverlay.tsx:242
+#: src/app/demo/tour/TourOverlay.tsx:270
 #: src/widgets/welcome/ui/WelcomePane/WelcomePane.tsx:137
 msgid "Next"
 msgstr "다음"
@@ -2034,7 +2038,7 @@ msgstr "요청이 너무 잦습니다"
 msgid "Re-authenticate"
 msgstr "재인증"
 
-#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:267
+#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:268
 msgid "Reach out to the web?"
 msgstr "웹에 접속할까요?"
 
@@ -2251,7 +2255,7 @@ msgstr "{1}회 중 {0}번째"
 msgid "Run a command"
 msgstr "명령 실행"
 
-#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:259
+#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:260
 msgid "Run this command?"
 msgstr "이 명령을 실행할까요?"
 
@@ -2478,7 +2482,7 @@ msgstr "브라우저에서 로그인하는 중…"
 msgid "Skip"
 msgstr "건너뛰기"
 
-#: src/app/demo/tour/TourOverlay.tsx:238
+#: src/app/demo/tour/TourOverlay.tsx:266
 msgid "Skip tour"
 msgstr "건너뛰기"
 
@@ -2540,7 +2544,7 @@ msgstr "스태시에 넣기"
 msgid "Stay here"
 msgstr "여기 있기"
 
-#: src/app/demo/tour/TourOverlay.tsx:231
+#: src/app/demo/tour/TourOverlay.tsx:259
 msgid "Step {shown} of {total}"
 msgstr "{total}단계 중 {shown}"
 
@@ -3017,7 +3021,7 @@ msgstr "도구"
 msgid "Tools"
 msgstr "도구"
 
-#: src/app/demo/tour/TourOverlay.tsx:245
+#: src/app/demo/tour/TourOverlay.tsx:273
 msgid "Try the highlighted control"
 msgstr "표시된 곳을 눌러보세요"
 
@@ -3130,7 +3134,7 @@ msgstr "주간 {rest}"
 msgid "Weekly overage"
 msgstr "주간 초과분"
 
-#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:228
+#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:229
 msgid "What is being approved"
 msgstr "승인할 내용"
 
@@ -3234,7 +3238,7 @@ msgstr "첫 노트 쓰기"
 msgid "Write their instructions once and the orchestrator can call them in any project."
 msgstr "지침을 한 번 써두면 어느 프로젝트에서든 부를 수 있습니다."
 
-#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:261
+#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:262
 msgid "Write this file?"
 msgstr "이 파일을 쓸까요?"
 

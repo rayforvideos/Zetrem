@@ -256,7 +256,7 @@ msgstr "{reported} reported back"
 
 #: src/entities/tool/ui/ChangeDiff/ChangeDiff.tsx:10
 #: src/widgets/conversation/lib/limits/limits.ts:6
-#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:249
+#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:250
 msgid "{rest, plural, one {# more line} other {# more lines}}"
 msgstr "{rest, plural, one {# more line} other {# more lines}}"
 
@@ -542,7 +542,7 @@ msgstr "Allow"
 msgid "Allow all"
 msgstr "Allow all"
 
-#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:271
+#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:272
 msgid "Allow this?"
 msgstr "Allow this?"
 
@@ -580,7 +580,7 @@ msgstr "Apply"
 msgid "Approve a plan"
 msgstr "Approve a plan"
 
-#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:269
+#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:270
 msgid "Approve this plan?"
 msgstr "Approve this plan?"
 
@@ -1126,11 +1126,11 @@ msgstr "Dismissed \"{title}\""
 msgid "Documents they read first. Long ones cost nothing until they open them."
 msgstr "Documents they read first. Long ones cost nothing until they open them."
 
-#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:174
+#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:175
 msgid "Don't ask again this session"
 msgstr "Don't ask again this session"
 
-#: src/app/demo/tour/TourOverlay.tsx:242
+#: src/app/demo/tour/TourOverlay.tsx:270
 #: src/widgets/agent-report/lib/state-word/state-word.ts:12
 #: src/widgets/library/ui/NoteReader/NoteReader.tsx:102
 #: src/widgets/setup/ui/PluginShelf/PluginShelf.tsx:129
@@ -1183,7 +1183,7 @@ msgstr "Edit {0}"
 msgid "Edit a file"
 msgstr "Edit a file"
 
-#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:264
+#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:265
 msgid "Edit this file?"
 msgstr "Edit this file?"
 
@@ -1511,6 +1511,10 @@ msgstr "It took too long and was stopped"
 msgid "It was cancelled"
 msgstr "It was cancelled"
 
+#: src/app/demo/tour/TourOverlay.tsx:293
+msgid "Just a moment · {left} more to come"
+msgstr "Just a moment · {left} more to come"
+
 #: src/widgets/library/lib/since/since.ts:11
 #: src/widgets/team-sidebar/lib/when/when.ts:12
 msgid "just now"
@@ -1743,7 +1747,7 @@ msgstr "New note in {name}"
 msgid "New teammate"
 msgstr "New teammate"
 
-#: src/app/demo/tour/TourOverlay.tsx:242
+#: src/app/demo/tour/TourOverlay.tsx:270
 #: src/widgets/welcome/ui/WelcomePane/WelcomePane.tsx:137
 msgid "Next"
 msgstr "Next"
@@ -2034,7 +2038,7 @@ msgstr "Rate limited"
 msgid "Re-authenticate"
 msgstr "Re-authenticate"
 
-#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:267
+#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:268
 msgid "Reach out to the web?"
 msgstr "Reach out to the web?"
 
@@ -2251,7 +2255,7 @@ msgstr "run {0} of {1}"
 msgid "Run a command"
 msgstr "Run a command"
 
-#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:259
+#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:260
 msgid "Run this command?"
 msgstr "Run this command?"
 
@@ -2478,7 +2482,7 @@ msgstr "Signing in through your browser…"
 msgid "Skip"
 msgstr "Skip"
 
-#: src/app/demo/tour/TourOverlay.tsx:238
+#: src/app/demo/tour/TourOverlay.tsx:266
 msgid "Skip tour"
 msgstr "Skip tour"
 
@@ -2540,7 +2544,7 @@ msgstr "Stash changes"
 msgid "Stay here"
 msgstr "Stay here"
 
-#: src/app/demo/tour/TourOverlay.tsx:231
+#: src/app/demo/tour/TourOverlay.tsx:259
 msgid "Step {shown} of {total}"
 msgstr "Step {shown} of {total}"
 
@@ -3017,7 +3021,7 @@ msgstr "tool"
 msgid "Tools"
 msgstr "Tools"
 
-#: src/app/demo/tour/TourOverlay.tsx:245
+#: src/app/demo/tour/TourOverlay.tsx:273
 msgid "Try the highlighted control"
 msgstr "Try the highlighted control"
 
@@ -3130,7 +3134,7 @@ msgstr "Weekly {rest}"
 msgid "Weekly overage"
 msgstr "Weekly overage"
 
-#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:228
+#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:229
 msgid "What is being approved"
 msgstr "What is being approved"
 
@@ -3234,7 +3238,7 @@ msgstr "Write the first note"
 msgid "Write their instructions once and the orchestrator can call them in any project."
 msgstr "Write their instructions once and the orchestrator can call them in any project."
 
-#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:261
+#: src/widgets/conversation/ui/ConversationPane/Approval.tsx:262
 msgid "Write this file?"
 msgstr "Write this file?"
 

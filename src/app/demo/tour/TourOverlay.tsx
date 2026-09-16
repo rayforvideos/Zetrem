@@ -91,21 +91,37 @@ export function TourOverlay({
 
   const node = target.node
   const onClickStep = step?.advance === 'click'
+  const wanted = step?.target ?? null
 
   useEffect(() => {
-    if (node === null || !onClickStep) return
+    if (node === null || !onClickStep || wanted === null) return
     // Capture, so the step moves on even when the control stops the click on
     // its way up, and the control still gets the click of its own.
+    //
+    // Matched by the selector rather than against the one element that was
+    // measured: a step may point at a row of things, and pressing the second
+    // of them is as much an answer as pressing the first.
     function onClick(event: MouseEvent): void {
-      if (event.target instanceof Node && node?.contains(event.target)) raise('target-click')
+      if (!(event.target instanceof Element)) return
+      if (event.target.closest(wanted as string) !== null) raise('target-click')
     }
     document.addEventListener('click', onClick, true)
     return () => document.removeEventListener('click', onClick, true)
-  }, [node, onClickStep])
+  }, [node, onClickStep, wanted])
 
   useEffect(() => {
     if (target.missing) raise('target-missing')
   }, [target.missing, at])
+
+  // A step says nothing while what it points at is still arriving, but only
+  // for a moment: a tour that has gone dark reads as broken, so past the grace
+  // the card speaks from the middle of the screen and the light catches up.
+  const [patient, setPatient] = useState(false)
+  useEffect(() => {
+    setPatient(false)
+    const timer = setTimeout(() => setPatient(true), TOUR.graceMs)
+    return () => clearTimeout(timer)
+  }, [at])
 
   const titleId = useId()
   const bodyId = useId()
@@ -115,7 +131,7 @@ export function TourOverlay({
   // A step that points at something says nothing until that something is on
   // screen. The recorded run takes a moment to put the teammates up, and a
   // card explaining them over an empty corner is worse than no card at all.
-  if (step.target !== null && target.box === null && !target.missing) return null
+  if (step.target !== null && target.box === null && !target.missing && !patient) return null
 
   const hole =
     target.box !== null && isOnScreen(target.box, viewport) ? spotlight(target.box, viewport) : null

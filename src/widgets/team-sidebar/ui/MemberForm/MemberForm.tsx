@@ -116,6 +116,7 @@ export function MemberForm({
   return (
     <Dialog open onOpenChange={(next) => !next && onCancel()}>
       <DialogContent
+        data-member-form
         ref={setSheet}
         showCloseButton={false}
         className="h-[min(84vh,720px)] max-w-[min(92vw,900px)] gap-0 overflow-hidden p-0 sm:max-w-[min(92vw,900px)]"
@@ -389,7 +390,13 @@ export function MemberForm({
                   : t`A running session keeps the old brief until it is restarted`)}
             </span>
             <span className="flex items-center gap-2">
-              <Button type="button" variant="ghost" onClick={onCancel} className="rounded-full">
+              <Button
+                type="button"
+                data-member-cancel
+                variant="ghost"
+                onClick={onCancel}
+                className="rounded-full"
+              >
                 {t`Cancel`}
               </Button>
               <Button type="submit" className="rounded-full">

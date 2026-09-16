@@ -234,6 +234,31 @@ export const DEMO_SCRIPT: DemoBeat[] = [
     ]),
   },
   {
+    afterMs: 1300,
+    event: {
+      type: 'user',
+      message: {
+        role: 'user',
+        content: [{ type: 'tool_result', tool_use_id: 'c6', content: '' }],
+      },
+      tool_use_result: {
+        stdout: [
+          '> zetrem@1.0.2-beta.5 typecheck',
+          '> tsc --noEmit',
+          '',
+          '> zetrem@1.0.2-beta.5 test',
+          '> vitest run tests/conventions --reporter=dot',
+          '',
+          ' Test Files  22 passed (22)',
+          '      Tests  92 passed (92)',
+          '   Duration  3.41s',
+        ].join('\n'),
+        stderr: '',
+        interrupted: false,
+      },
+    },
+  },
+  {
     afterMs: 900,
     event: progress('task_1', ELECTRON, 'IPC 경계의 sender 검증을 확인하는 중', 'Read', 21400),
   },

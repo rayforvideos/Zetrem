@@ -48,10 +48,14 @@ function onStepChange(step: { id: string }): void {
   // to the next, so the screen moves when the visitor does and never before
   // they have read why it is about to.
   if (step.id === 'crew') sendNow()
-  if (step.id === 'approval') releaseTape()
+  // Released a stop early, so the ask the next stop is about is already on
+  // screen when the visitor gets there: a tour that vanishes while it waits
+  // for something reads as broken.
+  if (step.id === 'crew-open') releaseTape()
   // A stop that is about a screen the visitor is not on opens it for them, and
   // one that has moved past a screen closes it behind them: the tour is the
   // only thing steering, so nothing is left ajar for the next stop to fight.
+  if (step.id === 'git-open') press('[data-member-cancel]')
   if (step.id === 'settings-open') press('[data-git-drawer] [data-git-close]', '[data-git-button]')
   if (step.id === 'settings-session') press('[data-setup-tab="session"]')
   if (step.id === 'outro') press('[data-setup-cancel]')

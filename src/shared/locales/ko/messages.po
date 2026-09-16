@@ -125,7 +125,7 @@ msgid "{0} teammates"
 msgstr "팀원 {0}명"
 
 #. placeholder {0}: i18n._(ORIGIN[member.origin])
-#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:181
+#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:182
 msgid "{0}. Joins from the next session."
 msgstr "{0}. 다음 세션부터 함께합니다."
 
@@ -246,7 +246,7 @@ msgstr "{name}이(가) {max}MB를 넘어서 이미지로 보낼 수 없습니다
 msgid "{percent}% used"
 msgstr "{percent}% 사용"
 
-#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:372
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:373
 msgid "{refused} is not something they can read. Notes and data files only."
 msgstr "{refused}은(는) 읽을 수 없습니다. 글이나 데이터 파일만 됩니다."
 
@@ -383,15 +383,15 @@ msgstr "개발 실행은 스스로 업데이트하지 않습니다."
 msgid "A name cannot start with a dash"
 msgstr "이름은 하이픈으로 시작할 수 없습니다"
 
-#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:161
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:162
 msgid "A name to call them by"
 msgstr "부를 이름"
 
-#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:388
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:389
 msgid "A running session cannot call them. Restart it, or they join the next one."
 msgstr "실행 중인 세션은 이 팀원을 부를 수 없습니다. 세션을 다시 시작하거나, 다음 세션부터 함께합니다."
 
-#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:389
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:390
 msgid "A running session keeps the old brief until it is restarted"
 msgstr "실행 중인 세션은 다시 시작하기 전까지 이전 지침을 씁니다"
 
@@ -483,7 +483,7 @@ msgstr "둘러보기"
 msgid "Add one by address"
 msgstr "주소로 추가하기"
 
-#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:95
+#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:96
 msgid "Add teammate"
 msgstr "팀원 추가"
 
@@ -491,7 +491,7 @@ msgstr "팀원 추가"
 msgid "Add variable"
 msgstr "변수 추가"
 
-#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:100
+#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:101
 msgid "Add your first teammate"
 msgstr "첫 팀원을 만들어 보세요"
 
@@ -601,7 +601,7 @@ msgstr "다음 단계 말고 일 전체를 맡기세요. 오케스트레이터�
 msgid "Asks before editing files or running commands"
 msgstr "파일을 고치거나 명령을 실행하기 전에 묻습니다"
 
-#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:309
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:310
 msgid "Attach"
 msgstr "첨부"
 
@@ -677,7 +677,7 @@ msgstr "연결 안 됨"
 #: src/widgets/library/ui/NoteReader/NoteReader.tsx:202
 #: src/widgets/setup/ui/SetupPane/SetupPane.tsx:238
 #: src/widgets/team-sidebar/ui/ChatList/ChatRow.tsx:250
-#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:393
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:400
 #: src/widgets/team-sidebar/ui/MemberMenu/MemberMenu.tsx:66
 #: src/widgets/team-sidebar/ui/ProjectSwitcher/ProjectSwitcher.tsx:145
 msgid "Cancel"
@@ -1043,11 +1043,11 @@ msgid "Could not switch accounts."
 msgstr "계정을 전환하지 못했습니다."
 
 #: src/widgets/git-desk/ui/GitDesk/GitDesk.tsx:508
-#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:396
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:403
 msgid "Create"
 msgstr "만들기"
 
-#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:130
+#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:131
 msgid "Create a teammate and they'll show up here."
 msgstr "팀원을 만들면 여기에 나타납니다."
 
@@ -1122,7 +1122,7 @@ msgstr "이 안내 닫기"
 msgid "Dismissed \"{title}\""
 msgstr "\"{title}\"을(를) 무시했습니다"
 
-#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:371
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:372
 msgid "Documents they read first. Long ones cost nothing until they open them."
 msgstr "이 팀원이 먼저 읽을 문서입니다. 길어도 열기 전까지는 비용이 들지 않습니다."
 
@@ -1130,7 +1130,7 @@ msgstr "이 팀원이 먼저 읽을 문서입니다. 길어도 열기 전까지�
 msgid "Don't ask again this session"
 msgstr "이번 세션에서는 다시 묻지 않기"
 
-#: src/app/demo/tour/TourOverlay.tsx:208
+#: src/app/demo/tour/TourOverlay.tsx:224
 #: src/widgets/agent-report/lib/state-word/state-word.ts:12
 #: src/widgets/library/ui/NoteReader/NoteReader.tsx:102
 #: src/widgets/setup/ui/PluginShelf/PluginShelf.tsx:129
@@ -1153,7 +1153,7 @@ msgstr "끌어서 크기 조절, 더블클릭하면 원래대로"
 msgid "Drop"
 msgstr "버리기"
 
-#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:324
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:325
 msgid "Drop a document here, or click to pick one."
 msgstr "문서를 여기로 끌어다 놓거나, 눌러서 고르세요."
 
@@ -1175,7 +1175,7 @@ msgid "Edit"
 msgstr "수정"
 
 #. placeholder {0}: initial.name
-#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:143
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:144
 msgid "Edit {0}"
 msgstr "{0} 수정"
 
@@ -1241,7 +1241,7 @@ msgstr "확장"
 msgid "Extra folders"
 msgstr "추가 폴더"
 
-#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:177
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:178
 #: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:202
 msgid "Face"
 msgstr "얼굴"
@@ -1402,7 +1402,7 @@ msgstr "이름을 지어주세요"
 msgid "Give them a name, say when to call them, and write their instructions. The orchestrator goes by the \"when to call them\" line to pick who gets the job."
 msgstr "이름을 정하고, 언제 부를지 적고, 지침을 씁니다. 오케스트레이터는 '언제 부를지' 줄을 보고 누구에게 맡길지 정합니다."
 
-#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:197
+#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:198
 msgid "Give them a task"
 msgstr "일을 맡기기"
 
@@ -1648,7 +1648,7 @@ msgstr "팀에게 말하기"
 #: src/widgets/conversation/ui/Composer/Composer.tsx:219
 #: src/widgets/setup/ui/SetupPane/SetupPane.tsx:158
 #: src/widgets/status-bar/ui/StatusDrawer/StatusDrawer.tsx:118
-#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:181
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:182
 msgid "Model"
 msgstr "모델"
 
@@ -1680,7 +1680,7 @@ msgstr "{name} 더 보기"
 msgid "More options for the folder {name}"
 msgstr "{name} 폴더 메뉴"
 
-#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:156
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:157
 #: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:187
 msgid "Name"
 msgstr "이름"
@@ -1739,11 +1739,11 @@ msgstr "새 노트"
 msgid "New note in {name}"
 msgstr "{name}에 새 노트"
 
-#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:143
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:144
 msgid "New teammate"
 msgstr "새 팀원"
 
-#: src/app/demo/tour/TourOverlay.tsx:208
+#: src/app/demo/tour/TourOverlay.tsx:224
 #: src/widgets/welcome/ui/WelcomePane/WelcomePane.tsx:137
 msgid "Next"
 msgstr "다음"
@@ -1776,7 +1776,7 @@ msgstr "처리할 곳이 없습니다"
 msgid "No notes yet"
 msgstr "아직 노트가 없어요"
 
-#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:128
+#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:129
 msgid "No one here yet"
 msgstr "아직 아무도 없습니다"
 
@@ -1794,7 +1794,7 @@ msgstr "그런 이름의 도구가 없습니다."
 msgid "none"
 msgstr "없음"
 
-#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:182
+#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:183
 msgid "Not available this session. Unlock it in Settings."
 msgstr "이번 세션에서는 쓸 수 없습니다. 설정에서 켜세요."
 
@@ -1899,7 +1899,7 @@ msgstr "열기"
 msgid "Open a project before keeping someone for it."
 msgstr "프로젝트 전용 팀원을 두려면 먼저 프로젝트를 여세요."
 
-#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:215
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:216
 msgid "Open a project to keep someone for it alone."
 msgstr "프로젝트를 열면 그 프로젝트에서만 쓰는 팀원을 둘 수 있습니다."
 
@@ -1923,7 +1923,7 @@ msgstr "지휘하는 중"
 msgid "Overage"
 msgstr "초과분"
 
-#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:248
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:249
 msgid "Own workspace"
 msgstr "자기 작업 공간"
 
@@ -1956,7 +1956,7 @@ msgstr "브랜치 선택"
 msgid "Pick a note"
 msgstr "노트를 고르세요"
 
-#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:87
+#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:88
 msgid "Pick a project first"
 msgstr "먼저 프로젝트를 고르세요"
 
@@ -2059,7 +2059,7 @@ msgstr "판단하기 전에 변경 내용을 먼저 읽고, 어디에 영향을 
 msgid "Reading"
 msgstr "읽는 중"
 
-#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:294
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:295
 msgid "Reading list"
 msgstr "읽을 자료"
 
@@ -2127,7 +2127,7 @@ msgid "Remove"
 msgstr "삭제"
 
 #. placeholder {0}: entry.name
-#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:355
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:356
 msgid "Remove {0}"
 msgstr "{0} 지우기"
 
@@ -2187,7 +2187,7 @@ msgstr "이름이 바뀜"
 msgid "Replace the running session so the next message goes on with the change"
 msgstr "실행 중인 세션을 새로 띄워, 다음 메시지부터 바뀐 설정으로 이어서 진행해요"
 
-#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:145
+#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:146
 msgid "Replace the running session so the next message goes on with them on the team"
 msgstr "실행 중인 세션을 새로 띄워, 다음 메시지부터 그들을 팀에 두고 이어서 진행해요"
 
@@ -2220,7 +2220,7 @@ msgid "Restart now, on {pick}"
 msgstr "지금 {pick}(으)로 다시 시작"
 
 #: src/widgets/conversation/ui/RestartNote/RestartNote.tsx:17
-#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:148
+#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:149
 msgid "Restart session"
 msgstr "세션 다시 시작"
 
@@ -2259,13 +2259,13 @@ msgstr "이 명령을 실행할까요?"
 msgid "Running"
 msgstr "실행하는 중"
 
-#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:187
-#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:190
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:188
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:191
 msgid "Same as the session"
 msgstr "세션과 같게"
 
 #: src/widgets/setup/ui/MemoryField/MemoryField.tsx:130
-#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:396
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:403
 msgid "Save"
 msgstr "저장"
 
@@ -2294,7 +2294,7 @@ msgstr "다음 단계 말고 원하는 결과를 말하세요. 오케스트레�
 msgid "Say what you would change and why, in that order."
 msgstr "무엇을 바꿀지, 왜인지 순서대로 적으세요."
 
-#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:200
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:201
 msgid "Scope"
 msgstr "범위"
 
@@ -2328,7 +2328,7 @@ msgstr "검색"
 msgid "Searching"
 msgstr "찾는 중"
 
-#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:197
+#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:198
 msgid "See what they did"
 msgstr "무엇을 했는지 보기"
 
@@ -2373,11 +2373,11 @@ msgstr "설정 구역"
 msgid "share unknown"
 msgstr "사용량 알 수 없음"
 
-#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:112
+#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:113
 msgid "Shared"
 msgstr "공용"
 
-#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:209
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:210
 msgid "Shared across projects"
 msgstr "모든 프로젝트에서 공용"
 
@@ -2478,7 +2478,7 @@ msgstr "브라우저에서 로그인하는 중…"
 msgid "Skip"
 msgstr "건너뛰기"
 
-#: src/app/demo/tour/TourOverlay.tsx:204
+#: src/app/demo/tour/TourOverlay.tsx:220
 msgid "Skip tour"
 msgstr "건너뛰기"
 
@@ -2540,7 +2540,7 @@ msgstr "스태시에 넣기"
 msgid "Stay here"
 msgstr "여기 있기"
 
-#: src/app/demo/tour/TourOverlay.tsx:197
+#: src/app/demo/tour/TourOverlay.tsx:213
 msgid "Step {shown} of {total}"
 msgstr "{total}단계 중 {shown}"
 
@@ -2729,7 +2729,7 @@ msgstr "파일이 삭제되고 에이전트가 로드하는 색인에서도 빠�
 msgid "The hardest problems. Slowest and priciest of these"
 msgstr "가장 어려운 문제용. 이 중 가장 느리고 가장 비쌉니다"
 
-#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:172
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:173
 msgid "The kind of work they should get"
 msgstr "어떤 일을 맡길지"
 
@@ -2769,7 +2769,7 @@ msgstr "라이브러리에서 노트가 지워집니다. 되돌릴 수 없습니
 msgid "the orchestrator"
 msgstr "오케스트레이터"
 
-#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:174
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:175
 #: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:197
 msgid "The orchestrator reads this to pick who gets the job."
 msgstr "오케스트레이터가 이 줄을 읽고 누구에게 맡길지 정합니다."
@@ -2848,7 +2848,7 @@ msgstr "파일이 지워지고 명단에서 빠집니다. 이미 실행 중인 �
 msgid "Their helpers"
 msgstr "이 팀원이 부른 도우미"
 
-#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:279
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:280
 #: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:212
 msgid "Their instructions"
 msgstr "지침"
@@ -2865,7 +2865,7 @@ msgstr "생각하는 중"
 msgid "Thinks longer. Slower and pricier"
 msgstr "더 오래 생각합니다. 느리고 비쌉니다"
 
-#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:288
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:289
 #: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:218
 msgid "This always applies. Write it the way you would explain the job to a person."
 msgstr "항상 적용되는 내용입니다. 사람에게 일을 설명하듯 적으세요."
@@ -2906,7 +2906,7 @@ msgstr "이 기기"
 msgid "This diff is too large to show here."
 msgstr "diff가 너무 커서 여기서는 보여줄 수 없습니다."
 
-#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:146
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:147
 msgid "This is everything they know when they start."
 msgstr "여기 적은 내용이 이 팀원이 시작할 때 아는 전부입니다."
 
@@ -2931,8 +2931,8 @@ msgstr "이 프로젝트"
 msgid "This project is not a git repository."
 msgstr "이 프로젝트는 git 저장소가 아닙니다."
 
-#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:211
-#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:118
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:212
+#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:119
 msgid "This project only"
 msgstr "이 프로젝트에서만"
 
@@ -3013,11 +3013,11 @@ msgstr "토큰"
 msgid "tool"
 msgstr "도구"
 
-#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:218
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:219
 msgid "Tools"
 msgstr "도구"
 
-#: src/app/demo/tour/TourOverlay.tsx:211
+#: src/app/demo/tour/TourOverlay.tsx:227
 msgid "Try the highlighted control"
 msgstr "표시된 곳을 눌러보세요"
 
@@ -3165,7 +3165,7 @@ msgstr "무엇을 바꿨는지"
 msgid "What they did"
 msgstr "무엇을 했는지"
 
-#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:284
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:285
 msgid "What they do, how to go about it, and what to hand back."
 msgstr "무슨 일을 어떤 방식으로 하고, 무엇을 돌려줄지 적으세요."
 
@@ -3185,7 +3185,7 @@ msgstr "이 프로젝트가 정한 것을 노트로 남겨 두면 다음 세션�
 msgid "What you have"
 msgstr "설치됨"
 
-#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:167
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:168
 #: src/widgets/welcome/ui/MockScreen/MockScreen.tsx:192
 msgid "When to call them"
 msgstr "언제 부를지"
@@ -3206,7 +3206,7 @@ msgstr "마지막 항목이 사라지는 이유"
 msgid "Working"
 msgstr "일하는 중"
 
-#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:250
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:251
 msgid "Works in a git worktree of its own; changes come back as a branch."
 msgstr "자기만의 git 워크트리에서 일합니다. 변경은 브랜치로 돌아옵니다."
 
@@ -3230,7 +3230,7 @@ msgstr "마크다운으로 적으세요"
 msgid "Write the first note"
 msgstr "첫 노트 쓰기"
 
-#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:101
+#: src/widgets/team-sidebar/ui/TeamList/TeamList.tsx:102
 msgid "Write their instructions once and the orchestrator can call them in any project."
 msgstr "지침을 한 번 써두면 어느 프로젝트에서든 부를 수 있습니다."
 
@@ -3242,7 +3242,7 @@ msgstr "이 파일을 쓸까요?"
 msgid "Write what they do, and how"
 msgstr "무슨 일을 어떻게 하는지 적으세요"
 
-#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:252
+#: src/widgets/team-sidebar/ui/MemberForm/MemberForm.tsx:253
 msgid "Writes straight into the shared working tree."
 msgstr "공유 작업 트리에 바로 씁니다."
 

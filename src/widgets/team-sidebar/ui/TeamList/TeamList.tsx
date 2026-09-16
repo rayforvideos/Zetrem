@@ -79,6 +79,7 @@ export function TeamList({
       )}
 
       <Button
+        data-hire
         variant="ghost"
         size="bare"
         onClick={() => setEditing('new')}

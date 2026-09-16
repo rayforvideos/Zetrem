@@ -52,6 +52,12 @@ function onStepChange(step: { id: string }): void {
   // screen when the visitor gets there: a tour that vanishes while it waits
   // for something reads as broken.
   if (step.id === 'crew-open') releaseTape()
+  // The same one stop early, twice more: the teammates report while the stop
+  // about the command's output is being read, and the answer is written while
+  // the stop about the usage bar is. What used to be a fourteen second wait in
+  // front of a still screen is the run happening behind what is being read.
+  if (step.id === 'output') releaseTape()
+  if (step.id === 'usage') releaseTape()
   // A stop that is about a screen the visitor is not on opens it for them, and
   // one that has moved past a screen closes it behind them: the tour is the
   // only thing steering, so nothing is left ajar for the next stop to fight.

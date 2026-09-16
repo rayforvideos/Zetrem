@@ -45,6 +45,26 @@ export const DEMO_STEPS: TourStep[] = [
     placement: 'right',
   },
   {
+    id: 'output',
+    target: '[data-tick="c6"]',
+    // Enabled is what says the output is in: the row is on screen the moment
+    // the command is called, and a stop that asks for a press before there is
+    // anything to open gets a press that does nothing.
+    waitFor: '[data-tick="c6"]:not([disabled])',
+    title: '돌아온 출력은 그 자리에 남습니다',
+    body: '허용한 명령이 실제로 돌아왔습니다. 줄을 누르면 그때의 출력이 그대로 펼쳐집니다. 터미널을 따로 열 일이 없습니다. 눌러보세요.',
+    advance: 'click',
+    placement: 'bottom',
+  },
+  {
+    id: 'usage',
+    target: '[data-usage-bar]',
+    title: '얼마를 썼는지는 계속 보입니다',
+    body: '남은 사용량과 언제 다시 차는지가 아래에 늘 붙어 있습니다. 읽는 동안에도 팀원들은 계속 일하고 있습니다.',
+    advance: 'manual',
+    placement: 'top',
+  },
+  {
     id: 'report',
     target: 'article',
     waitFor: '[data-system-line]',
@@ -53,7 +73,7 @@ export const DEMO_STEPS: TourStep[] = [
     // card be placed once, where it stays.
     waitGone: '[data-crew-board]',
     title: '보고가 한 답변으로 합쳐집니다',
-    body: '세 팀원이 각자 올린 결론을 오케스트레이터가 받아 하나로 정리했습니다. 위의 명령 줄을 누르면 그때 실제로 돌아온 출력도 그대로 열립니다.',
+    body: '세 팀원이 각자 올린 결론을 오케스트레이터가 받아 하나로 정리했습니다. 세 갈래로 나가서 한 답변으로 돌아온 것이 이 화면 하나입니다.',
     advance: 'manual',
     placement: 'top',
   },

@@ -96,7 +96,7 @@ export function TourOverlay({
 
   const node = target.node
   const onClickStep = step?.advance === 'click'
-  const wanted = step?.target ?? null
+  const wanted = step?.advanceOn ?? step?.target ?? null
 
   useEffect(() => {
     if (node === null || !onClickStep || wanted === null) return
@@ -127,26 +127,56 @@ export function TourOverlay({
     if (target.missing) raise('target-missing')
   }, [target.missing, at])
 
+  // A step speaks once its target has stopped moving, and then keeps speaking.
+  // The box moves again later on its own — a row grows as a tool reports, a
+  // counter ticks a tile wider — and a card that went away for every one of
+  // those would blink through the whole stop instead of following it.
+  const [spoke, setSpoke] = useState(-1)
+  useEffect(() => {
+    if (target.steady && spoke !== at) setSpoke(at)
+  }, [target.steady, at, spoke])
+
+  // Everything a step waits on before it is allowed to speak:
+  //
+  // - what the step is about is not on screen yet. The recorded run takes a
+  //   moment to put the teammates up, and a card explaining them over an empty
+  //   corner is worse than no card at all.
+  // - something that has to go is still going. The layout under a leaving
+  //   panel is still about to move, and a card placed against it now jumps.
+  // - the box it points at has not stopped moving. A card that appears in the
+  //   middle and then slides into place is two appearances, and only the
+  //   second one was wanted.
+  const waitingOn =
+    step !== undefined &&
+    ((step.waitFor !== undefined && settled.node === null && !settled.missing) ||
+      !gone ||
+      (step.target !== null && !target.steady && spoke !== at && !target.missing))
+
+  // Most of those waits are over in a frame or two and saying anything about
+  // them would be a flash. The one that is not is the run itself, and that one
+  // is long enough that a visitor with nothing on screen decides the tour is
+  // over and walks away.
+  const [saidSo, setSaidSo] = useState(false)
+  useEffect(() => {
+    if (!waitingOn) {
+      setSaidSo(false)
+      return undefined
+    }
+    const timer = setTimeout(() => setSaidSo(true), HELD_SHOWN_MS)
+    return () => clearTimeout(timer)
+  }, [waitingOn])
+
   const titleId = useId()
   const bodyId = useId()
 
   if (step === undefined) return null
 
-  // A step that points at something says nothing until that something is on
-  // screen. The recorded run takes a moment to put the teammates up, and a
-  // card explaining them over an empty corner is worse than no card at all.
-  // No grace on this one: what it waits for is the thing the step is about,
-  // and speaking early is the fault it was added to fix.
-  if (step.waitFor !== undefined && settled.node === null && !settled.missing) return null
+  const shown = at + 1
+  const total = steps.length
 
-  // While the run's panel is still on screen the layout under it is still
-  // going to move, and a card placed against it now is a card that jumps.
-  if (!gone) return null
-
-  // Nothing is shown until what the step points at has arrived and stopped
-  // moving. A card that appears in the middle and then slides to its place is
-  // two appearances, and the second one is the only one that was wanted.
-  if (step.target !== null && !target.steady && !target.missing) return null
+  // Said rather than nothing: the walk goes on, and this is how much of it is
+  // still to come.
+  if (waitingOn) return saidSo ? <Held left={total - at} /> : null
 
   const hole =
     target.box !== null && isOnScreen(target.box, viewport) ? spotlight(target.box, viewport) : null
@@ -159,8 +189,6 @@ export function TourOverlay({
           viewport,
           placement: step.placement,
         })
-  const shown = at + 1
-  const total = steps.length
   const moving = {
     transitionDuration: `${MOTION.quickMs}ms`,
     transitionTimingFunction: MOTION.easing,
@@ -251,6 +279,23 @@ export function TourOverlay({
   )
 }
 
+// How long a step waits before it admits to waiting.
+const HELD_SHOWN_MS = 600
+
+// What stands in for the card while a step waits on the app. It lights nothing
+// and covers nothing, so the visitor watches the run rather than the tour, and
+// it says how much is left so a long wait does not read as the end.
+function Held({ left }: { left: number }) {
+  return (
+    <div className="pointer-events-none fixed inset-0 z-[70]" data-tour-held>
+      <div className="zt-rise absolute bottom-10 left-1/2 flex -translate-x-1/2 items-center gap-2 rounded-full border bg-card/90 px-4 py-2 text-xs text-muted-foreground shadow-lg backdrop-blur">
+        <span aria-hidden className="size-1.5 animate-pulse rounded-full bg-foreground/60" />
+        <span>{t`Just a moment · ${left} more to come`}</span>
+      </div>
+    </div>
+  )
+}
+
 // Whether nothing on screen answers to a selector.
 function useGone(selector: string | null): boolean {
   const [gone, setGone] = useState(true)
@@ -272,6 +317,10 @@ function useGone(selector: string | null): boolean {
 
 // Frames a box must hold still before the step is allowed to speak.
 const STILL_FRAMES = 3
+
+// How long that stillness is waited for. Every entrance the app plays is over
+// well inside this; what runs past it is something that is not going to stop.
+const RESTLESS_MS = 600
 
 // Two readings are the same when nothing moved worth redrawing for.
 function same(was: Box | null, now: Box): boolean {
@@ -389,6 +438,13 @@ function useTarget(selector: string | null, waitMs: number): Spotted {
     // and the light is cut to what they cover between them.
     let last: Box | null = null
     let still = 0
+    // Some boxes never stop: a field grows under the typing, a counter widens
+    // a tile every second. Waiting for those to hold still keeps the step
+    // silent for good, so past this the box is taken as it reads and the card
+    // follows it. It is still never placed against nothing, which is the fault
+    // the stillness rule was added to fix.
+    let restless = false
+    let patience: ReturnType<typeof setTimeout> | undefined
 
     function read(): void {
       if (node === null) return
@@ -404,7 +460,7 @@ function useTarget(selector: string | null, waitMs: number): Spotted {
       }
       still = 0
       last = rect
-      setFound({ wanted, node, box: rect, missing: false, steady: false })
+      setFound({ wanted, node, box: rect, missing: false, steady: restless })
     }
 
     const sizes = new ResizeObserver(read)
@@ -431,6 +487,10 @@ function useTarget(selector: string | null, waitMs: number): Spotted {
       clearTimeout(waiting)
       arriving.disconnect()
       for (const one of document.querySelectorAll(wanted)) sizes.observe(one)
+      patience = setTimeout(() => {
+        restless = true
+        read()
+      }, RESTLESS_MS)
       settle()
     }
 
@@ -453,6 +513,7 @@ function useTarget(selector: string | null, waitMs: number): Spotted {
     window.addEventListener('scroll', read, true)
     return () => {
       clearTimeout(waiting)
+      clearTimeout(patience)
       cancelAnimationFrame(frame)
       sizes.disconnect()
       arriving.disconnect()

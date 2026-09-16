@@ -24,6 +24,10 @@ export type TourStep = {
   // widens the moment it goes: a card placed before that slides out from under
   // the reader.
   waitGone?: string
+  // The control that answers a click step, when only part of what is lit
+  // counts as an answer. A permission card is one box, but only allowing it
+  // carries the recording on: turning it down leaves the step where it was.
+  advanceOn?: string
   title: string
   body: string
   advance: TourAdvance

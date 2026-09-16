@@ -143,7 +143,7 @@ export function Approval({
       )}
 
       <div className="flex flex-none flex-wrap items-center gap-2">
-        <Button size="sm" onClick={() => decide(true)} className="rounded-full">
+        <Button size="sm" data-approval-allow onClick={() => decide(true)} className="rounded-full">
           {t`Allow`}
           <KbdGroup>
             <Kbd className="bg-primary-foreground/15 text-primary-foreground/70">
@@ -168,6 +168,7 @@ export function Approval({
           <Button
             size="sm"
             variant="ghost"
+            data-approval-allow
             onClick={() => decide(true, true)}
             className="rounded-full text-muted-foreground"
           >

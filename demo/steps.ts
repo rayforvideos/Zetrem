@@ -35,8 +35,12 @@ export const DEMO_STEPS: TourStep[] = [
   {
     id: 'approval',
     target: '[data-approval]',
+    // Only allowing carries the recording on. Turning it down is a real answer
+    // the app really takes, so the step stays where it is and the question
+    // comes back rather than the tour walking away from it.
+    advanceOn: '[data-approval-allow]',
     title: '실행 전에 멈춰서 묻습니다',
-    body: '팀원이 명령을 실행하려 합니다. 세션은 여기서 멈춰 답을 기다립니다. 허용을 눌러야 다음이 이어집니다.',
+    body: '답은 셋입니다. 허용은 이번 한 번만, 거부는 실행하지 않고 그 사정을 팀원에게 돌려보냅니다. 「이번 세션에서는 다시 묻지 않기」는 같은 명령을 이 세션 동안 넘겨 줍니다. 이 기록은 허용된 쪽만 가지고 있어, 거부하면 같은 질문이 다시 올라옵니다.',
     advance: 'click',
     placement: 'right',
   },
@@ -134,7 +138,7 @@ export const DEMO_STEPS: TourStep[] = [
     target: '[data-setup-section="session"]',
     waitFor: '[data-setup-section="session"]:not([hidden])',
     title: '권한과 모델은 여기서',
-    body: '계획 먼저 · 먼저 묻기 · 자동 편집 · 전부 허용 중에 고르고, 모델과 노력 수준도 정합니다. 다음 세션부터 그대로 적용됩니다.',
+    body: '아까처럼 매번 묻게 할지, 아예 묻지 않게 할지가 여기서 정해집니다. 계획부터 · 바꿀 때 묻기 · 자동 편집 · 전부 허용 중에 고르고, 모델과 노력 수준도 함께 정합니다. 다음 세션부터 그대로 적용됩니다.',
     advance: 'manual',
     placement: 'left',
   },

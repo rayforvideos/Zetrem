@@ -81,6 +81,18 @@ function notified(taskId: string, toolUseId: string, summary: string) {
   }
 }
 
+// The line that actually closes a teammate's tile. A notification only parks
+// it: the CLI reports the end itself, and without this the tiles stand until
+// the whole run is over and then leave in the middle of the next stop.
+function finished(taskId: string) {
+  return {
+    type: 'system',
+    subtype: 'task_updated',
+    task_id: taskId,
+    patch: { status: 'completed', end_time: Date.now() },
+  }
+}
+
 function delta(text: string) {
   return {
     type: 'stream_event',
@@ -280,6 +292,7 @@ export const DEMO_SCRIPT: DemoBeat[] = [
       '규약 테스트 22 개를 분류했습니다. IPC 계약·폴더 배치·타입 분리·커밋 형식을 CI 에서 강제하고, 커버리지 임계값과 knip 만 빠져 있습니다.',
     ),
   },
+  { afterMs: 150, event: finished('task_3') },
   {
     afterMs: 900,
     event: notified(
@@ -288,6 +301,7 @@ export const DEMO_SCRIPT: DemoBeat[] = [
       '렌더러는 외부 상태 라이브러리 없이 클로저 스토어와 useSyncExternalStore 로 일관됩니다. 순수 규칙이 lib 슬라이스로 분리돼 있어 React 없이도 테스트됩니다.',
     ),
   },
+  { afterMs: 150, event: finished('task_2') },
   {
     afterMs: 800,
     event: notified(
@@ -297,35 +311,36 @@ export const DEMO_SCRIPT: DemoBeat[] = [
     ),
     raises: 'proposal',
   },
+  { afterMs: 150, event: finished('task_1') },
 
-  { afterMs: 700, event: delta('세 팀원의 보고를 합쳐 정리했습니다.\n\n') },
+  { afterMs: 1600, event: delta('세 팀원의 보고를 합쳐 정리했습니다.\n\n') },
   {
-    afterMs: 260,
+    afterMs: 700,
     event: delta(
       '**한 문장:** 메인은 프로세스만 다루고, 해석과 화면은 렌더러가 맡으며, 그 경계를 규약 테스트가 지킵니다.\n\n',
     ),
   },
   {
-    afterMs: 300,
+    afterMs: 800,
     event: delta(
       '- **메인 프로세스** — `claude` 를 자식으로 띄워 stdout 을 줄 단위로 넘길 뿐, JSON 을 해석하지 않습니다. 모든 IPC 채널에 sender 검증이 걸려 있습니다.\n',
     ),
   },
   {
-    afterMs: 300,
+    afterMs: 800,
     event: delta(
       '- **렌더러** — 외부 상태 라이브러리가 없습니다. 클로저 스토어와 `useSyncExternalStore` 로 통일되어 있고, 순수 규칙은 전부 `lib` 으로 빠져 있습니다.\n',
     ),
   },
   {
-    afterMs: 300,
+    afterMs: 800,
     event: delta(
       '- **규약** — 폴더 배치·타입 분리·IPC 계약·커밋 형식까지 22 개의 테스트가 CI 에서 강제합니다. 빈 곳은 커버리지 임계값과 knip 미실행 둘입니다.\n\n',
     ),
   },
-  { afterMs: 260, event: delta('개선 후보를 하나 고르시면 그대로 작업으로 넘기겠습니다.') },
+  { afterMs: 700, event: delta('개선 후보를 하나 고르시면 그대로 작업으로 넘기겠습니다.') },
   {
-    afterMs: 500,
+    afterMs: 1000,
     event: {
       type: 'result',
       subtype: 'success',
